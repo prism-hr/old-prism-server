@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -130,7 +130,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String view(@ModelAttribute ApplicationForm applicationForm) {
+    public String view(@ModelAttribute Application applicationForm) {
         actionService.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.APPLICATION_EDIT_AS_ADMINISTRATOR);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, getCurrentUser());
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME;
@@ -138,7 +138,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @RequestMapping(value = "/editReferenceData", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String updateReference(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
+    public String updateReference(@ModelAttribute Application applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
             BindingResult refereesAdminEditDTOResult, ModelMap modelMap) throws ScoringDefinitionParseException {
         String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
         modelMap.addAttribute("editedRefereeId", editedRefereeId);
@@ -161,7 +161,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     }
 
     @RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)
-    public String submitRefereesData(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
+    public String submitRefereesData(@ModelAttribute Application applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
             BindingResult referenceResult, @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData,
             @RequestParam(required = false) Boolean forceSavingReference, Model model) throws ScoringDefinitionParseException {
 
@@ -209,7 +209,7 @@ public class EditApplicationFormAsProgrammeAdminController {
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
     }
 
-    public List<Question> getCustomQuestions(ApplicationForm applicationForm) throws ScoringDefinitionParseException {
+    public List<Question> getCustomQuestions(Application applicationForm) throws ScoringDefinitionParseException {
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
         if (scoringDefinition != null) {
             CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
@@ -220,7 +220,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @ModelAttribute(value = "refereesAdminEditDTO")
     public RefereesAdminEditDTO getRefereesAdminEditDTO(@RequestParam String applicationId) throws ScoringDefinitionParseException {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        Application applicationForm = getApplicationForm(applicationId);
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
 
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
@@ -252,8 +252,8 @@ public class EditApplicationFormAsProgrammeAdminController {
     }
 
     @ModelAttribute
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = applicationsService.getByApplicationNumber(applicationId);
+    public Application getApplicationForm(@RequestParam String applicationId) {
+        Application applicationForm = applicationsService.getByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new ResourceNotFoundException(applicationId);
         }
@@ -262,12 +262,12 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        Application applicationForm = getApplicationForm(applicationId);
         User user = getCurrentUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
-    public void createScoresWithQuestion(ApplicationForm applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) throws ScoringDefinitionParseException {
+    public void createScoresWithQuestion(Application applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) throws ScoringDefinitionParseException {
         List<Score> scores = refereesAdminEditDTO.getScores();
         if (!scores.isEmpty()) {
             List<Question> questions = getCustomQuestions(applicationForm);

@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ApplicationTp;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.CourseApplicationTp;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.jaxb.GMonthAdapter;
 
@@ -39,7 +39,7 @@ public class AdmissionsApplicationsServiceTest {
     @Autowired
     private WebServiceTemplate webServiceTemplate;
 
-    private ApplicationForm applicationForm = null;
+    private Application applicationForm = null;
 
     @Test
     public void shouldMarshallGMonthCorrectly() throws XmlMappingException, IOException, DatatypeConfigurationException {

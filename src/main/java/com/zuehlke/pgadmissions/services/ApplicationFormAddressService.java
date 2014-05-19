@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 
 @Service
 @Transactional
@@ -18,7 +18,7 @@ public class ApplicationFormAddressService {
     @Autowired
     private ApplicationFormCopyHelper applicationFormCopyHelper;
 
-    public ApplicationAddress getOrCreate(ApplicationForm application) {
+    public ApplicationAddress getOrCreate(Application application) {
         ApplicationAddress applicationFormAddress = application.getApplicationAddress();
         if (applicationFormAddress == null) {
             applicationFormAddress = new ApplicationAddress();
@@ -26,7 +26,7 @@ public class ApplicationFormAddressService {
         return applicationFormAddress;
     }
     
-	public void saveOrUpdate(ApplicationForm application, ApplicationAddress applicationFormAddress) {
+	public void saveOrUpdate(Application application, ApplicationAddress applicationFormAddress) {
 	    ApplicationAddress persistentApplicationFormAddress = application.getApplicationAddress();
         if (persistentApplicationFormAddress == null) {
             persistentApplicationFormAddress = new ApplicationAddress();         

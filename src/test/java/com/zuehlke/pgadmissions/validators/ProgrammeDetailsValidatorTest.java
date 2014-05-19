@@ -24,7 +24,7 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 import org.unitils.inject.util.InjectionUtils;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
@@ -59,7 +59,7 @@ public class ProgrammeDetailsValidatorTest {
 
     private Program program;
 
-    private ApplicationForm form;
+    private Application form;
 
     @Test
     public void shouldSupportProgrammeDetails() {

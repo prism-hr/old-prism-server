@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
@@ -35,7 +35,7 @@ public class ProgramInstanceService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public Date getEarliestPossibleStartDate(ApplicationForm applicationForm) {
+    public Date getEarliestPossibleStartDate(Application applicationForm) {
         Date result = null;
         ProgramDetails details = applicationForm.getProgramDetails();
         Date today = new Date();
@@ -56,15 +56,15 @@ public class ProgramInstanceService {
         return result;
     }
 
-    public boolean isPrefferedStartDateWithinBounds(ApplicationForm applicationForm) {
+    public boolean isPrefferedStartDateWithinBounds(Application applicationForm) {
         return isPreferredStartDateWithinBounds(applicationForm, applicationForm.getProgramDetails(), applicationForm.getProgramDetails().getStartDate());
     }
 
-    public boolean isPrefferedStartDateWithinBounds(ApplicationForm applicationForm, Date startDate) {
+    public boolean isPrefferedStartDateWithinBounds(Application applicationForm, Date startDate) {
         return isPreferredStartDateWithinBounds(applicationForm, applicationForm.getProgramDetails(), startDate);
     }
 
-    private boolean isPreferredStartDateWithinBounds(ApplicationForm applicationForm, ProgramDetails programDetails, Date startDate) {
+    private boolean isPreferredStartDateWithinBounds(Application applicationForm, ProgramDetails programDetails, Date startDate) {
         for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
             boolean afterStartDate = startDate.after(instance.getApplicationStartDate());
             boolean beforeEndDate = startDate.before(instance.getApplicationDeadline());

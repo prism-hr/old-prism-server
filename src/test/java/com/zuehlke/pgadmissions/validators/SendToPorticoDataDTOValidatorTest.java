@@ -20,7 +20,7 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 import org.unitils.inject.util.InjectionUtils;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -59,7 +59,7 @@ public class SendToPorticoDataDTOValidatorTest {
 
     private Referee referee2;
 
-    private ApplicationForm applicationForm;
+    private Application applicationForm;
 
     private PorticoService porticoServiceMock;
 
@@ -137,7 +137,7 @@ public class SendToPorticoDataDTOValidatorTest {
         referee1 = new RefereeBuilder().reference(referenceComment).build();
         referee2 = new RefereeBuilder().reference(referenceComment).build();
 
-        applicationForm = new ApplicationForm();
+        applicationForm = new Application();
         applicationForm.getQualifications().addAll(Arrays.asList(qualification1, qualification2));
         applicationForm.getReferees().addAll(Arrays.asList(referee1, referee2));
 

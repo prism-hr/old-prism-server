@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
@@ -46,7 +46,7 @@ public class FileUploadController {
     }
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(String applicationId) {
+    public Application getApplicationForm(String applicationId) {
         return applicationFormService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_COMPLETE,
                 ApplicationFormAction.APPLICATION_CORRECT);
     }

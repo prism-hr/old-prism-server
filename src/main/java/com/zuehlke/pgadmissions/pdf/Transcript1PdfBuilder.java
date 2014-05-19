@@ -11,7 +11,7 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
@@ -26,7 +26,7 @@ public class Transcript1PdfBuilder extends AbstractPdfModelBuilder {
     public Transcript1PdfBuilder() {
     }
 
-    public byte[] build(final ApplicationForm form) {
+    public byte[] build(final Application form) {
         try {
             Document document = new Document(PageSize.A4, 50, 50, 100, 50);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();

@@ -19,7 +19,7 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 
 import com.itextpdf.text.DocumentException;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -58,7 +58,7 @@ public class PrintControllerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         response.setOutputStreamAccessAllowed(true);
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).build();
+        Application applicationForm = new ApplicationFormBuilder().id(2).build();
         EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(applicationForm).anyTimes();
         // EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
         controller.printPage(request, response);
@@ -83,7 +83,7 @@ public class PrintControllerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         response.setOutputStreamAccessAllowed(true);
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(applicant).build();
+        Application applicationForm = new ApplicationFormBuilder().id(2).applicant(applicant).build();
         // EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
         EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(applicationForm).anyTimes();
         byte[] bytes = "pdf".getBytes();
@@ -110,8 +110,8 @@ public class PrintControllerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         response.setOutputStreamAccessAllowed(true);
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).applicant(new User().withId(4)).build();
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(new User().withId(5)).build();
+        Application applicationFormOne = new ApplicationFormBuilder().id(2).applicant(new User().withId(4)).build();
+        Application applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(new User().withId(5)).build();
         // EasyMock.expect(currentUser.canSee(applicationFormOne)).andReturn(true);
         // EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
         EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(applicationFormOne).anyTimes();
@@ -141,7 +141,7 @@ public class PrintControllerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         response.setOutputStreamAccessAllowed(true);
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(applicant).build();
+        Application applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(applicant).build();
 
         // EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
         EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(null).anyTimes();
@@ -171,8 +171,8 @@ public class PrintControllerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         response.setOutputStreamAccessAllowed(true);
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).applicant(applicant).build();
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(applicant).build();
+        Application applicationFormOne = new ApplicationFormBuilder().id(2).applicant(applicant).build();
+        Application applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(applicant).build();
         // EasyMock.expect(currentUser.canSee(applicationFormOne)).andReturn(false);
         // EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
         EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(applicationFormOne).anyTimes();

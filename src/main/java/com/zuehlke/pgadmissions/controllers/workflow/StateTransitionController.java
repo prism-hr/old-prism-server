@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.StateChangeDTO;
@@ -88,7 +88,7 @@ public class StateTransitionController {
 
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        Application applicationForm = getApplicationForm(applicationId);
         User user = getCurrentUser();
         return applicationFormService.getApplicationDescriptorForUser(applicationForm, user);
     }
@@ -96,7 +96,7 @@ public class StateTransitionController {
     @ModelAttribute("stateChangeDTO")
     public StateChangeDTO getStateChangeDTO(@RequestParam String applicationId, @RequestParam(required = false) String action) {
     	User user = getCurrentUser();
-    	ApplicationForm applicationForm = getApplicationForm(applicationId);
+    	Application applicationForm = getApplicationForm(applicationId);
     	
     	StateChangeDTO stateChangeDTO = new StateChangeDTO();
     	stateChangeDTO.setAction(action);
@@ -115,7 +115,7 @@ public class StateTransitionController {
     @RequestMapping(method = RequestMethod.GET, value = "/getPage")
     public String getStateTransitionView(@ModelAttribute StateChangeDTO stateChangeDTO) {
         User user = stateChangeDTO.getUser();
-        ApplicationForm applicationForm = stateChangeDTO.getApplicationForm();
+        Application applicationForm = stateChangeDTO.getApplicationForm();
         String action = stateChangeDTO.getAction();
 
         if (action != null) {
@@ -161,7 +161,7 @@ public class StateTransitionController {
 
     @RequestMapping(method = { RequestMethod.POST, RequestMethod.GET }, value = "/submitEvaluationComment")
     public String addComment(@Valid @ModelAttribute StateChangeDTO stateChangeDTO, BindingResult result) {
-        ApplicationForm applicationForm = stateChangeDTO.getApplicationForm();
+        Application applicationForm = stateChangeDTO.getApplicationForm();
         ApplicationFormAction invokedAction = null;
 
         // TODO reimplement
@@ -214,8 +214,8 @@ public class StateTransitionController {
         return userService.getCurrentUser();
     }
 
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = applicationFormService.getByApplicationNumber(applicationId);
+    public Application getApplicationForm(@RequestParam String applicationId) {
+        Application applicationForm = applicationFormService.getByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new ResourceNotFoundException(applicationId);
         }

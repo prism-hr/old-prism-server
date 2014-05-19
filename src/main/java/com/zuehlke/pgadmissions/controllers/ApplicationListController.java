@@ -27,8 +27,8 @@ import com.google.visualization.datasource.DataSourceHelper;
 import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.base.DataSourceException;
 import com.google.visualization.datasource.datatable.DataTable;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
@@ -183,7 +183,7 @@ public class ApplicationListController {
     }
 
     @ModelAttribute("applications")
-    public List<ApplicationForm> getApplications() {
+    public List<Application> getApplications() {
         return java.util.Collections.emptyList();
     }
 
@@ -203,7 +203,7 @@ public class ApplicationListController {
     }
 
     @ModelAttribute("messageApplication")
-    public ApplicationForm getApplicationForm(@RequestParam(required = false) String application) {
+    public Application getApplicationForm(@RequestParam(required = false) String application) {
         return applicationsService.getByApplicationNumber(application);
     }
 

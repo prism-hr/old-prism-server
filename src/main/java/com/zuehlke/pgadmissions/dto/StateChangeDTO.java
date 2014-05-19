@@ -2,11 +2,11 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
@@ -17,7 +17,7 @@ public class StateChangeDTO {
 
     private User user;
 
-    private ApplicationForm applicationForm;
+    private Application applicationForm;
 
     private String comment;
 
@@ -75,11 +75,11 @@ public class StateChangeDTO {
         this.user = user;
     }
 
-    public ApplicationForm getApplicationForm() {
+    public Application getApplicationForm() {
         return applicationForm;
     }
 
-    public void setApplicationForm(ApplicationForm applicationForm) {
+    public void setApplicationForm(Application applicationForm) {
         this.applicationForm = applicationForm;
         this.status = applicationForm.getState().getId();
     }

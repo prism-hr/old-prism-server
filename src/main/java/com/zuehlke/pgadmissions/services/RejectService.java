@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
 import com.zuehlke.pgadmissions.dao.StateDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -49,7 +49,7 @@ public class RejectService {
 		return rejectDao.getRejectReasonById(id);
 	}
 
-	public void moveApplicationToReject(final ApplicationForm form, final Rejection rejection) {
+	public void moveApplicationToReject(final Application form, final Rejection rejection) {
 
 		form.setState(stateDAO.getById(PrismState.APPLICATION_REJECTED));		
 		form.setRejection(rejection);
@@ -58,7 +58,7 @@ public class RejectService {
 		applicationDao.save(form);
 	}
 	
-	private void sendRejectNotificationToApplicant(ApplicationForm form) {
+	private void sendRejectNotificationToApplicant(Application form) {
 		try {
 			mailService.sendRejectionConfirmationToApplicant(form);
 		}
@@ -67,7 +67,7 @@ public class RejectService {
 		}
 	}
 	
-	public void sendToPortico(ApplicationForm form) {
+	public void sendToPortico(Application form) {
 	    if (form.getProgram().isImported()) {
 	        porticoQueueService.createOrReturnExistingApplicationFormTransfer(form);
 	    }

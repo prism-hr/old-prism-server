@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
 public class AssignReviewersComment extends Comment {
 

@@ -55,7 +55,7 @@ public class ProgramDetails implements Serializable, FormSectionObject {
     private List<SuggestedSupervisor> suggestedSupervisors = new ArrayList<SuggestedSupervisor>();
 
     @OneToOne(mappedBy = "programDetails", fetch = FetchType.LAZY)
-    private ApplicationForm application;
+    private Application application;
 
     @Transient
     private boolean acceptedTerms;
@@ -108,11 +108,11 @@ public class ProgramDetails implements Serializable, FormSectionObject {
         this.suggestedSupervisors = suggestedSupervisors;
     }
 
-    public ApplicationForm getApplication() {
+    public Application getApplication() {
         return application;
     }
 
-    public void setApplication(ApplicationForm application) {
+    public void setApplication(Application application) {
         this.application = application;
     }
 

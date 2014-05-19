@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.BooleanPropertyEditor;
@@ -44,13 +44,13 @@ public class AdditionalInformationController {
     private BooleanPropertyEditor booleanPropertyEditor;
     
     @RequestMapping(value = "/getAdditionalInformation", method = RequestMethod.GET)
-    public String getAdditionalInformationView(@ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {
+    public String getAdditionalInformationView(@ModelAttribute Application applicationForm, ModelMap modelMap) {
         return returnView(modelMap, additionalInformationService.getOrCreate(applicationForm));
     }
 
     @RequestMapping(value = "/editAdditionalInformation", method = RequestMethod.POST)
     public String editAdditionalInformation(@Valid AdditionalInformation additionalInformation, BindingResult result,
-            @ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {
+            @ModelAttribute Application applicationForm, ModelMap modelMap) {
         if (result.hasErrors()) {
             return returnView(modelMap, additionalInformation);
         }
@@ -62,7 +62,7 @@ public class AdditionalInformationController {
     public void registerValidatorsEditors(WebDataBinder binder) {
         binder.setValidator(additionalInformationValidator);
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
-        binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
+        binder.registerCustomEditor(Application.class, applicationFormPropertyEditor);
         binder.registerCustomEditor(Boolean.class, booleanPropertyEditor);
     }
 
@@ -71,7 +71,7 @@ public class AdditionalInformationController {
     }
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(String applicationId) {
+    public Application getApplicationForm(String applicationId) {
         return applicationFormService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_COMPLETE,
                 ApplicationFormAction.APPLICATION_CORRECT);
     }

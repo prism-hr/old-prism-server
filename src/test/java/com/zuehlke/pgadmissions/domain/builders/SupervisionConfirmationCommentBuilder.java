@@ -2,13 +2,13 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.User;
 
 public class SupervisionConfirmationCommentBuilder {
 
-    private ApplicationForm applicationForm;
+    private Application applicationForm;
     private String comment;
     private Integer id;
     private Date createdTimeStamp;
@@ -55,7 +55,7 @@ public class SupervisionConfirmationCommentBuilder {
         return this;
     }
 
-    public SupervisionConfirmationCommentBuilder application(ApplicationForm application) {
+    public SupervisionConfirmationCommentBuilder application(Application application) {
         this.applicationForm = application;
         return this;
     }

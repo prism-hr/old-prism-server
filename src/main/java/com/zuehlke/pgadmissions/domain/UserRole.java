@@ -39,7 +39,7 @@ public class UserRole {
 
     @ManyToOne
     @JoinColumn(name = "application_id")
-    private ApplicationForm application;
+    private Application application;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -97,11 +97,11 @@ public class UserRole {
         this.project = project;
     }
 
-    public ApplicationForm getApplication() {
+    public Application getApplication() {
         return application;
     }
 
-    public void setApplication(ApplicationForm application) {
+    public void setApplication(Application application) {
         this.application = application;
     }
 
@@ -165,7 +165,7 @@ public class UserRole {
         return this;
     }
 
-    public UserRole withApplication(ApplicationForm application) {
+    public UserRole withApplication(Application application) {
         this.application = application;
         return this;
     }

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -56,8 +56,8 @@ public class InterviewConfirmController {
 
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm application = applicationsService.getByApplicationNumber(applicationId);
+    public Application getApplicationForm(@RequestParam String applicationId) {
+        Application application = applicationsService.getByApplicationNumber(applicationId);
         if (application == null) {
             throw new ResourceNotFoundException(applicationId);
         }
@@ -71,7 +71,7 @@ public class InterviewConfirmController {
 
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        Application applicationForm = getApplicationForm(applicationId);
         User user = getUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
@@ -89,7 +89,7 @@ public class InterviewConfirmController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getInterviewConfirmPage(ModelMap modelMap) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS);
         
@@ -107,7 +107,7 @@ public class InterviewConfirmController {
     @RequestMapping(method = RequestMethod.POST)
     public String submitInterviewConfirmation(@ModelAttribute(value = "interviewConfirmDTO") @Valid InterviewConfirmDTO interviewConfirmDTO,
                     BindingResult result, ModelMap modelMap) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS);
 
@@ -122,7 +122,7 @@ public class InterviewConfirmController {
     }
 
     @RequestMapping(value = "/restart", method = RequestMethod.POST)
-    public String restartInterviewScheduling(@ModelAttribute ApplicationForm applicationForm) {
+    public String restartInterviewScheduling(@ModelAttribute Application applicationForm) {
         return "redirect:/interview/moveToInterview?applicationId=" + applicationForm.getApplicationNumber();
     }
 }

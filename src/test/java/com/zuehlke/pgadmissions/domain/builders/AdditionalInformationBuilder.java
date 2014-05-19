@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 
 public class AdditionalInformationBuilder {
 
 	private Integer infoId;
-	private ApplicationForm applicationForm;
+	private Application applicationForm;
 	private String convictionsText;
 	private Boolean hasConvictions;
 
@@ -26,7 +26,7 @@ public class AdditionalInformationBuilder {
 		return this;
 	}
 
-	public AdditionalInformationBuilder applicationForm(ApplicationForm applForm) {
+	public AdditionalInformationBuilder applicationForm(Application applForm) {
 		this.applicationForm = applForm;
 		return this;
 	}

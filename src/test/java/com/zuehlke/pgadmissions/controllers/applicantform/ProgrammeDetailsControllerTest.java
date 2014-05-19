@@ -14,7 +14,7 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.StudyOption;
@@ -71,7 +71,7 @@ public class ProgrammeDetailsControllerTest {
     public void shouldReturnAvaialbeStudyOptionLevels() {
         final String applicationNumber = "1";
         Program program = new Program().withId(7);
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber(applicationNumber).program(program).build();
+        final Application applicationForm = new ApplicationFormBuilder().id(1).applicationNumber(applicationNumber).program(program).build();
 
         StudyOption option1 = new StudyOption("1", "Full-time");
         StudyOption option2 = new StudyOption("31", "Part-time");

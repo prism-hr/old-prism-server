@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
@@ -51,7 +51,7 @@ public class PorticoAttachmentsZipCreator {
     @Value("${email.address.to}")
     private String emailAddressTo;
 
-    public void writeZipEntries(ApplicationForm applicationForm, String referenceNumber, OutputStream sftpOs) throws IOException, CouldNotCreateAttachmentsPack {
+    public void writeZipEntries(Application applicationForm, String referenceNumber, OutputStream sftpOs) throws IOException, CouldNotCreateAttachmentsPack {
         Properties contentsProperties = new Properties();
         ZipOutputStream zos = null;
         try {
@@ -69,7 +69,7 @@ public class PorticoAttachmentsZipCreator {
         }
     }
 
-    protected void addContentsFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
+    protected void addContentsFiles(Application applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException {
         contentsProperties.put("applicationNumber", applicationForm.getApplicationNumber());
         contentsProperties.put("bookingReferenceNumber", referenceNumber);
@@ -78,7 +78,7 @@ public class PorticoAttachmentsZipCreator {
         zos.closeEntry();
     }
 
-    protected void addReferences(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
+    protected void addReferences(Application applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException, CouldNotCreateAttachmentsPack {
         List<ReferenceComment> references = porticoService.getReferencesToSendToPortico(applicationForm);
         String filename;
@@ -105,7 +105,7 @@ public class PorticoAttachmentsZipCreator {
         }
     }
 
-    protected void addCV(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
+    protected void addCV(Application applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
         Document document = applicationForm.getApplicationDocument().getCv();
         if (document != null) {
             String filename = getRandomFilename();
@@ -118,7 +118,7 @@ public class PorticoAttachmentsZipCreator {
         }
     }
 
-    protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
+    protected void addLanguageTestCertificate(Application applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException, CouldNotCreateAttachmentsPack {
         Document document = applicationForm.getPersonalDetails().getLanguageQualification().getProofOfAward();
         if (document != null) {
@@ -132,7 +132,7 @@ public class PorticoAttachmentsZipCreator {
         }
     }
 
-    protected void addReserchProposal(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
+    protected void addReserchProposal(Application applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException {
         Document document = applicationForm.getApplicationDocument().getPersonalStatement();
         if (document != null) {
@@ -146,7 +146,7 @@ public class PorticoAttachmentsZipCreator {
         }
     }
 
-    protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
+    protected void addTranscriptFiles(Application applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException, CouldNotCreateAttachmentsPack {
         List<Document> qualifications = porticoService.getQualificationsToSendToPortico(applicationForm);
         String filename;
@@ -178,7 +178,7 @@ public class PorticoAttachmentsZipCreator {
         }
     }
 
-    protected void addApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
+    protected void addApplicationForm(Application applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException, CouldNotCreateAttachmentsPack {
         String serverfilename = "ApplicationForm" + referenceNumber + ".pdf";
         String applicationFilename = "ApplicationForm" + applicationForm.getApplicationNumber() + ".pdf";
@@ -195,7 +195,7 @@ public class PorticoAttachmentsZipCreator {
         contentsProperties.put("applicationForm.1.applicationFilename", applicationFilename);
     }
 
-    protected void addMergedApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
+    protected void addMergedApplicationForm(Application applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException, CouldNotCreateAttachmentsPack {
         String serverfilename = "MergedApplicationForm" + referenceNumber + ".pdf";
         String applicationFilename = "MergedApplicationForm" + applicationForm.getApplicationNumber() + ".pdf";
@@ -214,7 +214,7 @@ public class PorticoAttachmentsZipCreator {
         return UUID.randomUUID() + ".pdf";
     }
 
-    private byte[] getFileContents(Document document, ApplicationForm application) {
+    private byte[] getFileContents(Document document, Application application) {
         try {
             com.itextpdf.text.Document output = new com.itextpdf.text.Document(PageSize.A4, 50, 50, 100, 50);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -236,7 +236,7 @@ public class PorticoAttachmentsZipCreator {
         }
     }
     
-    private String getAlternativeMergedFileContents(ApplicationForm application) {
+    private String getAlternativeMergedFileContents(Application application) {
         return ("We are sorry but we were unable to read and merge the contents of this document. " + "Please contact us at " + emailAddressTo
                 + " to obtain an original copy, " + "quoting our application reference number: " + application.getApplicationNumber() + ".");
     }

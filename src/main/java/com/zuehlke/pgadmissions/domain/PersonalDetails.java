@@ -105,7 +105,7 @@ public class PersonalDetails implements FormSectionObject, Serializable {
     private Domicile residenceCountry;
 
     @OneToOne(mappedBy = "personalDetails", fetch = FetchType.LAZY)
-    private ApplicationForm application = null;
+    private Application application = null;
 
     public void setId(Integer id) {
         this.id = id;
@@ -163,11 +163,11 @@ public class PersonalDetails implements FormSectionObject, Serializable {
         this.residenceCountry = residenceCountry;
     }
 
-    public ApplicationForm getApplication() {
+    public Application getApplication() {
         return application;
     }
 
-    public void setApplication(ApplicationForm application) {
+    public void setApplication(Application application) {
         this.application = application;
     }
 

@@ -11,7 +11,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationTransferError;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;
@@ -69,7 +69,7 @@ public class ApplicationTransferDAO {
         return (ApplicationTransferError) sessionFactory.getCurrentSession().get(ApplicationTransferError.class, id);
     }
     
-    public void requeueApplicationTransfer(final ApplicationForm application) {
+    public void requeueApplicationTransfer(final Application application) {
         ApplicationTransfer transfer = application.getTransfer();
         if (transfer != null) {
             transfer.setBeganTimestamp(new Date());

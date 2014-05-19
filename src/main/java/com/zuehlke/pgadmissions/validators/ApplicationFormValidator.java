@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
@@ -39,12 +39,12 @@ public class ApplicationFormValidator extends AbstractValidator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return ApplicationForm.class.equals(clazz);
+        return Application.class.equals(clazz);
     }
 
     @Override
     public void addExtraValidation(Object target, Errors errors) {
-        ApplicationForm applicationForm = (ApplicationForm) target;
+        Application applicationForm = (Application) target;
         ProgramDetails programDetails = applicationForm.getProgramDetails();
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         ApplicationAddress applicationFormAddress = applicationForm.getApplicationAddress();

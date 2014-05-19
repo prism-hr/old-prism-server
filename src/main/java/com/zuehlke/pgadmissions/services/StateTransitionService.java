@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
@@ -26,11 +26,11 @@ public class StateTransitionService {
     @Autowired
     private PermissionsService permissionsService;
 
-    public String resolveView(ApplicationForm applicationForm) {
+    public String resolveView(Application applicationForm) {
         return resolveView(applicationForm, null);
     }
 
-    public String resolveView(ApplicationForm application, String action) {
+    public String resolveView(Application application, String action) {
 
         if (!application.getProgram().isEnabled()) {
             return REJECTION_VIEW + application.getApplicationNumber() + "&rejectionId=" + REJECTION_REASON_WHEN_PROGAMME_EXPIRED.toString()
@@ -59,7 +59,7 @@ public class StateTransitionService {
 
     }
 
-    public List<PrismState> getAssignableNextStati(final ApplicationForm application, final User user) {
+    public List<PrismState> getAssignableNextStati(final Application application, final User user) {
         // TODO write a query
         return null;
     }

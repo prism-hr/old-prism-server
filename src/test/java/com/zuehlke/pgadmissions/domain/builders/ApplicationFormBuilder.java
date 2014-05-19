@@ -8,9 +8,9 @@ import java.util.List;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
@@ -198,8 +198,8 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationForm build() {
-        ApplicationForm application = new ApplicationForm();
+    public Application build() {
+        Application application = new Application();
         application.setId(id);
         application.setUser(applicant);
         application.setProgram(program);

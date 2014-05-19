@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.AutomaticRollbackTestCase;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.services.StateService;
@@ -62,7 +62,7 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
         long idx = 0;
         Marshaller marshaller = webServiceTemplate.getMarshaller();
 
-        List<ApplicationForm> applications = new LinkedList<ApplicationForm>();
+        List<Application> applications = new LinkedList<Application>();
         applications.addAll(applicationFormDAO.getAllApplicationsByStatus(PrismState.APPLICATION_APPROVED));
         applications.addAll(applicationFormDAO.getAllApplicationsByStatus(PrismState.APPLICATION_APPROVAL));
         applications.addAll(applicationFormDAO.getAllApplicationsByStatus(PrismState.APPLICATION_INTERVIEW));
@@ -75,7 +75,7 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
         State rejectedState = stateService.getById(PrismState.APPLICATION_REJECTED);
         State withdrawnState = stateService.getById(PrismState.APPLICATION_WITHDRAWN);
 
-        for (ApplicationForm form : applications) {
+        for (Application form : applications) {
             try {
                 if (isTestProgram(form)) {
                     continue;
@@ -123,7 +123,7 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
         System.out.println(idx);
     }
 
-    private boolean isTestProgram(ApplicationForm form) {
+    private boolean isTestProgram(Application form) {
         return form.getAdvert().getTitle().equalsIgnoreCase("ABC") || form.getAdvert().getTitle().equalsIgnoreCase("Test Programme");
     }
 

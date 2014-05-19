@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
@@ -78,7 +78,7 @@ public class QualificationController {
     @InitBinder(value = "qualification")
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(qualificationValidator);
-        binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
+        binder.registerCustomEditor(Application.class, applicationFormPropertyEditor);
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(Language.class, languagePropertyEditor);
@@ -92,14 +92,14 @@ public class QualificationController {
     }
 
     @RequestMapping(value = "/getQualification", method = RequestMethod.GET)
-    public String getQualificationView(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) Integer qualificationId,
+    public String getQualificationView(@ModelAttribute Application applicationForm, @RequestParam(required = false) Integer qualificationId,
             ModelMap modelMap) {
         return returnView(modelMap, qualificationService.getOrCreate(qualificationId));
     }
 
     @RequestMapping(value = "/editQualification", method = RequestMethod.POST)
     public String editQualification(@RequestParam(required = false) Integer qualificationId, @Valid Qualification qualification, BindingResult result,
-            ModelMap modelMap, @ModelAttribute ApplicationForm applicationForm) {
+            ModelMap modelMap, @ModelAttribute Application applicationForm) {
         if (result.hasErrors()) {
             return returnView(modelMap, qualification);
         }
@@ -108,7 +108,7 @@ public class QualificationController {
     }
 
     @RequestMapping(value = "/deleteQualification", method = RequestMethod.POST)
-    public String deleteQualification(@RequestParam("id") Integer qualificationId, @ModelAttribute ApplicationForm applicationForm) {
+    public String deleteQualification(@RequestParam("id") Integer qualificationId, @ModelAttribute Application applicationForm) {
         qualificationService.delete(qualificationId);
         return RedirectLocation.UPDATE_APPLICATION_QUALIFICATION + applicationForm.getApplicationNumber() + "&message=deleted";
     }
@@ -134,7 +134,7 @@ public class QualificationController {
     }
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(String applicationId) {
+    public Application getApplicationForm(String applicationId) {
         return applicationsService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_COMPLETE, ApplicationFormAction.APPLICATION_CORRECT);
     }
 

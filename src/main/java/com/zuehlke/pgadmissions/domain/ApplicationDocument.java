@@ -31,7 +31,7 @@ public class ApplicationDocument implements Serializable, FormSectionObject {
     private Document cv = null;
 
     @OneToOne(mappedBy = "applicationDocument", fetch = FetchType.LAZY)
-    private ApplicationForm application;
+    private Application application;
 
     @Transient
     private boolean acceptedTerms;
@@ -61,11 +61,11 @@ public class ApplicationDocument implements Serializable, FormSectionObject {
         this.cv = cv;
     }
 
-    public ApplicationForm getApplication() {
+    public Application getApplication() {
         return application;
     }
 
-    public void setApplication(ApplicationForm application) {
+    public void setApplication(Application application) {
         this.application = application;
     }
 

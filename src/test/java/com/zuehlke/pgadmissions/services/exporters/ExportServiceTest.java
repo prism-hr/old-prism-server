@@ -43,7 +43,7 @@ import com.zuehlke.pgadmissions.dao.ApplicationTransferErrorDAO;
 import com.zuehlke.pgadmissions.dao.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationTransferError;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
@@ -92,7 +92,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
 
     private JSchFactory jschfactoryMock;
 
-    private ApplicationForm applicationForm;
+    private Application applicationForm;
 
     private ExportService exportService;
 
@@ -136,17 +136,17 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         ApplicationTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
         TransferListener listener = new TransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 assertNotNull(request);
             }
 
             @Override
-            public void webServiceCallCompleted(AdmissionsApplicationResponse response, ApplicationForm form) {
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response, Application form) {
                 Assert.fail("The web service call should not complete but throw an exception instead");
             }
 
             @Override
-            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 assertNotNull(error);
                 assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(), "org.springframework.ws.client.WebServiceIOException: Error"));
                 assertEquals(ApplicationTransferErrorHandlingDecision.RETRY, error.getErrorHandlingStrategy());
@@ -154,7 +154,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             }
 
             @Override
-            public void sftpTransferStarted(ApplicationForm form) {
+            public void sftpTransferStarted(Application form) {
                 Assert.fail("The SFTP transfer should not start");
             }
 
@@ -164,7 +164,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             }
 
             @Override
-            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 Assert.fail("The SFTP transfer should not start");
             }
         };
@@ -196,18 +196,18 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         TransferListener listener = new TransferListener() {
 
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 assertNotNull(request);
             }
 
             @Override
-            public void webServiceCallCompleted(AdmissionsApplicationResponse response, ApplicationForm form) {
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response, Application form) {
                 Assert.fail("The web service call should not complete but throw an exception instead");
 
             }
 
             @Override
-            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 assertNotNull(error);
                 assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(),
                         "org.springframework.ws.soap.client.SoapFaultClientException: Authentication Failed"));
@@ -216,7 +216,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             }
 
             @Override
-            public void sftpTransferStarted(ApplicationForm form) {
+            public void sftpTransferStarted(Application form) {
                 Assert.fail("The SFTP transfer should not start");
             }
 
@@ -226,7 +226,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             }
 
             @Override
-            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 Assert.fail("The SFTP transfer should not start");
             }
         };
@@ -316,23 +316,23 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         TransferListener listener = new TransferListener() {
 
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 assertNotNull(request);
                 assertNull(request.getApplication().getCourseApplication().getAtasStatement());
             }
 
             @Override
-            public void webServiceCallCompleted(AdmissionsApplicationResponse response, ApplicationForm form) {
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response, Application form) {
                 assertNotNull(response);
             }
 
             @Override
-            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 Assert.fail("The web service call should succeed");
             }
 
             @Override
-            public void sftpTransferStarted(ApplicationForm form) {
+            public void sftpTransferStarted(Application form) {
             }
 
             @Override
@@ -340,7 +340,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             }
 
             @Override
-            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, Application form) {
             }
         };
 
@@ -397,23 +397,23 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         TransferListener listener = new TransferListener() {
 
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 assertNotNull(request);
                 assertEquals("abstract", request.getApplication().getCourseApplication().getAtasStatement());
             }
 
             @Override
-            public void webServiceCallCompleted(AdmissionsApplicationResponse response, ApplicationForm form) {
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response, Application form) {
                 assertNotNull(response);
             }
 
             @Override
-            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 Assert.fail("The web service call should succeed");
             }
 
             @Override
-            public void sftpTransferStarted(ApplicationForm form) {
+            public void sftpTransferStarted(Application form) {
             }
 
             @Override
@@ -421,7 +421,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             }
 
             @Override
-            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, Application form) {
             }
         };
 
@@ -473,22 +473,22 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         ApplicationTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
         TransferListener listener = new TransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void webServiceCallCompleted(AdmissionsApplicationResponse response, ApplicationForm form) {
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void sftpTransferStarted(ApplicationForm form) {
+            public void sftpTransferStarted(Application form) {
             }
 
             @Override
@@ -497,7 +497,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             }
 
             @Override
-            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 assertNotNull(error);
                 assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(), "Failed to configure SSH connection"));
                 assertTrue(DateUtils.isToday(error.getTimepoint()));
@@ -531,22 +531,22 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         ApplicationTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
         TransferListener listener = new TransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void webServiceCallCompleted(AdmissionsApplicationResponse response, ApplicationForm form) {
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void sftpTransferStarted(ApplicationForm form) {
+            public void sftpTransferStarted(Application form) {
             }
 
             @Override
@@ -555,7 +555,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             }
 
             @Override
-            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 assertNotNull(error);
                 assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(), "Failed to open SSH connection to PORTICO host"));
                 assertTrue(DateUtils.isToday(error.getTimepoint()));
@@ -602,22 +602,22 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         TransferListener listener = new TransferListener() {
 
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void webServiceCallCompleted(AdmissionsApplicationResponse response, ApplicationForm form) {
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void sftpTransferStarted(ApplicationForm form) {
+            public void sftpTransferStarted(Application form) {
             }
 
             @Override
@@ -626,7 +626,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             }
 
             @Override
-            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 assertNotNull(error);
                 assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(), "Failed to open sftp channel over previously established SSH connection"));
                 assertTrue(DateUtils.isToday(error.getTimepoint()));
@@ -683,22 +683,22 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         ApplicationTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
         TransferListener listener = new TransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void webServiceCallCompleted(AdmissionsApplicationResponse response, ApplicationForm form) {
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void sftpTransferStarted(ApplicationForm form) {
+            public void sftpTransferStarted(Application form) {
             }
 
             @Override
@@ -707,7 +707,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             }
 
             @Override
-            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 assertNotNull(error);
                 assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(), "Failed to access remote directory for SFTP transmission"));
                 assertTrue(DateUtils.isToday(error.getTimepoint()));
@@ -767,22 +767,22 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         applicationForm.setUclBookingReferenceNumber(uclBookingReferenceNumber);
         TransferListener listener = new TransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void webServiceCallCompleted(AdmissionsApplicationResponse response, ApplicationForm form) {
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void sftpTransferStarted(ApplicationForm form) {
+            public void sftpTransferStarted(Application form) {
             }
 
             @Override
@@ -791,7 +791,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             }
 
             @Override
-            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 assertNotNull(error);
                 assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(),
                         "SFTP protocol error during transmission of attachments for application form"));
@@ -855,22 +855,22 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         applicationForm.setUclBookingReferenceNumber(uclBookingReferenceNumber);
         TransferListener listener = new TransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void webServiceCallCompleted(AdmissionsApplicationResponse response, ApplicationForm form) {
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void sftpTransferStarted(ApplicationForm form) {
+            public void sftpTransferStarted(Application form) {
             }
 
             @Override
@@ -879,7 +879,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             }
 
             @Override
-            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 assertNotNull(error);
                 assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(), "Error"));
                 assertTrue(DateUtils.isToday(error.getTimepoint()));
@@ -922,22 +922,22 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         applicationForm.setUclBookingReferenceNumber(uclBookingReferenceNumber);
         TransferListener listener = new TransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void webServiceCallCompleted(AdmissionsApplicationResponse response, ApplicationForm form) {
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 Assert.fail();
             }
 
             @Override
-            public void sftpTransferStarted(ApplicationForm form) {
+            public void sftpTransferStarted(Application form) {
             }
 
             @Override
@@ -948,7 +948,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             }
 
             @Override
-            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+            public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, Application form) {
                 Assert.fail();
             }
         };

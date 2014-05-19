@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -48,7 +48,7 @@ public class SendToPorticoDataDTOValidator extends AbstractValidator {
 
         if (qualifications != null) {
         	
-        	ApplicationForm applicationForm = applicationFormService.getByApplicationNumber(dto.getApplicationNumber()); 
+        	Application applicationForm = applicationFormService.getByApplicationNumber(dto.getApplicationNumber()); 
         	
             for (int i = 0; i < qualifications.size(); i++) {
             	if (qualificationService.getById(qualifications.get(i)).getDocument() == null) {

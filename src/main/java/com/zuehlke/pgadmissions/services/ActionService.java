@@ -5,13 +5,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.dao.StateDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -23,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.enums.StateTransitionType;
 import com.zuehlke.pgadmissions.dto.ActionDefinition;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
+import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
 @Service
 @Transactional
@@ -50,13 +52,13 @@ public class ActionService {
     private CommentService commentService;
 
     @Deprecated
-    public void validateAction(final ApplicationForm application, final User user, final ApplicationFormAction action) {
+    public void validateAction(final Application application, final User user, final ApplicationFormAction action) {
         if (!checkActionAvailable(application, user, action)) {
             throw new CannotExecuteActionException(application);
         }
     }
 
-    public boolean checkActionAvailable(final ApplicationForm application, final User user, final ApplicationFormAction action) {
+    public boolean checkActionAvailable(final Application application, final User user, final ApplicationFormAction action) {
         return !actionDAO.getUserActionById(application.getId(), user.getId(), action).isEmpty();
     }
 
@@ -87,6 +89,7 @@ public class ActionService {
         ApplicationFormAction nextAction = executeStateTransition(scope, user, invokingRole, action, newScope, comment);
         entityService.save(newScope);
         PrismScope nextActionScope = nextAction != null ? newScope.getEnclosingScope(nextAction.getScopeName()) : null;
+        Hibernate.initialize(nextActionScope);
         return new ActionOutcome(user, nextActionScope, nextAction);
     }
 

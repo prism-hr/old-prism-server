@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.ui.ModelMap;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -36,7 +36,7 @@ public class WithdrawControllerTest {
 
     @Test
     public void shouldChangeStatusToWithdrawnAndSaveAndSendEmailsNotifications() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_VALIDATION)).applicant(student).id(2)
+        Application applicationForm = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_VALIDATION)).applicant(student).id(2)
                 .applicationNumber("abc").build();
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", applicationForm);
@@ -57,14 +57,14 @@ public class WithdrawControllerTest {
     @Test
     public void shouldGetApplicationForm() {
         String applicationNumber = "abc";
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
+        Application applicationForm = new ApplicationFormBuilder().id(1).build();
         EasyMock.expect(applicationsServiceMock.getByApplicationNumber("abc")).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock);
         EasyMock.reset(userServiceMock);
         User currentUserMock = EasyMock.createMock(User.class);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
         EasyMock.replay(userServiceMock, currentUserMock);
-        ApplicationForm returnedForm = controller.getApplicationForm(applicationNumber);
+        Application returnedForm = controller.getApplicationForm(applicationNumber);
         assertEquals(applicationForm, returnedForm);
     }
 

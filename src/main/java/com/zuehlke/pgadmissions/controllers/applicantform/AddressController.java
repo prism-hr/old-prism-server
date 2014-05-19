@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
@@ -48,12 +48,12 @@ public class AddressController {
     private EntityPropertyEditor<Domicile> domicilePropertyEditor;
 
     @RequestMapping(value = "/getAddress", method = RequestMethod.GET)
-    public String getAddressView(@ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {
+    public String getAddressView(@ModelAttribute Application applicationForm, ModelMap modelMap) {
         return returnView(modelMap, applicationFormAddressService.getOrCreate(applicationForm));
     }
 
     @RequestMapping(value = "/editAddress", method = RequestMethod.POST)
-    public String editAddresses(@Valid ApplicationAddress applicationFormAddress, BindingResult result, @ModelAttribute ApplicationForm applicationForm,
+    public String editAddresses(@Valid ApplicationAddress applicationFormAddress, BindingResult result, @ModelAttribute Application applicationForm,
             ModelMap modelMap) {
         if (result.hasErrors()) {
             return returnView(modelMap, applicationFormAddress);
@@ -74,7 +74,7 @@ public class AddressController {
     }
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(String applicationId) {
+    public Application getApplicationForm(String applicationId) {
         return applicationFormService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_COMPLETE,
                 ApplicationFormAction.APPLICATION_CORRECT);
     }

@@ -43,7 +43,7 @@ public class Referee implements Serializable, FormSectionObject {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")
-    private ApplicationForm application;
+    private Application application;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
@@ -75,11 +75,11 @@ public class Referee implements Serializable, FormSectionObject {
 
     private boolean declined = false;
 
-    public ApplicationForm getApplication() {
+    public Application getApplication() {
         return application;
     }
 
-    public void setApplication(ApplicationForm application) {
+    public void setApplication(Application application) {
         this.application = application;
     }
 

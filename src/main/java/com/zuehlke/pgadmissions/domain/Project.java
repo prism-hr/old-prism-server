@@ -91,7 +91,7 @@ public class Project extends Advert {
     }
 
     @Override
-    public ApplicationForm getApplication() {
+    public Application getApplication() {
         return null;
     }
 }

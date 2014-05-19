@@ -12,7 +12,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 
 import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
@@ -129,21 +129,21 @@ public class TestObjectProvider {
                 .setMaxResults(1).uniqueResult();
     }
 
-    public ApplicationForm getProgramApplication() {
-        return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class) //
+    public Application getProgramApplication() {
+        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .createAlias("program", "program", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNull("project")) //
                 .setMaxResults(1).uniqueResult();
     }
 
-    public ApplicationForm getProjectApplication() {
-        return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class) //
+    public Application getProjectApplication() {
+        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .createAlias("project", "project", JoinType.INNER_JOIN) //
                 .setMaxResults(1).uniqueResult();
     }
 
-    public ApplicationForm getApplication(PrismState status) {
-        return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+    public Application getApplication(PrismState status) {
+        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class)
                 .createAlias("program", "program", JoinType.INNER_JOIN).add(Restrictions.eq("state.id", status)).setMaxResults(1).uniqueResult();
     }
 

@@ -23,7 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 import org.unitils.inject.util.InjectionUtils;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.pdf.CombinedReferencesPdfBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
@@ -37,7 +37,7 @@ public class PorticoAttachmentsZipCreatorTest {
 
     private PorticoAttachmentsZipCreator attachmentsZipCreator;
 
-    private ApplicationForm applicationForm;
+    private Application applicationForm;
 
     private PdfDocumentBuilder pdfDocumentBuilder;
 

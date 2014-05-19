@@ -4,6 +4,6 @@ public interface FormSectionObject {
 
 	boolean isAcceptedTerms();
 	
-	ApplicationForm getApplication();
+	Application getApplication();
 	
 }

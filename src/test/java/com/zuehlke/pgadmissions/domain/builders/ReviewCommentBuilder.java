@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.User;
 
@@ -14,7 +14,7 @@ public class ReviewCommentBuilder {
     private Boolean willingToWorkWithApplicant;
     private Integer applicantRating;
     private boolean decline;
-    private ApplicationForm applicationForm;
+    private Application applicationForm;
     private String content;
     private Integer id;
     private Date createdTimeStamp;
@@ -60,7 +60,7 @@ public class ReviewCommentBuilder {
         return this;
     }
 
-    public ReviewCommentBuilder application(ApplicationForm application) {
+    public ReviewCommentBuilder application(Application application) {
         this.applicationForm = application;
         return this;
     }

@@ -13,7 +13,7 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 
 /**
@@ -108,7 +108,7 @@ public class SftpAttachmentsSendingService {
      * @return the name of the created ZIP file on the server
      * @throws SftpTransmissionFailedOrProtocolError we were able to establish SSH connection but SFTP transfer over this connection failed - protocol error happened (possibly we lost the connection to the remote host)
      */
-    public String sendApplicationFormDocuments(ApplicationForm applicationForm, TransferListener listener)  throws CouldNotCreateAttachmentsPack, LocallyDefinedSshConfigurationIsWrong,
+    public String sendApplicationFormDocuments(Application applicationForm, TransferListener listener)  throws CouldNotCreateAttachmentsPack, LocallyDefinedSshConfigurationIsWrong,
         CouldNotOpenSshConnectionToRemoteHost,  SftpTargetDirectoryNotAccessible, SftpTransmissionFailedOrProtocolError
     {
         Session session = null;

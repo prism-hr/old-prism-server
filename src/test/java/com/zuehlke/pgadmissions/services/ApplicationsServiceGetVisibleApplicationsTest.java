@@ -27,9 +27,9 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.dao.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
@@ -110,7 +110,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldGetListOfVisibleApplicationsFromDAOAndSetDefaultValues() {
-        ApplicationForm form = new ApplicationFormBuilder().id(1).build();
+        Application form = new ApplicationFormBuilder().id(1).build();
         ApplicationDescriptor applicationDescriptor = new ApplicationDescriptor();
         applicationDescriptor.setApplicationFormId(form.getId());
         applicationDescriptor.setApplicationFormStatus(PrismState.APPLICATION_REVIEW);
@@ -135,21 +135,21 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     public void shouldGetApplicationsOrderedByCreationDateThenSubmissionDateFirst() throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(applicant)
+        Application applicationFormOne = new ApplicationFormBuilder().program(program).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_VALIDATION)).submittedDate(new Date())
                 .createdTimestamp(format.parse("01 01 2012")).build();
         ApplicationDescriptor applicationDescriptorOne = new ApplicationDescriptor();
         applicationDescriptorOne.setApplicationFormId(applicationFormOne.getId());
         applicationDescriptorOne.setApplicationFormStatus(PrismState.APPLICATION_VALIDATION);
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(applicant)
+        Application applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).createdTimestamp(format.parse("01 01 2012"))
                 .submittedDate(format.parse("01 04 2012")).build();
         ApplicationDescriptor applicationDescriptorTwo = new ApplicationDescriptor();
         applicationDescriptorTwo.setApplicationFormId(applicationFormTwo.getId());
         applicationDescriptorTwo.setApplicationFormStatus(PrismState.APPLICATION_UNSUBMITTED);
 
-        ApplicationForm applicationFormThree = new ApplicationFormBuilder().program(program).applicant(applicant)
+        Application applicationFormThree = new ApplicationFormBuilder().program(program).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).createdTimestamp(format.parse("01 02 2012")) // this is
                                                                                                                                         // insertable=false. We
                                                                                                                                         // can
@@ -160,7 +160,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         applicationDescriptorThree.setApplicationFormId(applicationFormThree.getId());
         applicationDescriptorThree.setApplicationFormStatus(PrismState.APPLICATION_UNSUBMITTED);
 
-        ApplicationForm applicationFormFour = new ApplicationFormBuilder().program(program).applicant(applicant)
+        Application applicationFormFour = new ApplicationFormBuilder().program(program).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).createdTimestamp(format.parse("01 02 2012")) // this is
                                                                                                                                         // insertable=false. We
                                                                                                                                         // can
@@ -194,28 +194,28 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldGetAllApplicationsContainingBiologyInTheirNumber() throws ParseException {
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program)
+        Application applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
         ApplicationDescriptor applicationDescriptorOne = new ApplicationDescriptor();
         applicationDescriptorOne.setApplicationFormId(applicationFormOne.getId());
         applicationDescriptorOne.setApplicationFormStatus(PrismState.APPLICATION_APPROVAL);
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
+        Application applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
         ApplicationDescriptor applicationDescriptorTwo = new ApplicationDescriptor();
         applicationDescriptorTwo.setApplicationFormId(applicationFormTwo.getId());
         applicationDescriptorTwo.setApplicationFormStatus(PrismState.APPLICATION_APPROVAL);
 
-        ApplicationForm applicationFormThree = new ApplicationFormBuilder().applicationNumber("ABCD").program(program)
+        Application applicationFormThree = new ApplicationFormBuilder().applicationNumber("ABCD").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
         ApplicationDescriptor applicationDescriptorThree = new ApplicationDescriptor();
         applicationDescriptorThree.setApplicationFormId(applicationFormThree.getId());
         applicationDescriptorThree.setApplicationFormStatus(PrismState.APPLICATION_APPROVAL);
 
-        ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
+        Application applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
         ApplicationDescriptor applicationDescriptorFour = new ApplicationDescriptor();
@@ -248,10 +248,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         Program programOne = new Program().withCode("Program_ZZZZZ_1").withTitle("empty").withInstitution(institution)
                 .withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR));
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC1").program(programOne).applicant(applicant)
+        Application applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC1").program(programOne).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("ABC2").program(program)
+        Application applicationFormTwo = new ApplicationFormBuilder().applicationNumber("ABC2").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
 
@@ -274,10 +274,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     public void shouldGetApplicationBelongingToProgramWithTitleScienceAndOtherCode() throws ParseException {
         Program programOne = new Program().withCode("empty").withTitle("Program_ZZZZZ_1").withInstitution(institution)
                 .withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR));
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant)
+        Application applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("ABC2").program(program)
+        Application applicationFormTwo = new ApplicationFormBuilder().applicationNumber("ABC2").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
 
@@ -299,7 +299,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldNotReturnAppIfTermNotInProgrameCodeOrTitle() {
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").applicant(applicant)
+        Application applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).program(testObjectProvider.getEnabledProgram()).build();
 
         Role role = roleDAO.getById(Authority.APPLICATION_CREATOR);
@@ -320,7 +320,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         User applicant = new User().withFirstName("FredzzZZZZZerick").withLastName("Doe").withEmail("email@test.com")
                 .withAccount(new UserAccount().withPassword("password").withEnabled(true));
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program).applicant(applicant)
+        Application applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
 
         Role role = roleDAO.getById(Authority.SYSTEM_ADMINISTRATOR);
@@ -344,7 +344,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         User applicant = new User().withFirstName("Frederick").withLastName("FredzzZZZZZerick").withEmail("email@test.com")
                 .withAccount(new UserAccount().withEnabled(true));
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program).applicant(applicant)
+        Application applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
 
         Role role = roleDAO.getById(Authority.SYSTEM_ADMINISTRATOR);
@@ -368,7 +368,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         User applicant = new User().withFirstName("Frederick").withLastName("unique").withEmail("email@test.com").withAccount(new UserAccount().withEnabled(true))
                 ;
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program).applicant(applicant)
+        Application applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
 
         Role role = roleDAO.getById(Authority.SYSTEM_ADMINISTRATOR);
@@ -388,21 +388,21 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldGetAllApplicationsInValidationStage() throws ParseException {
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_VALIDATION))
+        Application applicationFormOne = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_VALIDATION))
                 .applicationNumber("ABC").program(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
         ApplicationDescriptor applicationDescriptorOne = new ApplicationDescriptor();
         applicationDescriptorOne.setApplicationFormId(applicationFormOne.getId());
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
+        Application applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
 
-        ApplicationForm applicationFormThree = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_VALIDATION))
+        Application applicationFormThree = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_VALIDATION))
                 .applicationNumber("ABCD").program(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant)
                 .build();
         ApplicationDescriptor applicationDescriptorThree = new ApplicationDescriptor();
         applicationDescriptorThree.setApplicationFormId(applicationFormThree.getId());
 
-        ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
+        Application applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
 
         Role role = roleDAO.getById(Authority.APPLICATION_CREATOR);
@@ -428,19 +428,19 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldGetAllApplicationsInApprovalStage() throws ParseException {
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_APPROVAL))
+        Application applicationFormOne = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_APPROVAL))
                 .applicationNumber("ABC").program(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
         ApplicationDescriptor applicationDescriptorOne = new ApplicationDescriptor();
         applicationDescriptorOne.setApplicationFormId(applicationFormOne.getId());
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
+        Application applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
 
-        ApplicationForm applicationFormThree = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_VALIDATION))
+        Application applicationFormThree = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_VALIDATION))
                 .applicationNumber("ABCD").program(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant)
                 .build();
 
-        ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
+        Application applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
 
         Role role = roleDAO.getById(Authority.APPLICATION_CREATOR);
@@ -465,19 +465,19 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldGetAllApplicationsInApprovedStage() throws ParseException {
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_APPROVED))
+        Application applicationFormOne = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_APPROVED))
                 .applicationNumber("ABC").program(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
         ApplicationDescriptor applicationDescriptorOne = new ApplicationDescriptor();
         applicationDescriptorOne.setApplicationFormId(applicationFormOne.getId());
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
+        Application applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
 
-        ApplicationForm applicationFormThree = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_VALIDATION))
+        Application applicationFormThree = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_VALIDATION))
                 .applicationNumber("ABCD").program(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant)
                 .build();
 
-        ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
+        Application applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
 
         Role role = roleDAO.getById(Authority.APPLICATION_CREATOR);
@@ -502,17 +502,17 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldNotReturnAppIfNoStatusMatching() throws ParseException {
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_APPROVED))
+        Application applicationFormOne = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_APPROVED))
                 .applicationNumber("ABC").program(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
+        Application applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
 
-        ApplicationForm applicationFormThree = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_VALIDATION))
+        Application applicationFormThree = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_VALIDATION))
                 .applicationNumber("ABCD").program(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant)
                 .build();
 
-        ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
+        Application applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
 
         Role role = roleDAO.getById(Authority.APPLICATION_CREATOR);
@@ -535,18 +535,18 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldSearchAndSort() throws ParseException {
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_INTERVIEW))
+        Application applicationFormOne = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_INTERVIEW))
                 .applicationNumber("zzzFooBarzzz").program(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
                 .applicant(applicant).build();
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
+        Application applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/04")).applicant(applicant).build();
 
-        ApplicationForm applicationFormThree = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_VALIDATION))
+        Application applicationFormThree = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_VALIDATION))
                 .applicationNumber("zzzFooBarzzz1").program(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/05"))
                 .applicant(applicant).build();
 
-        ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
+        Application applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/06")).applicant(applicant).build();
 
         Role applicantRole = roleDAO.getById(Authority.APPLICATION_CREATOR);
@@ -572,16 +572,16 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldSortApplicationInNaturalSortOrder() throws ParseException {
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_APPROVED))
+        Application applicationFormOne = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_APPROVED))
                 .applicationNumber("ABC").program(program).applicant(applicant).build();
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
+        Application applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
                 .submittedDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/03")).applicant(applicant).build();
 
-        ApplicationForm applicationFormThree = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_APPROVED))
+        Application applicationFormThree = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_APPROVED))
                 .applicationNumber("ABCD").program(program).submittedDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).applicant(applicant).build();
 
-        ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
+        Application applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
                 .submittedDate(new SimpleDateFormat("yyyy/MM/dd").parse("2013/03/03")).applicant(applicant).build();
 
         Role applicantRole = roleDAO.getById(Authority.APPLICATION_CREATOR);
@@ -619,19 +619,19 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         // .withRole(roleDAO.getById(Authority.APPLICANT))
                 ;
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicant(applicant1)
+        Application applicationFormOne = new ApplicationFormBuilder().applicant(applicant1)
                 .status(new State().withId(PrismState.APPLICATION_APPROVED)).applicationNumber("ABCDE1").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).build();
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicant(applicant2)
+        Application applicationFormTwo = new ApplicationFormBuilder().applicant(applicant2)
                 .status(new State().withId(PrismState.APPLICATION_APPROVED)).applicationNumber("ABCDE2").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/03")).build();
 
-        ApplicationForm applicationFormThree = new ApplicationFormBuilder().applicant(applicant3)
+        Application applicationFormThree = new ApplicationFormBuilder().applicant(applicant3)
                 .status(new State().withId(PrismState.APPLICATION_APPROVED)).applicationNumber("ABCDE3").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).build();
 
-        ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicant(applicant4).applicationNumber("ABCDE4")
+        Application applicationFormFour = new ApplicationFormBuilder().applicant(applicant4).applicationNumber("ABCDE4")
                 .status(new State().withId(PrismState.APPLICATION_APPROVED)).program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2013/03/03")).build();
 
@@ -672,19 +672,19 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         // .withRole(roleDAO.getById(Authority.APPLICANT))
                 ;
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicant(applicant1)
+        Application applicationFormOne = new ApplicationFormBuilder().applicant(applicant1)
                 .status(new State().withId(PrismState.APPLICATION_APPROVED)).applicationNumber("ABCDE1").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).build();
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicant(applicant2)
+        Application applicationFormTwo = new ApplicationFormBuilder().applicant(applicant2)
                 .status(new State().withId(PrismState.APPLICATION_INTERVIEW)).applicationNumber("ABCDE2").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/03")).build();
 
-        ApplicationForm applicationFormThree = new ApplicationFormBuilder().applicant(applicant3)
+        Application applicationFormThree = new ApplicationFormBuilder().applicant(applicant3)
                 .status(new State().withId(PrismState.APPLICATION_REVIEW)).applicationNumber("ABCDE3").program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).build();
 
-        ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicant(applicant4).applicationNumber("ABCDE4")
+        Application applicationFormFour = new ApplicationFormBuilder().applicant(applicant4).applicationNumber("ABCDE4")
                 .status(new State().withId(PrismState.APPLICATION_WITHDRAWN)).program(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2013/03/03")).build();
 
@@ -735,19 +735,19 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 .withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR));
         save(program1, program2, program3, program4);
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicant(applicant1)
+        Application applicationFormOne = new ApplicationFormBuilder().applicant(applicant1)
                 .status(new State().withId(PrismState.APPLICATION_APPROVED)).applicationNumber("ABCDE1").program(program1)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).build();
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicant(applicant2)
+        Application applicationFormTwo = new ApplicationFormBuilder().applicant(applicant2)
                 .status(new State().withId(PrismState.APPLICATION_INTERVIEW)).applicationNumber("ABCDE2").program(program2)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/03")).build();
 
-        ApplicationForm applicationFormThree = new ApplicationFormBuilder().applicant(applicant3)
+        Application applicationFormThree = new ApplicationFormBuilder().applicant(applicant3)
                 .status(new State().withId(PrismState.APPLICATION_REVIEW)).applicationNumber("ABCDE3").program(program3)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).build();
 
-        ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicant(applicant4).applicationNumber("ABCDE4")
+        Application applicationFormFour = new ApplicationFormBuilder().applicant(applicant4).applicationNumber("ABCDE4")
                 .status(new State().withId(PrismState.APPLICATION_WITHDRAWN)).program(program4)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2013/03/03")).build();
 
@@ -777,9 +777,9 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         Role role = roleDAO.getById(Authority.SYSTEM_ADMINISTRATOR);
 
         List<UserRole> applicationFormUserRoles = Lists.newArrayList();
-        List<ApplicationForm> returnedAppls = Lists.newArrayList();
+        List<Application> returnedAppls = Lists.newArrayList();
         for (int i = 0; i < 70; i++) {
-            ApplicationForm form = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_APPROVED))
+            Application form = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_APPROVED))
                     .applicationNumber("ABCDEFG" + i).program(program).applicant(applicant).build();
 
             UserRole applicationFormUserRole = new UserRole().withApplication(form).withRole(role).withUser(superUser);
@@ -808,7 +808,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         SourcesOfInterest sourcesOfInterest = new SourcesOfInterestBuilder().name("foo").code("foo").build();
         ProgramDetails programmeDetails = new ProgrammeDetailsBuilder().studyOption(new StudyOption("Half", "Half")).startDate(new Date())
                 .sourcesOfInterest(sourcesOfInterest).suggestedSupervisors(supervisor).build();
-        ApplicationForm formWithSupervisor = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_REVIEW))
+        Application formWithSupervisor = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_REVIEW))
                 .applicant(applicant).programmeDetails(programmeDetails).program(program).build();
 
         Role superadministratorRole = roleDAO.getById(Authority.SYSTEM_ADMINISTRATOR);
@@ -863,18 +863,18 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldReturnApplicationsBasedOnTheirClosingDate() throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(applicant)
+        Application applicationFormOne = new ApplicationFormBuilder().program(program).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_VALIDATION)).submittedDate(new Date())
                 .createdTimestamp(format.parse("01 01 2012")).closingDate(new LocalDate(2050, 1, 1)).build();
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(applicant)
+        Application applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).createdTimestamp(format.parse("01 01 2012"))
                 .closingDate(new LocalDate(2050, 1, 1)).submittedDate(format.parse("01 04 2012")).build();
 
-        ApplicationForm applicationFormThree = new ApplicationFormBuilder().program(program).applicant(applicant).closingDate(new LocalDate(2050, 1, 1))
+        Application applicationFormThree = new ApplicationFormBuilder().program(program).applicant(applicant).closingDate(new LocalDate(2050, 1, 1))
                 .status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).createdTimestamp(format.parse("01 02 2012")).build();
 
-        ApplicationForm applicationFormFour = new ApplicationFormBuilder().program(program).applicant(applicant)
+        Application applicationFormFour = new ApplicationFormBuilder().program(program).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).createdTimestamp(format.parse("01 02 2012"))
                 .closingDate(new LocalDate(2050, 1, 1)).submittedDate(format.parse("01 03 2012")).build();
 
@@ -904,7 +904,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldReturnApplicationWithProjectTitle() throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_REVIEW)).program(program)
+        Application applicationFormOne = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_REVIEW)).program(program)
                 .applicant(applicant).submittedDate(new Date()).createdTimestamp(format.parse("01 01 2012")).dueDate(new LocalDate(2050, 1, 1)).build();
 
         Role role = roleDAO.getById(Authority.SYSTEM_ADMINISTRATOR);
@@ -922,7 +922,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         return new ApplicationsFilteringBuilder().sortCategory(sortCategory).order(sortOrder).blockCount(blockCount).filters(filters).build();
     }
 
-    private boolean listContainsId(ApplicationForm application, List<ApplicationDescriptor> applications) {
+    private boolean listContainsId(Application application, List<ApplicationDescriptor> applications) {
         for (ApplicationDescriptor entry : applications) {
             if (application.getId().equals(entry.getApplicationFormId())) {
                 return true;

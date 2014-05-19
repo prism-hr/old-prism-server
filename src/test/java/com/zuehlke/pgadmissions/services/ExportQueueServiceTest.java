@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessagePostProcessor;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationTransferService;
@@ -28,7 +28,7 @@ public class ExportQueueServiceTest {
 
     private ExportQueueService porticoQueueService;
     
-    private ApplicationForm form;
+    private Application form;
     
     @Before
     public void prepare() {

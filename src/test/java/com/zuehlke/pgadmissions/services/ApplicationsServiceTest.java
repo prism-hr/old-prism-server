@@ -14,7 +14,7 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class ApplicationsServiceTest {
@@ -36,7 +36,7 @@ public class ApplicationsServiceTest {
 
     @Test
     public void shouldGetApplicationById() {
-        ApplicationForm application = EasyMock.createMock(ApplicationForm.class);
+        Application application = EasyMock.createMock(Application.class);
         EasyMock.expect(applicationFormDAOMock.getById(234)).andReturn(application);
 
         replay();
@@ -46,7 +46,7 @@ public class ApplicationsServiceTest {
 
     @Test
     public void shouldGetApplicationbyApplicationNumber() {
-        ApplicationForm application = EasyMock.createMock(ApplicationForm.class);
+        Application application = EasyMock.createMock(Application.class);
         EasyMock.expect(applicationFormDAOMock.getByApplicationNumber("ABC")).andReturn(application);
 
         replay();

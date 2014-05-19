@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.CommentDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -39,7 +39,7 @@ public class OfferRecommendationService {
     @Autowired
     private WorkflowService applicationFormUserRoleService;
 
-    public boolean moveToApproved(ApplicationForm form, OfferRecommendedComment offerRecommendedComment) {
+    public boolean moveToApproved(Application form, OfferRecommendedComment offerRecommendedComment) {
 //        if (ApplicationFormStatus.APPROVAL != form.getStatus().getId()) {
 //            throw new IllegalStateException();
 //        }
@@ -66,7 +66,7 @@ public class OfferRecommendationService {
         return true;
     }
 
-    private void sendNotificationToApplicant(ApplicationForm form) {
+    private void sendNotificationToApplicant(Application form) {
         try {
             mailSendingService.sendApprovedNotification(form);
         } catch (Exception e) {
@@ -74,7 +74,7 @@ public class OfferRecommendationService {
         }
     }
     
-    public void sendToPortico(ApplicationForm form) {
+    public void sendToPortico(Application form) {
         if (form.getProgram().isImported()) {
             approvedSenderService.sendToPortico(form);
         }

@@ -5,7 +5,7 @@ import java.beans.PropertyEditorSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 
 @Component
@@ -36,6 +36,6 @@ public class ApplicationFormPropertyEditor extends PropertyEditorSupport {
 		if (getValue() == null ) {
 			return null;
 		}
-		return ((ApplicationForm) getValue()).getApplicationNumber().toString();
+		return ((Application) getValue()).getApplicationNumber().toString();
 	}
 }

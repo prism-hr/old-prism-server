@@ -22,7 +22,7 @@ public class Rejection implements Serializable {
     private Integer id;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "rejection")
-    private ApplicationForm applicationForm;
+    private Application applicationForm;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reject_reason_id")
@@ -38,11 +38,11 @@ public class Rejection implements Serializable {
         return id;
     }
 
-    public ApplicationForm getApplicationForm() {
+    public Application getApplicationForm() {
         return applicationForm;
     }
 
-    public void setApplicationForm(ApplicationForm applicationForm) {
+    public void setApplicationForm(Application applicationForm) {
         this.applicationForm = applicationForm;
     }
 

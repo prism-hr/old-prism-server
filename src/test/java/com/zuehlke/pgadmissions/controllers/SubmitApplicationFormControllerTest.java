@@ -20,7 +20,7 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -70,7 +70,7 @@ public class SubmitApplicationFormControllerTest {
     @Test
     public void shouldSubmitApplicationForm() throws UnknownHostException {
         User applicant = new User().withId(1);
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(applicant).applicationNumber("abc").build();
+        Application applicationForm = new ApplicationFormBuilder().id(2).applicant(applicant).applicationNumber("abc").build();
         BindingResult bindingResult = new BeanPropertyBindingResult(applicationForm, "applicationForm");
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteAddr("localhost");
@@ -95,11 +95,11 @@ public class SubmitApplicationFormControllerTest {
 
     @Test
     public void shouldGetApplicationFormFromService() {
-        ApplicationForm applicationForm = new ApplicationForm();
+        Application applicationForm = new Application();
         expect(applicationsServiceMock.getByApplicationNumber("2")).andReturn(applicationForm);
         
         replay();
-        ApplicationForm returnedApplicationForm = controller.getApplicationForm("2");
+        Application returnedApplicationForm = controller.getApplicationForm("2");
         
         assertEquals(applicationForm, returnedApplicationForm);
 

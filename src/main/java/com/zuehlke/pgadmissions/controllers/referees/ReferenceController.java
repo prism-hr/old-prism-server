@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.Score;
@@ -83,8 +83,8 @@ public class ReferenceController {
     private ActionService actionService;
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = applicationsService.getByApplicationNumber(applicationId);
+    public Application getApplicationForm(@RequestParam String applicationId) {
+        Application applicationForm = applicationsService.getByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new ResourceNotFoundException(applicationId);
         }
@@ -93,7 +93,7 @@ public class ReferenceController {
 
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        Application applicationForm = getApplicationForm(applicationId);
         User user = getCurrentUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
@@ -105,7 +105,7 @@ public class ReferenceController {
 
     @ModelAttribute("comment")
     public ReferenceComment getComment(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        Application applicationForm = getApplicationForm(applicationId);
         User currentUser = getCurrentUser();
 
         ReferenceComment referenceComment = new ReferenceComment();
@@ -138,7 +138,7 @@ public class ReferenceController {
 
     @RequestMapping(value = "/addReferences", method = RequestMethod.GET)
     public String getUploadReferencesPage(ModelMap modelMap) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_PROVIDE_REFERENCE);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, getCurrentUser());
@@ -148,7 +148,7 @@ public class ReferenceController {
     @RequestMapping(value = "/submitReference", method = RequestMethod.POST)
     public String handleReferenceSubmission(@ModelAttribute("comment") ReferenceComment comment, BindingResult bindingResult, ModelMap modelMap)
             throws ScoringDefinitionParseException {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_PROVIDE_REFERENCE);
 
@@ -176,7 +176,7 @@ public class ReferenceController {
         return "redirect:/applications?messageCode=reference.uploaded&application=" + comment.getApplication().getApplicationNumber();
     }
 
-    private List<Question> getCustomQuestions(ApplicationForm applicationForm) throws ScoringDefinitionParseException {
+    private List<Question> getCustomQuestions(Application applicationForm) throws ScoringDefinitionParseException {
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
         if (scoringDefinition != null) {
             CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());

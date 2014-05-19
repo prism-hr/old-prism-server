@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.Score;
@@ -24,7 +24,7 @@ public class ReferenceCommentBuilder {
     private User providedBy;
     private List<Score> scores = new ArrayList<Score>();
 
-    private ApplicationForm application;
+    private Application application;
     private Date date;
 
     public ReferenceCommentBuilder date(Date date) {
@@ -52,7 +52,7 @@ public class ReferenceCommentBuilder {
         return this;
     }
 
-    public ReferenceCommentBuilder application(ApplicationForm application) {
+    public ReferenceCommentBuilder application(Application application) {
         this.application = application;
         return this;
     }

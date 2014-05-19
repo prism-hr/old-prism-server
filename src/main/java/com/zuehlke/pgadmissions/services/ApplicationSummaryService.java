@@ -18,8 +18,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
@@ -49,7 +49,7 @@ public class ApplicationSummaryService {
     @Autowired
     private CommentService commentService;
 
-    private void addApplicationProperties(final ApplicationForm form, final Map<String, String> result) {
+    private void addApplicationProperties(final Application form, final Map<String, String> result) {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         Date updatedTimeStamp = commentService.getLastComment(form).getCreatedTimestamp();
         ApplicationDescriptor applicationDescriptor = applicationsService.getApplicationDescriptorForUser(form, userService.getCurrentUser());
@@ -64,7 +64,7 @@ public class ApplicationSummaryService {
         result.put("numberOfActiveApplications", userService.getNumberOfActiveApplicationsForApplicant(applicant).toString());
     }
 
-    private void addApplicantDetails(final ApplicationForm form, final Map<String, String> result) {
+    private void addApplicantDetails(final Application form, final Map<String, String> result) {
         result.put("title", form.getPersonalDetails() == null ? "" : form.getPersonalDetails().getTitle().getDisplayValue());
         result.put("name", form.getUser().getDisplayName());
         result.put("phoneNumber", form.getPersonalDetails() == null ? "" : form.getPersonalDetails().getPhoneNumber());
@@ -72,7 +72,7 @@ public class ApplicationSummaryService {
         result.put("applicationStatus", form.getState().getId().name());
     }
 
-    private void addQualifications(final ApplicationForm form, final Map<String, String> result) {
+    private void addQualifications(final Application form, final Map<String, String> result) {
         List<Qualification> qualifications = form.getQualifications();
         if (qualifications.isEmpty()) {
             result.put("mostRecentQualification", NONE_PROVIDED);
@@ -112,7 +112,7 @@ public class ApplicationSummaryService {
         }
     }
 
-    private void addEmployments(final ApplicationForm form, Map<String, String> result) {
+    private void addEmployments(final Application form, Map<String, String> result) {
         List<EmploymentPosition> employments = form.getEmploymentPositions();
         if (employments.isEmpty()) {
             result.put("mostRecentEmployment", NONE_PROVIDED);
@@ -136,7 +136,7 @@ public class ApplicationSummaryService {
         result.put("mostRecentEmployment", mostRecentEmployment.getEmployerName());
     }
 
-    private void addFundings(final ApplicationForm form, Map<String, String> result, final Gson gson) {
+    private void addFundings(final Application form, Map<String, String> result, final Gson gson) {
         Integer fundingSum = 0;
         for (Funding funding : form.getFundings()) {
             fundingSum = fundingSum + funding.getValueAsInteger();
@@ -144,7 +144,7 @@ public class ApplicationSummaryService {
         result.put("fundingRequirements", fundingSum.toString());
     }
 
-    private void addSkype(final ApplicationForm form, Map<String, String> result) {
+    private void addSkype(final Application form, Map<String, String> result) {
         String skype;
         if (form.getPersonalDetails() == null || Strings.isNullOrEmpty(form.getPersonalDetails().getMessenger())) {
             skype = "Not Provided";
@@ -154,7 +154,7 @@ public class ApplicationSummaryService {
         result.put("skype", skype);
     }
 
-    private void addReferences(ApplicationForm form, Map<String, String> result) {
+    private void addReferences(Application form, Map<String, String> result) {
         Integer numberOfResponsed = CollectionUtils.countMatches(form.getReferees(), new Predicate() {
             @Override
             public boolean evaluate(Object object) {
@@ -164,7 +164,7 @@ public class ApplicationSummaryService {
         result.put("numberOfReferences", numberOfResponsed.toString());
     }
 
-    private void addPersonalStatement(ApplicationForm form, Map<String, String> result) {
+    private void addPersonalStatement(Application form, Map<String, String> result) {
         ApplicationDocument applicationFormDocument = form.getApplicationDocument();
         if (applicationFormDocument == null) {
             result.put("personalStatementProvided", "false");
@@ -191,7 +191,7 @@ public class ApplicationSummaryService {
     }
 
     public Map<String, String> getSummary(final String applicationNumber) {
-        ApplicationForm form = applicationsService.getByApplicationNumber(applicationNumber);
+        Application form = applicationsService.getByApplicationNumber(applicationNumber);
 
         if (form.getState().equals(PrismState.APPLICATION_WITHDRAWN) || form.getState().equals(PrismState.APPLICATION_UNSUBMITTED)) {
             return Collections.emptyMap();

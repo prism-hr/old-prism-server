@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.Domicile;
@@ -24,7 +24,7 @@ public class PersonalDetailsBuilder {
     private Domicile residenceCountry;
     private Ethnicity ethnicity;
     private Disability disability;
-    private ApplicationForm applicationForm;
+    private Application applicationForm;
 
     private String messenger;
     private Language firstNationality;
@@ -129,7 +129,7 @@ public class PersonalDetailsBuilder {
         return this;
     }
 
-    public PersonalDetailsBuilder applicationForm(ApplicationForm applicationForm) {
+    public PersonalDetailsBuilder applicationForm(Application applicationForm) {
         this.applicationForm = applicationForm;
         return this;
     }

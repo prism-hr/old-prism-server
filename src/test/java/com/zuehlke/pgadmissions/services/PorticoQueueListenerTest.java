@@ -21,7 +21,7 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.PrismSystem;
@@ -66,7 +66,7 @@ public class PorticoQueueListenerTest {
     public void shouldReceiveJmsMessageAndCallSendToPortico() throws JMSException {
         ApplicationTransfer formTransferMock = EasyMock.createMock(ApplicationTransfer.class);
         
-        ApplicationForm form = new ValidApplicationFormBuilder().build();
+        Application form = new ValidApplicationFormBuilder().build();
         
         EasyMock.expect(messageMock.getText()).andReturn("XX");
         EasyMock.expect(formDAOMock.getByApplicationNumber("XX")).andReturn(form);
@@ -93,7 +93,7 @@ public class PorticoQueueListenerTest {
     public void shouldTriggerARetryIfThereWasAnIssueWithTheNetwork() throws JMSException, ExportServiceException {
         ApplicationTransfer formTransferMock = EasyMock.createMock(ApplicationTransfer.class);
         
-        ApplicationForm form = new ValidApplicationFormBuilder().build();
+        Application form = new ValidApplicationFormBuilder().build();
         ExportServiceException uclExportServiceException = new ExportServiceException("error",
                 new ApplicationTransferErrorBuilder().errorHandlingStrategy(
                         ApplicationTransferErrorHandlingDecision.RETRY).build());

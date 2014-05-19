@@ -12,8 +12,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -48,7 +48,7 @@ public class ApplicationFormDocumentValidatorTest {
 
     @Before
     public void setup() {
-        ApplicationForm application = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).build();
+        Application application = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).build();
         documentsSectionDTO = new ApplicationDocument();
         documentsSectionDTO.setCv(new Document().withType(DocumentType.CV));
         documentsSectionDTO.setPersonalStatement(new Document().withType(DocumentType.PERSONAL_STATEMENT));

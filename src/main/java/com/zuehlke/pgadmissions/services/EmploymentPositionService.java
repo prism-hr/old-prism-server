@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
 import com.zuehlke.pgadmissions.dao.EmploymentPositionDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 
@@ -34,7 +34,7 @@ public class EmploymentPositionService {
         return getSecuredInstance(employmentPositionId);
     }
 	
-	public void saveOrUpdate(ApplicationForm application, Integer employmentPositionId, EmploymentPosition employmentPosition) { 
+	public void saveOrUpdate(Application application, Integer employmentPositionId, EmploymentPosition employmentPosition) { 
 	    EmploymentPosition persistentEmploymentPosition;
         if (employmentPositionId == null) {
             persistentEmploymentPosition = new EmploymentPosition();

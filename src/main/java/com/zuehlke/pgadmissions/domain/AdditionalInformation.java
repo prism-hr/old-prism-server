@@ -35,7 +35,7 @@ public class AdditionalInformation implements Serializable, FormSectionObject {
     private String convictionsText;
 
     @OneToOne(mappedBy = "additionalInformation", fetch = FetchType.LAZY)
-    private ApplicationForm application;
+    private Application application;
 
     @Transient
     private boolean acceptedTerms;
@@ -64,11 +64,11 @@ public class AdditionalInformation implements Serializable, FormSectionObject {
         this.convictionsText = convictionsText;
     }
 
-    public ApplicationForm getApplication() {
+    public Application getApplication() {
         return application;
     }
 
-    public void setApplication(ApplicationForm application) {
+    public void setApplication(Application application) {
         this.application = application;
     }
 

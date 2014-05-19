@@ -12,7 +12,7 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.StateDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.User;
@@ -50,7 +50,7 @@ public class CommentServiceTest {
 
     @Test
     public void shouldDeclineReview() {
-        ApplicationForm application = new ApplicationForm();
+        Application application = new Application();
         User reviewerUser = new User().withId(1);
         final ReviewComment reviewComment = new ReviewCommentBuilder().id(1).user(reviewerUser).build();
 

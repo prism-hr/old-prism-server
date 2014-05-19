@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -85,13 +85,13 @@ public class PersonalDetailsController {
     private PersonalDetailsService personalDetailsService;
 
     @RequestMapping(value = "/getPersonalDetails", method = RequestMethod.GET)
-    public String getPersonalDetailsView(@ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {
+    public String getPersonalDetailsView(@ModelAttribute Application applicationForm, ModelMap modelMap) {
         return returnView(modelMap, personalDetailsService.getOrCreate(applicationForm), applicationForm.getUser());
     }
 
     @RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)
     public String editPersonalDetails(@Valid PersonalDetails personalDetails, BindingResult personalDetailsResult, @Valid User updatedUser,
-            BindingResult userResult, ModelMap modelMap, @ModelAttribute ApplicationForm applicationForm) {
+            BindingResult userResult, ModelMap modelMap, @ModelAttribute Application applicationForm) {
         if (personalDetailsResult.hasErrors() || userResult.hasErrors()) {
             returnView(modelMap, personalDetails, updatedUser);
         }
@@ -111,7 +111,7 @@ public class PersonalDetailsController {
         binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(Ethnicity.class, ethnicityPropertyEditor);
         binder.registerCustomEditor(Disability.class, disabilityPropertyEditor);
-        binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
+        binder.registerCustomEditor(Application.class, applicationFormPropertyEditor);
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
     }
 
@@ -157,7 +157,7 @@ public class PersonalDetailsController {
     }
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(String applicationId) {
+    public Application getApplicationForm(String applicationId) {
         return applicationFormService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_COMPLETE,
                 ApplicationFormAction.APPLICATION_CORRECT);
     }

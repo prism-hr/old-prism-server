@@ -30,7 +30,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AdmissionsApplicationResponse;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.QualificationsTp;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationTransferError;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -75,7 +75,7 @@ public class PorticoDocumentUploadPhase2IT {
     
     private List<String> csvEntries;
     
-    private ApplicationForm applicationForm;
+    private Application applicationForm;
 
     private Resource damagedPdf; 
     
@@ -307,7 +307,7 @@ public class PorticoDocumentUploadPhase2IT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
         uclExportService.sendToPortico(applicationForm, applicationFormTransfer, new CsvTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 request.getApplication().getCourseApplication().setExternalApplicationID("RRDCOMSING01-2016-000282");
                 request.getApplication().getApplicant().setEnglishIsFirstLanguage(true);
                 request.getApplication().getApplicant().setEnglishLanguageQualificationList(null);
@@ -329,7 +329,7 @@ public class PorticoDocumentUploadPhase2IT {
         });
     }
     
-    private void addReferres(ApplicationForm form) {
+    private void addReferres(Application form) {
         int numberOfReferences = 0;
         for (Referee referee : form.getReferees()) {
             if (referee.getComment() != null) {
@@ -347,7 +347,7 @@ public class PorticoDocumentUploadPhase2IT {
     
     private class CsvTransferListener implements TransferListener {
         @Override
-        public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+        public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
             Marshaller marshaller = webServiceTemplate.getMarshaller();
             try {
                 marshaller.marshal(request, new StreamResult(new File("request_" + request.getApplication().getCourseApplication().getExternalApplicationID() + ".txt")));
@@ -357,7 +357,7 @@ public class PorticoDocumentUploadPhase2IT {
         }
 
         @Override
-        public void webServiceCallCompleted(AdmissionsApplicationResponse response, ApplicationForm form) {
+        public void webServiceCallCompleted(AdmissionsApplicationResponse response, Application form) {
             if (response != null) {
                 csvEntries.add(response.getReference().getApplicantID());
                 csvEntries.add(response.getReference().getApplicationID());
@@ -370,7 +370,7 @@ public class PorticoDocumentUploadPhase2IT {
         }
 
         @Override
-        public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+        public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, Application form) {
             csvEntries.add("null");
             csvEntries.add("null");
             csvEntries.add(error.getDiagnosticInfo());
@@ -378,11 +378,11 @@ public class PorticoDocumentUploadPhase2IT {
         }
 
         @Override
-        public void sftpTransferStarted(ApplicationForm form) {
+        public void sftpTransferStarted(Application form) {
         }
 
         @Override
-        public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+        public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, Application form) {
             csvEntries.add("null");
             csvEntries.add("null");
             csvEntries.add("null");

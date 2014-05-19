@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.StateDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
@@ -55,11 +55,11 @@ public class CommentService {
         return commentDAO.getById(id);
     }
 
-    public List<Comment> getVisibleComments(User user, ApplicationForm applicationForm) {
+    public List<Comment> getVisibleComments(User user, Application applicationForm) {
         return commentDAO.getVisibleComments(user, applicationForm);
     }
 
-    public void declineReview(User user, ApplicationForm application) {
+    public void declineReview(User user, Application application) {
         // check if user has already responded
         // if (!commentDAO.getReviewCommentsForReviewerAndApplication(user, application).isEmpty()) {
         // return;
@@ -74,7 +74,7 @@ public class CommentService {
         save(reviewComment);
     }
 
-    public List<CommentAssignedUser> getNotDecliningSupervisorsFromLatestApprovalStage(ApplicationForm application) {
+    public List<CommentAssignedUser> getNotDecliningSupervisorsFromLatestApprovalStage(Application application) {
         return commentDAO.getNotDecliningSupervisorsFromLatestApprovalStage(application);
     }
 
@@ -87,7 +87,7 @@ public class CommentService {
     }
 
     public void postStateChangeComment(StateChangeDTO stateChangeDTO) {
-        ApplicationForm applicationForm = stateChangeDTO.getApplicationForm();
+        Application applicationForm = stateChangeDTO.getApplicationForm();
         User user = stateChangeDTO.getUser();
         PrismState status = applicationForm.getState().getId();
         Comment stateChangeComment = null;
@@ -147,15 +147,15 @@ public class CommentService {
         applicationFormUserRoleService.applicationUpdated(applicationForm, user);
     }
 
-    public <T extends Comment> T getLastCommentOfType(User user, ApplicationForm applicationForm, Class<T> clazz) {
+    public <T extends Comment> T getLastCommentOfType(User user, Application applicationForm, Class<T> clazz) {
         return commentDAO.getLastCommentOfType(user, applicationForm, clazz);
     }
 
-    public <T extends Comment> T getLastCommentOfType(ApplicationForm applicationForm, Class<T> clazz) {
+    public <T extends Comment> T getLastCommentOfType(Application applicationForm, Class<T> clazz) {
         return getLastCommentOfType(null, applicationForm, clazz);
     }
 
-    public Comment getLastComment(ApplicationForm form) {
+    public Comment getLastComment(Application form) {
         // TODO Auto-generated method stub
         return null;
     }

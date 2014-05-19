@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 public class ValidationCommentBuilder {
 
     private User user;
-    private ApplicationForm application;
+    private Application application;
     private ValidationQuestionOptions qualifiedForPhd;
     private ValidationQuestionOptions englishCompentencyOk;
     private ResidenceStatus homeOrOverseas;
@@ -34,7 +34,7 @@ public class ValidationCommentBuilder {
         return this;
     }
 
-    public ValidationCommentBuilder application(ApplicationForm application) {
+    public ValidationCommentBuilder application(Application application) {
         this.application = application;
         return this;
     }

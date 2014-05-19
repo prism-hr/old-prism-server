@@ -12,7 +12,7 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -70,26 +70,26 @@ public class DeclineControllerTest {
 
     @Test
     public void shouldGetApplicationFromId() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
+        Application applicationForm = new ApplicationFormBuilder().id(5).build();
         EasyMock.expect(applicationServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
         EasyMock.replay(applicationServiceMock);
-        ApplicationForm returnedForm = controller.getApplicationForm("5");
+        Application returnedForm = controller.getApplicationForm("5");
         assertEquals(applicationForm, returnedForm);
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowExceptionIfApplicationNotExists() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
+        Application applicationForm = new ApplicationFormBuilder().id(5).build();
         EasyMock.expect(applicationServiceMock.getByApplicationNumber("5")).andReturn(null);
         EasyMock.replay(applicationServiceMock);
-        ApplicationForm returnedForm = controller.getApplicationForm("5");
+        Application returnedForm = controller.getApplicationForm("5");
         assertEquals(applicationForm, returnedForm);
     }
 
     @Test
     public void shouldGetRefereeFromActivationCodeAndApplicationForm() {
         User userMock = EasyMock.createMock(User.class);
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
+        Application applicationForm = new ApplicationFormBuilder().id(5).build();
         EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(userMock);
         Referee referee = new RefereeBuilder().id(5).build();
         EasyMock.replay(userServiceMock, userMock);
@@ -99,7 +99,7 @@ public class DeclineControllerTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfUserDoesNotExists() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
+        Application applicationForm = new ApplicationFormBuilder().id(5).build();
         EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(null);
         EasyMock.replay(userServiceMock);
         controller.getReferee("5", applicationForm);
@@ -108,7 +108,7 @@ public class DeclineControllerTest {
 
     @Test
     public void shouldReturnConfirmationDialogForReference() {
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC")
+        final Application applicationForm = new ApplicationFormBuilder().applicationNumber("ABC")
                 .applicant(new User().withFirstName("").withLastName("")).id(5).build();
         final Referee referee = new RefereeBuilder().application(applicationForm).id(5).build();
         EasyMock.replay(refereeServiceMock);

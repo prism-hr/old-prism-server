@@ -16,7 +16,7 @@ public abstract class PrismScope {
 
     public abstract Project getProject();
     
-    public abstract ApplicationForm getApplication();
+    public abstract Application getApplication();
     
     public abstract State getState();
     

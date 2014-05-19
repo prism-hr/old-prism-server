@@ -14,7 +14,7 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.State;
@@ -41,7 +41,7 @@ public class WithdrawServiceTest {
 
     @Test
     public void shouldWithdrawApplication() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(PrismState.APPLICATION_REVIEW)).build();
+        Application applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(PrismState.APPLICATION_REVIEW)).build();
 
         applicationServiceMock.save(applicationForm);
 
@@ -54,7 +54,7 @@ public class WithdrawServiceTest {
 
     @Test
     public void shouldWithdrawUnsubmittedApplication() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).build();
+        Application applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).build();
 
         applicationServiceMock.save(applicationForm);
 
@@ -68,7 +68,7 @@ public class WithdrawServiceTest {
     @Test
     public void shouldSendFormToPortico() {
         Program program = new Program();
-        ApplicationForm form = new ApplicationFormBuilder().id(1).program(program).submittedDate(new Date()).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
+        Application form = new ApplicationFormBuilder().id(1).program(program).submittedDate(new Date()).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         expect(porticoQueueServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(new ApplicationTransfer());
         replay();
         service.sendToPortico(form);

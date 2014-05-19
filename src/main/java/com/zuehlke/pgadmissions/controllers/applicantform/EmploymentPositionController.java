@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
@@ -71,18 +71,18 @@ public class EmploymentPositionController {
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(Language.class, languagePropertyEditor);
         binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
-        binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
+        binder.registerCustomEditor(Application.class, applicationFormPropertyEditor);
     }
 
     @RequestMapping(value = "/getEmploymentPosition", method = RequestMethod.GET)
-    public String getEmploymentView(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) Integer employmentPositionId,
+    public String getEmploymentView(@ModelAttribute Application applicationForm, @RequestParam(required = false) Integer employmentPositionId,
             ModelMap modelMap) {
         return returnView(modelMap, employmentPositionService.getOrCreate(employmentPositionId));
     }
 
     @RequestMapping(value = "/editEmploymentPosition", method = RequestMethod.POST)
     public String editEmployment(@Valid EmploymentPosition employmentPosition, BindingResult result,
-            @RequestParam(required = false) Integer employmentPositionId, @ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {
+            @RequestParam(required = false) Integer employmentPositionId, @ModelAttribute Application applicationForm, ModelMap modelMap) {
         if (result.hasErrors()) {
             return returnView(modelMap, employmentPosition);
         }
@@ -91,7 +91,7 @@ public class EmploymentPositionController {
     }
 
     @RequestMapping(value = "/deleteEmploymentPosition", method = RequestMethod.POST)
-    public String deleteEmployment(@RequestParam("id") Integer employmentPositionId, @ModelAttribute ApplicationForm applicationForm) {
+    public String deleteEmployment(@RequestParam("id") Integer employmentPositionId, @ModelAttribute Application applicationForm) {
         employmentPositionService.delete(employmentPositionId);
         return RedirectLocation.UPDATE_APPLICATION_EMPLOYMENT_POSITION + applicationForm.getApplicationNumber() + "&message=deleted";
     }
@@ -107,7 +107,7 @@ public class EmploymentPositionController {
     }
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(String applicationId) {
+    public Application getApplicationForm(String applicationId) {
         return applicationFormService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_COMPLETE,
                 ApplicationFormAction.APPLICATION_CORRECT);
     }

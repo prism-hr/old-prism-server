@@ -23,9 +23,9 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -104,7 +104,7 @@ public class ApplicationFormListDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ApplicationForm> getVisibleApplicationsForReport(final User user, final ApplicationFilterGroup filtering) {
+    public List<Application> getVisibleApplicationsForReport(final User user, final ApplicationFilterGroup filtering) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class).setReadOnly(true)
                 .setProjection(Projections.groupProperty("application"));
 

@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.Address;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.User;
@@ -12,7 +12,7 @@ public class RefereeBuilder {
 
     private Integer id;
 
-    private ApplicationForm application;
+    private Application application;
 
     private String jobEmployer;
     private String jobTitle;
@@ -54,7 +54,7 @@ public class RefereeBuilder {
         return this;
     }
 
-    public RefereeBuilder application(ApplicationForm application) {
+    public RefereeBuilder application(Application application) {
         this.application = application;
         return this;
     }

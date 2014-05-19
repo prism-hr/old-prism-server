@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.dao.ApplicationTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationTransferErrorDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationTransferComment;
 import com.zuehlke.pgadmissions.domain.ApplicationTransferError;
@@ -64,7 +64,7 @@ public class ApplicationTransferService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void updateApplicationFormPorticoIds(final ApplicationForm form, final AdmissionsApplicationResponse response) {
+    public void updateApplicationFormPorticoIds(final Application form, final AdmissionsApplicationResponse response) {
         form.setUclBookingReferenceNumber(response.getReference().getApplicationID());
         // FIXME update user with his new UCL ID
 //        form.getApplicant().setUclUserId(response.getReference().getApplicantID());
@@ -78,7 +78,7 @@ public class ApplicationTransferService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public ApplicationTransfer createOrReturnExistingApplicationFormTransfer(final ApplicationForm form) {
+    public ApplicationTransfer createOrReturnExistingApplicationFormTransfer(final Application form) {
         ApplicationTransfer transfer = form.getTransfer();
         if (transfer == null) {
             ApplicationTransfer result = new ApplicationTransfer();
@@ -111,7 +111,7 @@ public class ApplicationTransferService {
     }
 
     @Transactional
-    public void processApplicationTransferError(TransferListener listener, ApplicationForm application, ApplicationTransfer transfer, Exception exception,
+    public void processApplicationTransferError(TransferListener listener, Application application, ApplicationTransfer transfer, Exception exception,
             ApplicationTransferState newStatus, String logMessage, ApplicationTransferErrorHandlingDecision handlingDecision,
             ApplicationTransferErrorType errorType, Logger log) throws ExportServiceException {
         ApplicationTransferError transferError = createTransferError(new ApplicationTransferErrorBuilder()
@@ -133,7 +133,7 @@ public class ApplicationTransferService {
     }
     
     @Transactional
-    public void requeueApplicationTransfer(ApplicationForm application) {
+    public void requeueApplicationTransfer(Application application) {
         applicationFormTransferDAO.requeueApplicationTransfer(application);
         applicationFormUserRoleService.applicationExportResent(application);
     }

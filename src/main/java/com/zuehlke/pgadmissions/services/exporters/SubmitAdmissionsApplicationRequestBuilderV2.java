@@ -51,7 +51,7 @@ import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.RefereeTp;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SourceOfInterestTp;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Address;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
@@ -91,7 +91,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
     protected final DatatypeFactory datatypeFactory;
 
-    private ApplicationForm applicationForm;
+    private Application applicationForm;
 
     private boolean printLanguageQualificationAdmissionsNote = false;
 
@@ -142,7 +142,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         this(null);
     }
 
-    public SubmitAdmissionsApplicationRequestBuilderV2 applicationForm(final ApplicationForm applicationForm) {
+    public SubmitAdmissionsApplicationRequestBuilderV2 applicationForm(final Application applicationForm) {
         this.applicationForm = applicationForm;
         return this;
     }

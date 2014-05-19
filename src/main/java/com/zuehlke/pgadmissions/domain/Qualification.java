@@ -67,7 +67,7 @@ public class Qualification implements Serializable, FormSectionObject {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")
-    private ApplicationForm application;
+    private Application application;
 
     @Column(name = "completed")
     private Boolean completed;
@@ -174,11 +174,11 @@ public class Qualification implements Serializable, FormSectionObject {
         this.export = export;
     }
 
-    public ApplicationForm getApplication() {
+    public Application getApplication() {
         return application;
     }
 
-    public void setApplication(ApplicationForm application) {
+    public void setApplication(Application application) {
         this.application = application;
     }
 
@@ -240,7 +240,7 @@ public class Qualification implements Serializable, FormSectionObject {
         return this;
     }
 
-    public Qualification withApplication(ApplicationForm application) {
+    public Qualification withApplication(Application application) {
         this.application = application;
         return this;
     }

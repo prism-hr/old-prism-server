@@ -8,7 +8,7 @@ import java.text.ParseException;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.User;
@@ -23,7 +23,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetQualificationById() throws ParseException {
-        ApplicationForm application = TestData.anApplicationForm(user, program, testObjectProvider.getState(PrismState.APPLICATION_UNSUBMITTED));
+        Application application = TestData.anApplicationForm(user, program, testObjectProvider.getState(PrismState.APPLICATION_UNSUBMITTED));
         Qualification qualification = TestData.aQualification(application, testObjectProvider.getQualificationType(), TestData.aDocument(), testObjectProvider.getImportedInstitution());
         save(application, qualification);
         flushAndClearSession();
@@ -36,7 +36,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldDeleteQualification() throws ParseException {
-        ApplicationForm application = TestData.anApplicationForm(user, program, testObjectProvider.getState(PrismState.APPLICATION_UNSUBMITTED));
+        Application application = TestData.anApplicationForm(user, program, testObjectProvider.getState(PrismState.APPLICATION_UNSUBMITTED));
         Qualification qualification = TestData.aQualification(application, testObjectProvider.getQualificationType(), TestData.aDocument(), testObjectProvider.getImportedInstitution()); 
         save(application, qualification);
         flushAndClearSession();

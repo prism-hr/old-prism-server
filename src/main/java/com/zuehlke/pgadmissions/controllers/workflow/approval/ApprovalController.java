@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
 import com.zuehlke.pgadmissions.controllers.workflow.EditApplicationFormAsProgrammeAdminController;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
@@ -96,7 +96,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
 
     @RequestMapping(method = RequestMethod.GET, value = "moveToApproval")
     public String getMoveToApprovalPage(ModelMap modelMap, @RequestParam(required = false) String action) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
 
         actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_ASSIGN_SUPERVISORS);
@@ -118,8 +118,8 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     }
 
     @ModelAttribute
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = applicationsService.getByApplicationNumber(applicationId);
+    public Application getApplicationForm(@RequestParam String applicationId) {
+        Application applicationForm = applicationsService.getByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new ResourceNotFoundException(applicationId);
         }
@@ -171,7 +171,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     @RequestMapping(value = "/assignSupervisors", method = RequestMethod.POST)
     public String assignSupervisors(ModelMap modelMap, @Valid @ModelAttribute("approvalComment") AssignSupervisorsComment approvalComment,
             BindingResult bindingResult, SessionStatus sessionStatus) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        Application applicationForm = (Application) modelMap.get("applicationForm");
         User initiator = getCurrentUser();
         actionService.validateAction(applicationForm, initiator, ApplicationFormAction.APPLICATION_ASSIGN_SUPERVISORS);
 
@@ -185,7 +185,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     }
 
     @RequestMapping(value = "/applyPorticoData", method = RequestMethod.POST)
-    public String applySendToPorticoData(@ModelAttribute ApplicationForm applicationForm,
+    public String applySendToPorticoData(@ModelAttribute Application applicationForm,
             @ModelAttribute("approvalRound") AssignSupervisorsComment approvalRound,
             @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult result) {
         if (sendToPorticoData.getQualificationsSendToPortico() == null || sendToPorticoData.getRefereesSendToPortico() == null) {
@@ -205,7 +205,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     }
 
     @RequestMapping(value = "/postQualificationsData", method = RequestMethod.POST)
-    public String submitQualificationsData(@ModelAttribute ApplicationForm applicationForm,
+    public String submitQualificationsData(@ModelAttribute Application applicationForm,
             @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult result) {
         if (sendToPorticoData.getQualificationsSendToPortico() == null) {
             throw new ResourceNotFoundException();
@@ -217,7 +217,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     }
 
     @RequestMapping(value = "/postRefereesDataAndValidateForApproval", method = RequestMethod.POST)
-    public String submitRefereesData(@ModelAttribute ApplicationForm applicationForm,
+    public String submitRefereesData(@ModelAttribute Application applicationForm,
             @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult porticoResult,
             @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult referenceResult,
             @RequestParam(required = false) Boolean forceSavingReference, Model model) throws ScoringDefinitionParseException {
@@ -273,7 +273,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         return REFERENCE_SECTION;
     }
 
-    public List<Question> getCustomQuestions(ApplicationForm applicationForm) throws ScoringDefinitionParseException {
+    public List<Question> getCustomQuestions(Application applicationForm) throws ScoringDefinitionParseException {
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
         if (scoringDefinition != null) {
             CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());

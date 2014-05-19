@@ -15,11 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.PrismScope;
-import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ActionDefinition;
@@ -51,24 +48,24 @@ public class ActionDAO {
         return getUserActionsAbstract(applicationFormId, userId, action);
     }
     
-    public void deleteApplicationActions(ApplicationForm applicationForm) {
+    public void deleteApplicationActions(Application applicationForm) {
         sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_APPLICATION_ACTIONS(?);")
                 .setInteger(0, applicationForm.getId()).executeUpdate();
     }
     
-    public void deleteStateActions(ApplicationForm applicationForm) {
+    public void deleteStateActions(Application applicationForm) {
         sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_STATE_ACTIONS(?);")
                 .setInteger(0, applicationForm.getId()).executeUpdate();
     }
 
-    public void deleteRoleAction(ApplicationForm applicationForm, Authority authority, ApplicationFormAction action) {
+    public void deleteRoleAction(Application applicationForm, Authority authority, ApplicationFormAction action) {
         sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_ROLE_ACTION(?, ?, ?);")
                 .setInteger(0, applicationForm.getId())
                 .setString(1, authority.toString())
                 .setString(2, action.toString()).executeUpdate();
     }
 
-    public void deleteUserAction(ApplicationForm applicationForm, User user, Authority authority, ApplicationFormAction action) {
+    public void deleteUserAction(Application applicationForm, User user, Authority authority, ApplicationFormAction action) {
        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_USER_ACTION(?, ?, ?, ?);")
                 .setInteger(0, applicationForm.getId())
                 .setInteger(1, user.getId())

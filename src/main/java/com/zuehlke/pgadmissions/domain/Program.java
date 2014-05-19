@@ -251,7 +251,7 @@ public class Program extends Advert {
     }
 
     @Override
-    public ApplicationForm getApplication() {
+    public Application getApplication() {
         return null;
     }
 

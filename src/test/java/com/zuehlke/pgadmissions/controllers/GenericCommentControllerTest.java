@@ -11,7 +11,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -40,7 +40,7 @@ public class GenericCommentControllerTest {
     @Test
     public void shouldGetApplicationFormFromId() {
         Program program = new Program().withId(7);
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
+        Application applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
         User currentUser = EasyMock.createMock(User.class);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
@@ -48,13 +48,13 @@ public class GenericCommentControllerTest {
 
         EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock);
-        ApplicationForm returnedApplication = controller.getApplicationForm("5");
+        Application returnedApplication = controller.getApplicationForm("5");
         assertEquals(returnedApplication, applicationForm);
     }
 
     @Test
     public void shouldReturnGenericCommentPage() {
-        ApplicationForm applicationForm = new ApplicationForm();
+        Application applicationForm = new Application();
         User user = new User();
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", applicationForm);
@@ -77,7 +77,7 @@ public class GenericCommentControllerTest {
 
     @Test
     public void shouldCreateNewCommentForApplicationForm() {
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
+        final Application applicationForm = new ApplicationFormBuilder().id(5).build();
         User currentUser = new User().withId(8);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.replay(userServiceMock);
@@ -85,7 +85,7 @@ public class GenericCommentControllerTest {
                 documentPropertyEditorMock, actionsProviderMock, applicationFormUserRoleServiceMock) {
 
             @Override
-            public ApplicationForm getApplicationForm(String id) {
+            public Application getApplicationForm(String id) {
                 return applicationForm;
             }
 
@@ -122,7 +122,7 @@ public class GenericCommentControllerTest {
 
     @Test
     public void shouldSaveCommentAndRedirectBackToPageIfNoErrors() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).applicationNumber("ABC").build();
+        Application applicationForm = new ApplicationFormBuilder().id(6).applicationNumber("ABC").build();
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", applicationForm);
 

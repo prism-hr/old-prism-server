@@ -1,13 +1,11 @@
 package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
@@ -30,14 +28,14 @@ public class ApplicationTransferComment extends Comment {
         super();
     }
 
-    public ApplicationTransferComment(ApplicationForm application, User user) {
+    public ApplicationTransferComment(Application application, User user) {
         super();
         setUser(user);
         setApplication(application);
         setTransferSucceeded(true);
     }
 
-    public ApplicationTransferComment(ApplicationForm application, User user, ApplicationTransferError applicationFormTransferError) {
+    public ApplicationTransferComment(Application application, User user, ApplicationTransferError applicationFormTransferError) {
         super();
         setUser(user);
         setApplication(application);

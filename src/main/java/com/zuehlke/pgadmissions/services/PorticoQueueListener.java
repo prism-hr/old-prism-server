@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
@@ -67,7 +67,7 @@ public class PorticoQueueListener implements MessageListener {
     }
 
     private void sendApplicationToPortico(final String applicationNumber) {
-        ApplicationForm form = getApplicationForm(applicationNumber);
+        Application form = getApplicationForm(applicationNumber);
         ApplicationTransfer transfer = getApplicationFormTransfer(form);
 
         try {
@@ -83,11 +83,11 @@ public class PorticoQueueListener implements MessageListener {
     }
 
     @Transactional
-    public ApplicationForm getApplicationForm(final String applicationNumber) {
+    public Application getApplicationForm(final String applicationNumber) {
         return applicationFormDAO.getByApplicationNumber(applicationNumber);
     }
 
-    private ApplicationTransfer getApplicationFormTransfer(final ApplicationForm form) {
+    private ApplicationTransfer getApplicationFormTransfer(final Application form) {
         return applicationFormTransferService.createOrReturnExistingApplicationFormTransfer(form);
     }
 

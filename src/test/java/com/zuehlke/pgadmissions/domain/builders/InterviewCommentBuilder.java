@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.User;
 
@@ -13,7 +13,7 @@ public class InterviewCommentBuilder {
     private Boolean suitableCandidateForProgramme;
     private Integer applicantRating;
     private boolean decline;
-    private ApplicationForm applicationForm;
+    private Application applicationForm;
     private String content;
     private Integer id;
     private Date createdTimeStamp;
@@ -54,7 +54,7 @@ public class InterviewCommentBuilder {
         return this;
     }
 
-    public InterviewCommentBuilder application(ApplicationForm application) {
+    public InterviewCommentBuilder application(Application application) {
         this.applicationForm = application;
         return this;
     }

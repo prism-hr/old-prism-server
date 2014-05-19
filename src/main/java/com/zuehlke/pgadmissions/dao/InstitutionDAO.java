@@ -32,7 +32,7 @@ public class InstitutionDAO {
     public InstitutionDAO(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
-    
+
     public List<Institution> getEnabledByDomicile(InstitutionDomicile domicile) {
         return (List<Institution>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
                 .add(Restrictions.eq("domicile", domicile)) //
@@ -45,26 +45,6 @@ public class InstitutionDAO {
                 .add(Restrictions.eq("domicile", domicile)) //
                 .addOrder(Order.asc("name")) //
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-    }
-
-    public List<Institution> getByUserIdAndDomicile(Integer userId, Domicile domicile) {
-        return (List<Institution>) sessionFactory.getCurrentSession().createCriteria(Program.class)
-                .setProjection(Projections.groupProperty("program.institution")).createAlias("administrators", "registeredUser", JoinType.INNER_JOIN)
-                .createAlias("institution", "qualificationInstitution", JoinType.INNER_JOIN).add(Restrictions.eq("registeredUser.id", userId))
-                .add(Restrictions.eq("qualificationInstitution.domicile", domicile)).add(Restrictions.eq("qualificationInstitution.enabled", true))
-                .addOrder(Order.asc("institution.name")).list();
-    }
-
-    public List<Institution> getByDomicileExludingUserId(Integer userId, Domicile domicile) {
-        DetachedCriteria exclusions = DetachedCriteria.forClass(Program.class).setProjection(Projections.groupProperty("program.institution"))
-                .createAlias("administrators", "registeredUser", JoinType.INNER_JOIN)
-                .createAlias("institution", "qualificationInstitution", JoinType.INNER_JOIN).add(Restrictions.eq("registeredUser.id", userId))
-                .add(Restrictions.eq("qualificationInstitution.domicile", domicile)).add(Restrictions.eq("qualificationInstitution.enabled", true));
-
-        return (List<Institution>) sessionFactory.getCurrentSession().createCriteria(Program.class)
-                .setProjection(Projections.groupProperty("program.institution")).createAlias("institution", "qualificationInstitution", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("qualificationInstitution.domicile", domicile)).add(Restrictions.eq("qualificationInstitution.enabled", true))
-                .add(Property.forName("program.institution").notIn(exclusions)).addOrder(Order.asc("institution.name")).list();
     }
 
     public Institution getByCode(String institutionCode) {

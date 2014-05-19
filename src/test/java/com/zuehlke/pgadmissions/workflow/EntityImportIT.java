@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.ImportedEntityType;
+import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -36,6 +37,9 @@ public class EntityImportIT {
 
     @Autowired
     private ImportedEntityService importedEntityService;
+    
+    @Autowired
+    private EntityService entityService;
 
     @Autowired
     private ProgramService programService;
@@ -46,7 +50,7 @@ public class EntityImportIT {
     @SuppressWarnings("unchecked")
     @Test
     public void testConflictsInProgramImport() throws Exception {
-        Institution ucl = institutionService.getByCode("UK0275");
+        Institution ucl = entityService.getById(Institution.class, 5243);
         ImportedEntityFeed importedEntityFeed = new ImportedEntityFeed();
         importedEntityFeed.setImportedEntityType(ImportedEntityType.PROGRAM);
         importedEntityFeed.setLocation("reference_data/conflicts/programs/initialPrograms.xml");

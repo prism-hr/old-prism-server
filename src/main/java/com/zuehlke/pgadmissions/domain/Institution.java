@@ -91,6 +91,14 @@ public class Institution extends PrismScope {
         this.domicile = domicile;
     }
 
+    public String getHomepage() {
+        return homepage;
+    }
+
+    public void setHomepage(String homepage) {
+        this.homepage = homepage;
+    }
+
     public Institution withId(Integer id) {
         this.id = id;
         return this;

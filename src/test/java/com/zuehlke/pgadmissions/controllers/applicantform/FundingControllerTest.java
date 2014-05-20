@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.FundingService;
@@ -37,7 +37,7 @@ public class FundingControllerTest {
 
     @Mock
     @InjectIntoByType
-    private DatePropertyEditor datePropertyEditorMock;
+    private LocalDatePropertyEditor datePropertyEditorMock;
 
     @Mock
     @InjectIntoByType

@@ -36,6 +36,7 @@ public class DocumentService {
         document.setContent(multipartFile.getBytes());
         document.setType(documentType);
         document.setFileData(multipartFile);
+        
         return document;
     }
 

@@ -11,7 +11,7 @@ import org.junit.Test;
 
 public class DatePropertyEditorTest {
 
-    private DatePropertyEditor editor;
+    private LocalDatePropertyEditor editor;
 
     private SimpleDateFormat dateFormat;
 
@@ -62,6 +62,6 @@ public class DatePropertyEditorTest {
     @Before
     public void setup() {
         dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        editor = new DatePropertyEditor();
+        editor = new LocalDatePropertyEditor();
     }
 }

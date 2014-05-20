@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.validators;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,16 +48,17 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "country", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceCountry", EMPTY_DROPDOWN_ERROR_MESSAGE);
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateOfBirth", EMPTY_FIELD_ERROR_MESSAGE);
-        String dob = personalDetail.getDateOfBirth() == null ? "" : personalDetail.getDateOfBirth().toString();
-        if (StringUtils.isNotBlank(dob) && personalDetail.getDateOfBirth().isAfter(today)) {
+
+        if (personalDetail.getDateOfBirth() == null) {
+            errors.rejectValue("dateOfBirth", EMPTY_FIELD_ERROR_MESSAGE);
+        } else if (personalDetail.getDateOfBirth().isAfter(today)) {
             errors.rejectValue("dateOfBirth", "date.field.notpast");
-        } else if (personalDetail.getDateOfBirth() != null) {
+        } else {
             int age = Years.yearsBetween(personalDetail.getDateOfBirth(), new LocalDate()).getYears();
             if (!(age >= 10 && age <= 80)) {
-                DateTime now = new DateTime().withTimeAtStartOfDay();
-                DateTime tenYearsAgo = now.toDateTime().minusYears(10);
-                DateTime eightyYearsAgo = now.toDateTime().minusYears(81).plusDays(1);
+                LocalDate now = new LocalDate();
+                LocalDate tenYearsAgo = now.minusYears(10);
+                LocalDate eightyYearsAgo = now.minusYears(81).plusDays(1);
                 errors.rejectValue("dateOfBirth", "date.field.age",
                         new Object[] { eightyYearsAgo.toString("dd-MMM-yyyy"), tenYearsAgo.toString("dd-MMM-yyyy") }, null);
             }
@@ -73,21 +72,11 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "disability", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "ethnicity", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "application", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "englishFirstLanguage", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "requiresVisa", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
         if (BooleanUtils.isFalse(personalDetail.getEnglishFirstLanguage())) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "languageQualificationAvailable", EMPTY_DROPDOWN_ERROR_MESSAGE);
-        }
-
-        if (BooleanUtils.isTrue(personalDetail.getPassportAvailable()) && BooleanUtils.isTrue(personalDetail.getRequiresVisa())) {
-            try {
-                errors.pushNestedPath("passport");
-                ValidationUtils.invokeValidator(passportInformationValidator, personalDetail.getPassport(), errors);
-            } finally {
-                errors.popNestedPath();
-            }
 
             if (BooleanUtils.isTrue(personalDetail.getLanguageQualificationAvailable())) {
                 if (personalDetail.getLanguageQualification() == null) {
@@ -98,6 +87,16 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
                     errors.popNestedPath();
                 }
             }
+        }
+
+        if (BooleanUtils.isTrue(personalDetail.getPassportAvailable()) && BooleanUtils.isTrue(personalDetail.getRequiresVisa())) {
+            try {
+                errors.pushNestedPath("passport");
+                ValidationUtils.invokeValidator(passportInformationValidator, personalDetail.getPassport(), errors);
+            } finally {
+                errors.popNestedPath();
+            }
+
         }
     }
 

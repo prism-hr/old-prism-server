@@ -21,7 +21,7 @@ public class DocumentDAO {
     }
 
     public void save(Document document) {
-        sessionFactory.getCurrentSession().saveOrUpdate(document);
+        sessionFactory.getCurrentSession().save(document);
     }
 
     public Document getDocumentbyId(Integer id) {

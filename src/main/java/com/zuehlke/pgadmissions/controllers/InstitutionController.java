@@ -49,7 +49,7 @@ public class InstitutionController {
                     @Override
                     public JsonElement serialize(ImportedInstitution src, Type typeOfSrc, JsonSerializationContext context) {
                         JsonObject jsonObject = new JsonObject();
-                        jsonObject.addProperty("code", src.getCode());
+                        jsonObject.addProperty("id", src.getId());
                         jsonObject.addProperty("name", src.getName());
                         return jsonObject;
                     }

@@ -1,8 +1,10 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
@@ -14,18 +16,18 @@ public class ApprovalCommentBuilder {
     private Application applicationForm;
     private String content;
     private Integer id;
-    private Date createdTimeStamp;
+    private DateTime createdTimeStamp;
     private User user;
 
     private Boolean projectDescriptionAvailable;
     private String projectTitle;
     private String projectAbstract;
-    private Date recommendedStartDate;
+    private LocalDate recommendedStartDate;
     private Boolean recommendedConditionsAvailable;
     private String recommendedConditions;
     private List<CommentAssignedUser> assignedUsers;
 
-    public ApprovalCommentBuilder createdTimeStamp(Date createdTimeStamp) {
+    public ApprovalCommentBuilder createdTimeStamp(DateTime createdTimeStamp) {
         this.createdTimeStamp = createdTimeStamp;
         return this;
     }
@@ -45,7 +47,7 @@ public class ApprovalCommentBuilder {
         return this;
     }
 
-    public ApprovalCommentBuilder recommendedStartDate(Date recommendedStartDate) {
+    public ApprovalCommentBuilder recommendedStartDate(LocalDate recommendedStartDate) {
         this.recommendedStartDate = recommendedStartDate;
         return this;
     }

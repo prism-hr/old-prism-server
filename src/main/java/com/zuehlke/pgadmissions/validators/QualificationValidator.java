@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.validators;
 
-import java.util.Date;
-
+import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -23,7 +22,7 @@ public class QualificationValidator extends FormSectionObjectValidator implement
     public void addExtraValidation(Object target, Errors errors) {
         super.addExtraValidation(target, errors);
 
-        Date today = new Date();
+        LocalDate today = new LocalDate();
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationInstitution", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationInstitutionCode", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationSubject", EMPTY_FIELD_ERROR_MESSAGE);
@@ -37,20 +36,20 @@ public class QualificationValidator extends FormSectionObjectValidator implement
         Qualification qualification = (Qualification) target;
 
         if (qualification.getStartDate() != null) {
-            if (qualification.getStartDate().after(today)) {
+            if (qualification.getStartDate().isAfter(today)) {
                 errors.rejectValue("qualificationStartDate", "date.field.notpast");
             } else if (qualification.getAwardDate() != null
-                    && qualification.getStartDate().after(qualification.getAwardDate())) {
+                    && qualification.getStartDate().isAfter(qualification.getAwardDate())) {
                 errors.rejectValue("qualificationStartDate", "qualification.start_date.notvalid");
             }
         }
 
         if (qualification.getCompleted()) {
-            if (qualification.getAwardDate() != null && qualification.getAwardDate().after(today)) {
+            if (qualification.getAwardDate() != null && qualification.getAwardDate().isAfter(today)) {
                 errors.rejectValue("qualificationAwardDate", "date.field.notpast");
             }
         } else {
-            if (qualification.getAwardDate() != null && qualification.getAwardDate().before(today)) {
+            if (qualification.getAwardDate() != null && qualification.getAwardDate().isAfter(today)) {
                 errors.rejectValue("qualificationAwardDate", "date.field.notfuture");
             }
         }

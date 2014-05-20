@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,9 +12,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -38,12 +38,12 @@ public class Qualification implements Serializable, FormSectionObject {
     private String title;
 
     @Column(name = "start_date")
-    @Temporal(TemporalType.DATE)
-    private Date startDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate startDate;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "award_date")
-    private Date awardDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate awardDate;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
     @Column(name = "qualification_language")
@@ -94,11 +94,11 @@ public class Qualification implements Serializable, FormSectionObject {
         this.document = document;
     }
 
-    public Date getAwardDate() {
+    public LocalDate getAwardDate() {
         return awardDate;
     }
 
-    public void setAwardDate(Date awardDate) {
+    public void setAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
     }
 
@@ -150,11 +150,11 @@ public class Qualification implements Serializable, FormSectionObject {
         this.grade = grade;
     }
 
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
@@ -205,12 +205,12 @@ public class Qualification implements Serializable, FormSectionObject {
         return this;
     }
 
-    public Qualification withStartDate(Date startDate) {
+    public Qualification withStartDate(LocalDate startDate) {
         this.startDate = startDate;
         return this;
     }
 
-    public Qualification withAwardDate(Date awardDate) {
+    public Qualification withAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
         return this;
     }

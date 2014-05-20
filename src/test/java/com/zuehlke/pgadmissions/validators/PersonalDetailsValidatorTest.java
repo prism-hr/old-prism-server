@@ -1,13 +1,9 @@
 package com.zuehlke.pgadmissions.validators;
 
 import static org.junit.Assert.assertTrue;
-
-import java.util.Calendar;
-import java.util.Date;
-
 import junit.framework.Assert;
 
-import org.apache.commons.lang.time.DateUtils;
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,19 +14,20 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
 
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.LanguageQualification;
+import com.zuehlke.pgadmissions.domain.Passport;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
-import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
-import com.zuehlke.pgadmissions.domain.builders.LanguageQualificationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.PassportInformationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -44,7 +41,7 @@ public class PersonalDetailsValidatorTest {
 
     private PersonalDetailsValidator personalDetailValidator;
 
-    private PassportValidator passportInformationValidator;
+    private PassportValidator passportValidator;
 
     private LanguageQualificationValidator languageQualificationValidator;
 
@@ -138,10 +135,7 @@ public class PersonalDetailsValidatorTest {
 
     @Test
     public void shouldRejectIfDOBISFutureDate() {
-        Date tomorrow;
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, 1);
-        tomorrow = calendar.getTime();
+        LocalDate tomorrow = new LocalDate().plusDays(1);
         personalDetails.setDateOfBirth(tomorrow);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
@@ -210,7 +204,7 @@ public class PersonalDetailsValidatorTest {
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("passportInformation.passportNumber").getCode());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("passport.number").getCode());
     }
 
     @Test
@@ -219,7 +213,7 @@ public class PersonalDetailsValidatorTest {
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("A maximum of 35 characters are allowed.", mappingResult.getFieldError("passportInformation.passportNumber").getDefaultMessage());
+        Assert.assertEquals("A maximum of 35 characters are allowed.", mappingResult.getFieldError("passport.number").getDefaultMessage());
     }
 
     @Test
@@ -228,7 +222,7 @@ public class PersonalDetailsValidatorTest {
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("passportInformation.nameOnPassport").getCode());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("passport.name").getCode());
     }
 
     @Test
@@ -237,7 +231,7 @@ public class PersonalDetailsValidatorTest {
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("passportInformation.passportIssueDate").getCode());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("passport.issueDate").getCode());
     }
 
     @Test
@@ -246,12 +240,12 @@ public class PersonalDetailsValidatorTest {
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("passportInformation.passportExpiryDate").getCode());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("passport.expiryDate").getCode());
     }
 
     @Test
     public void shouldRejectPassportExpiryAndIssueDateAreTheSame() {
-        Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(new Date(), -1);
+        LocalDate oneMonthAgo = new LocalDate().minusMonths(1);
         personalDetails.getPassport().setExpiryDate(oneMonthAgo);
         personalDetails.getPassport().setIssueDate(oneMonthAgo);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
@@ -264,27 +258,27 @@ public class PersonalDetailsValidatorTest {
 
     @Test
     public void shouldRejectPassportExpiryDateIsInThePast() {
-        Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(new Date(), -1);
+        LocalDate oneMonthAgo = new LocalDate().minusMonths(1);
         personalDetails.getPassport().setExpiryDate(oneMonthAgo);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("date.field.notfuture", mappingResult.getFieldError("passportInformation.passportExpiryDate").getCode());
+        Assert.assertEquals("date.field.notfuture", mappingResult.getFieldError("passport.expiryDate").getCode());
     }
 
     @Test
     public void shouldRejectPassportIssueDateIsInTheFuture() {
-        Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(new Date(), +1);
-        personalDetails.getPassport().setIssueDate(oneMonthAgo);
+        LocalDate oneMonthAhead = new LocalDate().plusMonths(1);
+        personalDetails.getPassport().setIssueDate(oneMonthAhead);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("date.field.notpast", mappingResult.getFieldError("passportInformation.passportIssueDate").getCode());
+        Assert.assertEquals("date.field.notpast", mappingResult.getFieldError("passport.issueDate").getCode());
     }
 
     @Test
     public void shouldRejectDateOfBirthIfAgeIsLessThan10() {
-        Date infant = org.apache.commons.lang.time.DateUtils.addYears(new Date(), -9);
+        LocalDate infant = new LocalDate().minusYears(9);
         personalDetails.setDateOfBirth(infant);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
@@ -294,7 +288,7 @@ public class PersonalDetailsValidatorTest {
 
     @Test
     public void shouldRejectDateOfBirthIfAgeIsBiggerThan80() {
-        Date oldGeezer = org.apache.commons.lang.time.DateUtils.addYears(new Date(), -81);
+        LocalDate oldGeezer = new LocalDate().minusYears(81);
         personalDetails.setDateOfBirth(oldGeezer);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
@@ -309,12 +303,12 @@ public class PersonalDetailsValidatorTest {
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("languageQualification.qualificationTypeName").getCode());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("languageQualification.qualificationTypeOther").getCode());
     }
 
     @Test
     public void shouldRejectLanguageQualificationIfExamDateIsInTheFuture() {
-        personalDetails.getLanguageQualification().setExamDate(DateUtils.addWeeks(new Date(), 5));
+        personalDetails.getLanguageQualification().setExamDate(new LocalDate().plusWeeks(5));
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -528,7 +522,7 @@ public class PersonalDetailsValidatorTest {
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("file.upload.empty", mappingResult.getFieldError("languageQualification.languageQualificationDocument").getCode());
+        Assert.assertEquals("file.upload.empty", mappingResult.getFieldError("languageQualification.proofOfAward").getCode());
     }
 
     @Test
@@ -673,37 +667,37 @@ public class PersonalDetailsValidatorTest {
     @Before
     public void setup() {
         Language nationality = new Language();
-        personalDetails = new PersonalDetailsBuilder().firstNationality(nationality)
-                .applicationForm(new ApplicationFormBuilder().id(2).build())
-                .country(new Country())
-                .dateOfBirth(DateUtils.addYears(new Date(), -28))
-                .gender(Gender.INDETERMINATE_GENDER)
-                .title(Title.PROFESSOR)
-                .residenceDomicile(new DomicileBuilder().build())
-                .phoneNumber("+44 (0) 20 7911 5000")
-                .ethnicity(new EthnicityBuilder().id(23).build())
-                .disability(new Disability())
-                .requiresVisa(true)
-                .passportAvailable(true)
-                .englishFirstLanguage(true)
-                .languageQualificationAvailable(true)
-                .passportInformation(
-                        new PassportInformationBuilder().name("Kevin Francis Denver").number("000")
-                                .expiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20))
-                                .issueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10)).build())
-                .languageQualification(
-                        new LanguageQualificationBuilder().examDate(new Date()).examOnline(false)
-                                .languageQualification(LanguageQualificationEnum.OTHER).qualificationTypeName("foobar").listeningScore("1")
-                                .overallScore("1").readingScore("1").writingScore("1").speakingScore("1")
-                                .languageQualificationDocument(new Document()).build()).build();
+        personalDetails = new PersonalDetails()
+                .withFirstNationality(nationality)
+                .withApplication(new Application().withState(new State().withId(PrismState.APPLICATION_UNSUBMITTED)))
+                .withCountry(new Country())
+                .withDateOfBirth(new LocalDate().minusYears(28))
+                .withGender(Gender.INDETERMINATE_GENDER)
+                .withTitle(Title.PROFESSOR)
+                .withResidenceCountry(new Domicile())
+                .withPhoneNumber("+44 (0) 20 7911 5000")
+                .withEthnicity(new Ethnicity().withId(23))
+                .withDisability(new Disability())
+                .withRequiresVisa(true)
+                .withPassportAvailable(true)
+                .withEnglishFirstLanguage(true)
+                .withLanguageQualificationAvailable(true)
+                .withPassportInformation(
+                        new Passport().withName("Kevin Francis Denver").withNumber("000")
+                                .withExpiryDate(new LocalDate().plusYears(20))
+                                .withIssueDate(new LocalDate().minusYears(10)))
+                .withLanguageQualification(
+                        new LanguageQualification().withExamDate(new LocalDate()).withExamOnline(false).withQualificationType(LanguageQualificationEnum.OTHER)
+                                .withQualificationTypeOther("foobar").withListeningScore("1").withOverallScore("1").withReadingScore("1").withWritingScore("1").withSpeakingScore("1")
+                                .withProofOfAward(new Document()));
 
-        passportInformationValidator = new PassportValidator();
-        passportInformationValidator.setValidator((javax.validation.Validator) validator);
+        passportValidator = new PassportValidator();
+        passportValidator.setValidator((javax.validation.Validator) validator);
 
         languageQualificationValidator = new LanguageQualificationValidator();
         languageQualificationValidator.setValidator((javax.validation.Validator) validator);
 
-        personalDetailValidator = new PersonalDetailsValidator(passportInformationValidator, languageQualificationValidator);
+        personalDetailValidator = new PersonalDetailsValidator(passportValidator, languageQualificationValidator);
         personalDetailValidator.setValidator((javax.validation.Validator) validator);
     }
 }

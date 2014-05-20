@@ -27,9 +27,8 @@ import javax.validation.Valid;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Objects;
@@ -68,13 +67,13 @@ public class Application extends PrismScope {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dueDate;
 
-    @Column(name = "created_timestamp", insertable = false, updatable = false)
-    @Generated(GenerationTime.INSERT)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdTimestamp;
+    @Column(name = "created_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdTimestamp;
 
     @Column(name = "submitted_timestamp")
-    private Date submittedTimestamp;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime submittedTimestamp;
 
     @Column(name = "closing_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -215,19 +214,19 @@ public class Application extends PrismScope {
         this.acceptedTerms = acceptedTerms;
     }
 
-    public Date getCreatedTimestamp() {
+    public DateTime getCreatedTimestamp() {
         return createdTimestamp;
     }
 
-    public void setCreatedTimestamp(Date createdTimestamp) {
+    public void setCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
     }
 
-    public Date getSubmittedTimestamp() {
+    public DateTime getSubmittedTimestamp() {
         return submittedTimestamp;
     }
 
-    public void setSubmittedTimestamp(Date submittedTimestamp) {
+    public void setSubmittedTimestamp(DateTime submittedTimestamp) {
         this.submittedTimestamp = submittedTimestamp;
     }
 
@@ -393,7 +392,7 @@ public class Application extends PrismScope {
         return this;
     }
 
-    public Application withSubmittedTimestamp(Date submittedTimestamp) {
+    public Application withSubmittedTimestamp(DateTime submittedTimestamp) {
         this.submittedTimestamp = submittedTimestamp;
         return this;
     }

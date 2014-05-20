@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.validation.Valid;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
@@ -126,7 +127,7 @@ public class AdmitterCommentController {
         }
 
         comment.setUser(user);
-        comment.setCreatedTimestamp(new Date());
+        comment.setCreatedTimestamp(new DateTime());
         comment.setApplication(application);
         
         commentService.save(comment);

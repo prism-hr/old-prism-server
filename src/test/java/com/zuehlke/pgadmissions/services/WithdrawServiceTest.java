@@ -5,8 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
-import java.util.Date;
-
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.unitils.UnitilsJUnit4TestClassRunner;
@@ -68,7 +67,7 @@ public class WithdrawServiceTest {
     @Test
     public void shouldSendFormToPortico() {
         Program program = new Program();
-        Application form = new ApplicationFormBuilder().id(1).program(program).submittedDate(new Date()).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
+        Application form = new ApplicationFormBuilder().id(1).program(program).submittedDate(new DateTime()).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         expect(porticoQueueServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(new ApplicationTransfer());
         replay();
         service.sendToPortico(form);

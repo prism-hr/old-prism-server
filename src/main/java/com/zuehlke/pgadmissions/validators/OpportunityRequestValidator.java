@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.validators;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -104,7 +104,7 @@ public class OpportunityRequestValidator extends AbstractValidator {
             if (opportunityRequest.getAdvertisingDeadlineYear() == null) {
                 errors.rejectValue("advertisingDeadlineYear", EMPTY_DROPDOWN_ERROR_MESSAGE);
             } else {
-                int startYear = programInstanceService.getFirstProgramInstanceStartYear(new DateTime());
+                int startYear = programInstanceService.getFirstProgramInstanceStartYear(new LocalDate());
                 if (opportunityRequest.getAdvertisingDeadlineYear() <= startYear) {
                     errors.rejectValue("advertisingDeadlineYear", "Min", new Object[] { null, startYear }, null);
                 } else if (opportunityRequest.getAdvertisingDeadlineYear() > startYear + 10) {

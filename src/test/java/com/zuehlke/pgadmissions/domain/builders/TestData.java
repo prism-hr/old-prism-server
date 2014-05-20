@@ -71,8 +71,8 @@ public class TestData {
     }
 
     public static Qualification aQualification(Application application, QualificationType qualificationType, Document document, ImportedInstitution institution) {
-        return new Qualification().withAwardDate(new Date()).withGrade("").withTitle("").withLanguage("Abkhazian").withSubject("").withCompleted(true)
-                .withStartDate(new Date()).withType(qualificationType).withApplication(application).withDocument(document).withExport(false).withInstitution(institution);
+        return new Qualification().withAwardDate(new LocalDate()).withGrade("").withTitle("").withLanguage("Abkhazian").withSubject("").withCompleted(true)
+                .withStartDate(new LocalDate()).withType(qualificationType).withApplication(application).withDocument(document).withExport(false).withInstitution(institution);
     }
 
 }

@@ -21,6 +21,9 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
@@ -37,9 +40,9 @@ public class ProgramDetails implements Serializable, FormSectionObject {
     @JoinColumn(name = "study_option_id")
     private StudyOption studyOption;
 
-    @Temporal(value = TemporalType.DATE)
     @Column(name = "start_date")
-    private Date startDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate startDate;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sources_of_interest_id")
@@ -76,11 +79,11 @@ public class ProgramDetails implements Serializable, FormSectionObject {
         this.studyOption = studyOption;
     }
 
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 

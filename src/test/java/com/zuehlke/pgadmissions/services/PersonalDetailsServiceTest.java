@@ -16,12 +16,11 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.Passport;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.LanguageQualificationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class PersonalDetailsServiceTest {
@@ -51,12 +50,11 @@ public class PersonalDetailsServiceTest {
         User applicant = new User();
         User newApplicant = new User();
 
-        PersonalDetails personalDetails = new PersonalDetailsBuilder().languageQualification(
-                new LanguageQualificationBuilder().languageQualificationDocument(oldQualificationDocument).build()).build();
-        PersonalDetails newPersonalDetails = new PersonalDetailsBuilder()
-                .languageQualification(new LanguageQualificationBuilder().languageQualificationDocument(newQualificationDocument).build())
-                .passportAvailable(true).passportInformation(new Passport()).id(1).languageQualificationAvailable(null).passportAvailable(null)
-                .build();
+        PersonalDetails personalDetails = new PersonalDetails().withLanguageQualification(new LanguageQualification()
+                .withProofOfAward(oldQualificationDocument));
+        PersonalDetails newPersonalDetails = new PersonalDetails()
+                .withLanguageQualification(new LanguageQualification().withProofOfAward(newQualificationDocument)).withPassportAvailable(true)
+                .withPassportInformation(new Passport()).withId(1).withLanguageQualificationAvailable(null).withPassportAvailable(null);
 
         Application applicationForm = new ApplicationFormBuilder().personalDetails(personalDetails).applicant(applicant).build();
 

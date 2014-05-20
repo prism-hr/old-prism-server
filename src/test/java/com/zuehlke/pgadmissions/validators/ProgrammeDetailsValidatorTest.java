@@ -3,16 +3,13 @@ package com.zuehlke.pgadmissions.validators;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 
 import junit.framework.Assert;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -113,7 +109,7 @@ public class ProgrammeDetailsValidatorTest {
 
     @Test
     public void shouldRejectIfStartDateIsFutureDate() {
-        programmeDetail.setStartDate(DateUtils.addDays(new Date(), -1));
+        programmeDetail.setStartDate(new LocalDate().plusDays(1));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "startDate");
         EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(
                 Arrays.asList(programInstance));
@@ -158,7 +154,7 @@ public class ProgrammeDetailsValidatorTest {
 
     @Test
     public void shouldRejectIfStartDateIsNotInRange() {
-        programmeDetail.setStartDate(DateUtils.addYears(new Date(), 5));
+        programmeDetail.setStartDate(new LocalDate().plusYears(5));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "startDate");
         EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(
                 Arrays.asList(programInstance));
@@ -328,10 +324,7 @@ public class ProgrammeDetailsValidatorTest {
 
     @Test
     public void shouldRejectIfApplicationDateHasPassed() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_WEEK, -1);
-        Date yesterday = calendar.getTime();
-        programInstance.setApplicationDeadline(yesterday);
+        programInstance.setApplicationDeadline(new LocalDate().minusDays(1));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "studyOption");
         programmeDetailsValidator.validate(programmeDetail, mappingResult);
 
@@ -378,13 +371,12 @@ public class ProgrammeDetailsValidatorTest {
         SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisor().withUser(
                 new User().withFirstName("Mark").withLastName("Johnson").withEmail("mark@gmail.com")).withAware(true);
         program = new Program().withId(1).withTitle("Program 1").withState(new State().withId(PrismState.PROGRAM_APPROVED));
-        programInstance = new ProgramInstanceBuilder().id(1).studyOption("1", "Full-time")
-                .applicationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2025/08/06"))
-                .applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).enabled(true).build();
-        form = new ApplicationFormBuilder().id(2).program(program).applicant(currentUser)
-                .status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).build();
+        programInstance = new ProgramInstance().withStudyOption("1", "Full-time").withApplicationStartDate(new LocalDate(2025, 8, 6))
+                .withApplicationDeadline(new LocalDate(2030, 8, 6)).withEnabled(true);
+        form = new ApplicationFormBuilder().id(2).program(program).applicant(currentUser).status(new State().withId(PrismState.APPLICATION_UNSUBMITTED))
+                .build();
         programmeDetail = new ProgrammeDetailsBuilder().id(5).suggestedSupervisors(suggestedSupervisor).sourcesOfInterest(interest)
-                .startDate(DateUtils.addDays(new Date(), 10)).applicationForm(form).studyOption(new StudyOption("1", "Full-time")).build();
+                .startDate(new LocalDate().plusDays(10)).applicationForm(form).studyOption(new StudyOption("1", "Full-time")).build();
 
         programServiceMock = EasyMock.createMock(ProgramService.class);
 

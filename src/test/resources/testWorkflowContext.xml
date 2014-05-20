@@ -12,10 +12,10 @@
   <context:property-placeholder location="classpath:environment.properties" />
 
   <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-        <property name="url" value="jdbc:mysql://${db.host}/pgadmissions-test" />
-        <property name="username" value="${db.username}" />
-        <property name="password" value="${db.password}" />
+    <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+    <property name="url" value="jdbc:mysql://${db.host}/pgadmissions-test" />
+    <property name="username" value="${db.username}" />
+    <property name="password" value="${db.password}" />
   </bean>
 
   <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -56,7 +56,7 @@
   <bean id="javaMailSender" class="com.zuehlke.pgadmissions.mail.FakeLoggingMailSender" />
 
   <!-- bean definitions -->
-  
+
   <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
     <property name="templateLoaderPath" value="/WEB-INF/freemarker/" />
     <property name="freemarkerVariables">
@@ -96,5 +96,33 @@
   <bean id="mailSender" class="com.zuehlke.pgadmissions.mail.MailSenderMock" primary="true" />
 
   <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PgAdmissionAuthenticationProvider" />
+
+  <bean class="com.zuehlke.pgadmissions.propertyeditors.GlobalPropertyEditorRegistrar">
+    <property name="countryPropertyEditor">
+      <bean class="com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor">
+        <constructor-arg value="com.zuehlke.pgadmissions.domain.Country" />
+      </bean>
+    </property>
+    <property name="languagePropertyEditor">
+      <bean class="com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor">
+        <constructor-arg value="com.zuehlke.pgadmissions.domain.Language" />
+      </bean>
+    </property>
+    <property name="disabilityPropertyEditor">
+      <bean class="com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor">
+        <constructor-arg value="com.zuehlke.pgadmissions.domain.Disability" />
+      </bean>
+    </property>
+    <property name="ethnicityPropertyEditor">
+      <bean class="com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor">
+        <constructor-arg value="com.zuehlke.pgadmissions.domain.Ethnicity" />
+      </bean>
+    </property>
+    <property name="domicilePropertyEditor">
+      <bean class="com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor">
+        <constructor-arg value="com.zuehlke.pgadmissions.domain.Domicile" />
+      </bean>
+    </property>
+  </bean>
 
 </beans>

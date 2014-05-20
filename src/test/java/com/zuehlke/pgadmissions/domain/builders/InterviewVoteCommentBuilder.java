@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
+import org.joda.time.DateTime;
+
 import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.User;
 
@@ -9,7 +11,7 @@ public class InterviewVoteCommentBuilder {
 
     private Integer id;
     private User user;
-    private Date createdTimeStamp;
+    private DateTime createdTimeStamp;
 
     public InterviewVoteCommentBuilder id(Integer id) {
         this.id = id;
@@ -21,7 +23,7 @@ public class InterviewVoteCommentBuilder {
         return this;
     }
 
-    public InterviewVoteCommentBuilder date(Date createdTimeStamp) {
+    public InterviewVoteCommentBuilder date(DateTime createdTimeStamp) {
         this.createdTimeStamp = createdTimeStamp;
         return this;
     }

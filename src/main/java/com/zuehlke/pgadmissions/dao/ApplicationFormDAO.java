@@ -1,18 +1,17 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -64,23 +63,16 @@ public class ApplicationFormDAO {
     }
 
     public Long getApplicationsInProgramThisYear(Program program, String year) {
-        Date startYear = null;
-
-        try {
-            startYear = new SimpleDateFormat("yyyy").parse(year);
-        } catch (ParseException e) {
-            throw new IllegalArgumentException(e);
-        }
-
-        Date endYear = DateUtils.addYears(startYear, 1);
+        DateTime startYear = new DateTime(Integer.parseInt(year), 1, 1, 0, 0);
+        DateTime endYear = startYear.plusYears(1);
 
         return (Long) sessionFactory.getCurrentSession().createCriteria(Application.class).setProjection(Projections.rowCount())
                 .add(Restrictions.eq("program", program)).add(Restrictions.between("createdTimestamp", startYear, endYear)).uniqueResult();
     }
 
     public Application getByApplicationNumber(String applicationNumber) {
-        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class)
-                .add(Restrictions.eq("applicationNumber", applicationNumber)).uniqueResult();
+        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class).add(Restrictions.eq("applicationNumber", applicationNumber))
+                .uniqueResult();
 
     }
 
@@ -160,10 +152,9 @@ public class ApplicationFormDAO {
 
     public Application getInProgressApplication(final User applicant, final Advert advert) {
         return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class).createAlias("state", "state", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("user", applicant))                
-                .add(Restrictions.eq(advert.getAdvertType().name().toLowerCase(), advert))
-                .add(Restrictions.eq("state.underAssessment", true)).addOrder(Order.desc("createdTimestamp"))
-                .addOrder(Order.desc("id")).setMaxResults(1).uniqueResult();
+                .add(Restrictions.eq("user", applicant)).add(Restrictions.eq(advert.getAdvertType().name().toLowerCase(), advert))
+                .add(Restrictions.eq("state.underAssessment", true)).addOrder(Order.desc("createdTimestamp")).addOrder(Order.desc("id")).setMaxResults(1)
+                .uniqueResult();
     }
 
     public Boolean getRaisesUrgentFlagForUser(Application application, User user) {

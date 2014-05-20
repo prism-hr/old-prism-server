@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
@@ -87,7 +86,7 @@ public class PersonalDetailsControllerTest {
 
     @Test
     public void returnAllEnabledEthnicities() {
-        List<Ethnicity> ethnicityList = Arrays.asList(new EthnicityBuilder().id(1).enabled(true).build(), new EthnicityBuilder().id(2).enabled(false).build());
+        List<Ethnicity> ethnicityList = Arrays.asList(new Ethnicity().withId(1), new Ethnicity().withId(2));
         EasyMock.expect(importedEntityService.getAllEthnicities()).andReturn(Collections.singletonList(ethnicityList.get(0)));
 
         replay();

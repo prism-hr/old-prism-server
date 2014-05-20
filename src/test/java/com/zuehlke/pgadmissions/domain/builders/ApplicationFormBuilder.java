@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
@@ -32,8 +33,8 @@ public class ApplicationFormBuilder {
     private Integer id;
     private User applicant;
     private Program program;
-    private Date createdTimestamp;
-    private Date submittedDate;
+    private DateTime createdTimestamp;
+    private DateTime submittedDate;
     private LocalDate closingDate;
     private LocalDate dueDate;
     private Boolean acceptedTerms;
@@ -173,12 +174,12 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder createdTimestamp(Date date) {
+    public ApplicationFormBuilder createdTimestamp(DateTime date) {
         this.createdTimestamp = date;
         return this;
     }
 
-    public ApplicationFormBuilder submittedDate(Date date) {
+    public ApplicationFormBuilder submittedDate(DateTime date) {
         this.submittedDate = date;
         return this;
     }

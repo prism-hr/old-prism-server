@@ -8,21 +8,17 @@ import java.io.StringWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import junit.framework.Assert;
 
 import org.hamcrest.CoreMatchers;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -62,14 +58,14 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     private SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder;
 
-    private Date recommendedStartDate;
+    private LocalDate recommendedStartDate;
 
     @Before
     public void prepare() throws ParseException {
         applicationForm = new ValidApplicationFormBuilder().build();
         requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
         SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
-        recommendedStartDate = format.parse("01-10-2014");
+        recommendedStartDate = new LocalDate(2014, 10, 1);
     }
 
     @Test
@@ -196,42 +192,10 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldBuildValidWebServiceRequestWithTOEFLEssaySection() throws JAXBException, DatatypeConfigurationException {
-        final DateTime dateInThePast = new DateTime(2013, 1, 1, 8, 0);
-        applicationForm.getProgramDetails().setStartDate(dateInThePast.toDate());
+        final LocalDate dateInThePast = new LocalDate(2013, 1, 1);
+        applicationForm.getProgramDetails().setStartDate(dateInThePast);
 
-        SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory()) {
-            @Override
-            protected XMLGregorianCalendar buildXmlDate(Date date) {
-                if (date != null) {
-                    GregorianCalendar gc = new GregorianCalendar();
-                    gc.setTimeInMillis(dateInThePast.toDate().getTime());
-                    return datatypeFactory.newXMLGregorianCalendar(gc);
-                }
-                return null;
-            }
-
-            @Override
-            protected XMLGregorianCalendar buildXmlDateYearOnly(String date) {
-                if (date != null) {
-                    XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
-                    xmlCalendar.setYear(dateInThePast.getYear());
-                    return xmlCalendar;
-                }
-                return null;
-            }
-
-            @Override
-            protected XMLGregorianCalendar buildXmlDateYearOnly(Date date) {
-                if (date != null) {
-                    Calendar cal = Calendar.getInstance();
-                    cal.setTime(dateInThePast.toDate());
-                    XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
-                    xmlCalendar.setYear(cal.get(Calendar.YEAR));
-                    return xmlCalendar;
-                }
-                return null;
-            }
-        };
+        SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
 
         applicationForm.getPersonalDetails().getLanguageQualification().setQualificationType(LanguageQualificationEnum.TOEFL);
 
@@ -248,43 +212,10 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldBuildValidWebServiceRequest() throws JAXBException, DatatypeConfigurationException {
-        final DateTime dateInThePast = new DateTime(2013, 1, 1, 8, 0);
-        applicationForm.getProgramDetails().setStartDate(dateInThePast.toDate());
+        final LocalDate dateInThePast = new LocalDate(2013, 1, 1);
+        applicationForm.getProgramDetails().setStartDate(dateInThePast);
 
-        SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory()) {
-            @Override
-            protected XMLGregorianCalendar buildXmlDate(Date date) {
-                if (date != null) {
-                    GregorianCalendar gc = new GregorianCalendar();
-                    gc.setTimeInMillis(dateInThePast.toDate().getTime());
-                    return datatypeFactory.newXMLGregorianCalendar(gc);
-                }
-                return null;
-            }
-
-            @Override
-            protected XMLGregorianCalendar buildXmlDateYearOnly(String date) {
-                if (date != null) {
-                    XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
-                    xmlCalendar.setYear(dateInThePast.getYear());
-                    return xmlCalendar;
-                }
-                return null;
-            }
-
-            @Override
-            protected XMLGregorianCalendar buildXmlDateYearOnly(Date date) {
-                if (date != null) {
-                    Calendar cal = Calendar.getInstance();
-                    cal.setTime(dateInThePast.toDate());
-                    XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
-                    xmlCalendar.setYear(cal.get(Calendar.YEAR));
-                    return xmlCalendar;
-                }
-                return null;
-            }
-        };
-
+        SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
         SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(applicationForm).build();
 
         JAXBContext context = JAXBContext.newInstance(SubmitAdmissionsApplicationRequest.class);
@@ -298,46 +229,14 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldBuildValidWebServiceRequestContainingAtasStatement() throws JAXBException, DatatypeConfigurationException {
-        final DateTime dateInThePast = new DateTime(2013, 1, 1, 8, 0);
-        applicationForm.getProgramDetails().setStartDate(dateInThePast.toDate());
+        final LocalDate dateInThePast = new LocalDate(2013, 1, 1);
+        applicationForm.getProgramDetails().setStartDate(dateInThePast);
         OfferRecommendedComment offerComment = new OfferRecommendedCommentBuilder().id(15).application(applicationForm).comment("").projectAbstract("abstract")
                 .recommendedConditionsAvailable(true).recommendedConditions("conditions").recommendedStartDate(recommendedStartDate).build();
         applicationForm.getApplicationComments().add(offerComment);
         applicationForm.getProgram().setRequireProjectDefinition(true);
 
-        SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory()) {
-            @Override
-            protected XMLGregorianCalendar buildXmlDate(Date date) {
-                if (date != null) {
-                    GregorianCalendar gc = new GregorianCalendar();
-                    gc.setTimeInMillis(dateInThePast.toDate().getTime());
-                    return datatypeFactory.newXMLGregorianCalendar(gc);
-                }
-                return null;
-            }
-
-            @Override
-            protected XMLGregorianCalendar buildXmlDateYearOnly(String date) {
-                if (date != null) {
-                    XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
-                    xmlCalendar.setYear(dateInThePast.getYear());
-                    return xmlCalendar;
-                }
-                return null;
-            }
-
-            @Override
-            protected XMLGregorianCalendar buildXmlDateYearOnly(Date date) {
-                if (date != null) {
-                    Calendar cal = Calendar.getInstance();
-                    cal.setTime(dateInThePast.toDate());
-                    XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
-                    xmlCalendar.setYear(cal.get(Calendar.YEAR));
-                    return xmlCalendar;
-                }
-                return null;
-            }
-        };
+        SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
         requestBuilder.isOverseasStudent(true);
 
         SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(applicationForm).build();
@@ -354,46 +253,14 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldBuildValidWebServiceRequestNotContainingAtasStatement() throws JAXBException, DatatypeConfigurationException {
-        final DateTime dateInThePast = new DateTime(2013, 1, 1, 8, 0);
-        applicationForm.getProgramDetails().setStartDate(dateInThePast.toDate());
+        final LocalDate dateInThePast = new LocalDate(2013, 1, 1);
+        applicationForm.getProgramDetails().setStartDate(dateInThePast);
         OfferRecommendedComment offerComment = new OfferRecommendedCommentBuilder().id(15).application(applicationForm).comment("").projectAbstract("abstract")
                 .recommendedConditionsAvailable(false).recommendedStartDate(recommendedStartDate).build();
         applicationForm.getApplicationComments().add(offerComment);
         applicationForm.getProgram().setRequireProjectDefinition(false);
 
-        SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory()) {
-            @Override
-            protected XMLGregorianCalendar buildXmlDate(Date date) {
-                if (date != null) {
-                    GregorianCalendar gc = new GregorianCalendar();
-                    gc.setTimeInMillis(dateInThePast.toDate().getTime());
-                    return datatypeFactory.newXMLGregorianCalendar(gc);
-                }
-                return null;
-            }
-
-            @Override
-            protected XMLGregorianCalendar buildXmlDateYearOnly(String date) {
-                if (date != null) {
-                    XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
-                    xmlCalendar.setYear(dateInThePast.getYear());
-                    return xmlCalendar;
-                }
-                return null;
-            }
-
-            @Override
-            protected XMLGregorianCalendar buildXmlDateYearOnly(Date date) {
-                if (date != null) {
-                    Calendar cal = Calendar.getInstance();
-                    cal.setTime(dateInThePast.toDate());
-                    XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
-                    xmlCalendar.setYear(cal.get(Calendar.YEAR));
-                    return xmlCalendar;
-                }
-                return null;
-            }
-        };
+        SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
         requestBuilder.isOverseasStudent(true);
 
         SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(applicationForm).build();
@@ -410,50 +277,18 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldBuildValidWebServiceRequestWithSupervisors() throws JAXBException, DatatypeConfigurationException {
-        final DateTime dateInThePast = new DateTime(2013, 1, 1, 8, 0);
+        final LocalDate dateInThePast = new LocalDate(2013, 1, 1);
 
         // suggested supervisors
         SuggestedSupervisor suggestedSupervisor1 = new SuggestedSupervisor().withUser(new User().withFirstName("Eugeniusz").withLastName("Kowalski"));
         SuggestedSupervisor suggestedSupervisor2 = new SuggestedSupervisor().withUser(new User().withFirstName("Genowefa").withLastName("Pigwa"));
         applicationForm.getProgramDetails().setSuggestedSupervisors(Arrays.asList(suggestedSupervisor1, suggestedSupervisor2));
-        applicationForm.getProgramDetails().setStartDate(dateInThePast.toDate());
+        applicationForm.getProgramDetails().setStartDate(dateInThePast);
 
         // agreed supervisor
         User primarySupervisorUser = new User().withFirstName("Franciszek").withLastName("Pieczka");
 
-        SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory()) {
-            @Override
-            protected XMLGregorianCalendar buildXmlDate(Date date) {
-                if (date != null) {
-                    GregorianCalendar gc = new GregorianCalendar();
-                    gc.setTimeInMillis(dateInThePast.toDate().getTime());
-                    return datatypeFactory.newXMLGregorianCalendar(gc);
-                }
-                return null;
-            }
-
-            @Override
-            protected XMLGregorianCalendar buildXmlDateYearOnly(String date) {
-                if (date != null) {
-                    XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
-                    xmlCalendar.setYear(dateInThePast.getYear());
-                    return xmlCalendar;
-                }
-                return null;
-            }
-
-            @Override
-            protected XMLGregorianCalendar buildXmlDateYearOnly(Date date) {
-                if (date != null) {
-                    Calendar cal = Calendar.getInstance();
-                    cal.setTime(dateInThePast.toDate());
-                    XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
-                    xmlCalendar.setYear(cal.get(Calendar.YEAR));
-                    return xmlCalendar;
-                }
-                return null;
-            }
-        };
+        SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
         requestBuilder.isOverseasStudent(true);
         requestBuilder.primarySupervisor(primarySupervisorUser);
 

@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,12 +14,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.Title;
@@ -50,7 +49,7 @@ public class PersonalDetails implements FormSectionObject, Serializable {
     @Column(name = "english_first_language")
     private Boolean englishFirstLanguage;
 
-    @Column(name = "language_qualification_available")
+    @Transient
     private Boolean languageQualificationAvailable;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -61,7 +60,7 @@ public class PersonalDetails implements FormSectionObject, Serializable {
     @Column(name = "requires_visa")
     private Boolean requiresVisa;
 
-    @Column(name = "passport_available")
+    @Transient
     private Boolean passportAvailable;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -85,8 +84,8 @@ public class PersonalDetails implements FormSectionObject, Serializable {
     private Gender gender;
 
     @Column(name = "date_of_birth")
-    @Temporal(TemporalType.DATE)
-    private Date dateOfBirth;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate dateOfBirth;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "country_id")
@@ -147,11 +146,11 @@ public class PersonalDetails implements FormSectionObject, Serializable {
         this.gender = gender;
     }
 
-    public Date getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -268,6 +267,101 @@ public class PersonalDetails implements FormSectionObject, Serializable {
 
     public void setLanguageQualification(LanguageQualification languageQualification) {
         this.languageQualification = languageQualification;
+    }
+
+    public PersonalDetails withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public PersonalDetails withApplication(Application application) {
+        this.application = application;
+        return this;
+    }
+
+    public PersonalDetails withTitle(Title title) {
+        this.title = title;
+        return this;
+    }
+
+    public PersonalDetails withGender(Gender gender) {
+        this.gender = gender;
+        return this;
+    }
+
+    public PersonalDetails withDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+        return this;
+    }
+
+    public PersonalDetails withCountry(Country country) {
+        this.country = country;
+        return this;
+    }
+
+    public PersonalDetails withFirstNationality(Language firstNationality) {
+        this.firstNationality = firstNationality;
+        return this;
+    }
+
+    public PersonalDetails withSecondNationality(Language secondNationality) {
+        this.secondNationality = secondNationality;
+        return this;
+    }
+
+    public PersonalDetails withEnglishFirstLanguage(Boolean englishFirstLanguage) {
+        this.englishFirstLanguage = englishFirstLanguage;
+        return this;
+    }
+
+    public PersonalDetails withLanguageQualificationAvailable(Boolean flag) {
+        this.languageQualificationAvailable = flag;
+        return this;
+    }
+
+    public PersonalDetails withLanguageQualification(LanguageQualification languageQualification) {
+        this.languageQualification = languageQualification;
+        return this;
+    }
+
+    public PersonalDetails withResidenceCountry(Domicile residenceCountry) {
+        this.residenceCountry = residenceCountry;
+        return this;
+    }
+
+    public PersonalDetails withRequiresVisa(Boolean requiresVisa) {
+        this.requiresVisa = requiresVisa;
+        return this;
+    }
+
+    public PersonalDetails withPassportAvailable(Boolean passportAvailable) {
+        this.passportAvailable = passportAvailable;
+        return this;
+    }
+
+    public PersonalDetails withPassportInformation(Passport passportInformation) {
+        this.passport = passportInformation;
+        return this;
+    }
+
+    public PersonalDetails withPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+        return this;
+    }
+
+    public PersonalDetails withMessenger(String messenger) {
+        this.messenger = messenger;
+        return this;
+    }
+
+    public PersonalDetails withEthnicity(Ethnicity eth) {
+        ethnicity = eth;
+        return this;
+    }
+
+    public PersonalDetails withDisability(Disability dis) {
+        this.disability = dis;
+        return this;
     }
 
 }

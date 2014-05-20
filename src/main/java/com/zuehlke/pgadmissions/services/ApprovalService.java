@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -103,7 +102,7 @@ public class ApprovalService {
         AssignSupervisorsComment approvalComment = new AssignSupervisorsComment();
         Comment latestApprovalComment = applicationsService.getLatestStateChangeComment(application, ApplicationFormAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
         Project project = application.getProject();
-        Date startDate = application.getProgramDetails().getStartDate();
+        LocalDate startDate = application.getProgramDetails().getStartDate();
         if (latestApprovalComment != null) {
             List<CommentAssignedUser> supervisors = commentService.getNotDecliningSupervisorsFromLatestApprovalStage(application);
             approvalComment.getAssignedUsers().addAll(supervisors);

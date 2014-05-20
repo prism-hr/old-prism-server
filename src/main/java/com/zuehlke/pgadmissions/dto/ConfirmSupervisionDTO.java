@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dto;
 
-import java.util.Date;
+import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.validators.ATASConstraint;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
@@ -19,7 +19,7 @@ public class ConfirmSupervisionDTO {
     @ATASConstraint
     private String projectAbstract;
 
-    private Date recommendedStartDate;
+    private LocalDate recommendedStartDate;
 
     private Boolean recommendedConditionsAvailable;
     
@@ -68,11 +68,11 @@ public class ConfirmSupervisionDTO {
         this.projectAbstract = projectAbstract;
     }
 
-    public Date getRecommendedStartDate() {
+    public LocalDate getRecommendedStartDate() {
         return recommendedStartDate;
     }
 
-    public void setRecommendedStartDate(Date recommendedStartDate) {
+    public void setRecommendedStartDate(LocalDate recommendedStartDate) {
         this.recommendedStartDate = recommendedStartDate;
     }
 

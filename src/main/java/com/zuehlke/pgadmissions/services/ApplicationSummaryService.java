@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,7 +51,7 @@ public class ApplicationSummaryService {
 
     private void addApplicationProperties(final Application form, final Map<String, String> result) {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-        Date updatedTimeStamp = commentService.getLastComment(form).getCreatedTimestamp();
+        DateTime updatedTimeStamp = commentService.getLastComment(form).getCreatedTimestamp();
         ApplicationDescriptor applicationDescriptor = applicationsService.getApplicationDescriptorForUser(form, userService.getCurrentUser());
 
         result.put("applicationSubmissionDate", dateFormat.format(form.getSubmittedTimestamp()));
@@ -113,27 +113,9 @@ public class ApplicationSummaryService {
     }
 
     private void addEmployments(final Application form, Map<String, String> result) {
-        List<EmploymentPosition> employments = form.getEmploymentPositions();
-        if (employments.isEmpty()) {
-            result.put("mostRecentEmployment", NONE_PROVIDED);
-            return;
-        }
-
-        EmploymentPosition mostRecentEmployment = Collections.max(employments, new Comparator<EmploymentPosition>() {
-            @Override
-            public int compare(EmploymentPosition o1, EmploymentPosition o2) {
-                Date e1Date = o1.getEndDate();
-                Date e2Date = o2.getEndDate();
-                if (e1Date == null) {
-                    return -1;
-                }
-                if (e2Date == null) {
-                    return 1;
-                }
-                return e1Date.compareTo(e2Date);
-            }
-        });
-        result.put("mostRecentEmployment", mostRecentEmployment.getEmployerName());
+        // TODO implement query
+        EmploymentPosition recentEmployment = null;
+        result.put("mostRecentEmployment", recentEmployment.getEmployerName());
     }
 
     private void addFundings(final Application form, Map<String, String> result, final Gson gson) {

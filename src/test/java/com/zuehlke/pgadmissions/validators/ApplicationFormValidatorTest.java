@@ -6,13 +6,13 @@ import static org.easymock.EasyMock.reset;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 
 import junit.framework.Assert;
 
 import org.easymock.EasyMock;
+import org.joda.time.LocalDate;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,8 +38,6 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.builders.AdditionalInformationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -168,7 +166,8 @@ public class ApplicationFormValidatorTest {
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(application, "application");
 
         EasyMock.reset(programService);
-        EasyMock.expect(programService.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Collections.<ProgramInstance>emptyList());
+        EasyMock.expect(programService.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(
+                Collections.<ProgramInstance> emptyList());
 
         EasyMock.replay(programService);
         applicationFormValidator.validate(application, mappingResult);
@@ -192,13 +191,12 @@ public class ApplicationFormValidatorTest {
     @Before
     public void setup() throws ParseException {
         program = new Program().withState(new State().withId(PrismState.PROGRAM_APPROVED));
-        programInstance = new ProgramInstanceBuilder().id(1).studyOption("1", "Full-time")
-                .applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).build();
+        programInstance = new ProgramInstance().withStudyOption("1", "Full-time").withApplicationDeadline(new LocalDate(2030, 8, 6));
         program.getInstances().addAll(Arrays.asList(programInstance));
-        personalDetails = new PersonalDetailsBuilder().id(1).build();
-        programmeDetails = new ProgrammeDetailsBuilder().studyOption(new StudyOption("1", "Full-time")).id(2).build();
+        personalDetails = new PersonalDetails();
+        programmeDetails = new ProgrammeDetailsBuilder().studyOption(new StudyOption("1", "Full-time")).build();
         address = new ApplicationAddress();
-        additionalInformation = new AdditionalInformationBuilder().id(3).build();
+        additionalInformation = new AdditionalInformationBuilder().build();
         document = new ApplicationDocument().withPersonalStatement(new Document());
 
         application = new Application() //

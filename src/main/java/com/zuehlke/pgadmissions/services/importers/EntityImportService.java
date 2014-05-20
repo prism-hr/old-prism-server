@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services.importers;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
-import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -11,6 +10,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.exception.ConstraintViolationException;
+import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
@@ -147,8 +147,8 @@ public class EntityImportService {
             // create new study option if does not exist yet
             StudyOption studyOption = thisBean.getOrCreateStudyOption(modeOfAttendance);
 
-            Date startDate = dtFormatter.parseDateTime(occurrence.getStartDate()).toDate();
-            Date endDate = dtFormatter.parseDateTime(occurrence.getEndDate()).toDate();
+            LocalDate startDate = dtFormatter.parseLocalDate(occurrence.getStartDate());
+            LocalDate endDate = dtFormatter.parseLocalDate(occurrence.getEndDate());
             ProgramInstance programInstance = new ProgramInstance().withProgram(program).withIdentifier(occurrence.getIdentifier())
                     .withAcademicYear(occurrence.getAcademicYear()).withStudyOption(studyOption).withApplicationStartDate(startDate)
                     .withApplicationDeadline(endDate).withEnabled(true);

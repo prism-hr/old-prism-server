@@ -1,8 +1,10 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Application;
@@ -15,17 +17,17 @@ public class OfferRecommendedCommentBuilder {
     private Application applicationForm;
     private String comment;
     private Integer id;
-    private Date createdTimeStamp;
+    private DateTime createdTimeStamp;
     private User user;
 
     private String projectTitle;
     private String projectAbstract;
-    private Date recommendedStartDate;
+    private LocalDate recommendedStartDate;
     private Boolean recommendedConditionsAvailable;
     private String recommendedConditions;
     private List<CommentAssignedUser> assignedUsers = Lists.newArrayList();
 
-    public OfferRecommendedCommentBuilder createdTimeStamp(Date createdTimeStamp) {
+    public OfferRecommendedCommentBuilder createdTimeStamp(DateTime createdTimeStamp) {
         this.createdTimeStamp = createdTimeStamp;
         return this;
     }
@@ -40,7 +42,7 @@ public class OfferRecommendedCommentBuilder {
         return this;
     }
 
-    public OfferRecommendedCommentBuilder recommendedStartDate(Date recommendedStartDate) {
+    public OfferRecommendedCommentBuilder recommendedStartDate(LocalDate recommendedStartDate) {
         this.recommendedStartDate = recommendedStartDate;
         return this;
     }

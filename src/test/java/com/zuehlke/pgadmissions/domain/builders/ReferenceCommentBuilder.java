@@ -2,8 +2,9 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
+
+import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -25,9 +26,9 @@ public class ReferenceCommentBuilder {
     private List<Score> scores = new ArrayList<Score>();
 
     private Application application;
-    private Date date;
+    private DateTime date;
 
-    public ReferenceCommentBuilder date(Date date) {
+    public ReferenceCommentBuilder date(DateTime date) {
         this.date = date;
         return this;
     }

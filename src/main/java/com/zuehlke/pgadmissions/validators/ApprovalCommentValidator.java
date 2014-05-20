@@ -1,8 +1,7 @@
 package com.zuehlke.pgadmissions.validators;
 
-import java.util.Date;
-
 import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -40,9 +39,9 @@ public class ApprovalCommentValidator extends AbstractValidator {
 
         // recommended offer validation
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedStartDate", EMPTY_FIELD_ERROR_MESSAGE);
-        Date startDate = approvalComment.getRecommendedStartDate();
-        Date today = new Date();
-        if (startDate != null && !startDate.after(today)) {
+        LocalDate startDate = approvalComment.getRecommendedStartDate();
+        LocalDate today = new LocalDate();
+        if (startDate != null && !startDate.isAfter(today)) {
             errors.rejectValue("recommendedStartDate", "date.field.notfuture");
         }
 

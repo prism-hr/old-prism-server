@@ -18,6 +18,9 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
@@ -52,13 +55,13 @@ public class EmploymentPosition implements Serializable, FormSectionObject {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 250)
     private String remit;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "start_date")
-    private Date startDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate startDate;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "end_date")
-    private Date endDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate endDate;
 
     @Transient
     private boolean acceptedTerms;
@@ -103,19 +106,19 @@ public class EmploymentPosition implements Serializable, FormSectionObject {
         this.remit = remit;
     }
 
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
@@ -179,12 +182,12 @@ public class EmploymentPosition implements Serializable, FormSectionObject {
         return this;
     }
     
-    public EmploymentPosition withStartDate(Date startDate) {
+    public EmploymentPosition withStartDate(LocalDate startDate) {
         this.startDate = startDate;
         return this;
     }
     
-    public EmploymentPosition withEndDate(Date endDate) {
+    public EmploymentPosition withEndDate(LocalDate endDate) {
         this.endDate = endDate;
         return this;
     }

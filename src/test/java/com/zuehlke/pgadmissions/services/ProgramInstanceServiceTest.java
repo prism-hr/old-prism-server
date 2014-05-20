@@ -14,6 +14,7 @@ import static org.unitils.easymock.EasyMockUnitils.verify;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.context.ApplicationContext;
@@ -28,7 +29,6 @@ import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class ProgramInstanceServiceTest {
@@ -53,12 +53,6 @@ public class ProgramInstanceServiceTest {
     private ProgramDAO programDAO;
 
     @Test
-    public void shouldReturnTrueForIsActiveIfProgramInstanceIsEnabled() {
-        ProgramInstance programInstance = new ProgramInstanceBuilder().enabled(true).build();
-        assertTrue(service.isActive(programInstance));
-    }
-
-    @Test
     public void shouldGetDistinctStudyOptions() {
         List<Object[]> options = Lists.newArrayList(new Object[] { "code1", "option1" }, new Object[] { "code2", "option2" });
 
@@ -78,7 +72,7 @@ public class ProgramInstanceServiceTest {
 
         expect(applicationContext.getBean(ProgramInstanceService.class)).andReturn(thisBean);
         expect(thisBean.getStudyOptions("F,P")).andReturn(Lists.newArrayList(fullTimeOption, partTimeOption));
-        expect(thisBean.getFirstProgramInstanceStartYear(isA(DateTime.class))).andReturn(2013);
+        expect(thisBean.getFirstProgramInstanceStartYear(isA(LocalDate.class))).andReturn(2013);
         expect(thisBean.createOrUpdateProgramInstance(program, 2013, fullTimeOption)).andReturn(new ProgramInstance());
         expect(thisBean.createOrUpdateProgramInstance(program, 2013, partTimeOption)).andReturn(new ProgramInstance());
         expect(thisBean.createOrUpdateProgramInstance(program, 2014, fullTimeOption)).andReturn(new ProgramInstance());
@@ -95,14 +89,14 @@ public class ProgramInstanceServiceTest {
 
     @Test
     public void shouldGetCustomProgramInstanceStartYearWhenBeforeSeptemberMonday() {
-        DateTime now = new DateTime(2014, 1, 22, 0, 0);
+        LocalDate now = new LocalDate(2014, 1, 22);
         int startYear = service.getFirstProgramInstanceStartYear(now);
         assertEquals(2013, startYear);
     }
 
     @Test
     public void shouldGetCustomProgramInstanceStartYearWhenAfterSeptemberMonday() {
-        DateTime now = new DateTime(2014, 9, 22, 0, 0);
+        LocalDate now = new LocalDate(2014, 9, 22);
         int startYear = service.getFirstProgramInstanceStartYear(now);
         assertEquals(2014, startYear);
     }
@@ -135,10 +129,10 @@ public class ProgramInstanceServiceTest {
     public void shouldUpdateProgramInstance() {
         ProgramInstanceService thisBean = EasyMockUnitils.createMock(ProgramInstanceService.class);
         Program program = new Program();
-        DateTime monday2013 = new DateTime(2013, 9, 23, 0, 0);
-        DateTime monday2014 = new DateTime(2014, 9, 22, 0, 0);
+        LocalDate monday2013 = new LocalDate(2013, 9, 23);
+        LocalDate monday2014 = new LocalDate(2014, 9, 22);
         StudyOption fullTimeOption = new StudyOption("F", "Full-time");
-        ProgramInstance programInstance = new ProgramInstanceBuilder().program(program).build();
+        ProgramInstance programInstance = new ProgramInstance().withProgram(program);
 
         expect(applicationContext.getBean(ProgramInstanceService.class)).andReturn(thisBean);
         expect(thisBean.findPenultimateSeptemberMonday(2013)).andReturn(monday2013);
@@ -157,8 +151,8 @@ public class ProgramInstanceServiceTest {
     public void shouldCreateProgramInstance() {
         ProgramInstanceService thisBean = EasyMockUnitils.createMock(ProgramInstanceService.class);
         Program program = new Program();
-        DateTime monday2013 = new DateTime(2013, 9, 23, 0, 0);
-        DateTime monday2014 = new DateTime(2014, 9, 22, 0, 0);
+        LocalDate monday2013 = new LocalDate(2013, 9, 23);
+        LocalDate monday2014 = new LocalDate(2014, 9, 22);
         StudyOption fullTimeOption = new StudyOption("F", "Full-time");
 
         expect(applicationContext.getBean(ProgramInstanceService.class)).andReturn(thisBean);
@@ -173,7 +167,7 @@ public class ProgramInstanceServiceTest {
         assertThat(program.getInstances(), contains(returned));
     }
 
-    private void assertProgramInstance(ProgramInstance programInstance, Program program, DateTime startDate, String academicYear, DateTime deadline,
+    private void assertProgramInstance(ProgramInstance programInstance, Program program, LocalDate startDate, String academicYear, LocalDate deadline,
             StudyOption studyOption) {
         assertEquals(startDate.toDate(), programInstance.getApplicationStartDate());
         assertEquals(academicYear, programInstance.getAcademicYear());

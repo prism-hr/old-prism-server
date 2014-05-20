@@ -47,7 +47,6 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -686,7 +685,7 @@ public class PorticoWebServiceIT {
         // we need to append another referee for this to work
         Referee referee = randomApplicationForm.getReferees().get(0);
         String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon\n\nW1T 4HD\nUnited Kingdom";
-        Domicile domicile = new DomicileBuilder().id(Integer.MAX_VALUE).code("XK").name("United Kingdom").enabled(true).build();
+        Domicile domicile = new Domicile().withId(Integer.MAX_VALUE).withCode("XK").withName("United Kingdom");
         ReferenceComment referenceComment1 = new ReferenceCommentBuilder().comment("Hello World").providedBy(referee.getUser()).suitableForProgramme(true)
                 .suitableForUcl(true).user(referee.getUser()).build();
         Referee refereeOne = new RefereeBuilder()

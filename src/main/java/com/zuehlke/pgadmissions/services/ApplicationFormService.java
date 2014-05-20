@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,7 +131,7 @@ public class ApplicationFormService {
             application.setDueDate(getDueDateForApplication(application));
             application.setClosingDate(getClosingDateForApplication(application));
         case APPLICATION_VALIDATION:
-            application.setSubmittedTimestamp(new LocalDate().toDate());
+            application.setSubmittedTimestamp(new DateTime());
             application.setDueDate(getDueDateForApplication(application));
         case APPLICATION_INTERVIEW:
             application.setDueDate(getDueDateForApplication(application));
@@ -240,6 +241,7 @@ public class ApplicationFormService {
     private Application createApplication(User applicant, Advert advert) {
         String applicationNumber = generateApplicationNumber(advert.getProgram());
         Application application = new Application();
+        application.setCreatedTimestamp(new DateTime());
         application.setUser(applicant);
         application.setProgram(advert.getProgram());
         application.setProject(advert.getProject());

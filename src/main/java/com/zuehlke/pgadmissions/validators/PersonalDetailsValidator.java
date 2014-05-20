@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.validators;
 
-import java.util.Date;
-
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
@@ -44,8 +42,7 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
             super.addExtraValidation(target, errors);
         }
 
-        LocalDate baseline = new LocalDate();
-        Date today = baseline.toDate();
+        LocalDate today = new LocalDate();
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "title", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "gender", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phoneNumber", EMPTY_FIELD_ERROR_MESSAGE);
@@ -55,10 +52,10 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceCountry", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateOfBirth", EMPTY_FIELD_ERROR_MESSAGE);
         String dob = personalDetail.getDateOfBirth() == null ? "" : personalDetail.getDateOfBirth().toString();
-        if (StringUtils.isNotBlank(dob) && personalDetail.getDateOfBirth().after(today)) {
+        if (StringUtils.isNotBlank(dob) && personalDetail.getDateOfBirth().isAfter(today)) {
             errors.rejectValue("dateOfBirth", "date.field.notpast");
         } else if (personalDetail.getDateOfBirth() != null) {
-            int age = Years.yearsBetween(new DateTime(personalDetail.getDateOfBirth()).withTimeAtStartOfDay(), new DateTime()).getYears();
+            int age = Years.yearsBetween(personalDetail.getDateOfBirth(), new LocalDate()).getYears();
             if (!(age >= 10 && age <= 80)) {
                 DateTime now = new DateTime().withTimeAtStartOfDay();
                 DateTime tenYearsAgo = now.toDateTime().minusYears(10);
@@ -86,7 +83,7 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
 
         if (BooleanUtils.isTrue(personalDetail.getPassportAvailable()) && BooleanUtils.isTrue(personalDetail.getRequiresVisa())) {
             try {
-                errors.pushNestedPath("passportInformation");
+                errors.pushNestedPath("passport");
                 ValidationUtils.invokeValidator(passportInformationValidator, personalDetail.getPassport(), errors);
             } finally {
                 errors.popNestedPath();

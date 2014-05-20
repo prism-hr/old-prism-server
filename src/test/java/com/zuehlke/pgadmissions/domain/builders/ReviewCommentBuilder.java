@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
@@ -17,7 +17,7 @@ public class ReviewCommentBuilder {
     private Application applicationForm;
     private String content;
     private Integer id;
-    private Date createdTimeStamp;
+    private DateTime createdTimeStamp;
     private User user;
 
     public ReviewCommentBuilder willingToWorkWithApplicant(Boolean willingToWorkWithApplicant) {
@@ -25,7 +25,7 @@ public class ReviewCommentBuilder {
         return this;
     }
 
-    public ReviewCommentBuilder createdTimeStamp(Date createdTimeStamp) {
+    public ReviewCommentBuilder createdTimeStamp(DateTime createdTimeStamp) {
         this.createdTimeStamp = createdTimeStamp;
         return this;
     }

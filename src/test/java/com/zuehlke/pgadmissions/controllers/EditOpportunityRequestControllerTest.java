@@ -43,7 +43,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
@@ -81,7 +81,7 @@ public class EditOpportunityRequestControllerTest {
 
     @Mock
     @InjectIntoByType
-    private DatePropertyEditor datePropertyEditor;
+    private LocalDatePropertyEditor datePropertyEditor;
 
     @Mock
     @InjectIntoByType

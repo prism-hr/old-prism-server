@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
@@ -92,7 +92,7 @@ public class ApprovalControllerTest {
 
     @Mock
     @InjectIntoByType
-    private DatePropertyEditor datePropertyEditorMock;
+    private LocalDatePropertyEditor datePropertyEditorMock;
 
     @Mock
     @InjectIntoByType

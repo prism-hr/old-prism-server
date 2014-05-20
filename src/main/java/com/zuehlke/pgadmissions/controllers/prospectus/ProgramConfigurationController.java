@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
@@ -85,7 +85,7 @@ public class ProgramConfigurationController {
     private AdvertClosingDateValidator closingDateValidator;
 
     @Autowired
-    private DatePropertyEditor datePropertyEditor;
+    private LocalDatePropertyEditor datePropertyEditor;
 
     @Autowired
     private ProgramPropertyEditor programPropertyEditor;

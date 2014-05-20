@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
-import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
@@ -77,7 +77,7 @@ public class CreateNewOpportunityControllerTest {
 
 	@Mock
 	@InjectIntoByType
-	private DatePropertyEditor datePropertyEditor;
+	private LocalDatePropertyEditor datePropertyEditor;
 
 	@Mock
 	@InjectIntoByType

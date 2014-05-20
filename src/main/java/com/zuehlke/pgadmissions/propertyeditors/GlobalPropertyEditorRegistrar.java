@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.propertyeditors;
 
+import org.joda.time.LocalDate;
 import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.beans.PropertyEditorRegistry;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
@@ -21,6 +23,10 @@ public class GlobalPropertyEditorRegistrar implements PropertyEditorRegistrar {
 
     private EntityPropertyEditor<Domicile> domicilePropertyEditor;
 
+    private StringTrimmerEditor stringTrimmerEditor;
+
+    private LocalDatePropertyEditor localDatePropertyEditor;
+
     @Override
     public void registerCustomEditors(PropertyEditorRegistry registry) {
         registry.registerCustomEditor(Language.class, languagePropertyEditor);
@@ -28,6 +34,8 @@ public class GlobalPropertyEditorRegistrar implements PropertyEditorRegistrar {
         registry.registerCustomEditor(Disability.class, disabilityPropertyEditor);
         registry.registerCustomEditor(Ethnicity.class, ethnicityPropertyEditor);
         registry.registerCustomEditor(Domicile.class, domicilePropertyEditor);
+        registry.registerCustomEditor(String.class, stringTrimmerEditor);
+        registry.registerCustomEditor(LocalDate.class, localDatePropertyEditor);
     }
 
     public void setCountryPropertyEditor(EntityPropertyEditor<Country> countryPropertyEditor) {
@@ -50,6 +58,12 @@ public class GlobalPropertyEditorRegistrar implements PropertyEditorRegistrar {
         this.domicilePropertyEditor = domicilePropertyEditor;
     }
 
-    
-    
+    public void setStringTrimmerEditor(StringTrimmerEditor stringTrimmerEditor) {
+        this.stringTrimmerEditor = stringTrimmerEditor;
+    }
+
+    public void setLocalDatePropertyEditor(LocalDatePropertyEditor localDatePropertyEditor) {
+        this.localDatePropertyEditor = localDatePropertyEditor;
+    }
+
 }

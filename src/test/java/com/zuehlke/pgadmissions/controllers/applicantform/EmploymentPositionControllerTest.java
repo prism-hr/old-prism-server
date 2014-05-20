@@ -7,7 +7,7 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
@@ -27,7 +27,7 @@ public class EmploymentPositionControllerTest {
 
     @Mock
     @InjectIntoByType
-    private DatePropertyEditor datePropertyEditor;
+    private LocalDatePropertyEditor datePropertyEditor;
 
     @Mock
     @InjectIntoByType

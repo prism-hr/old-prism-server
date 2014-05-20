@@ -123,6 +123,14 @@
         <constructor-arg value="com.zuehlke.pgadmissions.domain.Domicile" />
       </bean>
     </property>
+    <property name="stringTrimmerEditor">
+      <bean class="org.springframework.beans.propertyeditors.StringTrimmerEditor">
+        <constructor-arg value="true" />
+      </bean>
+    </property>
+    <property name="localDatePropertyEditor">
+      <bean class="com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor" />
+    </property>
   </bean>
 
 </beans>

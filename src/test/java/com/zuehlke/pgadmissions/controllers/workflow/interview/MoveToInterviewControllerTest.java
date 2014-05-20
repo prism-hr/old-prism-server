@@ -6,7 +6,7 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -35,7 +35,7 @@ public class MoveToInterviewControllerTest {
 
     @Mock
     @InjectIntoByType
-    private DatePropertyEditor datePropertyEditorMock;
+    private LocalDatePropertyEditor datePropertyEditorMock;
 
     @Mock
     @InjectIntoByType

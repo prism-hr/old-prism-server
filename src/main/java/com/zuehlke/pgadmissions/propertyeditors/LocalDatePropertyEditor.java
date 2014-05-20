@@ -1,19 +1,21 @@
 package com.zuehlke.pgadmissions.propertyeditors;
 
 import java.beans.PropertyEditorSupport;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DatePropertyEditor extends PropertyEditorSupport {
-    
-    private static final Logger log = LoggerFactory.getLogger(DatePropertyEditor.class);
+public class LocalDatePropertyEditor extends PropertyEditorSupport {
+
+    private static final Logger log = LoggerFactory.getLogger(LocalDatePropertyEditor.class);
+
+    private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MMM-yyyy");
 
     @Override
     public void setAsText(String strDate) throws IllegalArgumentException {
@@ -21,13 +23,14 @@ public class DatePropertyEditor extends PropertyEditorSupport {
             setValue(null);
             return;
         }
-        
+
         try {
-            setValue(DateUtils.parseDate(strDate, new String[] {"dd-MMM-yyyy", "dd MMM yyyy"}));
-        } catch (ParseException e) {
+            setValue(formatter.parseLocalDate(strDate));
+        } catch (IllegalArgumentException e) {
             log.error("Error parsing date: " + strDate, e);
             setValue(null);
         }
+
     }
 
     @Override
@@ -35,6 +38,6 @@ public class DatePropertyEditor extends PropertyEditorSupport {
         if (getValue() == null) {
             return null;
         }
-        return new SimpleDateFormat("dd-MMM-yyyy").format(getValue());
+        return formatter.print((LocalDate) getValue());
     }
 }

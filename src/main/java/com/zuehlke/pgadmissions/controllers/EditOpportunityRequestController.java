@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
@@ -70,7 +70,7 @@ public class EditOpportunityRequestController {
     private ProgramInstanceService programInstanceService;
 
     @Autowired
-    private DatePropertyEditor datePropertyEditor;
+    private LocalDatePropertyEditor datePropertyEditor;
 
     @Autowired
     private ApplicationContext applicationContext;

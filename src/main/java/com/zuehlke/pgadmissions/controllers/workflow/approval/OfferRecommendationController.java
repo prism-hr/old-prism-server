@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.OfferRecommendationService;
@@ -60,7 +60,7 @@ public class OfferRecommendationController {
     private OfferRecommendedCommentValidator offerRecommendedCommentValidator;
 
     @Autowired
-    private DatePropertyEditor datePropertyEditor;
+    private LocalDatePropertyEditor datePropertyEditor;
 
     @Autowired
     private ProgramInstanceService programInstanceService;

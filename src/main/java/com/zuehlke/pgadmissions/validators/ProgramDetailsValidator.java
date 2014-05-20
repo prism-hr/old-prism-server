@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.validators;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -59,7 +59,7 @@ public class ProgramDetailsValidator extends FormSectionObjectValidator implemen
                 errors.rejectValue("startDate", "programmeDetails.startDate.invalid", new Object[] { earliestStartDate.toString("dd-MMM-yyyy"),
                         latestStartDate.toString("dd-MMM-yyyy") }, "");
             }
-        } else if (programDetail.getStartDate() != null && programDetail.getStartDate().before(new Date())) {
+        } else if (programDetail.getStartDate() != null && !programDetail.getStartDate().isAfter(new LocalDate())) {
             errors.rejectValue("startDate", "date.field.notfuture");
         }
 

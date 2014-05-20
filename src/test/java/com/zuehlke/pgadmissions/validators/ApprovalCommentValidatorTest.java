@@ -1,11 +1,9 @@
 package com.zuehlke.pgadmissions.validators;
 
 import static org.junit.Assert.assertTrue;
-
-import java.util.Calendar;
-
 import junit.framework.Assert;
 
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -77,10 +75,7 @@ public class ApprovalCommentValidatorTest {
     
     @Test
     public void shouldRejectIfStartDateIsInThePast() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, -1);
-
-        approvalComment.setRecommendedStartDate(calendar.getTime());
+        approvalComment.setRecommendedStartDate(new LocalDate().minusDays(1));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalComment, "approvalRound");
         approvalCommentValidator.validate(approvalComment, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -155,9 +150,6 @@ public class ApprovalCommentValidatorTest {
 
     @Before
     public void setup() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-
 //        Supervisor supervisor1 = new SupervisorBuilder().id(4).build();
 //        Supervisor supervisor2 = new SupervisorBuilder().id(5).isPrimary(true).build();
         Application application = new ApplicationFormBuilder().id(2).build();
@@ -167,7 +159,7 @@ public class ApprovalCommentValidatorTest {
                 .projectDescriptionAvailable(true)//
                 .projectTitle("title")//
                 .projectAbstract("abstract")//
-                .recommendedStartDate(calendar.getTime())//
+                .recommendedStartDate(new LocalDate().plusDays(1))//
                 .recommendedConditionsAvailable(true)//
                 .recommendedConditions("conditions")//
                 .build();

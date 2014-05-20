@@ -110,17 +110,6 @@ public class RoleService {
         return roleDAO.getUserRole(user, authority);
     }
 
-    public PrismScope getEnclosingScope(Authority authority, PrismScope currentScope) {
-        String roleName = authority.name();
-        String scopeName = roleName.substring(0, roleName.indexOf('_')).toLowerCase();
-
-        try {
-            return (PrismScope) PropertyUtils.getSimpleProperty(currentScope, scopeName);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public List<RoleTransition> getRoleTransitions(StateTransition stateTransition, Role invokingRole) {
         return roleDAO.getRoleTransitions(stateTransition, invokingRole);
     }

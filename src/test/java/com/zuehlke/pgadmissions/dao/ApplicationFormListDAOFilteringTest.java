@@ -7,12 +7,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -61,13 +61,13 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
     private Application app6InReview;
 
-    private Date submissionDate;
+    private DateTime submissionDate;
 
-    private Date lastEditedDate;
+    private DateTime lastEditedDate;
 
-    private Date searchTermDateForLastEdited;
+    private LocalDate searchTermDateForLastEdited;
 
-    private Date searchTermDateForSubmission;
+    private LocalDate searchTermDateForSubmission;
 
     private Role role;
 
@@ -104,26 +104,26 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
         sessionFactory.getCurrentSession().flush();
 
-        lastEditedDate = new GregorianCalendar(2011, 4, 7, 19, 33).getTime();
-        submissionDate = new GregorianCalendar(2011, 3, 7, 17, 28).getTime();
+        lastEditedDate = new DateTime(2011, 4, 7, 19, 33);
+        submissionDate = new DateTime(2011, 3, 7, 17, 28);
 
-        searchTermDateForLastEdited = new GregorianCalendar(2011, 4, 9).getTime();
-        searchTermDateForSubmission = new GregorianCalendar(2011, 3, 9).getTime();
+        searchTermDateForLastEdited = new LocalDate(2011, 4, 9);
+        searchTermDateForSubmission = new LocalDate(2011, 3, 9);
 
         program = testObjectProvider.getEnabledProgram();
 
         app1InApproval = new Application().withProgram(program).withUser(applicant).withState(new State().withId(PrismState.APPLICATION_APPROVAL))
-                .withApplicationNumber("app1").withSubmittedTimestamp(DateUtils.addDays(submissionDate, 0));
+                .withApplicationNumber("app1").withSubmittedTimestamp(submissionDate.plusDays(0));
         app2InReview = new Application().withProgram(program).withUser(applicant).withState(new State().withId(PrismState.APPLICATION_REVIEW))
-                .withApplicationNumber("app2").withSubmittedTimestamp(DateUtils.addDays(submissionDate, 1));
+                .withApplicationNumber("app2").withSubmittedTimestamp(submissionDate.plusDays(1));
         app3InValidation = new Application().withProgram(program).withUser(applicant).withState(new State().withId(PrismState.APPLICATION_VALIDATION))
-                .withApplicationNumber("app3").withSubmittedTimestamp(DateUtils.addDays(submissionDate, 2));
+                .withApplicationNumber("app3").withSubmittedTimestamp(submissionDate.plusDays(2));
         app4InApproved = new Application().withProgram(program).withUser(applicant).withState(new State().withId(PrismState.APPLICATION_APPROVED))
-                .withApplicationNumber("app4").withSubmittedTimestamp(DateUtils.addDays(submissionDate, 3));
+                .withApplicationNumber("app4").withSubmittedTimestamp(submissionDate.plusDays(3));
         app5InInterview = new Application().withProgram(program).withUser(applicant).withState(new State().withId(PrismState.APPLICATION_INTERVIEW))
-                .withApplicationNumber("app5").withSubmittedTimestamp(DateUtils.addDays(submissionDate, 4));
+                .withApplicationNumber("app5").withSubmittedTimestamp(submissionDate.plusDays(4));
         app6InReview = new Application().withProgram(program).withUser(applicant).withState(new State().withId(PrismState.APPLICATION_REVIEW))
-                .withApplicationNumber("app6").withSubmittedTimestamp(DateUtils.addDays(submissionDate, 5));
+                .withApplicationNumber("app6").withSubmittedTimestamp(submissionDate.plusDays(5));
 
         save(applicant, currentUser, app1InApproval, app2InReview, app3InValidation, app4InApproved, app5InInterview, app6InReview);
 
@@ -379,7 +379,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
         Application app1InApproval = new Application().withProgram(alternativeProgram).withUser(applicant)
                 .withState(new State().withId(PrismState.APPLICATION_APPROVAL)).withApplicationNumber("app112")
-                .withSubmittedTimestamp(DateUtils.addDays(submissionDate, 0));
+                .withSubmittedTimestamp(submissionDate.plusDays(0));
 
         save(app1InApproval);
         createAndSaveApplicationFormUserRoles(app1InApproval);
@@ -411,9 +411,8 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         }
     }
 
-    private String dateToString(Date date) {
-        String formattedDate = ApplicationFormListDAO.USER_DATE_FORMAT.print(new DateTime(date));
-        return formattedDate;
+    private String dateToString(LocalDate date) {
+        return ApplicationFormListDAO.USER_DATE_FORMAT.print(date);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

@@ -2,6 +2,9 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.User;
@@ -11,16 +14,16 @@ public class SupervisionConfirmationCommentBuilder {
     private Application applicationForm;
     private String comment;
     private Integer id;
-    private Date createdTimeStamp;
+    private DateTime createdTimeStamp;
     private User user;
 
     private String projectTitle;
     private String projectAbstract;
-    private Date recommendedStartDate;
+    private LocalDate recommendedStartDate;
     private Boolean recommendedConditionsAvailable;
     private String recommendedConditions;
 
-    public SupervisionConfirmationCommentBuilder createdTimeStamp(Date createdTimeStamp) {
+    public SupervisionConfirmationCommentBuilder createdTimeStamp(DateTime createdTimeStamp) {
         this.createdTimeStamp = createdTimeStamp;
         return this;
     }
@@ -35,7 +38,7 @@ public class SupervisionConfirmationCommentBuilder {
         return this;
     }
 
-    public SupervisionConfirmationCommentBuilder recommendedStartDate(Date recommendedStartDate) {
+    public SupervisionConfirmationCommentBuilder recommendedStartDate(LocalDate recommendedStartDate) {
         this.recommendedStartDate = recommendedStartDate;
         return this;
     }

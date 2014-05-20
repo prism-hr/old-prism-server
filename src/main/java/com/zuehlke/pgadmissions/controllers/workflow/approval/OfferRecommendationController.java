@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
@@ -80,7 +81,7 @@ public class OfferRecommendationController {
             offerRecommendedComment.setProjectTitle(approvalComment.getProjectTitle());
             offerRecommendedComment.setProjectAbstract(approvalComment.getProjectAbstract());
 
-            Date startDate = approvalComment.getRecommendedStartDate();
+            LocalDate startDate = approvalComment.getRecommendedStartDate();
 
             if (!programInstanceService.isPrefferedStartDateWithinBounds(application, startDate)) {
                 startDate = programInstanceService.getEarliestPossibleStartDate(application);

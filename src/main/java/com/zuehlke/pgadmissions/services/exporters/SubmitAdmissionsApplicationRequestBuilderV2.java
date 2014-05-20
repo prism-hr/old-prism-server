@@ -2,9 +2,6 @@ package com.zuehlke.pgadmissions.services.exporters;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -14,8 +11,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.owasp.esapi.ESAPI;
 
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AddressTp;
@@ -293,8 +290,8 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             PassportTp passportTp = xmlFactory.createPassportTp();
             passportTp.setName(NOT_PROVIDED_VALUE);
             passportTp.setNumber(NOT_PROVIDED_VALUE);
-            passportTp.setExpiryDate(buildXmlDate(DateUtils.addYears(new Date(), 1)));
-            passportTp.setIssueDate(buildXmlDate(DateUtils.addYears(new Date(), -1)));
+            passportTp.setExpiryDate(buildXmlDate(new LocalDate().plusYears(1)));
+            passportTp.setIssueDate(buildXmlDate(new LocalDate().minusYears(1)));
             return passportTp;
         }
     }
@@ -462,7 +459,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
         ProgramInstance activeInstance = null;
         for (ProgramInstance instance : program.getInstances()) {
-            if (com.zuehlke.pgadmissions.utils.DateUtils.isToday(instance.getApplicationStartDate()) || instance.getApplicationStartDate().after(new Date())) {
+            if (!instance.getApplicationStartDate().isBefore(new LocalDate())) {
                 if (instance.getStudyOption().getId().equals(programmeDetails.getId())) {
                     activeInstance = instance;
                     break;
@@ -474,7 +471,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             occurrenceTp.setAcademicYear(buildXmlDateYearOnly(programmeDetails.getStartDate()));
             occurrenceTp.setIdentifier(NOT_PROVIDED_VALUE);
             occurrenceTp.setStartDate(buildXmlDate(programmeDetails.getStartDate()));
-            occurrenceTp.setEndDate(buildXmlDate(DateUtils.addYears(programmeDetails.getStartDate(), 1)));
+            occurrenceTp.setEndDate(buildXmlDate(programmeDetails.getStartDate().plusYears(1)));
             throw new NoActiveProgrameInstanceFoundException(occurrenceTp, String.format(
                     "No active program found for Program[code=%s], ProgrammeDetails[studyOption=%s]", program.getCode(), programmeDetails.getStudyOption()));
         }
@@ -576,8 +573,8 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             }
         } else {
             QualificationsTp qualificationsTp = xmlFactory.createQualificationsTp();
-            qualificationsTp.setStartDate(buildXmlDate(DateUtils.addYears(new Date(), -1)));
-            qualificationsTp.setEndDate(buildXmlDate(DateUtils.addYears(new Date(), 1)));
+            qualificationsTp.setStartDate(buildXmlDate(new LocalDate().minusYears(1)));
+            qualificationsTp.setEndDate(buildXmlDate(new LocalDate().plusYears(1)));
 
             qualificationsTp.setGrade(NOT_PROVIDED_VALUE);
             qualificationsTp.setLanguageOfInstruction(NOT_PROVIDED_VALUE);
@@ -751,11 +748,13 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         return number.replaceAll("[^0-9()+ ]", "");
     }
 
-    protected XMLGregorianCalendar buildXmlDate(Date date) {
-        if (date != null) {
-            GregorianCalendar gc = new GregorianCalendar();
-            gc.setTimeInMillis(date.getTime());
-            return datatypeFactory.newXMLGregorianCalendar(gc);
+    protected XMLGregorianCalendar buildXmlDate(LocalDate localDate) {
+        return buildXmlDate(localDate.toDateTimeAtStartOfDay());
+    }
+
+    protected XMLGregorianCalendar buildXmlDate(DateTime dateTime) {
+        if (dateTime != null) {
+            return datatypeFactory.newXMLGregorianCalendar(dateTime.toGregorianCalendar());
         }
         return null;
     }
@@ -769,12 +768,10 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         return null;
     }
 
-    protected XMLGregorianCalendar buildXmlDateYearOnly(Date date) {
+    protected XMLGregorianCalendar buildXmlDateYearOnly(LocalDate date) {
         if (date != null) {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
             XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
-            xmlCalendar.setYear(cal.get(Calendar.YEAR));
+            xmlCalendar.setYear(date.getYear());
             return xmlCalendar;
         }
         return null;

@@ -13,6 +13,7 @@ import javax.validation.Validator;
 
 import org.easymock.EasyMock;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,7 +60,7 @@ public class OpportunityRequestValidatorTest {
         programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
         fullTextSearchServiceMock = EasyMock.createMock(FullTextSearchService.class);
 
-        expect(programInstanceServiceMock.getFirstProgramInstanceStartYear(isA(DateTime.class))).andReturn(2013);
+        expect(programInstanceServiceMock.getFirstProgramInstanceStartYear(isA(LocalDate.class))).andReturn(2013);
         replay(programInstanceServiceMock);
 
         opportunityRequestValidator = new OpportunityRequestValidator();

@@ -1,10 +1,8 @@
 package com.zuehlke.pgadmissions.validators;
 
-import java.util.Date;
-
 import junit.framework.Assert;
 
-import org.apache.commons.lang.time.DateUtils;
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,7 +54,7 @@ public class ConfirmSupervisionDTOValidatorTest {
     @Test
     public void shouldRejectIfConfirmedAndProjectTitleAndAbstractAreMissing() {
         dto.setConfirmedSupervision(true);
-        dto.setRecommendedStartDate(DateUtils.addDays(new Date(), 5));
+        dto.setRecommendedStartDate(new LocalDate().plusDays(5));
         dto.setRecommendedConditionsAvailable(false);
         
         BindingResult mappingResult = new BeanPropertyBindingResult(dto, "confirmSupervisionDTO");
@@ -85,7 +83,7 @@ public class ConfirmSupervisionDTOValidatorTest {
         dto.setProjectAbstract("foo");
         dto.setProjectTitle("bar");
         dto.setRecommendedConditionsAvailable(false);
-        dto.setRecommendedStartDate(DateUtils.addDays(new Date(), -5));
+        dto.setRecommendedStartDate(new LocalDate().minusDays(5));
         
         BindingResult mappingResult = new BeanPropertyBindingResult(dto, "confirmSupervisionDTO");
         confirmSupervisionDTOValidator.validate(dto, mappingResult);
@@ -98,7 +96,7 @@ public class ConfirmSupervisionDTOValidatorTest {
         dto.setConfirmedSupervision(true);
         dto.setProjectAbstract("foo");
         dto.setProjectTitle("bar");
-        dto.setRecommendedStartDate(DateUtils.addDays(new Date(), +5));
+        dto.setRecommendedStartDate(new LocalDate().plusDays(5));
         dto.setRecommendedConditionsAvailable(true);
         
         BindingResult mappingResult = new BeanPropertyBindingResult(dto, "confirmSupervisionDTO");
@@ -112,7 +110,7 @@ public class ConfirmSupervisionDTOValidatorTest {
         dto.setConfirmedSupervision(true);
         dto.setProjectAbstract("foo");
         dto.setProjectTitle("bar");
-        dto.setRecommendedStartDate(DateUtils.addDays(new Date(), +5));
+        dto.setRecommendedStartDate(new LocalDate().plusDays(5));
         dto.setRecommendedConditionsAvailable(true);
         dto.setRecommendedConditions("fooBar");
         

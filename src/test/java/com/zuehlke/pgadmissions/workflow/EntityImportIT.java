@@ -72,14 +72,14 @@ public class EntityImportIT {
                 program1.getInstances(),
                 contains(equalTo(new ProgramInstance().withIdentifier("0009").withAcademicYear("2013")
                         .withStudyOption(new StudyOption().withId("F+++++").withDisplayName("Full-time"))
-                        .withApplicationStartDate(new LocalDate(2013, 9, 23).toDate()).withApplicationDeadline(new LocalDate(2014, 9, 15).toDate())
+                        .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15))
                         .withEnabled(true))));
 
         assertThat(
                 otherProgram.getInstances(),
                 contains(equalTo(new ProgramInstance().withIdentifier("0014").withAcademicYear("2013")
                         .withStudyOption(new StudyOption().withId("F+++++").withDisplayName("Full-time"))
-                        .withApplicationStartDate(new LocalDate(2013, 9, 23).toDate()).withApplicationDeadline(new LocalDate(2014, 9, 15).toDate())
+                        .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15))
                         .withEnabled(true))));
 
         importedEntityFeed.setLocation("reference_data/conflicts/programs/updatedPrograms.xml");
@@ -100,16 +100,16 @@ public class EntityImportIT {
                 containsInAnyOrder(
                         equalTo(new ProgramInstance().withIdentifier("0009").withAcademicYear("2013")
                                 .withStudyOption(new StudyOption().withId("F+++++").withDisplayName("Full-time"))
-                                .withApplicationStartDate(new LocalDate(2013, 9, 23).toDate()).withApplicationDeadline(new LocalDate(2014, 9, 15).toDate())
+                                .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15))
                                 .withEnabled(true)),
                         equalTo(new ProgramInstance().withIdentifier("0008").withAcademicYear("2014")
                                 .withStudyOption(new StudyOption().withId("P+++++").withDisplayName("Fart-time"))
-                                .withApplicationStartDate(new LocalDate(2013, 9, 23).toDate()).withApplicationDeadline(new LocalDate(2014, 9, 15).toDate())
+                                .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15))
                                 .withEnabled(true))));
 
         assertThat(otherProgram.getInstances(), contains(equalTo(new ProgramInstance().withIdentifier("0014").withAcademicYear("2013")
                 .withStudyOption(new StudyOption().withId("F+++++").withDisplayName("Full-time"))
-                .withApplicationStartDate(new LocalDate(2013, 9, 23).toDate()).withApplicationDeadline(new LocalDate(2014, 9, 15).toDate())
+                .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15))
                 .withEnabled(false))));
     }
 

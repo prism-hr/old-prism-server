@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
@@ -90,7 +91,7 @@ public class ConfirmSupervisionController {
         confirmSupervisionDTO.setProjectTitle(comment.getProjectTitle());
         confirmSupervisionDTO.setProjectAbstract(comment.getProjectAbstract());
 
-        Date startDate = comment.getRecommendedStartDate();
+        LocalDate startDate = comment.getRecommendedStartDate();
 
         if (!programInstanceService.isPrefferedStartDateWithinBounds(applicationForm, startDate)) {
             startDate = programInstanceService.getEarliestPossibleStartDate(applicationForm);

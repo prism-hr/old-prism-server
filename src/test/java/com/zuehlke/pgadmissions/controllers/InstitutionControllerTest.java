@@ -17,7 +17,6 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
@@ -25,10 +24,6 @@ import com.zuehlke.pgadmissions.services.UserService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class InstitutionControllerTest {
-
-    @Mock
-    @InjectIntoByType
-    private EncryptionHelper encryptionHelper;
 
     @Mock
     @InjectIntoByType
@@ -52,7 +47,7 @@ public class InstitutionControllerTest {
 
     @Test
     public void shouldGetInstitutions() {
-        Domicile domicile = new DomicileBuilder().id(0).code("UK").enabled(true).name("United Kingdom").build();
+        Domicile domicile = new Domicile().withId(0).withName("United Kingdom");
         ImportedInstitution institution1 = new ImportedInstitution().withId(2).withEnabled(true).withName("University of London").withDomicile(domicile)
                 .withCode("ABC");
         ImportedInstitution institution2 = new ImportedInstitution().withId(3).withEnabled(true).withName("University of Cambridge").withDomicile(domicile)

@@ -78,6 +78,9 @@ public class PrismWorkflowTest {
 
     @Autowired
     private MailSenderMock mailSenderMock;
+    
+    @Autowired
+    private ApplicationTestDataProvider applicationTestDataProvider;
 
     @Test
     public void runWorkflowTest() throws Exception {
@@ -93,6 +96,8 @@ public class PrismWorkflowTest {
         Application createdApplication = (Application) actionOutcome.getScope();
         assertEquals(ApplicationFormAction.APPLICATION_COMPLETE, actionOutcome.getNextAction());
 
+        applicationTestDataProvider.fillWithData(createdApplication);
+        
         Comment completeApplicationComment = null;
         actionOutcome = actionService.executeAction(createdApplication.getId(), applicant, ApplicationFormAction.APPLICATION_COMPLETE,
                 completeApplicationComment);

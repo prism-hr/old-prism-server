@@ -14,6 +14,7 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
+import org.joda.time.LocalDate;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -390,7 +391,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldSuccessfullyCallWebServiceWithOverseasStudent() throws ExportServiceException {
         OfferRecommendedComment offerComment = new OfferRecommendedCommentBuilder().id(15).application(applicationForm).comment("").projectAbstract("abstract")
-                .recommendedConditionsAvailable(false).recommendedStartDate(new Date()).build();
+                .recommendedConditionsAvailable(false).recommendedStartDate(new LocalDate()).build();
         applicationForm.getApplicationComments().add(offerComment);
         applicationForm.getProgram().setRequireProjectDefinition(true);
         ApplicationTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);

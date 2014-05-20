@@ -14,11 +14,11 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Address;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.TestData;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -46,8 +46,7 @@ public class RefereeValidatorTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
         EasyMock.replay(userServiceMock);
         referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(2).status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).build())
-                .user(TestData.aUser(null))
-                .address(new Address().withDomicile(new DomicileBuilder().enabled(true).build()).withLine1("london").withTown("london3")) //
+                .user(TestData.aUser(null)).address(new Address().withDomicile(new Domicile()).withLine1("london").withTown("london3")) //
                 .jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress").phoneNumber("+44 (0) 20 7911 5000").build();
         refereeValidator = new RefereeValidator(userServiceMock);
         refereeValidator.setValidator((javax.validation.Validator) validator);

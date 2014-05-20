@@ -3,12 +3,10 @@ package com.zuehlke.pgadmissions.validators;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 import junit.framework.Assert;
 
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,7 +53,7 @@ public class QualificationValidatorTest {
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("text.field.empty", mappingResult.getFieldError("qualificationStartDate").getCode());
     }
-    
+
     @Test
     public void shouldRejectIfAwardDateIsEmpty() {
         qualification.setAwardDate(null);
@@ -76,30 +74,19 @@ public class QualificationValidatorTest {
 
     @Test
     public void shouldRejectIfStartDateAndEndDateAreFutureDates() {
-        Date tomorrow, dayAfterTomorrow;
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, 1);
-        tomorrow = calendar.getTime();
-        calendar.add(Calendar.DATE, 2);
-        dayAfterTomorrow = calendar.getTime();
-        qualification.setStartDate(tomorrow);
-        qualification.setAwardDate(dayAfterTomorrow);
+        qualification.setStartDate(new LocalDate().plusDays(1));
+        qualification.setAwardDate(new LocalDate().plusDays(2));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
         qualificationValidator.validate(qualification, mappingResult);
         Assert.assertEquals(2, mappingResult.getErrorCount());
         Assert.assertEquals("date.field.notpast", mappingResult.getFieldError("qualificationStartDate").getCode());
         Assert.assertEquals("date.field.notpast", mappingResult.getFieldError("qualificationAwardDate").getCode());
     }
-    
+
     @Test
     public void shouldRejectIfStartDateIsInFutureAndAfterAwardDate() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, 1);
-        Date tomorrow = calendar.getTime();
-        calendar.add(Calendar.DATE, -1);
-        Date yesterday = calendar.getTime();
-        qualification.setStartDate(tomorrow);
-        qualification.setAwardDate(yesterday);
+        qualification.setStartDate(new LocalDate().plusDays(1));
+        qualification.setAwardDate(new LocalDate().minusDays(1));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
         qualificationValidator.validate(qualification, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -126,14 +113,13 @@ public class QualificationValidatorTest {
 
     @Test
     public void shouldRejectIfStartDateIsAfterEndDate() throws ParseException {
-        qualification.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-        qualification.setAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2009/08/06"));
+        qualification.setStartDate(new LocalDate(2010, 8, 6));
+        qualification.setAwardDate(new LocalDate(2009, 8, 6));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
         qualificationValidator.validate(qualification, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("qualification.start_date.notvalid", mappingResult.getFieldError("qualificationStartDate").getCode());
     }
-
 
     @Test
     public void shouldRejectIfQualificationLanguageIsLongerThan70Chars() {
@@ -145,8 +131,7 @@ public class QualificationValidatorTest {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
         qualificationValidator.validate(qualification, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("A maximum of 70 characters are allowed.",
-                mappingResult.getFieldError("qualificationLanguage").getDefaultMessage());
+        Assert.assertEquals("A maximum of 70 characters are allowed.", mappingResult.getFieldError("qualificationLanguage").getDefaultMessage());
     }
 
     @Test
@@ -159,10 +144,9 @@ public class QualificationValidatorTest {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
         qualificationValidator.validate(qualification, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("A maximum of 70 characters are allowed.", mappingResult
-                .getFieldError("qualificationGrade").getDefaultMessage());
+        Assert.assertEquals("A maximum of 70 characters are allowed.", mappingResult.getFieldError("qualificationGrade").getDefaultMessage());
     }
-    
+
     @Test
     public void shouldRejectQualificationAwardDateIfItIsInThePastAndNotCompleted() {
         qualification.setCompleted(false);
@@ -171,19 +155,19 @@ public class QualificationValidatorTest {
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("date.field.notfuture", mappingResult.getFieldError("qualificationAwardDate").getCode());
     }
-    
+
     @Before
     public void setup() throws ParseException {
         qualification = new Qualification();
         qualification.setApplication(new ApplicationFormBuilder().id(9).build());
         qualification.setId(3);
-        qualification.setAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/09"));
+        qualification.setAwardDate(new LocalDate(2010, 9, 9));
         qualification.setGrade("first");
         qualification.setLanguage("Abkhazian");
         qualification.setSubject("CS");
         qualification.setTitle("MS");
         qualification.setCompleted(true);
-        qualification.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06"));
+        qualification.setStartDate(new LocalDate(2006, 9, 9));
         qualification.setType(new QualificationTypeBuilder().name("degree").build());
 
         qualificationValidator = new QualificationValidator();

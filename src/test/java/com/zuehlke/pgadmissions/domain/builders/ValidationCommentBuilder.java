@@ -2,8 +2,9 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
+
+import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -19,7 +20,7 @@ public class ValidationCommentBuilder {
     private ValidationQuestionOptions qualifiedForPhd;
     private ValidationQuestionOptions englishCompentencyOk;
     private ResidenceStatus homeOrOverseas;
-    private Date date;
+    private DateTime date;
     private String comment;
     private Integer id;
     private List<Document> documents = new ArrayList<Document>();
@@ -54,7 +55,7 @@ public class ValidationCommentBuilder {
         return this;
     }
 
-    public ValidationCommentBuilder date(Date date) {
+    public ValidationCommentBuilder date(DateTime date) {
         this.date = date;
         return this;
     }

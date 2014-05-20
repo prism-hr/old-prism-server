@@ -1,11 +1,7 @@
 package com.zuehlke.pgadmissions.validators;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -26,22 +22,22 @@ public class LanguageQualificationValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "speakingScore", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "listeningScore", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "examOnline", EMPTY_FIELD_ERROR_MESSAGE);
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "languageQualificationDocument", "file.upload.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "proofOfAward", "file.upload.empty");
 
         LanguageQualification qualification = (LanguageQualification) target;
         if (qualification == null) {
             return;
         }
 
-        Date examDate = qualification.getExamDate();
+        LocalDate examDate = qualification.getExamDate();
 
-        Date today = new DateTime().withTimeAtStartOfDay().toDate();
-        if (examDate != null && DateUtils.truncate(examDate, Calendar.DATE).after(today)) {
+        LocalDate today = new LocalDate();
+        if (examDate != null && examDate.isAfter(today)) {
             errors.rejectValue("examDate", "date.field.notpast");
         }
 
         if (qualification.getQualificationType() == LanguageQualificationEnum.OTHER) {
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationTypeName", EMPTY_FIELD_ERROR_MESSAGE);
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationTypeOther", EMPTY_FIELD_ERROR_MESSAGE);
         }
 
         if (qualification.getQualificationType() == LanguageQualificationEnum.TOEFL) {

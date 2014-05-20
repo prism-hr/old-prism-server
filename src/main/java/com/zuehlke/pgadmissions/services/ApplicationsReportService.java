@@ -1,13 +1,14 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javassist.bytecode.stackmap.TypeData.ClassName;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import com.google.visualization.datasource.base.TypeMismatchException;
 import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.TableRow;
+import com.google.visualization.datasource.datatable.value.DateTimeValue;
 import com.google.visualization.datasource.datatable.value.DateValue;
 import com.google.visualization.datasource.datatable.value.NumberValue;
 import com.google.visualization.datasource.datatable.value.ValueType;
@@ -183,7 +185,7 @@ public class ApplicationsReportService {
 
                 int overallPositiveEndorsements = referenceEndorsements[0] + reviewEndorsements[0] + interviewEndorsements[0];
 
-                Date approveDate = getApproveDate(app);
+                LocalDate approveDate = getApproveDate(app);
                 boolean canSeeRating = user.getId() != applicant.getId();
 
                 TableRow row = new TableRow();
@@ -196,7 +198,7 @@ public class ApplicationsReportService {
                     row.addCell(getProjectTitle(app));
                     row.addCell(getSuggestedSupervisors(programmeDetails));
                     row.addCell(getAcademicYear(app));
-                    row.addCell(app.getSubmittedTimestamp() != null ? getDateValue(app.getSubmittedTimestamp()) : DateValue.getNullValue());
+                    row.addCell(app.getSubmittedTimestamp() != null ? getDateTimeValue(app.getSubmittedTimestamp()) : DateValue.getNullValue());
                     row.addCell(getFundingTotal(app));
 
                     // overall rating
@@ -232,7 +234,7 @@ public class ApplicationsReportService {
                     row.addCell(StringUtils.trimToEmpty(programmeDetails.getSourceOfInterestText()));
                     row.addCell(getSuggestedSupervisors(programmeDetails));
                     row.addCell(getAcademicYear(app));
-                    row.addCell(app.getSubmittedTimestamp() != null ? getDateValue(app.getSubmittedTimestamp()) : DateValue.getNullValue());
+                    row.addCell(app.getSubmittedTimestamp() != null ? getDateTimeValue(app.getSubmittedTimestamp()) : DateValue.getNullValue());
 //                    row.addCell(app.getUpdateTimestamp() != null ? getDateValue(app.getUpdateTimestamp()) : DateValue.getNullValue());
                     row.addCell(getFundingTotal(app));
 
@@ -298,6 +300,8 @@ public class ApplicationsReportService {
         return data;
     }
 
+
+
     private String getApplicationLink(Application app) {
         String applicationLink = host + "/pgadmissions/application?view=view&applicationId=" + app.getApplicationNumber();
         return applicationLink;
@@ -317,13 +321,22 @@ public class ApplicationsReportService {
         return supervisorsString;
     }
 
-    private DateValue getDateValue(Date date) {
+    private DateValue getDateValue(LocalDate date) {
         if (date == null) {
             return null;
         }
         GregorianCalendar calendar = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
-        calendar.setTime(date);
+        calendar.setTimeInMillis(date.toDateTimeAtStartOfDay().getMillis());
         return new DateValue(calendar);
+    }
+    
+    private DateTimeValue getDateTimeValue(DateTime dateTime) {
+        if (dateTime == null) {
+            return null;
+        }
+        GregorianCalendar calendar = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+        calendar.setTimeInMillis(dateTime.getMillis());
+        return new DateTimeValue(calendar);
     }
 
     private int[] getNumberOfReceivedAndDeclinedReferences(Application app) {
@@ -450,7 +463,7 @@ public class ApplicationsReportService {
         return StringUtils.EMPTY;
     }
 
-    private Date getApproveDate(Application app) {
+    private LocalDate getApproveDate(Application app) {
 //        List<Event> events = app.getEvents();
 //        for (Event event : events) {
 //            if (event instanceof StateChangeEvent) {
@@ -496,7 +509,7 @@ public class ApplicationsReportService {
     }
 
     private String getAcademicYear(Application app) {
-        Date startDate = app.getProgramDetails().getStartDate();
+        LocalDate startDate = app.getProgramDetails().getStartDate();
         if (startDate != null) {
             for (ProgramInstance instance : app.getProgram().getInstances()) {
                 if (instance.isDateWithinBounds(startDate)) {

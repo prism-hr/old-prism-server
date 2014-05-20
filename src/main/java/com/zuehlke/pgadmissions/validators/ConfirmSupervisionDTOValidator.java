@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.validators;
 import java.util.Date;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -33,9 +34,9 @@ public class ConfirmSupervisionDTOValidator extends AbstractValidator {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectAbstract", EMPTY_FIELD_ERROR_MESSAGE);
         
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedStartDate", EMPTY_FIELD_ERROR_MESSAGE);
-            Date startDate = dto.getRecommendedStartDate();
-            Date today = new Date();
-            if (startDate != null && !startDate.after(today)) {
+            LocalDate startDate = dto.getRecommendedStartDate();
+            LocalDate today = new LocalDate();
+            if (startDate != null && !startDate.isAfter(today)) {
                 errors.rejectValue("recommendedStartDate", "date.field.notfuture");
             }
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedConditionsAvailable", EMPTY_DROPDOWN_ERROR_MESSAGE);

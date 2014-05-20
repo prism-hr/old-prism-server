@@ -27,6 +27,9 @@ import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
@@ -83,8 +86,8 @@ public class Comment implements Serializable {
     private Set<CommentAssignedUser> assignedUsers = Sets.newHashSet();
 
     @Column(name = "created_timestamp", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdTimestamp;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdTimestamp;
 
     @OneToMany
     @JoinColumn(name = "comment_id")
@@ -117,9 +120,9 @@ public class Comment implements Serializable {
     @Column(name = "project_abstract")
     private String projectAbstract;
 
-    @Temporal(value = TemporalType.DATE)
     @Column(name = "recommended_start_date")
-    private Date recommendedStartDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate recommendedStartDate;
 
     @Column(name = "recommended_conditions_available")
     private Boolean recommendedConditionsAvailable;
@@ -215,11 +218,11 @@ public class Comment implements Serializable {
         this.user = user;
     }
 
-    public Date getCreatedTimestamp() {
+    public DateTime getCreatedTimestamp() {
         return createdTimestamp;
     }
 
-    public void setCreatedTimestamp(Date createdTimestamp) {
+    public void setCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
     }
 
@@ -271,11 +274,11 @@ public class Comment implements Serializable {
         this.projectAbstract = projectAbstract;
     }
 
-    public Date getRecommendedStartDate() {
+    public LocalDate getRecommendedStartDate() {
         return recommendedStartDate;
     }
 
-    public void setRecommendedStartDate(Date recommendedStartDate) {
+    public void setRecommendedStartDate(LocalDate recommendedStartDate) {
         this.recommendedStartDate = recommendedStartDate;
     }
 

@@ -1,12 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -35,20 +34,20 @@ public class ProgramInstanceService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public Date getEarliestPossibleStartDate(Application applicationForm) {
-        Date result = null;
+    public LocalDate getEarliestPossibleStartDate(Application applicationForm) {
+        LocalDate result = null;
         ProgramDetails details = applicationForm.getProgramDetails();
-        Date today = new Date();
-        Date todayPlusConsiderationPeriod = DateUtils.addMonths(today, CONSIDERATION_PERIOD_MONTHS);
+        LocalDate today = new LocalDate();
+        LocalDate todayPlusConsiderationPeriod = today.plusMonths(CONSIDERATION_PERIOD_MONTHS);
         for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
-            Date applicationStartDate = instance.getApplicationStartDate();
-            boolean startDateInFuture = today.before(applicationStartDate);
-            boolean beforeEndDate = todayPlusConsiderationPeriod.before(instance.getApplicationDeadline());
+            LocalDate applicationStartDate = instance.getApplicationStartDate();
+            boolean startDateInFuture = today.isBefore(applicationStartDate);
+            boolean beforeEndDate = todayPlusConsiderationPeriod.isBefore(instance.getApplicationDeadline());
             boolean sameStudyOption = details.getStudyOption().getId().equals(instance.getStudyOption().getId());
             if (applicationForm.getAdvert().isEnabled() && isActive(instance) && (startDateInFuture || beforeEndDate) && sameStudyOption) {
-                if (startDateInFuture && (result == null || result.after(applicationStartDate))) {
+                if (startDateInFuture && (result == null || result.isAfter(applicationStartDate))) {
                     result = applicationStartDate;
-                } else if (result == null || result.after(todayPlusConsiderationPeriod)) {
+                } else if (result == null || result.isAfter(todayPlusConsiderationPeriod)) {
                     result = todayPlusConsiderationPeriod;
                 }
             }
@@ -60,14 +59,14 @@ public class ProgramInstanceService {
         return isPreferredStartDateWithinBounds(applicationForm, applicationForm.getProgramDetails(), applicationForm.getProgramDetails().getStartDate());
     }
 
-    public boolean isPrefferedStartDateWithinBounds(Application applicationForm, Date startDate) {
+    public boolean isPrefferedStartDateWithinBounds(Application applicationForm, LocalDate startDate) {
         return isPreferredStartDateWithinBounds(applicationForm, applicationForm.getProgramDetails(), startDate);
     }
 
-    private boolean isPreferredStartDateWithinBounds(Application applicationForm, ProgramDetails programDetails, Date startDate) {
+    private boolean isPreferredStartDateWithinBounds(Application applicationForm, ProgramDetails programDetails, LocalDate startDate) {
         for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
-            boolean afterStartDate = startDate.after(instance.getApplicationStartDate());
-            boolean beforeEndDate = startDate.before(instance.getApplicationDeadline());
+            boolean afterStartDate = startDate.isAfter(instance.getApplicationStartDate());
+            boolean beforeEndDate = startDate.isBefore(instance.getApplicationDeadline());
             boolean sameStudyOption = programDetails.getStudyOption().getId().equals(instance.getStudyOption().getId());
             if (applicationForm.getAdvert().isEnabled() && isActive(instance) && afterStartDate && beforeEndDate && sameStudyOption) {
                 return true;
@@ -101,18 +100,18 @@ public class ProgramInstanceService {
         for (ProgramInstance existingInstance : program.getInstances()) {
             existingInstance.setEnabled(false);
         }
-//        program.setState(ProgramState.PROGRAM_DEACTIVATED);
+        // program.setState(ProgramState.PROGRAM_DEACTIVATED);
 
         List<ProgramInstance> instances = Lists.newLinkedList();
 
         List<StudyOption> studyOptions = thisBean.getStudyOptions(studyOptionCodes);
-        int startYear = thisBean.getFirstProgramInstanceStartYear(new DateTime());
+        int startYear = thisBean.getFirstProgramInstanceStartYear(new LocalDate());
 
         for (; startYear < advertisingDeadlineYear; startYear++) {
             for (StudyOption studyOption : studyOptions) {
                 ProgramInstance programInstance = thisBean.createOrUpdateProgramInstance(program, startYear, studyOption);
                 instances.add(programInstance);
-//                program.setState(ProgramState.PROGRAM_APPROVED);
+                // program.setState(ProgramState.PROGRAM_APPROVED);
             }
         }
         return instances;
@@ -121,8 +120,8 @@ public class ProgramInstanceService {
     @Transactional(propagation = Propagation.REQUIRED)
     protected ProgramInstance createOrUpdateProgramInstance(Program program, int startYear, StudyOption studyOption) {
         ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
-        DateTime startDate = thisBean.findPenultimateSeptemberMonday(startYear);
-        DateTime deadline = thisBean.findPenultimateSeptemberMonday(startYear + 1);
+        LocalDate startDate = thisBean.findPenultimateSeptemberMonday(startYear);
+        LocalDate deadline = thisBean.findPenultimateSeptemberMonday(startYear + 1);
 
         ProgramInstance programInstance = programDAO.getProgramInstance(program, studyOption, startDate.toDate());
         if (programInstance == null) {
@@ -131,9 +130,9 @@ public class ProgramInstanceService {
             program.getInstances().add(programInstance);
         }
 
-        programInstance.setApplicationStartDate(startDate.toDate());
+        programInstance.setApplicationStartDate(startDate);
         programInstance.setAcademicYear(Integer.toString(startYear));
-        programInstance.setApplicationDeadline(deadline.toDate());
+        programInstance.setApplicationDeadline(deadline);
         programInstance.setEnabled(true);
         programInstance.setIdentifier("CUSTOM");
         programInstance.setStudyOption(studyOption);
@@ -141,8 +140,6 @@ public class ProgramInstanceService {
 
         return programInstance;
     }
-    
-    
 
     public List<StudyOption> getAvailableStudyOptions() {
         return programDAO.getAvailableStudyOptions();
@@ -161,9 +158,9 @@ public class ProgramInstanceService {
         return studyOptions;
     }
 
-    public int getFirstProgramInstanceStartYear(DateTime startDate) {
+    public int getFirstProgramInstanceStartYear(LocalDate startDate) {
         int year = startDate.getYear();
-        DateTime actualStartDate = findPenultimateSeptemberMonday(year);
+        LocalDate actualStartDate = findPenultimateSeptemberMonday(year);
 
         if (actualStartDate.isAfter(startDate)) {
             year--;
@@ -172,8 +169,8 @@ public class ProgramInstanceService {
         return year;
     }
 
-    protected DateTime findPenultimateSeptemberMonday(int year) {
-        DateTime penultimateSeptemberMonday = new DateTime(year, 9, 30, 0, 0);
+    protected LocalDate findPenultimateSeptemberMonday(int year) {
+        LocalDate penultimateSeptemberMonday = new LocalDate(year, 9, 30);
         penultimateSeptemberMonday = penultimateSeptemberMonday.minusWeeks(1);
 
         while (penultimateSeptemberMonday.getDayOfWeek() != 1) {

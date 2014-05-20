@@ -6,6 +6,7 @@ import java.util.Date;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.SessionFactory;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -25,6 +26,8 @@ import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.LanguageQualification;
+import com.zuehlke.pgadmissions.domain.Passport;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
@@ -137,56 +140,54 @@ public class ValidApplicationFormBuilder {
         refereeOne.setComment(referenceComment1);
         refereeTwo.setComment(referenceComment2);
         employmentPosition = new EmploymentPosition().withCurrent(true).withEmployerAddress(TestData.anAddress(domicile)).withPosition("Software Engineer")
-                .withCurrent(true).withStartDate(DateUtils.addYears(new Date(), -2)).withRemit("Developer").withEmployerName("Zuhlke Ltd.");
+                .withCurrent(true).withStartDate(new LocalDate().minusYears(2)).withRemit("Developer").withEmployerName("Zuhlke Ltd.");
         language = new LanguageBuilder().code("GB").name("England").enabled(true).build();
         disability = new Disability().withCode("0").withName("No Disability");
-        ethnicity = new EthnicityBuilder().code("10").name("White").enabled(true).build();
-        personalDetails = new PersonalDetailsBuilder()
-                .firstNationality(language)
-                .country(country)
-                .dateOfBirth(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -28))
-                .disability(disability)
-                .englishFirstLanguage(true)
-                .ethnicity(ethnicity)
-                .gender(Gender.MALE)
-                .requiresVisa(true)
-                .passportInformation(
-                        new PassportInformationBuilder().number("000").name("Kevin Francis Denver")
-                                .expiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20))
-                                .issueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10)).build())
-                .languageQualificationAvailable(true)
-                .languageQualification(
-                        new LanguageQualificationBuilder().examDate(new Date()).examOnline(false).languageQualification(LanguageQualificationEnum.OTHER)
-                                .listeningScore("1").qualificationTypeName("FooBar").overallScore("1").readingScore("1").speakingScore("1").writingScore("1")
-                                .languageQualificationDocument(languageQualificationDocument).build()).phoneNumber("+44 (0) 123 123 1234")
-                .residenceDomicile(domicile).title(Title.MR).build();
+        ethnicity = new Ethnicity().withCode("10").withName("White");
+        personalDetails = new PersonalDetails()
+                .withFirstNationality(language)
+                .withCountry(country)
+                .withDateOfBirth(new LocalDate().minusYears(28))
+                .withDisability(disability)
+                .withEnglishFirstLanguage(true)
+                .withEthnicity(ethnicity)
+                .withGender(Gender.MALE)
+                .withRequiresVisa(true)
+                .withPassportInformation(
+                        new Passport().withNumber("000").withName("Kevin Francis Denver").withExpiryDate(new LocalDate().plusYears(20))
+                                .withIssueDate(new LocalDate().minusYears(10)))
+                .withLanguageQualificationAvailable(true)
+                .withLanguageQualification(
+                        new LanguageQualification().withExamDate(new LocalDate()).withExamOnline(false).withQualificationType(LanguageQualificationEnum.OTHER)
+                                .withListeningScore("1").withQualificationTypeOther("FooBar").withOverallScore("1").withReadingScore("1").withSpeakingScore("1").withWritingScore("1")
+                                .withProofOfAward(languageQualificationDocument)).withPhoneNumber("+44 (0) 123 123 1234")
+                .withResidenceCountry(domicile).withTitle(Title.MR);
         additionalInformation = new AdditionalInformationBuilder().setConvictions(false).build();
-        instance = new ProgramInstanceBuilder().academicYear("2013").applicationDeadline(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 1))
-                .applicationStartDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 5)).enabled(true).studyOption("F+++++", "Full-time")
-                .identifier("0009").build();
-        importedInstitution = new ImportedInstitution().withCode("code").withName("jakas instytucja").withDomicile(domicile)
-                .withEnabled(true);
+        instance = new ProgramInstance().withAcademicYear("2013").withApplicationDeadline(new LocalDate().plusYears(1))
+                .withApplicationStartDate(new LocalDate().plusMonths(5)).withEnabled(true).withStudyOption("F+++++", "Full-time")
+                .withIdentifier("0009");
+        importedInstitution = new ImportedInstitution().withCode("code").withName("jakas instytucja").withDomicile(domicile).withEnabled(true);
         state = new State().withId(PrismState.PROGRAM_APPROVED);
         program = new Program().withUser(approverUser).withCode("TMRMBISING99").withState(state).withInstances(instance)
                 .withTitle("MRes Medical and Biomedical Imaging").withInstitution(institution);
         interest = new SourcesOfInterestBuilder().code("BRIT_COUN").name("British Council").build();
-        programDetails = new ProgrammeDetailsBuilder().sourcesOfInterest(interest).startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1))
+        programDetails = new ProgrammeDetailsBuilder().sourcesOfInterest(interest).startDate(new LocalDate().plusDays(1))
                 .studyOption(new StudyOption("F+++++", "Full-time")).build();
         qualificationType = new QualificationTypeBuilder().code("DEGTRE").name("Bachelors Degree - France").enabled(true).build();
-        qualification1 = new Qualification().withId(Integer.MAX_VALUE - 1).withAwardDate(new Date()).withGrade("6").withInstitution(importedInstitution)
-                .withLanguage("English").withStartDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).withSubject("Engineering")
+        qualification1 = new Qualification().withId(Integer.MAX_VALUE - 1).withAwardDate(new LocalDate()).withGrade("6").withInstitution(importedInstitution)
+                .withLanguage("English").withStartDate(new LocalDate().minusYears(1)).withSubject("Engineering")
                 .withTitle("MSc").withType(qualificationType).withCompleted(true).withDocument(proofOfAwardDocument).withExport(true);
-        qualification2 = new Qualification().withId(Integer.MAX_VALUE - 2).withAwardDate(new Date()).withGrade("6").withInstitution(importedInstitution)
-                .withLanguage("English").withStartDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).withSubject("Engineering")
+        qualification2 = new Qualification().withId(Integer.MAX_VALUE - 2).withAwardDate(new LocalDate()).withGrade("6").withInstitution(importedInstitution)
+                .withLanguage("English").withStartDate(new LocalDate().minusYears(1)).withSubject("Engineering")
                 .withTitle("MSc").withType(qualificationType).withCompleted(true).withDocument(proofOfAwardDocument).withExport(true);
         funding = new FundingBuilder().awardDate(DateUtils.addYears(new Date(), -1)).description("Received a funding").document(fundingDocument)
                 .type(FundingType.SCHOLARSHIP).value("5").build();
         applicationFormBuilder = new ApplicationFormBuilder().applicant(user).acceptedTerms(true).additionalInformation(additionalInformation)
-                .createdTimestamp(new Date()).applicant(user).applicationNumber("TMRMBISING01-2012-999999").closingDate(new LocalDate().plusMonths(1))
+                .createdTimestamp(new DateTime()).applicant(user).applicationNumber("TMRMBISING01-2012-999999").closingDate(new LocalDate().plusMonths(1))
                 .applicationFormAddress(new ApplicationAddress().withCurrentAddress(address).withContactAddress(address))
                 .dueDate(new LocalDate().plusMonths(1)).employmentPositions(employmentPosition).fundings(funding).personalDetails(personalDetails)
                 .program(program).programmeDetails(programDetails).qualification(qualification1, qualification2)
-                .status(new State().withId(PrismState.APPLICATION_APPROVED)).submittedDate(new Date())
+                .status(new State().withId(PrismState.APPLICATION_APPROVED)).submittedDate(new DateTime())
                 .applicationFormDocument(new ApplicationDocument().withPersonalStatement(personalStatement).withCv(cvDocument))
                 .referees(refereeOne, refereeTwo).ipAddress("127.0.0.1");
         applicationForm = getApplicationFormBuilder().build();

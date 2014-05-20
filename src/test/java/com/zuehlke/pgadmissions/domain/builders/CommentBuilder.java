@@ -1,8 +1,9 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
+
+import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Application;
@@ -16,10 +17,10 @@ public class CommentBuilder {
 	private User user;
 	private String strComment;
 	private Integer id;
-	private Date createdTimeStamp;
+	private DateTime createdTimeStamp;
 	private List<Score> scores = Lists.newArrayList();
 	
-	public CommentBuilder date(Date createdTimeStamp) {
+	public CommentBuilder date(DateTime createdTimeStamp) {
 		this.createdTimeStamp = createdTimeStamp;
 		return this;
 	}

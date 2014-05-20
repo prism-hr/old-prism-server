@@ -1,8 +1,7 @@
 package com.zuehlke.pgadmissions.validators;
 
-import java.util.Date;
-
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -24,7 +23,7 @@ public class EmploymentPositionValidator extends FormSectionObjectValidator impl
 	public void addExtraValidation(Object target, Errors errors) {
 		super.addExtraValidation(target, errors);
 		
-		Date today = new Date();
+		LocalDate today = new LocalDate();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerName", EMPTY_FIELD_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerAddress", EMPTY_FIELD_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "position", EMPTY_FIELD_ERROR_MESSAGE);
@@ -34,13 +33,13 @@ public class EmploymentPositionValidator extends FormSectionObjectValidator impl
 		
 		String startDate = position.getStartDate() == null ? "" : position.getStartDate().toString();
 		String endDate = position.getEndDate() == null ? "" : position.getEndDate().toString();
-		if (StringUtils.isNotBlank(startDate) && position.getStartDate().after(today)) {
+		if (StringUtils.isNotBlank(startDate) && position.getStartDate().isAfter(today)) {
 			errors.rejectValue("startDate", "date.field.notpast");
 		}
-		if (StringUtils.isNotBlank(endDate) && position.getEndDate().after(today)) {
+		if (StringUtils.isNotBlank(endDate) && position.getEndDate().isAfter(today)) {
 			errors.rejectValue("endDate", "date.field.notpast");
 		}
-		if (StringUtils.isNotBlank(startDate) && position.getEndDate() != null && position.getStartDate().after(position.getEndDate())) {
+		if (StringUtils.isNotBlank(startDate) && position.getEndDate() != null && position.getStartDate().isAfter(position.getEndDate())) {
 			errors.rejectValue("startDate", "position.position_startDate.notvalid");
 		}
 		if (!position.isCurrent()  && StringUtils.isBlank(endDate)){

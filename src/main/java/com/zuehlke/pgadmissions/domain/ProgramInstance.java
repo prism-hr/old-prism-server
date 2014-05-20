@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,9 +8,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
 
 import com.google.common.base.Objects;
 
@@ -25,12 +24,12 @@ public class ProgramInstance {
     private Integer id;
 
     @Column(name = "deadline")
-    @Temporal(value = TemporalType.DATE)
-    private Date applicationDeadline;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate applicationDeadline;
 
     @Column(name = "start_date")
-    @Temporal(value = TemporalType.DATE)
-    private Date applicationStartDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate applicationStartDate;
 
     @Column(name = "academic_year")
     private String academicYear;
@@ -43,7 +42,7 @@ public class ProgramInstance {
     private StudyOption studyOption;
 
     @Column(name = "enabled")
-    private Boolean enabled;
+    private boolean enabled;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id")
@@ -57,11 +56,11 @@ public class ProgramInstance {
         return id;
     }
 
-    public Date getApplicationDeadline() {
+    public LocalDate getApplicationDeadline() {
         return applicationDeadline;
     }
 
-    public void setApplicationDeadline(Date applicationDeadline) {
+    public void setApplicationDeadline(LocalDate applicationDeadline) {
         this.applicationDeadline = applicationDeadline;
     }
 
@@ -73,11 +72,11 @@ public class ProgramInstance {
         this.program = program;
     }
 
-    public Date getApplicationStartDate() {
+    public LocalDate getApplicationStartDate() {
         return applicationStartDate;
     }
 
-    public void setApplicationStartDate(Date applicationStartDate) {
+    public void setApplicationStartDate(LocalDate applicationStartDate) {
         this.applicationStartDate = applicationStartDate;
     }
 
@@ -122,6 +121,11 @@ public class ProgramInstance {
         this.academicYear = academicYear;
         return this;
     }
+    
+    public ProgramInstance withStudyOption(String id, String option) {
+        this.studyOption = new StudyOption(id, option);
+        return this;
+    }
 
     public ProgramInstance withStudyOption(StudyOption studyOption) {
         this.studyOption = studyOption;
@@ -133,12 +137,12 @@ public class ProgramInstance {
         return this;
     }
 
-    public ProgramInstance withApplicationStartDate(Date applicationStartDate) {
+    public ProgramInstance withApplicationStartDate(LocalDate applicationStartDate) {
         this.applicationStartDate = applicationStartDate;
         return this;
     }
 
-    public ProgramInstance withApplicationDeadline(Date applicationDeadline) {
+    public ProgramInstance withApplicationDeadline(LocalDate applicationDeadline) {
         this.applicationDeadline = applicationDeadline;
         return this;
     }
@@ -148,9 +152,9 @@ public class ProgramInstance {
         return this;
     }
 
-    public boolean isDateWithinBounds(Date date) {
-        boolean afterStartDate = !date.before(getApplicationStartDate());
-        boolean beforeEndDate = date.before(getApplicationDeadline());
+    public boolean isDateWithinBounds(LocalDate date) {
+        boolean afterStartDate = !date.isBefore(getApplicationStartDate());
+        boolean beforeEndDate = date.isBefore(getApplicationDeadline());
         return afterStartDate && beforeEndDate;
     }
 

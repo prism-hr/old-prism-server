@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -32,12 +34,12 @@ public class Passport implements Serializable {
     private String name;
 
     @Column(name = "issue_date")
-    @Temporal(TemporalType.DATE)
-    private Date issueDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate issueDate;
 
     @Column(name = "expiry_date")
-    @Temporal(TemporalType.DATE)
-    private Date expiryDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate expiryDate;
 
     public Integer getId() {
         return id;
@@ -63,20 +65,40 @@ public class Passport implements Serializable {
         this.name = name;
     }
 
-    public Date getIssueDate() {
+    public LocalDate getIssueDate() {
         return issueDate;
     }
 
-    public void setIssueDate(Date issueDate) {
+    public void setIssueDate(LocalDate issueDate) {
         this.issueDate = issueDate;
     }
 
-    public Date getExpiryDate() {
+    public LocalDate getExpiryDate() {
         return expiryDate;
     }
 
-    public void setExpiryDate(Date expiryDate) {
+    public void setExpiryDate(LocalDate expiryDate) {
         this.expiryDate = expiryDate;
+    }
+
+    public Passport withNumber(String number) {
+        this.number = number;
+        return this;
+    }
+
+    public Passport withName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public Passport withIssueDate(LocalDate issueDate) {
+        this.issueDate = issueDate;
+        return this;
+    }
+
+    public Passport withExpiryDate(LocalDate expiryDate) {
+        this.expiryDate = expiryDate;
+        return this;
     }
 
 }

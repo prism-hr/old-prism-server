@@ -86,8 +86,5 @@
   <bean id="opportunityRequestValidator" class="com.zuehlke.pgadmissions.validators.OpportunityRequestValidator">
   </bean>
 
-  <bean id="domicilePropertyEditor" class="com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor">
-    <constructor-arg value="com.zuehlke.pgadmissions.domain.Domicile" />
-  </bean>
 
 </beans>

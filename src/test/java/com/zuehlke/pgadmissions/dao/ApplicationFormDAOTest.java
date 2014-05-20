@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -166,24 +167,24 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         List<Qualification> qualifications = new ArrayList<Qualification>();
 
         Qualification qualification1 = new Qualification();
-        qualification1.setAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
+        qualification1.setAwardDate(new LocalDate(2006, 2, 2));
         qualification1.setGrade("");
         // qualification1.setQualificationInstitution("");
 
         qualification1.setLanguage("Abkhazian");
         qualification1.setSubject("");
-        qualification1.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
+        qualification1.setStartDate(new LocalDate(2006, 2, 2));
         qualification1.setType(testObjectProvider.getQualificationType());
 
         qualifications.add(qualification1);
 
         Qualification qualification2 = new Qualification();
-        qualification2.setAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
+        qualification2.setAwardDate(new LocalDate(2006, 2, 2));
         qualification2.setGrade("");
         // qualification2.setQualificationInstitution("");
         qualification2.setLanguage("Abkhazian");
         qualification2.setSubject("");
-        qualification2.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
+        qualification2.setStartDate(new LocalDate(2006, 2, 2));
         qualification2.setType(testObjectProvider.getQualificationType());
 
         qualifications.add(qualification1);
@@ -223,16 +224,16 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         User otherApplicant = new User().withFirstName("Other").withLastName("Applicant").withEmail("other@applicant.com").withActivationCode("AA")
                 .withAccount(new UserAccount().withPassword("password").withEnabled(false));
 
-        Application applicationForm = new Application().withSubmittedTimestamp(initialDate.plusDays(2).toDate()).withProgram(program).withUser(user)
+        Application applicationForm = new Application().withSubmittedTimestamp(initialDate.plusDays(2)).withProgram(program).withUser(user)
                 .withState(testObjectProvider.getState(PrismState.APPLICATION_APPROVAL));
-        Application applicationForm2 = new Application().withSubmittedTimestamp(initialDate.toDate()).withProgram(program).withUser(user)
+        Application applicationForm2 = new Application().withSubmittedTimestamp(initialDate).withProgram(program).withUser(user)
                 .withState(testObjectProvider.getState(PrismState.APPLICATION_VALIDATION));
-        Application applicationForm3 = new Application().withSubmittedTimestamp(initialDate.plusDays(1).toDate()).withProgram(program).withUser(user)
+        Application applicationForm3 = new Application().withSubmittedTimestamp(initialDate.plusDays(1)).withProgram(program).withUser(user)
                 .withState(testObjectProvider.getState(PrismState.APPLICATION_INTERVIEW));
 
-        Application recentApplicationForm = new Application().withSubmittedTimestamp(initialDate.plusDays(2).plusMinutes(2).toDate())
+        Application recentApplicationForm = new Application().withSubmittedTimestamp(initialDate.plusDays(2).plusMinutes(2))
                 .withProgram(program).withUser(otherApplicant).withState(new State().withId(PrismState.APPLICATION_UNSUBMITTED));
-        Application otherApplication = new Application().withSubmittedTimestamp(initialDate.plusWeeks(1).toDate()).withProgram(program)
+        Application otherApplication = new Application().withSubmittedTimestamp(initialDate.plusWeeks(1)).withProgram(program)
                 .withUser(otherApplicant).withState(new State().withId(PrismState.APPLICATION_REVIEW));
 
         save(otherApplicant, applicationForm, applicationForm2, applicationForm3, recentApplicationForm, otherApplication);

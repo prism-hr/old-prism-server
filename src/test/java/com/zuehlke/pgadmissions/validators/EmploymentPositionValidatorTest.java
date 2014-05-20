@@ -3,12 +3,10 @@ package com.zuehlke.pgadmissions.validators;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 import junit.framework.Assert;
 
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,9 +17,9 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Address;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
@@ -59,14 +57,8 @@ public class EmploymentPositionValidatorTest {
 
     @Test
     public void shouldRejectIfStartDateAndEndDateAreFutureDates() {
-        Date tomorrow, dayAfterTomorrow;
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, 1);
-        tomorrow = calendar.getTime();
-        calendar.add(Calendar.DATE, 2);
-        dayAfterTomorrow = calendar.getTime();
-        position.setStartDate(tomorrow);
-        position.setEndDate(dayAfterTomorrow);
+        position.setStartDate(new LocalDate().plusDays(1));
+        position.setEndDate(new LocalDate().plusDays(2));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
         positionValidator.validate(position, mappingResult);
         Assert.assertEquals(2, mappingResult.getErrorCount());
@@ -112,8 +104,8 @@ public class EmploymentPositionValidatorTest {
 
     @Test
     public void shouldRejectIfStartDateIsAfterEndDate() throws ParseException {
-        position.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-        position.setEndDate(new SimpleDateFormat("yyyy/MM/dd").parse("2009/08/06"));
+        position.setStartDate(new LocalDate(2010, 8, 6));
+        position.setEndDate(new LocalDate(2009, 8, 6));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
         positionValidator.validate(position, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -138,12 +130,12 @@ public class EmploymentPositionValidatorTest {
         position = new EmploymentPosition();
         position.setApplication(new ApplicationFormBuilder().id(4).build());
         position.setEmployerName("Mark");
-        position.setEndDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
+        position.setEndDate(new LocalDate(2010, 8, 6));
         position.setRemit("cashier");
         position.setCurrent(false);
-        position.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
+        position.setStartDate(new LocalDate(2010, 8, 6));
         position.setPosition("head of department");
-        position.setEmployerAddress(new Address().withLine1("address").withTown("address3").withDomicile(new DomicileBuilder().id(1).enabled(true).build()));
+        position.setEmployerAddress(new Address().withLine1("address").withTown("address3").withDomicile(new Domicile().withId(1)));
 
         positionValidator = new EmploymentPositionValidator();
         positionValidator.setValidator((javax.validation.Validator) validator);

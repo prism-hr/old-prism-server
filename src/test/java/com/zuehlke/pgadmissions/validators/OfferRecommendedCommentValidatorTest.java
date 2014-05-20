@@ -6,7 +6,7 @@ import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertTrue;
 import junit.framework.Assert;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -86,7 +86,7 @@ public class OfferRecommendedCommentValidatorTest {
     @Before
     public void setup() {
         comment = new OfferRecommendedCommentBuilder().projectTitle("title").projectAbstract("abstract").recommendedConditionsAvailable(true)
-                .recommendedStartDate(DateTime.now().plusDays(1).toDate()).recommendedConditions("conditions").build();
+                .recommendedStartDate(new LocalDate().plusDays(1)).recommendedConditions("conditions").build();
         offerRecommendedCommentValidator = new OfferRecommendedCommentValidator();
         offerRecommendedCommentValidator.setValidator((javax.validation.Validator) validator);
         assignedUserValidatorMock = createMock(CommentAssignedUserValidator.class);

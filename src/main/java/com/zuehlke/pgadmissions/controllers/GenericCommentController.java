@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -108,7 +108,7 @@ public class GenericCommentController {
     public String getGenericCommentPage(ModelMap modelMap) {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_COMMENT);
+        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_COMMENT);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return GENERIC_COMMENT_PAGE;
     }
@@ -117,13 +117,13 @@ public class GenericCommentController {
     public String addComment(@Valid @ModelAttribute("comment") Comment comment, BindingResult result, ModelMap modelMap) {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_COMMENT);
+        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_COMMENT);
         if (result.hasErrors()) {
             return GENERIC_COMMENT_PAGE;
         }
         
         commentService.save(comment);
-        applicationsService.save(applicationForm);
+        applicationsService.saveUpdate(applicationForm);
         applicationFormUserRoleService.applicationUpdated(applicationForm, getUser());
         return "redirect:/comment?applicationId=" + applicationForm.getApplicationNumber();
     }

@@ -40,7 +40,7 @@ public class EmploymentPositionService {
             persistentEmploymentPosition = new EmploymentPosition();
             persistentEmploymentPosition.setApplication(application);
             application.getEmploymentPositions().add(persistentEmploymentPosition);
-            applicationFormService.save(application);
+            applicationFormService.saveUpdate(application);
         } else {
             persistentEmploymentPosition = getSecuredInstance(employmentPositionId);
         }

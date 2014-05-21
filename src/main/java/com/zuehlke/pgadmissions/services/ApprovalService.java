@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
@@ -58,7 +58,7 @@ public class ApprovalService {
         ApprovalService thisBean = applicationContext.getBean(ApprovalService.class);
 
         AssignSupervisorsComment approvalComment = (AssignSupervisorsComment) applicationsService
-                .getLatestStateChangeComment(form, ApplicationFormAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
+                .getLatestStateChangeComment(form, SystemAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
         SupervisionConfirmationComment supervisionConfirmationComment = thisBean.createSupervisionConfirmationComment(approvalComment, confirmSupervisionDTO);
 
         if (BooleanUtils.isTrue(supervisionConfirmationComment.getDeclined())) {
@@ -100,7 +100,7 @@ public class ApprovalService {
     public AssignSupervisorsComment initiateApprovalComment(String applicationId) {
         Application application = applicationsService.getByApplicationNumber(applicationId);
         AssignSupervisorsComment approvalComment = new AssignSupervisorsComment();
-        Comment latestApprovalComment = applicationsService.getLatestStateChangeComment(application, ApplicationFormAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
+        Comment latestApprovalComment = applicationsService.getLatestStateChangeComment(application, SystemAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
         Project project = application.getProject();
         LocalDate startDate = application.getProgramDetails().getStartDate();
         if (latestApprovalComment != null) {

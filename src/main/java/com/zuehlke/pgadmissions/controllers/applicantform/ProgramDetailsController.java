@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
@@ -100,8 +100,8 @@ public class ProgramDetailsController {
 
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(String applicationId) {
-        return applicationFormService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_COMPLETE,
-                ApplicationFormAction.APPLICATION_CORRECT);
+        return applicationFormService.getSecuredApplication(applicationId, SystemAction.APPLICATION_COMPLETE,
+                SystemAction.APPLICATION_CORRECT);
     }
 
     @InitBinder(value = "programmeDetails")

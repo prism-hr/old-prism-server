@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityScope;
 import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
@@ -109,19 +109,19 @@ public class RoleService {
         return roleDAO.getUserRole(user, authority);
     }
 
-    public List<RoleTransition> getRoleTransitions(StateTransition stateTransition, Role invokingRole) {
-        return roleDAO.getRoleTransitions(stateTransition, invokingRole);
+    public List<RoleTransition> getRoleTransitions(StateTransition stateTransition, List<Role> invokerRoles) {
+        return roleDAO.getRoleTransitions(stateTransition, invokerRoles);
     }
 
-    public Role canExecute(User user, PrismResource scope, ApplicationFormAction action) {
-        return roleDAO.getExecutorRole(user, scope, action);
+    public List<Role> canExecute(User user, PrismResource resource, SystemAction action) {
+        return roleDAO.getExecutorRoles(user, resource, action);
     }
 
-    public List<User> getBy(Role role, PrismResource scope) {
-        return roleDAO.getBy(role, scope);
+    public List<User> getBy(Role role, PrismResource resource) {
+        return roleDAO.getBy(role, resource);
     }
 
-    public void executeRoleTransition(PrismResource scope, User user, Role role, RoleTransitionType type, PrismResource newScope, Role newRole) {
+    public void executeRoleTransition(PrismResource resource, User user, Role role, RoleTransitionType type, PrismResource newScope, Role newRole) {
         UserRole userRole = getUserRole(user, role.getId());
         switch (type) {
         case UPDATE:
@@ -133,7 +133,7 @@ public class RoleService {
         }
     }
 
-    public Role getCreatorRole(ApplicationFormAction action, PrismResource scope) {
+    public Role getCreatorRole(SystemAction action, PrismResource scope) {
         return roleDAO.getCreatorRole(action, scope);
     }
 

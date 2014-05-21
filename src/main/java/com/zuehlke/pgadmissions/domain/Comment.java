@@ -63,10 +63,6 @@ public class Comment implements Serializable {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id")
-    private Role role;
-
     @ManyToOne
     @JoinColumn(name = "action_id")
     private Action action;

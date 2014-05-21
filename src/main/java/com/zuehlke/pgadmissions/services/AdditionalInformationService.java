@@ -11,9 +11,9 @@ import com.zuehlke.pgadmissions.domain.Application;
 @Service
 @Transactional
 public class AdditionalInformationService {
-
+    
     @Autowired
-    private ApplicationService applicationFormService;
+    private ApplicationService applicationService;
     
     @Autowired
     ApplicationFormCopyHelper applicationFormCopyHelper;
@@ -32,10 +32,10 @@ public class AdditionalInformationService {
 	        persistentAdditionalInformation = new AdditionalInformation();
 	        persistentAdditionalInformation.setApplication(application);
 	        application.setAdditionalInformation(persistentAdditionalInformation);
-	        applicationFormService.save(application);
+	        applicationService.saveUpdate(application);
 	    }
 	    applicationFormCopyHelper.copyAdditionalInformation(persistentAdditionalInformation, additionalInformation);
-	    applicationFormService.saveOrUpdateApplicationSection(application);
+	    applicationService.saveOrUpdateApplicationSection(application);
 	}
 	
 }

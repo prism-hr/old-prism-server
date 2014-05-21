@@ -75,7 +75,7 @@ public class RefereeService {
             persistentReferee = new Referee();
             persistentReferee.setApplication(application);
             application.getReferees().add(persistentReferee);
-            applicationFormService.save(application);
+            applicationFormService.saveUpdate(application);
         } else {
             persistentReferee = getSecuredInstance(refereeId);
         }

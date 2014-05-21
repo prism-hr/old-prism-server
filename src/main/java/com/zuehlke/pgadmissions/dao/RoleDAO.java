@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -18,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
 
@@ -66,20 +67,21 @@ public class RoleDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<RoleTransition> getRoleTransitions(StateTransition stateTransition, Role invokingRole) {
+    public List<RoleTransition> getRoleTransitions(StateTransition stateTransition, List<Role> invokerRoles) {
         return (List<RoleTransition>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
                 .add(Restrictions.eq("stateTransition", stateTransition)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("role", invokingRole)) //
+                                .add(Restrictions.in("role", invokerRoles)) //
                                 .add(Restrictions.eq("restrictToInvoker", true))) //
                         .add(Restrictions.ne("restrictToInvoker", true))) //
                 .addOrder(Order.asc("role")) //
                 .addOrder(Order.asc("processingOrder")) //
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .list();
     }
     
-    public Role getCreatorRole(ApplicationFormAction action, PrismResource resource) {
+    public Role getCreatorRole(SystemAction action, PrismResource resource) {
         return (Role) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
                 .setProjection(Projections.groupProperty("role"))
                 .createAlias("stateTransition", "stateTransition", JoinType.INNER_JOIN)
@@ -90,9 +92,10 @@ public class RoleDAO {
                 .add(Restrictions.eq("restrictToInvoker", true)).uniqueResult();
     }
 
-    public Role getExecutorRole(User user, PrismResource scope, ApplicationFormAction action) {
-        return (Role) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.property("userRole.role")) //
+    @SuppressWarnings("unchecked")
+    public List<Role> getExecutorRoles(User user, PrismResource scope, SystemAction action) {
+        return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.groupProperty("userRole.role")) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
@@ -108,9 +111,7 @@ public class RoleDAO {
                        .add(Restrictions.eq("system", scope.getSystem())) //
                  .add(Restrictions.eq("user.parentUser", user))) //
                  .add(Restrictions.eq("userAccount.enabled", true))
-                 .addOrder(Order.asc("stateActionAssignment.precedence")) //
-                 .setMaxResults(1) //
-                 .uniqueResult();
+                 .list();
     }
     
     @SuppressWarnings("unchecked")

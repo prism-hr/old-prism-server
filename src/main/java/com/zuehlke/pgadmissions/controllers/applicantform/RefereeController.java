@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
@@ -101,7 +101,7 @@ public class RefereeController {
 
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(@RequestParam String applicationId) {
-        return applicationsService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_EDIT_AS_CREATOR, ApplicationFormAction.APPLICATION_CORRECT);
+        return applicationsService.getSecuredApplication(applicationId, SystemAction.APPLICATION_EDIT_AS_CREATOR, SystemAction.APPLICATION_CORRECT);
     }
 
     @InitBinder(value = "referee")

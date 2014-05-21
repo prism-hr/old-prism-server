@@ -19,9 +19,9 @@ import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismResourceType;
 import com.zuehlke.pgadmissions.domain.enums.StateTransitionType;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.dto.ActionDefinition;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
@@ -49,16 +49,16 @@ public class ActionService {
     private CommentService commentService;
 
     /**
-     * @deprecated use {@link RoleService#canExecute(User, PrismScope, ApplicationFormAction)} instead.
+     * @deprecated use {@link RoleService#canExecute(User, PrismScope, SystemAction)} instead.
      */
     @Deprecated
-    public void validateAction(final Application application, final User user, final ApplicationFormAction action) {
+    public void validateAction(final Application application, final User user, final SystemAction action) {
         if (!checkActionAvailable(application, user, action)) {
             throw new CannotExecuteActionException(application);
         }
     }
 
-    public boolean checkActionAvailable(final Application application, final User user, final ApplicationFormAction action) {
+    public boolean checkActionAvailable(final Application application, final User user, final SystemAction action) {
         return !actionDAO.getUserActionById(application.getId(), user.getId(), action).isEmpty();
     }
 
@@ -66,15 +66,15 @@ public class ActionService {
         return actionDAO.getUserActions(applicationFormId, userId);
     }
 
-    public ActionOutcome executeAction(Integer scopeId, User user, ApplicationFormAction action, Comment comment) throws Exception {
+    public ActionOutcome executeAction(Integer scopeId, User user, SystemAction action, Comment comment) throws Exception {
         PrismResource scope = entityService.getById(action.getScopeClass(), scopeId);
         return executeAction(scope, user, action, comment);
     }
 
     @SuppressWarnings("unchecked")
-    public ActionOutcome executeAction(PrismResource resource, User user, ApplicationFormAction action, Comment comment) throws Exception {
-        Role invokingRole = roleService.canExecute(user, resource, action);
-        if (invokingRole == null) {
+    public ActionOutcome executeAction(PrismResource resource, User user, SystemAction action, Comment comment) throws Exception {
+        List<Role> invokerRoles = roleService.canExecute(user, resource, action);
+        if (invokerRoles.isEmpty()) {
             throw new CannotExecuteActionException(resource);
         }
 
@@ -87,23 +87,23 @@ public class ActionService {
             newResource = applicationService.getOrCreate(user, resource, PrismResourceType.valueOf(newResourceType));
         }
 
-        ApplicationFormAction nextAction = executeStateTransition(resource, user, invokingRole, action, newResource, comment);
+        SystemAction nextAction = executeStateTransition(resource, user, invokerRoles, action, newResource, comment);
         entityService.save(newResource);
         PrismResource nextActionResource = nextAction != null ? newResource.getEnclosingResource(PrismResourceType.valueOf(nextAction.getScopeName())) : null;
         Hibernate.initialize(nextActionResource);
         return new ActionOutcome(user, nextActionResource, nextAction);
     }
 
-    private ApplicationFormAction executeStateTransition(PrismResource scope, User user, Role invokingRole, ApplicationFormAction action, PrismResource newScope,
-            Comment comment) {
-        List<StateTransition> stateTransitions = stateDAO.getStateTransitions(scope.getState().getId(), action, StateTransitionType.ONE_COMPLETED,
+    private SystemAction executeStateTransition(PrismResource resource, User user, List<Role> invokerRoles, SystemAction action,
+            PrismResource newResource, Comment comment) {
+        List<StateTransition> stateTransitions = stateDAO.getStateTransitions(resource.getState().getId(), action, StateTransitionType.ONE_COMPLETED,
                 StateTransitionType.ALL_COMPLETED);
 
-        ApplicationFormAction nextAction = null;
+        SystemAction nextAction = null;
         for (StateTransition stateTransition : stateTransitions) {
-            ApplicationFormAction transitionAction = stateTransition.getTransitionAction().getId();
+            SystemAction transitionAction = stateTransition.getTransitionAction().getId();
             nextAction = transitionAction != null ? transitionAction : nextAction;
-            newScope.setState(stateTransition.getTransitionState());
+            newResource.setState(stateTransition.getTransitionState());
 
             if (comment != null) {
                 comment.setUser(user);
@@ -111,13 +111,13 @@ public class ActionService {
                 commentService.save(comment);
             }
 
-            executeRoleTransitions(invokingRole, scope, stateTransition, newScope);
+            executeRoleTransitions(invokerRoles, resource, stateTransition, newResource);
         }
         return nextAction;
     }
 
-    private void executeRoleTransitions(Role invokingRole, PrismResource scope, StateTransition stateTransition, PrismResource newScope) {
-        List<RoleTransition> roleTransitions = roleService.getRoleTransitions(stateTransition, invokingRole);
+    private void executeRoleTransitions(List<Role> invokerRoles, PrismResource scope, StateTransition stateTransition, PrismResource newScope) {
+        List<RoleTransition> roleTransitions = roleService.getRoleTransitions(stateTransition, invokerRoles);
         for (RoleTransition roleTransition : roleTransitions) {
             Role role = roleTransition.getRole();
             List<User> users = roleService.getBy(role, scope);

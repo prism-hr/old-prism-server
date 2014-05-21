@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ActionDefinition;
 
@@ -35,7 +35,7 @@ public class ActionDAO {
         this.sessionFactory = sessionFactory;
     }
     
-    public Action getById(ApplicationFormAction actionId) {
+    public Action getById(SystemAction actionId) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(Action.class)
                 .add(Restrictions.eq("id", actionId)).uniqueResult();
     }
@@ -44,7 +44,7 @@ public class ActionDAO {
         return getUserActionsAbstract(applicationFormId, userId, null);
     }
     
-    public List<ActionDefinition> getUserActionById(Integer applicationFormId, Integer userId, ApplicationFormAction action) {
+    public List<ActionDefinition> getUserActionById(Integer applicationFormId, Integer userId, SystemAction action) {
         return getUserActionsAbstract(applicationFormId, userId, action);
     }
     
@@ -58,14 +58,14 @@ public class ActionDAO {
                 .setInteger(0, applicationForm.getId()).executeUpdate();
     }
 
-    public void deleteRoleAction(Application applicationForm, Authority authority, ApplicationFormAction action) {
+    public void deleteRoleAction(Application applicationForm, Authority authority, SystemAction action) {
         sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_ROLE_ACTION(?, ?, ?);")
                 .setInteger(0, applicationForm.getId())
                 .setString(1, authority.toString())
                 .setString(2, action.toString()).executeUpdate();
     }
 
-    public void deleteUserAction(Application applicationForm, User user, Authority authority, ApplicationFormAction action) {
+    public void deleteUserAction(Application applicationForm, User user, Authority authority, SystemAction action) {
        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_USER_ACTION(?, ?, ?, ?);")
                 .setInteger(0, applicationForm.getId())
                 .setInteger(1, user.getId())
@@ -73,9 +73,9 @@ public class ActionDAO {
                 .setString(3, action.toString()).executeUpdate();
     }
     
-    private List<ActionDefinition> getUserActionsAbstract(Integer applicationFormId, Integer userId, ApplicationFormAction action) {
+    private List<ActionDefinition> getUserActionsAbstract(Integer applicationFormId, Integer userId, SystemAction action) {
         Properties customDTOProperties = new Properties();
-        customDTOProperties.put("enumClass", ApplicationFormAction.class.getCanonicalName());
+        customDTOProperties.put("enumClass", SystemAction.class.getCanonicalName());
         customDTOProperties.put("type", "12");
         Type actionEnum = new TypeLocatorImpl(new TypeResolver()).custom(EnumType.class, customDTOProperties);
         

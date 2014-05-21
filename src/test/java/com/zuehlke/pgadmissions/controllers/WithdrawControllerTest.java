@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -42,7 +42,7 @@ public class WithdrawControllerTest {
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", student);
 
-        actionsProviderMock.validateAction(applicationForm, student, ApplicationFormAction.APPLICATION_WITHDRAW);
+        actionsProviderMock.validateAction(applicationForm, student, SystemAction.APPLICATION_WITHDRAW);
         withdrawServiceMock.withdrawApplication(applicationForm);
 
         withdrawServiceMock.sendToPortico(applicationForm);

@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -140,7 +140,7 @@ public class ReferenceController {
     public String getUploadReferencesPage(ModelMap modelMap) {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_PROVIDE_REFERENCE);
+        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_PROVIDE_REFERENCE);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, getCurrentUser());
         return ADD_REFERENCES_VIEW_NAME;
     }
@@ -150,7 +150,7 @@ public class ReferenceController {
             throws ScoringDefinitionParseException {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_PROVIDE_REFERENCE);
+        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_PROVIDE_REFERENCE);
 
         List<Score> scores = comment.getScores();
         if (!scores.isEmpty()) {
@@ -171,7 +171,7 @@ public class ReferenceController {
         applicationForm.getApplicationComments().add(comment);
         applicationFormUserRoleService.referencePosted(comment);
 
-        applicationsService.save(applicationForm);
+        applicationsService.saveUpdate(applicationForm);
         applicationFormUserRoleService.applicationUpdated(applicationForm, user);
         return "redirect:/applications?messageCode=reference.uploaded&application=" + comment.getApplication().getApplicationNumber();
     }

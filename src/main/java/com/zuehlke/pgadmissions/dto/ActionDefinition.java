@@ -1,26 +1,26 @@
 package com.zuehlke.pgadmissions.dto;
 
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 
 public class ActionDefinition {
 
-    private ApplicationFormAction action;
+    private SystemAction action;
 
     private Boolean raisesUrgentFlag;
     
     public ActionDefinition() {
     }
 
-    public ActionDefinition(ApplicationFormAction action, Boolean raisesUrgentFlag) {
+    public ActionDefinition(SystemAction action, Boolean raisesUrgentFlag) {
         this.action = action;
         this.raisesUrgentFlag = raisesUrgentFlag;
     }
 
-    public ApplicationFormAction getAction() {
+    public SystemAction getAction() {
         return action;
     }
     
-    public void setAction(ApplicationFormAction action) {
+    public void setAction(SystemAction action) {
     	this.action = action;
     }
 

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.CompleteApprovalComment;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -86,7 +86,7 @@ public class ConfirmSupervisionController {
         ConfirmSupervisionDTO confirmSupervisionDTO = new ConfirmSupervisionDTO();
 
         Application applicationForm = getApplicationForm(applicationId);
-        CompleteApprovalComment comment = (CompleteApprovalComment) applicationsService.getLatestStateChangeComment(applicationForm, ApplicationFormAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
+        CompleteApprovalComment comment = (CompleteApprovalComment) applicationsService.getLatestStateChangeComment(applicationForm, SystemAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
 
         confirmSupervisionDTO.setProjectTitle(comment.getProjectTitle());
         confirmSupervisionDTO.setProjectAbstract(comment.getProjectAbstract());
@@ -120,7 +120,7 @@ public class ConfirmSupervisionController {
     public String confirmSupervision(ModelMap modelMap) {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_CONFIRM_SUPERVISION);
+        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_CONFIRM_SUPERVISION);
         workflowService.deleteApplicationUpdate(applicationForm, user);
         return CONFIRM_SUPERVISION_PAGE;
     }
@@ -129,7 +129,7 @@ public class ConfirmSupervisionController {
     public String applyConfirmSupervision(@Valid ConfirmSupervisionDTO confirmSupervisionDTO, BindingResult result, ModelMap modelMap) {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_CONFIRM_SUPERVISION);
+        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_CONFIRM_SUPERVISION);
 
         if (result.hasErrors()) {
             return CONFIRM_SUPERVISION_PAGE;

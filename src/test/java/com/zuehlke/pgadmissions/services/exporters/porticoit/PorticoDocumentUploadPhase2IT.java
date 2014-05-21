@@ -341,7 +341,7 @@ public class PorticoDocumentUploadPhase2IT {
                 break;
             }
         }
-        applicationsService.save(form);
+        applicationsService.saveUpdate(form);
         sessionFactory.getCurrentSession().refresh(form);
     }
     

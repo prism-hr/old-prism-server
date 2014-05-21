@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormDocumentService;
@@ -61,8 +61,8 @@ public class DocumentsController {
 
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(String applicationId) {
-        return applicationFormService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_COMPLETE,
-                ApplicationFormAction.APPLICATION_CORRECT);
+        return applicationFormService.getSecuredApplication(applicationId, SystemAction.APPLICATION_COMPLETE,
+                SystemAction.APPLICATION_CORRECT);
     }
 
     @ModelAttribute("message")

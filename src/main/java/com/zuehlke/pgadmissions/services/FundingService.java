@@ -40,7 +40,7 @@ public class FundingService {
             persistentFunding = new Funding();
             persistentFunding.setApplication(application);
             application.getFundings().add(persistentFunding);
-            applicationFormService.save(application);
+            applicationFormService.saveUpdate(application);
         } else {
             persistentFunding = getSecuredInstance(fundingId);
         }

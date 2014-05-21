@@ -698,7 +698,7 @@ public class PorticoWebServiceIT {
         refereeOne.setComment(referenceComment1);
         randomApplicationForm.getReferees().add(refereeOne);
 
-        applicationsService.save(randomApplicationForm);
+        applicationsService.saveUpdate(randomApplicationForm);
 
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
@@ -776,7 +776,7 @@ public class PorticoWebServiceIT {
 
         USED_APPLICATION_NUMBERS.add(applicationForm.getApplicationNumber());
 
-        applicationsService.save(applicationForm);
+        applicationsService.saveUpdate(applicationForm);
 
         return applicationForm;
     }

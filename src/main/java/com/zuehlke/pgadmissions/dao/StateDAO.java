@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateTransition;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.StateTransitionType;
 
@@ -52,7 +52,7 @@ public class StateDAO {
                 .add(Restrictions.eq("canBeAssignedFrom", true)).list();
     }
 
-    public List<StateTransition> getStateTransitions(PrismState state, ApplicationFormAction action, StateTransitionType... stateTransitionTypes) {
+    public List<StateTransition> getStateTransitions(PrismState state, SystemAction action, StateTransitionType... stateTransitionTypes) {
         return (List<StateTransition>) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state.id", state)) //

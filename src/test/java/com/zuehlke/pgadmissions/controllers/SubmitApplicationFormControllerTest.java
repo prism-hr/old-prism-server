@@ -23,7 +23,7 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -76,7 +76,7 @@ public class SubmitApplicationFormControllerTest {
         request.setRemoteAddr("localhost");
 
         expect(userServiceMock.getCurrentUser()).andReturn(applicant);
-        actionsProviderMock.validateAction(applicationForm, applicant, ApplicationFormAction.APPLICATION_COMPLETE);
+        actionsProviderMock.validateAction(applicationForm, applicant, SystemAction.APPLICATION_COMPLETE);
         submitApplicationFormServiceMock.submitApplication(applicationForm);
 
         replay();

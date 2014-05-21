@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -90,7 +90,7 @@ public class RegistrationController {
     }
 
     @RequestMapping(value = "/activateAccount", params = "action", method = RequestMethod.GET)
-    public String activateAccountSubmit(@RequestParam String activationCode, @RequestParam ApplicationFormAction action, Integer scopeId) throws Exception {
+    public String activateAccountSubmit(@RequestParam String activationCode, @RequestParam SystemAction action, Integer scopeId) throws Exception {
 
         User user = registrationService.activateAccount(activationCode, action, scopeId);
 

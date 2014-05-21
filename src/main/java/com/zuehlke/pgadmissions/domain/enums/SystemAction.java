@@ -5,7 +5,7 @@ import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 
-public enum ApplicationFormAction {
+public enum SystemAction {
 
     APPLICATION_ASSESS_ELIGIBILITY, //
     APPLICATION_ASSIGN_INTERVIEWERS, //

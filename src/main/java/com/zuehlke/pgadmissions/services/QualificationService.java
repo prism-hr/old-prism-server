@@ -42,7 +42,7 @@ public class QualificationService {
             persistentQualification = new Qualification();
             persistentQualification.setApplication(application);
             application.getQualifications().add(persistentQualification);
-            applicationFormService.save(application);
+            applicationFormService.saveUpdate(application);
         } else {
             persistentQualification = getSecuredInstance(qualificationId);
         }

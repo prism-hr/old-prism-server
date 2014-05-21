@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAddressService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -75,8 +75,8 @@ public class AddressController {
 
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(String applicationId) {
-        return applicationFormService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_COMPLETE,
-                ApplicationFormAction.APPLICATION_CORRECT);
+        return applicationFormService.getSecuredApplication(applicationId, SystemAction.APPLICATION_COMPLETE,
+                SystemAction.APPLICATION_CORRECT);
     }
 
     @ModelAttribute("message")

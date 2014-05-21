@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
@@ -91,21 +91,21 @@ public class PrismWorkflowTest {
         User applicant = registerAndActivateApplicant(program, "Kuba", "Fibinger", "kuba@fibinger.pl");
 
         Comment createApplicationComment = null;
-        ActionOutcome actionOutcome = actionService.executeAction(program.getId(), applicant, ApplicationFormAction.PROGRAM_CREATE_APPLICATION,
+        ActionOutcome actionOutcome = actionService.executeAction(program.getId(), applicant, SystemAction.PROGRAM_CREATE_APPLICATION,
                 createApplicationComment);
         Application createdApplication = (Application) actionOutcome.getScope();
-        assertEquals(ApplicationFormAction.APPLICATION_COMPLETE, actionOutcome.getNextAction());
+        assertEquals(SystemAction.APPLICATION_COMPLETE, actionOutcome.getNextAction());
 
         applicationTestDataProvider.fillWithData(createdApplication);
         
         Comment completeApplicationComment = null;
-        actionOutcome = actionService.executeAction(createdApplication.getId(), applicant, ApplicationFormAction.APPLICATION_COMPLETE,
+        actionOutcome = actionService.executeAction(createdApplication.getId(), applicant, SystemAction.APPLICATION_COMPLETE,
                 completeApplicationComment);
-        assertEquals(ApplicationFormAction.SYSTEM_VIEW_APPLICATION_LIST, actionOutcome.getNextAction());
+        assertEquals(SystemAction.SYSTEM_VIEW_APPLICATION_LIST, actionOutcome.getNextAction());
         assertEquals(roleService.getPrismSystem().getId(), actionOutcome.getScope().getId());
 
         Comment assignReviewerComment = new Comment();
-        actionService.executeAction(1, programAdministrator, ApplicationFormAction.APPLICATION_ASSIGN_REVIEWERS, assignReviewerComment);
+        actionService.executeAction(1, programAdministrator, SystemAction.APPLICATION_ASSIGN_REVIEWERS, assignReviewerComment);
 
         mailSenderMock.verify();
     }
@@ -115,7 +115,7 @@ public class PrismWorkflowTest {
                 new User().withFirstName(firstName).withLastName(lastName).withEmail(email).withAccount(new UserAccount().withPassword("password")), advert);
         mailSenderMock.assertEmailSent(applicant, NotificationTemplateId.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
 
-        applicant = registrationService.activateAccount(applicant.getActivationCode(), ApplicationFormAction.PROGRAM_CREATE_APPLICATION, advert.getId());
+        applicant = registrationService.activateAccount(applicant.getActivationCode(), SystemAction.PROGRAM_CREATE_APPLICATION, advert.getId());
         return applicant;
     }
 

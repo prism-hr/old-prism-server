@@ -12,8 +12,11 @@ import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 @Transactional
 public class ApplicationFormDocumentService {
 
+    @Autowired 
+    private EntityService entityService;
+    
     @Autowired
-    private ApplicationService applicationFormService;
+    private ApplicationService applicationService;
     
     @Autowired
     private ApplicationFormCopyHelper applicationFormCopyHelper;
@@ -32,10 +35,10 @@ public class ApplicationFormDocumentService {
             persistentApplicationFormDocument = new ApplicationDocument();
             persistentApplicationFormDocument.setApplication(application);
             application.setApplicationDocument(persistentApplicationFormDocument);
-            applicationFormService.save(application);
+            entityService.save(application);
         }
         applicationFormCopyHelper.copyApplicationFormDocument(persistentApplicationFormDocument, applicationFormDocument, false);
-        applicationFormService.saveOrUpdateApplicationSection(application);
+        applicationService.saveOrUpdateApplicationSection(application);
 	}
 	
 }

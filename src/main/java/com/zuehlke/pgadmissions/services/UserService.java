@@ -58,7 +58,7 @@ public class UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
             User currentUser = (User) authentication.getDetails();
-            return userDAO.getPrimaryById(currentUser.getId());
+            return userDAO.getParentUserByUserId(currentUser.getId());
         }
         return null;
     }

@@ -43,6 +43,14 @@ public class UserDAO {
         this.sessionFactory = sessionFactory;
     }
 
+    
+    public User getParentUserByUserId(Integer userId) {
+       return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
+        .setProjection(Property.forName("parentUser")) //
+        .add(Restrictions.eq("id", userId)) //
+        .uniqueResult();
+    }
+    
     public void save(User user) {
         Session session = sessionFactory.getCurrentSession();
         session.saveOrUpdate(user);

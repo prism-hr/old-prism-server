@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -60,13 +60,13 @@ public class RegistrationService {
         return user;
     }
 
-    public User activateAccount(String activationCode, ApplicationFormAction action, int resourceId) {
+    public User activateAccount(String activationCode, SystemAction action, int resourceId) {
         User user = userService.getUserByActivationCode(activationCode);
         user.getAccount().setEnabled(true);
 
-        PrismResource scope = entityService.getBy(action.getScopeClass(), "id", resourceId);
-        Role role = roleService.getCreatorRole(action, scope);
-        roleService.getOrCreateUserRole(scope, user, role.getId());
+        PrismResource resource = entityService.getBy(action.getScopeClass(), "id", resourceId);
+        Role role = roleService.getCreatorRole(action, resource);
+        roleService.getOrCreateUserRole(resource, user, role.getId());
         return user;
     }
 

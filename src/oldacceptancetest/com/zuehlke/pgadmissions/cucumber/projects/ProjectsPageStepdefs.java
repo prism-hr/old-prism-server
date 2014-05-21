@@ -68,7 +68,7 @@ public class ProjectsPageStepdefs {
 
 		anna = new RegisteredUserBuilder().firstName("Anna").lastName("Cucumber").email("email@test.com").username("anna").password("password")
 				.accountNonExpired(true).accountNonLocked(true).credentialsNonExpired(true).enabled(true).role(applicant).toUser();
-		sessionFactory.getCurrentSession().save(anna);
+		sessionFactory.getCurrentSession().saveUpdate(anna);
 		userMap.put("anna", anna);
 
 		sessionFactory.getCurrentSession().flush();
@@ -230,7 +230,7 @@ public class ProjectsPageStepdefs {
 		for (String revieweName : reviewers) {
 			applicationForm.getReviewers().add(userMap.get(revieweName.trim()));
 		}
-		sessionFactory.getCurrentSession().save(applicationForm);
+		sessionFactory.getCurrentSession().saveUpdate(applicationForm);
 		commitAndGetNewTransaction();
 		return applicationForm;
 	}

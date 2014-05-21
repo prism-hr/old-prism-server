@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
@@ -72,11 +72,11 @@ public class OfferRecommendationController {
     public String getOfferRecommendationPage(ModelMap modelMap) {
         Application application = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(application, user, ApplicationFormAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
+        actionService.validateAction(application, user, SystemAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
 
         OfferRecommendedComment offerRecommendedComment = new OfferRecommendedComment();
         AssignSupervisorsComment approvalComment = (AssignSupervisorsComment) applicationsService.getLatestStateChangeComment(application,
-                ApplicationFormAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
+                SystemAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
         if (approvalComment != null) {
             offerRecommendedComment.setProjectTitle(approvalComment.getProjectTitle());
             offerRecommendedComment.setProjectAbstract(approvalComment.getProjectAbstract());
@@ -105,7 +105,7 @@ public class OfferRecommendationController {
             ModelMap modelMap) {
         Application application = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(application, user, ApplicationFormAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
+        actionService.validateAction(application, user, SystemAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
 
         if (errors.hasErrors()) {
             modelMap.put("offerRecommendedComment", offerRecommendedComment);

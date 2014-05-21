@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -27,11 +25,11 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismResourceType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -40,8 +38,6 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 @Transactional
 public class ApplicationService extends PrismResourceService {
 
-    private final Logger log = LoggerFactory.getLogger(ApplicationService.class);
-
     public static final int APPLICATION_BLOCK_SIZE = 50;
 
     @Autowired
@@ -49,6 +45,9 @@ public class ApplicationService extends PrismResourceService {
 
     @Autowired
     private ApplicationFormListDAO applicationFormListDAO;
+    
+    @Autowired
+    private EntityService entityService;
 
     @Autowired
     private UserService userService;
@@ -152,24 +151,32 @@ public class ApplicationService extends PrismResourceService {
     }
 
     @SuppressWarnings("unchecked")
-    public Application getOrCreateApplication(final User applicant, final Integer advertId) throws Exception {
+    public Application getOrCreateApplication(final User creator, final Integer advertId) throws Exception {
         PrismResource parentResource = programService.getValidProgramProjectAdvert(advertId);
-        return (Application) super.getOrCreate(applicant, parentResource, PrismResourceType.APPLICATION);
+        return (Application) super.getOrCreate(creator, parentResource, PrismResourceType.APPLICATION);
     }
     
-    public void save(Application application) {
+    public void save(Application application, User creator) {
         application.setApplicationNumber(generateApplicationNumber(application.getAdvert().getProgram()));
         application.setCreatedTimestamp(new DateTime());
-        super.save(application);
+        Application previousApplication = applicationFormDAO.getPreviousApplicationForApplicant(application, creator);
+        if (previousApplication != null) {
+            applicationFormCopyHelper.copyApplicationFormData(application, previousApplication);
+        }
+        super.save(application, creator);
+    }
+    
+    public void saveUpdate(Application application) {
+        entityService.save(application);
     }
 
-    public Application getSecuredApplication(final String applicationId, final ApplicationFormAction... actions) {
+    public Application getSecuredApplication(final String applicationId, final SystemAction... actions) {
         Application application = getByApplicationNumber(applicationId);
         if (application == null) {
             throw new ResourceNotFoundException();
         }
         User user = userService.getCurrentUser();
-        for (ApplicationFormAction action : actions) {
+        for (SystemAction action : actions) {
             if (actionService.checkActionAvailable(application, user, action)) {
                 return application;
             }
@@ -178,7 +185,6 @@ public class ApplicationService extends PrismResourceService {
     }
 
     public void saveOrUpdateApplicationSection(Application application) {
-        User currentUser = userService.getCurrentUser();
         workflowService.applicationUpdated(application, userService.getCurrentUser());
     }
 
@@ -220,18 +226,8 @@ public class ApplicationService extends PrismResourceService {
         return applicationDescriptor;
     }
 
-    public Comment getLatestStateChangeComment(Application applicationForm, ApplicationFormAction action) {
+    public Comment getLatestStateChangeComment(Application applicationForm, SystemAction action) {
         return applicationFormDAO.getLatestStateChangeComment(applicationForm);
-    }
-
-    private void autoPopulateApplication(Application applicationForm) {
-        User user = userService.getCurrentUser();
-        if (user != null) {
-            Application previousApplication = applicationFormDAO.getPreviousApplicationForApplicant(applicationForm, user);
-            if (previousApplication != null) {
-                applicationFormCopyHelper.copyApplicationFormData(applicationForm, previousApplication);
-            }
-        }
     }
 
     private String generateApplicationNumber(final Program program) {

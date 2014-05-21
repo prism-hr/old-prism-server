@@ -32,14 +32,13 @@ public abstract class PrismResourceService {
         if (childResource == null) {
             try {
                 childResource = (PrismResource) ConstructorUtils.invokeConstructor(childResourceType, null);
-                childResource.setUser(creator);
                 childResource.setParentResource(parentResource);
                 
                 for (Entry<String, Object> uniqueConstraint : uniqueConstraints) {
                     BeanUtils.setProperty(childResource, uniqueConstraint.getKey(), uniqueConstraint.getValue());
                 }
               
-                save(childResource);
+                save(childResource, creator);
             } catch (Exception e) {
                 throw new Error("Could not create new prism resource of type: " + childResourceType.getSimpleName(), e);
             }
@@ -49,7 +48,8 @@ public abstract class PrismResourceService {
         return childResource;
     }
 
-    protected void save(PrismResource resource) {
+    protected void save(PrismResource resource, User creator) {
+        resource.setUser(creator);
         entityDAO.save(resource);
     }
 

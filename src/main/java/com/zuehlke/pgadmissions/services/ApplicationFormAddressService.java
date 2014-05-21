@@ -18,6 +18,9 @@ public class ApplicationFormAddressService {
     @Autowired
     private ApplicationFormCopyHelper applicationFormCopyHelper;
 
+    @Autowired
+    private EntityService entityService;
+
     public ApplicationAddress getOrCreate(Application application) {
         ApplicationAddress applicationFormAddress = application.getApplicationAddress();
         if (applicationFormAddress == null) {
@@ -32,7 +35,7 @@ public class ApplicationFormAddressService {
             persistentApplicationFormAddress = new ApplicationAddress();         
             persistentApplicationFormAddress.setApplication(application);
             application.setApplicationAddress(persistentApplicationFormAddress);
-            applicationFormService.save(application);
+            entityService.save(application);
         }
         applicationFormCopyHelper.copyApplicationFormAddress(persistentApplicationFormAddress, applicationFormAddress, false);
         applicationFormService.saveOrUpdateApplicationSection(application);

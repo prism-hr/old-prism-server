@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
@@ -59,7 +59,7 @@ public class MoveToReviewController {
     @RequestMapping(method = RequestMethod.GET, value = "moveToReview")
     public String getReviewRoundDetailsPage(ModelMap modelMap) {
         Application application = (Application) modelMap.get("applicationForm");
-        actionService.validateAction(application, getUser(), ApplicationFormAction.APPLICATION_ASSIGN_REVIEWERS);
+        actionService.validateAction(application, getUser(), SystemAction.APPLICATION_ASSIGN_REVIEWERS);
         applicationFormUserRoleService.deleteApplicationUpdate(application, getUser());
         return REVIEW_DETAILS_VIEW_NAME;
     }
@@ -76,7 +76,7 @@ public class MoveToReviewController {
         Application application = (Application) modelMap.get("applicationForm");
         User user = getUser();
 
-        actionService.validateAction(application, user, ApplicationFormAction.APPLICATION_ASSIGN_REVIEWERS);
+        actionService.validateAction(application, user, SystemAction.APPLICATION_ASSIGN_REVIEWERS);
         if (bindingResult.hasErrors()) {
             modelMap.put("comment", comment);
             return REVIEWERS_SECTION_NAME;

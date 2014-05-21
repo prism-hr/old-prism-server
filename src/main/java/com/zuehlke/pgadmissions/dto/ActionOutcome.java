@@ -6,7 +6,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 
 public class ActionOutcome {
 
@@ -14,9 +14,9 @@ public class ActionOutcome {
 
     private PrismResource scope;
 
-    private ApplicationFormAction nextAction;
+    private SystemAction nextAction;
 
-    public ActionOutcome(User user, PrismResource scope, ApplicationFormAction nextAction) {
+    public ActionOutcome(User user, PrismResource scope, SystemAction nextAction) {
         this.user = user;
         this.scope = scope;
         this.nextAction = nextAction;
@@ -30,7 +30,7 @@ public class ActionOutcome {
         return scope;
     }
 
-    public ApplicationFormAction getNextAction() {
+    public SystemAction getNextAction() {
         return nextAction;
     }
 

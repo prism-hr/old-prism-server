@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
@@ -131,7 +131,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String view(@ModelAttribute Application applicationForm) {
-        actionService.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.APPLICATION_EDIT_AS_ADMINISTRATOR);
+        actionService.validateAction(applicationForm, getCurrentUser(), SystemAction.APPLICATION_EDIT_AS_ADMINISTRATOR);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, getCurrentUser());
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME;
     }
@@ -198,7 +198,7 @@ public class EditApplicationFormAsProgrammeAdminController {
             // applicationsService.refresh(applicationForm);
             // refereeService.refresh(referee);
 
-            applicationsService.save(applicationForm);
+            applicationsService.saveUpdate(applicationForm);
             applicationFormUserRoleService.referencePosted(newComment);
             applicationFormUserRoleService.applicationUpdated(applicationForm, getCurrentUser());
 

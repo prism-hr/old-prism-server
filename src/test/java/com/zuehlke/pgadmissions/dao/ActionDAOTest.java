@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 
 public class ActionDAOTest extends AutomaticRollbackTestCase {
 
@@ -14,7 +14,7 @@ public class ActionDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetActionById() {
-        Action returnedAction = actionDAO.getById(ApplicationFormAction.APPLICATION_VIEW_AS_REFEREE);
+        Action returnedAction = actionDAO.getById(SystemAction.APPLICATION_VIEW_AS_REFEREE);
         assertNotNull(returnedAction);
     }
 

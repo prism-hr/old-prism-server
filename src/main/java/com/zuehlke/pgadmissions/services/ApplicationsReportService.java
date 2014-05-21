@@ -42,7 +42,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 
@@ -177,7 +177,7 @@ public class ApplicationsReportService {
                 String firstNames = Joiner.on(" ").skipNulls().join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3());
                 Program program = app.getProgram();
                 ProgramDetails programmeDetails = app.getProgramDetails();
-                ValidationComment validationComment = (ValidationComment) applicationsService.getLatestStateChangeComment(app, ApplicationFormAction.APPLICATION_COMPLETE_VALIDATION_STAGE);
+                ValidationComment validationComment = (ValidationComment) applicationsService.getLatestStateChangeComment(app, SystemAction.APPLICATION_COMPLETE_VALIDATION_STAGE);
                 int[] receivedAndDeclinedReferences = getNumberOfReceivedAndDeclinedReferences(app);
                 int[] referenceEndorsements = getNumberOfPositiveAndNegativeReferenceEndorsements(app);
                 int[] reviewEndorsements = getNumberOfPositiveAndNegativeReviewEndorsements(app);

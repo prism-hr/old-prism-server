@@ -141,7 +141,7 @@ public class CommentService {
         // TODO set relevant state
 //        applicationForm.setNextState(stateDAO.getById(nextStatus));
         save(stateChangeComment);
-        applicationsService.save(applicationForm);
+        applicationsService.saveUpdate(applicationForm);
         applicationsService.refresh(applicationForm);
         applicationFormUserRoleService.stateChanged(stateChangeComment);
         applicationFormUserRoleService.applicationUpdated(applicationForm, user);

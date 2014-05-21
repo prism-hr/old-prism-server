@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -137,7 +137,7 @@ public class InterviewCommentController {
     public String getInterviewFeedbackPage(ModelMap modelMap) {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK);
+        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return INTERVIEW_FEEDBACK_PAGE;
     }
@@ -147,7 +147,7 @@ public class InterviewCommentController {
             throws ScoringDefinitionParseException {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK);
+        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK);
 
         List<Score> scores = comment.getScores();
         if (!scores.isEmpty()) {
@@ -166,7 +166,7 @@ public class InterviewCommentController {
         commentService.save(comment);
         applicationForm.getApplicationComments().add(comment);
 
-        applicationsService.save(applicationForm);
+        applicationsService.saveUpdate(applicationForm);
         applicationFormUserRoleService.interviewFeedbackPosted(comment);
         applicationFormUserRoleService.applicationUpdated(applicationForm, user);
         return "redirect:/applications?messageCode=interview.feedback&application=" + applicationForm.getApplicationNumber();

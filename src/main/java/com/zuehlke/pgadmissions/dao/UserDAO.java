@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
@@ -198,7 +198,7 @@ public class UserDAO {
                 .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
                 .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN).createAlias("role", "applicationRole", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("applicationForm", application)).add(Restrictions.ne("applicationRole.id", Authority.SYSTEM_ADMINISTRATOR))
-                .add(Restrictions.eq("action.id", ApplicationFormAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS)).list();
+                .add(Restrictions.eq("action.id", SystemAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS)).list();
     }
 
     public List<User> getUsersInterestedInApplication(Application applicationForm) {

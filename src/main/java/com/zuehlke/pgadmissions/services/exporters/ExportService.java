@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;
@@ -100,7 +100,7 @@ public class ExportService {
             proxy.prepareApplicationForm(form);
             proxy.sendWebServiceRequest(form, transfer, listener);
             proxy.uploadDocuments(form, transfer, listener);
-            applicationsService.save(form);
+            applicationsService.saveUpdate(form);
             commentDAO.save(new ApplicationTransferComment(form, userDAO.getSuperadministrators().get(0)));
         } catch (ExportServiceException e) {
             throw e;
@@ -126,11 +126,11 @@ public class ExportService {
         Application form = applicationsService.getById(formObj.getId());
         ApplicationTransfer transfer = applicationFormTransferService.getById(transferObj.getId());
         ValidationComment validationComment = (ValidationComment) applicationsService.getLatestStateChangeComment(form,
-                ApplicationFormAction.APPLICATION_COMPLETE_VALIDATION_STAGE);
+                SystemAction.APPLICATION_COMPLETE_VALIDATION_STAGE);
 
         Boolean isOverseasStudent = validationComment == null ? true : validationComment.getHomeOrOverseas().equals(ResidenceStatus.OVERSEAS);
         OfferRecommendedComment offerRecommendedComment = (OfferRecommendedComment) applicationsService.getLatestStateChangeComment(form,
-                ApplicationFormAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
+                SystemAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
         CommentAssignedUser primarySupervisor = null;
         if (offerRecommendedComment != null) {
             primarySupervisor = offerRecommendedComment.getPrimaryAssignedUser();
@@ -249,7 +249,7 @@ public class ExportService {
                 }
             }
         }
-        applicationsService.save(application);
+        applicationsService.saveUpdate(application);
     }
 
     public ApplicationTransfer createOrReturnExistingApplicationFormTransfer(final Application form) {

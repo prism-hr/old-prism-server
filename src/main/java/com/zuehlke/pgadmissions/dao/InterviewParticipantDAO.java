@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 
@@ -41,6 +42,7 @@ public class InterviewParticipantDAO {
                 .createAlias("interview", "interview")
                 .createAlias("interview.application", "application")
                 .add(Restrictions.eqProperty("application.latestInterview", "interview"))
+                .add(Restrictions.eq("application.status", ApplicationFormStatus.INTERVIEW))
                 .add(Restrictions.eq("interview.stage", InterviewStage.SCHEDULING))
                 .add(Restrictions.eq("responded", false))
                 .add(Restrictions.le("lastNotified", dateWithSubtractedInterval)).list();

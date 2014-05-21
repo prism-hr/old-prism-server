@@ -206,6 +206,11 @@ public class Program extends Advert {
         this.projects.addAll(Arrays.asList(projects));
         return this;
     }
+    
+    public Program withSystem(System system) {
+        this.system = system;
+        return this;
+    }
 
     public Program withInstitution(Institution institution) {
         this.institution = institution;

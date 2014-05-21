@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -14,8 +16,9 @@ public class StateActionAssignment {
     @Id
     private Integer id;
     
-    @Column(name = "state_action_id", nullable = false)
-    private StateAction StateAction;
+    @ManyToOne
+    @JoinColumn(name = "state_action_id", nullable = false)
+    private StateAction stateAction;
     
     @Column(name = "role_id", nullable = false)
     private Role role;
@@ -32,11 +35,11 @@ public class StateActionAssignment {
     }
 
     public StateAction getStateAction() {
-        return StateAction;
+        return stateAction;
     }
 
     public void setStateAction(StateAction stateAction) {
-        StateAction = stateAction;
+        this.stateAction = stateAction;
     }
 
     public Role getRole() {

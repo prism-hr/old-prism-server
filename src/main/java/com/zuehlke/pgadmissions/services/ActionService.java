@@ -46,9 +46,6 @@ public class ActionService {
     private ApplicationService applicationService;
 
     @Autowired
-    private PrismResourceService entityCreationService;
-
-    @Autowired
     private CommentService commentService;
 
     /**
@@ -87,7 +84,7 @@ public class ActionService {
         PrismResource newResource = resource;
         if (createMatcher.matches()) {
             String newResourceType = createMatcher.group(2);
-            newResource = entityCreationService.getOrCreate(user, resource, PrismResourceType.valueOf(newResourceType));
+            newResource = applicationService.getOrCreate(user, resource, PrismResourceType.valueOf(newResourceType));
         }
 
         ApplicationFormAction nextAction = executeStateTransition(resource, user, invokingRole, action, newResource, comment);

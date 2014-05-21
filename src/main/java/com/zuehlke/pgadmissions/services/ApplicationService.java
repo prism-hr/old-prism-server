@@ -16,10 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismResourceType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
@@ -37,9 +38,9 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 
 @Service
 @Transactional
-public class ApplicationFormService {
+public class ApplicationService extends PrismResourceService {
 
-    private final Logger log = LoggerFactory.getLogger(ApplicationFormService.class);
+    private final Logger log = LoggerFactory.getLogger(ApplicationService.class);
 
     public static final int APPLICATION_BLOCK_SIZE = 50;
 
@@ -78,10 +79,6 @@ public class ApplicationFormService {
 
     public Application getById(Integer id) {
         return applicationFormDAO.getById(id);
-    }
-
-    public void save(Application application) {
-        applicationFormDAO.save(application);
     }
 
     public void refresh(final Application applicationForm) {
@@ -152,19 +149,18 @@ public class ApplicationFormService {
             application.setClosingDate(null);
         }
         
-
     }
 
-    public Application getOrCreateApplication(final User applicant, final Integer advertId) {
-        Advert advert = programService.getValidProgramProjectAdvert(advertId);
-        Application applicationForm = applicationFormDAO.getInProgressApplication(applicant, advert);
-        if (applicationForm != null) {
-            return applicationForm;
-        }
-        applicationForm = createApplication(applicant, advert);
-        autoPopulateApplication(applicationForm);
-        log.info("New application form created: " + applicationForm.getApplicationNumber());
-        return applicationForm;
+    @SuppressWarnings("unchecked")
+    public Application getOrCreateApplication(final User applicant, final Integer advertId) throws Exception {
+        PrismResource parentResource = programService.getValidProgramProjectAdvert(advertId);
+        return (Application) super.getOrCreate(applicant, parentResource, PrismResourceType.APPLICATION);
+    }
+    
+    public void save(Application application) {
+        application.setApplicationNumber(generateApplicationNumber(application.getAdvert().getProgram()));
+        application.setCreatedTimestamp(new DateTime());
+        super.save(application);
     }
 
     public Application getSecuredApplication(final String applicationId, final ApplicationFormAction... actions) {
@@ -236,17 +232,6 @@ public class ApplicationFormService {
                 applicationFormCopyHelper.copyApplicationFormData(applicationForm, previousApplication);
             }
         }
-    }
-
-    private Application createApplication(User applicant, Advert advert) {
-        String applicationNumber = generateApplicationNumber(advert.getProgram());
-        Application application = new Application();
-        application.setCreatedTimestamp(new DateTime());
-        application.setUser(applicant);
-        application.setProgram(advert.getProgram());
-        application.setProject(advert.getProject());
-        application.setApplicationNumber(applicationNumber);
-        return application;
     }
 
     private String generateApplicationNumber(final Program program) {

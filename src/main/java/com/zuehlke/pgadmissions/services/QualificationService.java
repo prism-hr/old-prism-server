@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 public class QualificationService {
     
     @Autowired
-    ApplicationFormService applicationFormService;
+    ApplicationService applicationFormService;
 
     @Autowired
     ApplicationFormCopyHelper applicationFormCopyHelper;

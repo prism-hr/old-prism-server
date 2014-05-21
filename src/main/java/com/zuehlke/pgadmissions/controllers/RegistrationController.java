@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -44,7 +44,7 @@ public class RegistrationController {
     private RegistrationService registrationService;
 
     @Autowired
-    private ApplicationFormService applicationFormService;
+    private ApplicationService applicationFormService;
 
     @Autowired
     private ProgramService programService;
@@ -90,7 +90,7 @@ public class RegistrationController {
     }
 
     @RequestMapping(value = "/activateAccount", params = "action", method = RequestMethod.GET)
-    public String activateAccountSubmit(@RequestParam String activationCode, @RequestParam ApplicationFormAction action, Integer scopeId) {
+    public String activateAccountSubmit(@RequestParam String activationCode, @RequestParam ApplicationFormAction action, Integer scopeId) throws Exception {
 
         User user = registrationService.activateAccount(activationCode, action, scopeId);
 

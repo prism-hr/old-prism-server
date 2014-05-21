@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAddressService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.validators.ApplicationFormAddressValidator;
 
@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.validators.ApplicationFormAddressValidator;
 public class AddressController {
 
     @Autowired
-    private ApplicationFormService applicationFormService;
+    private ApplicationService applicationFormService;
 
     @Autowired
     private ApplicationFormAddressService applicationFormAddressService;

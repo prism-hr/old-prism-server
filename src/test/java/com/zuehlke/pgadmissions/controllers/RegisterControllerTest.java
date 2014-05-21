@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.text.ParseException;
-
 import org.apache.commons.lang.StringUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -25,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -48,7 +46,7 @@ public class RegisterControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationFormService;
+    private ApplicationService applicationFormService;
 
     @Mock
     @InjectIntoByType
@@ -207,7 +205,7 @@ public class RegisterControllerTest {
     }
 
     @Test
-    public void shouldActivateAccountAndRedirectToApplicationListIfNoDirectURL() throws ParseException {
+    public void shouldActivateAccountAndRedirectToApplicationListIfNoDirectURL() throws Exception {
         String activationCode = "ul5oaij68186jbcg";
         User user = new User().withId(1).withActivationCode(activationCode).withAccount(new UserAccount().withEnabled(false))
                 ;
@@ -221,7 +219,7 @@ public class RegisterControllerTest {
     }
 
     @Test
-    public void shouldActivateAccountAndRedirectToDirectURLIfProvided() throws ParseException {
+    public void shouldActivateAccountAndRedirectToDirectURLIfProvided() throws Exception {
         String activationCode = "ul5oaij68186jbcg";
         User user = new User().withId(1).withActivationCode(activationCode)
                 .withEmail("email@email.com")
@@ -237,7 +235,7 @@ public class RegisterControllerTest {
     }
 
     @Test
-    public void shouldReturnToRegistrationPageIfNouserFound() throws ParseException {
+    public void shouldReturnToRegistrationPageIfNouserFound() throws Exception {
         String activationCode = "differentactivationcode";
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(null);
         EasyMock.replay(userServiceMock);

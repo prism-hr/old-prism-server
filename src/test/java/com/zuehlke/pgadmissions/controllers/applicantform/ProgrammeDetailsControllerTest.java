@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SuggestedSupervisorJSONPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramDetailsService;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -34,7 +34,7 @@ public class ProgrammeDetailsControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationFormService;
+    private ApplicationService applicationFormService;
 
     @Mock
     @InjectIntoByType

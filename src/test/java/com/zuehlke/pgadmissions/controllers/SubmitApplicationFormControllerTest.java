@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.SubmitApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -38,7 +38,7 @@ public class SubmitApplicationFormControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationsServiceMock;
+    private ApplicationService applicationsServiceMock;
 
     @Mock
     @InjectIntoByType

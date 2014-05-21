@@ -188,7 +188,7 @@ public class ProgramsServiceTest {
         programDAOMock.save(capture(programCapture));
 
         replay();
-        Program program = programsService.createOrGetProgram(opportunityRequest);
+        Program program = programsService.getOrCreateProgram(opportunityRequest);
         verify();
 
         assertSame(program.getUser(), requestAuthor);
@@ -213,7 +213,7 @@ public class ProgramsServiceTest {
         programDAOMock.save(program);
 
         replay();
-        Program returned = programsService.createOrGetProgram(opportunityRequest);
+        Program returned = programsService.getOrCreateProgram(opportunityRequest);
         verify();
 
         assertTrue(returned.getRequireProjectDefinition());

@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.domain.User;
 public class PersonalDetailsService {
 
     @Autowired
-    private ApplicationFormService applicationFormService;
+    private ApplicationService applicationFormService;
 
     @Autowired
     private ApplicationFormCopyHelper applicationFormCopyHelper;

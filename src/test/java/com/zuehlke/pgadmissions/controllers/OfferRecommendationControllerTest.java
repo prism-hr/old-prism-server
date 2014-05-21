@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.controllers.workflow.approval.OfferRecommendatio
 import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.OfferRecommendationService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -27,7 +27,7 @@ public class OfferRecommendationControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
 
     @Mock
     @InjectIntoByType

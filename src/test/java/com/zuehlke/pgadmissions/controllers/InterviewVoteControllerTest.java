@@ -8,7 +8,7 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.propertyeditors.AcceptedTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WorkflowService;
@@ -20,7 +20,7 @@ public class InterviewVoteControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
     
     @Mock
     @InjectIntoByType

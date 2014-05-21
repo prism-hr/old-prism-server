@@ -10,7 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 public class CreateApplicationFormController {
 
     @Autowired
-    private ApplicationFormService applicationFormService;
+    private ApplicationService applicationFormService;
 
     @Autowired
     private UserService userService;
@@ -29,7 +29,7 @@ public class CreateApplicationFormController {
 
     @RequestMapping(value = "/new", method = { RequestMethod.POST, RequestMethod.GET })
     public ModelAndView createNewApplicationForm(@RequestParam(value = "program", required = false) String programCode,
-            @RequestParam(value = "advert", required = false) Integer advertId) {
+            @RequestParam(value = "advert", required = false) Integer advertId) throws Exception {
         if (advertId == null && programCode != null) {
             Program program = programService.getProgramByCode(programCode);
             advertId = program.getId();

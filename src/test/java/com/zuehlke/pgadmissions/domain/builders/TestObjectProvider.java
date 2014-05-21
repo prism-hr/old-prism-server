@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.PrismSystem;
+import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -254,8 +254,8 @@ public class TestObjectProvider {
                 .setMaxResults(1).uniqueResult();
     }
 
-    public PrismSystem getPrismSystem() {
-        return (PrismSystem) sessionFactory.getCurrentSession().createCriteria(PrismSystem.class).uniqueResult();
+    public System getPrismSystem() {
+        return (System) sessionFactory.getCurrentSession().createCriteria(System.class).uniqueResult();
     }
 
     public State getState(PrismState state) {

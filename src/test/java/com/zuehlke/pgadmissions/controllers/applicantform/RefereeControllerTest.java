@@ -8,7 +8,7 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -27,7 +27,7 @@ public class RefereeControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
 
     @Mock
     @InjectIntoByType

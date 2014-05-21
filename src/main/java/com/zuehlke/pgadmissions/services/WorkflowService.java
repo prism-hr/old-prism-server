@@ -67,7 +67,7 @@ public class WorkflowService {
     private PermissionsService permissionsService;
     
     @Autowired
-    private ApplicationFormService applicationFormService;
+    private ApplicationService applicationFormService;
 
     public void applicationCreated(Application applicationForm) {
 //        createApplicationFormUserRole(applicationForm, applicationForm.getApplicant(), Authority.APPLICANT, false,

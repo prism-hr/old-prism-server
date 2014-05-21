@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
-import com.zuehlke.pgadmissions.domain.PrismScope;
+import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -39,7 +39,7 @@ public class RegistrationService {
     @Autowired
     private EntityService entityService;
 
-    public User submitRegistration(User pendingUser, PrismScope prismScope) {
+    public User submitRegistration(User pendingUser, PrismResource prismScope) {
         User user = userService.getUserByEmail(pendingUser.getEmail());
 
         if (user != null) {
@@ -64,7 +64,7 @@ public class RegistrationService {
         User user = userService.getUserByActivationCode(activationCode);
         user.getAccount().setEnabled(true);
 
-        PrismScope scope = entityService.getBy(action.getScopeClass(), "id", resourceId);
+        PrismResource scope = entityService.getBy(action.getScopeClass(), "id", resourceId);
         Role role = roleService.getCreatorRole(action, scope);
         roleService.getOrCreateUserRole(scope, user, role.getId());
         return user;

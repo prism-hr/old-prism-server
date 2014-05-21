@@ -23,8 +23,8 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
-import com.zuehlke.pgadmissions.domain.PrismScope;
-import com.zuehlke.pgadmissions.domain.PrismSystem;
+import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorHandlingDecision;
@@ -100,7 +100,7 @@ public class PorticoQueueListenerTest {
         User admin1 = new User().withId(1);
         User admin2 = new User().withId(2);
         List<User> admins = asList(admin1, admin2);
-        PrismScope systemScope = new PrismSystem();
+        PrismResource systemScope = new System();
         
         EasyMock.expect(messageMock.getText()).andReturn("XX");
         EasyMock.expect(formDAOMock.getByApplicationNumber("XX")).andReturn(form);

@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.PersonalDetailsService;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsUserValidator;
@@ -36,7 +36,7 @@ public class PersonalDetailsControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationFormService;
+    private ApplicationService applicationFormService;
 
     @Mock
     @InjectIntoByType

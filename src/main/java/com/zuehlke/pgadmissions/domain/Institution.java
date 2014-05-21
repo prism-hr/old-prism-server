@@ -27,7 +27,7 @@ import org.hibernate.search.annotations.TokenizerDef;
 @Entity
 @Table(name = "INSTITUTION")
 @Indexed
-public class Institution extends PrismScope {
+public class Institution extends PrismResource {
 
     @Id
     @GeneratedValue
@@ -35,7 +35,11 @@ public class Institution extends PrismScope {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "system_id", nullable = false)
-    private PrismSystem system;
+    private System system;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "institution_domicile_id", nullable = false)
@@ -51,36 +55,22 @@ public class Institution extends PrismScope {
     @JoinColumn(name = "state_id", nullable = false)
     private State state;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
+    @Override
     public Integer getId() {
         return id;
     }
-
-    public PrismSystem getSystem() {
-        return system;
+    
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
     }
-
-    public void setSystem(PrismSystem system) {
-        this.system = system;
-    }
-
+    
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
     }
 
     public InstitutionDomicile getDomicile() {
@@ -104,7 +94,7 @@ public class Institution extends PrismScope {
         return this;
     }
 
-    public Institution withSystem(PrismSystem system) {
+    public Institution withSystem(System system) {
         this.system = system;
         return this;
     }
@@ -125,8 +115,13 @@ public class Institution extends PrismScope {
     }
 
     @Override
-    public String getScopeName() {
-        return "institution";
+    public System getSystem() {
+        return system;
+    }
+
+    @Override
+    public void setSystem(System system) {
+        this.system = system;
     }
 
     @Override
@@ -135,8 +130,16 @@ public class Institution extends PrismScope {
     }
 
     @Override
+    public void setInstitution(Institution institution) {  
+    }
+
+    @Override
     public Program getProgram() {
         return null;
+    }
+    
+    @Override
+    public void setProgram(Program program) {
     }
 
     @Override
@@ -145,7 +148,32 @@ public class Institution extends PrismScope {
     }
 
     @Override
+    public void setProject(Project project) {
+    }
+    
+    @Override
+    public State getState() {
+        return state;
+    }
+
+    @Override
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    @Override
     public Application getApplication() {
         return null;
     }
+
+    @Override
+    public User getUser() {
+        return user;
+    }
+
+    @Override
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 }

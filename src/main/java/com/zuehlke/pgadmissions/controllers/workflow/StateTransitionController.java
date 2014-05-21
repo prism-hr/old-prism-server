@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
@@ -46,7 +46,7 @@ public class StateTransitionController {
     protected static final String STATE_TRANSITION_VIEW = "private/staff/admin/state_transition";
 
     @Autowired
-    protected ApplicationFormService applicationFormService;
+    protected ApplicationService applicationFormService;
 
     @Autowired
     protected UserService userService;

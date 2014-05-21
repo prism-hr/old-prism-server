@@ -6,7 +6,7 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WorkflowService;
@@ -17,7 +17,7 @@ public class AddressControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationsServiceMock;
+    private ApplicationService applicationsServiceMock;
 
     @Mock
     @InjectIntoByType

@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.mail.MailSendingService;
 public class ReviewService {
 
     @Autowired
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
 
     @Autowired
     private MailSendingService mailService;

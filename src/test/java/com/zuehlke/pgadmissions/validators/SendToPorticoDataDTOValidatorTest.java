@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.PorticoService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -45,7 +45,7 @@ public class SendToPorticoDataDTOValidatorTest {
 
     private DirectFieldBindingResult mappingResult;
 
-    private ApplicationFormService applicationsServiceMock;
+    private ApplicationService applicationsServiceMock;
 
     private QualificationService qualificationServiceMock;
 
@@ -143,7 +143,7 @@ public class SendToPorticoDataDTOValidatorTest {
 
         mappingResult = new DirectFieldBindingResult(sendToPorticoDataDTO, "sendToPorticoData");
 
-        applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
+        applicationsServiceMock = EasyMock.createMock(ApplicationService.class);
         qualificationServiceMock = EasyMock.createMock(QualificationService.class);
         refereeServiceMock = EasyMock.createMock(RefereeService.class);
         porticoServiceMock = EasyMock.createMock(PorticoService.class);

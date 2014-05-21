@@ -38,7 +38,7 @@ import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.pdf.CombinedReferencesPdfBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.Transcript1PdfBuilder;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.exporters.ExportService;
 import com.zuehlke.pgadmissions.services.exporters.TransferListener;
 
@@ -57,7 +57,7 @@ public class PorticoDocumentUploadPhase2IT {
     private WebServiceTemplate webServiceTemplate;
     
     @Autowired
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
     
     @Autowired
     private ExportService uclExportService;

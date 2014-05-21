@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.mail.MailSendingService;
 public class SubmitApplicationFormService {
 
     @Autowired
-    private ApplicationFormService applicationService;
+    private ApplicationService applicationService;
 
     @Autowired
     private WorkflowService applicationFormUserRoleService;

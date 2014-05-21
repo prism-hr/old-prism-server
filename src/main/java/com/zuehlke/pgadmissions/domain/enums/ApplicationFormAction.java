@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.PrismScope;
+import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 
@@ -68,10 +68,10 @@ public enum ApplicationFormAction {
     SYSTEM_VIEW_PROGRAM_LIST, //
     SYSTEM_VIEW_PROJECT_LIST;
 
-    public Class<? extends PrismScope> getScopeClass() {
+    public Class<? extends PrismResource> getScopeClass() {
         String scopeName = getPrefix();
 
-        Class<? extends PrismScope> scopeClass = null;
+        Class<? extends PrismResource> scopeClass = null;
         if ("APPLICATION".equals(scopeName)) {
             scopeClass = Application.class;
         } else if ("PROJECT".equals(scopeName)) {

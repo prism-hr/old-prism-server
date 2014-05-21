@@ -40,7 +40,7 @@ import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.PorticoService;
 import com.zuehlke.pgadmissions.services.QualificationService;
@@ -80,7 +80,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     private LocalDatePropertyEditor datePropertyEditor;
 
     @Autowired
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
     
     @Autowired
     private CommentAssignedUserPropertyEditor assignedUserPropertyEditor;

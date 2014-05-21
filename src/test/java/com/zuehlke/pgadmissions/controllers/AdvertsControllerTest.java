@@ -11,19 +11,19 @@ import org.springframework.ui.ModelMap;
 import com.zuehlke.pgadmissions.controllers.prospectus.AdvertsController;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 
 public class AdvertsControllerTest {
 
     private AdvertsController controller;
     private AdvertService advertServiceMock;
-    private ApplicationFormService applicationsServiceMock;
+    private ApplicationService applicationsServiceMock;
     private ProgramDAO programDAOMock;
 
     @Before
     public void setUp() {
         advertServiceMock = EasyMock.createMock(AdvertService.class);
-        applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
+        applicationsServiceMock = EasyMock.createMock(ApplicationService.class);
         programDAOMock = EasyMock.createMock(ProgramDAO.class);
         controller = new AdvertsController(advertServiceMock, applicationsServiceMock, programDAOMock);
     }

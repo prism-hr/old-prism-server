@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 public class ApplicationsServiceTest {
 
     @TestedObject
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
 
     @Mock
     @InjectIntoByType

@@ -23,7 +23,7 @@ public class UserRole {
 
     @ManyToOne
     @JoinColumn(name = "system_id")
-    private PrismSystem system;
+    private System system;
 
     @ManyToOne
     @JoinColumn(name = "institution_id")
@@ -65,11 +65,11 @@ public class UserRole {
         this.id = id;
     }
 
-    public PrismSystem getSystem() {
+    public System getSystem() {
         return system;
     }
 
-    public void setSystem(PrismSystem system) {
+    public void setSystem(System system) {
         this.system = system;
     }
 
@@ -137,15 +137,15 @@ public class UserRole {
         this.assignedTimestamp = assignedTimestamp;
     }
 
-    public void setScope(PrismScope scope) {
+    public void setScope(PrismResource resource) {
         try {
-            PropertyUtils.setProperty(this, scope.getScopeName(), scope);
+            PropertyUtils.setProperty(this, resource.getResourceType().toString().toLowerCase(), resource);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public UserRole withSystem(PrismSystem system) {
+    public UserRole withSystem(System system) {
         this.system = system;
         return this;
     }
@@ -190,7 +190,7 @@ public class UserRole {
         return this;
     }
     
-    public UserRole withScope(PrismScope scope) {
+    public UserRole withScope(PrismResource scope) {
         this.setScope(scope);
         return this;
     }

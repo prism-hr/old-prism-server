@@ -22,7 +22,7 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.PrismSystem;
+import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -260,7 +260,7 @@ public class ManageUsersControllerTest {
     @Test
     public void shouldGetAdmitters() {
         List<User> admitters = Lists.newArrayList();
-        PrismSystem prismSystem = new PrismSystem();
+        System prismSystem = new System();
 
         EasyMock.expect(roleService.getUsersInRole(prismSystem, Authority.INSTITUTION_ADMITTER)).andReturn(admitters);
         replay();
@@ -274,7 +274,7 @@ public class ManageUsersControllerTest {
         User userOne = new User().withId(1).withLastName("ZZZZ").withFirstName("BBBB");
         User userTwo = new User().withId(4).withLastName("ZZZZ").withFirstName("AAAA");
         User userThree = new User().withId(5).withLastName("AA").withFirstName("GGG");
-        PrismSystem prismSystem = new PrismSystem();
+        System prismSystem = new System();
         
         EasyMock.expect(roleService.getUsersInRole(prismSystem, Authority.SYSTEM_ADMINISTRATOR)).andReturn(Arrays.asList(userOne, userTwo, userThree));
         replay();
@@ -289,7 +289,7 @@ public class ManageUsersControllerTest {
     @Test
     public void shouldCreateNewUserInRolesSuperAdmin() {
 
-        PrismSystem prismSystem = new PrismSystem();
+        System prismSystem = new System();
 
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);

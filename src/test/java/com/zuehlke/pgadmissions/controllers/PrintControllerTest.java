@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -34,7 +34,7 @@ public class PrintControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationSevice;
+    private ApplicationService applicationSevice;
 
     @Mock
     @InjectIntoByType

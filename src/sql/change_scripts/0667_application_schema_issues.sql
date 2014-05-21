@@ -121,50 +121,238 @@ ALTER TABLE APPLICATION
 	MODIFY COLUMN due_date DATE AFTER previous_state_id
 ;
 
-/* Comment attribute as key value */
-/* Find and label move to different stage */
 /* Put use custom question in the right place */
 
-CREATE TABLE COMMENT_ATTRIBUTE_TYPE (
-	id VARCHAR(50) NOT NULL,
-	PRIMARY KEY (id)
-) ENGINE = INNODB
+UPDATE COMMENT INNER JOIN (
+	SELECT application_id AS application_id,
+		MIN(created_timestamp) AS created_timestamp
+	FROM COMMENT
+	WHERE action_id IN ("APPLICATION_ASSIGN_REVIEWERS", "APPLICATION_ASSIGN_INTERVIEWERS")
+	GROUP BY application_id) AS ASSIGNMENT_TIME
+	ON COMMENT.application_id = ASSIGNMENT_TIME.application_id
+	AND COMMENT.created_timestamp <= ASSIGNMENT_TIME.created_timestamp
+INNER JOIN COMMENT AS ASSIGNMENT_COMMENT
+	ON ASSIGNMENT_TIME.application_id = ASSIGNMENT_COMMENT.application_id
+	AND ASSIGNMENT_TIME.created_timestamp = ASSIGNMENT_COMMENT.created_timestamp
+SET ASSIGNMENT_COMMENT.application_use_custom_recruiter_questions = COMMENT.application_use_custom_recruiter_questions
 ;
 
-CREATE TABLE COMMENT_ATTRIBUTE_DATA_TYPE (
-	id VARCHAR(50) NOT NULL,
-	PRIMARY KEY (id)
-) ENGINE = INNODB
+UPDATE COMMENT
+SET application_use_custom_recruiter_questions = NULL
+WHERE action_id NOT LIKE "APPLICATION_ASSIGN%"
 ;
 
-INSERT INTO COMMENT_ATTRIBUTE_DATA_TYPE (id)
-VALUES ("STRING"),
-	("DATETIME"),
-	("BOOLEAN"),
-	("INTEGER"),
-	("DOCUMENT")
+UPDATE COMMENT
+SET application_use_custom_recruiter_questions = 0
+WHERE action_id IN ("APPLICATION_ASSIGN_REVIEWERS", "APPLICATION_ASSIGN_INTERVIEWERS")
+	AND application_use_custom_recruiter_questions IS NULL
 ;
 
-CREATE TABLE COMMENT_ATTRIBUTE (
-	id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-	comment_id INT(10) UNSIGNED NOT NULL, 
-	comment_attribute_type_id VARCHAR(50) NOT NULL,
-	comment_attribute_data_type_id VARCHAR(50) NOT NULL,
-	value_string LONGTEXT,
-	value_integer BIGINT,
-	value_datetime DATETIME,
-	document_id INT(10) UNSIGNED,
-	PRIMARY KEY (id),
-	INDEX (comment_id),
-	INDEX (comment_attribute_type_id),
-	INDEX (comment_attribute_data_type_id),
-	INDEX (value_integer),
-	INDEX (document_id),
-	FOREIGN KEY (comment_id) REFERENCES COMMENT (id),
-	FOREIGN KEY (comment_attribute_type_id) REFERENCES COMMENT_ATTRIBUTE_TYPE (id),
-	FOREIGN KEY (comment_attribute_data_type_id) REFERENCES COMMENT_ATTRIBUTE_DATA_TYPE (id),
-	FOREIGN KEY (document_id) REFERENCES DOCUMENT (id)
-) ENGINE = INNODB
-;
+/* Find and label move to different stage */
 
+UPDATE COMMENT INNER JOIN (
+	SELECT COMMENT.application_id AS application_id, 
+		COMMENT.id AS comment_id,
+		MAX(PREVIOUS_COMMENT.id) AS previous_comment_id
+	FROM COMMENT INNER JOIN COMMENT AS PREVIOUS_COMMENT
+		ON COMMENT.application_id = PREVIOUS_COMMENT.application_id
+		AND COMMENT.id > PREVIOUS_COMMENT.id
+	WHERE COMMENT.action_id IN ("APPLICATION_COMPLETE_VALIDATION_STAGE",
+		"APPLICATION_COMPLETE_REVIEW_STAGE",
+		"APPLICATION_COMPLETE_INTERVIEW_STAGE",
+		"APPLICATION_COMPLETE_APPROVAL_STAGE")
+	GROUP BY COMMENT.id) STATE_CHANGE_COMMENT
+	ON COMMENT.id = STATE_CHANGE_COMMENT.comment_id
+INNER JOIN COMMENT AS PREVIOUS_COMMENT
+	ON STATE_CHANGE_COMMENT.previous_comment_id = PREVIOUS_COMMENT.id
+SET COMMENT.action_id = "APPLICATION_MOVE_TO_DIFFERENT_STAGE"
+WHERE COMMENT.action_id = PREVIOUS_COMMENT.action_id
+;	
+	
 /* Drop stored procedures */
+
+DROP PROCEDURE SP_DELETE_APPLICATION_ACTIONS
+;
+
+DROP PROCEDURE SP_DELETE_APPLICATION_ROLE
+;
+
+DROP PROCEDURE SP_DELETE_APPLICATION_UPDATE
+;
+
+DROP PROCEDURE SP_DELETE_EXPIRED_CLOSING_DATES
+;
+
+DROP PROCEDURE SP_DELETE_INACTIVE_ADVERTS
+;
+
+DROP PROCEDURE SP_DELETE_ORPHAN_DOCUMENTS
+;
+
+DROP PROCEDURE SP_DELETE_PROGRAM_ROLE
+;
+
+DROP PROCEDURE SP_DELETE_ROLE_ACTION
+;
+
+DROP PROCEDURE SP_DELETE_STATE_ACTIONS
+;
+
+DROP PROCEDURE SP_DELETE_USER_ACTION
+;
+
+DROP PROCEDURE SP_DELETE_USER_ROLE
+;
+
+DROP PROCEDURE SP_INSERT_APPLICATION_UPDATE
+;
+
+DROP PROCEDURE SP_INSERT_PROGRAM_ROLE
+;
+
+DROP PROCEDURE SP_INSERT_USER_ROLE
+;
+
+DROP PROCEDURE SP_SELECT_RECOMMENDED_ADVERTS
+;
+
+DROP PROCEDURE SP_SELECT_USER_ACTIONS
+;
+
+DROP PROCEDURE SP_UPDATE_APPLICATION_FORM_DUE_DATE
+;
+
+DROP PROCEDURE SP_UPDATE_APPLICATION_INTEREST
+;
+
+DROP PROCEDURE SP_UPDATE_URGENT_APPLICATIONS
+;
+
+/* Redundant columns on personal details */
+
+ALTER TABLE APPLICATION_PERSONAL_DETAIL
+	DROP COLUMN language_qualification_available
+;
+
+ALTER TABLE APPLICATION_PERSONAL_DETAIL
+	DROP COLUMN passport_available
+;
+
+/* Denormalize the resource references */
+
+ALTER TABLE APPLICATION
+	ADD COLUMN system_id INT(10) UNSIGNED AFTER user_id,
+	ADD COLUMN institution_id INT(10) UNSIGNED AFTER system_id,
+	ADD INDEX (system_id),
+	ADD INDEX (institution_id),
+	ADD FOREIGN KEY (system_id) REFERENCES SYSTEM (id),
+	ADD FOREIGN KEY (institution_id) REFERENCES INSTITUTION (id)
+;
+
+UPDATE APPLICATION
+SET system_id = 1,
+	institution_id = 5243
+;
+
+ALTER TABLE APPLICATION
+	MODIFY COLUMN system_id INT(10) UNSIGNED NOT NULL,
+	MODIFY COLUMN institution_id INT(10) UNSIGNED NOT NULL
+;
+
+ALTER TABLE PROGRAM
+	ADD COLUMN system_id INT(10) UNSIGNED AFTER id,
+	ADD INDEX (system_id),
+	ADD FOREIGN KEY (system_id) REFERENCES SYSTEM (id),
+	MODIFY COLUMN institution_id INT(10) UNSIGNED AFTER system_id
+;
+
+UPDATE PROGRAM
+SET system_id = 1
+;
+
+ALTER TABLE PROGRAM
+	MODIFY COLUMN system_id INT(10) UNSIGNED NOT NULL,
+	MODIFY COLUMN institution_id INT(10) UNSIGNED NOT NULL
+;
+
+ALTER TABLE PROJECT
+	ADD COLUMN system_id INT(10) UNSIGNED AFTER id,
+	ADD COLUMN institution_id INT(10) UNSIGNED AFTER system_id,
+	ADD INDEX (system_id),
+	ADD INDEX (institution_id),
+	ADD FOREIGN KEY (system_id) REFERENCES SYSTEM (id),
+	ADD FOREIGN KEY (institution_id) REFERENCES INSTITUTION (id)
+;
+
+UPDATE PROJECT
+SET system_id = 1,
+	institution_id = 5243
+;
+
+ALTER TABLE PROJECT
+	MODIFY COLUMN system_id INT(10) UNSIGNED NOT NULL,
+	MODIFY COLUMN institution_id INT(10) UNSIGNED NOT NULL
+;
+
+UPDATE PROJECT
+SET system_id = 1,
+	institution_id = 5243
+;
+
+/* Fertile property in state */
+
+ALTER TABLE STATE
+	CHANGE COLUMN is_under_assessment is_assessment_state INT(1) UNSIGNED NOT NULL,
+	ADD COLUMN is_fertile_state INT(1) UNSIGNED AFTER parent_state_id,
+	ADD COLUMN is_duplicatable_state INT(1) UNSIGNED AFTER is_assessment_state
+;
+
+UPDATE STATE
+SET is_fertile_state = 0,
+	is_duplicatable_state = 0
+;
+
+UPDATE STATE
+SET is_fertile_state = 1
+WHERE id LIKE "SYSTEM%"
+	OR id LIKE "INSTITUTION%"
+	OR ((id LIKE "PROGRAM%"
+		OR id LIKE "PROJECT%")
+			AND id NOT LIKE "%COMPLETED")
+;
+
+UPDATE STATE
+SET is_duplicatable = 1
+WHERE parent_state_id LIKE "%_COMPLETED"
+;
+
+ALTER TABLE STATE
+	MODIFY COLUMN is_fertile_state INT(1) UNSIGNED NOT NULL,
+	MODIFY COLUMN is_fertile_state INT(1) UNSIGNED NOT NULL
+;
+
+/* Add users to system and institution and standardise human readable ID */
+
+ALTER TABLE INSTITUTION
+	ADD COLUMN user_id INT(10) UNSIGNED NOT NULL DEFAULT 1024 AFTER id,
+	ADD INDEX (user_id),
+	ADD FOREIGN KEY (user_id) REFERENCES USER (id)
+;
+
+ALTER TABLE INSTITUTION
+	MODIFY COLUMN user_id INT(10) UNSIGNED NOT NULL
+;
+
+ALTER TABLE SYSTEM
+	ADD COLUMN user_id INT(10) UNSIGNED NOT NULL DEFAULT 1024 AFTER id,
+	ADD INDEX (user_id),
+	ADD FOREIGN KEY (user_id) REFERENCES USER (id)
+;
+
+ALTER TABLE SYSTEM
+	MODIFY COLUMN user_id INT(10) UNSIGNED NOT NULL
+;
+
+ALTER TABLE ADVERT
+	MODIFY COLUMN user_id INT(10) UNSIGNED AFTER id
+;

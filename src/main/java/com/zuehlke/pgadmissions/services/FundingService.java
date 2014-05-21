@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 public class FundingService {
 
     @Autowired
-    private ApplicationFormService applicationFormService;
+    private ApplicationService applicationFormService;
     
     @Autowired
     private FundingDAO fundingDAO;

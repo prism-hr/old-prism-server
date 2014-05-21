@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,12 +14,13 @@ import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.PrismScope;
+import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismResourceType;
 import com.zuehlke.pgadmissions.domain.enums.StateTransitionType;
 import com.zuehlke.pgadmissions.dto.ActionDefinition;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
@@ -43,10 +43,10 @@ public class ActionService {
     private EntityService entityService;
 
     @Autowired
-    private ApplicationFormService applicationService;
+    private ApplicationService applicationService;
 
     @Autowired
-    private EntityCreationService entityCreationService;
+    private PrismResourceService entityCreationService;
 
     @Autowired
     private CommentService commentService;
@@ -69,34 +69,35 @@ public class ActionService {
         return actionDAO.getUserActions(applicationFormId, userId);
     }
 
-    public ActionOutcome executeAction(Integer scopeId, User user, ApplicationFormAction action, Comment comment) {
-        PrismScope scope = entityService.getById(action.getScopeClass(), scopeId);
+    public ActionOutcome executeAction(Integer scopeId, User user, ApplicationFormAction action, Comment comment) throws Exception {
+        PrismResource scope = entityService.getById(action.getScopeClass(), scopeId);
         return executeAction(scope, user, action, comment);
     }
 
-    public ActionOutcome executeAction(PrismScope scope, User user, ApplicationFormAction action, Comment comment) {
-        Role invokingRole = roleService.canExecute(user, scope, action);
+    @SuppressWarnings("unchecked")
+    public ActionOutcome executeAction(PrismResource resource, User user, ApplicationFormAction action, Comment comment) throws Exception {
+        Role invokingRole = roleService.canExecute(user, resource, action);
         if (invokingRole == null) {
-            throw new CannotExecuteActionException(scope);
+            throw new CannotExecuteActionException(resource);
         }
 
         Pattern createPattern = Pattern.compile("([A-Z]+)_CREATE_([A-Z]+)");
         Matcher createMatcher = createPattern.matcher(action.name());
 
-        PrismScope newScope = scope;
+        PrismResource newResource = resource;
         if (createMatcher.matches()) {
-            String newScopeName = createMatcher.group(2).toLowerCase();
-            newScope = entityCreationService.create(user, scope, newScopeName);
+            String newResourceType = createMatcher.group(2);
+            newResource = entityCreationService.getOrCreate(user, resource, PrismResourceType.valueOf(newResourceType));
         }
 
-        ApplicationFormAction nextAction = executeStateTransition(scope, user, invokingRole, action, newScope, comment);
-        entityService.save(newScope);
-        PrismScope nextActionScope = nextAction != null ? newScope.getEnclosingScope(nextAction.getScopeName()) : null;
-        Hibernate.initialize(nextActionScope);
-        return new ActionOutcome(user, nextActionScope, nextAction);
+        ApplicationFormAction nextAction = executeStateTransition(resource, user, invokingRole, action, newResource, comment);
+        entityService.save(newResource);
+        PrismResource nextActionResource = nextAction != null ? newResource.getEnclosingResource(PrismResourceType.valueOf(nextAction.getScopeName())) : null;
+        Hibernate.initialize(nextActionResource);
+        return new ActionOutcome(user, nextActionResource, nextAction);
     }
 
-    private ApplicationFormAction executeStateTransition(PrismScope scope, User user, Role invokingRole, ApplicationFormAction action, PrismScope newScope,
+    private ApplicationFormAction executeStateTransition(PrismResource scope, User user, Role invokingRole, ApplicationFormAction action, PrismResource newScope,
             Comment comment) {
         List<StateTransition> stateTransitions = stateDAO.getStateTransitions(scope.getState().getId(), action, StateTransitionType.ONE_COMPLETED,
                 StateTransitionType.ALL_COMPLETED);
@@ -118,7 +119,7 @@ public class ActionService {
         return nextAction;
     }
 
-    private void executeRoleTransitions(Role invokingRole, PrismScope scope, StateTransition stateTransition, PrismScope newScope) {
+    private void executeRoleTransitions(Role invokingRole, PrismResource scope, StateTransition stateTransition, PrismResource newScope) {
         List<RoleTransition> roleTransitions = roleService.getRoleTransitions(stateTransition, invokingRole);
         for (RoleTransition roleTransition : roleTransitions) {
             Role role = roleTransition.getRole();

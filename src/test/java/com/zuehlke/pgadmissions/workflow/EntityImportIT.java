@@ -63,8 +63,8 @@ public class EntityImportIT {
         Program otherProgram = programService.getProgramByCode("99");
         assertEquals("program1", program1.getTitle());
         assertEquals("otherProgram", otherProgram.getTitle());
-        assertTrue(program1.isEnabled());
-        assertTrue(otherProgram.isEnabled());
+        assertTrue(program1.isFertile());
+        assertTrue(otherProgram.isFertile());
         assertTrue(program1.getRequireProjectDefinition());
         assertTrue(otherProgram.getRequireProjectDefinition());
 

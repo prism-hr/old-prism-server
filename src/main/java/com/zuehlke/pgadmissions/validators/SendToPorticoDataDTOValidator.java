@@ -10,7 +10,7 @@ import org.springframework.validation.Errors;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.PorticoService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.services.RefereeService;
 public class SendToPorticoDataDTOValidator extends AbstractValidator {
 
     @Autowired
-	private ApplicationFormService applicationFormService;
+	private ApplicationService applicationFormService;
 	
     @Autowired
     private QualificationService qualificationService;

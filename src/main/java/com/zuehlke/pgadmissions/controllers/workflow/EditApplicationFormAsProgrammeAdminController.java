@@ -49,7 +49,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -72,7 +72,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     protected UserService userService;
 
     @Autowired
-    protected ApplicationFormService applicationsService;
+    protected ApplicationService applicationsService;
 
     @Autowired
     protected DocumentPropertyEditor documentPropertyEditor;

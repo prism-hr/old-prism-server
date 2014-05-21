@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.validators.DocumentValidator;
 
@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.validators.DocumentValidator;
 public class FileUploadController {
     
     @Autowired
-	private ApplicationFormService applicationFormService;
+	private ApplicationService applicationFormService;
 	
     @Autowired
 	private DocumentValidator documentValidator;

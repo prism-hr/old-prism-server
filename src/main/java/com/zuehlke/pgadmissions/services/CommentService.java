@@ -33,7 +33,7 @@ public class CommentService {
     private CommentDAO commentDAO;
 
     @Autowired
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
 
     @Autowired
     private WorkflowService applicationFormUserRoleService;

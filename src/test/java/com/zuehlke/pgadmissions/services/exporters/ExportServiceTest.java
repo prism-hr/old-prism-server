@@ -59,7 +59,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.PorticoService;
 import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
@@ -103,7 +103,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
 
     private ApplicationFormDAO applicationFormDAOMock;
 
-    private ApplicationFormService applicationsServiceMock;
+    private ApplicationService applicationsServiceMock;
 
     private ApplicationTransferService applicationFormTransferService;
 
@@ -1066,7 +1066,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
 
         applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 
-        applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
+        applicationsServiceMock = EasyMock.createMock(ApplicationService.class);
 
         applicationFormUserRoleServiceMock = EasyMock.createMock(WorkflowService.class);
 

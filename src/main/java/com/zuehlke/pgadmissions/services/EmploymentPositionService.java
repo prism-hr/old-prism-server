@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 public class EmploymentPositionService {
 
     @Autowired
-    private ApplicationFormService applicationFormService;
+    private ApplicationService applicationFormService;
     
     @Autowired
 	private EmploymentPositionDAO employmentPositionDAO;

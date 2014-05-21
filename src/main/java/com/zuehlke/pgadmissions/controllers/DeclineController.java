@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -31,7 +31,7 @@ public class DeclineController {
 	private CommentService commentService;
     
     @Autowired
-	private ApplicationFormService applicationsService;
+	private ApplicationService applicationsService;
     
     @Autowired
 	private RefereeService refereeService;

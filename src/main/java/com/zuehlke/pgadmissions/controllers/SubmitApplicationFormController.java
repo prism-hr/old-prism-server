@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.SubmitApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -39,7 +39,7 @@ public class SubmitApplicationFormController {
     private ApplicationFormValidator applicationFormValidator;
 
     @Autowired
-    private ApplicationFormService applicationService;
+    private ApplicationService applicationService;
 
     @Autowired
     private UserService userService;

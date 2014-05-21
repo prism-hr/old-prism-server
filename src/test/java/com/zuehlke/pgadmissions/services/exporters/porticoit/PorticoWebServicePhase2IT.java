@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationTransferError;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.exporters.ExportService;
 import com.zuehlke.pgadmissions.services.exporters.TransferListener;
 
@@ -49,7 +49,7 @@ public class PorticoWebServicePhase2IT {
     private ExportService uclExportService;
     
     @Autowired
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
     
     @Autowired 
     private SessionFactory sessionFactory;

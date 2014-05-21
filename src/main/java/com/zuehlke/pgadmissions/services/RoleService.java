@@ -2,15 +2,14 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.RoleDAO;
-import com.zuehlke.pgadmissions.domain.PrismScope;
-import com.zuehlke.pgadmissions.domain.PrismSystem;
+import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
@@ -33,7 +32,7 @@ public class RoleService {
         return roleDAO.getById(authority);
     }
 
-    public UserRole getOrCreateUserRole(PrismScope scope, User user, Authority authority) {
+    public UserRole getOrCreateUserRole(PrismResource scope, User user, Authority authority) {
         Role role = roleDAO.getById(authority);
         UserRole userRole = roleDAO.get(user, scope, authority);
         if (userRole == null) {
@@ -56,15 +55,15 @@ public class RoleService {
         return hasRole(user, authority, null);
     }
 
-    public boolean hasRole(User user, Authority authority, PrismScope scope) {
+    public boolean hasRole(User user, Authority authority, PrismResource scope) {
         return roleDAO.get(user, scope, authority) != null;
     }
 
-    public List<User> getUsersInRole(PrismScope scope, Authority... authorities) {
+    public List<User> getUsersInRole(PrismResource scope, Authority... authorities) {
         return roleDAO.getUsersInRole(scope, authorities);
     }
 
-    public User getUserInRole(PrismScope scope, Authority... authorities) {
+    public User getUserInRole(PrismResource scope, Authority... authorities) {
         return roleDAO.getUserInRole(scope, authorities);
     }
 
@@ -83,7 +82,7 @@ public class RoleService {
      * @param authorities
      *            role to remove, when <code>null</code> removes all the roles in given scope
      */
-    public void removeRoles(User user, PrismScope scope, Authority... authorities) {
+    public void removeRoles(User user, PrismResource scope, Authority... authorities) {
         // TODO Auto-generated method stub
     }
 
@@ -97,7 +96,7 @@ public class RoleService {
         return null;
     }
 
-    public PrismSystem getPrismSystem() {
+    public System getPrismSystem() {
         return roleDAO.getPrismSystem();
     }
 
@@ -114,15 +113,15 @@ public class RoleService {
         return roleDAO.getRoleTransitions(stateTransition, invokingRole);
     }
 
-    public Role canExecute(User user, PrismScope scope, ApplicationFormAction action) {
-        return roleDAO.canExecute(user, scope, action);
+    public Role canExecute(User user, PrismResource scope, ApplicationFormAction action) {
+        return roleDAO.getExecutorRole(user, scope, action);
     }
 
-    public List<User> getBy(Role role, PrismScope scope) {
+    public List<User> getBy(Role role, PrismResource scope) {
         return roleDAO.getBy(role, scope);
     }
 
-    public void executeRoleTransition(PrismScope scope, User user, Role role, RoleTransitionType type, PrismScope newScope, Role newRole) {
+    public void executeRoleTransition(PrismResource scope, User user, Role role, RoleTransitionType type, PrismResource newScope, Role newRole) {
         UserRole userRole = getUserRole(user, role.getId());
         switch (type) {
         case UPDATE:
@@ -134,7 +133,7 @@ public class RoleService {
         }
     }
 
-    public Role getCreatorRole(ApplicationFormAction action, PrismScope scope) {
+    public Role getCreatorRole(ApplicationFormAction action, PrismResource scope) {
         return roleDAO.getCreatorRole(action, scope);
     }
 

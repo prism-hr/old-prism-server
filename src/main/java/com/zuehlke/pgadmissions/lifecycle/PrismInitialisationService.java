@@ -37,5 +37,5 @@ public class PrismInitialisationService implements InitializingBean {
     private void initialiseHibernateSearchIndexes() {
         fullTextSearchService.initialiseSearchIndexes();
     }
-    
+
 }

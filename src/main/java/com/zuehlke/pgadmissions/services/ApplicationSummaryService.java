@@ -38,7 +38,7 @@ public class ApplicationSummaryService {
     private static final String DATE_FORMAT = "dd MMM yyyy";
 
     @Autowired
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
 
     @Autowired
     private UserService userService;

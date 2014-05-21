@@ -57,7 +57,7 @@ public class ApplicationSumaryServiceTest {
 
     private EncryptionHelper encryptionHelperMock;
 
-    private ApplicationFormService applicationsServiceMock;
+    private ApplicationService applicationsServiceMock;
 
     private ActionService actionsProviderMock;
 

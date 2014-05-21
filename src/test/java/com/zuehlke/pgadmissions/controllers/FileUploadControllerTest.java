@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.DocumentValidator;
@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.validators.DocumentValidator;
 public class FileUploadControllerTest {
 
 	private FileUploadController controller;
-	private ApplicationFormService applicationsServiceMock;
+	private ApplicationService applicationsServiceMock;
 	private User currentUser;
 	private DocumentValidator documentValidatorMock;
 	private BindingResult errors;
@@ -123,7 +123,7 @@ public class FileUploadControllerTest {
 	@Before
 	public void setup() {
 		errors = EasyMock.createMock(BindingResult.class);
-		applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
+		applicationsServiceMock = EasyMock.createMock(ApplicationService.class);
 		documentValidatorMock = EasyMock.createMock(DocumentValidator.class);
 		documentServiceMock = EasyMock.createMock(DocumentService.class);
 		document = new Document().withId(1);

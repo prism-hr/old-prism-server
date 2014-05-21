@@ -8,7 +8,7 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
@@ -23,7 +23,7 @@ public class EmploymentPositionControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationFormService;
+    private ApplicationService applicationFormService;
 
     @Mock
     @InjectIntoByType

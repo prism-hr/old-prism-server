@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WithdrawService;
 import com.zuehlke.pgadmissions.services.WorkflowService;
@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.services.WorkflowService;
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class WithdrawControllerTest {
 
-    private ApplicationFormService applicationsServiceMock;
+    private ApplicationService applicationsServiceMock;
     private WithdrawService withdrawServiceMock;
     private User student;
 

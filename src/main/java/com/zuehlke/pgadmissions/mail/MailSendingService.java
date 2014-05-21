@@ -53,6 +53,7 @@ public class MailSendingService extends AbstractMailSendingService {
     @Value("${ucl.prospectus.url}")
     private String uclProspectusLink;
 
+    @Autowired
     private RoleService roleService;
 
     private void sendReferenceRequest(Referee referee, Application application) {

@@ -87,17 +87,23 @@ public class ActionService {
             newResource = applicationService.getOrCreate(user, resource, PrismResourceType.valueOf(newResourceType));
         }
 
-        SystemAction nextAction = executeStateTransition(resource, user, invokerRoles, action, newResource, comment);
+        SystemAction nextAction = executeStateTransitions(resource, user, invokerRoles, action, newResource, comment);
         entityService.save(newResource);
         PrismResource nextActionResource = nextAction != null ? newResource.getEnclosingResource(PrismResourceType.valueOf(nextAction.getScopeName())) : null;
         Hibernate.initialize(nextActionResource);
         return new ActionOutcome(user, nextActionResource, nextAction);
     }
 
-    private SystemAction executeStateTransition(PrismResource resource, User user, List<Role> invokerRoles, SystemAction action,
+    private SystemAction executeStateTransitions(PrismResource resource, User user, List<Role> invokerRoles, SystemAction action,
             PrismResource newResource, Comment comment) {
+        
+        String invokerRolesAsString = invokerRoles.get(0).getAuthority();
+        for (int i = 1; i < invokerRoles.size(); i++) {
+            invokerRolesAsString = invokerRolesAsString + "|" + invokerRoles.get(i).getAuthority();
+        }
+        
         List<StateTransition> stateTransitions = stateDAO.getStateTransitions(resource.getState().getId(), action, StateTransitionType.ONE_COMPLETED,
-                StateTransitionType.ALL_COMPLETED);
+                StateTransitionType.ALL_COMPLETED, StateTransitionType.PROPAGATION);
 
         SystemAction nextAction = null;
         for (StateTransition stateTransition : stateTransitions) {
@@ -107,6 +113,7 @@ public class ActionService {
 
             if (comment != null) {
                 comment.setUser(user);
+                comment.setRoles(invokerRolesAsString);
                 comment.setCreatedTimestamp(new DateTime());
                 commentService.save(comment);
             }

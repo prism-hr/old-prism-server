@@ -389,4 +389,14 @@ INSERT INTO STATE_ACTION_ASSIGNMENT(state_action_id, role_id)
 		AND ROLE.id IN ("SYSTEM_ADMINISTRATOR", "INSTITUTION_ADMINISTRATOR",
 			"PROGRAM_ADMINISTRATOR")
 ;
-	
+
+/* Allow roles at time of action invokation to be stored as concatenated string */
+
+ALTER TABLE COMMENT
+	DROP INDEX role_id,
+	DROP FOREIGN KEY comment_ibfk_5,
+	DROP FOREIGN KEY comment_ibfk_7,
+	DROP INDEX delegate_role_id,
+	MODIFY COLUMN role_id VARCHAR(1000) NOT NULL,
+	MODIFY COLUMN delegate_role_id VARCHAR(1000)
+;

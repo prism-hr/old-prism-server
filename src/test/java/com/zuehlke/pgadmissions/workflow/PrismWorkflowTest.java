@@ -54,7 +54,7 @@ public class PrismWorkflowTest {
 
     @Autowired
     private ManageUsersService manageUsersService;
-
+    
     @Autowired
     private RegistrationService registrationService;
 

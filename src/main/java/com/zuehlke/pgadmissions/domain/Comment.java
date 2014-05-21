@@ -62,7 +62,17 @@ public class Comment implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+    
+    @Column(name = "role_id")
+    String roles;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "delegate_user_id", nullable = false)
+    private User delegateUser;
+    
+    @Column(name = "delegate_role_id")
+    String delegateRoles;
+    
     @ManyToOne
     @JoinColumn(name = "action_id")
     private Action action;
@@ -212,6 +222,30 @@ public class Comment implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+    
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+    
+    public User getDelegateUser() {
+        return delegateUser;
+    }
+
+    public void setDelegateUser(User delegateUser) {
+        this.delegateUser = delegateUser;
+    }
+
+    public String getDelegateRoles() {
+        return delegateRoles;
+    }
+
+    public void setDelegateRoles(String delegateRoles) {
+        this.delegateRoles = delegateRoles;
     }
 
     public DateTime getCreatedTimestamp() {

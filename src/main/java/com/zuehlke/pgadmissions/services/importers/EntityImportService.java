@@ -39,6 +39,7 @@ import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.Progr
 import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.ProgramService;
+import com.zuehlke.pgadmissions.services.RoleService;
 
 @Service
 public class EntityImportService {
@@ -64,6 +65,9 @@ public class EntityImportService {
 
     @Autowired
     private MailSendingService mailSendingService;
+    
+    @Autowired
+    private RoleService roleService;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void importEntities(ImportedEntityFeed importedEntityFeed) throws XMLDataImportException {
@@ -210,7 +214,7 @@ public class EntityImportService {
     public Program getOrCreateProgram(Programme programme, Institution institution) {
         Program program = programService.getProgramByCode(programme.getCode());
         if (program == null) {
-            program = new Program().withInstitution(institution).withCode(programme.getCode()).withState(new State().withId(PrismState.PROGRAM_APPROVED));
+            program = new Program().withSystem(roleService.getPrismSystem()).withInstitution(institution).withCode(programme.getCode()).withState(new State().withId(PrismState.PROGRAM_APPROVED));
             entityDAO.save(program);
         }
 

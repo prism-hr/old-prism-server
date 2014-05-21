@@ -49,7 +49,7 @@ public class ApprovalService {
     private RoleService roleService;
 
     @Autowired
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
 
     @Autowired
     private ApplicationContext applicationContext;

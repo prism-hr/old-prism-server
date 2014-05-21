@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 public class AdditionalInformationService {
 
     @Autowired
-    private ApplicationFormService applicationFormService;
+    private ApplicationService applicationFormService;
     
     @Autowired
     ApplicationFormCopyHelper applicationFormCopyHelper;

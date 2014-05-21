@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -35,7 +35,7 @@ public class ConfirmSupervisionControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationServiceMock;
+    private ApplicationService applicationServiceMock;
 
     @Mock
     @InjectIntoByType

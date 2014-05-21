@@ -39,7 +39,7 @@ public class ApprovalServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
     
     @Mock
     @InjectIntoByType

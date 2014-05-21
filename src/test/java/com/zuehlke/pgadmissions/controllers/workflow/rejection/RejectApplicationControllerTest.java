@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.RejectService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WorkflowService;
@@ -45,7 +45,7 @@ public class RejectApplicationControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationServiceMock;
+    private ApplicationService applicationServiceMock;
 
     @Mock
     @InjectIntoByType

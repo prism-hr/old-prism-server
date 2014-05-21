@@ -270,7 +270,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         assertTrue(projects.size() >= (expected ? 1 : 0));
         boolean projectIncluded = false;
         for (Project loadedProject : projects) {
-            assertTrue(loadedProject.isEnabled());
+            assertTrue(loadedProject.isFertile());
             if (expectedProject.getId().equals(loadedProject.getId())) {
                 projectIncluded = true;
             }

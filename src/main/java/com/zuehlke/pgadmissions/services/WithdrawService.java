@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.domain.enums.PrismState;
 public class WithdrawService {
 
     @Autowired
-    private ApplicationFormService applicationFormService;
+    private ApplicationService applicationFormService;
 
     @Transactional
     public void withdrawApplication(final Application application) {

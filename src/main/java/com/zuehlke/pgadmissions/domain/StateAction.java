@@ -1,10 +1,15 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -31,6 +36,9 @@ public class StateAction {
 
     @Column(name = "precedence")
     private Integer precedence;
+    
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "stateAction")
+    private Set<StateActionAssignment> stateActionAssignments = new HashSet<StateActionAssignment>();
 
     public Integer getId() {
         return id;
@@ -78,6 +86,10 @@ public class StateAction {
 
     public void setPrecedence(Integer precedence) {
         this.precedence = precedence;
+    }
+
+    public Set<StateActionAssignment> getStateActionAssignments() {
+        return stateActionAssignments;
     }
 
 }

@@ -38,7 +38,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.PorticoService;
 
 /**
@@ -76,7 +76,7 @@ public class ExportService {
     private SftpAttachmentsSendingService sftpAttachmentsSendingService;
 
     @Autowired
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
 
     @Autowired
     private ApplicationTransferService applicationFormTransferService;

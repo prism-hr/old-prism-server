@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.ApplicationFormDocumentValidator;
@@ -35,7 +35,7 @@ public class DocumentsControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationsServiceMock;
+    private ApplicationService applicationsServiceMock;
 
     @Mock
     @InjectIntoByType

@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WithdrawService;
 import com.zuehlke.pgadmissions.services.WorkflowService;
@@ -26,7 +26,7 @@ public class WithdrawController {
     private WithdrawService withdrawService;
 
     @Autowired
-    private ApplicationFormService applicationService;
+    private ApplicationService applicationService;
 
     @Autowired
     private UserService userService;

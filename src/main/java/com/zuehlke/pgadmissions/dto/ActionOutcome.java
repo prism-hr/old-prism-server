@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.PrismScope;
+import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 
@@ -12,11 +12,11 @@ public class ActionOutcome {
 
     private User user;
 
-    private PrismScope scope;
+    private PrismResource scope;
 
     private ApplicationFormAction nextAction;
 
-    public ActionOutcome(User user, PrismScope scope, ApplicationFormAction nextAction) {
+    public ActionOutcome(User user, PrismResource scope, ApplicationFormAction nextAction) {
         this.user = user;
         this.scope = scope;
         this.nextAction = nextAction;
@@ -26,7 +26,7 @@ public class ActionOutcome {
         return user;
     }
 
-    public PrismScope getScope() {
+    public PrismResource getScope() {
         return scope;
     }
 

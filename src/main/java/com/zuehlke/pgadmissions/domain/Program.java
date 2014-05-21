@@ -20,9 +20,10 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -31,10 +32,6 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
         @UniqueConstraint(columnNames = { "title", "institution_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Program extends Advert {
-
-    @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
-    private State state;
 
     @Column(name = "code")
     private String code;
@@ -45,6 +42,10 @@ public class Program extends Advert {
 
     @Column(name = "require_project_definition")
     private Boolean requireProjectDefinition;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "system_id", nullable = false)
+    private System system;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id", nullable = false)
@@ -68,6 +69,18 @@ public class Program extends Advert {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_type_id")
     private ProgramType programType;
+
+    @Column(name = "due_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate dueDate;
+
+    @ManyToOne
+    @JoinColumn(name = "state_id", nullable = false)
+    private State state;
+
+    @ManyToOne
+    @JoinColumn(name = "previous_state_id", nullable = true)
+    private State previousState;
 
     public Program() {
         super.setAdvertType(AdvertType.PROGRAM);
@@ -105,14 +118,6 @@ public class Program extends Advert {
         return scoringDefinitions;
     }
 
-    public Institution getInstitution() {
-        return institution;
-    }
-
-    public void setInstitution(Institution institution) {
-        this.institution = institution;
-    }
-
     public boolean isImported() {
         return imported;
     }
@@ -135,29 +140,6 @@ public class Program extends Advert {
 
     public void setProgramType(ProgramType programType) {
         this.programType = programType;
-    }
-
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
-    }
-
-    @Override
-    public Program getProgram() {
-        return this;
-    }
-
-    @Override
-    public Project getProject() {
-        return null;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return state.getId() == PrismState.PROGRAM_APPROVED;
     }
 
     public Program withId(Integer id) {
@@ -241,13 +223,71 @@ public class Program extends Advert {
     }
 
     @Override
-    public String getScopeName() {
-        return "program";
+    public System getSystem() {
+        return system;
     }
 
     @Override
-    public PrismSystem getSystem() {
-        return getInstitution().getSystem();
+    public void setSystem(System system) {
+        this.system = system;
+    }
+
+    @Override
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    @Override
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
+
+    @Override
+    public Program getProgram() {
+        return this;
+    }
+
+    @Override
+    public void setProgram(Program program) {
+    }
+
+    @Override
+    public Project getProject() {
+        return null;
+    }
+
+    @Override
+    public void setProject(Project project) {
+    }
+
+    @Override
+    public State getState() {
+        return state;
+    }
+
+    @Override
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    @Override
+    public State getPreviousState() {
+        return previousState;
+    }
+
+    @Override
+    public void setPreviousState(State previousState) {
+        this.previousState = previousState;
+    }
+
+    @Override
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    @Override
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
     }
 
     @Override

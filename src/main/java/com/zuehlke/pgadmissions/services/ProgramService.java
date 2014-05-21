@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
 @Service
 @Transactional
-public class ProgramService {
+public class ProgramService extends PrismResourceService {
 
     @Autowired
     private ProgramDAO programDAO;
@@ -129,7 +129,7 @@ public class ProgramService {
         return String.format("%05d", codeNumber);
     }
 
-    protected Program createOrGetProgram(OpportunityRequest opportunityRequest) {
+    protected Program getOrCreateProgram(OpportunityRequest opportunityRequest) {
         ProgramService thisBean = applicationContext.getBean(ProgramService.class);
 
         Program program = opportunityRequest.getSourceProgram();
@@ -190,7 +190,7 @@ public class ProgramService {
     public Program saveProgramOpportunity(OpportunityRequest opportunityRequest) {
         ProgramService thisBean = applicationContext.getBean(ProgramService.class);
 
-        Program program = thisBean.createOrGetProgram(opportunityRequest);
+        Program program = thisBean.getOrCreateProgram(opportunityRequest);
 
         if (program.isImported()) {
             programInstanceService.createRemoveProgramInstances(program, opportunityRequest.getStudyOptions(), opportunityRequest.getAdvertisingDeadlineYear());

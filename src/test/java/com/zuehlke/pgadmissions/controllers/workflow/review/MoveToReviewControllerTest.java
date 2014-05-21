@@ -8,7 +8,7 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WorkflowService;
@@ -18,7 +18,7 @@ public class MoveToReviewControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationServiceMock;
+    private ApplicationService applicationServiceMock;
 
     @Mock
     @InjectIntoByType

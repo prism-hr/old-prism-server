@@ -22,7 +22,7 @@ public class OfferRecommendationService {
     private ProgramInstanceService programInstanceService;
 
     @Autowired
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
 
     @Autowired
     private CommentDAO commentDAO;

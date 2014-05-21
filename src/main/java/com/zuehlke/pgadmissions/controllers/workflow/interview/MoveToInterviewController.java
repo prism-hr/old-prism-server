@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WorkflowService;
@@ -43,7 +43,7 @@ public class MoveToInterviewController {
     private static final String INTERVIEW_PAGE = "/private/staff/interviewers/interview_details";
 
     @Autowired
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
 
     @Autowired
     private UserService userService;

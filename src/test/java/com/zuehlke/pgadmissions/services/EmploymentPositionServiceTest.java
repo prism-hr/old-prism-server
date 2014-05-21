@@ -20,7 +20,7 @@ public class EmploymentPositionServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationFormService;
+    private ApplicationService applicationFormService;
 
     @Mock
     @InjectIntoByType

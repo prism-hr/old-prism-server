@@ -36,7 +36,7 @@ import com.google.common.base.Objects;
 @Entity
 @Table(name = "APPLICATION")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Application extends PrismScope {
+public class Application extends PrismResourceTransient {
 
     @Id
     @GeneratedValue
@@ -52,6 +52,10 @@ public class Application extends PrismScope {
     @ManyToOne
     @JoinColumn(name = "state_id", nullable = false)
     private State state;
+    
+    @ManyToOne
+    @JoinColumn(name = "previous_state_id", nullable = true)
+    private State previousState;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_address_id")
@@ -82,6 +86,14 @@ public class Application extends PrismScope {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user = null;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "system_id", nullable = false)
+    private System system;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "institution_id", nullable = false)
+    private Institution institution;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id", nullable = false)
@@ -150,10 +162,12 @@ public class Application extends PrismScope {
     @Transient
     private Boolean acceptedTerms;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
@@ -174,14 +188,6 @@ public class Application extends PrismScope {
         this.rejection = rejection;
     }
 
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State status) {
-        this.state = status;
-    }
-
     public ApplicationAddress getApplicationAddress() {
         return applicationAddress;
     }
@@ -196,14 +202,6 @@ public class Application extends PrismScope {
 
     public void setApplicationDocument(ApplicationDocument applicationDocument) {
         this.applicationDocument = applicationDocument;
-    }
-
-    public LocalDate getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
     }
 
     public Boolean getAcceptedTerms() {
@@ -238,32 +236,8 @@ public class Application extends PrismScope {
         this.closingDate = closingDate;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User applicant) {
-        this.user = applicant;
-    }
-
     public Advert getAdvert() {
         return Objects.firstNonNull(getProject(), getProgram());
-    }
-
-    public Program getProgram() {
-        return program;
-    }
-
-    public void setProgram(Program program) {
-        this.program = program;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
     }
 
     public PersonalDetails getPersonalDetails() {
@@ -431,25 +405,90 @@ public class Application extends PrismScope {
         this.referees.addAll(Arrays.asList(referees));
         return this;
     }
-
+    
     @Override
-    public String getScopeName() {
-        return "application";
-    }
-
-    @Override
-    public PrismSystem getSystem() {
+    public System getSystem() {
         return getInstitution().getSystem();
+    }
+    
+    @Override
+    public void setSystem(System system) {
+        this.system = system;
     }
 
     @Override
     public Institution getInstitution() {
         return getProgram().getInstitution();
     }
+
+    @Override
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
     
+    @Override
+    public Program getProgram() {
+        return program;
+    }
+
+    @Override
+    public void setProgram(Program program) {
+        this.program = program;
+    }
+    
+    @Override
+    public Project getProject() {
+        return project;
+    }
+
+    @Override
+    public void setProject(Project project) {
+        this.project = project;
+    }
+    
+    @Override
+    public State getState() {
+        return state;
+    }
+
+    @Override
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    @Override
+    public State getPreviousState() {
+        return previousState;
+    }
+
+    @Override
+    public void setPreviousState(State previousState) {
+        this.previousState = previousState;
+    }
+    
+    @Override
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    @Override
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
     @Override
     public Application getApplication() {
         return this;
+    }
+
+    @Override
+    public User getUser() {
+        return user;
+    }
+
+    @Override
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }

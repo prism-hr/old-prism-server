@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WorkflowService;
@@ -35,7 +35,7 @@ public class GenericCommentController {
 
     private static final String GENERIC_COMMENT_PAGE = "private/staff/admin/comment/genericcomment";
 
-    private final ApplicationFormService applicationsService;
+    private final ApplicationService applicationsService;
 
     private final UserService userService;
 
@@ -54,7 +54,7 @@ public class GenericCommentController {
     }
 
     @Autowired
-    public GenericCommentController(ApplicationFormService applicationsService, UserService userService, CommentService commentService,
+    public GenericCommentController(ApplicationService applicationsService, UserService userService, CommentService commentService,
             GenericCommentValidator genericCommentValidator, DocumentPropertyEditor documentPropertyEditor, ActionService actionService,
             WorkflowService applicationFormUserRoleService) {
         this.applicationsService = applicationsService;

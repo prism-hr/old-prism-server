@@ -57,7 +57,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 
 public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRollbackTestCase {
 
-    private static final int APPLICATION_BLOCK_SIZE = ApplicationFormService.APPLICATION_BLOCK_SIZE;
+    private static final int APPLICATION_BLOCK_SIZE = ApplicationService.APPLICATION_BLOCK_SIZE;
 
     private User applicant;
 
@@ -69,7 +69,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     private Program program;
 
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
 
     private RoleDAO roleDAO;
 
@@ -85,7 +85,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         applicationFormDAO = new ApplicationFormDAO(sessionFactory);
 
-        applicationsService = new ApplicationFormService();
+        applicationsService = new ApplicationService();
         InjectionUtils.injectInto(applicationFormListDAO, applicationsService, "applicationFormListDAO");
         InjectionUtils.injectInto(applicationFormDAO, applicationsService, "applicationFormDAO");
 

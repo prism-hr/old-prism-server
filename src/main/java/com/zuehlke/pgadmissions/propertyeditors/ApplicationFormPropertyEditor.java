@@ -6,19 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 
 @Component
 public class ApplicationFormPropertyEditor extends PropertyEditorSupport {
 
-	private final ApplicationFormService applicationsService;
+	private final ApplicationService applicationsService;
 
 	public ApplicationFormPropertyEditor() {
 		this(null);
 	}
 	
 	@Autowired
-	public ApplicationFormPropertyEditor(ApplicationFormService applicationsService) {
+	public ApplicationFormPropertyEditor(ApplicationService applicationsService) {
 		this.applicationsService = applicationsService;
 	}
 

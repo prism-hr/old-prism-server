@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityListType;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 
 @Controller
 @RequestMapping("/opportunities")
@@ -31,7 +31,7 @@ public class AdvertsController {
 
     private static final String RELATED_OPPORTUNITIES_VIEW = "private/prospectus/opportunities";
     private final AdvertService advertService;
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
     private ProgramDAO programDAO;
 
     public AdvertsController() {
@@ -39,7 +39,7 @@ public class AdvertsController {
     }
 
     @Autowired
-    public AdvertsController(final AdvertService advertService, final ApplicationFormService applicationsService, final ProgramDAO programDAO) {
+    public AdvertsController(final AdvertService advertService, final ApplicationService applicationsService, final ProgramDAO programDAO) {
         this.advertService = advertService;
         this.applicationsService = applicationsService;
         this.programDAO = programDAO;

@@ -16,7 +16,7 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.dao.ApplicationTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationTransferErrorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
-import com.zuehlke.pgadmissions.domain.PrismSystem;
+import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -48,7 +48,7 @@ public class ReportPorticoDocumentUploadFailureServiceTest {
         User superadmin1 = new User().withId(12);
         User superadmin2 = new User().withId(13);
         List<User> superadmins = Arrays.asList(superadmin1, superadmin2);
-        PrismSystem prismSystem = new PrismSystem();
+        System prismSystem = new System();
         
         EasyMock.expect(roleServiceMock.getUsersInRole(prismSystem, Authority.SYSTEM_ADMINISTRATOR)).andReturn(superadmins);
         

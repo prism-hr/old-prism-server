@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -26,7 +26,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationServiceMock;
+    private ApplicationService applicationServiceMock;
 
     @Mock
     @InjectIntoByType

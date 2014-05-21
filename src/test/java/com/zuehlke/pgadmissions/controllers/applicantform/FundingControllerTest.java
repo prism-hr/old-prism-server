@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.FundingService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WorkflowService;
@@ -41,7 +41,7 @@ public class FundingControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationsServiceMock;
+    private ApplicationService applicationsServiceMock;
 
     @Mock
     @InjectIntoByType

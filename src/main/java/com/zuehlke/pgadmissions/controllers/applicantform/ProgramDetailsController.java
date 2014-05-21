@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SuggestedSupervisorJSONPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramDetailsService;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -41,7 +41,7 @@ import com.zuehlke.pgadmissions.validators.ProgramDetailsValidator;
 public class ProgramDetailsController {
 
     @Autowired
-    private ApplicationFormService applicationFormService;
+    private ApplicationService applicationFormService;
 
     @Autowired
     private ApplicationFormPropertyEditor applicationFormPropertyEditor;

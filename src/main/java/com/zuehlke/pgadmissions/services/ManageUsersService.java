@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.PrismScope;
-import com.zuehlke.pgadmissions.domain.PrismSystem;
+import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
@@ -23,7 +23,7 @@ public class ManageUsersService {
     @Autowired
     private MailSendingService mailService;
 
-    public User setUserRoles(String firstname, String lastname, String email, boolean replaceRoles, PrismScope scope,
+    public User setUserRoles(String firstname, String lastname, String email, boolean replaceRoles, PrismResource scope,
             Authority... authorities) {
         User user = userService.getOrCreateUser(firstname, lastname, email);
         if (replaceRoles) {
@@ -35,7 +35,7 @@ public class ManageUsersService {
         return user;
     }
     
-    public PrismSystem getPrismSystem() {
+    public System getPrismSystem() {
         return roleService.getPrismSystem();
     }
 

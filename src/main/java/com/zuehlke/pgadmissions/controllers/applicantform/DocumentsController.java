@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormDocumentService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.validators.ApplicationFormDocumentValidator;
 
 @Controller
@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.validators.ApplicationFormDocumentValidator;
 public class DocumentsController {
 
     @Autowired
-    private ApplicationFormService applicationFormService;
+    private ApplicationService applicationFormService;
     
     @Autowired
     private ApplicationFormDocumentService applicationFormDocumentService;

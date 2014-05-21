@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.AcceptedTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WorkflowService;
@@ -35,7 +35,7 @@ public class InterviewVoteController {
     private static final String INTERVIEW_VOTE_PAGE = "private/staff/interviewers/interview_vote";
     
     @Autowired
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
     
     @Autowired
     private UserService userService;

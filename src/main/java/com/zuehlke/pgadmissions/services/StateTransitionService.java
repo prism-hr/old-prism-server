@@ -32,7 +32,7 @@ public class StateTransitionService {
 
     public String resolveView(Application application, String action) {
 
-        if (!application.getProgram().isEnabled()) {
+        if (!application.getProgram().isFertile()) {
             return REJECTION_VIEW + application.getApplicationNumber() + "&rejectionId=" + REJECTION_REASON_WHEN_PROGAMME_EXPIRED.toString()
                     + "&rejectionIdForced=true";
         } else if ("abort".equals(action)) {

@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
-import com.zuehlke.pgadmissions.domain.PrismScope;
+import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ManageUsersService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
@@ -65,7 +65,7 @@ public class PrismWorkflowTest {
     private AuthenticationProvider authenticationProvider;
 
     @Autowired
-    private ApplicationFormService applicationFormService;
+    private ApplicationService applicationFormService;
 
     @Autowired
     private ReviewService reviewService;

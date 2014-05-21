@@ -17,7 +17,7 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.dto.UserDTO;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -29,7 +29,7 @@ public class CreateNewApplicationUserControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationsServiceMock;
+    private ApplicationService applicationsServiceMock;
 
     @TestedObject
     private CreateNewApplicationUserController controller;

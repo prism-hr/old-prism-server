@@ -44,7 +44,7 @@ public class ProgramInstanceService {
             boolean startDateInFuture = today.isBefore(applicationStartDate);
             boolean beforeEndDate = todayPlusConsiderationPeriod.isBefore(instance.getApplicationDeadline());
             boolean sameStudyOption = details.getStudyOption().getId().equals(instance.getStudyOption().getId());
-            if (applicationForm.getAdvert().isEnabled() && isActive(instance) && (startDateInFuture || beforeEndDate) && sameStudyOption) {
+            if (applicationForm.getAdvert().isFertile() && isActive(instance) && (startDateInFuture || beforeEndDate) && sameStudyOption) {
                 if (startDateInFuture && (result == null || result.isAfter(applicationStartDate))) {
                     result = applicationStartDate;
                 } else if (result == null || result.isAfter(todayPlusConsiderationPeriod)) {
@@ -68,7 +68,7 @@ public class ProgramInstanceService {
             boolean afterStartDate = startDate.isAfter(instance.getApplicationStartDate());
             boolean beforeEndDate = startDate.isBefore(instance.getApplicationDeadline());
             boolean sameStudyOption = programDetails.getStudyOption().getId().equals(instance.getStudyOption().getId());
-            if (applicationForm.getAdvert().isEnabled() && isActive(instance) && afterStartDate && beforeEndDate && sameStudyOption) {
+            if (applicationForm.getAdvert().isFertile() && isActive(instance) && afterStartDate && beforeEndDate && sameStudyOption) {
                 return true;
             }
         }

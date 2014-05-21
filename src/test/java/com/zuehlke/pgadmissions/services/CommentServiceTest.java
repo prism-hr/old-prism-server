@@ -25,7 +25,7 @@ public class CommentServiceTest {
     private CommentDAO commentDAO;
     
     @Mock @InjectIntoByType
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
     
     @Mock @InjectIntoByType 
     private WorkflowService applicationFormUserRoleService;

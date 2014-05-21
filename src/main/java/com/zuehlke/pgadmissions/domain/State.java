@@ -24,8 +24,14 @@ public class State {
     @JoinColumn(name = "parent_state_id", nullable = false)
     private State parentState;
 
-    @Column(name = "is_under_assessment", nullable = false)
-    private boolean underAssessment;
+    @Column(name = "is_assessment_state", nullable = false)
+    private boolean assessmentState;
+    
+    @Column(name = "is_fertile_state", nullable = false)
+    private boolean fertileState;
+    
+    @Column(name = "is_duplicatable_state", nullable = false)
+    private boolean duplicatableState;
 
     public PrismState getId() {
         return id;
@@ -43,12 +49,28 @@ public class State {
         this.parentState = parentState;
     }
 
-    public boolean isUnderAssessment() {
-        return underAssessment;
+    public boolean isAssessmentState() {
+        return assessmentState;
     }
 
-    public void setUnderAssessment(boolean underAssessment) {
-        this.underAssessment = underAssessment;
+    public void setAssessmentState(boolean assessmentState) {
+        this.assessmentState = assessmentState;
+    }
+
+    public boolean isFertileState() {
+        return fertileState;
+    }
+
+    public void setFertileState(boolean fertileState) {
+        this.fertileState = fertileState;
+    }
+
+    public boolean isDuplicatableState() {
+        return duplicatableState;
+    }
+
+    public void setDuplicatableState(boolean duplicatableState) {
+        this.duplicatableState = duplicatableState;
     }
 
     public State withId(PrismState id) {

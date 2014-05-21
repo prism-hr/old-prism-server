@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -30,7 +30,7 @@ public class CommentTimelineController {
 	private UserService userService;
 	
 	@Autowired
-	private ApplicationFormService applicationService;
+	private ApplicationService applicationService;
 	
 	@Autowired
 	private CommentService commentService;

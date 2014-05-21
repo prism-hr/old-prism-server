@@ -30,7 +30,7 @@ public class InterviewService {
     private final Logger log = LoggerFactory.getLogger(InterviewService.class);
 
     @Autowired
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
 
     @Autowired
     private MailSendingService mailService;

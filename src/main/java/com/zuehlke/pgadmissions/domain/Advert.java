@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 @Entity
 @Table(name = "ADVERT")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Advert extends PrismScope {
+public abstract class Advert extends PrismResourceTransient {
 
     @Id
     @GeneratedValue
@@ -58,10 +58,12 @@ public abstract class Advert extends PrismScope {
     @JoinColumn(name = "advert_id", nullable = false)
     private List<AdvertClosingDate> closingDates = new ArrayList<AdvertClosingDate>();
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
@@ -139,8 +141,6 @@ public abstract class Advert extends PrismScope {
     public List<AdvertClosingDate> getClosingDates() {
         return closingDates;
     }
-
-    public abstract boolean isEnabled();
 
     @Override
     public int hashCode() {

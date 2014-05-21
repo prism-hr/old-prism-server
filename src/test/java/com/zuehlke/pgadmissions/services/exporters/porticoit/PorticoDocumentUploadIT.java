@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.pdf.CombinedReferencesPdfBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.Transcript1PdfBuilder;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.exporters.ExportService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -41,7 +41,7 @@ public class PorticoDocumentUploadIT {
     private WebServiceTemplate webServiceTemplate;
     
     @Autowired
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
     
     @Autowired
     private ExportService uclExportService;

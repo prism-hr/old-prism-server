@@ -6,9 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -16,7 +14,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Entity
@@ -29,10 +26,9 @@ public class Role implements GrantedAuthority {
     @Id
     @Enumerated(EnumType.STRING)
     private Authority id;
-
-    @ManyToMany
-    @JoinTable(name = "ROLE_INHERITANCE", joinColumns = { @JoinColumn(name = "role_id") }, inverseJoinColumns = { @JoinColumn( name = "inherited_role_id") })
-    private Set<Role> inheritedRoles = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "role")
+    private Set<UserRole> userRoles;
 
     public Authority getId() {
         return id;
@@ -45,10 +41,6 @@ public class Role implements GrantedAuthority {
     @Override
     public String getAuthority() {
         return id.toString();
-    }
-
-    public Set<Role> getInheritedRoles() {
-        return inheritedRoles;
     }
 
     @Override

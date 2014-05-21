@@ -50,7 +50,7 @@ public class RefereeService {
     private EncryptionHelper encryptionHelper;
 
     @Autowired
-    private ApplicationFormService applicationFormService;
+    private ApplicationService applicationFormService;
 
     @Autowired
     private WorkflowService applicationFormUserRoleService;

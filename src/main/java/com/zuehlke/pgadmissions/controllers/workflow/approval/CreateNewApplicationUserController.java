@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.UserDTO;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
@@ -32,7 +32,7 @@ public class CreateNewApplicationUserController {
     private UserService userService;
 
     @Autowired
-    private ApplicationFormService applicationsService;
+    private ApplicationService applicationsService;
 
     @RequestMapping(value = "/createSupervisor", method = RequestMethod.POST)
     public String createNewSupervisorUser(@Valid @ModelAttribute("suggestedUser") UserDTO userDTO, BindingResult bindingResult, ModelMap modelMap) {

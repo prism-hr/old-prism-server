@@ -40,7 +40,7 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnParticipantsDueReminders() {
-        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).build();
         save(application);
         Date now = Calendar.getInstance().getTime();
         Date eightDaysAgo = DateUtils.addDays(now, -8);

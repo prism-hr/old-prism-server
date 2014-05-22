@@ -129,7 +129,7 @@ public class AdmitterCommentController {
         comment.setApplication(application);
         
         commentService.save(comment);
-        applicationsService.saveUpdate(application);
+        applicationsService.save(application);
         applicationFormUserRoleService.admitterCommentPosted(comment);
         applicationFormUserRoleService.applicationUpdated(application, user);
         return "redirect:/applications?messageCode=validation.comment.success&application=" + application.getApplicationNumber();

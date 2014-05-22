@@ -119,23 +119,24 @@ public class ApplicationFormDAO {
                         .add(Restrictions.eq("cv", document))).uniqueResult();
     }
 
-    public Application getPreviousApplicationForApplicant(final Application applicationForm, final User applicant) {
+    public Application getPreviousApplicationForApplicant(final Application application) {
         Boolean copySubmittedApplication = true;
-        Integer applicationFormId = applicationForm.getId();
+        Integer applicationFormId = application.getId();
+        User creator = application.getUser();
 
         Date copyOnDate = (Date) sessionFactory.getCurrentSession().createCriteria(Application.class).setProjection(Projections.max("submittedTimestamp"))
-                .add(Restrictions.eq("user", applicant)).add(Restrictions.isNotNull("submittedTimestamp")).add(Restrictions.ne("id", applicationFormId))
+                .add(Restrictions.eq("user", creator)).add(Restrictions.isNotNull("submittedTimestamp")).add(Restrictions.ne("id", applicationFormId))
                 .uniqueResult();
 
         if (copyOnDate == null) {
             copySubmittedApplication = false;
             copyOnDate = (Date) sessionFactory.getCurrentSession().createCriteria(Application.class).setProjection(Projections.min("applicationTimestamp"))
-                    .add(Restrictions.eq("user", applicant)).add(Restrictions.ne("id", applicationFormId)).uniqueResult();
+                    .add(Restrictions.eq("user", creator)).add(Restrictions.ne("id", applicationFormId)).uniqueResult();
         }
 
         if (copyOnDate != null) {
             Criteria getPreviousApplication = sessionFactory.getCurrentSession().createCriteria(Application.class).setProjection(Projections.max("id"))
-                    .add(Restrictions.eq("user", applicant)).add(Restrictions.ne("id", applicationFormId));
+                    .add(Restrictions.eq("user", creator)).add(Restrictions.ne("id", applicationFormId));
 
             if (BooleanUtils.isTrue(copySubmittedApplication)) {
                 getPreviousApplication.add(Restrictions.ge("submittedTimestamp", copyOnDate));

@@ -24,7 +24,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
-import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 import com.zuehlke.pgadmissions.domain.enums.SystemAction;
@@ -148,20 +147,22 @@ public class UserDAO {
         Date reminderBaseline = getReminderBaseline(baselineDate, ReminderType.TASK);
         Date expiryBaseline = getExpiryBaseline(baselineDate);
 
-        return (List<Integer>) sessionFactory
-                .getCurrentSession()
-                .createCriteria(UserRole.class)
-                .setProjection(Projections.groupProperty("primaryAccount.id"))
-                .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
-                .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
-                .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("action.notification", NotificationMethod.SYNDICATED))
-                .add(Restrictions.eq("raisesUrgentFlag", true))
-                .add(Restrictions.disjunction().add(Restrictions.isNull("registeredUser.latestTaskNotificationDate"))
-                        .add(Restrictions.lt("registeredUser.latestTaskNotificationDate", reminderBaseline)))
-                .add(Restrictions.gt("applicationFormActionRequired.deadlineTimestamp", expiryBaseline)).add(Restrictions.eq("registeredUser.enabled", true))
-                .add(Restrictions.eq("registeredUser.accountNonExpired", true)).add(Restrictions.eq("registeredUser.accountNonLocked", true))
-                .add(Restrictions.eq("registeredUser.credentialsNonExpired", true)).list();
+        // TODO reimplement
+        return Lists.newArrayList();
+//        return (List<Integer>) sessionFactory
+//                .getCurrentSession()
+//                .createCriteria(UserRole.class)
+//                .setProjection(Projections.groupProperty("primaryAccount.id"))
+//                .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
+//                .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
+//                .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN)
+//                .add(Restrictions.eq("action.notification", NotificationMethod.SYNDICATED))
+//                .add(Restrictions.eq("raisesUrgentFlag", true))
+//                .add(Restrictions.disjunction().add(Restrictions.isNull("registeredUser.latestTaskNotificationDate"))
+//                        .add(Restrictions.lt("registeredUser.latestTaskNotificationDate", reminderBaseline)))
+//                .add(Restrictions.gt("applicationFormActionRequired.deadlineTimestamp", expiryBaseline)).add(Restrictions.eq("registeredUser.enabled", true))
+//                .add(Restrictions.eq("registeredUser.accountNonExpired", true)).add(Restrictions.eq("registeredUser.accountNonLocked", true))
+//                .add(Restrictions.eq("registeredUser.credentialsNonExpired", true)).list();
     }
 
     public List<Integer> getUsersDueUpdateNotification(Date seedDate) {

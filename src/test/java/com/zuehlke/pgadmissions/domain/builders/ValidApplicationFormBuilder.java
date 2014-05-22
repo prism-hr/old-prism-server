@@ -189,7 +189,7 @@ public class ValidApplicationFormBuilder {
                 .program(program).programmeDetails(programDetails).qualification(qualification1, qualification2)
                 .status(new State().withId(PrismState.APPLICATION_APPROVED)).submittedDate(new DateTime())
                 .applicationFormDocument(new ApplicationDocument().withPersonalStatement(personalStatement).withCv(cvDocument))
-                .referees(refereeOne, refereeTwo).ipAddress("127.0.0.1");
+                .referees(refereeOne, refereeTwo);
         applicationForm = getApplicationFormBuilder().build();
 
         personalDetails.setApplication(applicationForm);

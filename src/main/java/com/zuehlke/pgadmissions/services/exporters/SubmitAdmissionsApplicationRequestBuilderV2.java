@@ -387,12 +387,12 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
         applicationTp.setSourcesOfInterest(buildSourcesOfInterest(applicationTp));
         applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedTimestamp()));
-        applicationTp.setIpAddress(applicationForm.getIpAddressAsString());
         applicationTp.setExternalApplicationID(applicationForm.getApplicationNumber());
 
-        if (StringUtils.isBlank(applicationForm.getIpAddressAsString())) {
-            applicationTp.setIpAddress(IP_ADDRESS_NOT_PROVIDED_VALUE);
-        }
+        // FIXME set ip address
+        // applicationTp.setIpAddress(applicationForm.getIpAddressAsString());
+        // else
+        // applicationTp.setIpAddress(IP_ADDRESS_NOT_PROVIDED_VALUE);
 
         applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedTimestamp()));
         applicationTp.setRefereeList(buildReferee());

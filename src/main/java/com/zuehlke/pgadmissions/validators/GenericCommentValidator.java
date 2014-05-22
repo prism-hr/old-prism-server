@@ -16,6 +16,6 @@ public class GenericCommentValidator extends AbstractValidator {
 
     @Override
     public void addExtraValidation(Object target, Errors errors) {
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "content", EMPTY_FIELD_ERROR_MESSAGE);
     }
 }

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.Application;
@@ -99,10 +100,12 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Transactional
     public List<Integer> getUsersForOpportunityRequestNotification(Date baselineDate) {
-        if (opportunitiesService.getNewOpportunityRequests().isEmpty()) {
-            return Collections.emptyList();
-        }
-        return userDAO.getUsersDueOpportunityRequestNotification(baselineDate);
+        // TODO reimplement
+        return Lists.newArrayList();
+//        if (opportunitiesService.getNewOpportunityRequests().isEmpty()) {
+//            return Collections.emptyList();
+//        }
+//        return userDAO.getUsersDueOpportunityRequestNotification(baselineDate);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)

@@ -370,7 +370,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
 
         EasyMock.expect(applicationContextMock.getBean(EasyMock.isA(Class.class))).andReturn(exportService);
 
-        applicationsServiceMock.saveUpdate(applicationForm);
+        applicationsServiceMock.save(applicationForm);
 
         EasyMock.replay(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, applicationContextMock);
         exportService.sendToPortico(applicationForm, applicationFormTransfer, listener);
@@ -451,7 +451,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
 
         expect(applicationContextMock.getBean(EasyMock.isA(Class.class))).andReturn(exportService);
 
-        applicationsServiceMock.saveUpdate(applicationForm);
+        applicationsServiceMock.save(applicationForm);
 
         EasyMock.replay(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, applicationContextMock);
         exportService.sendToPortico(applicationForm, applicationFormTransfer, listener);
@@ -982,7 +982,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             referee.setSendToUCL(false);
         }
 
-        applicationsServiceMock.saveUpdate(applicationForm);
+        applicationsServiceMock.save(applicationForm);
 
         EasyMock.replay(applicationsServiceMock);
 
@@ -1009,7 +1009,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
 
         applicationForm.getReferees().get(0).setComment(null);
 
-        applicationsServiceMock.saveUpdate(applicationForm);
+        applicationsServiceMock.save(applicationForm);
 
         EasyMock.replay(applicationsServiceMock);
 
@@ -1037,7 +1037,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         applicationForm.getReferees().get(0).setSendToUCL(null);
         applicationForm.getReferees().get(1).setSendToUCL(true);
 
-        applicationsServiceMock.saveUpdate(applicationForm);
+        applicationsServiceMock.save(applicationForm);
 
         EasyMock.replay(applicationsServiceMock);
 

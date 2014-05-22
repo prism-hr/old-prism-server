@@ -166,7 +166,7 @@ public class InterviewCommentController {
         commentService.save(comment);
         applicationForm.getApplicationComments().add(comment);
 
-        applicationsService.saveUpdate(applicationForm);
+        applicationsService.save(applicationForm);
         applicationFormUserRoleService.interviewFeedbackPosted(comment);
         applicationFormUserRoleService.applicationUpdated(applicationForm, user);
         return "redirect:/applications?messageCode=interview.feedback&application=" + applicationForm.getApplicationNumber();

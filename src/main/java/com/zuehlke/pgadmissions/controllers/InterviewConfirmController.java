@@ -116,7 +116,7 @@ public class InterviewConfirmController {
         }
         
         interviewService.confirmInterview(user, applicationForm, interviewConfirmDTO);
-        applicationsService.saveUpdate(applicationForm);
+        applicationsService.save(applicationForm);
         
         return "redirect:/applications?messageCode=interview.confirm&application=" + applicationForm.getApplicationNumber();
     }

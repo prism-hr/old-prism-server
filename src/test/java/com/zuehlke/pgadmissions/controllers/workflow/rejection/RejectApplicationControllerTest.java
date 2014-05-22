@@ -14,9 +14,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 import org.unitils.easymock.annotation.Mock;
@@ -25,10 +22,8 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.RejectReason;
-import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -91,12 +86,6 @@ public class RejectApplicationControllerTest {
     }
 
     @Test
-    public void shouldGetNewRejection() {
-        Rejection rejection = controllerUT.getRejection();
-        Assert.assertNull(rejection.getId());
-    }
-
-    @Test
     public void shouldRegisterRejectReasonProperyEditor() {
         WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
         binderMock.registerCustomEditor(RejectReason.class, rejectReasonPropertyEditorMock);
@@ -150,46 +139,5 @@ public class RejectApplicationControllerTest {
 
     // -------------------------------------------
     // ------- move application to reject:
-
-    @Test
-    public void moveToRejectWithValidRejection() {
-        Application application = new Application();
-        User admin = new User().withId(1);
-        Rejection rejection = new RejectionBuilder().id(3).build();
-        BindingResult result = new BeanPropertyBindingResult(rejection, "rejection");
-
-        rejectServiceMock.moveApplicationToReject(application, rejection);
-        EasyMock.expectLastCall();
-        rejectServiceMock.sendToPortico(application);
-
-        ModelMap modelMap = new ModelMap();
-        modelMap.put("applicationForm", application);
-        modelMap.put("user", admin);
-
-        EasyMock.replay(rejectServiceMock);
-        String nextView = controllerUT.moveApplicationToReject(rejection, result, modelMap);
-        EasyMock.verify(rejectServiceMock);
-
-        Assert.assertEquals(AFTER_REJECT_VIEW + "?messageCode=application.rejected&application=abc", nextView);
-    }
-
-    @Test
-    public void returnToRejectViewWithInvalidRejection() {
-        Application application = new Application();
-        User admin = new User().withId(1);
-        Rejection rejection = new RejectionBuilder().id(3).build();
-        BindingResult result = new DirectFieldBindingResult(rejection, "rejection");
-        result.reject("error");
-
-        ModelMap modelMap = new ModelMap();
-        modelMap.put("applicationForm", application);
-        modelMap.put("user", admin);
-
-        EasyMock.replay(rejectServiceMock);
-        String nextView = controllerUT.moveApplicationToReject(rejection, result, modelMap);
-        EasyMock.verify(rejectServiceMock);
-
-        Assert.assertEquals(VIEW_RESULT, nextView);
-    }
 
 }

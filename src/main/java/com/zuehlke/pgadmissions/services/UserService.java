@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
-import javax.jws.soap.SOAPBinding.Use;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

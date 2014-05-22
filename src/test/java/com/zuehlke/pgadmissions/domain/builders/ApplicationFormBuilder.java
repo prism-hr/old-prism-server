@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -45,7 +44,6 @@ public class ApplicationFormBuilder {
     private List<Funding> fundings = new ArrayList<Funding>();
     private ApplicationDocument applicationFormDocument;
     private AdditionalInformation info;
-    private Date rejectNotificationDate;
     private Rejection rejection;
     private String applicationNumber;
     private String uclBookingReferenceNumber;
@@ -69,11 +67,6 @@ public class ApplicationFormBuilder {
 
     public ApplicationFormBuilder rejection(Rejection rejection) {
         this.rejection = rejection;
-        return this;
-    }
-
-    public ApplicationFormBuilder rejectNotificationDate(Date rejectNotificationDate) {
-        this.rejectNotificationDate = rejectNotificationDate;
         return this;
     }
 
@@ -221,7 +214,6 @@ public class ApplicationFormBuilder {
         application.setRejection(rejection);
         application.setApplicationNumber(applicationNumber);
         application.setClosingDate(closingDate);
-        application.setRejectNotificationDate(rejectNotificationDate);
         application.setUclBookingReferenceNumber(uclBookingReferenceNumber);
         application.getEmploymentPositions().addAll(employmentPositions);
         application.setUseCustomReferenceQuestions(useCustomReferenceQuestions);

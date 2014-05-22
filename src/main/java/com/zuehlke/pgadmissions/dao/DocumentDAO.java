@@ -29,7 +29,8 @@ public class DocumentDAO {
     }
 
     public void deleteOrphanDocuments() {
-        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_ORPHAN_DOCUMENTS();").executeUpdate();
+        // TODO rewrite
+//        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_ORPHAN_DOCUMENTS();").executeUpdate();
     }
 
 }

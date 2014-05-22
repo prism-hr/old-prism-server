@@ -4,7 +4,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -19,8 +18,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
@@ -142,10 +139,6 @@ public class Application extends PrismResourceTransient {
     @Valid
     private AdditionalInformation additionalInformation;
 
-    @Column(name = "reject_notification_date")
-    @Temporal(value = TemporalType.TIMESTAMP)
-    private Date rejectNotificationDate;
-
     @Column(name = "submitted_ip_address")
     private byte[] submittedIpAddress;
 
@@ -262,14 +255,6 @@ public class Application extends PrismResourceTransient {
 
     public void setAdditionalInformation(AdditionalInformation additionalInformation) {
         this.additionalInformation = additionalInformation;
-    }
-
-    public Date getRejectNotificationDate() {
-        return rejectNotificationDate;
-    }
-
-    public void setRejectNotificationDate(Date rejectNotificationDate) {
-        this.rejectNotificationDate = rejectNotificationDate;
     }
 
     public byte[] getSubmittedIpAddress() {

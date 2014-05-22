@@ -168,18 +168,20 @@ public class UserDAO {
     public List<Integer> getUsersDueUpdateNotification(Date seedDate) {
         Date baseline = getBaselineDate(seedDate);
 
-        return (List<Integer>) sessionFactory
-                .getCurrentSession()
-                .createCriteria(UserRole.class)
-                .setProjection(Projections.groupProperty("primaryAccount.id"))
-                .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
-                .createAlias("role", "role", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("role.doSendUpdateNotification", true))
-                .add(Restrictions.eq("raisesUpdateFlag", true))
-                .add(Restrictions.disjunction().add(Restrictions.isNull("registeredUser.latestUpdateNotificationDate"))
-                        .add(Restrictions.lt("registeredUser.latestUpdateNotificationDate", baseline))).add(Restrictions.ge("updateTimestamp", baseline))
-                .add(Restrictions.eq("registeredUser.enabled", true)).add(Restrictions.eq("registeredUser.accountNonExpired", true))
-                .add(Restrictions.eq("registeredUser.accountNonLocked", true)).add(Restrictions.eq("registeredUser.credentialsNonExpired", true)).list();
+        // TODO reimplement
+        return Lists.newArrayList();
+//        return (List<Integer>) sessionFactory
+//                .getCurrentSession()
+//                .createCriteria(UserRole.class)
+//                .setProjection(Projections.groupProperty("primaryAccount.id"))
+//                .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
+//                .createAlias("role", "role", JoinType.INNER_JOIN)
+//                .add(Restrictions.eq("role.doSendUpdateNotification", true))
+//                .add(Restrictions.eq("raisesUpdateFlag", true))
+//                .add(Restrictions.disjunction().add(Restrictions.isNull("registeredUser.latestUpdateNotificationDate"))
+//                        .add(Restrictions.lt("registeredUser.latestUpdateNotificationDate", baseline))).add(Restrictions.ge("updateTimestamp", baseline))
+//                .add(Restrictions.eq("registeredUser.enabled", true)).add(Restrictions.eq("registeredUser.accountNonExpired", true))
+//                .add(Restrictions.eq("registeredUser.accountNonLocked", true)).add(Restrictions.eq("registeredUser.credentialsNonExpired", true)).list();
     }
 
     public List<Integer> getUsersDueOpportunityRequestNotification(Date seedDate) {

@@ -220,8 +220,8 @@ public class ApplicationService extends PrismResourceService {
 
     public ApplicationDescriptor getApplicationDescriptorForUser(final Application application, final User user) {
         ApplicationDescriptor applicationDescriptor = new ApplicationDescriptor();
-        applicationDescriptor.getActionDefinitions().addAll(actionService.getUserActions(user.getId(), application.getId()));
-        applicationDescriptor.setNeedsToSeeUrgentFlag(applicationFormDAO.getRaisesUrgentFlagForUser(application, user));
+//        applicationDescriptor.getActionDefinitions().addAll(actionService.getUserActions(user.getId(), application.getId()));
+//        applicationDescriptor.setNeedsToSeeUrgentFlag(applicationFormDAO.getRaisesUrgentFlagForUser(application, user));
 //        applicationDescriptor.setNeedsToSeeUpdateFlag(applicationFormDAO.getRaisesUpdateFlagForUser(application, user));
         return applicationDescriptor;
     }

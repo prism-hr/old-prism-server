@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.dto;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -207,9 +206,6 @@ public class ApplicationDescriptor {
     }
 
     public List<ActionDefinition> getActionDefinitions() {
-        if (actionDefinitions == null) {
-            actionDefinitions = new ArrayList<ActionDefinition>();
-        }
         return actionDefinitions;
     }
 

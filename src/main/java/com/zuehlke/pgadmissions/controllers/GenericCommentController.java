@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -68,11 +69,12 @@ public class GenericCommentController {
 
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(@RequestParam String applicationId) {
-        Application applicationForm = applicationsService.getByApplicationNumber(applicationId);
-        if (applicationForm == null) {
-            throw new ResourceNotFoundException();
-        }
-        return applicationForm;
+        // Application applicationForm = applicationsService.getByApplicationNumber(applicationId);
+        // if (applicationForm == null) {
+        // throw new ResourceNotFoundException();
+        // }
+
+        return new Application();
     }
 
     @ModelAttribute("applicationDescriptor")
@@ -99,7 +101,7 @@ public class GenericCommentController {
     @InitBinder(value = "comment")
     public void registerBinders(WebDataBinder binder) {
         binder.setValidator(genericCommentValidator);
-        binder.registerCustomEditor(null, "comment", new StringTrimmerEditor("\r", true));
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor("\r", true));
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
 
     }
@@ -108,23 +110,24 @@ public class GenericCommentController {
     public String getGenericCommentPage(ModelMap modelMap) {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_COMMENT);
-        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
+//        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_COMMENT);
+//        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return GENERIC_COMMENT_PAGE;
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String addComment(@Valid @ModelAttribute("comment") Comment comment, BindingResult result, ModelMap modelMap) {
+    public String addComment(@RequestBody Comment comment, ModelMap modelMap) {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_COMMENT);
-        if (result.hasErrors()) {
-            return GENERIC_COMMENT_PAGE;
-        }
+//        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_COMMENT);
         
-        commentService.save(comment);
-        applicationsService.saveUpdate(applicationForm);
-        applicationFormUserRoleService.applicationUpdated(applicationForm, getUser());
+//        if (result.hasErrors()) {
+//            return GENERIC_COMMENT_PAGE;
+//        }
+
+//        commentService.save(comment);
+//        applicationsService.saveUpdate(applicationForm);
+//        applicationFormUserRoleService.applicationUpdated(applicationForm, getUser());
         return "redirect:/comment?applicationId=" + applicationForm.getApplicationNumber();
     }
 

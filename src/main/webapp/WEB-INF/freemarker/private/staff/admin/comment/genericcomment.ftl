@@ -54,15 +54,12 @@
 			 <!-- Middle Starts -->
 			<div id="middle">
 			
-				<#include "/private/common/parts/nav_with_user_info_toggle.ftl"/>
-				       <@header/>
 				    <!-- Main content area. -->
 				    <article id="content" role="main">		    
 				      
 				      <!-- content box -->				      
 				      <div class="content-box">
 				        <div class="content-box-inner">
-				         <#include "/private/common/parts/application_info.ftl"/>
 				        
 									<section class="form-rows">
 										<#if isConfirmEligibilityComment??>
@@ -75,11 +72,11 @@
 												<div class="row-group">
 													<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
 													<div class="row">
-														<label class="plain-label" for="comment">Comment<em>*</em></label>
+														<label class="plain-label" for="content">Comment<em>*</em></label>
 														<span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
 														<div class="field">
-														    <textarea id="genericComment" name="comment" class="max" rows="6" cols="80">${(comment.comment?html)!}</textarea>
-															<@spring.bind "comment.comment" /> 
+														    <textarea id="genericComment" name="content" class="max" rows="6" cols="80">${(comment.content?html)!}</textarea>
+															<@spring.bind "comment.content" /> 
 															<#list spring.status.errorMessages as error> 
                                                             <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
                                                             </#list>
@@ -150,7 +147,6 @@
 											
 										</div>
 									</section>
-		  					<#include "/private/staff/admin/comment/timeline_application.ftl"/>
 		  					
 				        </div><!-- .content-box-inner -->
 				      </div><!-- .content-box -->

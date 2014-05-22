@@ -171,7 +171,7 @@ public class ReferenceController {
         applicationForm.getApplicationComments().add(comment);
         applicationFormUserRoleService.referencePosted(comment);
 
-        applicationsService.saveUpdate(applicationForm);
+        applicationsService.save(applicationForm);
         applicationFormUserRoleService.applicationUpdated(applicationForm, user);
         return "redirect:/applications?messageCode=reference.uploaded&application=" + comment.getApplication().getApplicationNumber();
     }

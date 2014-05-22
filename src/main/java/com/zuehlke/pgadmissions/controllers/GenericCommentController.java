@@ -123,7 +123,7 @@ public class GenericCommentController {
         }
         
         commentService.save(comment);
-        applicationsService.saveUpdate(applicationForm);
+        applicationsService.save(applicationForm);
         applicationFormUserRoleService.applicationUpdated(applicationForm, getUser());
         return "redirect:/comment?applicationId=" + applicationForm.getApplicationNumber();
     }

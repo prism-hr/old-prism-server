@@ -100,7 +100,7 @@ public class ExportService {
             proxy.prepareApplicationForm(form);
             proxy.sendWebServiceRequest(form, transfer, listener);
             proxy.uploadDocuments(form, transfer, listener);
-            applicationsService.saveUpdate(form);
+            applicationsService.save(form);
             commentDAO.save(new ApplicationTransferComment(form, userDAO.getSuperadministrators().get(0)));
         } catch (ExportServiceException e) {
             throw e;
@@ -249,7 +249,7 @@ public class ExportService {
                 }
             }
         }
-        applicationsService.saveUpdate(application);
+        applicationsService.save(application);
     }
 
     public ApplicationTransfer createOrReturnExistingApplicationFormTransfer(final Application form) {

@@ -33,7 +33,7 @@ public class PersonalDetailsService {
             persistentPersonalDetails = new PersonalDetails();
             persistentPersonalDetails.setApplication(application);
             application.setPersonalDetails(persistentPersonalDetails);
-            applicationFormService.saveUpdate(application);
+            applicationFormService.save(application);
         }
         updateApplicantData(application, updatedUser);
         applicationFormCopyHelper.copyPersonalDetails(persistentPersonalDetails, personalDetails, false);

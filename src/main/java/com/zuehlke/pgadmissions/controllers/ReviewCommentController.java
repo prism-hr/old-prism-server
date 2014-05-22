@@ -160,7 +160,7 @@ public class ReviewCommentController {
             return REVIEW_FEEDBACK_PAGE;
         }
         
-        applicationsService.saveUpdate(applicationForm);
+        applicationsService.save(applicationForm);
         commentService.save(comment);
         applicationForm.getApplicationComments().add(comment);
         WorkflowService.reviewPosted(comment);

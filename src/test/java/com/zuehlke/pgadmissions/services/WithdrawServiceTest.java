@@ -42,7 +42,7 @@ public class WithdrawServiceTest {
     public void shouldWithdrawApplication() {
         Application applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(PrismState.APPLICATION_REVIEW)).build();
 
-        applicationServiceMock.saveUpdate(applicationForm);
+        applicationServiceMock.save(applicationForm);
 
         replay();
         service.withdrawApplication(applicationForm);
@@ -55,7 +55,7 @@ public class WithdrawServiceTest {
     public void shouldWithdrawUnsubmittedApplication() {
         Application applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).build();
 
-        applicationServiceMock.saveUpdate(applicationForm);
+        applicationServiceMock.save(applicationForm);
 
         replay();
         service.withdrawApplication(applicationForm);

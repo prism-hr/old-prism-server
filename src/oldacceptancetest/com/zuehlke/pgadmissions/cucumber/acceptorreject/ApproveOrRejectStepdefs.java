@@ -138,7 +138,7 @@ public class ApproveOrRejectStepdefs {
 		for (String revieweName : reviewers) {
 			applicationForm.getReviewers().add(userMap.get(revieweName.trim()));
 		}
-		sessionFactory.getCurrentSession().saveUpdate(applicationForm);
+		sessionFactory.getCurrentSession().save(applicationForm);
 		commitAndGetNewTransaction();
 		try {
 			Thread.sleep(1000);
@@ -189,32 +189,32 @@ public class ApproveOrRejectStepdefs {
 
 		anna = new RegisteredUserBuilder().firstName("Anna").lastName("Cucumber").email("email@test.com").username("anna").password("password")
 				.accountNonExpired(true).accountNonLocked(true).credentialsNonExpired(true).enabled(true).role(applicant).toUser();
-		sessionFactory.getCurrentSession().saveUpdate(anna);
+		sessionFactory.getCurrentSession().save(anna);
 		userMap.put("anna", anna);
 
 		bert = new RegisteredUserBuilder().firstName("Bert").lastName("Cucumber").email("email@test.com").username("bert").password("password")
 				.accountNonExpired(true).accountNonLocked(true).credentialsNonExpired(true).enabled(true).role(applicant).toUser();
-		sessionFactory.getCurrentSession().saveUpdate(bert);
+		sessionFactory.getCurrentSession().save(bert);
 		userMap.put("bert", bert);
 
 		charles = new RegisteredUserBuilder().firstName("Charles").lastName("Cucumber").email("email@test.com").username("charles").password("password")
 				.accountNonExpired(true).accountNonLocked(true).credentialsNonExpired(true).enabled(true).role(administrator).toUser();
-		sessionFactory.getCurrentSession().saveUpdate(charles);
+		sessionFactory.getCurrentSession().save(charles);
 		userMap.put("charles", charles);
 
 		dorotha = new RegisteredUserBuilder().firstName("Dorotha").lastName("Cucumber").email("email@test.com").username("dorotha").password("password")
 				.accountNonExpired(true).accountNonLocked(true).credentialsNonExpired(true).enabled(true).role(reviewer).toUser();
-		sessionFactory.getCurrentSession().saveUpdate(dorotha);
+		sessionFactory.getCurrentSession().save(dorotha);
 		userMap.put("dorotha", dorotha);
 
 		elsie = new RegisteredUserBuilder().firstName("Elsie").lastName("Cucumber").email("email@test.com").username("elsie").password("password")
 				.accountNonExpired(true).accountNonLocked(true).credentialsNonExpired(true).enabled(true).role(reviewer).toUser();
-		sessionFactory.getCurrentSession().saveUpdate(elsie);
+		sessionFactory.getCurrentSession().save(elsie);
 		userMap.put("elsie", elsie);
 		
 		foxy = new RegisteredUserBuilder().firstName("Foxy").lastName("Cucumber").email("email@test.com").username("foxy").password("password")
 				.accountNonExpired(true).accountNonLocked(true).credentialsNonExpired(true).enabled(true).role(approver).toUser();
-		sessionFactory.getCurrentSession().saveUpdate(foxy);
+		sessionFactory.getCurrentSession().save(foxy);
 		userMap.put("foxy", foxy);
 		
 		programOne = new Program().code("CUKEPROG1").description("Cucumber Test Program Description").title("Cucumber Test Program Title").approver(foxy).toProgram();

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.AbstractMap;
 import java.util.Map.Entry;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -12,13 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.dao.PrismResourceDAO;
 import com.zuehlke.pgadmissions.domain.PrismResource;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismResourceType;
 
 @Service
 @Transactional
 public abstract class PrismResourceService {
-    
+
     private static final String DOMAIN_PACKAGE = "com.zuehlke.pgadmissions.domain";
 
     @Autowired
@@ -28,11 +28,11 @@ public abstract class PrismResourceService {
     private PrismResourceDAO prismResourceDAO;
 
     @SuppressWarnings("unchecked")
-    public PrismResource getOrCreate(User creator, PrismResource parentResource, PrismResourceType childResourceType,
-            Entry<String, Object>... uniqueConstraints) throws Exception {
+    public PrismResource getOrCreate(PrismResource parentResource, PrismResourceType childResourceType,
+            AbstractMap.SimpleEntry<String, Object>... uniqueConstraints) throws Exception {
         String childResourceClassName = DOMAIN_PACKAGE + "." + StringUtils.capitalize(childResourceType.toString().toLowerCase());
         Class<? extends PrismResource> childResourceClass = (Class<? extends PrismResource>) Class.forName(childResourceClassName);
-        PrismResource childResource = prismResourceDAO.getDuplicateResource(childResourceClass, creator, parentResource, uniqueConstraints);
+        PrismResource childResource = prismResourceDAO.getDuplicateResource(childResourceClass, parentResource, uniqueConstraints);
 
         if (childResource == null) {
             try {
@@ -43,7 +43,7 @@ public abstract class PrismResourceService {
                     BeanUtils.setProperty(childResource, uniqueConstraint.getKey(), uniqueConstraint.getValue());
                 }
 
-                save(childResource, creator);
+                save(childResource);
             } catch (Exception e) {
                 throw new Error("Could not create new prism resource of type: " + childResourceClass.getSimpleName(), e);
             }
@@ -53,8 +53,7 @@ public abstract class PrismResourceService {
         return childResource;
     }
 
-    protected void save(PrismResource resource, User creator) {
-        resource.setUser(creator);
+    public void save(PrismResource resource) {
         entityDAO.save(resource);
     }
 

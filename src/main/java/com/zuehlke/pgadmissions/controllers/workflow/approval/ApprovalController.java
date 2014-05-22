@@ -259,7 +259,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             // refereeService.refresh(referee);
 
             applicationFormUserRoleService.applicationUpdated(applicationForm, getCurrentUser());
-            applicationsService.saveUpdate(applicationForm);
+            applicationsService.save(applicationForm);
 
             String newRefereeId = encryptionHelper.encrypt(referee.getId());
             model.addAttribute("editedRefereeId", newRefereeId);

@@ -32,7 +32,7 @@ public class ProgramDetailsService {
             persistentProgramDetails = new ProgramDetails();
             persistentProgramDetails.setApplication(application);
             application.setProgramDetails(persistentProgramDetails);
-            applicationFormService.saveUpdate(application);
+            applicationFormService.save(application);
         }
         applicationFormCopyHelper.copyProgramDetails(persistentProgramDetails, programDetails);
         applicationFormService.saveOrUpdateApplicationSection(application);

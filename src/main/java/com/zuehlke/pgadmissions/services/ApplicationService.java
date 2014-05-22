@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.text.SimpleDateFormat;
+import java.util.AbstractMap;
 import java.util.Date;
 import java.util.List;
 
@@ -153,21 +154,17 @@ public class ApplicationService extends PrismResourceService {
     @SuppressWarnings("unchecked")
     public Application getOrCreateApplication(final User creator, final Integer advertId) throws Exception {
         PrismResource parentResource = programService.getValidProgramProjectAdvert(advertId);
-        return (Application) super.getOrCreate(creator, parentResource, PrismResourceType.APPLICATION);
+        return (Application) super.getOrCreate(parentResource, PrismResourceType.APPLICATION, new AbstractMap.SimpleEntry<String, Object>("user", creator));
     }
     
     public void save(Application application, User creator) {
         application.setApplicationNumber(generateApplicationNumber(application.getAdvert().getProgram()));
         application.setCreatedTimestamp(new DateTime());
-        Application previousApplication = applicationFormDAO.getPreviousApplicationForApplicant(application, creator);
+        Application previousApplication = applicationFormDAO.getPreviousApplicationForApplicant(application);
         if (previousApplication != null) {
             applicationFormCopyHelper.copyApplicationFormData(application, previousApplication);
         }
-        super.save(application, creator);
-    }
-    
-    public void saveUpdate(Application application) {
-        entityService.save(application);
+        super.save(application);
     }
 
     public Application getSecuredApplication(final String applicationId, final SystemAction... actions) {

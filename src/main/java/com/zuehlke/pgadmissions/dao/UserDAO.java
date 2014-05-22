@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -19,11 +21,11 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReminderType;
@@ -204,33 +206,14 @@ public class UserDAO {
                 .add(Restrictions.eq("action.id", SystemAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS)).list();
     }
 
-    public List<User> getUsersInterestedInApplication(Application applicationForm) {
-        return sessionFactory
-                .getCurrentSession()
-                .createCriteria(UserRole.class)
-                .setProjection(Projections.projectionList().add(Projections.groupProperty("primaryAccount"), "user"))
-                .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("applicationForm", applicationForm))
-                .add(Restrictions.eq("interestedInApplicant", true))
-                .add(Restrictions
-                        .disjunction()
-                        .add(Restrictions.eq("registeredUser.enabled", true))
-                        .add(Restrictions.conjunction().add(Restrictions.eq("registeredUser.enabled", false))
-                                .add(Restrictions.in("role.id", Arrays.asList(Authority.APPLICATION_SUGGESTED_SUPERVISOR))))).addOrder(Order.asc("registeredUser.lastName"))
-                .addOrder(Order.asc("registeredUser.firstName")).addOrder(Order.asc("registeredUser.id")).list();
+    //TODO rewrite the query - HQL
+    public List<User> getUsersInterestedInApplication(Application application) {
+        return new ArrayList<User>();
     }
 
-    public List<User> getUsersPotentiallyInterestedInApplication(Application applicationForm) {
-        DetachedCriteria usersInterestedInApplicant = DetachedCriteria.forClass(UserRole.class)
-                .setProjection(Projections.projectionList().add(Projections.groupProperty("user"))).add(Restrictions.eq("applicationForm", applicationForm))
-                .add(Restrictions.eq("interestedInApplicant", true));
-
-        return sessionFactory.getCurrentSession().createCriteria(UserRole.class).setProjection(Projections.groupProperty(""))
-                .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN).createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
-                .createAlias("user", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("program.id", applicationForm.getProgram().getId()))
-                .add(Restrictions.in("role.id", AuthorityGroup.getAllInternalRecruiterAuthorities())).add(Restrictions.isNull("registeredUser.primaryAccount"))
-                .add(Restrictions.eq("registeredUser.enabled", true)).add(Property.forName("user").notIn(usersInterestedInApplicant))
-                .addOrder(Order.asc("registeredUser.lastName")).addOrder(Order.asc("registeredUser.firstName")).addOrder(Order.asc("registeredUser.id")).list();
+    //TODO rewrite the query - HQL
+    public List<User> getUsersPotentiallyInterestedInApplication(Application application) {
+        return new ArrayList<User>();
     }
 
     private Date getBaselineDate(Date seedDate) {

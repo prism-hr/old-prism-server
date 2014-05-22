@@ -93,7 +93,7 @@ public class RoleDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Role> getExecutorRoles(User user, PrismResource scope, SystemAction action) {
+    public List<Role> getExecutorRoles(User user, PrismResource resource, SystemAction action) {
         return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("userRole.role")) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
@@ -101,14 +101,14 @@ public class RoleDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN)
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("state", scope.getState())) //
+                .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.eq("action", action)) //
                 .add(Restrictions.disjunction() //
-                       .add(Restrictions.eq("application", scope.getApplication())) //
-                       .add(Restrictions.eq("project", scope.getProject())) //
-                       .add(Restrictions.eq("program", scope.getProgram())) //
-                       .add(Restrictions.eq("institution", scope.getInstitution())) //
-                       .add(Restrictions.eq("system", scope.getSystem())) //
+                       .add(Restrictions.eq("application", resource.getApplication())) //
+                       .add(Restrictions.eq("project", resource.getProject())) //
+                       .add(Restrictions.eq("program", resource.getProgram())) //
+                       .add(Restrictions.eq("institution", resource.getInstitution())) //
+                       .add(Restrictions.eq("system", resource.getSystem())) //
                  .add(Restrictions.eq("user.parentUser", user))) //
                  .add(Restrictions.eq("userAccount.enabled", true))
                  .list();

@@ -508,7 +508,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
 
         EasyMock.expect(jschfactoryMock.getInstance()).andThrow(new JSchException());
 
-        SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
+        new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         EasyMock.replay(jschfactoryMock);
@@ -579,7 +579,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
 
         EasyMock.expect(sessionMock.isConnected()).andReturn(false);
 
-        SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
+        new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         EasyMock.replay(jschfactoryMock, sessionMock);
@@ -660,7 +660,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
 
         sessionMock.disconnect();
 
-        SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
+        new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         EasyMock.replay(jschfactoryMock, sessionMock, sftpChannelMock);
@@ -743,7 +743,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
 
         sessionMock.disconnect();
 
-        SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
+        new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         EasyMock.replay(jschfactoryMock, sessionMock, sftpChannelMock);
@@ -830,7 +830,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
 
         sessionMock.disconnect();
 
-        SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
+        new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         EasyMock.replay(jschfactoryMock, sessionMock, sftpChannelMock);
@@ -1070,7 +1070,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         applicationFormUserRoleServiceMock = EasyMock.createMock(WorkflowService.class);
 
         applicationFormTransferService = new ApplicationTransferService(applicationFormDAOMock, applicationFormTransferErrorDAO, applicationFormTransferDAO,
-                applicationFormUserRoleServiceMock, commentDAOMock, userDAOMock);
+                applicationFormUserRoleServiceMock);
 
         applicationFormTransferServiceMock = EasyMock.createMock(ApplicationTransferService.class);
 

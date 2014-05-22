@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
-import com.zuehlke.pgadmissions.domain.ApplicationTransferComment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -101,7 +100,6 @@ public class ExportService {
             proxy.sendWebServiceRequest(form, transfer, listener);
             proxy.uploadDocuments(form, transfer, listener);
             applicationsService.save(form);
-            commentDAO.save(new ApplicationTransferComment(form, userDAO.getSuperadministrators().get(0)));
         } catch (ExportServiceException e) {
             throw e;
         } catch (Exception e) {

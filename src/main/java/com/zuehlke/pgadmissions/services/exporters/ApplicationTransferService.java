@@ -13,11 +13,8 @@ import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AdmissionsApplicationR
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationTransferErrorDAO;
-import com.zuehlke.pgadmissions.dao.CommentDAO;
-import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
-import com.zuehlke.pgadmissions.domain.ApplicationTransferComment;
 import com.zuehlke.pgadmissions.domain.ApplicationTransferError;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorType;
@@ -32,23 +29,18 @@ public class ApplicationTransferService {
     private final ApplicationTransferErrorDAO applicationFormTransferErrorDAO;
     private final ApplicationTransferDAO applicationFormTransferDAO;
     private final WorkflowService applicationFormUserRoleService;
-    private final CommentDAO commentDAO;
-    private final UserDAO userDAO;
 
     public ApplicationTransferService() {
-        this(null, null, null, null, null, null);
+        this(null, null, null, null);
     }
 
     @Autowired
     public ApplicationTransferService(final ApplicationFormDAO applicationFormDAO, final ApplicationTransferErrorDAO applicationFormTransferErrorDAO,
-            final ApplicationTransferDAO applicationFormTransferDAO, WorkflowService applicationFormUserRoleService,
-            CommentDAO commentDAO, UserDAO userDAO) {
+            final ApplicationTransferDAO applicationFormTransferDAO, WorkflowService applicationFormUserRoleService) {
         this.applicationFormDAO = applicationFormDAO;
         this.applicationFormTransferErrorDAO = applicationFormTransferErrorDAO;
         this.applicationFormTransferDAO = applicationFormTransferDAO;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.commentDAO = commentDAO;
-        this.userDAO = userDAO;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -122,7 +114,6 @@ public class ApplicationTransferService {
         listener.webServiceCallFailed(exception, transferError, application);
         applicationFormUserRoleService.applicationExportFailed(application);
         applicationFormDAO.save(application);
-        commentDAO.save(new ApplicationTransferComment(application, userDAO.getSuperadministrators().get(0), transferError));
         log.error(String.format(logMessage, application.getApplicationNumber()), exception);
         throw new ExportServiceException(String.format(logMessage, application.getApplicationNumber()), exception, transferError);
     }

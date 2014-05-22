@@ -331,7 +331,7 @@ ALTER TABLE STATE
 	MODIFY COLUMN is_duplicatable_state INT(1) UNSIGNED NOT NULL
 ;
 
-/* Add users to system and institution and standardise human readable ID */
+/* Add users to system and institution */
 
 ALTER TABLE INSTITUTION
 	ADD COLUMN user_id INT(10) UNSIGNED NOT NULL DEFAULT 1024 AFTER id,
@@ -356,6 +356,8 @@ ALTER TABLE SYSTEM
 ALTER TABLE ADVERT
 	MODIFY COLUMN user_id INT(10) UNSIGNED AFTER id
 ;
+
+/* Export actions for applications */
 
 INSERT INTO ACTION (id)
 VALUES ("SYSTEM_EXPORT_APPLICATIONS"),

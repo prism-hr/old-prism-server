@@ -33,7 +33,6 @@ import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 
@@ -163,15 +162,6 @@ public class ProgramDAO {
                 .add(Restrictions.eq("id", programTypeId)).uniqueResult();
     }
 
-    public List<Program> getEnabledProgramsForWhichUserHasProgramAuthority(User user) {
-        HashSet<Program> programs = new HashSet<Program>();
-        for (Authority authority : AuthorityGroup.INTERNAL_PROGRAM_AUTHORITIES.getAuthorities()) {
-            programs.addAll((List<Program>) sessionFactory.getCurrentSession().createCriteria(Program.class)
-                    .createAlias(authority.toString().toLowerCase() + "s", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("enabled", true))
-                    .add(Restrictions.eq("registeredUser.id", user.getId())).list());
-        }
-        return new ArrayList<Program>(programs);
-    }
 
     public List<Program> getEnabledProgramsForWhichUserHasProjectAuthority(User user) {
         return sessionFactory
@@ -183,13 +173,7 @@ public class ProgramDAO {
                         .add(Restrictions.eq("secondarySupervisor", user)).add(Restrictions.eq("program.enabled", true))).list();
     }
 
-    public List<Program> getEnabledProgramsForWhichUserHasApplicationAuthority(User user) {
-        return sessionFactory.getCurrentSession().createCriteria(UserRole.class).setProjection(Projections.groupProperty("applicationForm.program"))
-                .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN).createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
-                .createAlias("role", "applicationRole", JoinType.INNER_JOIN).add(Restrictions.eq("user", user))
-                .add(Restrictions.in("applicationRole.id", AuthorityGroup.INTERNAL_APPLICATION_AUTHORITIES.getAuthorities()))
-                .add(Restrictions.eq("program.enabled", true)).list();
-    }
+
 
     public List<Project> getProjectsForProgram(Program program) {
         return sessionFactory.getCurrentSession().createCriteria(Project.class).add(Restrictions.eq("program", program))

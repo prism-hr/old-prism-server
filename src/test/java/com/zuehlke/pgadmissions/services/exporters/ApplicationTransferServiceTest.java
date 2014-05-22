@@ -38,10 +38,6 @@ public class ApplicationTransferServiceTest {
 
     private WorkflowService applicationFormUserRoleServiceMock;
 
-    private CommentDAO commentDAOMock;
-
-    private UserDAO userDAOMock;
-
     private ApplicationTransferService service;
 
     @Before
@@ -50,10 +46,8 @@ public class ApplicationTransferServiceTest {
         applicationFormTransferDAOMock = EasyMock.createMock(ApplicationTransferDAO.class);
         applicationFormTransferErrorDAOMock = EasyMock.createMock(ApplicationTransferErrorDAO.class);
         applicationFormUserRoleServiceMock = EasyMock.createMock(WorkflowService.class);
-        commentDAOMock = EasyMock.createMock(CommentDAO.class);
-        userDAOMock = EasyMock.createMock(UserDAO.class);
         service = new ApplicationTransferService(applicationFormDAOMock, applicationFormTransferErrorDAOMock, applicationFormTransferDAOMock,
-                applicationFormUserRoleServiceMock, commentDAOMock, userDAOMock);
+                applicationFormUserRoleServiceMock);
     }
 
     @Test

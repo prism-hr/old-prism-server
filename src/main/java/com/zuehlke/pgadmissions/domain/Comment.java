@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -31,7 +32,9 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.validators.ATASConstraint;
@@ -143,11 +146,11 @@ public class Comment implements Serializable {
     @Column(name = "suitable_for_programme")
     private Boolean suitableForProgramme;
 
-    @Column(name = "willing_to_interview")
-    private Boolean willingToInterview;
+    @Column(name = "desire_to_interview")
+    private Boolean desireToInterview;
 
-    @Column(name = "willing_to_supervise")
-    private Boolean willingToSupervise;
+    @Column(name = "desire_to_supervise")
+    private Boolean desireToSupervise;
 
     @Column(name = "rating")
     private Integer rating;
@@ -224,8 +227,8 @@ public class Comment implements Serializable {
         this.user = user;
     }
     
-    public String getRoles() {
-        return roles;
+    public List<Authority> getRoles() {  
+        return explodeRolesToList(roles);
     }
 
     public void setRoles(String roles) {
@@ -240,8 +243,8 @@ public class Comment implements Serializable {
         this.delegateUser = delegateUser;
     }
 
-    public String getDelegateRoles() {
-        return delegateRoles;
+    public List<Authority> getDelegateRoles() {
+        return explodeRolesToList(delegateRoles);
     }
 
     public void setDelegateRoles(String delegateRoles) {
@@ -345,19 +348,19 @@ public class Comment implements Serializable {
     }
 
     public Boolean getWillingToInterview() {
-        return willingToInterview;
+        return desireToInterview;
     }
 
     public void setWillingToInterview(Boolean willingToInterview) {
-        this.willingToInterview = willingToInterview;
+        this.desireToInterview = willingToInterview;
     }
 
     public Boolean getWillingToSupervise() {
-        return willingToSupervise;
+        return desireToSupervise;
     }
 
     public void setWillingToSupervise(Boolean willingToSupervise) {
-        this.willingToSupervise = willingToSupervise;
+        this.desireToSupervise = willingToSupervise;
     }
 
     public Integer getRating() {
@@ -521,6 +524,15 @@ public class Comment implements Serializable {
             }
         }
         return null;
+    }
+    
+    private List<Authority> explodeRolesToList(String roles) {
+        List<String> splitRoles = Arrays.asList(roles.split("|"));
+        List<Authority> splitRolesParsed = Lists.newArrayList();
+        for (String role : splitRoles) {
+            splitRolesParsed.add(Authority.valueOf(role));
+        }
+        return splitRolesParsed;
     }
 
 }

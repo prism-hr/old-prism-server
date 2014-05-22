@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.SystemAction;
@@ -176,41 +175,37 @@ public class TestObjectProvider {
     }
 
     private User getProgramUser(Program program, Boolean programEnabled, Authority authority, Boolean isInRole, Boolean userEnabled) {
-        if (AuthorityGroup.getAllProgramAuthorities().contains(authority)) {
-            String authorityString = authority.toString();
-            String capitalisedAuthorityString = authorityString.substring(0, 1).toUpperCase() + authorityString.substring(1);
+        String authorityString = authority.toString();
+        String capitalisedAuthorityString = authorityString.substring(0, 1).toUpperCase() + authorityString.substring(1);
 
-            Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class)
-                    .createAlias("programsOfWhich" + capitalisedAuthorityString, "program", JoinType.INNER_JOIN);
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class)
+                .createAlias("programsOfWhich" + capitalisedAuthorityString, "program", JoinType.INNER_JOIN);
 
-            if (BooleanUtils.isTrue(isInRole)) {
-                criteria.add(Restrictions.eq("role.id", authority));
-            } else {
-                criteria.add(Restrictions.ne("role.id", authority));
-            }
-
-            List<Criterion> userCriteria = new ArrayList<Criterion>(4);
-            userCriteria.add(Restrictions.eq("accountNonExpired", userEnabled));
-            userCriteria.add(Restrictions.eq("accountNonLocked", userEnabled));
-            userCriteria.add(Restrictions.eq("credentialsNonExpired", userEnabled));
-            userCriteria.add(Restrictions.eq("enabled", userEnabled));
-
-            if (BooleanUtils.isTrue(userEnabled)) {
-                for (Criterion userCriterion : userCriteria) {
-                    criteria.add(userCriterion);
-                }
-            } else {
-                Disjunction disjunction = Restrictions.disjunction();
-                for (Criterion userCriterion : userCriteria) {
-                    disjunction.add(userCriterion);
-                }
-                criteria.add(disjunction);
-            }
-
-            return (User) criteria.setMaxResults(1).uniqueResult();
+        if (BooleanUtils.isTrue(isInRole)) {
+            criteria.add(Restrictions.eq("role.id", authority));
+        } else {
+            criteria.add(Restrictions.ne("role.id", authority));
         }
 
-        return null;
+        List<Criterion> userCriteria = new ArrayList<Criterion>(4);
+        userCriteria.add(Restrictions.eq("accountNonExpired", userEnabled));
+        userCriteria.add(Restrictions.eq("accountNonLocked", userEnabled));
+        userCriteria.add(Restrictions.eq("credentialsNonExpired", userEnabled));
+        userCriteria.add(Restrictions.eq("enabled", userEnabled));
+
+        if (BooleanUtils.isTrue(userEnabled)) {
+            for (Criterion userCriterion : userCriteria) {
+                criteria.add(userCriterion);
+            }
+        } else {
+            Disjunction disjunction = Restrictions.disjunction();
+            for (Criterion userCriterion : userCriteria) {
+                disjunction.add(userCriterion);
+            }
+            criteria.add(disjunction);
+        }
+
+        return (User) criteria.setMaxResults(1).uniqueResult();
     }
 
     private Program getProgram(PrismState state, Program alternativeOf) {

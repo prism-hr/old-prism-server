@@ -135,9 +135,6 @@ public class Application extends PrismResourceTransient {
     @Valid
     private AdditionalInformation additionalInformation;
 
-    @Column(name = "submitted_ip_address")
-    private byte[] submittedIpAddress;
-
     @Column(name = "ucl_booking_ref_number")
     private String uclBookingReferenceNumber;
 
@@ -245,14 +242,6 @@ public class Application extends PrismResourceTransient {
         this.additionalInformation = additionalInformation;
     }
 
-    public byte[] getSubmittedIpAddress() {
-        return submittedIpAddress;
-    }
-
-    public void setSubmittedIpAddress(byte[] ipAddress) {
-        this.submittedIpAddress = ipAddress;
-    }
-
     public String getUclBookingReferenceNumber() {
         return uclBookingReferenceNumber;
     }
@@ -295,18 +284,6 @@ public class Application extends PrismResourceTransient {
 
     public List<Referee> getReferees() {
         return referees;
-    }
-
-    public String getIpAddressAsString() {
-        try {
-            return InetAddress.getByAddress(submittedIpAddress).getHostAddress();
-        } catch (UnknownHostException e) {
-            return StringUtils.EMPTY;
-        }
-    }
-
-    public void setIpAddressAsString(String ipAddress) throws UnknownHostException {
-        this.submittedIpAddress = InetAddress.getByName(ipAddress).getAddress();
     }
 
     public Application withId(Integer id) {

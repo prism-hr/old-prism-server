@@ -9,7 +9,6 @@ import java.util.List;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
-import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
@@ -190,8 +189,9 @@ public class ProgramDAO {
     }
 
     public void deleteInactiveAdverts() {
-        Query query = sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_INACTIVE_ADVERTS();");
-        query.executeUpdate();
+        // TODO reimplement
+//        Query query = sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_INACTIVE_ADVERTS();");
+//        query.executeUpdate();
     }
 
     public Date getDefaultStartDate(Program program, StudyOption studyOption) {

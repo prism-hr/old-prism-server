@@ -103,7 +103,7 @@ public class PorticoWebServicePhase2IT {
         for (Referee referee : form.getReferees()) {
             referee.setSendToUCL(true);
         }
-        applicationsService.saveUpdate(form);
+        applicationsService.save(form);
         sessionFactory.getCurrentSession().refresh(form);
     }
     

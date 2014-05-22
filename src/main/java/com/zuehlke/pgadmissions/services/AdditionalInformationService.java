@@ -32,7 +32,7 @@ public class AdditionalInformationService {
 	        persistentAdditionalInformation = new AdditionalInformation();
 	        persistentAdditionalInformation.setApplication(application);
 	        application.setAdditionalInformation(persistentAdditionalInformation);
-	        applicationService.saveUpdate(application);
+	        applicationService.save(application);
 	    }
 	    applicationFormCopyHelper.copyAdditionalInformation(persistentAdditionalInformation, additionalInformation);
 	    applicationService.saveOrUpdateApplicationSection(application);

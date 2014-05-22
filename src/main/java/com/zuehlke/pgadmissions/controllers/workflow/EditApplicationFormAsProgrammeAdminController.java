@@ -198,7 +198,7 @@ public class EditApplicationFormAsProgrammeAdminController {
             // applicationsService.refresh(applicationForm);
             // refereeService.refresh(referee);
 
-            applicationsService.saveUpdate(applicationForm);
+            applicationsService.save(applicationForm);
             applicationFormUserRoleService.referencePosted(newComment);
             applicationFormUserRoleService.applicationUpdated(applicationForm, getCurrentUser());
 

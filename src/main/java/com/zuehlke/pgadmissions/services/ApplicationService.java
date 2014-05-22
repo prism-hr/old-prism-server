@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 
 @Service
 @Transactional
-public class ApplicationService extends PrismResourceService {
+public class ApplicationService extends PrismResourceService<Application> {
 
     public static final int APPLICATION_BLOCK_SIZE = 50;
 
@@ -157,10 +157,11 @@ public class ApplicationService extends PrismResourceService {
         return (Application) super.getOrCreate(parentResource, PrismResourceType.APPLICATION, new AbstractMap.SimpleEntry<String, Object>("user", creator));
     }
     
-    public void save(Application application, User creator) {
+    @Override
+    public void save(Application application) {
         application.setApplicationNumber(generateApplicationNumber(application.getAdvert().getProgram()));
         application.setCreatedTimestamp(new DateTime());
-        Application previousApplication = applicationFormDAO.getPreviousApplicationForApplicant(application);
+        Application previousApplication = applicationFormDAO.getPreviousApplication(application);
         if (previousApplication != null) {
             applicationFormCopyHelper.copyApplicationFormData(application, previousApplication);
         }

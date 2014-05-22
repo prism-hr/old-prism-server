@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.enums.PrismResourceType;
 
 @Service
 @Transactional
-public abstract class PrismResourceService {
+public abstract class PrismResourceService<R extends PrismResource> {
 
     private static final String DOMAIN_PACKAGE = "com.zuehlke.pgadmissions.domain";
 
@@ -28,15 +28,14 @@ public abstract class PrismResourceService {
     private PrismResourceDAO prismResourceDAO;
 
     @SuppressWarnings("unchecked")
-    public PrismResource getOrCreate(PrismResource parentResource, PrismResourceType childResourceType,
-            AbstractMap.SimpleEntry<String, Object>... uniqueConstraints) throws Exception {
+    public R getOrCreate(PrismResource parentResource, PrismResourceType childResourceType, AbstractMap.SimpleEntry<String, Object>... uniqueConstraints) throws Exception {
         String childResourceClassName = DOMAIN_PACKAGE + "." + StringUtils.capitalize(childResourceType.toString().toLowerCase());
-        Class<? extends PrismResource> childResourceClass = (Class<? extends PrismResource>) Class.forName(childResourceClassName);
-        PrismResource childResource = prismResourceDAO.getDuplicateResource(childResourceClass, parentResource, uniqueConstraints);
+        Class<R> childResourceClass = (Class<R>) Class.forName(childResourceClassName);
+        R childResource = (R) prismResourceDAO.getDuplicateResource(childResourceClass, parentResource, uniqueConstraints);
 
         if (childResource == null) {
             try {
-                childResource = (PrismResource) ConstructorUtils.invokeConstructor(childResourceClass, null);
+                childResource = (R) ConstructorUtils.invokeConstructor(childResourceClass, null);
                 childResource.setParentResource(parentResource);
 
                 for (Entry<String, Object> uniqueConstraint : uniqueConstraints) {
@@ -53,7 +52,7 @@ public abstract class PrismResourceService {
         return childResource;
     }
 
-    public void save(PrismResource resource) {
+    public void save(R resource) {
         entityDAO.save(resource);
     }
 

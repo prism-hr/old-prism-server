@@ -110,33 +110,6 @@ public class GenericCommentControllerTest {
 
     }
 
-    @Test
-    public void shouldReturnToCommentsPageIfErrors() {
-        BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-        EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
-
-        EasyMock.replay(errorsMock);
-        assertEquals("private/staff/admin/comment/genericcomment", controller.addComment(null, errorsMock, new ModelMap()));
-        EasyMock.verify(errorsMock);
-    }
-
-    @Test
-    public void shouldSaveCommentAndRedirectBackToPageIfNoErrors() {
-        Application applicationForm = new ApplicationFormBuilder().id(6).applicationNumber("ABC").build();
-        ModelMap modelMap = new ModelMap();
-        modelMap.put("applicationForm", applicationForm);
-
-        Comment comment = new CommentBuilder().id(1).build();
-        BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-        EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
-        commentServiceMock.save(comment);
-
-        EasyMock.replay(errorsMock, commentServiceMock);
-        assertEquals("redirect:/comment?applicationId=ABC", controller.addComment(comment, errorsMock, modelMap));
-        EasyMock.verify(errorsMock, commentServiceMock);
-
-    }
-
     @Before
     public void setUp() {
         applicationsServiceMock = EasyMock.createMock(ApplicationService.class);

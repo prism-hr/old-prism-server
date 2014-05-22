@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RejectReason;
-import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
@@ -70,7 +70,7 @@ public class RejectApplicationController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Rejection rejection, BindingResult errors, ModelMap modelMap) {
+    public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Comment rejection, BindingResult errors, ModelMap modelMap) {
         Application application = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(application, user, SystemAction.APPLICATION_CONFIRM_REJECTION);
@@ -108,11 +108,6 @@ public class RejectApplicationController {
 
     protected User getCurrentUser() {
         return userService.getCurrentUser();
-    }
-
-    @ModelAttribute("rejection")
-    public Rejection getRejection() {
-        return new Rejection();
     }
 
     @InitBinder("rejection")

@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;

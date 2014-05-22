@@ -4,14 +4,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import com.zuehlke.pgadmissions.domain.Rejection;
+import com.zuehlke.pgadmissions.domain.Comment;
 
 @Component
 public class RejectionValidator extends AbstractValidator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return Rejection.class.equals(clazz);
+		return Comment.class.equals(clazz);
 	}
 
 	@Override

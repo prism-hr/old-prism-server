@@ -12,9 +12,9 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateTransition;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.StateTransitionType;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 
 @Repository
 @SuppressWarnings("unchecked")

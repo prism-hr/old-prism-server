@@ -44,7 +44,6 @@ public class ApplicationFormBuilder {
     private List<Funding> fundings = new ArrayList<Funding>();
     private ApplicationDocument applicationFormDocument;
     private AdditionalInformation info;
-    private Rejection rejection;
     private String applicationNumber;
     private String uclBookingReferenceNumber;
     private String ipAddress;
@@ -62,11 +61,6 @@ public class ApplicationFormBuilder {
 
     public ApplicationFormBuilder applicationNumber(String applicationNumber) {
         this.applicationNumber = applicationNumber;
-        return this;
-    }
-
-    public ApplicationFormBuilder rejection(Rejection rejection) {
-        this.rejection = rejection;
         return this;
     }
 
@@ -211,7 +205,6 @@ public class ApplicationFormBuilder {
         application.setAdditionalInformation(info);
         application.setAcceptedTerms(acceptedTerms);
         application.getApplicationComments().addAll(comments);
-        application.setRejection(rejection);
         application.setApplicationNumber(applicationNumber);
         application.setClosingDate(closingDate);
         application.setUclBookingReferenceNumber(uclBookingReferenceNumber);

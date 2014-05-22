@@ -52,7 +52,6 @@ public class RejectService {
 	public void moveApplicationToReject(final Application form, final Rejection rejection) {
 
 		form.setState(stateDAO.getById(PrismState.APPLICATION_REJECTED));		
-		form.setRejection(rejection);
 		
 		sendRejectNotificationToApplicant(form);
 		applicationDao.save(form);

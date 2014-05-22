@@ -80,23 +80,6 @@ public class RejectServiceTest {
     }
 
     @Test
-    public void shouldMoveToReject() {
-        Rejection rejection = new RejectionBuilder().id(1).build();
-
-        applicationDaoMock.save(application);
-        expectLastCall();
-
-        mailServiceMock.sendRejectionConfirmationToApplicant(application);
-
-        replay();
-        rejectService.moveApplicationToReject(application, rejection);
-        verify();
-
-        assertEquals(PrismState.APPLICATION_REJECTED, application.getState());
-        assertEquals(rejection, application.getRejection());
-    }
-
-    @Test
     public void loadAllRejections() {
         List<RejectReason> values = new ArrayList<RejectReason>();
         values.add(reason1);

@@ -42,10 +42,6 @@ public class Application extends PrismResourceTransient {
     @Column(name = "application_number", nullable = false)
     private String applicationNumber;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "rejection_id")
-    private Rejection rejection;
-
     @ManyToOne
     @JoinColumn(name = "state_id", nullable = false)
     private State state;
@@ -171,14 +167,6 @@ public class Application extends PrismResourceTransient {
 
     public void setApplicationNumber(String applicationNumber) {
         this.applicationNumber = applicationNumber;
-    }
-
-    public Rejection getRejection() {
-        return rejection;
-    }
-
-    public void setRejection(Rejection rejection) {
-        this.rejection = rejection;
     }
 
     public ApplicationAddress getApplicationAddress() {

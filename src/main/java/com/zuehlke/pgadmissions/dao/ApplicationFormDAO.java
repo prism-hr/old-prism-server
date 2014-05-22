@@ -119,7 +119,7 @@ public class ApplicationFormDAO {
                         .add(Restrictions.eq("cv", document))).uniqueResult();
     }
 
-    public Application getPreviousApplicationForApplicant(final Application application) {
+    public Application getPreviousApplication(final Application application) {
         Boolean copySubmittedApplication = true;
         Integer applicationFormId = application.getId();
         User creator = application.getUser();

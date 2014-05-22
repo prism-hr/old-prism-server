@@ -2,14 +2,16 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
   xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
   xmlns:task="http://www.springframework.org/schema/task" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:oxm="http://www.springframework.org/schema/oxm"
+  xmlns:util="http://www.springframework.org/schema/util"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd      
-        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
-        http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
-        http://www.directwebremoting.org/schema/spring-dwr http://www.directwebremoting.org/schema/spring-dwr-3.0.xsd
-        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
-        http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-1.5.xsd">
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.directwebremoting.org/schema/spring-dwr http://www.directwebremoting.org/schema/spring-dwr.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-1.5.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
   <mvc:interceptors>
     <bean class="com.zuehlke.pgadmissions.interceptors.Utf8Interceptor" />
@@ -22,8 +24,11 @@
 
   <mvc:resources mapping="/design/**" location="/WEB-INF/design/" cache-period="300" />
 
-  <!-- JSR-303 support will be detected on classpath and enabled automatically -->
-  <mvc:annotation-driven />
+  <mvc:annotation-driven>
+    <mvc:message-converters>
+      <ref bean="jacksonMessageConverter" />
+    </mvc:message-converters>
+  </mvc:annotation-driven>
 
   <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
     <!-- one of the properties available; the maximum file size in bytes -->
@@ -86,5 +91,52 @@
   <bean id="opportunityRequestValidator" class="com.zuehlke.pgadmissions.validators.OpportunityRequestValidator">
   </bean>
 
+  <bean id="domicilePropertyEditor" class="com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor">
+    <constructor-arg value="com.zuehlke.pgadmissions.domain.Domicile" />
+  </bean>
+
+  <bean class="com.zuehlke.pgadmissions.propertyeditors.GlobalPropertyEditorRegistrar">
+    <property name="countryPropertyEditor">
+      <bean class="com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor">
+        <constructor-arg value="com.zuehlke.pgadmissions.domain.Country" />
+      </bean>
+    </property>
+    <property name="languagePropertyEditor">
+      <bean class="com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor">
+        <constructor-arg value="com.zuehlke.pgadmissions.domain.Language" />
+      </bean>
+    </property>
+    <property name="disabilityPropertyEditor">
+      <bean class="com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor">
+        <constructor-arg value="com.zuehlke.pgadmissions.domain.Disability" />
+      </bean>
+    </property>
+    <property name="ethnicityPropertyEditor">
+      <bean class="com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor">
+        <constructor-arg value="com.zuehlke.pgadmissions.domain.Ethnicity" />
+      </bean>
+    </property>
+    <property name="domicilePropertyEditor" ref="domicilePropertyEditor" />
+    <property name="stringTrimmerEditor">
+      <bean class="org.springframework.beans.propertyeditors.StringTrimmerEditor">
+        <constructor-arg value="true" />
+      </bean>
+    </property>
+    <property name="localDatePropertyEditor">
+      <bean class="com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor" />
+    </property>
+  </bean>
+
+  <bean id="jacksonObjectMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
+    <property name="modules">
+      <array>
+        <bean class="com.fasterxml.jackson.datatype.joda.JodaModule" />
+      </array>
+    </property>
+  </bean>
+
+  <bean id="jacksonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+    <property name="objectMapper" ref="jacksonObjectMapper" />
+  </bean>
 
 </beans>

@@ -31,7 +31,9 @@ public class PermissionsService {
 
     public boolean canSeeOpportunityRequests() {
         User user = userService.getCurrentUser();
-        return roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR) || !opportunityRequestDAO.getOpportunityRequestsForAuthor(user).isEmpty();
+        // FIXME reimplement
+        return true;
+//        return roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR) || !opportunityRequestDAO.getOpportunityRequestsForAuthor(user).isEmpty();
     }
 
     public boolean canManageProjects() {

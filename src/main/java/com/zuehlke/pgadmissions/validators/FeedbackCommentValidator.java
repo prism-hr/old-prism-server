@@ -30,32 +30,25 @@ public class FeedbackCommentValidator extends AbstractValidator {
     public void addExtraValidation(Object target, Errors errors) {
         Comment comment = (Comment) target;
         if (comment instanceof ReviewComment || comment instanceof InterviewComment) {
-            if (!comment.getDeclined()) {
+            if (!comment.getDeclinedResponse()) {
                 ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForProgramme", EMPTY_DROPDOWN_ERROR_MESSAGE);
                 ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForInstitution", EMPTY_DROPDOWN_ERROR_MESSAGE);
                 ValidationUtils.rejectIfEmptyOrWhitespace(errors, "willingToInterview", EMPTY_DROPDOWN_ERROR_MESSAGE);
                 ValidationUtils.rejectIfEmptyOrWhitespace(errors, "willingToSupervise", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
-                if (BooleanUtils.isNotTrue(comment.getConfirmNextStage())) {
-                    errors.rejectValue("confirmNextStage", MANDATORY_CHECKBOX);
-                }
                 ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
             }
         } else if (comment instanceof ReferenceComment) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "content", EMPTY_FIELD_ERROR_MESSAGE);
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForProgramme", EMPTY_DROPDOWN_ERROR_MESSAGE);
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForInstitution", EMPTY_DROPDOWN_ERROR_MESSAGE);
-
-            if (BooleanUtils.isNotTrue(comment.getConfirmNextStage())) {
-                errors.rejectValue("confirmNextStage", MANDATORY_CHECKBOX);
-            }
         }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicantRating", EMPTY_FIELD_ERROR_MESSAGE);
 
         List<Score> scores = comment.getScores();
 
-        if (BooleanUtils.isTrue(comment.getUseCustomQuestions())
+        if (BooleanUtils.isTrue(comment.getUseCustomRecruiterQuestions())
             ) {
             for (int i = 0; i < scores.size(); i++) {
                 try {

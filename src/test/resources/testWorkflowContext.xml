@@ -29,7 +29,7 @@
         <prop key="javax.persistence.validation.mode">NONE</prop>
         <prop key="hibernate.search.default.directory_provider">filesystem</prop>
         <prop key="hibernate.search.default.indexBase">testIndexes/</prop>
-        <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+        <prop key="hibernate.hbm2ddl.auto">create</prop>
         <prop key="hibernate.hbm2ddl.import_files">sql/disable_foreign_key_check.sql,sql/initialize_prism_data.sql,sql/enable_foreign_key_check.sql</prop>
         <prop key="hibernate.cache.use_second_level_cache">false</prop>
         <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory

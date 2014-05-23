@@ -69,7 +69,7 @@ public class InterviewService {
         // }
 
         Comment latestStateChangeComment = applicationsService.getLatestStateChangeComment(applicationForm, null);
-        interviewComment.setUseCustomQuestions(latestStateChangeComment.getUseCustomQuestions());
+        interviewComment.setUseCustomRecruiterQuestions(latestStateChangeComment.getUseCustomRecruiterQuestions());
         commentService.save(interviewComment);
 
         // TODO move into common place
@@ -154,8 +154,8 @@ public class InterviewService {
     private InterviewScheduleComment createInterviewScheduleComment(User user, Application application, String interviewInstructions, String locationUrl) {
         InterviewScheduleComment scheduleComment = new InterviewScheduleComment();
         scheduleComment.setContent("");
-        scheduleComment.setAppointmentInstructions(interviewInstructions);
-        scheduleComment.setLocationUrl(locationUrl);
+        scheduleComment.setIntervieweeInstructions(interviewInstructions);
+        scheduleComment.setInterviewLocation(locationUrl);
         scheduleComment.setUser(user);
         scheduleComment.setApplication(application);
         return scheduleComment;

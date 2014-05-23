@@ -97,8 +97,8 @@ public class InterviewConfirmController {
         
         InterviewConfirmDTO interviewConfirmDTO = new InterviewConfirmDTO();
         
-        interviewConfirmDTO.setInterviewInstructions(latestComment.getAppointmentInstructions());
-        interviewConfirmDTO.setLocationUrl(latestComment.getLocationUrl());
+        interviewConfirmDTO.setInterviewInstructions(latestComment.getIntervieweeInstructions());
+        interviewConfirmDTO.setLocationUrl(latestComment.getInterviewLocation());
         modelMap.put("interviewConfirmDTO", interviewConfirmDTO);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return INTERVIEW_CONFIRM_PAGE;

@@ -70,7 +70,7 @@ public class ReferenceValidatorTest {
 	
 	@Test
 	public void shouldRejectIfSuitableForProgrammeIsNotSelected(){
-		reference.setSuitableForProgramme(null);
+		reference.setSuitableForOpportunity(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reference, "suitableForProgramme");
 		referenceValidator.validate(reference, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -83,7 +83,7 @@ public class ReferenceValidatorTest {
 		reference = new ReferenceComment();
 		reference.getDocuments().add(new Document().withId(1));
 		reference.setContent("comment");
-		reference.setSuitableForProgramme(false);
+		reference.setSuitableForOpportunity(false);
 		reference.setSuitableForInstitution(false);
 		
 		referenceValidator = new ReferenceValidator();

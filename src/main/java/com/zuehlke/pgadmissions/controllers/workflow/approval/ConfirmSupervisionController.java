@@ -88,18 +88,17 @@ public class ConfirmSupervisionController {
         Application applicationForm = getApplicationForm(applicationId);
         CompleteApprovalComment comment = (CompleteApprovalComment) applicationsService.getLatestStateChangeComment(applicationForm, SystemAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
 
-        confirmSupervisionDTO.setProjectTitle(comment.getProjectTitle());
-        confirmSupervisionDTO.setProjectAbstract(comment.getProjectAbstract());
+        confirmSupervisionDTO.setProjectTitle(comment.getPositionTitle());
+        confirmSupervisionDTO.setProjectAbstract(comment.getPositionDescription());
 
-        LocalDate startDate = comment.getRecommendedStartDate();
+        LocalDate startDate = comment.getPositionProvisionalStartDate();
 
         if (!programInstanceService.isPrefferedStartDateWithinBounds(applicationForm, startDate)) {
             startDate = programInstanceService.getEarliestPossibleStartDate(applicationForm);
         }
 
         confirmSupervisionDTO.setRecommendedStartDate(startDate);
-        confirmSupervisionDTO.setRecommendedConditionsAvailable(comment.getRecommendedConditionsAvailable());
-        confirmSupervisionDTO.setRecommendedConditions(comment.getRecommendedConditions());
+        confirmSupervisionDTO.setRecommendedConditions(comment.getAppointmentConditions());
 
         return confirmSupervisionDTO;
     }

@@ -86,7 +86,7 @@ public class SendToPorticoDataDTOValidator extends AbstractValidator {
         	
             for (int i = 0; i < referees.size(); i++) {
             	Comment reference = refereeService.getRefereeById(referees.get(i)).getComment();
-                if (reference == null || reference.getDeclined()) {
+                if (reference == null || reference.getDeclinedResponse()) {
             		referees.remove(i);
             	}
             }

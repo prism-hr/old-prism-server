@@ -39,16 +39,12 @@ import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AdmissionsApplicationR
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.GenderTp;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.QualificationsTp;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationTransferError;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -686,17 +682,17 @@ public class PorticoWebServiceIT {
         Referee referee = randomApplicationForm.getReferees().get(0);
         String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon\n\nW1T 4HD\nUnited Kingdom";
         Domicile domicile = new Domicile().withId(Integer.MAX_VALUE).withCode("XK").withName("United Kingdom");
-        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().comment("Hello World").providedBy(referee.getUser()).suitableForProgramme(true)
-                .suitableForUcl(true).user(referee.getUser()).build();
-        Referee refereeOne = new RefereeBuilder()
-                .user(referee.getUser())
-                .address(
-                        new Address().withDomicile(domicile).withLine1(addressStr.split("\n")[0]).withLine2(addressStr.split("\n")[1])
-                                .withTown(addressStr.split("\n")[2]).withRegion(addressStr.split("\n")[3]).withCode(addressStr.split("\n")[4]))
-                .jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234")
-                .sendToUCL(true).reference(referenceComment1).build();
-        refereeOne.setComment(referenceComment1);
-        randomApplicationForm.getReferees().add(refereeOne);
+//        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().comment("Hello World").providedBy(referee.getUser()).suitableForProgramme(true)
+//                .suitableForUcl(true).user(referee.getUser()).build();
+//        Referee refereeOne = new RefereeBuilder()
+//                .user(referee.getUser())
+//                .address(
+//                        new Address().withDomicile(domicile).withLine1(addressStr.split("\n")[0]).withLine2(addressStr.split("\n")[1])
+//                                .withTown(addressStr.split("\n")[2]).withRegion(addressStr.split("\n")[3]).withCode(addressStr.split("\n")[4]))
+//                .jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234")
+//                .sendToUCL(true).reference(referenceComment1).build();
+//        refereeOne.setComment(referenceComment1);
+//        randomApplicationForm.getReferees().add(refereeOne);
 
         applicationsService.save(randomApplicationForm);
 

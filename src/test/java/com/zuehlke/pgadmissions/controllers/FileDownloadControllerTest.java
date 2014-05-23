@@ -18,8 +18,6 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -108,55 +106,6 @@ public class FileDownloadControllerTest {
         controller.downloadApplicationDocument("encryptedId", new MockHttpServletResponse());
     }
 
-    @Test
-    public void shouldGetReferenceDocumentFromServiceAndWriteContentToResponse() throws IOException {
-        EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
-        EasyMock.replay(encryptionHelperMock);
-        Document document = new Document().withContent("aaaa".getBytes()).withId(101);
-        ReferenceComment reference = new ReferenceCommentBuilder().id(1).document(document).build();
-        HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
-
-        EasyMock.expect(commentServiceMock.getById(1)).andReturn(reference);
-        EasyMock.replay(commentServiceMock);
-
-        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ServletOutputStream servletOutputStream = new ServletOutputStream() {
-
-            @Override
-            public void write(int b) throws IOException {
-                byteArrayOutputStream.write(b);
-            }
-        };
-
-        EasyMock.expect(responseMock.getOutputStream()).andReturn(servletOutputStream);
-        responseMock.setHeader("Expires", "0");
-        responseMock.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
-        responseMock.setHeader("Pragma", "public");
-        responseMock.setHeader("Content-Disposition", "inline; filename=\"" + document.getFileName() + "\"");
-        responseMock.setContentType("application/pdf");
-        responseMock.setContentLength(document.getContent().length);
-        EasyMock.replay(responseMock);
-        controller.downloadReferenceDocument("encryptedId", responseMock);
-
-        EasyMock.verify(commentServiceMock, responseMock);
-
-        byte[] byteArray = byteArrayOutputStream.toByteArray();
-        assertEquals("aaaa", new String(byteArray));
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourceNotFoundExceptionIfReferenceDoesNotHaveDocument() throws IOException {
-        EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
-        EasyMock.replay(encryptionHelperMock);
-        ReferenceComment reference = new ReferenceCommentBuilder().id(1).build();
-        HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
-        EasyMock.expect(commentServiceMock.getById(1)).andReturn(reference);
-        EasyMock.replay(commentServiceMock);
-        controller.downloadReferenceDocument("encryptedId", responseMock);
-
-        EasyMock.verify(commentServiceMock);
-    }
-
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfReferenceDoesNotExistt() throws IOException {
         EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
@@ -169,18 +118,4 @@ public class FileDownloadControllerTest {
         EasyMock.verify(commentServiceMock);
     }
 
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourceNotFoundExceptionUserCannotSeeReference() throws IOException {
-        EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
-        EasyMock.replay(encryptionHelperMock);
-        Document document = new Document().withContent("aaaa".getBytes()).withId(101);
-        ReferenceComment reference = new ReferenceCommentBuilder().id(1).document(document).build();
-        HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
-        EasyMock.expect(commentServiceMock.getById(1)).andReturn(reference);
-        EasyMock.replay(commentServiceMock);
-
-        controller.downloadReferenceDocument("encryptedId", responseMock);
-
-        EasyMock.verify(commentServiceMock);
-    }
 }

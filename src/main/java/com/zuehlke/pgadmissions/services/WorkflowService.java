@@ -414,7 +414,7 @@ public class WorkflowService {
 
         Comment latestStateChangeComment = applicationFormService.getLatestStateChangeComment(applicationForm, null);
         if (latestStateChangeComment != null) {
-            User stateAdministrator = latestStateChangeComment.getDelegateAdministrator();
+            User stateAdministrator = latestStateChangeComment.getDelegateUser();
             if (stateAdministrator != null) {
                 administrators.put(stateAdministrator, Authority.APPLICATION_ADMINISTRATOR);
             }

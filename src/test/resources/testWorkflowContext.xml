@@ -133,4 +133,17 @@
     </property>
   </bean>
 
+  <bean id="jacksonObjectMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
+    <property name="modules">
+      <array>
+        <bean class="com.fasterxml.jackson.datatype.joda.JodaModule" />
+        <bean class="com.zuehlke.pgadmissions.serializer.PrismJacksonModule" />
+      </array>
+    </property>
+  </bean>
+
+  <bean id="jacksonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+    <property name="objectMapper" ref="jacksonObjectMapper" />
+  </bean>
+
 </beans>

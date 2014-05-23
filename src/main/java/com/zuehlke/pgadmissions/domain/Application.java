@@ -258,6 +258,16 @@ public class Application extends PrismResourceTransient {
         this.applicationNumber = applicationNumber;
         return this;
     }
+    
+    public Application withSystem(System system) {
+        this.system = system;
+        return this;
+    }
+    
+    public Application withInstitution(Institution institution) {
+        this.institution = institution;
+        return this;
+    }
 
     public Application withProgram(Program program) {
         this.program = program;
@@ -276,6 +286,11 @@ public class Application extends PrismResourceTransient {
 
     public Application withDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
+        return this;
+    }
+    
+    public Application withCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
         return this;
     }
 

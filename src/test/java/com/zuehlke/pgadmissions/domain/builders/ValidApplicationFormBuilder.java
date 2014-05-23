@@ -176,10 +176,10 @@ public class ValidApplicationFormBuilder {
         qualificationType = new QualificationTypeBuilder().code("DEGTRE").name("Bachelors Degree - France").enabled(true).build();
         qualification1 = new Qualification().withId(Integer.MAX_VALUE - 1).withAwardDate(new LocalDate()).withGrade("6").withInstitution(importedInstitution)
                 .withLanguage("English").withStartDate(new LocalDate().minusYears(1)).withSubject("Engineering")
-                .withTitle("MSc").withType(qualificationType).withCompleted(true).withDocument(proofOfAwardDocument).withExport(true);
+                .withTitle("MSc").withType(qualificationType).withCompleted(true).withDocument(proofOfAwardDocument).withIncludeInExport(true);
         qualification2 = new Qualification().withId(Integer.MAX_VALUE - 2).withAwardDate(new LocalDate()).withGrade("6").withInstitution(importedInstitution)
                 .withLanguage("English").withStartDate(new LocalDate().minusYears(1)).withSubject("Engineering")
-                .withTitle("MSc").withType(qualificationType).withCompleted(true).withDocument(proofOfAwardDocument).withExport(true);
+                .withTitle("MSc").withType(qualificationType).withCompleted(true).withDocument(proofOfAwardDocument).withIncludeInExport(true);
         funding = new FundingBuilder().awardDate(DateUtils.addYears(new Date(), -1)).description("Received a funding").document(fundingDocument)
                 .type(FundingType.SCHOLARSHIP).value("5").build();
         applicationFormBuilder = new ApplicationFormBuilder().applicant(user).acceptedTerms(true).additionalInformation(additionalInformation)

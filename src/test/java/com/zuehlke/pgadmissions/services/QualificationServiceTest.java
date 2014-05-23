@@ -90,10 +90,10 @@ public class QualificationServiceTest {
 
     @Test
     public void shouldSetFlagSendToPorticoOnSelectedQualifications() {
-        Qualification qualification1 = new Qualification().withId(1).withExport(true);
-        Qualification qualification2 = new Qualification().withId(2).withExport(true);
-        Qualification qualification3 = new Qualification().withId(3).withExport(false);
-        Qualification qualification4 = new Qualification().withId(4).withExport(false);
+        Qualification qualification1 = new Qualification().withId(1).withIncludeInExport(true);
+        Qualification qualification2 = new Qualification().withId(2).withIncludeInExport(true);
+        Qualification qualification3 = new Qualification().withId(3).withIncludeInExport(false);
+        Qualification qualification4 = new Qualification().withId(4).withIncludeInExport(false);
 
         Application applicationForm = new ApplicationFormBuilder().qualifications(qualification1, qualification2, qualification3, qualification4).build();
 
@@ -108,18 +108,18 @@ public class QualificationServiceTest {
         replay();
         service.selectForSendingToPortico(applicationForm, Arrays.asList(new Integer[] { 3, 4 }));
 
-        assertTrue("SendToUcl flag has not been updated to true", qualification3.getExport());
-        assertTrue("SendToUcl flag has not been updated to true", qualification4.getExport());
-        assertFalse("SendToUcl flag has not been updated to false", qualification1.getExport());
-        assertFalse("SendToUcl flag has not been updated to false", qualification2.getExport());
+        assertTrue("SendToUcl flag has not been updated to true", qualification3.isIncludeInExport());
+        assertTrue("SendToUcl flag has not been updated to true", qualification4.isIncludeInExport());
+        assertFalse("SendToUcl flag has not been updated to false", qualification1.isIncludeInExport());
+        assertFalse("SendToUcl flag has not been updated to false", qualification2.isIncludeInExport());
     }
 
     @Test
     public void shouldSetNoFlagSendToPorticoOnQualifications() {
-        Qualification qualification1 = new Qualification().withId(1).withExport(true);
-        Qualification qualification2 = new Qualification().withId(2).withExport(true);
-        Qualification qualification3 = new Qualification().withId(3).withExport(false);
-        Qualification qualification4 = new Qualification().withId(4).withExport(false);
+        Qualification qualification1 = new Qualification().withId(1).withIncludeInExport(true);
+        Qualification qualification2 = new Qualification().withId(2).withIncludeInExport(true);
+        Qualification qualification3 = new Qualification().withId(3).withIncludeInExport(false);
+        Qualification qualification4 = new Qualification().withId(4).withIncludeInExport(false);
 
         Application applicationForm = new ApplicationFormBuilder().qualifications(qualification1, qualification2, qualification3, qualification4).build();
 
@@ -131,10 +131,10 @@ public class QualificationServiceTest {
         replay();
         service.selectForSendingToPortico(applicationForm, Collections.<Integer> emptyList());
 
-        assertFalse("SendToUcl flag has not been updated to false", qualification3.getExport());
-        assertFalse("SendToUcl flag has not been updated to false", qualification4.getExport());
-        assertFalse("SendToUcl flag has not been updated to false", qualification1.getExport());
-        assertFalse("SendToUcl flag has not been updated to false", qualification2.getExport());
+        assertFalse("SendToUcl flag has not been updated to false", qualification3.isIncludeInExport());
+        assertFalse("SendToUcl flag has not been updated to false", qualification4.isIncludeInExport());
+        assertFalse("SendToUcl flag has not been updated to false", qualification1.isIncludeInExport());
+        assertFalse("SendToUcl flag has not been updated to false", qualification2.isIncludeInExport());
     }
 
 }

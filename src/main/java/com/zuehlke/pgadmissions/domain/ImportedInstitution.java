@@ -39,7 +39,7 @@ public class ImportedInstitution {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "insititution_id", nullable = false)
+    @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
     @ManyToOne

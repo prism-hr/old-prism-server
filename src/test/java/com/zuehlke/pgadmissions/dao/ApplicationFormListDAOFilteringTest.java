@@ -142,7 +142,8 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
     @Test
     public void shouldReturnAppsFilteredByNumber() {
-        Application otherApplicationForm = TestData.anApplicationForm(applicant, program, TestData.aState(PrismState.APPLICATION_APPROVAL));
+        Application otherApplicationForm = new Application().withProgram(program).withUser(applicant)
+                .withState(new State().withId(PrismState.APPLICATION_APPROVAL)).withApplicationNumber("app");
         save(otherApplicationForm);
         flushAndClearSession();
 

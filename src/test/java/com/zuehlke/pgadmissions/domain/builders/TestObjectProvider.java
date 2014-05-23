@@ -51,7 +51,7 @@ public class TestObjectProvider {
     public User getUser() {
         return getUser(Authority.APPLICATION_CREATOR, true, true);
     }
-    
+
     public User getEnabledUserInRole(Authority authority) {
         return getUser(authority, true, true);
     }
@@ -146,9 +146,13 @@ public class TestObjectProvider {
                 .setMaxResults(1).uniqueResult();
     }
 
+    public Application getApplication() {
+        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class).setMaxResults(1).uniqueResult();
+    }
+
     public Application getApplication(PrismState status) {
-        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class)
-                .createAlias("program", "program", JoinType.INNER_JOIN).add(Restrictions.eq("state.id", status)).setMaxResults(1).uniqueResult();
+        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class).createAlias("program", "program", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("state.id", status)).setMaxResults(1).uniqueResult();
     }
 
     private User getUser(Authority authority, Boolean isInRole, Boolean userEnabled) {
@@ -235,19 +239,19 @@ public class TestObjectProvider {
     }
 
     public Institution getInstitution() {
-        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class).add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED)).setMaxResults(1)
-                .uniqueResult();
+        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class)
+                .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED)).setMaxResults(1).uniqueResult();
     }
-    
+
     public ImportedInstitution getImportedInstitution() {
-        return (ImportedInstitution) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class).add(Restrictions.eq("enabled", true)).setMaxResults(1)
-                .uniqueResult();
+        return (ImportedInstitution) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class).add(Restrictions.eq("enabled", true))
+                .setMaxResults(1).uniqueResult();
     }
 
     public Domicile getDomicile() {
         return (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).setMaxResults(1).uniqueResult();
     }
-    
+
     public InstitutionDomicile getInstitutionDomicile() {
         return (InstitutionDomicile) sessionFactory.getCurrentSession().createCriteria(InstitutionDomicile.class).setMaxResults(1).uniqueResult();
     }

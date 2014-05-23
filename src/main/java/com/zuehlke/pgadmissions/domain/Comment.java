@@ -22,7 +22,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -185,11 +184,6 @@ public class Comment implements Serializable {
     @OneToMany
     @JoinColumn(name = "comment_id")
     private List<Document> documents = new ArrayList<Document>();
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "comment_id")
-    @IndexColumn(name = "score_position")
-    private List<Score> scores = new ArrayList<Score>();
 
     public Integer getId() {
         return id;
@@ -529,10 +523,6 @@ public class Comment implements Serializable {
 
     public List<Document> getDocuments() {
         return documents;
-    }
-
-    public List<Score> getScores() {
-        return scores;
     }
 
     public Set<CommentAssignedUser> getAssignedUsers() {

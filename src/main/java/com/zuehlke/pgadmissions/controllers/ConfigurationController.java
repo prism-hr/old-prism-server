@@ -29,12 +29,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
@@ -46,11 +44,8 @@ import com.zuehlke.pgadmissions.dto.ApplicationExportConfigurationDTO;
 import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
 import com.zuehlke.pgadmissions.exceptions.NotificationTemplateException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
-import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
-import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ApplicationExportConfigurationService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.NotificationTemplateService;
@@ -85,12 +80,6 @@ public class ConfigurationController {
 
     @Autowired
     private ScoringDefinitionParser scoringDefinitionParser;
-
-    @Autowired
-    private ScoreFactory scoreFactory;
-
-    @Autowired
-    private ScoresPropertyEditor scoresPropertyEditor;
 
     @Autowired
     private FeedbackCommentValidator dummyCommentValidator;
@@ -162,7 +151,7 @@ public class ConfigurationController {
         applicationExportConfigurationService.updateApplicationExportConfiguration(configuration);
 
         if (applicationExportConfigurationService.userTurnedOnThrottle(configuration.isEnabled())) {
-//            queueService.sendQueuedApprovedApplicationsToPortico();
+            // queueService.sendQueuedApprovedApplicationsToPortico();
         }
 
         return Collections.emptyMap();
@@ -303,43 +292,43 @@ public class ConfigurationController {
     @InitBinder(value = "dummyComment")
     public void registerBinders(WebDataBinder binder) {
         binder.setValidator(dummyCommentValidator);
-        binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
+        // binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/fakeSubmitScores")
     public String dummySubmitScores(@ModelAttribute("dummyComment") Comment dummyComment, BindingResult result, @RequestParam String scoringContent, Model model)
             throws ScoringDefinitionParseException {
-        List<Score> scores = dummyComment.getScores();
-        CustomQuestions parseScoringDefinition = scoringDefinitionParser.parseScoringDefinition(scoringContent);
-        model.addAttribute("scores", scores);
-        model.addAttribute("alertForScoringQuestions", parseScoringDefinition.getAlert());
-        if (scores != null) {
-            List<Question> questions = parseScoringDefinition.getQuestion();
-            for (int i = 0; i < scores.size(); i++) {
-                Score score = scores.get(i);
-                score.setOriginalQuestion(questions.get(i));
-            }
-        }
-        dummyCommentValidator.validate(dummyComment, result);
-        model.addAttribute("errorsContainerName", "dummyComment");
+        // List<Score> scores = dummyComment.getScores();
+        // CustomQuestions parseScoringDefinition = scoringDefinitionParser.parseScoringDefinition(scoringContent);
+        // model.addAttribute("scores", scores);
+        // model.addAttribute("alertForScoringQuestions", parseScoringDefinition.getAlert());
+        // if (scores != null) {
+        // List<Question> questions = parseScoringDefinition.getQuestion();
+        // for (int i = 0; i < scores.size(); i++) {
+        // Score score = scores.get(i);
+        // score.setOriginalQuestion(questions.get(i));
+        // }
+        // }
+        // dummyCommentValidator.validate(dummyComment, result);
+        // model.addAttribute("errorsContainerName", "dummyComment");
         return "/private/staff/scores";
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/previewScoringDefinition")
     public String previewScoringDefinition(@RequestParam String programCode, @RequestParam String scoringContent, Model model, HttpServletResponse response)
             throws IOException {
-        String errorMessage = "";
-        try {
-            CustomQuestions parseScoringDefinition = scoringDefinitionParser.parseScoringDefinition(scoringContent);
-            List<Score> scores = scoreFactory.createScores(parseScoringDefinition.getQuestion());
-            model.addAttribute("scores", scores);
-            model.addAttribute("alertForScoringQuestions", parseScoringDefinition.getAlert());
-            return "/private/staff/scores";
-        } catch (ScoringDefinitionParseException e) {
-            errorMessage = e.getLocalizedMessage();
-        }
-
-        response.sendError(418, errorMessage);
+        // String errorMessage = "";
+        // try {
+        // CustomQuestions parseScoringDefinition = scoringDefinitionParser.parseScoringDefinition(scoringContent);
+        // List<Score> scores = scoreFactory.createScores(parseScoringDefinition.getQuestion());
+        // model.addAttribute("scores", scores);
+        // model.addAttribute("alertForScoringQuestions", parseScoringDefinition.getAlert());
+        // return "/private/staff/scores";
+        // } catch (ScoringDefinitionParseException e) {
+        // errorMessage = e.getLocalizedMessage();
+        // }
+        //
+        // response.sendError(418, errorMessage);
         return null;
     }
 }

@@ -1,9 +1,5 @@
 package com.zuehlke.pgadmissions.validators;
 
-import java.util.List;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -12,13 +8,9 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
-import com.zuehlke.pgadmissions.domain.Score;
 
 @Component
 public class FeedbackCommentValidator extends AbstractValidator {
-
-    @Autowired
-    private ScoresValidator scoresValidator;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -46,19 +38,6 @@ public class FeedbackCommentValidator extends AbstractValidator {
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicantRating", EMPTY_FIELD_ERROR_MESSAGE);
 
-        List<Score> scores = comment.getScores();
-
-        if (BooleanUtils.isTrue(comment.getUseCustomRecruiterQuestions())
-            ) {
-            for (int i = 0; i < scores.size(); i++) {
-                try {
-                    errors.pushNestedPath("scores[" + i + "]");
-                    ValidationUtils.invokeValidator(scoresValidator, scores.get(i), errors);
-                } finally {
-                    errors.popNestedPath();
-                }
-            }
-        }
     }
 
 }

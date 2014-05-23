@@ -48,6 +48,10 @@ public class TestObjectProvider {
                 .setMaxResults(1).uniqueResult();
     }
 
+    public User getUser() {
+        return getUser(Authority.APPLICATION_CREATOR, true, true);
+    }
+    
     public User getEnabledUserInRole(Authority authority) {
         return getUser(authority, true, true);
     }
@@ -254,7 +258,7 @@ public class TestObjectProvider {
                 .setMaxResults(1).uniqueResult();
     }
 
-    public System getPrismSystem() {
+    public System getSystem() {
         return (System) sessionFactory.getCurrentSession().createCriteria(System.class).uniqueResult();
     }
 

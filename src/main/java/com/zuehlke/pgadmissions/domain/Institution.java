@@ -98,6 +98,11 @@ public class Institution extends PrismResource {
         this.system = system;
         return this;
     }
+    
+    public Institution withUser(User user) {
+        this.user = user;
+        return this;
+    }
 
     public Institution withDomicile(InstitutionDomicile domicile) {
         this.domicile = domicile;
@@ -111,6 +116,11 @@ public class Institution extends PrismResource {
 
     public Institution withState(State state) {
         this.state = state;
+        return this;
+    }
+    
+    public Institution withHomepage(String homepage) {
+        this.homepage = homepage;
         return this;
     }
 

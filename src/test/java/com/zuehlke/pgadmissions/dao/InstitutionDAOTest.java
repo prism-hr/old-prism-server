@@ -10,6 +10,9 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.System;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.builders.TestData;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
@@ -19,15 +22,14 @@ public class InstitutionDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldReturnInstitutionForDomicileCode() {
+        User user = testObjectProvider.getUser();
+        System system = testObjectProvider.getSystem();
         InstitutionDomicile domicile1 = testObjectProvider.getInstitutionDomicile();
         InstitutionDomicile domicile2 = testObjectProvider.getAlternativeInstitutionDomicile(domicile1);
         
-        Institution institution1 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Bielsko-Biala")
-                .withDomicile(domicile1).withSystem(testObjectProvider.getPrismSystem());
-        Institution institution2 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Zywiec")
-                .withDomicile(domicile2).withSystem(testObjectProvider.getPrismSystem());
-        Institution institution3 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Zurich")
-                .withDomicile(domicile2).withSystem(testObjectProvider.getPrismSystem());
+        Institution institution1 = TestData.aInstitution(user, system, domicile1).withName("dupa1");
+        Institution institution2 = TestData.aInstitution(user, system, domicile2).withName("dupa2");
+        Institution institution3 = TestData.aInstitution(user, system, domicile2).withName("dupa3");
 
         save(institution1, institution2, institution3);
 
@@ -38,61 +40,23 @@ public class InstitutionDAOTest extends AutomaticRollbackTestCase {
         assertTrue(HibernateUtils.containsEntity(returnList, institution1));
     }
 
-    @Test
-    public void shouldGetInstitutionByCode() {
-        InstitutionDomicile domicile1 = testObjectProvider.getInstitutionDomicile();
-        
-        Institution institution1 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Bielsko-Biala")
-                .withDomicile(domicile1).withSystem(testObjectProvider.getPrismSystem());
-        Institution institution2 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Zywiec")
-                .withDomicile(domicile1).withSystem(testObjectProvider.getPrismSystem());
-        Institution institution3 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Zurich")
-                .withDomicile(domicile1).withSystem(testObjectProvider.getPrismSystem());
-
-        save(institution1, institution2, institution3);
-
-        flushAndClearSession();
-
-        Institution returned = institutionDAO.getByCode("ABC");
-
-        assertEquals(institution1.getName(), returned.getName());
-    }
-
-    @Test
-    public void shouldGetLastCustomInstitution() {
-        InstitutionDomicile domicile1 = testObjectProvider.getInstitutionDomicile();
-        
-        Institution institution1 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Bielsko-Biala")
-                .withDomicile(domicile1).withSystem(testObjectProvider.getPrismSystem());
-        Institution institution2 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Zywiec")
-                .withDomicile(domicile1).withSystem(testObjectProvider.getPrismSystem());
-        Institution institution3 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Zurich")
-                .withDomicile(domicile1).withSystem(testObjectProvider.getPrismSystem());
-
-        save(institution1, institution2, institution3);
-
-        flushAndClearSession();
-
-        Institution returned = institutionDAO.getLastCustomInstitution();
-
-        assertEquals(institution2.getName(), returned.getName());
-    }
 
     @Test
     public void shouldGetInstitutionByDomicileAndName() {
+        User user = testObjectProvider.getUser();
+        System system = testObjectProvider.getSystem();
         InstitutionDomicile domicile1 = testObjectProvider.getInstitutionDomicile();
         InstitutionDomicile domicile2 = testObjectProvider.getAlternativeInstitutionDomicile(domicile1);
         
-        Institution institution1 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Bielsko-Biala")
-                .withDomicile(domicile1).withSystem(testObjectProvider.getPrismSystem());
-        Institution institution2 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Zywiec")
-                .withDomicile(domicile2).withSystem(testObjectProvider.getPrismSystem());
-
-        save(institution1, institution2);
+        Institution institution1 = TestData.aInstitution(user, system, domicile1).withName("dupa1");
+        Institution institution2 = TestData.aInstitution(user, system, domicile2).withName("dupa2");
+        Institution institution3 = TestData.aInstitution(user, system, domicile2).withName("dupa3");
+        
+        save(institution1, institution2, institution3);
 
         flushAndClearSession();
 
-        Institution returned = institutionDAO.getByDomicileAndName(domicile1, "University of Bielsko-Biala");
+        Institution returned = institutionDAO.getByDomicileAndName(domicile1, "dupa1");
 
         assertEquals(institution1.getId(), returned.getId());
     }

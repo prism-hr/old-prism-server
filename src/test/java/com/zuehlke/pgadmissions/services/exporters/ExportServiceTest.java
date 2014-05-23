@@ -7,7 +7,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationTransferErrorDAO;
 import com.zuehlke.pgadmissions.dao.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
@@ -59,8 +58,6 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
     private CommentDAO commentDAOMock;
 
     private UserDAO userDAOMock;
-
-    private ApplicationTransferErrorDAO applicationFormTransferErrorDAO;
 
     private PorticoService porticoServiceMock;
 

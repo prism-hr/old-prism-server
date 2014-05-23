@@ -45,7 +45,6 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.services.ApplicationExportConfigurationService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
-import com.zuehlke.pgadmissions.services.ExportQueueService;
 import com.zuehlke.pgadmissions.services.NotificationTemplateService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -66,7 +65,6 @@ public class ConfigurationControllerTest {
     private ApplicationExportConfigurationService throttleserviceMock;
     private ConfigurationService configurationServiceMock;
     private User admin;
-    private ExportQueueService queueServiceMock;
     private ProgramService programsServiceMock;
     private ScoringDefinitionParser scoringDefinitionParserMock;
     private ApplicationContext applicationContext;
@@ -250,20 +248,6 @@ public class ConfigurationControllerTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("message", result.get("enabled"));
-    }
-
-    @Test
-    public void shouldTriggerSendingApplicationsToPorticoIfTheSwitchHasBeenSetToTrue() {
-        ApplicationExportConfigurationDTO configuration = new ApplicationExportConfigurationDTO();
-        throttleserviceMock.updateApplicationExportConfiguration(configuration);
-        EasyMock.expect(throttleserviceMock.userTurnedOnThrottle(true)).andReturn(true);
-        queueServiceMock.sendQueuedApprovedApplicationsToPortico();
-
-        BindingResult errors = new DirectFieldBindingResult(configuration, "throttle");
-
-        replay(throttleserviceMock, queueServiceMock);
-        controller.updateApplicationExportConfiguration(configuration, errors);
-        verify(throttleserviceMock, queueServiceMock);
     }
 
     @Test

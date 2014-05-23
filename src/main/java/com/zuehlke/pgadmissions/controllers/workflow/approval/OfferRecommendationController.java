@@ -78,18 +78,17 @@ public class OfferRecommendationController {
         AssignSupervisorsComment approvalComment = (AssignSupervisorsComment) applicationsService.getLatestStateChangeComment(application,
                 SystemAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
         if (approvalComment != null) {
-            offerRecommendedComment.setProjectTitle(approvalComment.getProjectTitle());
-            offerRecommendedComment.setProjectAbstract(approvalComment.getProjectAbstract());
+            offerRecommendedComment.setPositionTitle(approvalComment.getPositionTitle());
+            offerRecommendedComment.setPositionDescription(approvalComment.getPositionDescription());
 
-            LocalDate startDate = approvalComment.getRecommendedStartDate();
+            LocalDate startDate = approvalComment.getPositionProvisionalStartDate();
 
             if (!programInstanceService.isPrefferedStartDateWithinBounds(application, startDate)) {
                 startDate = programInstanceService.getEarliestPossibleStartDate(application);
             }
 
-            offerRecommendedComment.setRecommendedStartDate(startDate);
-            offerRecommendedComment.setRecommendedConditionsAvailable(approvalComment.getRecommendedConditionsAvailable());
-            offerRecommendedComment.setRecommendedConditions(approvalComment.getRecommendedConditions());
+            offerRecommendedComment.setPositionProvisionalStartDate(startDate);
+            offerRecommendedComment.setAppointmentConditions(approvalComment.getAppointmentConditions());
             offerRecommendedComment.getAssignedUsers().addAll(approvalComment.getAssignedUsers());
         }
 

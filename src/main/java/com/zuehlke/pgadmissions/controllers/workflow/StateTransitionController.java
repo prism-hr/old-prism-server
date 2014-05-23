@@ -123,9 +123,9 @@ public class StateTransitionController {
 
             if (applicationForm.getState().getId() == PrismState.APPLICATION_VALIDATION) {
                 ValidationComment validationComment = commentService.getLastCommentOfType(applicationForm, ValidationComment.class);
-                stateChangeDTO.setQualifiedForPhd(validationComment.getQualifiedForPhd());
-                stateChangeDTO.setEnglishCompentencyOk(validationComment.getEnglishCompetencyOk());
-                stateChangeDTO.setHomeOrOverseas(validationComment.getHomeOrOverseas());
+                stateChangeDTO.setQualifiedForPhd(validationComment.getQualified());
+                stateChangeDTO.setEnglishCompentencyOk(validationComment.getCompetentInWorkLanguage());
+                stateChangeDTO.setHomeOrOverseas(validationComment.getResidenceStatus());
                 latestStateChangeComment = validationComment;
             } else {
                 latestStateChangeComment = applicationFormService.getLatestStateChangeComment(applicationForm, null);
@@ -135,7 +135,7 @@ public class StateTransitionController {
                 stateChangeDTO.setComment(latestStateChangeComment.getContent());
                 stateChangeDTO.setDocuments(latestStateChangeComment.getDocuments());
 
-                User delegateAdministrator = latestStateChangeComment.getDelegateAdministrator();
+                User delegateAdministrator = latestStateChangeComment.getDelegateUser();
 
                 if (delegateAdministrator != null) {
                     stateChangeDTO.setDelegate(true);

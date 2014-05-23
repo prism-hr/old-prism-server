@@ -23,7 +23,6 @@ public class RefereeBuilder {
     private User user;
 
     private String phoneNumber;
-    private boolean declined;
 
     private Date lastNotified;
 
@@ -36,11 +35,6 @@ public class RefereeBuilder {
 
     public RefereeBuilder lastNotified(Date lastNotified) {
         this.lastNotified = lastNotified;
-        return this;
-    }
-
-    public RefereeBuilder declined(boolean declined) {
-        this.declined = declined;
         return this;
     }
 
@@ -101,7 +95,6 @@ public class RefereeBuilder {
         referee.setComment(reference);
         referee.setUser(user);
         referee.setPhoneNumber(phoneNumber);
-        referee.setDeclined(declined);
         referee.setLastNotified(lastNotified);
         referee.setSendToUCL(sendToUCL);
         return referee;

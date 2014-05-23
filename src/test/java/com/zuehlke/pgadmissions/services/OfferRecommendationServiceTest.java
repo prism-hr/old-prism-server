@@ -35,10 +35,6 @@ public class OfferRecommendationServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ExportQueueService approvedSenderServiceMock;
-    
-    @Mock
-    @InjectIntoByType
     private WorkflowService applicationFormUserRoleService;
 
     @TestedObject

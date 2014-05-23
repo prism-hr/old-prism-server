@@ -41,8 +41,8 @@ public class Transcript1PdfBuilder extends AbstractPdfModelBuilder {
 
             AssignSupervisorsComment latestApprovalRound = (AssignSupervisorsComment) applicationsService.getLatestStateChangeComment(form, SystemAction.APPLICATION_ASSIGN_SUPERVISORS);
             if (latestApprovalRound != null) {
-                if (StringUtils.isBlank(latestApprovalRound.getMissingQualificationExplanation())) {
-                    document.add(new Paragraph(String.format("Approval Round Comment:\n%s", latestApprovalRound.getMissingQualificationExplanation())));
+                if (StringUtils.isBlank(latestApprovalRound.getEquivalentExperience())) {
+                    document.add(new Paragraph(String.format("Approval Round Comment:\n%s", latestApprovalRound.getEquivalentExperience())));
                 } else {
                     document.add(new Paragraph(String.format("Approval Round Comment:\n%s", NOT_PROVIDED)));
                 }

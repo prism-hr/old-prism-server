@@ -34,9 +34,6 @@ public class OfferRecommendationService {
     private MailSendingService mailSendingService;
     
     @Autowired
-    private ExportQueueService approvedSenderService;
-    
-    @Autowired
     private WorkflowService applicationFormUserRoleService;
 
     public boolean moveToApproved(Application form, OfferRecommendedComment offerRecommendedComment) {
@@ -76,7 +73,7 @@ public class OfferRecommendationService {
     
     public void sendToPortico(Application form) {
         if (form.getProgram().isImported()) {
-            approvedSenderService.sendToPortico(form);
+//            approvedSenderService.sendToPortico(form);
         }
     }
 

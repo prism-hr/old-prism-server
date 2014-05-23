@@ -429,20 +429,20 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         OfferRecommendedComment offerRecommendedComment = null; // applicationForm.getOfferRecommendedComment();
         if (offerRecommendedComment != null) {
             if (isOverseasStudent && BooleanUtils.isTrue(applicationForm.getProgram().getRequireProjectDefinition())) {
-                applicationTp.setAtasStatement(offerRecommendedComment.getProjectAbstract());
+                applicationTp.setAtasStatement(offerRecommendedComment.getPositionDescription());
             }
         }
 
         if (offerRecommendedComment != null && applicationForm.getState().getId() == PrismState.APPLICATION_APPROVED) {
             String departmentalOfferConditions = "Recommended Offer Type: ";
-            if (BooleanUtils.isTrue(offerRecommendedComment.getRecommendedConditionsAvailable())) {
+            if (BooleanUtils.isTrue(offerRecommendedComment.getAppointmentConditions() != null)) {
                 departmentalOfferConditions += "Conditional\n\nRecommended Conditions: ";
-                departmentalOfferConditions += offerRecommendedComment.getRecommendedConditions() + "\n\n";
+                departmentalOfferConditions += offerRecommendedComment.getAppointmentConditions() + "\n\n";
             } else {
                 departmentalOfferConditions += "Unconditional\n\n";
             }
             SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
-            String provisionalStartDateString = outputDateFormat.format(offerRecommendedComment.getRecommendedStartDate());
+            String provisionalStartDateString = outputDateFormat.format(offerRecommendedComment.getPositionProvisionalStartDate());
             departmentalOfferConditions += "Recommended Start Date: " + provisionalStartDateString;
             applicationTp.setDepartmentalOfferConditions(departmentalOfferConditions);
         }

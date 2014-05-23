@@ -72,8 +72,8 @@ public class Qualification implements Serializable, FormSectionObject {
     @Column(name = "completed")
     private Boolean completed;
 
-    @Column(name = "export")
-    private Boolean export;
+    @Column(name = "include_in_export")
+    private boolean includeInExport;
 
     @Transient
     private boolean acceptedTerms;
@@ -166,12 +166,12 @@ public class Qualification implements Serializable, FormSectionObject {
         this.completed = completed;
     }
 
-    public Boolean getExport() {
-        return export;
+    public Boolean isIncludeInExport() {
+        return includeInExport;
     }
 
-    public void setExport(Boolean export) {
-        this.export = export;
+    public void setIncludeInExport(Boolean export) {
+        this.includeInExport = export;
     }
 
     public Application getApplication() {
@@ -250,8 +250,8 @@ public class Qualification implements Serializable, FormSectionObject {
         return this;
     }
 
-    public Qualification withExport(Boolean export) {
-        this.export = export;
+    public Qualification withIncludeInExport(Boolean export) {
+        this.includeInExport = export;
         return this;
     }
 

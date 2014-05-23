@@ -7,10 +7,8 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -59,14 +57,6 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     @Mock
     @InjectIntoByType
     private ScoringDefinitionParser scoringDefinitionParserMock;
-
-    @Mock
-    @InjectIntoByType
-    private ScoresPropertyEditor scoresPropertyEditorMock;
-
-    @Mock
-    @InjectIntoByType
-    private ScoreFactory scoreFactoryMock;
 
     @Mock
     @InjectIntoByType

@@ -56,11 +56,6 @@ public class ApplicationFormDAO {
         return sessionFactory.getCurrentSession().createCriteria(Application.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public List<Qualification> getQualificationsByApplication(Application application) {
-        return sessionFactory.getCurrentSession().createCriteria(Qualification.class).add(Restrictions.eq("application", application))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-    }
-
     public Long getApplicationsInProgramThisYear(Program program, String year) {
         DateTime startYear = new DateTime(Integer.parseInt(year), 1, 1, 0, 0);
         DateTime endYear = startYear.plusYears(1);

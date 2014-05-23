@@ -13,7 +13,6 @@ import java.util.List;
 import org.hibernate.SessionFactory;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.builders.TestData;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testFullTextSearchContext.xml")
+@ContextConfiguration("/testWorkflowContext.xml")
 public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
 
     @Autowired
@@ -60,17 +59,6 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
         template.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(final TransactionStatus status) {
-                sessionFactory
-                        .getCurrentSession()
-                        .createSQLQuery(
-                                "" + "INSERT INTO APPLICATION_ROLE (id) VALUES ('ADMINISTRATOR');" + "INSERT INTO APPLICATION_ROLE (id) VALUES ('APPLICANT');"
-                                        + "INSERT INTO APPLICATION_ROLE (id) VALUES ('APPROVER');"
-                                        + "INSERT INTO APPLICATION_ROLE (id) VALUES ('INTERVIEWER');" + "INSERT INTO APPLICATION_ROLE (id) VALUES ('REFEREE');"
-                                        + "INSERT INTO APPLICATION_ROLE (id) VALUES ('REVIEWER');"
-                                        + "INSERT INTO APPLICATION_ROLE (id) VALUES ('SUPERADMINISTRATOR');"
-                                        + "INSERT INTO APPLICATION_ROLE (id) VALUES ('SUPERVISOR');" + "INSERT INTO APPLICATION_ROLE (id) VALUES ('VIEWER');")
-                        .executeUpdate();
-
                 user1 = new User().withFirstName("Tyler").withLastName("Durden").withEmail("tyler@durden.com")
                         .withAccount(new UserAccount().withPassword("password").withEnabled(true));
 
@@ -87,21 +75,6 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
             }
         });
 
-    }
-
-    @After
-    public void clean() {
-        TransactionTemplate template = new TransactionTemplate(transactionManager);
-        template.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(final TransactionStatus status) {
-                sessionFactory
-                        .getCurrentSession()
-                        .createSQLQuery(
-                                "DELETE FROM APPLICATION_FORM;DELETE FROM PROGRAM_APPROVER_LINK;DELETE FROM PROGRAM_ADMINISTRATOR_LINK;DELETE FROM USER_ROLE_LINK;DELETE FROM APPLICATION_ROLE;DELETE FROM REGISTERED_USER")
-                        .executeUpdate();
-            }
-        });
     }
 
     @Test

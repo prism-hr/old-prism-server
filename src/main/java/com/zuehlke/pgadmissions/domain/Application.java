@@ -42,7 +42,7 @@ public class Application extends PrismResourceTransient {
     @ManyToOne
     @JoinColumn(name = "state_id", nullable = false)
     private State state;
-    
+
     @ManyToOne
     @JoinColumn(name = "previous_state_id", nullable = true)
     private State previousState;
@@ -76,11 +76,11 @@ public class Application extends PrismResourceTransient {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user = null;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
@@ -131,16 +131,6 @@ public class Application extends PrismResourceTransient {
     @JoinColumn(name = "application_additional_information_id")
     @Valid
     private AdditionalInformation additionalInformation;
-
-    @Column(name = "ucl_booking_ref_number")
-    private String uclBookingReferenceNumber;
-
-    @Column(name = "use_custom_reference_questions")
-    private Boolean useCustomReferenceQuestions = false;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_transfer_id")
-    private ApplicationTransfer transfer;
 
     @Transient
     private Boolean acceptedTerms;
@@ -239,30 +229,6 @@ public class Application extends PrismResourceTransient {
         this.additionalInformation = additionalInformation;
     }
 
-    public String getUclBookingReferenceNumber() {
-        return uclBookingReferenceNumber;
-    }
-
-    public void setUclBookingReferenceNumber(String uclBookingReferenceNumber) {
-        this.uclBookingReferenceNumber = uclBookingReferenceNumber;
-    }
-
-    public Boolean getUseCustomReferenceQuestions() {
-        return useCustomReferenceQuestions;
-    }
-
-    public void setUseCustomReferenceQuestions(Boolean useCustomReferenceQuestions) {
-        this.useCustomReferenceQuestions = useCustomReferenceQuestions;
-    }
-
-    public ApplicationTransfer getTransfer() {
-        return transfer;
-    }
-
-    public void setTransfer(ApplicationTransfer transfer) {
-        this.transfer = transfer;
-    }
-
     public List<Comment> getApplicationComments() {
         return applicationComments;
     }
@@ -292,6 +258,16 @@ public class Application extends PrismResourceTransient {
         this.applicationNumber = applicationNumber;
         return this;
     }
+    
+    public Application withSystem(System system) {
+        this.system = system;
+        return this;
+    }
+    
+    public Application withInstitution(Institution institution) {
+        this.institution = institution;
+        return this;
+    }
 
     public Application withProgram(Program program) {
         this.program = program;
@@ -310,6 +286,11 @@ public class Application extends PrismResourceTransient {
 
     public Application withDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
+        return this;
+    }
+    
+    public Application withCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
         return this;
     }
 
@@ -352,12 +333,12 @@ public class Application extends PrismResourceTransient {
         this.referees.addAll(Arrays.asList(referees));
         return this;
     }
-    
+
     @Override
     public System getSystem() {
         return getInstitution().getSystem();
     }
-    
+
     @Override
     public void setSystem(System system) {
         this.system = system;
@@ -372,7 +353,7 @@ public class Application extends PrismResourceTransient {
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
-    
+
     @Override
     public Program getProgram() {
         return program;
@@ -382,7 +363,7 @@ public class Application extends PrismResourceTransient {
     public void setProgram(Program program) {
         this.program = program;
     }
-    
+
     @Override
     public Project getProject() {
         return project;
@@ -392,7 +373,7 @@ public class Application extends PrismResourceTransient {
     public void setProject(Project project) {
         this.project = project;
     }
-    
+
     @Override
     public State getState() {
         return state;
@@ -412,7 +393,7 @@ public class Application extends PrismResourceTransient {
     public void setPreviousState(State previousState) {
         this.previousState = previousState;
     }
-    
+
     @Override
     public LocalDate getDueDate() {
         return dueDate;

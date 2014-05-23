@@ -5,7 +5,6 @@ import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLI
 import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_TASK_REQUEST_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_UPDATE_NOTIFICATION;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;

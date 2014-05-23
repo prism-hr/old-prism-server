@@ -23,11 +23,9 @@ import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplic
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationTransferComment;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.PorticoService;
 
@@ -76,7 +74,7 @@ public class ExportService {
 
     // oooooooooooooooooooooooooo PUBLIC API IMPLEMENTATION oooooooooooooooooooooooooooooooo
 
-    public void sendToPortico(final Application form) throws ExportServiceException {
+    public void sendToPortico(final Application form)  {
         try {
             log.info(String.format("Submitting application to PORTICO [applicationNumber=%s]", form.getApplicationNumber()));
             ExportService proxy = context.getBean(this.getClass());
@@ -84,7 +82,7 @@ public class ExportService {
             proxy.sendWebServiceRequest(form);
             proxy.uploadDocuments(form);
             applicationsService.save(form);
-            commentDAO.save(new ApplicationTransferComment(form, userDAO.getSuperadministrators().get(0)));
+//            commentDAO.save(new ApplicationTransferComment(form, userDAO.getSuperadministrators().get(0)));
         } catch (Exception e) {
             // FIXME store information about fail
         }
@@ -101,7 +99,7 @@ public class ExportService {
     // ooooooooooooooooooooooooooooooo PRIVATE oooooooooooooooooooooooooooooooo
 
     @Transactional
-    public void sendWebServiceRequest(final Application formObj) throws ExportServiceException {
+    public void sendWebServiceRequest(final Application formObj)  {
         Application form = applicationsService.getById(formObj.getId());
         Boolean isOverseasStudent = null;
         User primarySupervisor = null;

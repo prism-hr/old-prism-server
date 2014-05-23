@@ -30,9 +30,6 @@ public class RejectService {
 	private RejectReasonDAO rejectDao;
 	
 	@Autowired
-	private ExportQueueService porticoQueueService;
-	
-	@Autowired
 	private MailSendingService mailService;
 	
 	@Autowired
@@ -68,7 +65,7 @@ public class RejectService {
 	
 	public void sendToPortico(Application form) {
 	    if (form.getProgram().isImported()) {
-	        porticoQueueService.createOrReturnExistingApplicationFormTransfer(form);
+//	        porticoQueueService.createOrReturnExistingApplicationFormTransfer(form);
 	    }
 	}
 }

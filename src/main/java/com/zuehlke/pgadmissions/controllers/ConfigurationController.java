@@ -53,7 +53,6 @@ import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ApplicationExportConfigurationService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
-import com.zuehlke.pgadmissions.services.ExportQueueService;
 import com.zuehlke.pgadmissions.services.NotificationTemplateService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -80,9 +79,6 @@ public class ConfigurationController {
 
     @Autowired
     private NotificationTemplateService templateService;
-
-    @Autowired
-    private ExportQueueService queueService;
 
     @Autowired
     private ProgramService programsService;
@@ -166,7 +162,7 @@ public class ConfigurationController {
         applicationExportConfigurationService.updateApplicationExportConfiguration(configuration);
 
         if (applicationExportConfigurationService.userTurnedOnThrottle(configuration.isEnabled())) {
-            queueService.sendQueuedApprovedApplicationsToPortico();
+//            queueService.sendQueuedApprovedApplicationsToPortico();
         }
 
         return Collections.emptyMap();

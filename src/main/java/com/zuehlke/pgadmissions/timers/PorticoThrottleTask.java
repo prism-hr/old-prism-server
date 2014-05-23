@@ -7,26 +7,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.services.ApplicationExportConfigurationService;
-import com.zuehlke.pgadmissions.services.ExportQueueService;
 
 @Service
 public class PorticoThrottleTask {
 
     private final Logger log = LoggerFactory.getLogger(PorticoThrottleTask.class);
-    
-    private final ApplicationExportConfigurationService throttleService;
 
-    private ExportQueueService queueService;
-    
-    public PorticoThrottleTask() {
-        this(null, null);
-    }
-    
     @Autowired
-    public PorticoThrottleTask(final ApplicationExportConfigurationService throttleService, final ExportQueueService queueService) {
-        this.throttleService = throttleService;
-        this.queueService = queueService;
-    }
+    private ApplicationExportConfigurationService throttleService;
 
     @Scheduled(cron = "${xml.data.export.throttle.cron}")
     public void porticoThrottleTask() {
@@ -34,7 +22,7 @@ public class PorticoThrottleTask {
         if (throttleService.isPorticoInterfaceEnabled()) {
             int batchSize = throttleService.getBatchSize();
             log.info(String.format("Throttle is set to send %d applications to PORTICO", batchSize));
-            queueService.sendApplicationsToBeSentToPortico(batchSize);
+//            queueService.sendApplicationsToBeSentToPortico(batchSize);
         } else {
             log.info("Portico interface is disabled");
         }

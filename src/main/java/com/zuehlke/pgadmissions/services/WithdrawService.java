@@ -21,7 +21,7 @@ public class WithdrawService {
 
     @Transactional
     public void sendToPortico(final Application application) {
-        applicationFormService.queueApplicationForExport(application);
+//        applicationFormService.queueApplicationForExport(application);
     }
     
 }

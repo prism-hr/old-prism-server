@@ -29,10 +29,6 @@ public class WithdrawServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ExportQueueService porticoQueueServiceMock;
-
-    @Mock
-    @InjectIntoByType
     private ActionService actionService;
 
     @TestedObject
@@ -68,10 +64,9 @@ public class WithdrawServiceTest {
     public void shouldSendFormToPortico() {
         Program program = new Program();
         Application form = new ApplicationFormBuilder().id(1).program(program).submittedDate(new DateTime()).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
-        expect(porticoQueueServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(new ApplicationTransfer());
+        
         replay();
         service.sendToPortico(form);
-        verify();
     }
 
 }

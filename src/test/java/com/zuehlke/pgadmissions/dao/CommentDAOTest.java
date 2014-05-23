@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ScoreBuilder;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 
@@ -31,7 +33,6 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
     private CommentDAO commentDAO;
 
     private User user;
-    private Program program;
 
     @Test(expected = NullPointerException.class)
     public void shouldThrowNullPointerException() {
@@ -43,20 +44,15 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
     @Before
     public void prepare() {
         commentDAO = new CommentDAO(sessionFactory);
-        user = new User().withFirstName("Jane").withLastName("Doe").withEmail("email2@test.com").withActivationCode("code")
-                .withAccount(new UserAccount().withEnabled(false).withPassword("haslo"));
-        save(user);
-        flushAndClearSession();
-        program = testObjectProvider.getEnabledProgram();
     }
 
     @Test
     public void shouldSaveAndLoadGenericComment() {
+        User user = testObjectProvider.getEnabledUserInRole(Authority.APPLICATION_CREATOR);
         Application application = testObjectProvider.getApplication(PrismState.APPLICATION_APPROVAL);
 
-        Comment review = new Comment();
-        review.setApplication(application);
-        review.setContent("Excellent Application!!!");
+        Comment review = new Comment().withApplication(application).withContent("Excellent Application!!!").withUser(user).withCreatedTimestamp(new DateTime())
+                .withRole("ADMIN");
         review.setUser(user);
 
         assertNull(review.getId());
@@ -78,42 +74,15 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
     }
 
     @Test
-    public void shouldSaveAndLoadReviewComment() {
-        Application application = new ApplicationFormBuilder().id(1).program(program).applicant(user).build();
-        save(application);
-        flushAndClearSession();
-
-        Comment comment = new Comment();
-
-        assertNull(comment.getId());
-
-        commentDAO.save(comment);
-
-        assertNotNull(comment.getId());
-        Integer id = comment.getId();
-        Comment reloadedComment = commentDAO.get(id);
-        assertSame(comment, reloadedComment);
-
-        flushAndClearSession();
-
-        reloadedComment = commentDAO.get(id);
-
-        assertNotSame(comment, reloadedComment);
-        assertEquals(comment.getId(), reloadedComment.getId());
-        assertEquals(user.getId(), reloadedComment.getUser().getId());
-        assertTrue(reloadedComment instanceof ReviewComment);
-    }
-
-    @Test
     public void shouldReturnCommentWithTwoScores() {
-        User user = new User().withFirstName("Jane").withLastName("Doe").withEmail("email@test.com")
-                .withAccount(new UserAccount().withPassword("password").withEnabled(false));
-
-        Application application = new ApplicationFormBuilder().program(program).applicant(user).build();
+        User user = testObjectProvider.getEnabledUserInRole(Authority.APPLICATION_CREATOR);
+        Application application = testObjectProvider.getApplication(PrismState.APPLICATION_APPROVAL);
+        
         Score score1 = new ScoreBuilder().dateResponse(new Date()).question("1??").questionType(QuestionType.RATING).ratingResponse(4).build();
         Score score2 = new ScoreBuilder().dateResponse(new Date()).question("2??").questionType(QuestionType.TEXTAREA).textResponse("aaa").build();
-        Comment comment = new Comment(); //.comment("reference").user(user).application(application).scores(score1, score2).build();
-
+        Comment comment = new Comment().withApplication(application).withContent("Excellent Application!!!").withUser(user).withCreatedTimestamp(new DateTime())
+                .withRole("ADMIN");
+        
         save(user, application, comment);
         flushAndClearSession();
 

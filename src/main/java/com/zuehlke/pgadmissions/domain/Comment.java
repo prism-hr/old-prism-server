@@ -98,20 +98,20 @@ public class Comment implements Serializable {
     @Column(name = "application_suitable_for_institution")
     private Boolean suitableForInstitution;
 
-    @Column(name = "application_suitable_for_programme")
+    @Column(name = "application_suitable_for_opportunity")
     private Boolean suitableForOpportunity;
 
-    @Column(name = "desire_to_interview")
+    @Column(name = "application_desire_to_interview")
     private Boolean desireToInterview;
 
-    @Column(name = "desire_to_supervise")
-    private Boolean desireToSupervise;
+    @Column(name = "application_desire_to_recruit")
+    private Boolean desireToRecruit;
 
     @Column(name = "application_interview_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime interviewDateTime;
 
-    @Column(name = " application_interview_timezone")
+    @Column(name = "application_interview_timezone")
     private TimeZone interviewTimeZone = TimeZone.getTimeZone("GMT");
 
     @Column(name = "application_interview_duration")
@@ -335,12 +335,12 @@ public class Comment implements Serializable {
         this.desireToInterview = desireToInterview;
     }
 
-    public Boolean getDesireToSupervise() {
-        return desireToSupervise;
+    public Boolean getDesireToRecruit() {
+        return desireToRecruit;
     }
 
-    public void setDesireToSupervise(Boolean desireToSupervise) {
-        this.desireToSupervise = desireToSupervise;
+    public void setDesireToRecruit(Boolean desireToRecruit) {
+        this.desireToRecruit = desireToRecruit;
     }
 
     public DateTime getInterviewDateTime() {
@@ -550,22 +550,22 @@ public class Comment implements Serializable {
             addDocument(document);
         }
     }
-    
+
     public Comment withId(Integer id) {
         this.id = id;
         return this;
     }
-    
+
     public Comment withProgram(Program program) {
         this.program = program;
         return this;
     }
-    
+
     public Comment withProject(Project project) {
         this.project = project;
         return this;
     }
-    
+
     public Comment withApplication(Application application) {
         this.application = application;
         return this;
@@ -576,26 +576,41 @@ public class Comment implements Serializable {
         return this;
     }
     
+    public Comment withRole(String role) {
+        this.role = role;
+        return this;
+    }
+
     public Comment withDelegateUser(User user) {
         this.user = user;
         return this;
     }
-    
+
     public Comment withDelegateRole(Role delegateRole) {
         this.delegateRole = delegateRole;
         return this;
     }
-    
+
     public Comment withAction(Action action) {
         this.action = action;
         return this;
     }
-    
+
+    public Comment withDeclinedResponse(Boolean declinedResponse) {
+        this.declinedResponse = declinedResponse;
+        return this;
+    }
+
+    public Comment withContent(String content) {
+        this.content = content;
+        return this;
+    }
+
     public Comment withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
         return this;
     }
-    
+
     public boolean isAtLeastOneAnswerUnsure() {
         return getResidenceStatus() == ResidenceStatus.UNSURE || getQualified() == ValidationQuestionOptions.UNSURE
                 || getCompetentInWorkLanguage() == ValidationQuestionOptions.UNSURE;

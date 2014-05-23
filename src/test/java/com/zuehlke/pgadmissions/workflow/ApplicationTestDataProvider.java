@@ -1,13 +1,15 @@
 package com.zuehlke.pgadmissions.workflow;
 
+import javax.annotation.Resource;
+
 import org.joda.time.LocalDate;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindException;
 import org.springframework.validation.DataBinder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
@@ -31,13 +33,17 @@ public class ApplicationTestDataProvider {
     
     @Autowired
     private DocumentService documentService;
+    
+    @Resource(name="jacksonObjectMapper")
+    private ObjectMapper objectMapper;
 
-    public void fillWithData(Application application) throws BindException {
-        
+    public void fillWithData(Application application) throws Exception {
+
         Document document = new Document().withContent(new byte[0]);
         documentService.save(document);
-        
-        PersonalDetails personalDetails = new PersonalDetails();
+
+        PersonalDetails personalDetails = objectMapper.readValue("{\"requiresVisa\" : \"true\", \"residenceCountry\" : 295}", PersonalDetails.class);
+
         DataBinder dataBinder = new DataBinder(personalDetails);
         globalPropertyEditorRegistrar.registerCustomEditors(dataBinder);
         dataBinder.setValidator(personalDetailsValidator);

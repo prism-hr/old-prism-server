@@ -43,13 +43,6 @@ public class ApplicationFormBuilder {
     private ApplicationDocument applicationFormDocument;
     private AdditionalInformation info;
     private String applicationNumber;
-    private String uclBookingReferenceNumber;
-    private Boolean useCustomReferenceQuestions = false;
-
-    public ApplicationFormBuilder uclBookingReferenceNumber(String number) {
-        this.uclBookingReferenceNumber = number;
-        return this;
-    }
 
     public ApplicationFormBuilder applicationNumber(String applicationNumber) {
         this.applicationNumber = applicationNumber;
@@ -173,11 +166,6 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder useCustomReferenceQuestions(Boolean useCustomReferenceQuestions) {
-        this.useCustomReferenceQuestions = useCustomReferenceQuestions;
-        return this;
-    }
-
     public Application build() {
         Application application = new Application();
         application.setId(id);
@@ -199,9 +187,7 @@ public class ApplicationFormBuilder {
         application.getApplicationComments().addAll(comments);
         application.setApplicationNumber(applicationNumber);
         application.setClosingDate(closingDate);
-        application.setUclBookingReferenceNumber(uclBookingReferenceNumber);
         application.getEmploymentPositions().addAll(employmentPositions);
-        application.setUseCustomReferenceQuestions(useCustomReferenceQuestions);
         return application;
     }
 }

@@ -55,15 +55,7 @@ public class ReviewService {
         Integer durationInMinutes = 0; // state.getDurationInMinutes();
         
         application.setDueDate(baseDate.plus(new Period().withMinutes(durationInMinutes)));
-        boolean sendReferenceRequest = application.getState().getId() == PrismState.APPLICATION_VALIDATION;
         application.setState(state);
-
-        if (sendReferenceRequest) {
-            mailService.sendReferenceRequest(application.getReferees(), application);
-            Comment latestStateChangeComment = applicationsService.getLatestStateChangeComment(application, null);
-            application.setUseCustomReferenceQuestions(latestStateChangeComment.getUseCustomReferenceQuestions());
-            applicationFormUserRoleService.validationStageCompleted(application);
-        }
 
         comment.setUser(user);
         comment.setApplication(application);

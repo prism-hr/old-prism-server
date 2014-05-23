@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.UserRole;
@@ -25,13 +26,12 @@ import com.zuehlke.pgadmissions.domain.enums.PrismState;
 public class TestData {
 
     public static ImportedInstitution aImportedInstitution(Domicile domicile) {
-        return new ImportedInstitution().withCode("AGH").withName("Akademia G\u00F3rniczo-Hutnicza").withDomicile(domicile)
-                .withEnabled(true);
+        return new ImportedInstitution().withCode("AGH").withName("Akademia G\u00F3rniczo-Hutnicza").withDomicile(domicile).withEnabled(true);
     }
-    
-    public static Institution aInstitution(InstitutionDomicile domicile) {
-        return new Institution().withName("Akademia G\u00F3rniczo-Hutnicza").withDomicile(domicile)
-                .withState(new State().withId(PrismState.INSTITUTION_APPROVED));
+
+    public static Institution aInstitution(User user, System system, InstitutionDomicile domicile) {
+        return new Institution().withUser(user).withSystem(system).withName("Akademia G\u00F3rniczo-Hutnicza").withDomicile(domicile)
+                .withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withHomepage("www.agh.edu.pl");
     }
 
     public static User aUser(UserAccount account) {
@@ -42,8 +42,9 @@ public class TestData {
         return new UserAccount().withEnabled(true).withPassword("password");
     }
 
-    public static Application anApplicationForm(User user, Program program, State state) {
-        return new Application().withUser(user).withProgram(program).withState(state).withDueDate(new LocalDate().plusWeeks(2));
+    public static Application anApplicationForm(System system, Institution institution, Program program, User user, State state) {
+        return new Application().withSystem(system).withInstitution(institution).withUser(user).withProgram(program).withState(state)
+                .withDueDate(new LocalDate().plusWeeks(2)).withApplicationNumber("aplikacja1").withCreatedTimestamp(new DateTime());
     }
 
     public static Address anAddress(Domicile domicile) {
@@ -51,8 +52,8 @@ public class TestData {
     }
 
     public static Program aProgram(ProgramType programType, Institution institution, User user, State state) {
-        return new Program().withCode("AAA").withTitle("Amazing program!").withState(state).withRequireProjectDefinition(false)
-                .withStudyDuration(20).withProgramType(programType).withUser(user).withInstitution(institution);
+        return new Program().withCode("AAA").withTitle("Amazing program!").withState(state).withRequireProjectDefinition(false).withStudyDuration(20)
+                .withProgramType(programType).withUser(user).withInstitution(institution);
     }
 
     public static State aState(PrismState stateValue) {
@@ -60,7 +61,8 @@ public class TestData {
     }
 
     public static UserRole aUserRole(Application applicaton, Role role, User user, User requestingUser) {
-        return new UserRole().withApplication(applicaton).withRole(role).withUser(user).withRequestingUser(requestingUser).withAssignedTimestamp(new DateTime());
+        return new UserRole().withApplication(applicaton).withRole(role).withUser(user).withRequestingUser(requestingUser)
+                .withAssignedTimestamp(new DateTime());
     }
 
     public static Document aDocument() {
@@ -70,7 +72,8 @@ public class TestData {
 
     public static Qualification aQualification(Application application, QualificationType qualificationType, Document document, ImportedInstitution institution) {
         return new Qualification().withAwardDate(new LocalDate()).withGrade("").withTitle("").withLanguage("Abkhazian").withSubject("").withCompleted(true)
-                .withStartDate(new LocalDate()).withType(qualificationType).withApplication(application).withDocument(document).withExport(false).withInstitution(institution);
+                .withStartDate(new LocalDate()).withType(qualificationType).withApplication(application).withDocument(document).withIncludeInExport(false)
+                .withInstitution(institution);
     }
 
 }

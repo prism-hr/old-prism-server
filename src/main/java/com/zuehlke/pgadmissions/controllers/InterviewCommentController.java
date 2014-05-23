@@ -15,11 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
-import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -27,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
@@ -65,12 +62,6 @@ public class InterviewCommentController {
 
     @Autowired
     private ScoringDefinitionParser scoringDefinitionParser;
-
-    @Autowired
-    private ScoresPropertyEditor scoresPropertyEditor;
-
-    @Autowired
-    private ScoreFactory scoreFactory;
 
     @Autowired
     private WorkflowService applicationFormUserRoleService;
@@ -112,16 +103,6 @@ public class InterviewCommentController {
 
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.INTERVIEW);
 
-        if (scoringDefinition != null) {
-            try {
-                CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
-                List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
-                interviewComment.getScores().addAll(scores);
-                interviewComment.setAlert(customQuestion.getAlert());
-            } catch (ScoringDefinitionParseException e) {
-                log.error("Incorrect scoring XML configuration for interview stage in program: " + applicationForm.getAdvert().getTitle());
-            }
-        }
 
         return interviewComment;
     }
@@ -130,7 +111,6 @@ public class InterviewCommentController {
     public void registerBinders(WebDataBinder binder) {
         binder.setValidator(feedbackCommentValidator);
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
-        binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -148,16 +128,6 @@ public class InterviewCommentController {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK);
-
-        List<Score> scores = comment.getScores();
-        if (!scores.isEmpty()) {
-            List<Question> questions = getCustomQuestions(applicationForm.getApplicationNumber());
-            for (int i = 0; i < scores.size(); i++) {
-                Score score = scores.get(i);
-                score.setOriginalQuestion(questions.get(i));
-            }
-        }
-
         feedbackCommentValidator.validate(comment, result);
 
         if (result.hasErrors()) {

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.workflow;
 import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.lang.WordUtils;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +26,7 @@ import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ManageUsersService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
@@ -84,6 +86,7 @@ public class PrismWorkflowTest {
     
     @Autowired
     private SystemService systemService;
+    private CommentService commentService;
 
     @Test
     public void runWorkflowTest() throws Exception {
@@ -93,7 +96,9 @@ public class PrismWorkflowTest {
 
         User applicant = registerAndActivateApplicant(program, "Kuba", "Fibinger", "kuba@fibinger.pl");
 
-        Comment createApplicationComment = null;
+
+        Comment createApplicationComment = new Comment().withCreatedTimestamp(new DateTime()).withUser(applicant);
+        commentService.save(createApplicationComment);
         ActionOutcome actionOutcome = actionService.executeAction(program.getId(), applicant, SystemAction.PROGRAM_CREATE_APPLICATION,
                 createApplicationComment);
         Application createdApplication = (Application) actionOutcome.getScope();

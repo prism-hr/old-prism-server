@@ -1005,7 +1005,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                     table.addCell(newTableCell("No", SMALL_FONT));
                 }
                 table.addCell(newTableCell("Is the applicant suitable for their chosen postgraduate study programme?", SMALL_BOLD_FONT));
-                if (BooleanUtils.isTrue(reference.getSuitableForProgramme())) {
+                if (BooleanUtils.isTrue(reference.getSuitableForOpportunity())) {
                     table.addCell(newTableCell("Yes", SMALL_FONT));
                 } else {
                     table.addCell(newTableCell("No", SMALL_FONT));

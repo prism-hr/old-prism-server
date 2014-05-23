@@ -36,7 +36,7 @@ public class CombinedReferencesPdfBuilder extends AbstractPdfModelBuilder {
             document.add(table);
             document.add(addSectionSeparators());
 
-            if (BooleanUtils.isTrue(referenceComment.getDeclined())) {
+            if (BooleanUtils.isTrue(referenceComment.getDeclinedResponse())) {
                 document.add(new Paragraph("Comment:\nDeclined to provide a reference."));
             } else {
                 document.add(new Paragraph("Comment:\n" + referenceComment.getContent()));

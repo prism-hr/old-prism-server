@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.validators;
 
-import java.util.List;
-
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +7,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -17,9 +14,6 @@ import com.zuehlke.pgadmissions.services.UserService;
 public class RefereesAdminEditDTOValidator extends AbstractValidator {
 
 	private final UserService userService;
-
-	@Autowired
-	private ScoresValidator scoresValidator;
 
 	@Autowired
 	public RefereesAdminEditDTOValidator(UserService userService) {
@@ -65,16 +59,5 @@ public class RefereesAdminEditDTOValidator extends AbstractValidator {
 			}
 		}
 
-		List<Score> scores = dto.getScores();
-		if (scores != null) {
-			for (int i = 0; i < scores.size(); i++) {
-				try {
-					errors.pushNestedPath("scores[" + i + "]");
-					ValidationUtils.invokeValidator(scoresValidator, scores.get(i), errors);
-				} finally {
-					errors.popNestedPath();
-				}
-			}
-		}
 	}
 }

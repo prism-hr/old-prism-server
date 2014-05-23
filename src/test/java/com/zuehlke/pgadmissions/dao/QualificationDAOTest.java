@@ -9,21 +9,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.TestData;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 public class QualificationDAOTest extends AutomaticRollbackTestCase {
 
-    private User user;
-    private Program program;
     private QualificationDAO qualificationDAO;
 
     @Test
     public void shouldGetQualificationById() throws ParseException {
-        Application application = TestData.anApplicationForm(user, program, testObjectProvider.getState(PrismState.APPLICATION_UNSUBMITTED));
+        Application application = testObjectProvider.getApplication();
         Qualification qualification = TestData.aQualification(application, testObjectProvider.getQualificationType(), TestData.aDocument(), testObjectProvider.getImportedInstitution());
         save(application, qualification);
         flushAndClearSession();
@@ -36,9 +31,9 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldDeleteQualification() throws ParseException {
-        Application application = TestData.anApplicationForm(user, program, testObjectProvider.getState(PrismState.APPLICATION_UNSUBMITTED));
+        Application application = testObjectProvider.getApplication();
         Qualification qualification = TestData.aQualification(application, testObjectProvider.getQualificationType(), TestData.aDocument(), testObjectProvider.getImportedInstitution()); 
-        save(application, qualification);
+        save(qualification);
         flushAndClearSession();
 
         Integer id = qualification.getId();
@@ -50,9 +45,5 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
     @Before
     public void prepare() {
         qualificationDAO = new QualificationDAO(sessionFactory);
-        user = TestData.aUser(null);
-        save(user);
-        flushAndClearSession();
-        program = testObjectProvider.getEnabledProgram();
     }
 }

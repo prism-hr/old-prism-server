@@ -18,13 +18,13 @@ public class AdmitterCommentValidator extends AbstractValidator {
     public void addExtraValidation(Object target, Errors errors) {
         if (target instanceof AdmitterComment) {
             AdmitterComment comment = (AdmitterComment) target;
-            if (comment.getQualifiedForPhd() == null) {
+            if (comment.getQualified() == null) {
                 errors.rejectValue("qualifiedForPhd", EMPTY_DROPDOWN_ERROR_MESSAGE);
             }
-            if (comment.getEnglishCompetencyOk() == null) {
+            if (comment.getCompetentInWorkLanguage() == null) {
                 errors.rejectValue("englishCompentencyOk", EMPTY_DROPDOWN_ERROR_MESSAGE);
             }
-            if (comment.getHomeOrOverseas() == null) {
+            if (comment.getResidenceStatus() == null) {
                 errors.rejectValue("homeOrOverseas", EMPTY_DROPDOWN_ERROR_MESSAGE);
             }
         }

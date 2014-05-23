@@ -9,7 +9,6 @@ import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -23,7 +22,6 @@ import org.springframework.stereotype.Repository;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -60,8 +58,9 @@ public class FullTextSearchDAO {
 
     private List<User> getMatchingUsers(final String searchTerm, final String propertyName, final Comparator<User> comparator) {
 
-        Criterion notAnApplicantCriterion = Restrictions.in("r.id", new Authority[] { Authority.PROGRAM_ADMINISTRATOR, Authority.PROGRAM_APPROVER, Authority.APPLICATION_INTERVIEWER,
-                Authority.APPLICATION_REFEREE, Authority.APPLICATION_REVIEWER, Authority.SYSTEM_ADMINISTRATOR, Authority.APPLICATION_PRIMARY_SUPERVISOR });
+        // FIXME use non-an-applicant-citerion
+//        Criterion notAnApplicantCriterion = Restrictions.in("r.id", new Authority[] { Authority.PROGRAM_ADMINISTRATOR, Authority.PROGRAM_APPROVER, Authority.APPLICATION_INTERVIEWER,
+//                Authority.APPLICATION_REFEREE, Authority.APPLICATION_REVIEWER, Authority.SYSTEM_ADMINISTRATOR, Authority.APPLICATION_PRIMARY_SUPERVISOR });
 
         String trimmedSearchTerm = StringUtils.trimToEmpty(searchTerm);
 
@@ -71,9 +70,14 @@ public class FullTextSearchDAO {
 
         TreeSet<User> uniqueResults = new TreeSet<User>(comparator);
 
-        Criteria wildcardCriteria = sessionFactory.getCurrentSession().createCriteria(User.class).add(Restrictions.eq("enabled", true))
-                .add(Restrictions.isNull("primaryAccount")).add(Restrictions.ilike(propertyName, trimmedSearchTerm, MatchMode.START)).createAlias("roles", "r")
-                .add(notAnApplicantCriterion).addOrder(Order.asc("lastName")).setMaxResults(25);
+        Criteria wildcardCriteria = sessionFactory.getCurrentSession().createCriteria(User.class).add(Restrictions.isNotNull("account"))
+                // FIXME consider only primary users
+//                .add(Restrictions.isNull("primaryAccount"))
+                
+                .add(Restrictions.ilike(propertyName, trimmedSearchTerm, MatchMode.START))
+//                .createAlias("roles", "r")
+//                .add(notAnApplicantCriterion)
+                .addOrder(Order.asc("lastName")).setMaxResults(25);
 
         uniqueResults.addAll(wildcardCriteria.list());
 
@@ -81,9 +85,13 @@ public class FullTextSearchDAO {
             FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
 
             QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(User.class).get();
+            Criteria notApplicantCriteria = fullTextSession.createCriteria(User.class).add(Restrictions.isNotNull("account"))
 
-            Criteria notApplicantCriteria = fullTextSession.createCriteria(User.class).add(Restrictions.eq("enabled", true))
-                    .add(Restrictions.isNull("primaryAccount")).createAlias("roles", "r").add(notAnApplicantCriterion);
+//                    .add(Restrictions.isNull("primaryAccount"))
+                    
+//                    .createAlias("roles", "r")
+//                    .add(notAnApplicantCriterion)
+                    ;
 
             FullTextQuery fuzzyQuery = fullTextSession.createFullTextQuery(
                     queryBuilder.keyword().fuzzy().withThreshold(.7f).withPrefixLength(0).onField(propertyName).matching(trimmedSearchTerm).createQuery(),

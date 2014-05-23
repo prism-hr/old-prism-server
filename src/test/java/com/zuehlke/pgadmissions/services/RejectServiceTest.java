@@ -49,10 +49,6 @@ public class RejectServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ExportQueueService porticoQueueService;
-
-    @Mock
-    @InjectIntoByType
     private ActionService actionService;
 
     private Application application;

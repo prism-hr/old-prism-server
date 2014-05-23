@@ -147,8 +147,9 @@ public class RefereeService {
     }
 
     public void declineToActAsRefereeAndSendNotification(int refereeId) {
-        Referee referee = refereeDAO.getRefereeById(refereeId);
-        referee.setDeclined(true);
+        // TODO post comment instead
+//        Referee referee = refereeDAO.getRefereeById(refereeId);
+//        referee.setDeclined(true);
     }
 
     public void selectForSendingToPortico(final Application applicationForm, final List<Integer> refereesSendToPortico) {

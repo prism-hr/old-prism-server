@@ -168,7 +168,7 @@ public class RefereeService {
         Comment reference = referee.getComment();
         reference.setContent(refereesAdminEditDTO.getComment());
         reference.setSuitableForInstitution(refereesAdminEditDTO.getSuitableForUCL());
-        reference.setSuitableForProgramme(refereesAdminEditDTO.getSuitableForProgramme());
+        reference.setSuitableForOpportunity(refereesAdminEditDTO.getSuitableForProgramme());
         reference.setRating(refereesAdminEditDTO.getApplicantRating());
         reference.getScores().clear();
         reference.getScores().addAll(refereesAdminEditDTO.getScores());
@@ -229,9 +229,9 @@ public class RefereeService {
         ReferenceComment referenceComment = new ReferenceComment();
         referenceComment.setApplication(applicationForm);
         referenceComment.setUser(referee.getUser());
-        referenceComment.setDelegateProvider(userService.getCurrentUser());
+        referenceComment.setDelegateUser(userService.getCurrentUser());
         referenceComment.setContent(refereesAdminEditDTO.getComment());
-        referenceComment.setSuitableForProgramme(refereesAdminEditDTO.getSuitableForProgramme());
+        referenceComment.setSuitableForOpportunity(refereesAdminEditDTO.getSuitableForProgramme());
         referenceComment.setSuitableForInstitution(refereesAdminEditDTO.getSuitableForUCL());
         referenceComment.setRating(refereesAdminEditDTO.getApplicantRating());
         referenceComment.getScores().addAll(refereesAdminEditDTO.getScores());

@@ -128,7 +128,7 @@ public class ExportService {
         ValidationComment validationComment = (ValidationComment) applicationsService.getLatestStateChangeComment(form,
                 SystemAction.APPLICATION_COMPLETE_VALIDATION_STAGE);
 
-        Boolean isOverseasStudent = validationComment == null ? true : validationComment.getHomeOrOverseas().equals(ResidenceStatus.OVERSEAS);
+        Boolean isOverseasStudent = validationComment == null ? true : validationComment.getResidenceStatus().equals(ResidenceStatus.OVERSEAS);
         OfferRecommendedComment offerRecommendedComment = (OfferRecommendedComment) applicationsService.getLatestStateChangeComment(form,
                 SystemAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
         CommentAssignedUser primarySupervisor = null;
@@ -230,7 +230,7 @@ public class ExportService {
 
                     if (BooleanUtils.isTrue(referee.getSendToUCL())) {
                         refereesToSend.put(referee.getId(), referee);
-                    } else if (referee.getComment() != null && !referee.getComment().getDeclined()) {
+                    } else if (referee.getComment() != null && !referee.getComment().getDeclinedResponse()) {
                         referee.setSendToUCL(true);
                         refereesToSend.put(referee.getId(), referee);
                     }

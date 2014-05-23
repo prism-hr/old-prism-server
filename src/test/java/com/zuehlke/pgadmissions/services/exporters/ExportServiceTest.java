@@ -13,7 +13,6 @@ import java.io.OutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
-import org.joda.time.LocalDate;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,16 +45,11 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationTransferError;
-import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.builders.OfferRecommendedCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ValidationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -175,8 +169,8 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
                 webServiceTemplateMock.marshalSendAndReceive(EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class),
                         EasyMock.anyObject(WebServiceMessageCallback.class))).andThrow(new WebServiceIOException("Error"));
 
-        EasyMock.expect(applicationsServiceMock.getLatestStateChangeComment(applicationForm, SystemAction.APPLICATION_COMPLETE_VALIDATION_STAGE)).andReturn(
-                new ValidationCommentBuilder().homeOrOverseas(ResidenceStatus.HOME).build());
+//        EasyMock.expect(applicationsServiceMock.getLatestStateChangeComment(applicationForm, SystemAction.APPLICATION_COMPLETE_VALIDATION_STAGE)).andReturn(
+//                new ValidationCommentBuilder().homeOrOverseas(ResidenceStatus.HOME).build());
 
         EasyMock.replay(webServiceTemplateMock, applicationFormTransferServiceMock, commentDAOMock, applicationsServiceMock);
 
@@ -250,8 +244,8 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
                 webServiceTemplateMock.marshalSendAndReceive(EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class),
                         EasyMock.anyObject(WebServiceMessageCallback.class))).andThrow(e);
 
-        EasyMock.expect(applicationsServiceMock.getLatestStateChangeComment(applicationForm, SystemAction.APPLICATION_COMPLETE_VALIDATION_STAGE)).andReturn(
-                new ValidationCommentBuilder().homeOrOverseas(ResidenceStatus.HOME).build());
+//        EasyMock.expect(applicationsServiceMock.getLatestStateChangeComment(applicationForm, SystemAction.APPLICATION_COMPLETE_VALIDATION_STAGE)).andReturn(
+//                new ValidationCommentBuilder().homeOrOverseas(ResidenceStatus.HOME).build());
 
         EasyMock.expect(applicationsServiceMock.getById(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
 
@@ -294,8 +288,8 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
                 webServiceTemplateMock.marshalSendAndReceive(EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class),
                         EasyMock.anyObject(WebServiceMessageCallback.class))).andThrow(e);
 
-        EasyMock.expect(applicationsServiceMock.getLatestStateChangeComment(applicationForm, SystemAction.APPLICATION_COMPLETE_VALIDATION_STAGE)).andReturn(
-                new ValidationCommentBuilder().homeOrOverseas(ResidenceStatus.HOME).build());
+//        EasyMock.expect(applicationsServiceMock.getLatestStateChangeComment(applicationForm, SystemAction.APPLICATION_COMPLETE_VALIDATION_STAGE)).andReturn(
+//                new ValidationCommentBuilder().homeOrOverseas(ResidenceStatus.HOME).build());
 
         EasyMock.replay(webServiceTemplateMock, applicationsServiceMock, commentDAOMock);
 
@@ -354,8 +348,8 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
                 webServiceTemplateMock.marshalSendAndReceive(EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class),
                         EasyMock.anyObject(WebServiceMessageCallback.class))).andReturn(response);
 
-        EasyMock.expect(applicationsServiceMock.getLatestStateChangeComment(applicationForm, SystemAction.APPLICATION_COMPLETE_VALIDATION_STAGE)).andReturn(
-                new ValidationCommentBuilder().homeOrOverseas(ResidenceStatus.HOME).build());
+//        EasyMock.expect(applicationsServiceMock.getLatestStateChangeComment(applicationForm, SystemAction.APPLICATION_COMPLETE_VALIDATION_STAGE)).andReturn(
+//                new ValidationCommentBuilder().homeOrOverseas(ResidenceStatus.HOME).build());
 
         EasyMock.expect(applicationsServiceMock.getById(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
 
@@ -389,9 +383,9 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldSuccessfullyCallWebServiceWithOverseasStudent() throws ExportServiceException {
-        OfferRecommendedComment offerComment = new OfferRecommendedCommentBuilder().id(15).application(applicationForm).comment("").projectAbstract("abstract")
-                .recommendedConditionsAvailable(false).recommendedStartDate(new LocalDate()).build();
-        applicationForm.getApplicationComments().add(offerComment);
+//        OfferRecommendedComment offerComment = new OfferRecommendedCommentBuilder().id(15).application(applicationForm).comment("").projectAbstract("abstract")
+//                .recommendedConditionsAvailable(false).recommendedStartDate(new LocalDate()).build();
+//        applicationForm.getApplicationComments().add(offerComment);
         applicationForm.getProgram().setRequireProjectDefinition(true);
         ApplicationTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
         TransferListener listener = new TransferListener() {
@@ -435,8 +429,8 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
                 webServiceTemplateMock.marshalSendAndReceive(EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class),
                         EasyMock.anyObject(WebServiceMessageCallback.class))).andReturn(response);
 
-        EasyMock.expect(applicationsServiceMock.getLatestStateChangeComment(applicationForm, SystemAction.APPLICATION_COMPLETE_VALIDATION_STAGE)).andReturn(
-                new ValidationCommentBuilder().homeOrOverseas(ResidenceStatus.OVERSEAS).build());
+//        EasyMock.expect(applicationsServiceMock.getLatestStateChangeComment(applicationForm, SystemAction.APPLICATION_COMPLETE_VALIDATION_STAGE)).andReturn(
+//                new ValidationCommentBuilder().homeOrOverseas(ResidenceStatus.OVERSEAS).build());
 
         EasyMock.expect(applicationsServiceMock.getById(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
 

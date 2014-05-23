@@ -244,9 +244,9 @@ public class ApplicationsReportService {
 
                     row.addCell(app.getState().getId().name());
                     row.addCell(new NumberValue(getTimeSpentIn(app, PrismState.APPLICATION_VALIDATION)));
-                    row.addCell(validationComment != null ? validationComment.getHomeOrOverseas().getDisplayValue() : StringUtils.EMPTY);
-                    row.addCell(validationComment != null ? validationComment.getQualifiedForPhd().getDisplayValue() : StringUtils.EMPTY);
-                    row.addCell(validationComment != null ? validationComment.getEnglishCompetencyOk().getDisplayValue() : StringUtils.EMPTY);
+                    row.addCell(validationComment != null ? validationComment.getResidenceStatus().getDisplayValue() : StringUtils.EMPTY);
+                    row.addCell(validationComment != null ? validationComment.getQualified().getDisplayValue() : StringUtils.EMPTY);
+                    row.addCell(validationComment != null ? validationComment.getCompetentInWorkLanguage().getDisplayValue() : StringUtils.EMPTY);
 
                     // reference report
                     row.addCell(receivedAndDeclinedReferences[0]);
@@ -356,9 +356,9 @@ public class ApplicationsReportService {
         for (Referee referee : app.getReferees()) {
             if (referee.getComment() != null) {
                 Comment reference = referee.getComment();
-                if (BooleanUtils.isTrue(reference.getSuitableForProgramme())) {
+                if (BooleanUtils.isTrue(reference.getSuitableForOpportunity())) {
                     endorsements[0]++;
-                } else if (BooleanUtils.isFalse(reference.getSuitableForProgramme())) {
+                } else if (BooleanUtils.isFalse(reference.getSuitableForOpportunity())) {
                     endorsements[1]++;
                 }
 

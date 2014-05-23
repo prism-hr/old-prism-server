@@ -109,7 +109,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             porticoData.setApplicationNumber(applicationForm.getApplicationNumber());
             porticoData.setQualificationsSendToPortico(porticoService.getQualificationsToSendToPorticoIds(applicationForm));
             porticoData.setRefereesSendToPortico(porticoService.getRefereesToSendToPorticoIds(applicationForm));
-            porticoData.setEmptyQualificationsExplanation(latestApprovalComment.getMissingQualificationExplanation());
+            porticoData.setEmptyQualificationsExplanation(latestApprovalComment.getEquivalentExperience());
             modelMap.put("sendToPorticoData", porticoData);
         }
 
@@ -199,7 +199,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             return PORTICO_VALIDATION_SECTION;
         }
 
-        approvalRound.setMissingQualificationExplanation(sendToPorticoData.getEmptyQualificationsExplanation());
+        approvalRound.setEquivalentExperience(sendToPorticoData.getEmptyQualificationsExplanation());
         applicationFormUserRoleService.applicationUpdated(applicationForm, getCurrentUser());
         return PROPOSE_OFFER_RECOMMENDATION_SECTION;
     }

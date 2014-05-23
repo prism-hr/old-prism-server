@@ -24,9 +24,8 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ScoreBuilder;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 
 public class CommentDAOTest extends AutomaticRollbackTestCase {
@@ -55,10 +54,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveAndLoadGenericComment() {
-        State state = (State) sessionFactory.getCurrentSession().createQuery("from State where id = 'APPLICATION_APPROVAL'").uniqueResult();
-        Application application = new ApplicationFormBuilder().id(1).program(program).applicant(user).dueDate(new LocalDate()).status(state).build();
-        save(application);
-        flushAndClearSession();
+        Application application = testObjectProvider.getApplication(PrismState.APPLICATION_APPROVAL);
 
         Comment review = new Comment();
         review.setApplication(application);
@@ -89,23 +85,23 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
         save(application);
         flushAndClearSession();
 
-        ReviewComment reviewComment = new ReviewCommentBuilder().application(application).content("comment").user(user).build();
+        Comment comment = new Comment();
 
-        assertNull(reviewComment.getId());
+        assertNull(comment.getId());
 
-        commentDAO.save(reviewComment);
+        commentDAO.save(comment);
 
-        assertNotNull(reviewComment.getId());
-        Integer id = reviewComment.getId();
+        assertNotNull(comment.getId());
+        Integer id = comment.getId();
         Comment reloadedComment = commentDAO.get(id);
-        assertSame(reviewComment, reloadedComment);
+        assertSame(comment, reloadedComment);
 
         flushAndClearSession();
 
         reloadedComment = commentDAO.get(id);
 
-        assertNotSame(reviewComment, reloadedComment);
-        assertEquals(reviewComment.getId(), reloadedComment.getId());
+        assertNotSame(comment, reloadedComment);
+        assertEquals(comment.getId(), reloadedComment.getId());
         assertEquals(user.getId(), reloadedComment.getUser().getId());
         assertTrue(reloadedComment instanceof ReviewComment);
     }
@@ -118,7 +114,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
         Application application = new ApplicationFormBuilder().program(program).applicant(user).build();
         Score score1 = new ScoreBuilder().dateResponse(new Date()).question("1??").questionType(QuestionType.RATING).ratingResponse(4).build();
         Score score2 = new ScoreBuilder().dateResponse(new Date()).question("2??").questionType(QuestionType.TEXTAREA).textResponse("aaa").build();
-        ReferenceComment comment = new ReferenceCommentBuilder().comment("reference").user(user).application(application).scores(score1, score2).build();
+        Comment comment = new Comment(); //.comment("reference").user(user).application(application).scores(score1, score2).build();
 
         save(user, application, comment);
         flushAndClearSession();

@@ -2,12 +2,10 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.AbstractMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.hibernate.Hibernate;
-import org.hibernate.ejb.packaging.Entry;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -117,7 +115,7 @@ public class ActionService {
 
             if (comment != null) {
                 comment.setUser(user);
-                comment.setRoles(invokerRolesAsString);
+                comment.setRole(invokerRolesAsString);
                 comment.setCreatedTimestamp(new DateTime());
                 commentService.save(comment);
             }

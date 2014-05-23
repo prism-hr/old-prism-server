@@ -61,7 +61,7 @@ public class ReviewService {
         if (sendReferenceRequest) {
             mailService.sendReferenceRequest(application.getReferees(), application);
             Comment latestStateChangeComment = applicationsService.getLatestStateChangeComment(application, null);
-            application.setUseCustomReferenceQuestions(latestStateChangeComment.getUseCustomReferenceQuestions());
+            application.setUseCustomReferenceQuestions(latestStateChangeComment.getUseCustomRefereeQuestions());
             applicationFormUserRoleService.validationStageCompleted(application);
         }
 

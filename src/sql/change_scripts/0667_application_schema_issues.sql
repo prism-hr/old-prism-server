@@ -323,7 +323,7 @@ WHERE id LIKE "SYSTEM%"
 
 UPDATE STATE
 SET is_duplicatable_state = 1
-WHERE parent_state_id LIKE "%_COMPLETED"
+WHERE id LIKE "%_COMPLETED"
 ;
 
 ALTER TABLE STATE

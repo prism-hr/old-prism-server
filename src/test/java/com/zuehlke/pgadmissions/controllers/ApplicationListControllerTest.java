@@ -75,7 +75,7 @@ public class ApplicationListControllerTest {
         AlertDefinition alert = new AlertDefinition(AlertType.WARNING, "title", "desc");
         httpSession.setAttribute("alertDefinition", alert);
         ApplicationFilterGroup filtering = new ApplicationFilterGroup();
-        user.getAccount().setFilterGroup(filtering);
+        user.getUserAccount().setFilterGroup(filtering);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
         EasyMock.expect(filteringServiceMock.getDefaultApplicationFiltering(user)).andReturn(filtering);

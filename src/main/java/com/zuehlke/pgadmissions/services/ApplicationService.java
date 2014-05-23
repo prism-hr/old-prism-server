@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.text.SimpleDateFormat;
-import java.util.AbstractMap;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -15,10 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -27,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.PrismResourceType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.domain.enums.SystemAction;
@@ -37,7 +36,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 
 @Service
 @Transactional
-public class ApplicationService extends PrismResourceService<Application> {
+public class ApplicationService {
 
     public static final int APPLICATION_BLOCK_SIZE = 50;
 
@@ -76,6 +75,34 @@ public class ApplicationService extends PrismResourceService<Application> {
 
     @Autowired
     private WorkflowService workflowService;
+    
+    public Application getOrCreate(final User user, final Integer advertId) throws Exception { 
+        return getOrCreate(user, programService.getValidProgramProjectAdvert(advertId));
+    }
+    
+    public Application getOrCreate(final User user, final Advert advert) {
+        HashMap <String, Object> applicationProperties = new HashMap<String, Object>();
+        applicationProperties.put("user", user);
+        applicationProperties.put(advert.getClass().getSimpleName().toLowerCase(), advert);
+        Application application = entityService.getDuplicateEntity(Application.class, applicationProperties);
+        if (application == null) {
+            application = entityService.create(Application.class, applicationProperties);
+            application.setApplicationNumber(generateApplicationNumber(application.getAdvert().getProgram()));
+            application.setParentResource(advert);
+            application.setCreatedTimestamp(new DateTime());
+            Application previousApplication = applicationFormDAO.getPreviousApplication(application);
+            if (previousApplication != null) {
+                applicationFormCopyHelper.copyApplicationFormData(application, previousApplication);
+            }
+        }
+        return application;
+    }
+    
+    public void save(Application application) {
+        entityService.save(application);
+    }
+    
+    // TODO: Rewrite/remove the following
 
     public Application getById(Integer id) {
         return applicationFormDAO.getById(id);
@@ -149,23 +176,6 @@ public class ApplicationService extends PrismResourceService<Application> {
             application.setClosingDate(null);
         }
         
-    }
-
-    @SuppressWarnings("unchecked")
-    public Application getOrCreateApplication(final User creator, final Integer advertId) throws Exception {
-        PrismResource parentResource = programService.getValidProgramProjectAdvert(advertId);
-        return (Application) super.getOrCreate(parentResource, PrismResourceType.APPLICATION, new AbstractMap.SimpleEntry<String, Object>("user", creator));
-    }
-    
-    @Override
-    public void save(Application application) {
-        application.setApplicationNumber(generateApplicationNumber(application.getAdvert().getProgram()));
-        application.setCreatedTimestamp(new DateTime());
-        Application previousApplication = applicationFormDAO.getPreviousApplication(application);
-        if (previousApplication != null) {
-            applicationFormCopyHelper.copyApplicationFormData(application, previousApplication);
-        }
-        super.save(application);
     }
 
     public Application getSecuredApplication(final String applicationId, final SystemAction... actions) {

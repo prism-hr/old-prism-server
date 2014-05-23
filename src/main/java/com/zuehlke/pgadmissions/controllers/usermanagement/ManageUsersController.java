@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.ManageUsersService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.SuperadminUserDTOValidator;
 import com.zuehlke.pgadmissions.validators.UserDTOValidator;
@@ -39,6 +40,9 @@ public class ManageUsersController {
 
     @Autowired
     private ProgramService programService;
+    
+    @Autowired
+    private SystemService systemService;
 
     @Autowired
     private UserService userService;
@@ -98,13 +102,13 @@ public class ManageUsersController {
 
     @ModelAttribute("superadministrators")
     public List<User> getSuperadministrators() {
-        List<User> superadmins = roleService.getUsersInRole(roleService.getPrismSystem(), Authority.SYSTEM_ADMINISTRATOR);
+        List<User> superadmins = roleService.getUsersInRole(systemService.getSystem(), Authority.SYSTEM_ADMINISTRATOR);
         return superadmins;
     }
 
     @ModelAttribute("admitters")
     public List<User> getAdmitters() {
-        return roleService.getUsersInRole(roleService.getPrismSystem(), Authority.INSTITUTION_ADMITTER);
+        return roleService.getUsersInRole(systemService.getSystem(), Authority.INSTITUTION_ADMITTER);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/edit")
@@ -132,7 +136,7 @@ public class ManageUsersController {
         
         boolean userExisted = userService.getUserByEmail(userDTO.getEmail()) != null;
 
-        User newUser = manageUsersService.setUserRoles(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), false, roleService.getPrismSystem(),
+        User newUser = manageUsersService.setUserRoles(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), false, systemService.getSystem(),
                 userDTO.getSelectedAuthorities());
         
         if(!userExisted) {

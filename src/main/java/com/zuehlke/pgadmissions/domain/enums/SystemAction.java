@@ -1,9 +1,6 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.PrismResource;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 
 public enum SystemAction {
 
@@ -67,30 +64,20 @@ public enum SystemAction {
     SYSTEM_VIEW_INSTITUTION_LIST, //
     SYSTEM_VIEW_PROGRAM_LIST, //
     SYSTEM_VIEW_PROJECT_LIST;
-
-    public Class<? extends PrismResource> getScopeClass() {
-        String scopeName = getPrefix();
-
-        Class<? extends PrismResource> scopeClass = null;
-        if ("APPLICATION".equals(scopeName)) {
-            scopeClass = Application.class;
-        } else if ("PROJECT".equals(scopeName)) {
-            scopeClass = Project.class;
-        } else if ("PROGRAM".equals(scopeName)) {
-            scopeClass = Program.class;
+    
+    @SuppressWarnings("unchecked")
+    public Class<? extends PrismResource> getResourceClass() {
+        try {
+            return (Class<? extends PrismResource>) Class.forName(PrismResourceType.valueOf(getResourceName()).getCanonicalName());
+        } catch (ClassNotFoundException e) {
+            throw new Error("Tried to create a prism resource of invalid type", e);
         }
-        return scopeClass;
     }
 
-    public String getScopeName() {
-        String scopeName = getPrefix();
-        return scopeName.toLowerCase();
-    }
-
-    private String getPrefix() {
+    public String getResourceName() {
         String actionName = name();
-        String scopeName = actionName.substring(0, actionName.indexOf('_'));
-        return scopeName;
+        String resourceName = actionName.substring(0, actionName.indexOf('_'));
+        return resourceName;
     }
     
 }

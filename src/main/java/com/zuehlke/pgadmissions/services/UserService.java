@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -62,6 +63,14 @@ public class UserService {
         }
         return null;
     }
+    
+    public boolean checkUserEnabled(User user) {
+        UserAccount userAccount = user.getUserAccount();
+        if (userAccount != null) {
+            return userAccount.isEnabled();
+        }
+        return false;
+    }
 
     public User getUserByEmail(String email) {
         return userDAO.getUserByEmail(email);
@@ -83,9 +92,9 @@ public class UserService {
         user.setEmail(email);
         user.setActivationCode(encryptionUtils.generateUUID());
 
-        // FIXME specify inviting user
-
         userDAO.save(user);
+        user.setParentUser(user);
+        
         return user;
     }
 
@@ -104,8 +113,8 @@ public class UserService {
         currentUser.setFirstName3(user.getFirstName3());
         currentUser.setLastName(user.getLastName());
         currentUser.setEmail(user.getEmail());
-        if (StringUtils.isNotBlank(user.getAccount().getNewPassword())) {
-            currentUser.getAccount().setPassword(encryptionUtils.getMD5Hash(user.getAccount().getNewPassword()));
+        if (StringUtils.isNotBlank(user.getUserAccount().getNewPassword())) {
+            currentUser.getUserAccount().setPassword(encryptionUtils.getMD5Hash(user.getUserAccount().getNewPassword()));
         }
         save(currentUser);
     }
@@ -122,7 +131,7 @@ public class UserService {
             mailService.sendResetPasswordMessage(storedUser, newPassword);
 
             String hashPassword = encryptionUtils.getMD5Hash(newPassword);
-            storedUser.getAccount().setPassword(hashPassword);
+            storedUser.getUserAccount().setPassword(hashPassword);
             userDAO.save(storedUser);
         } catch (Exception e) {
             log.warn("error while sending email", e);
@@ -189,7 +198,7 @@ public class UserService {
 
     public void setFiltering(final User user, final ApplicationFilterGroup filtering) {
         ApplicationFilterGroup mergedFilter = filteringDAO.merge(filtering);
-        user.getAccount().setFilterGroup(mergedFilter);
+        user.getUserAccount().setFilterGroup(mergedFilter);
         userDAO.save(user);
     }
 

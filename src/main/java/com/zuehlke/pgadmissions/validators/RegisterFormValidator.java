@@ -35,7 +35,7 @@ public class RegisterFormValidator extends AbstractValidator {
 	@Override
 	public void addExtraValidation(Object target, Errors errors) {
 	    User user = (User) target;
-	    UserAccount account = user.getAccount();
+	    UserAccount account = user.getUserAccount();
 
 	    if (StringUtils.isEmpty(user.getActivationCode())) {
 	        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", EMPTY_FIELD_ERROR_MESSAGE);

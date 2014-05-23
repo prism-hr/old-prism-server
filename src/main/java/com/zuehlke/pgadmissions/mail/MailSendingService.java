@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.SystemService;
 
 @Service
 public class MailSendingService extends AbstractMailSendingService {
@@ -54,6 +55,9 @@ public class MailSendingService extends AbstractMailSendingService {
 
     @Autowired
     private RoleService roleService;
+    
+    @Autowired
+    private SystemService systemService;
 
     private void sendReferenceRequest(Referee referee, Application application) {
         PrismEmailMessage message = null;
@@ -84,7 +88,7 @@ public class MailSendingService extends AbstractMailSendingService {
             EmailModelBuilder modelBuilder = getModelBuilder(
                     new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel" },
                     new Object[] { adminsEmails, form, form.getUser(),
-                            roleService.getUsersInRole(roleService.getPrismSystem(), Authority.INSTITUTION_ADMITTER), getHostName(),
+                            roleService.getUsersInRole(systemService.getSystem(), Authority.INSTITUTION_ADMITTER), getHostName(),
                             admissionsOfferServiceLevel });
             Map<String, Object> model = modelBuilder.build();
             Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle() };
@@ -104,7 +108,7 @@ public class MailSendingService extends AbstractMailSendingService {
             EmailModelBuilder modelBuilder = getModelBuilder(
                     new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel" },
                     new Object[] { adminsEmails, form, form.getUser(),
-                            roleService.getUsersInRole(roleService.getPrismSystem(), Authority.INSTITUTION_ADMITTER), getHostName(),
+                            roleService.getUsersInRole(systemService.getSystem(), Authority.INSTITUTION_ADMITTER), getHostName(),
                             admissionsOfferServiceLevel });
             Map<String, Object> model = modelBuilder.build();
             // FIXME specify reason and prospectusLink in the model
@@ -131,7 +135,7 @@ public class MailSendingService extends AbstractMailSendingService {
             EmailModelBuilder modelBuilder = getModelBuilder(
                     new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel" },
                     new Object[] { adminsEmails, form, form.getUser(),
-                            roleService.getUsersInRole(roleService.getPrismSystem(), Authority.INSTITUTION_ADMITTER), getHostName(),
+                            roleService.getUsersInRole(systemService.getSystem(), Authority.INSTITUTION_ADMITTER), getHostName(),
                             admissionsOfferServiceLevel });
             Map<String, Object> model = modelBuilder.build();
             String subject = resolveMessage(APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION, form);
@@ -165,7 +169,7 @@ public class MailSendingService extends AbstractMailSendingService {
             List<User> admins = roleService.getProgramAdministrators(application.getProgram());
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel" }, new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), application, application.getUser(),
-                    roleService.getUsersInRole(roleService.getPrismSystem(), Authority.INSTITUTION_ADMITTER), getHostName(), admissionsOfferServiceLevel });
+                    roleService.getUsersInRole(systemService.getSystem(), Authority.INSTITUTION_ADMITTER), getHostName(), admissionsOfferServiceLevel });
             Map<String, Object> model = modelBuilder.build();
             message = buildMessage(application.getUser(), subject, model, APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION_INTERVIEWEE);
             sendEmail(message);
@@ -233,7 +237,7 @@ public class MailSendingService extends AbstractMailSendingService {
             return;
         }
         String subject = resolveMessage(SYSTEM_IMPORT_ERROR_NOTIFICATION);
-        List<User> recipients = roleService.getUsersInRole(roleService.getPrismSystem(), Authority.SYSTEM_ADMINISTRATOR);
+        List<User> recipients = roleService.getUsersInRole(systemService.getSystem(), Authority.SYSTEM_ADMINISTRATOR);
         for (User user : recipients) {
             try {
                 EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "message", "time", "host" }, new Object[] { user, messageText,

@@ -90,15 +90,15 @@ public class RegistrationController {
     }
 
     @RequestMapping(value = "/activateAccount", params = "action", method = RequestMethod.GET)
-    public String activateAccountSubmit(@RequestParam String activationCode, @RequestParam SystemAction action, Integer scopeId) throws Exception {
+    public String activateAccountSubmit(@RequestParam String activationCode, @RequestParam SystemAction action, Integer resourceId) throws Exception {
 
-        User user = registrationService.activateAccount(activationCode, action, scopeId);
+        User user = registrationService.activateAccount(activationCode);
 
         if (user == null) {
             return TemplateLocation.REGISTRATION_FAILURE_CONFIRMATION;
         }
 
-        ActionOutcome actionOutcome = actionService.executeAction(scopeId, user, action, new Comment());
+        ActionOutcome actionOutcome = actionService.executeAction(resourceId, user, action, new Comment());
         return actionOutcome.createRedirectionUrl();
     }
 

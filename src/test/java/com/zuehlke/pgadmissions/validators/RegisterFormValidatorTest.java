@@ -86,7 +86,7 @@ public class RegisterFormValidatorTest {
     @Test
     @DirtiesContext
     public void shouldRejectIfNoConfirmPassword() {
-        user.getAccount().setConfirmPassword(null);
+        user.getUserAccount().setConfirmPassword(null);
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "confirmPassword");
 
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(user);
@@ -99,8 +99,8 @@ public class RegisterFormValidatorTest {
     @Test
     @DirtiesContext
     public void shouldRejectIfPasswordsDoNotMatch() {
-        user.getAccount().setConfirmPassword("12345");
-        user.getAccount().setPassword("12345678");
+        user.getUserAccount().setConfirmPassword("12345");
+        user.getUserAccount().setPassword("12345678");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "confirmPassword");
 
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(user);
@@ -113,8 +113,8 @@ public class RegisterFormValidatorTest {
     @Test
     @DirtiesContext
     public void shouldRejectIfPasswordLessThan8Chars() {
-        user.getAccount().setPassword("12");
-        user.getAccount().setConfirmPassword("12");
+        user.getUserAccount().setPassword("12");
+        user.getUserAccount().setConfirmPassword("12");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "password");
 
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(user);
@@ -127,8 +127,8 @@ public class RegisterFormValidatorTest {
     @Test
     @DirtiesContext
     public void shouldRejectIfPasswordMoreThan15Chars() {
-        user.getAccount().setPassword("1234567891234567");
-        user.getAccount().setConfirmPassword("1234567891234567");
+        user.getUserAccount().setPassword("1234567891234567");
+        user.getUserAccount().setConfirmPassword("1234567891234567");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "password");
 
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(user);
@@ -141,8 +141,8 @@ public class RegisterFormValidatorTest {
     @Test
     @DirtiesContext
     public void shouldNotRejectIfContainsSpecialChars() {
-        user.getAccount().setPassword(" 12o*-lala");
-        user.getAccount().setConfirmPassword(" 12o*-lala");
+        user.getUserAccount().setPassword(" 12o*-lala");
+        user.getUserAccount().setConfirmPassword(" 12o*-lala");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "password");
 
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(user);
@@ -154,8 +154,8 @@ public class RegisterFormValidatorTest {
     @Test
     @DirtiesContext
     public void shouldAcceptPasswordWithOnlyChars() {
-        user.getAccount().setPassword("oooooooooo");
-        user.getAccount().setConfirmPassword("oooooooooo");
+        user.getUserAccount().setPassword("oooooooooo");
+        user.getUserAccount().setConfirmPassword("oooooooooo");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "password");
 
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(user);
@@ -167,8 +167,8 @@ public class RegisterFormValidatorTest {
     @Test
     @DirtiesContext
     public void shouldAcceptPasswordWithOnlyNumbersAndLettes() {
-        user.getAccount().setPassword("ooo12ooo3oo1");
-        user.getAccount().setConfirmPassword("ooo12ooo3oo1");
+        user.getUserAccount().setPassword("ooo12ooo3oo1");
+        user.getUserAccount().setConfirmPassword("ooo12ooo3oo1");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "password");
 
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(user);

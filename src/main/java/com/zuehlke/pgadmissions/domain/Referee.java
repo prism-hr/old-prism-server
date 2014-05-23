@@ -73,8 +73,6 @@ public class Referee implements Serializable, FormSectionObject {
     @Column(name = "send_to_ucl")
     private Boolean sendToUCL;
 
-    private boolean declined = false;
-
     public Application getApplication() {
         return application;
     }
@@ -145,14 +143,6 @@ public class Referee implements Serializable, FormSectionObject {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public boolean isDeclined() {
-        return declined;
-    }
-
-    public void setDeclined(boolean declined) {
-        this.declined = declined;
     }
 
     public Date getLastNotified() {

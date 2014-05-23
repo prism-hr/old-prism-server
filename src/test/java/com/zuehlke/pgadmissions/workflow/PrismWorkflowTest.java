@@ -94,7 +94,6 @@ public class PrismWorkflowTest {
 
         User applicant = registerAndActivateApplicant(program, "Kuba", "Fibinger", "kuba@fibinger.pl");
 
-//        applicationTestDataProvider.fillWithData(null);
 
         Comment createApplicationComment = new Comment().withCreatedTimestamp(new DateTime()).withUser(applicant);
         commentService.save(createApplicationComment);
@@ -103,6 +102,7 @@ public class PrismWorkflowTest {
         Application createdApplication = (Application) actionOutcome.getScope();
         assertEquals(SystemAction.APPLICATION_COMPLETE, actionOutcome.getNextAction());
 
+        applicationTestDataProvider.fillWithData(createdApplication);
         
         Comment completeApplicationComment = null;
         actionOutcome = actionService.executeAction(createdApplication.getId(), applicant, SystemAction.APPLICATION_COMPLETE,

@@ -88,28 +88,23 @@ public class RoleDAO {
     @SuppressWarnings("unchecked")
     public List<Role> getExecutorRoles(User user, PrismResource resource, SystemAction action) {
         // Check that the action is valid
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+        return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("stateActionAssignment.role")) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
-                .add(Restrictions.eq("action.id", action)); //
-
-        // If it is not a creator action (which any user can perform) verify that the user has permission
-        if (!action.toString().contains("CREATE")) {
-            criteria.createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                    .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                    .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                    .add(Restrictions.eq("userRole.application", resource.getApplication())) //
-                    .add(Restrictions.eq("userRole.project", resource.getProject())) //
-                    .add(Restrictions.eq("userRole.program", resource.getProgram())) //
-                    .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
-                    .add(Restrictions.eq("userRole.system", resource.getSystem())) //
-                    .add(Restrictions.eq("user.parentUser", user)); //
-        }
-        
-        // Check that the user account is enabled
-        return criteria.list();
+                .add(Restrictions.eq("action.id", action)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
+                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
+                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
+                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
+                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
+                .add(Restrictions.eq("user.parentUser", user)) //
+                .list();
     }
 
     @SuppressWarnings("unchecked")

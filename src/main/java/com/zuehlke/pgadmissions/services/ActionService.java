@@ -12,6 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Application;
@@ -81,12 +82,16 @@ public class ActionService {
     }
 
     public ActionOutcome executeAction(PrismResource parentResource, User user, SystemAction action, Comment comment) {
-        List<Role> invokerRoles = getInvokerRoles(parentResource, user, action);
+        if (!userService.checkUserEnabled(user)) {
+            throw new CannotExecuteActionException(parentResource);
+        }
 
         Pattern createPattern = Pattern.compile("([A-Z]+)_CREATE_([A-Z]+)");
         Matcher createMatcher = createPattern.matcher(action.name());
 
         PrismResource childResource = parentResource;
+        List<Role> invokerRoles = Lists.newArrayList();
+
         if (createMatcher.matches()) {
             try {
                 Class<?> klass = Class.forName(PrismResourceType.valueOf(createMatcher.group(2)).getCanonicalName());
@@ -96,6 +101,11 @@ public class ActionService {
             } catch (ClassNotFoundException e) {
                 throw new Error("Tried to create a prism resource of invalid type", e);
             }
+        } else {
+            invokerRoles = roleService.getExecutorRoles(user, parentResource, action);
+            if (invokerRoles.isEmpty()) {
+                throw new CannotExecuteActionException(parentResource);
+            }
         }
 
         SystemAction nextAction = executeStateTransitions(parentResource, user, invokerRoles, action, childResource, comment);
@@ -103,19 +113,6 @@ public class ActionService {
                 : null;
         Hibernate.initialize(nextActionResource);
         return new ActionOutcome(user, nextActionResource, nextAction);
-    }
-
-    private List<Role> getInvokerRoles(PrismResource parentResource, User user, SystemAction action) {
-        if (!userService.checkUserEnabled(user)) {
-            throw new CannotExecuteActionException(parentResource);
-        }
-
-        List<Role> invokerRoles = roleService.getExecutorRoles(user, parentResource, action);
-
-        if (invokerRoles.isEmpty()) {
-            throw new CannotExecuteActionException(parentResource);
-        }
-        return invokerRoles;
     }
 
     private SystemAction executeStateTransitions(PrismResource parentResource, User user, List<Role> invokerRoles, SystemAction action,
@@ -157,13 +154,13 @@ public class ActionService {
         return nextAction;
     }
 
-    private void executeRoleTransitions(List<Role> invokerRoles, PrismResource scope, StateTransition stateTransition, PrismResource newScope) {
+    private void executeRoleTransitions(List<Role> invokerRoles, PrismResource parentResource, StateTransition stateTransition, PrismResource childResource) {
         List<RoleTransition> roleTransitions = roleService.getRoleTransitions(stateTransition, invokerRoles);
         for (RoleTransition roleTransition : roleTransitions) {
             Role role = roleTransition.getRole();
-            List<User> users = roleService.getBy(role, scope);
+            List<User> users = roleService.getBy(role, parentResource);
             for (User roleUser : users) {
-                roleService.executeRoleTransition(scope, roleUser, role, roleTransition.getType(), newScope, roleTransition.getTransitionRole());
+                roleService.executeRoleTransition(parentResource, roleUser, role, roleTransition.getType(), childResource, roleTransition.getTransitionRole());
             }
         }
     }

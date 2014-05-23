@@ -60,15 +60,14 @@ public class Comment implements Serializable {
     private User user;
 
     @Column(name = "role_id")
-    private String role;
+    private String roles;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "delegate_user_id")
     private User delegateUser;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "delegate_role_id")
-    private Role delegateRole;
+    @Column(name = "delegate_role_id")
+    private String delegateRoles;
 
     @ManyToOne
     @JoinColumn(name = "action_id")
@@ -104,7 +103,7 @@ public class Comment implements Serializable {
     private Boolean suitableForOpportunity;
 
     @Column(name = "application_desire_to_interview")
-    private Boolean desireToInterview;
+    private Boolean willingToInterview;
 
     @Column(name = "application_desire_to_recruit")
     private Boolean desireToRecruit;
@@ -133,6 +132,9 @@ public class Comment implements Serializable {
 
     @Column(name = "application_position_title")
     private String positionTitle;
+    
+    @Column(name = "application_position_description")
+    private String positionDescription;
 
     @Column(name = "desire_to_interview")
     private Boolean desireToInterview;
@@ -232,8 +234,8 @@ public class Comment implements Serializable {
         return explodeRolesToList(roles);
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoles(String roles) {
+        this.roles = roles;
     }
 
     public User getDelegateUser() {
@@ -248,8 +250,8 @@ public class Comment implements Serializable {
         return explodeRolesToList(delegateRoles);
     }
 
-    public void setDelegateRole(Role delegateRole) {
-        this.delegateRole = delegateRole;
+    public void setDelegateRole(String delegateRole) {
+        this.delegateRoles = delegateRole;
     }
 
     public Action getAction() {
@@ -325,11 +327,11 @@ public class Comment implements Serializable {
     }
 
     public Boolean getDesireToInterview() {
-        return desireToInterview;
+        return willingToInterview;
     }
 
     public void setDesireToInterview(Boolean desireToInterview) {
-        this.desireToInterview = desireToInterview;
+        this.willingToInterview = desireToInterview;
     }
 
     public Boolean getDesireToRecruit() {
@@ -349,19 +351,19 @@ public class Comment implements Serializable {
     }
 
     public TimeZone getInterviewTimeZone() {
-        return desireToInterview;
+        return interviewTimeZone;
     }
 
     public void setInterviewTimeZone(TimeZone interviewTimeZone) {
-        this.desireToInterview = willingToInterview;
+        this.interviewTimeZone = interviewTimeZone;
     }
 
     public Integer getInterviewDuration() {
-        return desireToSupervise;
+        return interviewDuration;
     }
 
     public void setInterviewDuration(Integer interviewDuration) {
-        this.desireToSupervise = willingToSupervise;
+        this.interviewDuration = interviewDuration;
     }
 
     public String getIntervieweeInstructions() {
@@ -570,7 +572,7 @@ public class Comment implements Serializable {
     }
     
     public Comment withRole(String role) {
-        this.role = role;
+        this.roles = role;
         return this;
     }
 
@@ -579,8 +581,8 @@ public class Comment implements Serializable {
         return this;
     }
 
-    public Comment withDelegateRole(Role delegateRole) {
-        this.delegateRole = delegateRole;
+    public Comment withDelegateRole(String delegateRole) {
+        this.delegateRoles = delegateRole;
         return this;
     }
 

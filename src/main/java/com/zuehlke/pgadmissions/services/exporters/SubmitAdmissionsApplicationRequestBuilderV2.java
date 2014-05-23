@@ -68,8 +68,6 @@ import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
-    private static final String IP_ADDRESS_NOT_PROVIDED_VALUE = "127.0.0.1";
-
     private static final String NOT_PROVIDED_VALUE = "NOT PROVIDED";
 
     private static final String ADDRESS_LINE_EMPTY_VALUE = "-";

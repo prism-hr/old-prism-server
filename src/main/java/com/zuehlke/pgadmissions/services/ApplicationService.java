@@ -66,9 +66,6 @@ public class ApplicationService extends PrismResourceService<Application> {
     private ProgramService programService;
 
     @Autowired
-    private ExportQueueService exportQueueService;
-
-    @Autowired
     private ActionService actionService;
 
     @Autowired
@@ -192,12 +189,6 @@ public class ApplicationService extends PrismResourceService<Application> {
 
     public void openApplicationForView(Application application, User user) {
         applicationFormDAO.deleteApplicationUpdate(application, user);
-    }
-
-    public void queueApplicationForExport(Application application) {
-        if (application.getState().getId() == PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT) {
-            exportQueueService.createOrReturnExistingApplicationFormTransfer(application);
-        }
     }
 
     public Date getDefaultStartDateForApplication(Application application) {

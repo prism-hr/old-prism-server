@@ -1,49 +1,42 @@
 package com.zuehlke.pgadmissions.timers;
 
-import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.unitils.easymock.EasyMockUnitils.replay;
 
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.unitils.UnitilsBlockJUnit4ClassRunner;
+import org.unitils.easymock.annotation.Mock;
+import org.unitils.inject.annotation.InjectIntoByType;
+import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.services.ApplicationExportConfigurationService;
-import com.zuehlke.pgadmissions.services.ExportQueueService;
 
+@RunWith(UnitilsBlockJUnit4ClassRunner.class)
 public class PorticoThrottleTaskTest {
-	
-	private ApplicationExportConfigurationService throttleServiceMock;
-	private ExportQueueService porticoQueueServiceMock;
-	private PorticoThrottleTask timer;
-	
-	@Before
-	public void setup() {
-		throttleServiceMock = createMock(ApplicationExportConfigurationService.class);
-		porticoQueueServiceMock = createMock(ExportQueueService.class);
-		timer = new PorticoThrottleTask(throttleServiceMock, porticoQueueServiceMock);
-	}
-	
-	@Test
-	public void shouldSendApplicationsToQueueService() {
-		expect(throttleServiceMock.isPorticoInterfaceEnabled()).andReturn(true);
-		expect(throttleServiceMock.getBatchSize()).andReturn(10);
-		porticoQueueServiceMock.sendApplicationsToBeSentToPortico(10);
-		replay(throttleServiceMock, porticoQueueServiceMock);
-		
-		timer.porticoThrottleTask();
-		
-		verify(throttleServiceMock, porticoQueueServiceMock);
-	}
-	
-	@Test
-	public void shouldNotSendApplicationsToQueueService() {
-		expect(throttleServiceMock.isPorticoInterfaceEnabled()).andReturn(false);
-		replay(throttleServiceMock, porticoQueueServiceMock);
-		
-		timer.porticoThrottleTask();
-		
-		verify(throttleServiceMock, porticoQueueServiceMock);
-	}
+
+    @Mock
+    @InjectIntoByType
+    private ApplicationExportConfigurationService throttleServiceMock;
+
+    @TestedObject
+    private PorticoThrottleTask timer;
+
+    @Test
+    public void shouldSendApplicationsToQueueService() {
+        expect(throttleServiceMock.isPorticoInterfaceEnabled()).andReturn(true);
+        expect(throttleServiceMock.getBatchSize()).andReturn(10);
+
+        replay();
+        timer.porticoThrottleTask();
+    }
+
+    @Test
+    public void shouldNotSendApplicationsToQueueService() {
+        expect(throttleServiceMock.isPorticoInterfaceEnabled()).andReturn(false);
+
+        replay();
+        timer.porticoThrottleTask();
+    }
 
 }

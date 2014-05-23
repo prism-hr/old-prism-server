@@ -24,14 +24,9 @@ import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.services.exporters.ApplicationTransferService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class FileDownloadControllerTest {
-
-    @Mock
-    @InjectIntoByType
-    private ApplicationTransferService applicationFormTransferServiceMock;
 
     @Mock
     @InjectIntoByType

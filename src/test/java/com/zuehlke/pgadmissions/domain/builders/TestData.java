@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.UserRole;
@@ -29,9 +30,9 @@ public class TestData {
                 .withEnabled(true);
     }
     
-    public static Institution aInstitution(InstitutionDomicile domicile) {
-        return new Institution().withName("Akademia G\u00F3rniczo-Hutnicza").withDomicile(domicile)
-                .withState(new State().withId(PrismState.INSTITUTION_APPROVED));
+    public static Institution aInstitution(User user, System system, InstitutionDomicile domicile) {
+        return new Institution().withUser(user).withSystem(system).withName("Akademia G\u00F3rniczo-Hutnicza").withDomicile(domicile)
+                .withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withHomepage("www.agh.edu.pl");
     }
 
     public static User aUser(UserAccount account) {

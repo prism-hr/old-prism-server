@@ -78,7 +78,7 @@ public class AccountController {
         user.setFirstName3(currentUser.getFirstName3());
         user.setLastName(currentUser.getLastName());
         user.setEmail(currentUser.getEmail());
-        user.getAccount().setPassword(currentUser.getPassword());
+        user.getUserAccount().setPassword(currentUser.getPassword());
         return user;
     }
 

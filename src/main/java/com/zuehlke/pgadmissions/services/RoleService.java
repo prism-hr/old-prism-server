@@ -13,7 +13,6 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.StateTransition;
-import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -32,11 +31,11 @@ public class RoleService {
         return roleDAO.getById(authority);
     }
 
-    public UserRole getOrCreateUserRole(PrismResource scope, User user, Authority authority) {
+    public UserRole getOrCreateUserRole(PrismResource resource, User user, Authority authority) {
         Role role = roleDAO.getById(authority);
-        UserRole userRole = roleDAO.get(user, scope, authority);
+        UserRole userRole = roleDAO.get(user, resource, authority);
         if (userRole == null) {
-            userRole = new UserRole().withUser(user).withRole(role).withScope(scope).withAssignedTimestamp(new DateTime());
+            userRole = new UserRole().withUser(user).withRole(role).withScope(resource).withAssignedTimestamp(new DateTime());
             roleDAO.save(userRole);
         }
         return userRole;
@@ -96,10 +95,6 @@ public class RoleService {
         return null;
     }
 
-    public System getPrismSystem() {
-        return roleDAO.getPrismSystem();
-    }
-
     public User getInvitingAdmin(User user) {
         // TODO implement
         return null;
@@ -113,7 +108,7 @@ public class RoleService {
         return roleDAO.getRoleTransitions(stateTransition, invokerRoles);
     }
 
-    public List<Role> canExecute(User user, PrismResource resource, SystemAction action) {
+    public List<Role> getExecutorRoles(User user, PrismResource resource, SystemAction action) {
         return roleDAO.getExecutorRoles(user, resource, action);
     }
 

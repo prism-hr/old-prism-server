@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
 @Service
 @Transactional
-public class ProgramService extends PrismResourceService {
+public class ProgramService {
 
     @Autowired
     private ProgramDAO programDAO;
@@ -47,6 +47,9 @@ public class ProgramService extends PrismResourceService {
     @Autowired
     private RoleService roleService;
 
+    
+    // TODO: Rewrite below
+    
     public List<Program> getAllEnabledPrograms() {
         return programDAO.getAllEnabledPrograms();
     }
@@ -54,7 +57,7 @@ public class ProgramService extends PrismResourceService {
     public Advert getById(Integer advertId) {
         return programDAO.getById(advertId);
     }
-
+    
     @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
     public void save(Advert advert) {
         programDAO.save(advert);

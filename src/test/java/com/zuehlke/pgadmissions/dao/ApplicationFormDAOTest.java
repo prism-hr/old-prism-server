@@ -238,7 +238,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
         save(otherApplicant, applicationForm, applicationForm2, applicationForm3, recentApplicationForm, otherApplication);
 
-        Application returned = applicationDAO.getPreviousApplicationForApplicant(recentApplicationForm);
+        Application returned = applicationDAO.getPreviousApplication(recentApplicationForm);
 
         assertEquals(otherApplication.getId(), returned.getId());
     }

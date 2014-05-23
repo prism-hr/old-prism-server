@@ -35,7 +35,7 @@ public class CreateApplicationFormController {
             advertId = program.getId();
         }
 
-        Application application = applicationFormService.getOrCreateApplication(userService.getCurrentUser(), advertId);
+        Application application = applicationFormService.getOrCreate(userService.getCurrentUser(), advertId);
         return new ModelAndView(RedirectLocation.UPDATE_APPLICATION, "applicationId", application.getApplicationNumber());
     }
 }

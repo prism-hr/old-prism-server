@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,7 +19,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -107,26 +104,26 @@ public class Application extends PrismResourceTransient {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("date")
-    @JoinColumn(name = "application_form_id")
+    @JoinColumn(name = "application_id")
     private List<Comment> applicationComments = new ArrayList<Comment>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_form_id")
+    @JoinColumn(name = "application_id")
     @Valid
     private List<Qualification> qualifications = new ArrayList<Qualification>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_form_id")
+    @JoinColumn(name = "application_id")
     @Valid
     private List<Funding> fundings = new ArrayList<Funding>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_form_id")
+    @JoinColumn(name = "application_id")
     @Valid
     private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_form_id")
+    @JoinColumn(name = "application_id")
     @Valid
     private List<Referee> referees = new ArrayList<Referee>();
 

@@ -130,7 +130,7 @@ public class ApplicationFormDAO {
 
         if (copyOnDate == null) {
             copySubmittedApplication = false;
-            copyOnDate = (Date) sessionFactory.getCurrentSession().createCriteria(Application.class).setProjection(Projections.min("applicationTimestamp"))
+            copyOnDate = (Date) sessionFactory.getCurrentSession().createCriteria(Application.class).setProjection(Projections.min("createdTimestamp"))
                     .add(Restrictions.eq("user", creator)).add(Restrictions.ne("id", applicationFormId)).uniqueResult();
         }
 
@@ -141,7 +141,7 @@ public class ApplicationFormDAO {
             if (BooleanUtils.isTrue(copySubmittedApplication)) {
                 getPreviousApplication.add(Restrictions.ge("submittedTimestamp", copyOnDate));
             } else {
-                getPreviousApplication.add(Restrictions.ge("applicationTimestamp", copyOnDate));
+                getPreviousApplication.add(Restrictions.ge("createdTimestamp", copyOnDate));
             }
 
             return getById((Integer) getPreviousApplication.uniqueResult());

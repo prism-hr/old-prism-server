@@ -40,6 +40,7 @@ import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.Progr
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.SystemService;
 
 @Service
 public class EntityImportService {
@@ -58,6 +59,9 @@ public class EntityImportService {
     private ProgramService programService;
 
     @Autowired
+    private SystemService systemService;
+
+    @Autowired
     private ProgramInstanceService programInstanceService;
 
     @Autowired
@@ -65,7 +69,7 @@ public class EntityImportService {
 
     @Autowired
     private MailSendingService mailSendingService;
-    
+
     @Autowired
     private RoleService roleService;
 
@@ -214,7 +218,8 @@ public class EntityImportService {
     public Program getOrCreateProgram(Programme programme, Institution institution) {
         Program program = programService.getProgramByCode(programme.getCode());
         if (program == null) {
-            program = new Program().withSystem(roleService.getPrismSystem()).withInstitution(institution).withCode(programme.getCode()).withState(new State().withId(PrismState.PROGRAM_APPROVED));
+            program = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withCode(programme.getCode())
+                    .withState(new State().withId(PrismState.PROGRAM_APPROVED)).withImported(true);
             entityDAO.save(program);
         }
 

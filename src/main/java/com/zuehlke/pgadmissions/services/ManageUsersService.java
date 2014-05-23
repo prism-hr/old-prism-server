@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.PrismResource;
-import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
@@ -22,21 +21,20 @@ public class ManageUsersService {
 
     @Autowired
     private MailSendingService mailService;
+    
+    @Autowired
+    private SystemService systemService;
 
-    public User setUserRoles(String firstname, String lastname, String email, boolean replaceRoles, PrismResource scope,
+    public User setUserRoles(String firstname, String lastname, String email, boolean replaceRoles, PrismResource resource,
             Authority... authorities) {
         User user = userService.getOrCreateUser(firstname, lastname, email);
         if (replaceRoles) {
-            roleService.removeRoles(user, scope);
+            roleService.removeRoles(user, resource);
         }
         for (Authority authority : authorities) {
-            roleService.getOrCreateUserRole(roleService.getPrismSystem(), user, authority);
+            roleService.getOrCreateUserRole(systemService.getSystem(), user, authority);
         }
         return user;
-    }
-    
-    public System getPrismSystem() {
-        return roleService.getPrismSystem();
     }
 
 }

@@ -46,20 +46,20 @@ public abstract class PrismResource {
 
     public PrismResource getParentResource(PrismResourceType resourceType) {
         try {
-            return (PrismResource) PropertyUtils.getSimpleProperty(this, resourceType.toString().toLowerCase());
+            return (PrismResource) PropertyUtils.getSimpleProperty(this, resourceType.getLowerCaseName());
         } catch (Exception e) {
             throw new Error(e);
         }
     }
 
-    public void setParentResource(PrismResource enclosingResource) throws Exception {
+    public void setParentResource(PrismResource enclosingResource) {
         Program enclosingProgram = enclosingResource.getProgram();
         Institution enclosingInstitution = enclosingResource.getInstitution();
         System enclosingSystem = enclosingResource.getSystem();
 
         if (enclosingSystem == null || (!(enclosingResource instanceof System) && enclosingInstitution == null)
                 || (!(enclosingResource instanceof System || enclosingResource instanceof Institution) && enclosingProgram == null)) {
-            throw new Exception("Attempted to create new " + enclosingResource.getResourceType().toString() + " with invalid parent scope");
+            throw new Error("Attempted to create new " + enclosingResource.getResourceType().toString() + " with invalid parent scope");
         }
 
         setProject(enclosingResource.getProject());

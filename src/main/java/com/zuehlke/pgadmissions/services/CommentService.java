@@ -46,6 +46,9 @@ public class CommentService {
 
     @Autowired
     private StateDAO stateDAO;
+    
+    @Autowired
+    private SystemService systemService;
 
     public void save(Comment comment) {
         commentDAO.save(comment);
@@ -128,7 +131,7 @@ public class CommentService {
         if (true) {
             if (BooleanUtils.isTrue(stateChangeDTO.getDelegate())) {
                 User userToSaveAsDelegate = manageUsersService.setUserRoles(stateChangeDTO.getDelegateFirstName(), stateChangeDTO.getDelegateLastName(),
-                        stateChangeDTO.getDelegateEmail(), false, manageUsersService.getPrismSystem(), Authority.APPLICATION_ADMINISTRATOR);
+                        stateChangeDTO.getDelegateEmail(), false, systemService.getSystem(), Authority.APPLICATION_ADMINISTRATOR);
 
                 stateChangeComment.setDelegateAdministrator(userToSaveAsDelegate);
             }

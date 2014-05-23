@@ -39,9 +39,9 @@ public class UserAccountValidator extends AbstractValidator {
     @Override
     public void addExtraValidation(Object target, Errors errors) {
         User updatedUser = (User) target;
-        UserAccount updatedAccount = updatedUser.getAccount();
+        UserAccount updatedAccount = updatedUser.getUserAccount();
         User existingUser = getCurrentUser();
-        UserAccount existingAccount = existingUser.getAccount();
+        UserAccount existingAccount = existingUser.getUserAccount();
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", EMPTY_FIELD_ERROR_MESSAGE);

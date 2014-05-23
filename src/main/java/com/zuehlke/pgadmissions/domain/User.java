@@ -102,7 +102,7 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     @JoinColumn(name = "user_account_id")
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    private UserAccount account;
+    private UserAccount userAccount;
 
     public Integer getId() {
         return id;
@@ -153,7 +153,7 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     }
 
     public boolean isEnabled() {
-        return account != null && account.isEnabled();
+        return userAccount != null && userAccount.isEnabled();
     }
 
     public String getActivationCode() {
@@ -188,12 +188,12 @@ public class User implements UserDetails, Comparable<User>, Serializable {
         return programExports;
     }
 
-    public UserAccount getAccount() {
-        return account;
+    public UserAccount getUserAccount() {
+        return userAccount;
     }
 
-    public void setAccount(UserAccount account) {
-        this.account = account;
+    public void setUserAccount(UserAccount account) {
+        this.userAccount = account;
     }
 
     public String getDisplayName() {
@@ -231,7 +231,7 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     @Override
     public String getPassword() {
-        return account != null ? account.getPassword() : null;
+        return userAccount != null ? userAccount.getPassword() : null;
     }
 
     @Override
@@ -275,7 +275,7 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     }
     
     public User withAccount(UserAccount account) {
-        this.account = account;
+        this.userAccount = account;
         return this;
     }
     

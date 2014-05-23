@@ -1,16 +1,12 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
@@ -21,7 +17,6 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
@@ -97,7 +92,6 @@ public class UserDAO {
 
     public User getUserByEmail(String email) {
         return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
-                .add(Restrictions.isNotNull("account")) //
                 .add(Restrictions.eq("email", email)).uniqueResult();
     }
 
@@ -123,7 +117,7 @@ public class UserDAO {
     }
 
     public void setApplicationFormListLastAccessTimestamp(User user) {
-        user.getAccount().setApplicationListLastAccessTimestamp(new Date());
+        user.getUserAccount().setApplicationListLastAccessTimestamp(new Date());
         save(user);
     }
 

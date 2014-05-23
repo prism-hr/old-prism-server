@@ -76,7 +76,7 @@ public class SwitchUserServiceTest {
     
     @Test(expected = DisabledException.class)
     public void shouldThrowDisabledExceptionForDisabledAccount() {
-        user2.getAccount().setEnabled(false);
+        user2.getUserAccount().setEnabled(false);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user1, user2);
         authenticationProvider.authenticate(authenticationToken);
     }

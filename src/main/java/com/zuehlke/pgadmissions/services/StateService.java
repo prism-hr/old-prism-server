@@ -8,7 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.enums.StateTransitionType;
+import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 
 @Service
 @Transactional
@@ -35,6 +38,10 @@ public class StateService {
     
     public List<PrismState> getAllStatesThatApplicationsCanBeAssignedFrom() {
         return stateDAO.getAllStatesThatApplicationsCanBeAssignedFrom();
+    }
+    
+    public List<StateTransition> getStateTransitions(PrismState state, SystemAction action, StateTransitionType...stateTransitionTypes) {
+        return stateDAO.getStateTransitions(state, action, stateTransitionTypes);
     }
     
 }

@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 import com.zuehlke.pgadmissions.timers.XMLDataImportTask;
 
@@ -80,6 +81,9 @@ public class PrismWorkflowTest {
     
     @Autowired
     private ApplicationTestDataProvider applicationTestDataProvider;
+    
+    @Autowired
+    private SystemService systemService;
 
     @Test
     public void runWorkflowTest() throws Exception {
@@ -101,7 +105,7 @@ public class PrismWorkflowTest {
         actionOutcome = actionService.executeAction(createdApplication.getId(), applicant, SystemAction.APPLICATION_COMPLETE,
                 completeApplicationComment);
         assertEquals(SystemAction.SYSTEM_VIEW_APPLICATION_LIST, actionOutcome.getNextAction());
-        assertEquals(roleService.getPrismSystem().getId(), actionOutcome.getScope().getId());
+        assertEquals(systemService.getSystem().getId(), actionOutcome.getScope().getId());
 
         Comment assignReviewerComment = new Comment();
         actionService.executeAction(1, programAdministrator, SystemAction.APPLICATION_ASSIGN_REVIEWERS, assignReviewerComment);
@@ -114,15 +118,12 @@ public class PrismWorkflowTest {
                 new User().withFirstName(firstName).withLastName(lastName).withEmail(email).withAccount(new UserAccount().withPassword("password")), advert);
         mailSenderMock.assertEmailSent(applicant, NotificationTemplateId.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
 
-        applicant = registrationService.activateAccount(applicant.getActivationCode(), SystemAction.PROGRAM_CREATE_APPLICATION, advert.getId());
+        applicant = registrationService.activateAccount(applicant.getActivationCode());
         return applicant;
     }
 
     @Before
     public void initializeData() {
-        User superadmin = manageUsersService.setUserRoles("Jozef", "Oleksy", "jozek@oleksy.pl", true, roleService.getPrismSystem(),
-                Authority.SYSTEM_ADMINISTRATOR);
-
         for (ImportedEntityFeed feed : entityImportService.getImportedEntityFeeds()) {
             String entityName = WordUtils.uncapitalize(feed.getImportedEntityType().getEntityClass().getSimpleName());
             String url = "reference_data/2014-05-08/" + entityName + ".xml";

@@ -56,7 +56,7 @@ public class UserValidatorTest {
 
     @Test
     public void shouldRejectIfNewPasswordIsNotSetAndCurrentAndConfirmAreSet() {
-        user.getAccount().setNewPassword(null);
+        user.getUserAccount().setNewPassword(null);
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "newPassword");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
@@ -68,7 +68,7 @@ public class UserValidatorTest {
 
     @Test
     public void shouldRejectIfCurrentPasswordIsNotSetAndConfirmAndNewPasswordAreSet() {
-        user.getAccount().setPassword(null);
+        user.getUserAccount().setPassword(null);
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "password");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
@@ -80,7 +80,7 @@ public class UserValidatorTest {
 
     @Test
     public void shouldRejectIfConfirmPasswordIsNotSetAndCurrentAndNewPasswordAreSet() {
-        user.getAccount().setConfirmPassword(null);
+        user.getUserAccount().setConfirmPassword(null);
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "confirmPassword");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
@@ -92,7 +92,7 @@ public class UserValidatorTest {
 
     @Test
     public void shouldRejectIfCurrentPasswordNotSameWithExisting() {
-        user.getAccount().setPassword("12345678");
+        user.getUserAccount().setPassword("12345678");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "password");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
@@ -107,7 +107,7 @@ public class UserValidatorTest {
     @Test
     @Ignore
     public void shouldRejectIfNewAndConfirmPasswordsNotSame() {
-        user.getAccount().setConfirmPassword("password");
+        user.getUserAccount().setConfirmPassword("password");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "newPassword");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
@@ -122,8 +122,8 @@ public class UserValidatorTest {
 
     @Test
     public void shouldRejectIfNewPasswordIsLessThan8Chars() {
-        user.getAccount().setNewPassword("1234");
-        user.getAccount().setConfirmPassword("1234");
+        user.getUserAccount().setNewPassword("1234");
+        user.getUserAccount().setConfirmPassword("1234");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "newPassword");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
@@ -137,8 +137,8 @@ public class UserValidatorTest {
 
     @Test
     public void shouldRejectIfNewPasswordIsMoreThan15Chars() {
-        user.getAccount().setNewPassword("1234567891234567");
-        user.getAccount().setConfirmPassword("1234567891234567");
+        user.getUserAccount().setNewPassword("1234567891234567");
+        user.getUserAccount().setConfirmPassword("1234567891234567");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "newPassword");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
@@ -152,8 +152,8 @@ public class UserValidatorTest {
 
     @Test
     public void shouldNotRejectIfContainsSpecialChars() {
-        user.getAccount().setNewPassword(" 12o*-lala");
-        user.getAccount().setConfirmPassword(" 12o*-lala");
+        user.getUserAccount().setNewPassword(" 12o*-lala");
+        user.getUserAccount().setConfirmPassword(" 12o*-lala");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "newPassword");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);

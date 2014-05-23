@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.PrismResource;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -50,23 +49,19 @@ public class RegistrationService {
         } else {
             // new user
             user = pendingUser;
-            user.getAccount().setEnabled(false);
+            user.getUserAccount().setEnabled(false);
             user.setActivationCode(encryptionUtils.generateUUID());
             userService.save(user);
         }
 
-        user.getAccount().setPassword(encryptionUtils.getMD5Hash(pendingUser.getPassword()));
+        user.getUserAccount().setPassword(encryptionUtils.getMD5Hash(pendingUser.getPassword()));
         mailService.sendRegistrationConfirmation(user);
         return user;
     }
 
-    public User activateAccount(String activationCode, SystemAction action, int resourceId) {
+    public User activateAccount(String activationCode) {
         User user = userService.getUserByActivationCode(activationCode);
-        user.getAccount().setEnabled(true);
-
-        PrismResource resource = entityService.getBy(action.getScopeClass(), "id", resourceId);
-        Role role = roleService.getCreatorRole(action, resource);
-        roleService.getOrCreateUserRole(resource, user, role.getId());
+        user.getUserAccount().setEnabled(true);
         return user;
     }
 

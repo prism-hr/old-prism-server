@@ -132,12 +132,6 @@ public class Application extends PrismResourceTransient {
     @Valid
     private AdditionalInformation additionalInformation;
 
-    @Column(name = "ucl_booking_ref_number")
-    private String uclBookingReferenceNumber;
-
-    @Column(name = "use_custom_reference_questions")
-    private Boolean useCustomReferenceQuestions = false;
-
     @Transient
     private Boolean acceptedTerms;
 
@@ -233,22 +227,6 @@ public class Application extends PrismResourceTransient {
 
     public void setAdditionalInformation(AdditionalInformation additionalInformation) {
         this.additionalInformation = additionalInformation;
-    }
-
-    public String getUclBookingReferenceNumber() {
-        return uclBookingReferenceNumber;
-    }
-
-    public void setUclBookingReferenceNumber(String uclBookingReferenceNumber) {
-        this.uclBookingReferenceNumber = uclBookingReferenceNumber;
-    }
-
-    public Boolean getUseCustomReferenceQuestions() {
-        return useCustomReferenceQuestions;
-    }
-
-    public void setUseCustomReferenceQuestions(Boolean useCustomReferenceQuestions) {
-        this.useCustomReferenceQuestions = useCustomReferenceQuestions;
     }
 
     public List<Comment> getApplicationComments() {

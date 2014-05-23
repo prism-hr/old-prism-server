@@ -6,13 +6,11 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -105,14 +103,6 @@ public class ApprovalControllerTest {
     @Mock
     @InjectIntoByType
     private ScoringDefinitionParser scoringDefinitionParserMock;
-
-    @Mock
-    @InjectIntoByType
-    private ScoresPropertyEditor scoresPropertyEditorMock;
-
-    @Mock
-    @InjectIntoByType
-    private ScoreFactory scoreFactoryMock;
 
     @Mock
     @InjectIntoByType
@@ -427,7 +417,8 @@ public class ApprovalControllerTest {
     // Role adminRole = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
     // RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
     // Program program = new Program().title("some title").administrators(admin1).build();
-    // ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").program(program).status(new State().withId(ApplicationFormStatus.INTERVIEW))
+    // ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").program(program).status(new
+    // State().withId(ApplicationFormStatus.INTERVIEW))
     // .build();
     // SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
     // BindingResult porticoResult = new MapBindingResult(Collections.emptyMap(), "");
@@ -464,7 +455,8 @@ public class ApprovalControllerTest {
     // public void shouldReturnRefereesAdminEditDTO() throws Exception {
     // final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
     // final Program program = new Program().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
-    // final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.REVIEW)).program(program).build();
+    // final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new
+    // State().withId(ApplicationFormStatus.REVIEW)).program(program).build();
     //
     // final Question question1 = new Question();
     // question1.setLabel("question1");
@@ -489,7 +481,8 @@ public class ApprovalControllerTest {
     // public void shouldNotApplyScoringConfigurationIfParseException() throws Exception {
     // final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
     // final Program program = new Program().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
-    // final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.REVIEW)).program(program).build();
+    // final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new
+    // State().withId(ApplicationFormStatus.REVIEW)).program(program).build();
     //
     // EasyMock.expect(applicationServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
     // EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));

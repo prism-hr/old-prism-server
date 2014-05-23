@@ -1,13 +1,9 @@
 package com.zuehlke.pgadmissions.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 public class RefereesAdminEditDTO {
@@ -25,8 +21,6 @@ public class RefereesAdminEditDTO {
     private Boolean suitableForProgramme;
 
     private Integer applicantRating;
-    
-    private List<Score> scores = new ArrayList<Score>();
     
     private String alert;
 
@@ -183,14 +177,6 @@ public class RefereesAdminEditDTO {
 
     public void setMessenger(String messenger) {
         this.messenger = messenger;
-    }
-
-    public List<Score> getScores() {
-        return scores;
-    }
-
-    public void setScores(List<Score> scores) {
-        this.scores = scores;
     }
 
     public boolean hasUserStartedTyping() {

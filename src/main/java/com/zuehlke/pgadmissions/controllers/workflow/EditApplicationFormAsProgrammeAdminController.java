@@ -24,13 +24,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
-import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -42,7 +40,6 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
@@ -102,12 +99,6 @@ public class EditApplicationFormAsProgrammeAdminController {
     protected ScoringDefinitionParser scoringDefinitionParser;
 
     @Autowired
-    protected ScoresPropertyEditor scoresPropertyEditor;
-
-    @Autowired
-    protected ScoreFactory scoreFactory;
-
-    @Autowired
     protected WorkflowService applicationFormUserRoleService;
 
     @Autowired
@@ -126,7 +117,6 @@ public class EditApplicationFormAsProgrammeAdminController {
         binder.registerCustomEditor(null, "comment", new StringTrimmerEditor("\r", true));
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
         binder.registerCustomEditor(String[].class, new StringArrayPropertyEditor());
-        binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -143,7 +133,6 @@ public class EditApplicationFormAsProgrammeAdminController {
         String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
         modelMap.addAttribute("editedRefereeId", editedRefereeId);
 
-        createScoresWithQuestion(applicationForm, refereesAdminEditDTO);
         refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, refereesAdminEditDTOResult);
 
         Map<String, Object> map = new HashMap<String, Object>();
@@ -178,8 +167,6 @@ public class EditApplicationFormAsProgrammeAdminController {
                 return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
             }
         }
-
-        createScoresWithQuestion(applicationForm, refereesAdminEditDTO);
 
         if (BooleanUtils.isTrue(forceSavingReference) || refereesAdminEditDTO.hasUserStartedTyping()
                 || (BooleanUtils.isTrue(forceSavingReference) && BooleanUtils.isFalse(refereesAdminEditDTO.getContainsRefereeData()))) {
@@ -222,18 +209,6 @@ public class EditApplicationFormAsProgrammeAdminController {
     public RefereesAdminEditDTO getRefereesAdminEditDTO(@RequestParam String applicationId) throws ScoringDefinitionParseException {
         Application applicationForm = getApplicationForm(applicationId);
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
-
-        ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
-        if (scoringDefinition != null) {
-            try {
-                CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
-                List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
-                refereesAdminEditDTO.getScores().addAll(scores);
-                refereesAdminEditDTO.setAlert(customQuestion.getAlert());
-            } catch (ScoringDefinitionParseException e) {
-                log.error("Incorrect scoring XML configuration for reference stage in program: " + applicationForm.getAdvert().getTitle());
-            }
-        }
         return refereesAdminEditDTO;
     }
 
@@ -265,19 +240,6 @@ public class EditApplicationFormAsProgrammeAdminController {
         Application applicationForm = getApplicationForm(applicationId);
         User user = getCurrentUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
-    }
-
-    public void createScoresWithQuestion(Application applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) throws ScoringDefinitionParseException {
-        List<Score> scores = refereesAdminEditDTO.getScores();
-        if (!scores.isEmpty()) {
-            List<Question> questions = getCustomQuestions(applicationForm);
-            for (int i = 0; i < scores.size(); i++) {
-                Score score = scores.get(i);
-                if (i < questions.size()) {
-                    score.setOriginalQuestion(questions.get(i));
-                }
-            }
-        }
     }
 
 }

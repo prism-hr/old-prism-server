@@ -15,11 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
-import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -27,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
@@ -46,34 +43,28 @@ public class ReviewCommentController {
 
     private static final Logger log = LoggerFactory.getLogger(ReviewCommentController.class);
     private static final String REVIEW_FEEDBACK_PAGE = "private/staff/reviewer/feedback/reviewcomment";
-    
+
     @Autowired
     private ApplicationService applicationsService;
 
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private FeedbackCommentValidator reviewFeedbackValidator;
-    
+
     @Autowired
     private CommentService commentService;
-    
+
     @Autowired
     private DocumentPropertyEditor documentPropertyEditor;
-    
+
     @Autowired
     private ScoringDefinitionParser scoringDefinitionParser;
-    
-    @Autowired
-    private ScoresPropertyEditor scoresPropertyEditor;
-    
-    @Autowired
-    private ScoreFactory scoreFactory;
-    
+
     @Autowired
     private WorkflowService WorkflowService;
-    
+
     @Autowired
     private ActionService actionService;
 
@@ -108,18 +99,6 @@ public class ReviewCommentController {
         reviewComment.setContent("");
         reviewComment.setUser(user);
 
-        ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REVIEW);
-        if (scoringDefinition != null) {
-            try {
-                CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
-                List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
-                reviewComment.getScores().addAll(scores);
-                reviewComment.setAlert(customQuestion.getAlert());
-            } catch (ScoringDefinitionParseException e) {
-                log.error("Incorrect scoring XML configuration for review stage in program: " + applicationForm.getAdvert().getTitle());
-            }
-        }
-
         return reviewComment;
     }
 
@@ -127,7 +106,6 @@ public class ReviewCommentController {
     public void registerBinders(WebDataBinder binder) {
         binder.setValidator(reviewFeedbackValidator);
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
-        binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -145,21 +123,12 @@ public class ReviewCommentController {
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_PROVIDE_REVIEW);
 
-        List<Score> scores = comment.getScores();
-        if (!scores.isEmpty()) {
-            List<Question> questions = getCustomQuestions(applicationForm.getApplicationNumber());
-            for (int i = 0; i < scores.size(); i++) {
-                Score score = scores.get(i);
-                score.setOriginalQuestion(questions.get(i));
-            }
-        }
-
         reviewFeedbackValidator.validate(comment, result);
 
         if (result.hasErrors()) {
             return REVIEW_FEEDBACK_PAGE;
         }
-        
+
         applicationsService.save(applicationForm);
         commentService.save(comment);
         applicationForm.getApplicationComments().add(comment);

@@ -16,11 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -28,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
@@ -71,12 +68,6 @@ public class ReferenceController {
     private ScoringDefinitionParser scoringDefinitionParser;
 
     @Autowired
-    private ScoresPropertyEditor scoresPropertyEditor;
-
-    @Autowired
-    private ScoreFactory scoreFactory;
-
-    @Autowired
     private WorkflowService applicationFormUserRoleService;
 
     @Autowired
@@ -113,18 +104,6 @@ public class ReferenceController {
         referenceComment.setUser(currentUser);
         referenceComment.setContent("");
 
-        ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
-        if (scoringDefinition != null) {
-            try {
-                CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
-                List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
-                referenceComment.getScores().addAll(scores);
-                referenceComment.setAlert(customQuestion.getAlert());
-            } catch (ScoringDefinitionParseException e) {
-                log.error("Incorrect scoring XML configuration for reference stage in program: " + applicationForm.getAdvert().getTitle());
-            }
-        }
-
         return referenceComment;
     }
 
@@ -133,7 +112,7 @@ public class ReferenceController {
         binder.setValidator(referenceValidator);
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
-        binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
+//        binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
     }
 
     @RequestMapping(value = "/addReferences", method = RequestMethod.GET)
@@ -151,15 +130,6 @@ public class ReferenceController {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_PROVIDE_REFERENCE);
-
-        List<Score> scores = comment.getScores();
-        if (!scores.isEmpty()) {
-            List<Question> questions = getCustomQuestions(applicationForm);
-            for (int i = 0; i < scores.size(); i++) {
-                Score score = scores.get(i);
-                score.setOriginalQuestion(questions.get(i));
-            }
-        }
 
         referenceValidator.validate(comment, bindingResult);
 

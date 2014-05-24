@@ -45,7 +45,7 @@ public class EntityDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getDuplicateEntity(Class<T> klass, HashMap<String, Object> constraints) {
+    public <T> T getDuplicateEntity(Class<T> klass, HashMap<String, Object> properties) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(klass); 
         
         if (klass.isAssignableFrom(PrismResource.class)) {
@@ -53,8 +53,12 @@ public class EntityDAO {
             criteria.add(Restrictions.eq("state.duplicatableState", false));
         }
 
-        for (Map.Entry<String, Object> uniqueConstraint : constraints.entrySet()) {
-            criteria.add(Restrictions.eq(uniqueConstraint.getKey(), uniqueConstraint.getValue()));
+        for (Map.Entry<String, Object> property : properties.entrySet()) {
+            if (property.getValue() != null) {
+                criteria.add(Restrictions.eq(property.getKey(), property.getValue()));
+            } else {
+                criteria.add(Restrictions.isNull(property.getKey()));
+            }
         }
             
         return (T) criteria.uniqueResult();

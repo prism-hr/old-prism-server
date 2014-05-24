@@ -23,25 +23,30 @@ public class StateService {
     public State getById(PrismState id) {
         return stateDAO.getById(id);
     }
-    
+
     public void save(State state) {
         stateDAO.save(state);
     }
-    
+
     public List<State> getAllConfigurableStates() {
         return stateDAO.getAllConfigurableStates();
     }
-    
+
     public List<PrismState> getAllStatesThatApplicationsCanBeAssignedTo() {
         return stateDAO.getAllStatesThatApplicationsCanBeAssignedTo();
     }
-    
+
     public List<PrismState> getAllStatesThatApplicationsCanBeAssignedFrom() {
         return stateDAO.getAllStatesThatApplicationsCanBeAssignedFrom();
     }
-    
-    public List<StateTransition> getStateTransitions(PrismState state, SystemAction action, StateTransitionType...stateTransitionTypes) {
+
+    public List<StateTransition> getUserStateTransitions(PrismState state, SystemAction action) {
+        return stateDAO.getStateTransitions(state, action, StateTransitionType.ONE_COMPLETED, StateTransitionType.ALL_COMPLETED,
+                StateTransitionType.PROPAGATION);
+    }
+
+    public List<StateTransition> getStateTransitions(PrismState state, SystemAction action, StateTransitionType... stateTransitionTypes) {
         return stateDAO.getStateTransitions(state, action, stateTransitionTypes);
     }
-    
+
 }

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -17,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityScope;
-import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
 import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 
 @Service
@@ -27,18 +27,62 @@ public class RoleService {
     @Autowired
     private RoleDAO roleDAO;
 
+    @Autowired
+    private EntityService entityService;
+
     public Role getById(Authority authority) {
         return roleDAO.getById(authority);
     }
 
-    public UserRole getOrCreateUserRole(PrismResource resource, User user, Authority authority) {
-        Role role = roleDAO.getById(authority);
-        UserRole userRole = roleDAO.get(user, resource, authority);
+    public UserRole getOrCreateUserRole(PrismResource resource, User user, Role role) {
+        HashMap<String, Object> properties = new HashMap<String, Object>();
+        properties.put(resource.getClass().getSimpleName().toLowerCase(), resource);
+        properties.put("user", user);
+        properties.put("role", role);
+        UserRole userRole = entityService.getDuplicateEntity(UserRole.class, properties);
         if (userRole == null) {
-            userRole = new UserRole().withUser(user).withRole(role).withScope(resource).withAssignedTimestamp(new DateTime());
-            roleDAO.save(userRole);
+            userRole = entityService.create(UserRole.class, properties);
+            userRole.setAssignedTimestamp(new DateTime());
         }
         return userRole;
+    }
+
+    public void saveUserRole(UserRole userRole) {
+        entityService.save(userRole);
+    }
+    
+    public void deleteUserRole(UserRole userRole) {
+        entityService.delete(userRole);
+    }
+
+    public void executeRoleTransition(PrismResource resource, User user, RoleTransition roleTransition) {    
+        switch (roleTransition.getRoleTransitionType()) {
+        case BRANCH:
+            saveUserRole(getOrCreateUserRole(resource, user, roleTransition.getTransitionRole()));
+            break;
+        case CREATE:
+            saveUserRole(getOrCreateUserRole(resource, user, roleTransition.getRole()));
+            break;
+        case REJOIN:
+            saveUserRole(getOrCreateUserRole(resource, user, roleTransition.getTransitionRole()));
+            deleteUserRole(getOrCreateUserRole(resource, user, roleTransition.getRole()));
+            break;
+        case REMOVE:
+            deleteUserRole(getOrCreateUserRole(resource, user, roleTransition.getRole()));
+        case UPDATE:
+            UserRole userRole = getOrCreateUserRole(resource, user, roleTransition.getRole());
+            userRole.setRole(roleTransition.getTransitionRole());
+            saveUserRole(userRole);
+            break;
+        }
+    }
+    
+    public List<User> getByRoleTransitionAndResource(Role role, PrismResource resource) {
+        return roleDAO.getBy(role, resource);
+    }
+
+    public Role getCreatorRole(SystemAction action, PrismResource scope) {
+        return roleDAO.getCreatorRole(action, scope);
     }
 
     public boolean hasAnyRole(User user, Authority... authorities) {
@@ -110,26 +154,6 @@ public class RoleService {
 
     public List<Role> getExecutorRoles(User user, PrismResource resource, SystemAction action) {
         return roleDAO.getExecutorRoles(user, resource, action);
-    }
-
-    public List<User> getBy(Role role, PrismResource resource) {
-        return roleDAO.getBy(role, resource);
-    }
-
-    public void executeRoleTransition(PrismResource resource, User user, Role role, RoleTransitionType type, PrismResource newScope, Role newRole) {
-        UserRole userRole = getUserRole(user, role.getId());
-        switch (type) {
-        case UPDATE:
-            userRole.setRole(newRole);
-            userRole.setScope(newScope);
-            break;
-        default:
-            break;
-        }
-    }
-
-    public Role getCreatorRole(SystemAction action, PrismResource scope) {
-        return roleDAO.getCreatorRole(action, scope);
     }
 
 }

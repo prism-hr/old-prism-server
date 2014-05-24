@@ -21,12 +21,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.domain.enums.SystemAction;
@@ -80,7 +78,8 @@ public class ApplicationService {
     public Application getOrCreate(final User user, final Advert advert) {
         HashMap <String, Object> applicationProperties = new HashMap<String, Object>();
         applicationProperties.put("user", user);
-        applicationProperties.put(advert.getClass().getSimpleName().toLowerCase(), advert);
+        applicationProperties.put("program", advert.getProgram());
+        applicationProperties.put("project", advert.getProject());
         Application application = entityService.getDuplicateEntity(Application.class, applicationProperties);
         if (application == null) {
             application = entityService.create(Application.class, applicationProperties);
@@ -208,13 +207,6 @@ public class ApplicationService {
             return programService.getDefaultStartDate(program, studyOption);
         }
         return null;
-    }
-
-    public void applicationCreated(Application application) {
-        User applicant = application.getUser();
-        Role role = roleService.getById(Authority.APPLICATION_CREATOR);
-        // TODO save action
-        roleService.getOrCreateUserRole(application, applicant, Authority.APPLICATION_CREATOR);
     }
 
     public ApplicationDescriptor getApplicationDescriptorForUser(final Application application, final User user) {

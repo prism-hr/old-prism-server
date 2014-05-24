@@ -67,8 +67,10 @@ public class RoleDAO {
                 .add(Restrictions.eq("stateTransition", stateTransition)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.in("role", invokerRoles)) //
-                                .add(Restrictions.eq("restrictToInvoker", true))) //
+                                .add(Restrictions.eq("restrictToInvoker", true)) //
+                                .add(Restrictions.disjunction()
+                                        .add(Restrictions.eq("roleTransitionType", RoleTransitionType.CREATE)) //
+                                        .add(Restrictions.in("role", invokerRoles)))) //
                         .add(Restrictions.ne("restrictToInvoker", true))) //
                 .addOrder(Order.asc("role")) //
                 .addOrder(Order.asc("processingOrder")) //

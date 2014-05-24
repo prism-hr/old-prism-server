@@ -9,14 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.EntityDAO;
-
 @Service
 @Transactional
 public class EntityService {
     
     @Autowired
-    private EntityDAO entityDAO;
+    private EntityService entityDAO;
 
     public <T> T getById(Class<T> klass, int id) {
         return entityDAO.getById(klass, id);
@@ -57,6 +55,10 @@ public class EntityService {
 
     public void update(Object entity) {
         entityDAO.update(entity);
+    }
+    
+    public void delete(Object entity) {
+        entityDAO.delete(entity);
     }
 
 }

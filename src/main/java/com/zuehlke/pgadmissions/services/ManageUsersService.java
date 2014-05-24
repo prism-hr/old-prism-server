@@ -32,7 +32,7 @@ public class ManageUsersService {
             roleService.removeRoles(user, resource);
         }
         for (Authority authority : authorities) {
-            roleService.getOrCreateUserRole(systemService.getSystem(), user, authority);
+            roleService.getOrCreateUserRole(systemService.getSystem(), user, roleService.getById(authority));
         }
         return user;
     }

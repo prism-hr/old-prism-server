@@ -28,7 +28,7 @@ public class RoleTransition {
 
     @Column(name = "role_transition_type_id", nullable = false)
     @Enumerated(EnumType.STRING)
-    private RoleTransitionType type;
+    private RoleTransitionType roleTransitionType;
 
     @Column(name = "processing_order")
     private Integer processingOrder;
@@ -70,12 +70,12 @@ public class RoleTransition {
         this.role = role;
     }
 
-    public RoleTransitionType getType() {
-        return type;
+    public RoleTransitionType getRoleTransitionType() {
+        return roleTransitionType;
     }
 
-    public void setType(RoleTransitionType type) {
-        this.type = type;
+    public void setRoleTransitionType(RoleTransitionType roleTransitionType) {
+        this.roleTransitionType = roleTransitionType;
     }
 
     public Integer getProcessingOrder() {

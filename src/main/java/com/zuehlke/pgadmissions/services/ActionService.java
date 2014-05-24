@@ -168,8 +168,8 @@ public class ActionService {
                 roleService.executeRoleTransition(resource, invoker, roleTransition);
             }
             List<User> users = roleService.getByRoleTransitionAndResource(roleTransition.getRole(), resource);
-            for (User roleUser : users) {
-                roleService.executeRoleTransition(resource, roleUser, roleTransition);
+            for (User user : users) {
+                roleService.executeRoleTransition(resource, user, roleTransition);
             }
         }
     }

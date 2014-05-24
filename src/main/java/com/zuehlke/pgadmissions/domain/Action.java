@@ -21,9 +21,6 @@ public class Action {
     @Column(name = "id", nullable = false)
     @Enumerated(EnumType.STRING)
     private SystemAction id;
-    
-    @Column(name = "bypass_permission_check", nullable = false)
-    private boolean bypassPermissionCheck;
 
     public SystemAction getId() {
         return id;
@@ -33,21 +30,8 @@ public class Action {
         this.id = id;
     }
 
-    public boolean isBypassPermissionCheck() {
-        return bypassPermissionCheck;
-    }
-
-    public void setBypassPermissionCheck(boolean bypassPermissionCheck) {
-        this.bypassPermissionCheck = bypassPermissionCheck;
-    }
-
     public Action withId(SystemAction id) {
         this.id = id;
-        return this;
-    }
-    
-    public Action withBypassAdmissionCheck(boolean bypassPermissionCheck) {
-        this.bypassPermissionCheck = bypassPermissionCheck;
         return this;
     }
 

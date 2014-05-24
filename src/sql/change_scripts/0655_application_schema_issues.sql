@@ -105,7 +105,7 @@ ALTER TABLE USER
 ;
 
 INSERT INTO USER_ROLE (program_id, user_id, role_id, requesting_user_id, assigned_timestamp)
-	SELECT PROGRAM.id, USER.id, "PROGRAM_APPLICATION_CREATOR", ADVERT.user_id, "2012-10-01 00:00:00"
+	SELECT PROGRAM.id, USER.id, "APPLICATION_CREATOR", ADVERT.user_id, "2012-10-01 00:00:00"
 	FROM USER INNER JOIN PROGRAM
 		ON USER.advert_id = PROGRAM.id
 	INNER JOIN ADVERT
@@ -117,7 +117,7 @@ INSERT INTO USER_ROLE (program_id, user_id, role_id, requesting_user_id, assigne
 ;
 
 INSERT INTO USER_ROLE (project_id, user_id, role_id, requesting_user_id, assigned_timestamp)
-	SELECT PROJECT.id, USER.id, "PROJECT_APPLICATION_CREATOR", ADVERT.user_id, "2012-10-01 00:00:00"
+	SELECT PROJECT.id, USER.id, "APPLICATION_CREATOR", ADVERT.user_id, "2012-10-01 00:00:00"
 	FROM USER INNER JOIN PROJECT
 		ON USER.advert_id = PROJECT.id
 	INNER JOIN ADVERT

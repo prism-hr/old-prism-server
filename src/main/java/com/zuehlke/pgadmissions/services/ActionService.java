@@ -139,6 +139,19 @@ public class ActionService {
         return nextAction;
     }
 
+    private void executeRoleTransitions(User invoker, PrismResource resource, List<Role> invokerRoles, StateTransition stateTransition) {
+        List<RoleTransition> roleTransitions = roleService.getRoleTransitions(stateTransition, invokerRoles);
+        for (RoleTransition roleTransition : roleTransitions) {
+            if (roleTransition.getRoleTransitionType() == RoleTransitionType.CREATE) {
+                roleService.executeRoleTransition(resource, invoker, roleTransition);
+            }
+            List<User> otherUsers = roleService.getByRoleTransitionAndResource(roleTransition.getRole(), resource);
+            for (User otherUser : otherUsers) {
+                roleService.executeRoleTransition(resource, otherUser, roleTransition);
+            }
+        }
+    }
+
     private void postComment(Comment comment, PrismResource childResource, User user, List<Role> invokerRoles) {
         if (comment != null) {
             try {
@@ -159,19 +172,6 @@ public class ActionService {
             invokerRolesAsString = invokerRolesAsString + "|" + invokerRoles.get(i).getAuthority();
         }
         return invokerRolesAsString;
-    }
-
-    private void executeRoleTransitions(User invoker, PrismResource resource, List<Role> invokerRoles, StateTransition stateTransition) {
-        List<RoleTransition> roleTransitions = roleService.getRoleTransitions(stateTransition, invokerRoles);
-        for (RoleTransition roleTransition : roleTransitions) {
-            if (roleTransition.getRoleTransitionType() == RoleTransitionType.CREATE) {
-                roleService.executeRoleTransition(resource, invoker, roleTransition);
-            }
-            List<User> users = roleService.getByRoleTransitionAndResource(roleTransition.getRole(), resource);
-            for (User user : users) {
-                roleService.executeRoleTransition(resource, user, roleTransition);
-            }
-        }
     }
 
 }

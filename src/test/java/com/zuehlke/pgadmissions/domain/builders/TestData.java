@@ -61,8 +61,7 @@ public class TestData {
     }
 
     public static UserRole aUserRole(Application applicaton, Role role, User user, User requestingUser) {
-        return new UserRole().withApplication(applicaton).withRole(role).withUser(user).withRequestingUser(requestingUser)
-                .withAssignedTimestamp(new DateTime());
+        return new UserRole().withApplication(applicaton).withRole(role).withUser(user).withAssignedTimestamp(new DateTime());
     }
 
     public static Document aDocument() {

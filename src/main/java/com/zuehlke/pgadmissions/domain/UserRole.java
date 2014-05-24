@@ -49,10 +49,6 @@ public class UserRole {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "requesting_user_id")
-    private User requestingUser;
-
     @Column(name = "assigned_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime assignedTimestamp;
@@ -121,14 +117,6 @@ public class UserRole {
         this.role = role;
     }
 
-    public User getRequestingUser() {
-        return requestingUser;
-    }
-
-    public void setRequestingUser(User requestingUser) {
-        this.requestingUser = requestingUser;
-    }
-
     public DateTime getAssignedTimestamp() {
         return assignedTimestamp;
     }
@@ -177,11 +165,6 @@ public class UserRole {
 
     public UserRole withRole(Role role) {
         this.role = role;
-        return this;
-    }
-
-    public UserRole withRequestingUser(User requestingUser) {
-        this.requestingUser = requestingUser;
         return this;
     }
 

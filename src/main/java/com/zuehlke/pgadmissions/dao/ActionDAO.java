@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Properties;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.internal.TypeLocatorImpl;
+import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BooleanType;
 import org.hibernate.type.EnumType;
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SystemAction;
@@ -86,6 +90,27 @@ public class ActionDAO {
                 .setInteger(1, userId))
                 .setString(2, action.toString())
                 .setResultTransformer(Transformers.aliasToBean(ActionDefinition.class)).list();
+    }
+    
+    public List<StateAction> getPermittedActions(User user, PrismResource resource) {
+        return (List<StateAction>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN).createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("state", resource.getState())) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
+                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
+                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
+                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
+                        .add(Restrictions.eq("userRole.system", resource.getSystem())) //
+                        .add(Restrictions.eq("user.parentUser", user))) //
+                .add(Restrictions.eq("userAccount.enabled", true)).addOrder(Order.desc("stateActionAssignment.raisesUrgentFlag")) //
+                .addOrder(Order.asc("action.id")) //
+                .list();
+        // TODO
+        // Filter the returned list to get the precedent actions.
     }
 	
 }

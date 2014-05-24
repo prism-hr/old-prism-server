@@ -104,30 +104,6 @@ ALTER TABLE USER
 	DROP COLUMN application_id
 ;
 
-INSERT INTO USER_ROLE (program_id, user_id, role_id, requesting_user_id, assigned_timestamp)
-	SELECT PROGRAM.id, USER.id, "APPLICATION_CREATOR", ADVERT.user_id, "2012-10-01 00:00:00"
-	FROM USER INNER JOIN PROGRAM
-		ON USER.advert_id = PROGRAM.id
-	INNER JOIN ADVERT
-		ON PROGRAM.id = ADVERT.id
-	LEFT JOIN APPLICATION
-		ON PROGRAM.id = APPLICATION.program_id
-		AND USER.id = APPLICATION.user_id
-	WHERE APPLICATION.id IS NULL
-;
-
-INSERT INTO USER_ROLE (project_id, user_id, role_id, requesting_user_id, assigned_timestamp)
-	SELECT PROJECT.id, USER.id, "APPLICATION_CREATOR", ADVERT.user_id, "2012-10-01 00:00:00"
-	FROM USER INNER JOIN PROJECT
-		ON USER.advert_id = PROJECT.id
-	INNER JOIN ADVERT
-		ON PROJECT.id = ADVERT.id
-	LEFT JOIN APPLICATION
-		ON PROJECT.id = APPLICATION.program_id
-		AND USER.id = APPLICATION.user_id
-	WHERE APPLICATION.id IS NULL
-;
-
 ALTER TABLE USER 
 	DROP FOREIGN KEY user_ibfk_3,
 	DROP COLUMN advert_id

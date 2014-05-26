@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -39,19 +38,10 @@ public class RegistrationService {
     private EntityService entityService;
 
     public User submitRegistration(User pendingUser, PrismResource prismScope) {
-        User user = userService.getUserByEmail(pendingUser.getEmail());
+        User user = userService.getOrCreateUser(pendingUser.getFirstName(), pendingUser.getLastName(), pendingUser.getEmail());
 
-        if (user != null) {
-            // invited user
-            if (!user.getActivationCode().equals(pendingUser.getActivationCode())) {
-                throw new ResourceNotFoundException();
-            }
-        } else {
-            // new user
-            user = pendingUser;
-            user.getUserAccount().setEnabled(false);
-            user.setActivationCode(encryptionUtils.generateUUID());
-            userService.save(user);
+        if (pendingUser.getActivationCode() != null && !user.getActivationCode().equals(pendingUser.getActivationCode())) {
+            throw new ResourceNotFoundException();
         }
 
         user.getUserAccount().setPassword(encryptionUtils.getMD5Hash(pendingUser.getPassword()));

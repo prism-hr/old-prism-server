@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.dto.ActionDefinition;
 
 @Repository
-@SuppressWarnings("unchecked")
 public class ActionDAO {
 
 	private SessionFactory sessionFactory;
@@ -77,6 +76,7 @@ public class ActionDAO {
                 .setString(3, action.toString()).executeUpdate();
     }
     
+    @SuppressWarnings("unchecked")
     private List<ActionDefinition> getUserActionsAbstract(Integer applicationFormId, Integer userId, SystemAction action) {
         Properties customDTOProperties = new Properties();
         customDTOProperties.put("enumClass", SystemAction.class.getCanonicalName());
@@ -92,7 +92,16 @@ public class ActionDAO {
                 .setResultTransformer(Transformers.aliasToBean(ActionDefinition.class)).list();
     }
     
-    public List<StateAction> getPermittedActions(User user, PrismResource resource) {
+    @SuppressWarnings("unchecked")
+    public List<StateAction> getPermittedAction(PrismResource resource, SystemAction action) {
+        return (List<StateAction>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .add(Restrictions.eq("state", resource.getState())) //
+                .add(Restrictions.eq("action.id", action)) //
+                .list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<StateAction> getPermittedUserActions(User user, PrismResource resource) {
         return (List<StateAction>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //

@@ -152,8 +152,12 @@ public class RoleService {
         return roleDAO.getRoleTransitions(stateTransition, invokerRoles);
     }
 
-    public List<Role> getExecutorRoles(User user, PrismResource resource, SystemAction action) {
-        return roleDAO.getExecutorRoles(user, resource, action);
+    public List<Role> getActionRoles(PrismResource resource, SystemAction action) {
+        return roleDAO.getActionRoles(resource, action);
+    }
+    
+    public List<Role> getActionInvokerRoles(User user, PrismResource resource, SystemAction action) {
+        return roleDAO.getActionInvokerRoles(user, resource, action);
     }
 
 }

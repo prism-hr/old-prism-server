@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,6 +22,9 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Parameter;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @AnalyzerDef(name = "institutionNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
@@ -184,6 +190,16 @@ public class Institution extends PrismResource {
     @Override
     public void setUser(User user) {
         this.user = user;
+    }
+    
+    @Override
+    public UniqueResourceSignature getUniqueResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("system", system);
+        properties.put("name", name);
+        propertiesWrapper.add(properties);
+        return new UniqueResourceSignature(propertiesWrapper, null);
     }
 
 }

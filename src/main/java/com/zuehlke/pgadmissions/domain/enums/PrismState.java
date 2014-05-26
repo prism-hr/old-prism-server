@@ -48,7 +48,8 @@ public enum PrismState {
     PROJECT_DISABLED, //
     PROJECT_DISABLED_COMPLETED, //
     PROJECT_DISABLED_PENDING_COMPLETION, //
-    SYSTEM_APPROVED;
+    SYSTEM_APPROVED, //
+    PROGRAM_WITHDRAWN;
 
     private String displayValue = null;
 

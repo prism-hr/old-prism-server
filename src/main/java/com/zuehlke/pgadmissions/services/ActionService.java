@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Hibernate;
 import org.joda.time.DateTime;
@@ -89,12 +88,10 @@ public class ActionService {
         List<Role> actionInvokerRoles = Lists.newArrayList();
 
         if (createMatcher.matches()) {
-            try {
-                PrismResourceType childResourceType = PrismResourceType.valueOf(createMatcher.group(2));
-                Object resourceService = applicationContext.getBean(childResourceType.toString().toLowerCase() + "Service");
-                resource = (PrismResource) MethodUtils.invokeExactMethod(resourceService, "getOrCreate", new Object[] { invoker, resource });
-            } catch (Exception e) {
-                throw new Error("Tried to create a prism resource of invalid type", e);
+            PrismResource duplicateResource = entityService.getDuplicateEntity(resource.getClass(), resource.getUniqueResourceSignature());
+            if (duplicateResource != null) {
+                resource = duplicateResource;
+                entityService.delete(resource);
             }
         }
 

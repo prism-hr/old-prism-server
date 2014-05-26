@@ -4,7 +4,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 import com.zuehlke.pgadmissions.domain.enums.PrismResourceType;
 
-public abstract class PrismResource {
+public abstract class PrismResource implements IDeduplicatableResource {
 
     public abstract Integer getId();
     
@@ -71,5 +71,5 @@ public abstract class PrismResource {
     public boolean isFertile() {
         return this.getState().isFertileState();
     }
-
+    
 }

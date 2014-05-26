@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,7 +15,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
@@ -135,6 +141,19 @@ public class Project extends Advert {
     @Override
     public Application getApplication() {
         return null;
+    }
+
+    @Override
+    public UniqueResourceSignature getUniqueResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("user", getUser());
+        properties.put("program", program);
+        properties.put("title", title);
+        propertiesWrapper.add(properties);
+        HashMap<String, Object> exclusions = Maps.newHashMap();   
+        exclusions.put("state.id", PrismState.PROJECT_DISABLED_COMPLETED);
+        return new UniqueResourceSignature(propertiesWrapper, exclusions);
     }
 
 }

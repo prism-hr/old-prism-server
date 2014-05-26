@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +13,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.search.annotations.Indexed;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @Entity
 @Table(name = "SYSTEM")
@@ -108,6 +114,15 @@ public class System extends PrismResource {
     @Override
     public void setUser(User user) {
         this.user = user;
+    }
+    
+    @Override
+    public UniqueResourceSignature getUniqueResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("name", name);
+        propertiesWrapper.add(properties);
+        return new UniqueResourceSignature(propertiesWrapper, null);
     }
     
 }

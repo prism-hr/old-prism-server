@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.domain.IDeduplicatableResource;
+
 @Service
 @Transactional
 public class EntityService {
@@ -24,8 +26,8 @@ public class EntityService {
         return entityDAO.getBy(klass, propertyName, propertyValue);
     }
     
-    public <T> T getDuplicateEntity(Class<T> klass, HashMap<String, Object> properties) {
-        return (T) entityDAO.getDuplicateEntity(klass, properties);
+    public <T> T getDuplicateEntity(Class<T> klass, IDeduplicatableResource.UniqueResourceSignature signature) {
+        return (T) entityDAO.getDuplicateEntity(klass, signature);
     }
     
     @SuppressWarnings("unchecked")

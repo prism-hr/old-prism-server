@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -26,6 +27,9 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Entity
 @Table(name = "APPLICATION")
@@ -417,6 +421,23 @@ public class Application extends PrismResourceTransient {
     @Override
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @Override
+    public UniqueResourceSignature getUniqueResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("user", user);
+        properties.put("program", program);
+        if (project != null) {
+            properties.put("project", project);
+        }
+        propertiesWrapper.add(properties);
+        HashMap<String, Object> exclusions = Maps.newHashMap();   
+        exclusions.put("state.id", PrismState.APPLICATION_APPROVED_COMPLETED);
+        exclusions.put("state.id", PrismState.APPLICATION_REJECTED_COMPLETED);
+        exclusions.put("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED);
+        return new UniqueResourceSignature(propertiesWrapper, exclusions);
     }
 
 }

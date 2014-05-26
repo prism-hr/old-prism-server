@@ -23,7 +23,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -298,6 +301,24 @@ public class Program extends Advert {
     @Override
     public Application getApplication() {
         return null;
+    }
+
+    @Override
+    public UniqueResourceSignature getUniqueResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties1 = Maps.newHashMap();
+        HashMap<String, Object> properties2 = Maps.newHashMap();        
+        properties1.put("institution", institution);
+        properties1.put("code", code);
+        properties2.put("institution", institution);
+        properties2.put("title", title);  
+        propertiesWrapper.add(properties1);
+        propertiesWrapper.add(properties2);
+        HashMap<String, Object> exclusions = Maps.newHashMap();   
+        exclusions.put("state.id", PrismState.PROGRAM_DISABLED_COMPLETED);
+        exclusions.put("state.id", PrismState.PROGRAM_REJECTED);
+        exclusions.put("state.id", PrismState.PROGRAM_WITHDRAWN);
+        return new UniqueResourceSignature(propertiesWrapper, exclusions);
     }
 
 }

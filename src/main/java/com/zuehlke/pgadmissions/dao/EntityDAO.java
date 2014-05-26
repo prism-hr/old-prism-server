@@ -2,16 +2,18 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.IDeduplicatableResource;
 
 @Repository
 public class EntityDAO {
@@ -45,23 +47,33 @@ public class EntityDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getDuplicateEntity(Class<T> klass, HashMap<String, Object> properties) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(klass); 
+    public <T> T getDuplicateEntity(Class<T> klass, IDeduplicatableResource.UniqueResourceSignature signature) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(klass);
+        Disjunction indexes = Restrictions.disjunction();
         
-        if (klass.isAssignableFrom(PrismResource.class)) {
-            criteria.createAlias("state", "state", JoinType.INNER_JOIN);
-            criteria.add(Restrictions.eq("state.duplicatableState", false));
-        }
-
-        for (Map.Entry<String, Object> property : properties.entrySet()) {
-            if (property.getValue() != null) {
-                criteria.add(Restrictions.eq(property.getKey(), property.getValue()));
-            } else {
-                criteria.add(Restrictions.isNull(property.getKey()));
+        List<HashMap<String, Object>> propertyWrapper = signature.getProperties();
+        if (propertyWrapper.size() > 0) {
+            for (HashMap<String, Object> properties : propertyWrapper) {
+                Conjunction index = Restrictions.conjunction();
+                for (Map.Entry<String, Object> property : properties.entrySet()) {
+                    if (property.getKey() == null || property.getValue() == null) {
+                        throw new Error("Invalid resource signature");
+                    }
+                    index.add(Restrictions.eq(property.getKey(), property.getValue()));
+                }
+                indexes.add(index);
             }
+            for (Map.Entry<String, Object> exclusion : signature.getExclusions().entrySet()) {
+                criteria.add(Restrictions.ne(exclusion.getKey(), exclusion.getValue()));
+            }
+            return (T) criteria.uniqueResult();
         }
-            
-        return (T) criteria.uniqueResult();
+        
+        throw new Error("Invalid resource signature");
+    }
+    
+    public void delete(Object entity) {
+        sessionFactory.getCurrentSession().delete(entity);
     }
     
 }

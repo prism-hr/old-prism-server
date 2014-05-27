@@ -153,10 +153,12 @@ public class Application extends PrismResourceTransient {
         this.id = id;
     }
 
+    @Override
     public String getCode() {
         return code;
     }
 
+    @Override
     public void setCode(String code) {
         this.code = code;
     }
@@ -185,10 +187,12 @@ public class Application extends PrismResourceTransient {
         this.acceptedTerms = acceptedTerms;
     }
 
+    @Override
     public DateTime getCreatedTimestamp() {
         return createdTimestamp;
     }
 
+    @Override
     public void setCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
     }

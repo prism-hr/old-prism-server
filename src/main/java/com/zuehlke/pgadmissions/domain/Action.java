@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 
 @Entity
 @Table(name = "ACTION")
@@ -20,17 +20,17 @@ public class Action {
     @Id
     @Column(name = "id", nullable = false)
     @Enumerated(EnumType.STRING)
-    private SystemAction id;
+    private PrismAction id;
 
-    public SystemAction getId() {
+    public PrismAction getId() {
         return id;
     }
 
-    public void setId(SystemAction id) {
+    public void setId(PrismAction id) {
         this.id = id;
     }
 
-    public Action withId(SystemAction id) {
+    public Action withId(PrismAction id) {
         this.id = id;
         return this;
     }

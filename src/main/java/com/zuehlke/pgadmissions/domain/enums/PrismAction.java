@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.enums;
 
 import com.zuehlke.pgadmissions.domain.PrismResource;
 
-public enum SystemAction {
+public enum PrismAction {
 
     APPLICATION_ASSESS_ELIGIBILITY, //
     APPLICATION_ASSIGN_INTERVIEWERS, //

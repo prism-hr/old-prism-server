@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -99,11 +99,11 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
 
-        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_ASSIGN_SUPERVISORS);
+        actionService.validateAction(applicationForm, user, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
 
         modelMap.put("approvalRound", getApprovalRound(applicationForm.getCode()));
 
-        Comment latestApprovalComment = applicationsService.getLatestStateChangeComment(applicationForm, SystemAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
+        Comment latestApprovalComment = applicationsService.getLatestStateChangeComment(applicationForm, PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
         if (latestApprovalComment != null) {
             SendToPorticoDataDTO porticoData = new SendToPorticoDataDTO();
             porticoData.setApplicationNumber(applicationForm.getCode());
@@ -173,7 +173,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             BindingResult bindingResult, SessionStatus sessionStatus) {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User initiator = getCurrentUser();
-        actionService.validateAction(applicationForm, initiator, SystemAction.APPLICATION_ASSIGN_SUPERVISORS);
+        actionService.validateAction(applicationForm, initiator, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
 
         if (bindingResult.hasErrors()) {
             return PROPOSE_OFFER_RECOMMENDATION_SECTION;

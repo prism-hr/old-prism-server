@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @Service
@@ -41,7 +41,7 @@ public class ReviewService {
     public void moveApplicationToReview(int applicationId, AssignReviewersComment comment) {
         Application application = applicationsService.getById(applicationId);
         User user = userService.getCurrentUser();
-        Comment latestAssignReviewersComment = applicationsService.getLatestStateChangeComment(application, SystemAction.APPLICATION_ASSIGN_REVIEWERS);
+        Comment latestAssignReviewersComment = applicationsService.getLatestStateChangeComment(application, PrismAction.APPLICATION_ASSIGN_REVIEWERS);
 
         LocalDate baseDate;
         if (application.getClosingDate() == null || latestAssignReviewersComment != null) {

@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
@@ -71,11 +71,11 @@ public class OfferRecommendationController {
     public String getOfferRecommendationPage(ModelMap modelMap) {
         Application application = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(application, user, SystemAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
+        actionService.validateAction(application, user, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
 
         OfferRecommendedComment offerRecommendedComment = new OfferRecommendedComment();
         AssignSupervisorsComment approvalComment = (AssignSupervisorsComment) applicationsService.getLatestStateChangeComment(application,
-                SystemAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
+                PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
         if (approvalComment != null) {
             offerRecommendedComment.setPositionTitle(approvalComment.getPositionTitle());
             offerRecommendedComment.setPositionDescription(approvalComment.getPositionDescription());
@@ -103,7 +103,7 @@ public class OfferRecommendationController {
             ModelMap modelMap) {
         Application application = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(application, user, SystemAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
+        actionService.validateAction(application, user, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
 
         if (errors.hasErrors()) {
             modelMap.put("offerRecommendedComment", offerRecommendedComment);

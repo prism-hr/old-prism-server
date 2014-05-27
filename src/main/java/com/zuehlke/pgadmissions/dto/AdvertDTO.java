@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.Date;
 
-import com.zuehlke.pgadmissions.domain.enums.AdvertType;
-
 public class AdvertDTO {
 
     private Integer id;
@@ -16,7 +14,6 @@ public class AdvertDTO {
 	private String primarySupervisorFirstName;
 	private String primarySupervisorLastName;
 	private String primarySupervisorEmail;
-    private AdvertType advertType;
     private String secondarySupervisorFirstName = null;
     private String secondarySupervisorLastName = null;
     private Boolean selected = false;
@@ -99,14 +96,6 @@ public class AdvertDTO {
     
     public void setPrimarySupervisorEmail(String primarySupervisorEmail) {
         this.primarySupervisorEmail = primarySupervisorEmail;
-    }
-    
-    public AdvertType getAdvertType() {
-        return advertType;
-    }
-
-    public void setType(AdvertType advertType) {
-        this.advertType = advertType;
     }
     
     public String getSecondarySupervisorFirstName() {

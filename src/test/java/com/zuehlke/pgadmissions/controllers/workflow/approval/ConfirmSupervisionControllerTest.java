@@ -18,7 +18,7 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -76,7 +76,7 @@ public class ConfirmSupervisionControllerTest {
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", user);
 
-        actionsProviderMock.validateAction(applicationForm, user, SystemAction.APPLICATION_CONFIRM_SUPERVISION);
+        actionsProviderMock.validateAction(applicationForm, user, PrismAction.APPLICATION_CONFIRM_SUPERVISION);
 
         EasyMock.replay(actionsProviderMock);
         String res = controller.confirmSupervision(modelMap);
@@ -99,7 +99,7 @@ public class ConfirmSupervisionControllerTest {
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", user);
 
-        actionsProviderMock.validateAction(applicationForm, user, SystemAction.APPLICATION_CONFIRM_SUPERVISION);
+        actionsProviderMock.validateAction(applicationForm, user, PrismAction.APPLICATION_CONFIRM_SUPERVISION);
 
         EasyMock.replay(approvalServiceMock, actionsProviderMock);
         String res = controller.applyConfirmSupervision(confirmSupervisionDTO, result, modelMap);

@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
-    private ApplicationFormDAO applicationDAO;
+    private ApplicationDAO applicationDAO;
     private System system;
     private Institution institution;
     private Program program;
@@ -44,7 +44,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
     @Before
     public void prepare() {
-        applicationDAO = new ApplicationFormDAO(sessionFactory);
+        applicationDAO = new ApplicationDAO(sessionFactory);
 
         system = testObjectProvider.getSystem();
         institution = testObjectProvider.getInstitution();
@@ -55,7 +55,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
     @Test(expected = NullPointerException.class)
     public void shouldSendNullPointerException() {
-        ApplicationFormDAO applicationFormDAO = new ApplicationFormDAO();
+        ApplicationDAO applicationFormDAO = new ApplicationDAO();
         Application applicationForm = new Application().withId(1);
         applicationFormDAO.save(applicationForm);
     }

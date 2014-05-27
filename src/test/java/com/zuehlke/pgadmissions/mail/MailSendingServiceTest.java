@@ -4,7 +4,7 @@ import static org.easymock.EasyMock.createMock;
 
 import org.junit.Before;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
@@ -41,7 +41,7 @@ public class MailSendingServiceTest {
 
     protected ConfigurationService configurationServiceMock;
 
-    protected ApplicationFormDAO applicationFormDAOMock;
+    protected ApplicationDAO applicationFormDAOMock;
 
     protected UserDAO userDAOMock;
 
@@ -59,7 +59,7 @@ public class MailSendingServiceTest {
         encryptionUtilsMock = createMock(EncryptionUtils.class);
         mockMailSender = createMock(MailSender.class);
         configurationServiceMock = createMock(ConfigurationService.class);
-        applicationFormDAOMock = createMock(ApplicationFormDAO.class);
+        applicationFormDAOMock = createMock(ApplicationDAO.class);
 //        service = new MailSendingService(mockMailSender, configurationServiceMock, applicationFormDAOMock, userDAOMock, roleDAOMock, refereeDAOMock,
 //                encryptionUtilsMock, HOST, SERVICE_OFFER, UCL_PROSPECTUS_LINK);
     }

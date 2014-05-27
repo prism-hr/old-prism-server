@@ -32,20 +32,20 @@ import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
 @Transactional
 public class WorkflowService {
 
-    private static final HashMap<PrismState, SystemAction> INITIATE_STAGE_MAP;
+    private static final HashMap<PrismState, PrismAction> INITIATE_STAGE_MAP;
     static {
-        INITIATE_STAGE_MAP = new HashMap<PrismState, SystemAction>(4);
-        INITIATE_STAGE_MAP.put(PrismState.APPLICATION_REVIEW, SystemAction.APPLICATION_ASSIGN_REVIEWERS);
-        INITIATE_STAGE_MAP.put(PrismState.APPLICATION_INTERVIEW, SystemAction.APPLICATION_ASSIGN_INTERVIEWERS);
-        INITIATE_STAGE_MAP.put(PrismState.APPLICATION_APPROVAL, SystemAction.APPLICATION_ASSIGN_SUPERVISORS);
-        INITIATE_STAGE_MAP.put(PrismState.APPLICATION_REJECTED, SystemAction.APPLICATION_CONFIRM_REJECTION);
+        INITIATE_STAGE_MAP = new HashMap<PrismState, PrismAction>(4);
+        INITIATE_STAGE_MAP.put(PrismState.APPLICATION_REVIEW, PrismAction.APPLICATION_ASSIGN_REVIEWERS);
+        INITIATE_STAGE_MAP.put(PrismState.APPLICATION_INTERVIEW, PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
+        INITIATE_STAGE_MAP.put(PrismState.APPLICATION_APPROVAL, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
+        INITIATE_STAGE_MAP.put(PrismState.APPLICATION_REJECTED, PrismAction.APPLICATION_CONFIRM_REJECTION);
     };
 
     @Autowired
@@ -390,7 +390,7 @@ public class WorkflowService {
         updateApplicationDueDate(applicationForm, newDueDate);
     }
 
-    private void assignToAdministrators(Application applicationForm, SystemAction action, Date dueDate, Boolean bindDeadlineToDueDate) {
+    private void assignToAdministrators(Application applicationForm, PrismAction action, Date dueDate, Boolean bindDeadlineToDueDate) {
         Map<User, Authority> administrators = Maps.newHashMap();
 
         for (User superAdministrator : userDAO.getSuperadministrators()) {

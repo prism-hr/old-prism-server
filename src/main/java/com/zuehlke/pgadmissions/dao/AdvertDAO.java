@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.dao;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.Criteria;
@@ -12,15 +11,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.internal.TypeLocatorImpl;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.DateType;
-import org.hibernate.type.EnumType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.StringType;
-import org.hibernate.type.Type;
-import org.hibernate.type.TypeResolver;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -29,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramExport;
 import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityListType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
@@ -87,7 +78,7 @@ public class AdvertDAO {
             programQuery = getProgramAdvertByUserUsernameCriteria(session, feedKeyValue);
             projectQuery = getProjectAdvertByUserUsernameCriteria(session, feedKeyValue);
         } else if (feedKey == OpportunityListType.RECOMMENDEDOPPORTUNTIIESBYAPPLICANTID) {
-            return getRecommendedAdvertFeed(feedKeyValue);
+//            return getRecommendedAdvertFeed(feedKeyValue);
         } 
         
         DateTime baseline = new DateTime(new Date());
@@ -172,7 +163,6 @@ public class AdvertDAO {
     }
     
     private List<AdvertDTO> getProgramAdvertDTOs(Criteria programQuery, ProjectionList programProjectionList, Date baselineDate, Integer selectedAdvertId) {
-        deleteExpiredClosingDates();
         return (List<AdvertDTO>) programQuery
                 .setProjection(programProjectionList.add(Projections.groupProperty("program.id"), "id")
                         .add(Projections.property("program.title"), "title")
@@ -216,45 +206,46 @@ public class AdvertDAO {
                 .add(Restrictions.ne("project.id", selectedAdvertId))
                 .setResultTransformer(Transformers.aliasToBean(AdvertDTO.class)).list();
     }
-    
-    /**
-     * Calls a stored procedure to get a list of recommended adverts for a given applicant.
-     * The threshold value governs the number of recommended adverts that are returned.
-     * Setting the threshold to 0.00 returns all of the recommended adverts.
-     * Setting the threshold to 1.00 returns only the top recommended advert(s).
-     * 
-     * @author Alastair Knowles
-     * @param feedKeyValue
-     * @return List<AdvertDTO>
-     */
-    private List<AdvertDTO> getRecommendedAdvertFeed(String feedKeyValue) {
-        Properties customDTOProperties = new Properties();
-        customDTOProperties.put("enumClass", AdvertType.class.getCanonicalName());
-        customDTOProperties.put("type", "12");
-        Type advertTypeEnum = new TypeLocatorImpl(new TypeResolver()).custom(EnumType.class, customDTOProperties);
-        
-        return (List<AdvertDTO>) sessionFactory.getCurrentSession()
-            .createSQLQuery("CALL SP_SELECT_RECOMMENDED_ADVERTS(?, ?);")
-                .addScalar("id", IntegerType.INSTANCE)
-                .addScalar("title", StringType.INSTANCE)
-                .addScalar("description", StringType.INSTANCE)
-                .addScalar("studyDuration", IntegerType.INSTANCE)
-                .addScalar("funding", StringType.INSTANCE)
-                .addScalar("programCode", StringType.INSTANCE)
-                .addScalar("closingDate", DateType.INSTANCE)
-                .addScalar("primarySupervisorFirstName", StringType.INSTANCE)
-                .addScalar("primarySupervisorLastName", StringType.INSTANCE)
-                .addScalar("primarySupervisorEmail", StringType.INSTANCE)
-                .addScalar("advertType", advertTypeEnum)
-                .addScalar("secondarySupervisorFirstName", StringType.INSTANCE)
-                .addScalar("secondarySupervisorLastName", StringType.INSTANCE)
-                .setInteger(0, Integer.parseInt(feedKeyValue))
-                .setBigDecimal(1, RECOMMENDED_ADVERT_FEED_THRESHOLD)
-            .setResultTransformer(Transformers.aliasToBean(AdvertDTO.class)).list();
-    }
-    
-    private void deleteExpiredClosingDates() {
-        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_EXPIRED_CLOSING_DATES();").executeUpdate();
-    }
+
+//  TODO: reimplement the algorithm in Java layer
+//    /**
+//     * Calls a stored procedure to get a list of recommended adverts for a given applicant.
+//     * The threshold value governs the number of recommended adverts that are returned.
+//     * Setting the threshold to 0.00 returns all of the recommended adverts.
+//     * Setting the threshold to 1.00 returns only the top recommended advert(s).
+//     * 
+//     * @author Alastair Knowles
+//     * @param feedKeyValue
+//     * @return List<AdvertDTO>
+//     */
+//    private List<AdvertDTO> getRecommendedAdvertFeed(String feedKeyValue) {
+//        Properties customDTOProperties = new Properties();
+//        customDTOProperties.put("enumClass", AdvertType.class.getCanonicalName());
+//        customDTOProperties.put("type", "12");
+//        Type advertTypeEnum = new TypeLocatorImpl(new TypeResolver()).custom(EnumType.class, customDTOProperties);
+//        
+//        return (List<AdvertDTO>) sessionFactory.getCurrentSession()
+//            .createSQLQuery("CALL SP_SELECT_RECOMMENDED_ADVERTS(?, ?);")
+//                .addScalar("id", IntegerType.INSTANCE)
+//                .addScalar("title", StringType.INSTANCE)
+//                .addScalar("description", StringType.INSTANCE)
+//                .addScalar("studyDuration", IntegerType.INSTANCE)
+//                .addScalar("funding", StringType.INSTANCE)
+//                .addScalar("programCode", StringType.INSTANCE)
+//                .addScalar("closingDate", DateType.INSTANCE)
+//                .addScalar("primarySupervisorFirstName", StringType.INSTANCE)
+//                .addScalar("primarySupervisorLastName", StringType.INSTANCE)
+//                .addScalar("primarySupervisorEmail", StringType.INSTANCE)
+//                .addScalar("advertType", advertTypeEnum)
+//                .addScalar("secondarySupervisorFirstName", StringType.INSTANCE)
+//                .addScalar("secondarySupervisorLastName", StringType.INSTANCE)
+//                .setInteger(0, Integer.parseInt(feedKeyValue))
+//                .setBigDecimal(1, RECOMMENDED_ADVERT_FEED_THRESHOLD)
+//            .setResultTransformer(Transformers.aliasToBean(AdvertDTO.class)).list();
+//    }
+//    
+//    private void deleteExpiredClosingDates() {
+//        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_EXPIRED_CLOSING_DATES();").executeUpdate();
+//    }
 
 }

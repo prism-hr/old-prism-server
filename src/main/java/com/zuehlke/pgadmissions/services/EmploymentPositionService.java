@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
+import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.EmploymentPositionDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
@@ -21,7 +21,7 @@ public class EmploymentPositionService {
 	private EmploymentPositionDAO employmentPositionDAO;
 
     @Autowired
-    private ApplicationFormCopyHelper applicationFormCopyHelper;
+    private ApplicationCopyHelper applicationFormCopyHelper;
 
 	public EmploymentPosition getById(Integer id) {
 		return employmentPositionDAO.getById(id);

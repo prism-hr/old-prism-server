@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 
 @Repository
 public class RoleDAO {
@@ -77,7 +77,7 @@ public class RoleDAO {
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public Role getCreatorRole(SystemAction action, PrismResource resource) {
+    public Role getCreatorRole(PrismAction action, PrismResource resource) {
         return (Role) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
                 .setProjection(Projections.groupProperty("role")).createAlias("stateTransition", "stateTransition", JoinType.INNER_JOIN)
                 .createAlias("stateTransition.stateAction", "stateAction", JoinType.INNER_JOIN).add(Restrictions.eq("stateAction.state", resource.getState())) //
@@ -87,7 +87,7 @@ public class RoleDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Role> getActionRoles(PrismResource resource, SystemAction action) {
+    public List<Role> getActionRoles(PrismResource resource, PrismAction action) {
         // Check that the action is valid
         return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("stateActionAssignment.role")) //
@@ -98,7 +98,7 @@ public class RoleDAO {
     }
     
     @SuppressWarnings("unchecked")
-    public List<Role> getActionInvokerRoles(User user, PrismResource resource, SystemAction action) {
+    public List<Role> getActionInvokerRoles(User user, PrismResource resource, PrismAction action) {
         return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("stateActionAssignment.role")) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //

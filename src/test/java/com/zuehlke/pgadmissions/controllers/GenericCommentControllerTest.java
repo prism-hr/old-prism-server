@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -58,7 +58,7 @@ public class GenericCommentControllerTest {
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", user);
 
-        actionsProviderMock.validateAction(applicationForm, user, SystemAction.APPLICATION_COMMENT);
+        actionsProviderMock.validateAction(applicationForm, user, PrismAction.APPLICATION_COMMENT);
 
         EasyMock.replay(actionsProviderMock);
         assertEquals("private/staff/admin/comment/genericcomment", controller.getGenericCommentPage(modelMap));

@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.QualificationType;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
@@ -135,7 +135,7 @@ public class QualificationController {
 
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(String applicationId) {
-        return applicationsService.getSecuredApplication(applicationId, SystemAction.APPLICATION_COMPLETE, SystemAction.APPLICATION_CORRECT);
+        return applicationsService.getSecuredApplication(applicationId, PrismAction.APPLICATION_COMPLETE, PrismAction.APPLICATION_CORRECT);
     }
 
     private String returnView(ModelMap modelMap, Qualification qualification) {

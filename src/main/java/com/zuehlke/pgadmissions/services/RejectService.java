@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Application;
@@ -24,7 +24,7 @@ public class RejectService {
 	private final Logger log = LoggerFactory.getLogger(RejectService.class);
 
 	@Autowired
-	private ApplicationFormDAO applicationDao;
+	private ApplicationDAO applicationDao;
 	
 	@Autowired
 	private RejectReasonDAO rejectDao;

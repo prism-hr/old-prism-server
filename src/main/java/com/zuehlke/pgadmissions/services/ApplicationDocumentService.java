@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
+import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 
@@ -19,7 +19,7 @@ public class ApplicationDocumentService {
     private ApplicationService applicationService;
     
     @Autowired
-    private ApplicationFormCopyHelper applicationFormCopyHelper;
+    private ApplicationCopyHelper applicationCopyHelper;
 
     public ApplicationDocument getOrCreate(Application application) {
         ApplicationDocument applicationFormDocument = application.getApplicationDocument();
@@ -37,7 +37,7 @@ public class ApplicationDocumentService {
             application.setApplicationDocument(persistentApplicationFormDocument);
             entityService.save(application);
         }
-        applicationFormCopyHelper.copyApplicationFormDocument(persistentApplicationFormDocument, applicationFormDocument, false);
+        applicationCopyHelper.copyApplicationFormDocument(persistentApplicationFormDocument, applicationFormDocument, false);
         applicationService.saveOrUpdateApplicationSection(application);
 	}
 	

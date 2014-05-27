@@ -8,7 +8,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 
 public class ActionOutcome {
 
@@ -16,9 +16,9 @@ public class ActionOutcome {
 
     private PrismResource resource;
 
-    private SystemAction nextAction;
+    private PrismAction nextAction;
 
-    public ActionOutcome(User user, PrismResource resource, SystemAction nextAction) {
+    public ActionOutcome(User user, PrismResource resource, PrismAction nextAction) {
         this.user = user;
         this.resource = resource;
         this.nextAction = nextAction;
@@ -33,7 +33,7 @@ public class ActionOutcome {
         return resource;
     }
 
-    public SystemAction getNextAction() {
+    public PrismAction getNextAction() {
         return nextAction;
     }
 

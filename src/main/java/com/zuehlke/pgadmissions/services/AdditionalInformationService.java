@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
+import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Application;
 
@@ -16,7 +16,7 @@ public class AdditionalInformationService {
     private ApplicationService applicationService;
     
     @Autowired
-    ApplicationFormCopyHelper applicationFormCopyHelper;
+    ApplicationCopyHelper applicationFormCopyHelper;
 
     public AdditionalInformation getOrCreate(Application application) {
         AdditionalInformation additionalInformation = application.getAdditionalInformation();

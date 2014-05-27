@@ -18,8 +18,7 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -58,7 +57,7 @@ public class ApprovalService {
         ApprovalService thisBean = applicationContext.getBean(ApprovalService.class);
 
         AssignSupervisorsComment approvalComment = (AssignSupervisorsComment) applicationsService.getLatestStateChangeComment(form,
-                SystemAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
+                PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
         SupervisionConfirmationComment supervisionConfirmationComment = thisBean.createSupervisionConfirmationComment(approvalComment, confirmSupervisionDTO);
 
         if (BooleanUtils.isTrue(supervisionConfirmationComment.getDeclinedResponse())) {
@@ -101,7 +100,7 @@ public class ApprovalService {
     public AssignSupervisorsComment initiateApprovalComment(String applicationId) {
         Application application = applicationsService.getByApplicationNumber(applicationId);
         AssignSupervisorsComment approvalComment = new AssignSupervisorsComment();
-        Comment latestApprovalComment = applicationsService.getLatestStateChangeComment(application, SystemAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
+        Comment latestApprovalComment = applicationsService.getLatestStateChangeComment(application, PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
         Project project = application.getProject();
         LocalDate startDate = application.getProgramDetails().getStartDate();
         if (latestApprovalComment != null) {
@@ -131,8 +130,8 @@ public class ApprovalService {
 
     public void moveApplicationToApproval(Application form, Comment newComment, User initiator) {
         checkSendToPorticoStatus(form);
-
-        applicationsService.setApplicationStatus(form, PrismState.APPLICATION_APPROVAL);
+     // TODO: remove class and integrate with workflow engine
+  //      applicationsService.setApplicationStatus(form, PrismState.APPLICATION_APPROVAL);
 
         AssignSupervisorsComment approvalComment = new AssignSupervisorsComment();
         approvalComment.setApplication(form);

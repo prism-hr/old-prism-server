@@ -18,7 +18,6 @@ import org.joda.time.LocalDate;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -58,14 +57,12 @@ public class Project extends Advert {
     @Column(name = "title")
     private String title;
 
-    public Project() {
-        super.setAdvertType(AdvertType.PROJECT);
-    }
-
+    @Override
     public String getCode() {
         return code;
     }
 
+    @Override
     public void setCode(String code) {
         this.code = code;
     }
@@ -78,10 +75,12 @@ public class Project extends Advert {
         this.state = state;
     }
 
+    @Override
     public String getTitle() {
         return title;
     }
 
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }

@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
@@ -75,7 +75,7 @@ public class MoveToInterviewController {
     public String getInterviewDetailsPage(ModelMap modelMap) {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_ASSIGN_INTERVIEWERS);
+        actionService.validateAction(applicationForm, user, PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return INTERVIEW_PAGE;
     }
@@ -90,7 +90,7 @@ public class MoveToInterviewController {
     public String moveToInterview(@Valid @ModelAttribute("interview") AssignInterviewersComment interviewComment, BindingResult bindingResult, ModelMap modelMap) {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_ASSIGN_INTERVIEWERS);
+        actionService.validateAction(applicationForm, user, PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
 
         if (bindingResult.hasErrors()) {
             return INTERVIEWERS_SECTION;

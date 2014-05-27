@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Service
 @Transactional
@@ -16,7 +15,8 @@ public class WithdrawService {
 
     @Transactional
     public void withdrawApplication(final Application application) {
-        applicationFormService.setApplicationStatus(application, PrismState.APPLICATION_WITHDRAWN);
+    //TODO: remove class and integrate with workflow engine
+    //       applicationFormService.setApplicationStatus(application, PrismState.APPLICATION_WITHDRAWN);
     }
 
     @Transactional

@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.dto.StateChangeDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -161,7 +161,7 @@ public class StateTransitionController {
     @RequestMapping(method = { RequestMethod.POST, RequestMethod.GET }, value = "/submitEvaluationComment")
     public String addComment(@Valid @ModelAttribute StateChangeDTO stateChangeDTO, BindingResult result) {
         Application applicationForm = stateChangeDTO.getApplicationForm();
-        SystemAction invokedAction = null;
+        PrismAction invokedAction = null;
 
         // TODO reimplement
 //        if (stateChangeDTO.getAction() != null) {

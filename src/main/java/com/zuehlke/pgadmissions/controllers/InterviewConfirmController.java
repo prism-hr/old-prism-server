@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -90,9 +90,9 @@ public class InterviewConfirmController {
     public String getInterviewConfirmPage(ModelMap modelMap) {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS);
+        actionService.validateAction(applicationForm, user, PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS);
         
-        AssignInterviewersComment latestComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(applicationForm, SystemAction.APPLICATION_ASSIGN_INTERVIEWERS);
+        AssignInterviewersComment latestComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(applicationForm, PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
         
         InterviewConfirmDTO interviewConfirmDTO = new InterviewConfirmDTO();
         
@@ -108,7 +108,7 @@ public class InterviewConfirmController {
                     BindingResult result, ModelMap modelMap) {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS);
+        actionService.validateAction(applicationForm, user, PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS);
 
         if (result.hasErrors()) {
             return INTERVIEW_CONFIRM_PAGE;

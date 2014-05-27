@@ -32,11 +32,8 @@ public class StateTransition {
     private State transitionState;
 
     @ManyToOne
-    @JoinColumn(name = "transition_action_id")
+    @JoinColumn(name = "transition_action_id", nullable = false)
     private Action transitionAction;
-
-    @Column(name = "processing_order")
-    private Integer processingOrder;
 
     @Column(name = "state_transition_evaluation_id")
     @Enumerated(EnumType.STRING)
@@ -86,14 +83,6 @@ public class StateTransition {
 
     public void setTransitionAction(Action transitionAction) {
         this.transitionAction = transitionAction;
-    }
-
-    public Integer getProcessingOrder() {
-        return processingOrder;
-    }
-
-    public void setProcessingOrder(Integer processingOrder) {
-        this.processingOrder = processingOrder;
     }
 
     public StateTransitionEvaluation getEvaluation() {

@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -44,7 +44,7 @@ public class DeclineController {
 	    User reviewer = getReviewer(activationCode);
 	    Application application = getApplicationForm(applicationId);
 	    
-	    actionService.validateAction(application, reviewer, SystemAction.APPLICATION_PROVIDE_REVIEW);
+	    actionService.validateAction(application, reviewer, PrismAction.APPLICATION_PROVIDE_REVIEW);
 	    
 		if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
 		    commentService.declineReview(reviewer, application);
@@ -82,7 +82,7 @@ public class DeclineController {
 	    Referee referee = getReferee(activationCode, applicationForm);
 	    User user = userService.getUserByActivationCode(activationCode);
 	    
-	    actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_PROVIDE_REFERENCE);
+	    actionService.validateAction(applicationForm, user, PrismAction.APPLICATION_PROVIDE_REFERENCE);
 	    
 	    if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
 	        // the user clicked on "Confirm"

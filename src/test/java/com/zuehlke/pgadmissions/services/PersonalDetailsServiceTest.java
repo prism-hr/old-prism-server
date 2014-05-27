@@ -13,7 +13,7 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
@@ -27,7 +27,7 @@ public class PersonalDetailsServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormDAO applicationFormDAOMock;
+    private ApplicationDAO applicationFormDAOMock;
 
     @Mock
     @InjectIntoByType

@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityScope;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 
 @Service
 @Transactional
@@ -81,7 +81,7 @@ public class RoleService {
         return roleDAO.getBy(role, resource);
     }
 
-    public Role getCreatorRole(SystemAction action, PrismResource scope) {
+    public Role getCreatorRole(PrismAction action, PrismResource scope) {
         return roleDAO.getCreatorRole(action, scope);
     }
 
@@ -152,11 +152,11 @@ public class RoleService {
         return roleDAO.getRoleTransitions(stateTransition, invokerRoles);
     }
 
-    public List<Role> getActionRoles(PrismResource resource, SystemAction action) {
+    public List<Role> getActionRoles(PrismResource resource, PrismAction action) {
         return roleDAO.getActionRoles(resource, action);
     }
     
-    public List<Role> getActionInvokerRoles(User user, PrismResource resource, SystemAction action) {
+    public List<Role> getActionInvokerRoles(User user, PrismResource resource, PrismAction action) {
         return roleDAO.getActionInvokerRoles(user, resource, action);
     }
 

@@ -1,18 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.lang.reflect.InvocationTargetException;
-
-import org.apache.commons.beanutils.PropertyUtils;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sun.mail.util.PropUtil;
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.IUniqueResource;
-import com.zuehlke.pgadmissions.domain.PrismResource;
-import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
 
 @Service
 @Transactional
@@ -53,14 +46,5 @@ public class EntityService {
     public void delete(Object entity) {
         entityDAO.delete(entity);
     }
-
-    public String generateNewResourceCode(PrismResourceTransient resource) {
-        try {
-            DateTime createdTimestamp = (DateTime) PropertyUtils.getSimpleProperty(resource, "createdTimestamp");
-            return resource.getCodePrefix() + "-" + createdTimestamp.getYear() + "-" + String.format("%010d", resource.getId());
-        } catch (Exception e) {
-            throw new Error(e);
-        }
-    }
-
+    
 }

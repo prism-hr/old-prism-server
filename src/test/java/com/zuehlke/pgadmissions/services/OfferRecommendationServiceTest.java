@@ -6,7 +6,7 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -19,7 +19,7 @@ public class OfferRecommendationServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormDAO applicationFormDAOMock;
+    private ApplicationDAO applicationFormDAOMock;
 
     @Mock
     @InjectIntoByType

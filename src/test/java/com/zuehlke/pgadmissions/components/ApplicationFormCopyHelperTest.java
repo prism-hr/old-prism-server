@@ -53,7 +53,7 @@ public class ApplicationFormCopyHelperTest {
     private RefereeValidator refereeValidator;
     private AdditionalInformationValidator additionalInformationValidator;
 
-    private ApplicationFormCopyHelper applicationFormCopyHelper;
+    private ApplicationCopyHelper applicationFormCopyHelper;
 
     @Test
     public void shouldCopyApplicationForm() {
@@ -141,7 +141,7 @@ public class ApplicationFormCopyHelperTest {
         additionalInformationValidator = new AdditionalInformationValidator();
         additionalInformationValidator.setValidator(validator);
 
-        applicationFormCopyHelper = new ApplicationFormCopyHelper();
+        applicationFormCopyHelper = new ApplicationCopyHelper();
         InjectionUtils.injectInto(documentService, applicationFormCopyHelper, "documentService");
 
         expect(userServiceMock.getCurrentUser()).andReturn(new User().withEmail("jfi@zuhlke.pl")).anyTimes();

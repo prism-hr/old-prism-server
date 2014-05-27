@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.services.DocumentService;
 
 @Component
-public class ApplicationFormCopyHelper {
+public class ApplicationCopyHelper {
 
     @Autowired
     DocumentService documentService;

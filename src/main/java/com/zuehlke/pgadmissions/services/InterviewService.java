@@ -18,8 +18,7 @@ import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.InterviewScheduleComment;
 import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -49,8 +48,8 @@ public class InterviewService {
 
     public void moveApplicationToInterview(User user, final AssignInterviewersComment interviewComment, Application applicationForm) {
         interviewComment.setApplication(applicationForm);
-
-        applicationsService.setApplicationStatus(applicationForm, PrismState.APPLICATION_INTERVIEW);
+     // TODO: remove class and integrate with workflow engine
+     //   applicationsService.setApplicationStatus(applicationForm, PrismState.APPLICATION_INTERVIEW);
 
         // TODO add interview status transient field to the comment and use it here
         // if (!interview.getTakenPlace()) {
@@ -87,7 +86,7 @@ public class InterviewService {
     public void postVote(InterviewVoteComment interviewVoteComment, User user) {
         Application application = interviewVoteComment.getApplication();
         AssignInterviewersComment assignInterviewersComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(application,
-                SystemAction.APPLICATION_ASSIGN_INTERVIEWERS);
+                PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
         commentService.save(interviewVoteComment);
         applicationFormUserRoleService.interviewParticipantResponded(interviewVoteComment);
         applicationFormUserRoleService.applicationUpdated(interviewVoteComment.getApplication(), user);
@@ -100,7 +99,7 @@ public class InterviewService {
         Integer timeslotId = interviewConfirmDTO.getTimeslotId();
         AppointmentTimeslot timeslot = null;
         AssignInterviewersComment assignInterviewersComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(applicationForm,
-                SystemAction.APPLICATION_ASSIGN_INTERVIEWERS);
+                PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
         for (AppointmentTimeslot t : assignInterviewersComment.getAvailableAppointmentTimeslots()) {
             if (t.getId().equals(timeslotId)) {
                 timeslot = t;

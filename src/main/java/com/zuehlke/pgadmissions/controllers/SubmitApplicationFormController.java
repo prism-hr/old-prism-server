@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -59,7 +59,7 @@ public class SubmitApplicationFormController {
     @RequestMapping(method = RequestMethod.POST)
     public String submitApplication(@Valid Application application, BindingResult result, HttpServletRequest request) {
         User user = userService.getCurrentUser();
-        actionService.validateAction(application, user, SystemAction.APPLICATION_COMPLETE);
+        actionService.validateAction(application, user, PrismAction.APPLICATION_COMPLETE);
 
         if (result.hasErrors()) {
             if (result.getFieldError("program") != null) {
@@ -67,7 +67,8 @@ public class SubmitApplicationFormController {
             }
             return TemplateLocation.APPLICATION_APPLICANT_FORM;
         }
-        applicationService.submitApplication(application);
+     // TODO: remove class and integrate with workflow engine
+//        applicationService.submitApplication(application);
         return "redirect:/applications?messageCode=application.submitted&application=" + application.getCode();
     }
 
@@ -78,7 +79,7 @@ public class SubmitApplicationFormController {
     
     @ModelAttribute
     public Application getApplicationForm(@RequestParam String applicationId) {
-        return applicationService.getSecuredApplication(applicationId, SystemAction.APPLICATION_COMPLETE);
+        return applicationService.getSecuredApplication(applicationId, PrismAction.APPLICATION_COMPLETE);
     }
     
 }

@@ -25,7 +25,7 @@ import org.springframework.ws.soap.client.SoapFaultClientException;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AdmissionsApplicationResponse;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.dao.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.State;
@@ -45,7 +45,7 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
     @Autowired
     private StateService stateService;
 
-    private ApplicationFormDAO applicationFormDAO;
+    private ApplicationDAO applicationFormDAO;
 
     private SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder;
 
@@ -129,7 +129,7 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
 
     @Before
     public void initialise() {
-        applicationFormDAO = new ApplicationFormDAO(sessionFactory);
+        applicationFormDAO = new ApplicationDAO(sessionFactory);
         requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
     }
 }

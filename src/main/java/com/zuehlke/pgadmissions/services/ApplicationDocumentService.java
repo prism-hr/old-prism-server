@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 
 @Service
 @Transactional
-public class ApplicationFormDocumentService {
+public class ApplicationDocumentService {
 
     @Autowired 
     private EntityService entityService;

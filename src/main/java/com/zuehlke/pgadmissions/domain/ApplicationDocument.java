@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,9 +12,7 @@ import javax.persistence.Transient;
 
 @Entity
 @Table(name = "APPLICATION_DOCUMENT")
-public class ApplicationDocument implements Serializable, FormSectionObject {
-
-    private static final long serialVersionUID = 1088530727424344593L;
+public class ApplicationDocument {
 
     @Id
     @GeneratedValue
@@ -43,7 +39,6 @@ public class ApplicationDocument implements Serializable, FormSectionObject {
     public void setId(Integer id) {
         this.id = id;
     }
-    
 
     public Document getPersonalStatement() {
         return personalStatement;

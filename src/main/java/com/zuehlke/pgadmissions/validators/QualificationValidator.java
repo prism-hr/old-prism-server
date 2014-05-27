@@ -4,12 +4,11 @@ import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Qualification;
 
 @Component
-public class QualificationValidator extends FormSectionObjectValidator implements Validator {
+public class QualificationValidator extends AbstractValidator {
 
     private static final int MAX_NUMBER_OF_POSITIONS = 6;
 
@@ -20,8 +19,6 @@ public class QualificationValidator extends FormSectionObjectValidator implement
 
     @Override
     public void addExtraValidation(Object target, Errors errors) {
-        super.addExtraValidation(target, errors);
-
         LocalDate today = new LocalDate();
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationInstitution", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationInstitutionCode", EMPTY_DROPDOWN_ERROR_MESSAGE);

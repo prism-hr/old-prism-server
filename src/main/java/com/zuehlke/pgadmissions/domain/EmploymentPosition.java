@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,9 +20,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
 @Table(name = "APPLICATION_EMPLOYMENT_POSITION")
-public class EmploymentPosition implements Serializable, FormSectionObject {
-
-    private static final long serialVersionUID = 4492119755495402951L;
+public class EmploymentPosition {
 
     @Id
     @GeneratedValue
@@ -147,18 +143,17 @@ public class EmploymentPosition implements Serializable, FormSectionObject {
         this.id = id;
         return this;
     }
-    
+
     public EmploymentPosition withApplication(Application application) {
         this.application = application;
         return this;
     }
-    
-    
+
     public EmploymentPosition withEmployerName(String employerName) {
         this.employerName = employerName;
         return this;
     }
-    
+
     public EmploymentPosition withEmployerAddress(Address employerAddress) {
         this.employerAddress = employerAddress;
         return this;
@@ -168,25 +163,25 @@ public class EmploymentPosition implements Serializable, FormSectionObject {
         this.position = position;
         return this;
     }
-    
+
     public EmploymentPosition withCurrent(boolean current) {
         this.current = current;
         return this;
     }
-    
+
     public EmploymentPosition withRemit(String remit) {
         this.remit = remit;
         return this;
     }
-    
+
     public EmploymentPosition withStartDate(LocalDate startDate) {
         this.startDate = startDate;
         return this;
     }
-    
+
     public EmploymentPosition withEndDate(LocalDate endDate) {
         this.endDate = endDate;
         return this;
     }
-    
+
 }

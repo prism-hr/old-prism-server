@@ -3,12 +3,11 @@ package com.zuehlke.pgadmissions.validators;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 
 @Component
-public class AdditionalInformationValidator extends FormSectionObjectValidator implements Validator {
+public class AdditionalInformationValidator extends AbstractValidator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -17,8 +16,6 @@ public class AdditionalInformationValidator extends FormSectionObjectValidator i
 
 	@Override
     public void addExtraValidation(final Object target, final Errors errors) {
-		super.addExtraValidation(target, errors);
-		
 		AdditionalInformation info = (AdditionalInformation) target;
 
 		Boolean hasConvictions = info.getConvictions();

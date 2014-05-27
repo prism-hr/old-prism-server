@@ -27,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
 @Service
@@ -49,15 +48,14 @@ public class ApplicationSummaryService {
     @Autowired
     private CommentService commentService;
 
-    private void addApplicationProperties(final Application form, final Map<String, String> result) {
+    private void addApplicationProperties(final Application application, final Map<String, String> result) {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-        DateTime updatedTimeStamp = commentService.getLastComment(form).getCreatedTimestamp();
-        ApplicationDescriptor applicationDescriptor = applicationsService.getApplicationDescriptorForUser(form, userService.getCurrentUser());
+        DateTime updatedTimeStamp = commentService.getLastComment(application).getCreatedTimestamp();
 
-        result.put("applicationSubmissionDate", dateFormat.format(form.getSubmittedTimestamp()));
+        result.put("applicationSubmissionDate", dateFormat.format(application.getSubmittedTimestamp()));
         result.put("applicationUpdateDate", dateFormat.format(updatedTimeStamp));
-        result.put("requiresAttention", BooleanUtils.toStringTrueFalse(applicationDescriptor.getNeedsToSeeUrgentFlag()));
-        result.put("applicationNumber", form.getApplicationNumber());
+        result.put("requiresAttention", BooleanUtils.toStringTrueFalse(application.isUrgent()));
+        result.put("applicationNumber", application.getApplicationNumber());
     }
 
     private void addActiveApplications(final User applicant, final Map<String, String> result) {

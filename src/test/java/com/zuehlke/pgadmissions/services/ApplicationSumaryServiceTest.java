@@ -9,7 +9,6 @@ import org.unitils.UnitilsJUnit4TestClassRunner;
 
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Title;
-import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -50,8 +49,6 @@ public class ApplicationSumaryServiceTest {
     private Date dateOfSubmission;
 
     private User currentUser;
-
-    private ApplicationDescriptor applicationDescriptorMock;
 
     private UserService userServiceMock;
 

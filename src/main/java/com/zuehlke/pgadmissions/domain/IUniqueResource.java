@@ -3,7 +3,13 @@ package com.zuehlke.pgadmissions.domain;
 import java.util.HashMap;
 import java.util.List;
 
-public interface IDeduplicatableResource {
+import com.google.common.collect.HashMultimap;
+
+public interface IUniqueResource {
+    
+    public static String UNIQUE_CREATION_ERROR = "Tried to create a resource that has an invalid unique signature";
+    
+    public static String UNIQUE_IDENTIFICATION_ERROR = "Tried to identify a resource that has an invalid unique signature";
     
     public UniqueResourceSignature getUniqueResourceSignature();
 
@@ -11,9 +17,9 @@ public interface IDeduplicatableResource {
         
         private List<HashMap<String, Object>> properties;
         
-        private HashMap<String, Object> exclusions;
+        private HashMultimap<String, Object> exclusions;
         
-        public UniqueResourceSignature(List<HashMap<String, Object>> properties, HashMap<String, Object> exclusions) {
+        public UniqueResourceSignature(List<HashMap<String, Object>> properties, HashMultimap<String, Object> exclusions) {
             this.properties = properties;
             this.exclusions = exclusions;
         }
@@ -26,11 +32,11 @@ public interface IDeduplicatableResource {
             this.properties = properties;
         }
     
-        public HashMap<String, Object> getExclusions() {
+        public HashMultimap<String, Object> getExclusions() {
             return exclusions;
         }
     
-        public void setExclusions(HashMap<String, Object> exclusions) {
+        public void setExclusions(HashMultimap<String, Object> exclusions) {
             this.exclusions = exclusions;
         }
         

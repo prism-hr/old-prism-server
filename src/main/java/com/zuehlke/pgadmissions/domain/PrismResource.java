@@ -4,7 +4,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 import com.zuehlke.pgadmissions.domain.enums.PrismResourceType;
 
-public abstract class PrismResource implements IDeduplicatableResource {
+public abstract class PrismResource implements IUniqueResource {
 
     public abstract Integer getId();
     

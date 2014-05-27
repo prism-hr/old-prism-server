@@ -45,7 +45,6 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
-import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
@@ -145,7 +144,7 @@ public class ApplicationListControllerTest {
         // GIVEN
         ModelMap model = new ExtendedModelMap();
         ApplicationFilterGroup filtering = new ApplicationFilterGroup();
-        List<ApplicationDescriptor> applications = new ArrayList<ApplicationDescriptor>();
+        List<Application> applications = new ArrayList<Application>();
         
         expect(applicationsServiceMock.getApplicationsForList(user, filtering)).andReturn(applications);
 

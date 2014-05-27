@@ -15,6 +15,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
@@ -151,9 +152,14 @@ public class Project extends Advert {
         properties.put("program", program);
         properties.put("title", title);
         propertiesWrapper.add(properties);
-        HashMap<String, Object> exclusions = Maps.newHashMap();   
+        HashMultimap<String, Object> exclusions = HashMultimap.create();
         exclusions.put("state.id", PrismState.PROJECT_DISABLED_COMPLETED);
         return new UniqueResourceSignature(propertiesWrapper, exclusions);
+    }
+
+    @Override
+    public String getCodePrefix() {
+        return program.getCode();
     }
 
 }

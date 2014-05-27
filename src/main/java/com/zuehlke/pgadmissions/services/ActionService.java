@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.Hibernate;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -17,15 +15,16 @@ import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismResourceType;
 import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
 import com.zuehlke.pgadmissions.domain.enums.SystemAction;
-import com.zuehlke.pgadmissions.dto.ActionDefinition;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
 
@@ -54,22 +53,18 @@ public class ActionService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    /**
-     * @deprecated use {@link RoleService#getActionactionInvokerRoles(User, PrismScope, SystemAction)} instead.
-     */
-    @Deprecated
     public void validateAction(final Application application, final User user, final SystemAction action) {
         if (!checkActionAvailable(application, user, action)) {
             throw new CannotExecuteActionException(application);
         }
     }
-
-    public boolean checkActionAvailable(final Application application, final User user, final SystemAction action) {
-        return !actionDAO.getUserActionById(application.getId(), user.getId(), action).isEmpty();
+    
+    public boolean checkActionAvailable(PrismResource resource, User user, SystemAction action) {
+        return actionDAO.getPermittedAction(user, resource, action) != null;
     }
-
-    public List<ActionDefinition> getUserActions(Integer applicationFormId, Integer userId) {
-        return actionDAO.getUserActions(applicationFormId, userId);
+    
+    public List<StateAction> getPermittedActions(User user, PrismResource resource) {
+        return actionDAO.getPermittedActions(user, resource);
     }
 
     public ActionOutcome executeAction(Integer resourceId, User user, SystemAction action, Comment comment) {
@@ -88,22 +83,20 @@ public class ActionService {
         List<Role> actionInvokerRoles = Lists.newArrayList();
 
         if (createMatcher.matches()) {
-            PrismResource duplicateResource = entityService.getDuplicateEntity(resource.getClass(), resource.getUniqueResourceSignature());
+            PrismResource duplicateResource = entityService.getDuplicateEntity(resource);
             if (duplicateResource != null) {
-                resource = duplicateResource;
-                entityService.delete(resource);
+                return new ActionOutcome(invoker, resource, actionDAO.getDeduplicatingAction(duplicateResource, action, invoker));
             }
         }
 
         actionInvokerRoles = getActionInvokerRoles(invoker, resource, action);
         SystemAction nextAction = executeStateTransitions(resource, invoker, actionInvokerRoles, action, comment);
         PrismResource nextActionResource = nextAction != null ? resource.getEnclosingResource(PrismResourceType.valueOf(nextAction.getResourceName())) : null;
-        Hibernate.initialize(nextActionResource);
         return new ActionOutcome(invoker, nextActionResource, nextAction);
     }
 
     public boolean checkActionEnabled(PrismResource resource, SystemAction action) {
-        return !actionDAO.getPermittedAction(resource, action).isEmpty();
+        return !actionDAO.getValidAction(resource, action).isEmpty();
     }
 
     private List<Role> getActionInvokerRoles(User user, PrismResource resource, SystemAction action) {
@@ -126,13 +119,18 @@ public class ActionService {
             State transitionState = stateTransition.getTransitionState();
             if (transitionState != null) {
                 resource.setState(stateTransition.getTransitionState());
+                if (resource.getClass().isAssignableFrom(PrismResourceTransient.class)) {
+                    entityService.generateNewResourceCode(resource);
+                }
                 entityService.save(resource);
             }
 
             executeRoleTransitions(invoker, resource, actionInvokerRoles, stateTransition);
         }
 
-        postComment(comment, resource, invoker, actionInvokerRoles);
+        comment.setRoles(getActionInvokerRolesAsString(actionInvokerRoles));
+        comment.setCreatedTimestamp(new DateTime());
+        entityService.save(comment);
         return nextAction;
     }
 
@@ -146,20 +144,6 @@ public class ActionService {
             for (User otherUser : otherUsers) {
                 roleService.executeRoleTransition(resource, otherUser, roleTransition);
             }
-        }
-    }
-
-    private void postComment(Comment comment, PrismResource childResource, User user, List<Role> actionInvokerRoles) {
-        if (comment != null) {
-            try {
-                PropertyUtils.setProperty(comment, childResource.getClass().getSimpleName().toLowerCase(), childResource);
-            } catch (Exception e) {
-                throw new Error("Tried to create comment for invalid prism resource type", e);
-            }
-            comment.setUser(user);
-            comment.setRoles(getActionInvokerRolesAsString(actionInvokerRoles));
-            comment.setCreatedTimestamp(new DateTime());
-            commentService.save(comment);
         }
     }
 

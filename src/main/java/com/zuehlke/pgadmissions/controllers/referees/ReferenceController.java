@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
@@ -118,7 +118,7 @@ public class ReferenceController {
     public String getUploadReferencesPage(ModelMap modelMap) {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_PROVIDE_REFERENCE);
+        actionService.validateAction(applicationForm, user, PrismAction.APPLICATION_PROVIDE_REFERENCE);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, getCurrentUser());
         return ADD_REFERENCES_VIEW_NAME;
     }
@@ -128,7 +128,7 @@ public class ReferenceController {
             throws ScoringDefinitionParseException {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_PROVIDE_REFERENCE);
+        actionService.validateAction(applicationForm, user, PrismAction.APPLICATION_PROVIDE_REFERENCE);
 
         referenceValidator.validate(comment, bindingResult);
 

@@ -17,7 +17,7 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -41,7 +41,7 @@ public class RejectServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormDAO applicationDaoMock;
+    private ApplicationDAO applicationDaoMock;
 
     @Mock
     @InjectIntoByType

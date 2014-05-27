@@ -1,26 +1,26 @@
 package com.zuehlke.pgadmissions.dto;
 
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 
 public class ActionDefinition {
 
-    private SystemAction action;
+    private PrismAction action;
 
     private Boolean raisesUrgentFlag;
     
     public ActionDefinition() {
     }
 
-    public ActionDefinition(SystemAction action, Boolean raisesUrgentFlag) {
+    public ActionDefinition(PrismAction action, Boolean raisesUrgentFlag) {
         this.action = action;
         this.raisesUrgentFlag = raisesUrgentFlag;
     }
 
-    public SystemAction getAction() {
+    public PrismAction getAction() {
         return action;
     }
     
-    public void setAction(SystemAction action) {
+    public void setAction(PrismAction action) {
     	this.action = action;
     }
 

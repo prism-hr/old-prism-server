@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @Service
@@ -22,7 +21,8 @@ public class SubmitApplicationFormService {
     private MailSendingService mailSendingService;
 
     public void submitApplication(Application applicationForm) {
-        applicationService.setApplicationStatus(applicationForm, PrismState.APPLICATION_VALIDATION);
+// TODO: remove class and integrate with workflow engine
+//        applicationService.setApplicationStatus(applicationForm, PrismState.APPLICATION_VALIDATION);
         
         mailSendingService.sendSubmissionConfirmationToApplicant(applicationForm);
         

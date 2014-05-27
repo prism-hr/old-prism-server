@@ -6,8 +6,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -19,8 +17,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
 import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 
 @Entity
 @Table(name = "ADVERT")
@@ -46,13 +46,13 @@ public abstract class Advert extends PrismResourceTransient {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "advert_type")
-    @Enumerated(EnumType.STRING)
-    private AdvertType advertType;
-
     @OneToOne
     @JoinColumn(name = "advert_closing_date_id")
     private AdvertClosingDate closingDate;
+    
+    @Column(name = "created_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdTimestamp;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
@@ -122,14 +122,6 @@ public abstract class Advert extends PrismResourceTransient {
         this.user = user;
     }
 
-    public AdvertType getAdvertType() {
-        return advertType;
-    }
-
-    public void setAdvertType(AdvertType advertType) {
-        this.advertType = advertType;
-    }
-
     public AdvertClosingDate getClosingDate() {
         return closingDate;
     }
@@ -140,6 +132,16 @@ public abstract class Advert extends PrismResourceTransient {
 
     public List<AdvertClosingDate> getClosingDates() {
         return closingDates;
+    }
+    
+    @Override
+    public DateTime getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    @Override
+    public void setCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
     }
 
     @Override
@@ -159,10 +161,8 @@ public abstract class Advert extends PrismResourceTransient {
         return Objects.equal(id, other.getId());
     }
 
-    public abstract Program getProgram();
-
-    public abstract Project getProject();
-
     public abstract String getTitle();
+    
+    public abstract void setTitle(String title);
 
 }

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
+import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.User;
@@ -17,7 +17,7 @@ public class PersonalDetailsService {
     private ApplicationService applicationFormService;
 
     @Autowired
-    private ApplicationFormCopyHelper applicationFormCopyHelper;
+    private ApplicationCopyHelper applicationFormCopyHelper;
     
     public PersonalDetails getOrCreate(Application application) {
         PersonalDetails personalDetails = application.getPersonalDetails();

@@ -44,7 +44,6 @@ public class ViewEditApplicationFormController {
         User user = userService.getCurrentUser();
 
         Application application = applicationFormService.getByApplicationNumber(applicationNumber);
-        applicationFormService.openApplicationForView(application, user);
         if (request != null && request.getParameter("embeddedApplication") != null && request.getParameter("embeddedApplication").equals("true")) {
             return TemplateLocation.APPLICATION_STAFF_EMBEDDED_FORM;
         }

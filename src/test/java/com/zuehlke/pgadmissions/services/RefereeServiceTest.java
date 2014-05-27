@@ -4,7 +4,7 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -30,7 +30,7 @@ public class RefereeServiceTest {
     
     @Mock
     @InjectIntoByType
-    private ApplicationFormDAO applicationFormDAOMock;
+    private ApplicationDAO applicationFormDAOMock;
     
     @Mock
     @InjectIntoByType

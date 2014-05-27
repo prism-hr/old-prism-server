@@ -11,7 +11,7 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
+import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.EmploymentPositionDAO;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 
@@ -28,7 +28,7 @@ public class EmploymentPositionServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormCopyHelper applicationFormCopyHelper;
+    private ApplicationCopyHelper applicationFormCopyHelper;
 
     @TestedObject
     private EmploymentPositionService service;

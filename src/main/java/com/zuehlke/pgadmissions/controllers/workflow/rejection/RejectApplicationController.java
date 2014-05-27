@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -63,7 +63,7 @@ public class RejectApplicationController {
     public String getRejectPage(ModelMap modelMap) {
         Application application = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(application, user, SystemAction.APPLICATION_CONFIRM_REJECTION);
+        actionService.validateAction(application, user, PrismAction.APPLICATION_CONFIRM_REJECTION);
         applicationFormUserRoleService.deleteApplicationUpdate(application, user);
         return REJECT_VIEW_NAME;
     }
@@ -72,7 +72,7 @@ public class RejectApplicationController {
     public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Comment rejection, BindingResult errors, ModelMap modelMap) {
         Application application = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(application, user, SystemAction.APPLICATION_CONFIRM_REJECTION);
+        actionService.validateAction(application, user, PrismAction.APPLICATION_CONFIRM_REJECTION);
         
         if (errors.hasErrors()) {
             return REJECT_VIEW_NAME;

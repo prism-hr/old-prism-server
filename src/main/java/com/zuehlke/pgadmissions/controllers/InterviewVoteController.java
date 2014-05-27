@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.AcceptedTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -94,7 +94,7 @@ public class InterviewVoteController {
     public String getInterviewVotePage(ModelMap modelMap) {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY);
+        actionService.validateAction(applicationForm, user, PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return INTERVIEW_VOTE_PAGE;
     }
@@ -104,7 +104,7 @@ public class InterviewVoteController {
             @RequestParam(required = false) String comment, ModelMap modelMap) {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY);
+        actionService.validateAction(applicationForm, user, PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY);
 
         if (bindingResult.hasErrors()) {
             return INTERVIEW_VOTE_PAGE;

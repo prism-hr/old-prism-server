@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.validators.DocumentValidator;
@@ -47,8 +47,8 @@ public class FileUploadController {
 
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(String applicationId) {
-        return applicationFormService.getSecuredApplication(applicationId, SystemAction.APPLICATION_COMPLETE,
-                SystemAction.APPLICATION_CORRECT);
+        return applicationFormService.getSecuredApplication(applicationId, PrismAction.APPLICATION_COMPLETE,
+                PrismAction.APPLICATION_CORRECT);
     }
 
 	@ModelAttribute

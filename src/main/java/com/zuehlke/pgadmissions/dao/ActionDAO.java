@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 
 @Repository
 public class ActionDAO {
@@ -31,22 +31,22 @@ public class ActionDAO {
         this.sessionFactory = sessionFactory;
     }
     
-    public Action getById(SystemAction actionId) {
+    public Action getById(PrismAction actionId) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(Action.class)
                 .add(Restrictions.eq("id", actionId)).uniqueResult();
     }
     
     @SuppressWarnings("unchecked")
-    public List<StateAction> getValidAction(PrismResource resource, SystemAction action) {
+    public List<StateAction> getValidAction(PrismResource resource, PrismAction action) {
         return (List<StateAction>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.eq("action.id", action)) //
                 .list();
     }
     
-    public SystemAction getDeduplicatingAction(PrismResource resource, SystemAction action, User user) {
+    public PrismAction getRedirectAction(PrismResource resource, PrismAction action, User user) {
         
-        return (SystemAction) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+        return (PrismAction) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action.id")) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
@@ -61,8 +61,8 @@ public class ActionDAO {
                 .uniqueResult();
     }
     
-    public SystemAction getPermittedAction(User user, PrismResource resource, SystemAction action) {
-        return (SystemAction) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+    public PrismAction getPermittedAction(User user, PrismResource resource, PrismAction action) {
+        return (PrismAction) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action.id")) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //

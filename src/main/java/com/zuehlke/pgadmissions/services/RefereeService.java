@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -41,7 +41,7 @@ public class RefereeService {
     private CommentService commentService;
 
     @Autowired
-    private ApplicationFormDAO applicationFormDAO;
+    private ApplicationDAO applicationFormDAO;
 
     @Autowired
     private EncryptionUtils encryptionUtils;
@@ -56,7 +56,7 @@ public class RefereeService {
     private WorkflowService applicationFormUserRoleService;
 
     @Autowired
-    private ApplicationFormCopyHelper applicationFormCopyHelper;
+    private ApplicationCopyHelper applicationFormCopyHelper;
 
     public Referee getRefereeById(Integer id) {
         return refereeDAO.getRefereeById(id);

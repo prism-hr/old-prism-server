@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
+import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.QualificationDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Qualification;
@@ -20,7 +20,7 @@ public class QualificationService {
     ApplicationService applicationFormService;
 
     @Autowired
-    ApplicationFormCopyHelper applicationFormCopyHelper;
+    ApplicationCopyHelper applicationFormCopyHelper;
 
     @Autowired
     private QualificationDAO qualificationDAO;

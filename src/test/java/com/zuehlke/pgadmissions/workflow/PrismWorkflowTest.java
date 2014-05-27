@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -102,21 +102,21 @@ public class PrismWorkflowTest {
 
         Comment createApplicationComment = new Comment().withCreatedTimestamp(new DateTime()).withUser(applicant);
         commentService.save(createApplicationComment);
-        ActionOutcome actionOutcome = actionService.executeAction(program.getId(), applicant, SystemAction.PROGRAM_CREATE_APPLICATION,
+        ActionOutcome actionOutcome = actionService.executeAction(program.getId(), applicant, PrismAction.PROGRAM_CREATE_APPLICATION,
                 createApplicationComment);
         Application createdApplication = (Application) actionOutcome.getResource();
-        assertEquals(SystemAction.APPLICATION_COMPLETE, actionOutcome.getNextAction());
+        assertEquals(PrismAction.APPLICATION_COMPLETE, actionOutcome.getNextAction());
 
         applicationTestDataProvider.fillWithData(createdApplication);
         
         Comment completeApplicationComment = null;
-        actionOutcome = actionService.executeAction(createdApplication.getId(), applicant, SystemAction.APPLICATION_COMPLETE,
+        actionOutcome = actionService.executeAction(createdApplication.getId(), applicant, PrismAction.APPLICATION_COMPLETE,
                 completeApplicationComment);
-        assertEquals(SystemAction.SYSTEM_VIEW_APPLICATION_LIST, actionOutcome.getNextAction());
+        assertEquals(PrismAction.SYSTEM_VIEW_APPLICATION_LIST, actionOutcome.getNextAction());
         assertEquals(systemService.getSystem().getId(), actionOutcome.getResource().getId());
 
         Comment assignReviewerComment = new Comment();
-        actionService.executeAction(1, programAdministrator, SystemAction.APPLICATION_ASSIGN_REVIEWERS, assignReviewerComment);
+        actionService.executeAction(1, programAdministrator, PrismAction.APPLICATION_ASSIGN_REVIEWERS, assignReviewerComment);
 
         mailSenderMock.verify();
         

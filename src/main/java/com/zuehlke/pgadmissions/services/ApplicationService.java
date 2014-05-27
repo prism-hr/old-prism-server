@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -11,8 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Application;
@@ -26,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 
@@ -37,7 +36,7 @@ public class ApplicationService {
     public static final int APPLICATION_BLOCK_SIZE = 50;
 
     @Autowired
-    private ApplicationFormDAO applicationFormDAO;
+    private ApplicationDAO applicationDAO;
 
     @Autowired
     private ApplicationFormListDAO applicationFormListDAO;
@@ -55,7 +54,7 @@ public class ApplicationService {
     private ProgramDetailsService programDetailsService;
 
     @Autowired
-    private ApplicationFormCopyHelper applicationFormCopyHelper;
+    private ApplicationCopyHelper applicationCopyHelper;
 
     @Autowired
     private ProgramService programService;
@@ -74,9 +73,9 @@ public class ApplicationService {
         application.setUser(user);
         application.setParentResource(advert);
         application.setCreatedTimestamp(new DateTime());
-        Application previousApplication = applicationFormDAO.getPreviousApplication(application);
+        Application previousApplication = applicationDAO.getPreviousApplication(application);
         if (previousApplication != null) {
-            applicationFormCopyHelper.copyApplicationFormData(application, previousApplication);
+            applicationCopyHelper.copyApplicationFormData(application, previousApplication);
         }
         return application;
     }
@@ -97,15 +96,15 @@ public class ApplicationService {
     // TODO: Rewrite/remove the following
 
     public Application getById(Integer id) {
-        return applicationFormDAO.getById(id);
+        return applicationDAO.getById(id);
     }
 
     public void refresh(final Application applicationForm) {
-        applicationFormDAO.refresh(applicationForm);
+        applicationDAO.refresh(applicationForm);
     }
 
     public Application getByApplicationNumber(String applicationNumber) {
-        return applicationFormDAO.getByApplicationNumber(applicationNumber);
+        return applicationDAO.getByApplicationNumber(applicationNumber);
     }
 
     public List<Application> getApplicationsForList(final User user, final ApplicationFilterGroup filtering) {
@@ -121,62 +120,20 @@ public class ApplicationService {
     }
 
     public List<Application> getApplicationsByStatus(final PrismState status) {
-        return applicationFormDAO.getAllApplicationsByStatus(status);
+        return applicationDAO.getAllApplicationsByStatus(status);
     }
 
     public List<Application> getApplicationsForProject(final Project project) {
-        return applicationFormDAO.getApplicationsByProject(project);
+        return applicationDAO.getApplicationsByProject(project);
     }
 
-    public void submitApplication(Application application) {
-        // TODO set IP
-        
-        setApplicationStatus(application, PrismState.APPLICATION_VALIDATION);
-        workflowService.applicationSubmitted(application);
-        workflowService.applicationUpdated(application, userService.getCurrentUser());
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void setApplicationStatus(Application application, PrismState newStatus) {
-        application.setState(stateService.getById(newStatus));
-
-        // TODO add referee roles and send referee notifications
-        // TODO add admitter roles
-        switch (newStatus) {
-        case APPLICATION_UNSUBMITTED:
-            application.setDueDate(getDueDateForApplication(application));
-            application.setClosingDate(getClosingDateForApplication(application));
-        case APPLICATION_VALIDATION:
-            application.setSubmittedTimestamp(new DateTime());
-            application.setDueDate(getDueDateForApplication(application));
-        case APPLICATION_INTERVIEW:
-            application.setDueDate(getDueDateForApplication(application));
-            application.setClosingDate(null);
-        case APPLICATION_APPROVAL:
-            application.setDueDate(getDueDateForApplication(application));
-            application.setClosingDate(null);
-        case APPLICATION_REVIEW:
-            application.setDueDate(getDueDateForApplication(application));
-            // TODO check the history in order tyo set closing date
-//            if (application.getLastState().getId() == newStatus) {
-                application.setClosingDate(null);
-//            }
-        case APPLICATION_APPROVED:
-        case APPLICATION_REJECTED:
-        case APPLICATION_WITHDRAWN:
-            application.setDueDate(null);
-            application.setClosingDate(null);
-        }
-        
-    }
-
-    public Application getSecuredApplication(final String applicationId, final SystemAction... actions) {
+    public Application getSecuredApplication(final String applicationId, final PrismAction... actions) {
         Application application = getByApplicationNumber(applicationId);
         if (application == null) {
             throw new ResourceNotFoundException();
         }
         User user = userService.getCurrentUser();
-        for (SystemAction action : actions) {
+        for (PrismAction action : actions) {
             if (actionService.checkActionAvailable(application, user, action)) {
                 return application;
             }
@@ -186,14 +143,6 @@ public class ApplicationService {
 
     public void saveOrUpdateApplicationSection(Application application) {
         workflowService.applicationUpdated(application, userService.getCurrentUser());
-    }
-
-    public void openApplicationForEdit(Application application, User user) {
-        openApplicationForView(application, user);
-    }
-
-    public void openApplicationForView(Application application, User user) {
-        applicationFormDAO.deleteApplicationUpdate(application, user);
     }
 
     public Date getDefaultStartDateForApplication(Application application) {
@@ -213,15 +162,8 @@ public class ApplicationService {
         return applicationDescriptor;
     }
 
-    public Comment getLatestStateChangeComment(Application applicationForm, SystemAction action) {
-        return applicationFormDAO.getLatestStateChangeComment(applicationForm);
-    }
-
-    private String generateApplicationNumber(final Program program) {
-        String thisYear = new SimpleDateFormat("yyyy").format(new Date());
-        Long runningCount = applicationFormDAO.getApplicationsInProgramThisYear(program, thisYear);
-        String applicationNumber = program.getCode() + "-" + thisYear + "-" + String.format("%06d", runningCount + 1);
-        return applicationNumber;
+    public Comment getLatestStateChangeComment(Application applicationForm, PrismAction action) {
+        return applicationDAO.getLatestStateChangeComment(applicationForm);
     }
 
     private void addSuggestedSupervisorsFromProject(Application application) {

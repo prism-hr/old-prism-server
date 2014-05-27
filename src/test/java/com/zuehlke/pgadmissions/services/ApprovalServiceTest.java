@@ -7,7 +7,7 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -15,7 +15,7 @@ public class ApprovalServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormDAO applicationDAO;
+    private ApplicationDAO applicationDAO;
 
     @Mock
     @InjectIntoByType

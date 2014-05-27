@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReminderType;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -200,7 +200,7 @@ public class UserDAO {
                 .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
                 .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN).createAlias("role", "applicationRole", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("applicationForm", application)).add(Restrictions.ne("applicationRole.id", Authority.SYSTEM_ADMINISTRATOR))
-                .add(Restrictions.eq("action.id", SystemAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS)).list();
+                .add(Restrictions.eq("action.id", PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS)).list();
     }
 
     //TODO rewrite the query - HQL

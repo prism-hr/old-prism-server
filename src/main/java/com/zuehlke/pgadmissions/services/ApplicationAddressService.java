@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
+import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 
@@ -16,7 +16,7 @@ public class ApplicationAddressService {
     private ApplicationService applicationFormService;
     
     @Autowired
-    private ApplicationFormCopyHelper applicationFormCopyHelper;
+    private ApplicationCopyHelper applicationCopyHelper;
 
     @Autowired
     private EntityService entityService;
@@ -37,7 +37,7 @@ public class ApplicationAddressService {
             application.setApplicationAddress(persistentApplicationFormAddress);
             entityService.save(application);
         }
-        applicationFormCopyHelper.copyApplicationFormAddress(persistentApplicationFormAddress, applicationFormAddress, false);
+        applicationCopyHelper.copyApplicationFormAddress(persistentApplicationFormAddress, applicationFormAddress, false);
         applicationFormService.saveOrUpdateApplicationSection(application);
 	}
 	

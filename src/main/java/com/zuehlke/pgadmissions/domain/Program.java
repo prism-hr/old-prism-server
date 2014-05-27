@@ -26,7 +26,6 @@ import org.joda.time.LocalDate;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
@@ -85,23 +84,23 @@ public class Program extends Advert {
     @ManyToOne
     @JoinColumn(name = "previous_state_id", nullable = true)
     private State previousState;
-
-    public Program() {
-        super.setAdvertType(AdvertType.PROGRAM);
-    }
-
+    
+    @Override
     public void setCode(final String code) {
         this.code = code;
     }
 
+    @Override
     public String getCode() {
         return code;
     }
 
+    @Override
     public String getTitle() {
         return title;
     }
 
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }

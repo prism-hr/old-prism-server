@@ -39,6 +39,9 @@ public class StateAction {
     
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "stateAction")
     private Set<StateActionAssignment> stateActionAssignments = new HashSet<StateActionAssignment>();
+    
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "stateAction")
+    private Set<StateTransition> stateTransitions = new HashSet<StateTransition>();
 
     public Integer getId() {
         return id;
@@ -90,6 +93,10 @@ public class StateAction {
 
     public Set<StateActionAssignment> getStateActionAssignments() {
         return stateActionAssignments;
+    }
+
+    public Set<StateTransition> getStateTransitions() {
+        return stateTransitions;
     }
 
 }

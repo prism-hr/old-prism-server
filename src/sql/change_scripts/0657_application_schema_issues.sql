@@ -685,24 +685,6 @@ ALTER TABLE APPLICATION_PERSONAL_DETAIL
 DROP TABLE NATIONALITY
 ;
 
-/* Fix program instance */
-
-DELETE PROGRAM_INSTANCE.* 
-FROM PROGRAM_INSTANCE INNER JOIN (
-	SELECT MAX(id) AS id,
-		program_id AS program_id
-	FROM PROGRAM_INSTANCE
-	GROUP BY program_id, academic_year, program_study_option_id
-	HAVING COUNT(id) > 1) AS DUPLICATE_PROGRAM_INSTANCE
-	ON PROGRAM_INSTANCE.program_id = DUPLICATE_PROGRAM_INSTANCE.program_id
-WHERE PROGRAM_INSTANCE.id != DUPLICATE_PROGRAM_INSTANCE.id
-;
-
-ALTER TABLE PROGRAM_INSTANCE
-	ADD UNIQUE INDEX (program_id, academic_year, program_study_option_id),
-	DROP INDEX program_instance_prog_fk
-;
-
 /* Qualification type import */
 
 ALTER TABLE QUALIFICATION_TYPE

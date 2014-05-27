@@ -10,7 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.Application;
@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 public abstract class AbstractMailSendingService {
 
     @Autowired
-    protected ApplicationFormDAO applicationDAO;
+    protected ApplicationDAO applicationDAO;
     
     @Autowired
     protected ConfigurationService configurationService;

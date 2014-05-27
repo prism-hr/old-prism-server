@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.unitils.inject.util.InjectionUtils;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.dao.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
@@ -63,7 +63,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     private ApplicationFormListDAO applicationFormListDAO;
 
-    private ApplicationFormDAO applicationFormDAO;
+    private ApplicationDAO applicationFormDAO;
 
     private Program program;
 
@@ -81,7 +81,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         applicationFormListDAO = new ApplicationFormListDAO(sessionFactory, userDAO);
 
-        applicationFormDAO = new ApplicationFormDAO(sessionFactory);
+        applicationFormDAO = new ApplicationDAO(sessionFactory);
 
         applicationsService = new ApplicationService();
         InjectionUtils.injectInto(applicationFormListDAO, applicationsService, "applicationFormListDAO");

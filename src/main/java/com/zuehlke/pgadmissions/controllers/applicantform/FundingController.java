@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
@@ -90,8 +90,8 @@ public class FundingController {
 
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(@RequestParam String applicationId) {
-        return applicationFormService.getSecuredApplication(applicationId, SystemAction.APPLICATION_COMPLETE,
-                SystemAction.APPLICATION_CORRECT);
+        return applicationFormService.getSecuredApplication(applicationId, PrismAction.APPLICATION_COMPLETE,
+                PrismAction.APPLICATION_CORRECT);
     }
 
     private String returnView(ModelMap modelMap, Funding funding) {

@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
-import com.zuehlke.pgadmissions.domain.enums.SystemAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
@@ -112,7 +112,7 @@ public class InterviewCommentController {
     public String getInterviewFeedbackPage(ModelMap modelMap) {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK);
+        actionService.validateAction(applicationForm, user, PrismAction.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return INTERVIEW_FEEDBACK_PAGE;
     }
@@ -122,7 +122,7 @@ public class InterviewCommentController {
             throws ScoringDefinitionParseException {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK);
+        actionService.validateAction(applicationForm, user, PrismAction.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK);
         feedbackCommentValidator.validate(comment, result);
 
         if (result.hasErrors()) {

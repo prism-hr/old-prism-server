@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -14,28 +13,25 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Repository
 @SuppressWarnings("unchecked")
-public class ApplicationFormDAO {
+public class ApplicationDAO {
 
     private SessionFactory sessionFactory;
 
-    public ApplicationFormDAO() {
+    public ApplicationDAO() {
     }
 
     @Autowired
-    public ApplicationFormDAO(SessionFactory sessionFactory) {
+    public ApplicationDAO(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
@@ -142,74 +138,6 @@ public class ApplicationFormDAO {
         }
 
         return null;
-    }
-
-    public Application getInProgressApplication(final User applicant, final Advert advert) {
-        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class).createAlias("state", "state", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("user", applicant)).add(Restrictions.eq(advert.getAdvertType().name().toLowerCase(), advert))
-                .add(Restrictions.eq("state.underAssessment", true)).addOrder(Order.desc("createdTimestamp")).addOrder(Order.desc("id")).setMaxResults(1)
-                .uniqueResult();
-    }
-
-    public Boolean getRaisesUrgentFlagForUser(Application application, User user) {
-        // FIXME: rewrite as HQL statement
-        Boolean raisesUrgentFlag = (Boolean) sessionFactory.getCurrentSession().createCriteria(UserRole.class)
-                .add(Restrictions.eq("applicationForm", application)).add(Restrictions.eq("user", user)).addOrder(Order.desc("raisesUrgentFlag"))
-                .setProjection(Projections.projectionList().add(Projections.max("raisesUrgentFlag"))).uniqueResult();
-        return BooleanUtils.toBoolean(raisesUrgentFlag);
-    }
-
-    public void deleteApplicationUpdate(Application applicationForm, User user) {
-        // FIXME: rewrite as HQL statement
-        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_APPLICATION_UPDATE(?, ?);").setInteger(0, applicationForm.getId())
-                .setInteger(1, user.getId()).executeUpdate();
-    }
-
-    public void deleteApplicationRole(Application application, User user, Authority authority) {
-        // FIXME: rewrite as HQL statement
-        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_APPLICATION_ROLE(?, ?, ?);").setInteger(0, application.getId())
-                .setInteger(1, user.getId()).setString(2, authority.toString()).executeUpdate();
-    }
-
-    public void deleteProgramRole(User user, Program program, Authority authority) {
-        // FIXME: rewrite as HQL statement
-        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_PROGRAM_ROLE(?, ?, ?);").setInteger(0, user.getId()).setInteger(1, program.getId())
-                .setString(2, authority.toString()).executeUpdate();
-    }
-
-    public void deleteUserRole(User user, Authority authority) {
-        // FIXME: rewrite as HQL statement
-        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_USER_ROLE(?, ?);").setInteger(0, user.getId()).setString(1, authority.toString())
-                .executeUpdate();
-    }
-
-    public void insertProgramRole(User user, Program program, Authority authority) {
-        // FIXME: rewrite as HQL statement
-        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_INSERT_PROGRAM_ROLE(?, ?, ?);").setInteger(0, user.getId()).setInteger(1, program.getId())
-                .setString(2, authority.toString()).executeUpdate();
-    }
-
-    public void insertUserRole(User user, Authority authority) {
-        // FIXME: rewrite as HQL statement
-        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_INSERT_USER_ROLE(?, ?);").setInteger(0, user.getId()).setString(1, authority.toString())
-                .executeUpdate();
-    }
-
-    public void updateApplicationDueDate(Application applicationForm, Date deadlineTimestamp) {
-        // FIXME: rewrite as HQL statement
-        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_UPDATE_APPLICATION_FORM_DUE_DATE(?, ?);").setInteger(0, applicationForm.getId())
-                .setDate(1, deadlineTimestamp).executeUpdate();
-    }
-
-    public void updateApplicationInterest(Application applicationForm, User user, Boolean interested) {
-        // FIXME: rewrite as HQL statement
-        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_UPDATE_APPLICATION_INTEREST(?, ?, ?);").setInteger(0, applicationForm.getId())
-                .setInteger(1, user.getId()).setBoolean(2, interested).executeUpdate();
-    }
-
-    public void updateUrgentApplications() {
-        // FIXME: rewrite as HQL statement
-        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_UPDATE_URGENT_APPLICATIONS();").executeUpdate();
     }
 
     public Comment getLatestStateChangeComment(Application applicationForm) {

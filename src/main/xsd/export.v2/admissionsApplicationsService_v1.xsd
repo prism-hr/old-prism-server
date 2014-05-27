@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This schema definition describes types to be used for UCL applications -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           xmlns="http://www.w3.org/2001/XMLSchema"
+	       xmlns:v1_0="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1.0" 
+	       elementFormDefault="qualified"
+	       xmlns:uclBasic_v1_0="http://ucl.ac.uk/isd/uclbasic_v1_0/" 
+	       targetNamespace="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1.0">	
+    
+    <!-- SCHEMA INCLUDE SECTION -->
+    <xs:include schemaLocation="registryData_v1_0.xsd"/>  
+    <xs:import namespace="http://ucl.ac.uk/isd/uclbasic_v1_0/" schemaLocation="uclbasic_v1_0.xsd" />
+  
+  	<!--
+		*****************************************************************
+						Request types	  
+		*****************************************************************
+	-->
+        
+    <element name="SubmitAdmissionsApplicationRequest">
+        <complexType>
+            <sequence>
+                <element name="application" type="v1_0:applicationTp">
+                </element>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="SubmitAdmissionsApplicantRequest">
+        <complexType>
+            <sequence>
+                <element name="applicant" type="v1_0:applicantTp">
+                </element>
+            </sequence>
+        </complexType>
+    </element>
+    
+     
+  	<!--
+		*****************************************************************
+						Response types	  
+		*****************************************************************
+	-->
+	
+    <element name="AdmissionsApplicationResponse">
+        <complexType>
+            <sequence>
+                <element name="reference" type="v1_0:referenceTp">
+                </element>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="ExtendedFaultDtl">
+        <complexType>
+            <sequence>
+                <element name="faultDtl" type="uclBasic_v1_0:errorInfoTp"></element>
+            </sequence>
+        </complexType>
+    </element>
+    
+    
+    <!--
+		*********************************************************************************
+		Response reference type that includes an identifier for applicant and application 
+		**********************************************************************************
+	-->
+    <xs:complexType name="referenceTp">
+        <xs:sequence>
+            <!-- Identifier that identifies the application created -->
+            <xs:element name="applicationID" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <!-- Identifier that identifies the applicant created -->
+            <xs:element name="applicantID" type="xs:string" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    
+</xs:schema>

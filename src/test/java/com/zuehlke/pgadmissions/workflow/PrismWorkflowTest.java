@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.workflow;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Random;
+
 import org.apache.commons.lang.WordUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -117,6 +119,7 @@ public class PrismWorkflowTest {
         actionService.executeAction(1, programAdministrator, SystemAction.APPLICATION_ASSIGN_REVIEWERS, assignReviewerComment);
 
         mailSenderMock.verify();
+        
     }
 
     private User registerAndActivateApplicant(Advert advert, String firstName, String lastName, String email) {

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.workflow;
 
+import java.util.UUID;
+
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.TestObjectProvider;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
@@ -38,10 +39,14 @@ import com.zuehlke.pgadmissions.services.FundingService;
 import com.zuehlke.pgadmissions.services.PersonalDetailsService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
 @Transactional
 public class ApplicationTestDataProvider {
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private PersonalDetailsService personalDetailsService;
@@ -178,7 +183,7 @@ public class ApplicationTestDataProvider {
     private void createReferees(Application application) {
         for (int i = 0; i < 3; i++) {
             Referee referee = new Referee();
-            referee.setUser(testObjectProvider.getEnabledUserInRole(Authority.APPLICATION_REFEREE));
+            referee.setUser(userService.getOrCreateUser("Jakis", "Polecacz", "polecacz" + UUID.randomUUID().toString() + "@email.com"));
             referee.setJobEmployer("Kozacka firma");
             referee.setJobTitle("Szef wszystkich szefow");
             Address address = new Address();

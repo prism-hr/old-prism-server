@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormDocumentService;
+import com.zuehlke.pgadmissions.services.ApplicationDocumentService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.validators.ApplicationFormDocumentValidator;
 
@@ -33,7 +33,7 @@ public class DocumentsController {
     private ApplicationService applicationFormService;
     
     @Autowired
-    private ApplicationFormDocumentService applicationFormDocumentService;
+    private ApplicationDocumentService applicationFormDocumentService;
 
     @Autowired
     private ApplicationFormDocumentValidator documentSectionValidator;

@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.workflow;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Random;
+
 import org.apache.commons.lang.WordUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -86,6 +88,8 @@ public class PrismWorkflowTest {
     
     @Autowired
     private SystemService systemService;
+    
+    @Autowired
     private CommentService commentService;
 
     @Test
@@ -95,7 +99,6 @@ public class PrismWorkflowTest {
         User programAdministrator = manageUsersService.setUserRoles("Jerzy", "Urban", "jerzy@urban.pl", true, program, Authority.PROGRAM_ADMINISTRATOR);
 
         User applicant = registerAndActivateApplicant(program, "Kuba", "Fibinger", "kuba@fibinger.pl");
-
 
         Comment createApplicationComment = new Comment().withCreatedTimestamp(new DateTime()).withUser(applicant);
         commentService.save(createApplicationComment);
@@ -116,6 +119,7 @@ public class PrismWorkflowTest {
         actionService.executeAction(1, programAdministrator, SystemAction.APPLICATION_ASSIGN_REVIEWERS, assignReviewerComment);
 
         mailSenderMock.verify();
+        
     }
 
     private User registerAndActivateApplicant(Advert advert, String firstName, String lastName, String email) {

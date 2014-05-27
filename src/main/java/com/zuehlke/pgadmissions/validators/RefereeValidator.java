@@ -5,13 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
-public class RefereeValidator extends FormSectionObjectValidator implements Validator {
+public class RefereeValidator extends AbstractValidator {
 
     private UserService userService;
 
@@ -32,8 +31,6 @@ public class RefereeValidator extends FormSectionObjectValidator implements Vali
 
     @Override
     public void addExtraValidation(Object target, Errors errors) {
-        super.addExtraValidation(target, errors);
-
         Referee referee = (Referee) target;
         if (userService.getCurrentUser().getEmail().equals(referee.getUser().getEmail())) {
             errors.rejectValue("email", "text.email.notyourself");

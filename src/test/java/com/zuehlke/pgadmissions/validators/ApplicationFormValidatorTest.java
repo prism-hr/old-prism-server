@@ -59,7 +59,7 @@ public class ApplicationFormValidatorTest {
 
     private PersonalDetailsValidator personalDetailsValidatorMock;
 
-    private ApplicationFormAddressValidator applicationFormAddressValidatorMock;
+    private ApplicationAddressValidator applicationFormAddressValidatorMock;
 
     private AdditionalInformationValidator additionalInformationValidatorMock;
 
@@ -212,7 +212,7 @@ public class ApplicationFormValidatorTest {
         programService = EasyMock.createMock(ProgramService.class);
         programDetailsValidatorMock = EasyMock.createMock(ProgramDetailsValidator.class);
         personalDetailsValidatorMock = EasyMock.createMock(PersonalDetailsValidator.class);
-        applicationFormAddressValidatorMock = EasyMock.createMock(ApplicationFormAddressValidator.class);
+        applicationFormAddressValidatorMock = EasyMock.createMock(ApplicationAddressValidator.class);
         additionalInformationValidatorMock = EasyMock.createMock(AdditionalInformationValidator.class);
         applicationFormDocumentValidatorMock = EasyMock.createMock(ApplicationFormDocumentValidator.class);
 

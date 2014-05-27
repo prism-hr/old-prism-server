@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
@@ -19,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.services.ProgramService;
 
 @Component
-public class ProgramDetailsValidator extends FormSectionObjectValidator implements Validator {
+public class ProgramDetailsValidator extends AbstractValidator {
 
     @Autowired
     private ProgramService programService;
@@ -31,8 +30,6 @@ public class ProgramDetailsValidator extends FormSectionObjectValidator implemen
 
     @Override
     public void addExtraValidation(final Object target, final Errors errors) {
-        super.addExtraValidation(target, errors);
-
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programmeName", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyOption", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", EMPTY_FIELD_ERROR_MESSAGE);

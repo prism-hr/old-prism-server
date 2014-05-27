@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,9 +24,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
 @Table(name = "APPLICATION_FORM_PROGRAM_DETAIL")
-public class ProgramDetails implements Serializable, FormSectionObject {
-
-    private static final long serialVersionUID = -5997103825068065955L;
+public class ProgramDetails {
 
     @Id
     @GeneratedValue

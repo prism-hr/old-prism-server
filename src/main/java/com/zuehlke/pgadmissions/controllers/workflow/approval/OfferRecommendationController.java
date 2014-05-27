@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.SystemAction;
-import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
@@ -133,7 +132,7 @@ public class OfferRecommendationController {
     }
 
     @ModelAttribute("applicationDescriptor")
-    public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
+    public Application getApplicationDescriptor(@RequestParam String applicationId) {
         Application applicationForm = getApplicationForm(applicationId);
         User user = getUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);

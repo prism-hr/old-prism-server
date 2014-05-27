@@ -13,7 +13,8 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.IDeduplicatableResource;
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.IUniqueResource;
 
 @Repository
 public class EntityDAO {
@@ -47,33 +48,43 @@ public class EntityDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getDuplicateEntity(Class<T> klass, IDeduplicatableResource.UniqueResourceSignature signature) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(klass);
-        Disjunction indexes = Restrictions.disjunction();
+    public <T extends IUniqueResource> T getDuplicateEntity(T resource) {
+        IUniqueResource.UniqueResourceSignature signature = resource.getUniqueResourceSignature(); 
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resource.getClass());
+        Disjunction indices = Restrictions.disjunction();
         
         List<HashMap<String, Object>> propertyWrapper = signature.getProperties();
         if (propertyWrapper.size() > 0) {
             for (HashMap<String, Object> properties : propertyWrapper) {
                 Conjunction index = Restrictions.conjunction();
                 for (Map.Entry<String, Object> property : properties.entrySet()) {
-                    if (property.getKey() == null || property.getValue() == null) {
-                        throw new Error("Invalid resource signature");
+                    if (property.getKey() == null) {
+                        throw new Error(IUniqueResource.UNIQUE_IDENTIFICATION_ERROR);
                     }
-                    index.add(Restrictions.eq(property.getKey(), property.getValue()));
+                    if (property.getValue() == null) {
+                        index.add(Restrictions.isNull(property.getKey()));
+                    } else {
+                        index.add(Restrictions.eq(property.getKey(), property.getValue()));
+                    }
                 }
-                indexes.add(index);
+                indices.add(index);
             }
-            for (Map.Entry<String, Object> exclusion : signature.getExclusions().entrySet()) {
-                criteria.add(Restrictions.ne(exclusion.getKey(), exclusion.getValue()));
+            
+            criteria.add(indices);
+            
+            HashMultimap<String, Object> exclusions = signature.getExclusions();
+            for (String key : exclusions.keySet()) {
+                criteria.add(Restrictions.not(Restrictions.in(key, exclusions.get(key))));
             }
+            
             return (T) criteria.uniqueResult();
         }
-        
-        throw new Error("Invalid resource signature");
+
+        throw new Error(IUniqueResource.UNIQUE_IDENTIFICATION_ERROR);
     }
-    
+
     public void delete(Object entity) {
         sessionFactory.getCurrentSession().delete(entity);
     }
-    
+
 }

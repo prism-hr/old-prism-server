@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -34,22 +33,23 @@ public class RoleService {
         return roleDAO.getById(authority);
     }
 
-    public UserRole getOrCreateUserRole(PrismResource resource, User user, Role role) {
-        HashMap<String, Object> properties = new HashMap<String, Object>();
-        properties.put(resource.getClass().getSimpleName().toLowerCase(), resource);
-        properties.put("user", user);
-        properties.put("role", role);
-        UserRole userRole = entityService.getDuplicateEntity(UserRole.class, properties);
-        if (userRole == null) {
-            userRole = entityService.create(UserRole.class, properties);
-            userRole.setAssignedTimestamp(new DateTime());
-        }
+    public UserRole createUserRole(PrismResource resource, User user, Role role) {
+        UserRole userRole = new UserRole();
+        userRole.setResource(resource);
+        userRole.setUser(user);
+        userRole.setRole(role);
+        userRole.setAssignedTimestamp(new DateTime());
         return userRole;
+    }
+    
+    public UserRole getOrCreateUserRole(PrismResource resource, User user, Role role) {
+        UserRole transientUserRole = createUserRole(resource, user, role);
+        return entityService.getOrCreate(transientUserRole);
     }
 
     public void saveUserRole(UserRole userRole) {
         entityService.save(userRole);
-    }
+    }   
     
     public void deleteUserRole(UserRole userRole) {
         entityService.delete(userRole);

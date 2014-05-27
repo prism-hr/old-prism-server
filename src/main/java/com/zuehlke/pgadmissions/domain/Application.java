@@ -27,6 +27,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -138,7 +139,10 @@ public class Application extends PrismResourceTransient {
 
     @Transient
     private Boolean acceptedTerms;
-
+    
+    @Transient
+    private List<StateAction> permittedActions;
+    
     @Override
     public Integer getId() {
         return id;
@@ -251,6 +255,19 @@ public class Application extends PrismResourceTransient {
 
     public List<Referee> getReferees() {
         return referees;
+    }
+
+    public List<StateAction> getPermittedActions() {
+        return permittedActions;
+    }
+    
+    public boolean isUrgent() {
+        for (StateAction permittedAction : permittedActions) {
+            if (permittedAction.isRaisesUrgentFlag()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Application withId(Integer id) {
@@ -429,15 +446,18 @@ public class Application extends PrismResourceTransient {
         HashMap<String, Object> properties = Maps.newHashMap();
         properties.put("user", user);
         properties.put("program", program);
-        if (project != null) {
-            properties.put("project", project);
-        }
+        properties.put("project", project);
         propertiesWrapper.add(properties);
-        HashMap<String, Object> exclusions = Maps.newHashMap();   
+        HashMultimap<String, Object> exclusions = HashMultimap.create(); 
         exclusions.put("state.id", PrismState.APPLICATION_APPROVED_COMPLETED);
         exclusions.put("state.id", PrismState.APPLICATION_REJECTED_COMPLETED);
         exclusions.put("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED);
         return new UniqueResourceSignature(propertiesWrapper, exclusions);
+    }
+
+    @Override
+    public String getCodePrefix() {
+        return program.getCode();
     }
 
 }

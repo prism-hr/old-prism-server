@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.SystemAction;
-import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -100,7 +99,7 @@ public class RejectApplicationController {
     }
 
     @ModelAttribute("applicationDescriptor")
-    public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
+    public Application getApplicationDescriptor(@RequestParam String applicationId) {
         Application applicationForm = getApplicationForm(applicationId);
         User user = getUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);

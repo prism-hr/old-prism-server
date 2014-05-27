@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.domain.enums.SystemAction;
-import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
@@ -41,7 +40,6 @@ import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 public class ReviewCommentController {
     // TODO fix tests
 
-    private static final Logger log = LoggerFactory.getLogger(ReviewCommentController.class);
     private static final String REVIEW_FEEDBACK_PAGE = "private/staff/reviewer/feedback/reviewcomment";
 
     @Autowired
@@ -78,7 +76,7 @@ public class ReviewCommentController {
     }
 
     @ModelAttribute("applicationDescriptor")
-    public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
+    public Application getApplicationDescriptor(@RequestParam String applicationId) {
         Application applicationForm = getApplicationForm(applicationId);
         User user = getUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);

@@ -16,13 +16,9 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
 
 @Controller
@@ -37,29 +33,19 @@ public class GenericCommentController {
 
     private final GenericCommentValidator genericCommentValidator;
 
-    private final CommentService commentService;
-
     private final DocumentPropertyEditor documentPropertyEditor;
 
-    private final ActionService actionService;
-
-    private final WorkflowService applicationFormUserRoleService;
-
     public GenericCommentController() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null);
     }
 
     @Autowired
-    public GenericCommentController(ApplicationService applicationsService, UserService userService, CommentService commentService,
-            GenericCommentValidator genericCommentValidator, DocumentPropertyEditor documentPropertyEditor, ActionService actionService,
-            WorkflowService applicationFormUserRoleService) {
+    public GenericCommentController(ApplicationService applicationsService, UserService userService,
+            GenericCommentValidator genericCommentValidator, DocumentPropertyEditor documentPropertyEditor) {
         this.applicationsService = applicationsService;
         this.userService = userService;
-        this.commentService = commentService;
         this.genericCommentValidator = genericCommentValidator;
         this.documentPropertyEditor = documentPropertyEditor;
-        this.actionService = actionService;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     @ModelAttribute("applicationForm")
@@ -73,7 +59,7 @@ public class GenericCommentController {
     }
 
     @ModelAttribute("applicationDescriptor")
-    public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
+    public Application getApplicationDescriptor(@RequestParam String applicationId) {
         Application applicationForm = getApplicationForm(applicationId);
         User user = getUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);

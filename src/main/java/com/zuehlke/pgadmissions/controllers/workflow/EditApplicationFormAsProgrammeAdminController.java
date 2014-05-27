@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -33,7 +31,6 @@ import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.domain.enums.SystemAction;
-import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -58,8 +55,6 @@ import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
 @RequestMapping("/editApplicationFormAsProgrammeAdmin")
 public class EditApplicationFormAsProgrammeAdminController {
     // TODO fix tests
-
-    private static final Logger log = LoggerFactory.getLogger(EditApplicationFormAsProgrammeAdminController.class);
 
     private static final String VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME = "/private/staff/admin/application/main_application_page_programme_administrator";
 
@@ -236,7 +231,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     }
 
     @ModelAttribute("applicationDescriptor")
-    public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
+    public Application getApplicationDescriptor(@RequestParam String applicationId) {
         Application applicationForm = getApplicationForm(applicationId);
         User user = getCurrentUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);

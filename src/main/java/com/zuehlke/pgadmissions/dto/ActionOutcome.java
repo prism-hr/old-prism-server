@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.Map;
 
+import org.hibernate.Hibernate;
+
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.PrismResource;
@@ -12,13 +14,13 @@ public class ActionOutcome {
 
     private User user;
 
-    private PrismResource scope;
+    private PrismResource resource;
 
     private SystemAction nextAction;
 
-    public ActionOutcome(User user, PrismResource scope, SystemAction nextAction) {
+    public ActionOutcome(User user, PrismResource resource, SystemAction nextAction) {
         this.user = user;
-        this.scope = scope;
+        this.resource = resource;
         this.nextAction = nextAction;
     }
 
@@ -26,8 +28,9 @@ public class ActionOutcome {
         return user;
     }
 
-    public PrismResource getScope() {
-        return scope;
+    public PrismResource getResource() {
+        Hibernate.initialize(resource);
+        return resource;
     }
 
     public SystemAction getNextAction() {
@@ -36,7 +39,7 @@ public class ActionOutcome {
 
     public String createRedirectionUrl() {
         Map<String, String> params = Maps.newLinkedHashMap();
-        params.put("resource", scope.getId().toString());
+        params.put("resource", resource.getId().toString());
         params.put("action", nextAction.name());
 
         return "redirect:/execute?" + Joiner.on("&").withKeyValueSeparator("=").join(params);

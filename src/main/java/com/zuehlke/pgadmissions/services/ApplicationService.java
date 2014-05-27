@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -28,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.domain.enums.SystemAction;
-import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 
@@ -71,27 +69,25 @@ public class ApplicationService {
     @Autowired
     private WorkflowService workflowService;
     
+    public Application create(User user, Advert advert) {
+        Application application = new Application();
+        application.setUser(user);
+        application.setParentResource(advert);
+        application.setCreatedTimestamp(new DateTime());
+        Application previousApplication = applicationFormDAO.getPreviousApplication(application);
+        if (previousApplication != null) {
+            applicationFormCopyHelper.copyApplicationFormData(application, previousApplication);
+        }
+        return application;
+    }
+    
     public Application getOrCreate(final User user, final Integer advertId) throws Exception { 
         return getOrCreate(user, programService.getValidProgramProjectAdvert(advertId));
     }
     
     public Application getOrCreate(final User user, final Advert advert) {
-        HashMap <String, Object> applicationProperties = new HashMap<String, Object>();
-        applicationProperties.put("user", user);
-        applicationProperties.put("program", advert.getProgram());
-        applicationProperties.put("project", advert.getProject());
-        Application application = entityService.getDuplicateEntity(Application.class, applicationProperties);
-        if (application == null) {
-            application = entityService.create(Application.class, applicationProperties);
-            application.setApplicationNumber(generateApplicationNumber(application.getAdvert().getProgram()));
-            application.setParentResource(advert);
-            application.setCreatedTimestamp(new DateTime());
-            Application previousApplication = applicationFormDAO.getPreviousApplication(application);
-            if (previousApplication != null) {
-                applicationFormCopyHelper.copyApplicationFormData(application, previousApplication);
-            }
-        }
-        return application;
+        Application transientApplication = create(user, advert);
+        return entityService.getOrCreate(transientApplication);
     }
     
     public void save(Application application) {
@@ -112,10 +108,10 @@ public class ApplicationService {
         return applicationFormDAO.getByApplicationNumber(applicationNumber);
     }
 
-    public List<ApplicationDescriptor> getApplicationsForList(final User user, final ApplicationFilterGroup filtering) {
-        List<ApplicationDescriptor> applications = applicationFormListDAO.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE);
-        for (ApplicationDescriptor application : applications) {
-            application.getActionDefinitions().addAll(actionService.getUserActions(user.getId(), application.getApplicationFormId()));
+    public List<Application> getApplicationsForList(final User user, final ApplicationFilterGroup filtering) {
+        List<Application> applications = applicationFormListDAO.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE);
+        for (Application application : applications) {
+            application.getPermittedActions().addAll(actionService.getPermittedActions(user, application));
         }
         return applications;
     }
@@ -209,8 +205,8 @@ public class ApplicationService {
         return null;
     }
 
-    public ApplicationDescriptor getApplicationDescriptorForUser(final Application application, final User user) {
-        ApplicationDescriptor applicationDescriptor = new ApplicationDescriptor();
+    public Application getApplicationDescriptorForUser(final Application application, final User user) {
+        Application applicationDescriptor = new Application();
 //        applicationDescriptor.getActionDefinitions().addAll(actionService.getUserActions(user.getId(), application.getId()));
 //        applicationDescriptor.setNeedsToSeeUrgentFlag(applicationFormDAO.getRaisesUrgentFlagForUser(application, user));
 //        applicationDescriptor.setNeedsToSeeUpdateFlag(applicationFormDAO.getRaisesUpdateFlagForUser(application, user));

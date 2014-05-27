@@ -1,22 +1,19 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.commons.beanutils.ConstructorUtils;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.IDeduplicatableResource;
+import com.zuehlke.pgadmissions.dao.EntityDAO;
+import com.zuehlke.pgadmissions.domain.IUniqueResource;
+import com.zuehlke.pgadmissions.domain.PrismResource;
 
 @Service
 @Transactional
 public class EntityService {
-    
+
     @Autowired
-    private EntityService entityDAO;
+    private EntityDAO entityDAO;
 
     public <T> T getById(Class<T> klass, int id) {
         return entityDAO.getById(klass, id);
@@ -25,30 +22,18 @@ public class EntityService {
     public <T> T getBy(Class<T> klass, String propertyName, Object propertyValue) {
         return entityDAO.getBy(klass, propertyName, propertyValue);
     }
-    
-    public <T> T getDuplicateEntity(Class<T> klass, IDeduplicatableResource.UniqueResourceSignature signature) {
-        return (T) entityDAO.getDuplicateEntity(klass, signature);
+
+    public <T extends IUniqueResource> T getDuplicateEntity(T resource) {
+        return (T) entityDAO.getDuplicateEntity(resource);
     }
     
-    @SuppressWarnings("unchecked")
-    public <T> T create(Class<T> klass, HashMap<String, Object> properties) {
-        try {
-            T entity = (T) ConstructorUtils.invokeConstructor(klass, null);
-            for (Map.Entry<String, Object> constraint : properties.entrySet()) {
-                PropertyUtils.setProperty(entity, constraint.getKey(), constraint.getValue());
-            }       
-            return entity;
-        } catch (Exception e) {
-            throw new Error("Could not create new resource of type: " + klass.getSimpleName(), e);
+    public <T extends IUniqueResource> T getOrCreate(T transientResource) {
+        T persistentResource = (T) getDuplicateEntity(transientResource);
+        if (persistentResource == null) {
+            save(transientResource);
+            persistentResource = transientResource;
         }
-    }
-    
-    public <T> T getOrCreate(Class<T> klass, HashMap<String, Object> properties) throws Exception {
-        T entity = getDuplicateEntity(klass, properties);
-        if (entity == null) {
-            entity = create(klass, properties);
-        }
-        return entity;
+        return persistentResource;
     }
 
     public void save(Object entity) {
@@ -58,9 +43,14 @@ public class EntityService {
     public void update(Object entity) {
         entityDAO.update(entity);
     }
-    
+
     public void delete(Object entity) {
         entityDAO.delete(entity);
+    }
+
+    public void generateNewResourceCode(PrismResource resource) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

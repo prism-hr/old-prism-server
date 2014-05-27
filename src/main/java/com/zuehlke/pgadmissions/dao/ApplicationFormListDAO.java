@@ -34,7 +34,6 @@ import com.zuehlke.pgadmissions.domain.enums.SearchCategory.CategoryType;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
-import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 
 @Repository
 public class ApplicationFormListDAO {
@@ -56,7 +55,7 @@ public class ApplicationFormListDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ApplicationDescriptor> getVisibleApplicationsForList(final User user, final ApplicationFilterGroup filtering, final int itemsPerPage) {
+    public List<Application> getVisibleApplicationsForList(final User user, final ApplicationFilterGroup filtering, final int itemsPerPage) {
         Integer blockCount = filtering.getBlockCount();
         updateLastAccessTimestamp(user, blockCount);
 
@@ -100,7 +99,7 @@ public class ApplicationFormListDAO {
         appendOrderStatement(criteria, filtering);
         appendLimitStatement(criteria, (blockCount - 1) * itemsPerPage, itemsPerPage);
 
-        return criteria.setResultTransformer(Transformers.aliasToBean(ApplicationDescriptor.class)).list();
+        return criteria.setResultTransformer(Transformers.aliasToBean(Application.class)).list();
     }
 
     @SuppressWarnings("unchecked")

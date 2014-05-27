@@ -12,4 +12,6 @@ public abstract class PrismResourceTransient extends PrismResource {
 
     public abstract void setDueDate(LocalDate dueDate);
     
+    public abstract String getCodePrefix();
+    
 }

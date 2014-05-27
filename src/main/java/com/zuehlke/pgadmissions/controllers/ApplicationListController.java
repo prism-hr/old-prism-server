@@ -34,7 +34,6 @@ import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
-import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
@@ -112,7 +111,7 @@ public class ApplicationListController {
         User user = getUser();
         filtering.setBlockCount(blockCount);
         filtering.setUseDisjunction(useDisjunction);
-        List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(user, filtering);
+        List<Application> applications = applicationsService.getApplicationsForList(user, filtering);
         model.addAttribute("applications", applications);
         model.addAttribute("latestConsideredFlagIndex", filtering.getLatestConsideredFlagIndex());
         return APPLICATION_LIST_SECTION_VIEW_NAME;

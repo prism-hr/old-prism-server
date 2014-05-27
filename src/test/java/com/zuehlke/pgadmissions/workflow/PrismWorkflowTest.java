@@ -101,7 +101,7 @@ public class PrismWorkflowTest {
         commentService.save(createApplicationComment);
         ActionOutcome actionOutcome = actionService.executeAction(program.getId(), applicant, SystemAction.PROGRAM_CREATE_APPLICATION,
                 createApplicationComment);
-        Application createdApplication = (Application) actionOutcome.getScope();
+        Application createdApplication = (Application) actionOutcome.getResource();
         assertEquals(SystemAction.APPLICATION_COMPLETE, actionOutcome.getNextAction());
 
         applicationTestDataProvider.fillWithData(createdApplication);
@@ -110,7 +110,7 @@ public class PrismWorkflowTest {
         actionOutcome = actionService.executeAction(createdApplication.getId(), applicant, SystemAction.APPLICATION_COMPLETE,
                 completeApplicationComment);
         assertEquals(SystemAction.SYSTEM_VIEW_APPLICATION_LIST, actionOutcome.getNextAction());
-        assertEquals(systemService.getSystem().getId(), actionOutcome.getScope().getId());
+        assertEquals(systemService.getSystem().getId(), actionOutcome.getResource().getId());
 
         Comment assignReviewerComment = new Comment();
         actionService.executeAction(1, programAdministrator, SystemAction.APPLICATION_ASSIGN_REVIEWERS, assignReviewerComment);

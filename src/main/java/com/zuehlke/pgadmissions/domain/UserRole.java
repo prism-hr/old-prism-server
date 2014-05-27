@@ -1,8 +1,10 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -13,9 +15,12 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 @Entity
 @Table(name = "USER_ROLE")
-public class UserRole {
+public class UserRole implements IUniqueResource {
 
     @Id
     @GeneratedValue
@@ -52,7 +57,7 @@ public class UserRole {
     @Column(name = "assigned_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime assignedTimestamp;
-
+    
     public Integer getId() {
         return id;
     }
@@ -100,7 +105,7 @@ public class UserRole {
     public void setApplication(Application application) {
         this.application = application;
     }
-
+    
     public User getUser() {
         return user;
     }
@@ -123,14 +128,6 @@ public class UserRole {
 
     public void setAssignedTimestamp(DateTime assignedTimestamp) {
         this.assignedTimestamp = assignedTimestamp;
-    }
-
-    public void setScope(PrismResource resource) {
-        try {
-            PropertyUtils.setProperty(this, resource.getResourceType().toString().toLowerCase(), resource);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public UserRole withSystem(System system) {
@@ -173,9 +170,51 @@ public class UserRole {
         return this;
     }
     
-    public UserRole withScope(PrismResource scope) {
-        this.setScope(scope);
+    public UserRole withScope(PrismResource resource) {
+        this.setResource(resource);
         return this;
+    }
+    
+    @Override
+    public UniqueResourceSignature getUniqueResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        if (system != null) {
+            properties.put("system", system);
+        } else if (institution != null) {
+            properties.put("institution", institution);          
+        } else if (program != null) {
+            properties.put("program", program);          
+        } else if (project != null) {
+            properties.put("program", project);               
+        } else if (application != null) {
+            properties.put("application", application);
+        }
+        properties.put("user", user);
+        properties.put("role", role);
+        propertiesWrapper.add(properties);
+        return new UniqueResourceSignature(propertiesWrapper, null);
+    }
+    
+    public PrismResource getResource() {
+        if (system != null) {
+            return system;
+        } else if (institution != null) {
+            return institution;
+        } else if (program != null) {
+            return program;
+        } else if (project != null) {
+            return project;
+        }
+        return application;
+    }
+    
+    public void setResource(PrismResource resource) {
+        try {
+            PropertyUtils.setSimpleProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
+        } catch (Exception e) {
+            throw new Error("Tried to assign user role to invalid prism resource", e);
+        }
     }
 
 }

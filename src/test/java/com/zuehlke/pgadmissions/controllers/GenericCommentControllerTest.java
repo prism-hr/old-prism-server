@@ -79,8 +79,7 @@ public class GenericCommentControllerTest {
         User currentUser = new User().withId(8);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.replay(userServiceMock);
-        controller = new GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, genericCommentValidatorMock,
-                documentPropertyEditorMock, actionsProviderMock, applicationFormUserRoleServiceMock) {
+        controller = new GenericCommentController() {
 
             @Override
             public Application getApplicationForm(String id) {
@@ -117,8 +116,8 @@ public class GenericCommentControllerTest {
         documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
         actionsProviderMock = EasyMock.createMock(ActionService.class);
         applicationFormUserRoleServiceMock = EasyMock.createMock(WorkflowService.class);
-        controller = new GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, genericCommentValidatorMock,
-                documentPropertyEditorMock, actionsProviderMock, applicationFormUserRoleServiceMock);
+        controller = new GenericCommentController(applicationsServiceMock, userServiceMock, genericCommentValidatorMock,
+                documentPropertyEditorMock);
 
     }
 }

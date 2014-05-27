@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.StateTransitionType;
 
 @Service
 @Transactional
@@ -35,14 +34,14 @@ public class StateService {
         return stateDAO.getAllConfigurableStates();
     }
     
-    public List<StateTransition> getUserStateTransitions(PrismResource resource, PrismAction action) {
-        return stateDAO.getStateTransitions(resource, action, StateTransitionType.ONE_COMPLETED);
+    public List<StateTransition> getStateTransitions(PrismResource resource, PrismAction action) {
+        return stateDAO.getStateTransitions(resource, action);
     }
     
     public StateTransition getStateTransition(PrismResource resource, PrismAction action, Comment comment) {
         StateTransition stateTransition = null;
         
-        List<StateTransition> stateTransitions = getUserStateTransitions(resource, action);     
+        List<StateTransition> stateTransitions = getStateTransitions(resource, action);     
         if (stateTransitions.size() > 1) {
             try {
                 String method = stateTransitions.get(0).getEvaluation().getProcessorMethodName(); 

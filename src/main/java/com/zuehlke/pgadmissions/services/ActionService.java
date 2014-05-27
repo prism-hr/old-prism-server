@@ -93,15 +93,18 @@ public class ActionService {
             
             if (resource instanceof PrismResourceTransient) {
                 PrismResourceTransient codableResource = (PrismResourceTransient) resource;
-                codableResource.generateCode();
+                codableResource.setCode(codableResource.generateCode());
             }
         }
 
         executeRoleTransitions(invoker, resource, actionInvokerRoles, transition);
-
-        comment.setRoles(getActionInvokerRolesAsString(actionInvokerRoles));
-        comment.setCreatedTimestamp(new DateTime());
-        entityService.save(comment);
+        
+        if (transition.isDoPostComment()) {
+            comment.setRoles(getActionInvokerRolesAsString(actionInvokerRoles));
+            comment.setCreatedTimestamp(new DateTime());
+            entityService.save(comment);
+        }
+        
         return transition.getTransitionAction().getId();
     }
 

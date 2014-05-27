@@ -10,7 +10,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.zuehlke.pgadmissions.domain.enums.StateTransitionEvaluation;
-import com.zuehlke.pgadmissions.domain.enums.StateTransitionType;
 
 @Entity
 @Table(name = "STATE_TRANSITION")
@@ -22,10 +21,6 @@ public class StateTransition {
     @ManyToOne
     @JoinColumn(name = "state_action_id", nullable = false)
     private StateAction stateAction;
-
-    @Column(name = "state_transition_type_id", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private StateTransitionType type;
 
     @ManyToOne
     @JoinColumn(name = "transition_state_id", nullable = false)
@@ -59,14 +54,6 @@ public class StateTransition {
 
     public void setStateAction(StateAction stateAction) {
         this.stateAction = stateAction;
-    }
-
-    public StateTransitionType getType() {
-        return type;
-    }
-
-    public void setType(StateTransitionType type) {
-        this.type = type;
     }
 
     public State getTransitionState() {

@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.HashMultimap;
@@ -26,7 +27,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Project extends Advert {
 
-    @Column(name = "code")
+    @Column(name = "code", nullable = true)
     private String code;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -56,6 +57,10 @@ public class Project extends Advert {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     @Column(name = "title")
     private String title;
+    
+    @Column(name = "created_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdTimestamp;
 
     @Override
     public String getCode() {
@@ -149,13 +154,21 @@ public class Project extends Advert {
         this.dueDate = dueDate;
     }
 
+    public DateTime getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public void setCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+    }
+
     @Override
     public Application getApplication() {
         return null;
     }
 
     @Override
-    public UniqueResourceSignature getUniqueResourceSignature() {
+    public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
         HashMap<String, Object> properties = Maps.newHashMap();
         properties.put("user", getUser());
@@ -163,13 +176,14 @@ public class Project extends Advert {
         properties.put("title", title);
         propertiesWrapper.add(properties);
         HashMultimap<String, Object> exclusions = HashMultimap.create();
+        exclusions.put("state.id", PrismState.PROJECT_DISABLED);
         exclusions.put("state.id", PrismState.PROJECT_DISABLED_COMPLETED);
-        return new UniqueResourceSignature(propertiesWrapper, exclusions);
+        return new ResourceSignature(propertiesWrapper, exclusions);
     }
 
     @Override
-    public String getCodePrefix() {
-        return program.getCode();
+    public String generateCode() {
+        return program.getCode() + "-" + createdTimestamp.getYear() + "-" + String.format("%010d", getId());
     }
 
 }

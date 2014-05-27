@@ -13,7 +13,6 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.StateTransitionType;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -45,12 +44,11 @@ public class StateDAO {
                 .list();
     }
 
-    public List<StateTransition> getStateTransitions(PrismResource resource, PrismAction action, StateTransitionType... stateTransitionTypes) {
+    public List<StateTransition> getStateTransitions(PrismResource resource, PrismAction action) {
         return (List<StateTransition>) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state.id", resource.getState().getId())) //
                 .add(Restrictions.eq("stateAction.action.id", action)) //
-                .add(Restrictions.in("type", stateTransitionTypes)) // /
                 .list();
     }
 

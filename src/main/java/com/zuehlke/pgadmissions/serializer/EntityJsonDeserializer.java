@@ -21,6 +21,7 @@ public class EntityJsonDeserializer<T> extends JsonDeserializer<T> {
     }
 
     @Override
+    @SuppressWarnings("unused")
     public T deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
         JsonToken token = jp.getCurrentToken();
         int id = jp.getIntValue();

@@ -133,16 +133,6 @@ public abstract class Advert extends PrismResourceTransient {
     public List<AdvertClosingDate> getClosingDates() {
         return closingDates;
     }
-    
-    @Override
-    public DateTime getCreatedTimestamp() {
-        return createdTimestamp;
-    }
-
-    @Override
-    public void setCreatedTimestamp(DateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
-    }
 
     @Override
     public int hashCode() {

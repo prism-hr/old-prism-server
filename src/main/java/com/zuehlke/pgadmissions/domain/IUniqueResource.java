@@ -11,15 +11,15 @@ public interface IUniqueResource {
     
     public static String UNIQUE_IDENTIFICATION_ERROR = "Tried to identify a resource that has an invalid unique signature";
     
-    public UniqueResourceSignature getUniqueResourceSignature();
+    public ResourceSignature getResourceSignature();
 
-    public class UniqueResourceSignature {
+    public class ResourceSignature {
         
         private List<HashMap<String, Object>> properties;
         
         private HashMultimap<String, Object> exclusions;
         
-        public UniqueResourceSignature(List<HashMap<String, Object>> properties, HashMultimap<String, Object> exclusions) {
+        public ResourceSignature(List<HashMap<String, Object>> properties, HashMultimap<String, Object> exclusions) {
             this.properties = properties;
             this.exclusions = exclusions;
         }

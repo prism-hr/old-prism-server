@@ -41,7 +41,7 @@ public class Application extends PrismResourceTransient {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "code")
+    @Column(name = "code", nullable = true)
     private String code;
 
     @ManyToOne
@@ -139,10 +139,10 @@ public class Application extends PrismResourceTransient {
 
     @Transient
     private Boolean acceptedTerms;
-    
+
     @Transient
     private List<StateAction> permittedActions;
-    
+
     @Override
     public Integer getId() {
         return id;
@@ -187,12 +187,10 @@ public class Application extends PrismResourceTransient {
         this.acceptedTerms = acceptedTerms;
     }
 
-    @Override
     public DateTime getCreatedTimestamp() {
         return createdTimestamp;
     }
 
-    @Override
     public void setCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
     }
@@ -264,7 +262,7 @@ public class Application extends PrismResourceTransient {
     public List<StateAction> getPermittedActions() {
         return permittedActions;
     }
-    
+
     public boolean isUrgent() {
         for (StateAction permittedAction : permittedActions) {
             if (permittedAction.isRaisesUrgentFlag()) {
@@ -283,12 +281,12 @@ public class Application extends PrismResourceTransient {
         this.code = code;
         return this;
     }
-    
+
     public Application withSystem(System system) {
         this.system = system;
         return this;
     }
-    
+
     public Application withInstitution(Institution institution) {
         this.institution = institution;
         return this;
@@ -313,7 +311,7 @@ public class Application extends PrismResourceTransient {
         this.dueDate = dueDate;
         return this;
     }
-    
+
     public Application withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
         return this;
@@ -445,23 +443,23 @@ public class Application extends PrismResourceTransient {
     }
 
     @Override
-    public UniqueResourceSignature getUniqueResourceSignature() {
+    public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
         HashMap<String, Object> properties = Maps.newHashMap();
         properties.put("user", user);
         properties.put("program", program);
         properties.put("project", project);
         propertiesWrapper.add(properties);
-        HashMultimap<String, Object> exclusions = HashMultimap.create(); 
+        HashMultimap<String, Object> exclusions = HashMultimap.create();
         exclusions.put("state.id", PrismState.APPLICATION_APPROVED_COMPLETED);
         exclusions.put("state.id", PrismState.APPLICATION_REJECTED_COMPLETED);
         exclusions.put("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED);
-        return new UniqueResourceSignature(propertiesWrapper, exclusions);
+        return new ResourceSignature(propertiesWrapper, exclusions);
     }
 
     @Override
-    public String getCodePrefix() {
-        return program.getCode();
+    public String generateCode() {
+        return program.getCode() + "-" + getCreatedTimestamp().getYear() + "-" + String.format("%010d", getId());
     }
 
 }

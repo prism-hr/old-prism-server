@@ -119,12 +119,13 @@ public class ActionService {
             State transitionState = stateTransition.getTransitionState();
             if (transitionState != null) {
                 resource.setState(stateTransition.getTransitionState());
+                
+                entityService.save(resource);
+                
                 if (resource instanceof PrismResourceTransient) {
                     PrismResourceTransient transientResource = (PrismResourceTransient) resource;
                     entityService.generateNewResourceCode(transientResource);
-                    // TODO: database and methods to set the code
                 }
-                entityService.save(resource);
             }
 
             executeRoleTransitions(invoker, resource, actionInvokerRoles, stateTransition);

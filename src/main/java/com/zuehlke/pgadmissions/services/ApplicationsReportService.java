@@ -269,7 +269,7 @@ public class ApplicationsReportService {
                 }
 
             } catch (NullPointerException e) {
-                logger.info("User tried to download spreadsheet report for corrupted application: " + app.getApplicationNumber() + ".", e);
+                logger.info("User tried to download spreadsheet report for corrupted application: " + app.getCode() + ".", e);
                 continue;
             }
         }

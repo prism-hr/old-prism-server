@@ -44,7 +44,7 @@ public class TestData {
 
     public static Application anApplicationForm(System system, Institution institution, Program program, User user, State state) {
         return new Application().withSystem(system).withInstitution(institution).withUser(user).withProgram(program).withState(state)
-                .withDueDate(new LocalDate().plusWeeks(2)).withApplicationNumber("aplikacja1").withCreatedTimestamp(new DateTime());
+                .withDueDate(new LocalDate().plusWeeks(2)).withCode("aplikacja1").withCreatedTimestamp(new DateTime());
     }
 
     public static Address anAddress(Domicile domicile) {

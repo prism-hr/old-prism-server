@@ -200,10 +200,10 @@ public class StateTransitionController {
         // FIXME check if has global administration rights (administrator or approver), use PermissionsService, split it into 2 actions
         if (true) {
             if (BooleanUtils.isTrue(stateChangeDTO.getDelegate())) {
-                return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
+                return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getCode();
             }
         } else if (applicationForm.getState().getId() != stateChangeDTO.getNextStatus()) {
-            return "redirect:/applications?messageCode=state.change.suggestion&application=" + applicationForm.getApplicationNumber();
+            return "redirect:/applications?messageCode=state.change.suggestion&application=" + applicationForm.getCode();
         }
 
         return stateTransitionService.resolveView(applicationForm);

@@ -91,7 +91,7 @@ public class MailSendingService extends AbstractMailSendingService {
                             roleService.getUsersInRole(systemService.getSystem(), Authority.INSTITUTION_ADMITTER), getHostName(),
                             admissionsOfferServiceLevel });
             Map<String, Object> model = modelBuilder.build();
-            Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle() };
+            Object[] args = new Object[] { form.getCode(), form.getProgram().getTitle() };
             String subject = resolveMessage(APPLICATION_COMPLETE_NOTIFICATION, args);
             message = buildMessage(applicant, subject, model, APPLICATION_COMPLETE_NOTIFICATION);
             sendEmail(message);
@@ -118,7 +118,7 @@ public class MailSendingService extends AbstractMailSendingService {
 //                    model.put("prospectusLink", uclProspectusLink);
 //                }
 //            }
-            Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName() };
+            Object[] args = new Object[] { form.getCode(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName() };
             String subject = resolveMessage(APPLICATION_CONFIRM_REJECTION_NOTIFICATION, args);
             message = buildMessage(applicant, subject, model, APPLICATION_CONFIRM_REJECTION_NOTIFICATION);
             sendEmail(message);

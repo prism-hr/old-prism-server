@@ -137,9 +137,9 @@ public class ConfirmSupervisionController {
         workflowService.applicationUpdated(applicationForm, user);
 
         if (BooleanUtils.isTrue(confirmSupervisionDTO.getConfirmedSupervision())) {
-            return "redirect:/applications?messageCode=supervision.confirmed&application=" + applicationForm.getApplicationNumber();
+            return "redirect:/applications?messageCode=supervision.confirmed&application=" + applicationForm.getCode();
         } else {
-            return "redirect:/applications?messageCode=supervision.declined&application=" + applicationForm.getApplicationNumber();
+            return "redirect:/applications?messageCode=supervision.declined&application=" + applicationForm.getCode();
         }
     }
 

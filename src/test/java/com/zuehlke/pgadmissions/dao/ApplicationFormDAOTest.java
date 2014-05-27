@@ -127,7 +127,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetApplicationByApplicationNumber() {
-        Application applicationFormOne = TestData.anApplicationForm(system, institution, program, user, testObjectProvider.getState(PrismState.APPLICATION_APPROVAL)).withApplicationNumber("ABC"); 
+        Application applicationFormOne = TestData.anApplicationForm(system, institution, program, user, testObjectProvider.getState(PrismState.APPLICATION_APPROVAL)).withCode("ABC"); 
 
         save(applicationFormOne);
 
@@ -140,8 +140,8 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldGetTwoApplicationsByApplicantAndProgram() {
-        Application applicationForm = TestData.anApplicationForm(system, institution, program, user, testObjectProvider.getState(PrismState.APPLICATION_APPROVAL)).withApplicationNumber("dfgf1");
-        Application applicationForm2 = TestData.anApplicationForm(system, institution, program, user, testObjectProvider.getState(PrismState.APPLICATION_UNSUBMITTED)).withApplicationNumber("dfgf2");
+        Application applicationForm = TestData.anApplicationForm(system, institution, program, user, testObjectProvider.getState(PrismState.APPLICATION_APPROVAL)).withCode("dfgf1");
+        Application applicationForm2 = TestData.anApplicationForm(system, institution, program, user, testObjectProvider.getState(PrismState.APPLICATION_UNSUBMITTED)).withCode("dfgf2");
 
         save(applicationForm, applicationForm2);
         flushAndClearSession();
@@ -168,9 +168,9 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         User otherApplicant = new User().withFirstName("Other").withLastName("Applicant").withEmail("other@applicant.com").withActivationCode("AA")
                 .withAccount(new UserAccount().withPassword("password").withEnabled(false));
 
-        Application applicationForm = TestData.anApplicationForm(system, institution, program, user, testObjectProvider.getState(PrismState.APPLICATION_APPROVAL)).withApplicationNumber("kdjsa1");
-        Application applicationForm2 = TestData.anApplicationForm(system, institution, program, user, testObjectProvider.getState(PrismState.APPLICATION_VALIDATION)).withApplicationNumber("kdjsa2");
-        Application applicationForm3 = TestData.anApplicationForm(system, institution, program, user, testObjectProvider.getState(PrismState.APPLICATION_INTERVIEW)).withApplicationNumber("kdjsa3");
+        Application applicationForm = TestData.anApplicationForm(system, institution, program, user, testObjectProvider.getState(PrismState.APPLICATION_APPROVAL)).withCode("kdjsa1");
+        Application applicationForm2 = TestData.anApplicationForm(system, institution, program, user, testObjectProvider.getState(PrismState.APPLICATION_VALIDATION)).withCode("kdjsa2");
+        Application applicationForm3 = TestData.anApplicationForm(system, institution, program, user, testObjectProvider.getState(PrismState.APPLICATION_INTERVIEW)).withCode("kdjsa3");
 
         Application recentApplicationForm = new Application().withSubmittedTimestamp(initialDate.plusDays(2).plusMinutes(2))
                 .withProgram(program).withUser(otherApplicant).withState(new State().withId(PrismState.APPLICATION_UNSUBMITTED));

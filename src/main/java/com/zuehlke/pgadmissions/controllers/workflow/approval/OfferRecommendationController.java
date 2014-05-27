@@ -113,11 +113,11 @@ public class OfferRecommendationController {
         if (offerRecommendedService.moveToApproved(application, offerRecommendedComment)) {
             offerRecommendedService.sendToPortico(application);
             modelMap.put("messageCode", "move.approved");
-            modelMap.put("application", application.getApplicationNumber());
+            modelMap.put("application", application.getCode());
             applicationFormUserRoleService.applicationUpdated(application, user);
             return "redirect:/applications";
         } else {
-            return "redirect:/rejectApplication?applicationId=" + application.getApplicationNumber() + "&rejectionId=7";
+            return "redirect:/rejectApplication?applicationId=" + application.getCode() + "&rejectionId=7";
         }
 
     }

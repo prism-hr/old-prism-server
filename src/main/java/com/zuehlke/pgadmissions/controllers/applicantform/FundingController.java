@@ -74,13 +74,13 @@ public class FundingController {
             return returnView(modelMap, funding);
         }
         fundingService.saveOrUpdate(applicationForm, fundingId, funding);
-        return RedirectLocation.UPDATE_APPLICATION_FUNDING + applicationForm.getApplicationNumber();
+        return RedirectLocation.UPDATE_APPLICATION_FUNDING + applicationForm.getCode();
     }
 
     @RequestMapping(value = "/deleteFunding", method = RequestMethod.POST)
     public String deleteFunding(@RequestParam("id") Integer fundingId, @ModelAttribute Application applicationForm) {
         fundingService.delete(fundingId);
-        return RedirectLocation.UPDATE_APPLICATION_FUNDING + applicationForm.getApplicationNumber() + "&message=deleted";
+        return RedirectLocation.UPDATE_APPLICATION_FUNDING + applicationForm.getCode() + "&message=deleted";
     }
 
     @ModelAttribute("fundingTypes")

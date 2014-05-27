@@ -55,7 +55,7 @@ public class ApplicationSummaryService {
         result.put("applicationSubmissionDate", dateFormat.format(application.getSubmittedTimestamp()));
         result.put("applicationUpdateDate", dateFormat.format(updatedTimeStamp));
         result.put("requiresAttention", BooleanUtils.toStringTrueFalse(application.isUrgent()));
-        result.put("applicationNumber", application.getApplicationNumber());
+        result.put("applicationNumber", application.getCode());
     }
 
     private void addActiveApplications(final User applicant, final Map<String, String> result) {

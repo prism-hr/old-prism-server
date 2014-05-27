@@ -85,7 +85,7 @@ public class StateChangeDTO {
     }
 
     public String getApplicationNumber() {
-        return applicationForm.getApplicationNumber();
+        return applicationForm.getCode();
     }
 
     public Boolean hasFastTrackOption() {

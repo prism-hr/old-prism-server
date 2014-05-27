@@ -55,7 +55,7 @@ public class AdditionalInformationController {
             return returnView(modelMap, additionalInformation);
         }
         additionalInformationService.saveOrUpdate(applicationForm, additionalInformation);
-        return RedirectLocation.UPDATE_APPLICATION_ADDITIONAL_INFORMATION + applicationForm.getApplicationNumber();
+        return RedirectLocation.UPDATE_APPLICATION_ADDITIONAL_INFORMATION + applicationForm.getCode();
     }
 
     @InitBinder(value = "additionalInformation")

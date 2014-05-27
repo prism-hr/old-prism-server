@@ -117,11 +117,11 @@ public class InterviewConfirmController {
         interviewService.confirmInterview(user, applicationForm, interviewConfirmDTO);
         applicationsService.save(applicationForm);
         
-        return "redirect:/applications?messageCode=interview.confirm&application=" + applicationForm.getApplicationNumber();
+        return "redirect:/applications?messageCode=interview.confirm&application=" + applicationForm.getCode();
     }
 
     @RequestMapping(value = "/restart", method = RequestMethod.POST)
     public String restartInterviewScheduling(@ModelAttribute Application applicationForm) {
-        return "redirect:/interview/moveToInterview?applicationId=" + applicationForm.getApplicationNumber();
+        return "redirect:/interview/moveToInterview?applicationId=" + applicationForm.getCode();
     }
 }

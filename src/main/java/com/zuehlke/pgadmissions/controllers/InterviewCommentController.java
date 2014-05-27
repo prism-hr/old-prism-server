@@ -134,7 +134,7 @@ public class InterviewCommentController {
         applicationsService.save(applicationForm);
         applicationFormUserRoleService.interviewFeedbackPosted(comment);
         applicationFormUserRoleService.applicationUpdated(applicationForm, user);
-        return "redirect:/applications?messageCode=interview.feedback&application=" + applicationForm.getApplicationNumber();
+        return "redirect:/applications?messageCode=interview.feedback&application=" + applicationForm.getCode();
     }
 
     private List<Question> getCustomQuestions(String applicationId) throws ScoringDefinitionParseException {

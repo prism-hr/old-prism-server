@@ -168,10 +168,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<Application> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1));
 
-        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationNumber());
-        assertEquals(applicationFormTwo.getId(), applications.get(1).getApplicationNumber());
-        assertEquals(applicationFormFour.getId(), applications.get(2).getApplicationNumber());
-        assertEquals(applicationFormThree.getId(), applications.get(3).getApplicationNumber());
+        assertEquals(applicationFormOne.getId(), applications.get(0).getCode());
+        assertEquals(applicationFormTwo.getId(), applications.get(1).getCode());
+        assertEquals(applicationFormFour.getId(), applications.get(2).getCode());
+        assertEquals(applicationFormThree.getId(), applications.get(3).getCode());
     }
 
     @Test
@@ -234,7 +234,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
         assertEquals(1, applications.size());
-        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationNumber());
+        assertEquals(applicationFormOne.getId(), applications.get(0).getCode());
     }
 
     @Test
@@ -259,7 +259,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
         assertEquals(1, applications.size());
-        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationNumber());
+        assertEquals(applicationFormOne.getId(), applications.get(0).getCode());
     }
 
     @Test
@@ -301,7 +301,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
         assertEquals(1, applications.size());
-        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationNumber());
+        assertEquals(applicationFormOne.getId(), applications.get(0).getCode());
     }
 
     @Test
@@ -325,7 +325,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
         assertEquals(1, applications.size());
-        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationNumber());
+        assertEquals(applicationFormOne.getId(), applications.get(0).getCode());
     }
 
     @Test
@@ -417,7 +417,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
         assertEquals(1, applications.size());
-        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationNumber());
+        assertEquals(applicationFormOne.getId(), applications.get(0).getCode());
     }
 
     @Test
@@ -451,7 +451,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
         assertEquals(1, applications.size());
-        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationNumber());
+        assertEquals(applicationFormOne.getId(), applications.get(0).getCode());
     }
 
     @Test
@@ -517,8 +517,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.APPLICATION_STATUS, SortOrder.ASCENDING, 1, filter));
 
         assertEquals(2, applications.size());
-        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationNumber());
-        assertEquals(applicationFormThree.getId(), applications.get(1).getApplicationNumber());
+        assertEquals(applicationFormOne.getId(), applications.get(0).getCode());
+        assertEquals(applicationFormThree.getId(), applications.get(1).getCode());
     }
 
     @Test
@@ -550,10 +550,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<Application> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1));
 
-        Assert.assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationNumber());
-        Assert.assertEquals(applicationFormTwo.getId(), applications.get(1).getApplicationNumber());
-        Assert.assertEquals(applicationFormThree.getId(), applications.get(2).getApplicationNumber());
-        Assert.assertEquals(applicationFormFour.getId(), applications.get(3).getApplicationNumber());
+        Assert.assertEquals(applicationFormOne.getId(), applications.get(0).getCode());
+        Assert.assertEquals(applicationFormTwo.getId(), applications.get(1).getCode());
+        Assert.assertEquals(applicationFormThree.getId(), applications.get(2).getCode());
+        Assert.assertEquals(applicationFormFour.getId(), applications.get(3).getCode());
     }
 
     @Test
@@ -599,10 +599,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 1, filter));
 
         Assert.assertEquals(4, applications.size());
-        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormThree.getId(), applications.get(0).getApplicationNumber());
-        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormFour.getId(), applications.get(1).getApplicationNumber());
-        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormOne.getId(), applications.get(2).getApplicationNumber());
-        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormTwo.getId(), applications.get(3).getApplicationNumber());
+        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormThree.getId(), applications.get(0).getCode());
+        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormFour.getId(), applications.get(1).getCode());
+        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormOne.getId(), applications.get(2).getCode());
+        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormTwo.getId(), applications.get(3).getCode());
     }
 
     @Test
@@ -648,10 +648,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.APPLICATION_STATUS, SortOrder.ASCENDING, 1, filter));
 
         Assert.assertEquals(4, applications.size());
-        Assert.assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationNumber());
-        Assert.assertEquals(applicationFormTwo.getId(), applications.get(1).getApplicationNumber());
-        Assert.assertEquals(applicationFormThree.getId(), applications.get(2).getApplicationNumber());
-        Assert.assertEquals(applicationFormFour.getId(), applications.get(3).getApplicationNumber());
+        Assert.assertEquals(applicationFormOne.getId(), applications.get(0).getCode());
+        Assert.assertEquals(applicationFormTwo.getId(), applications.get(1).getCode());
+        Assert.assertEquals(applicationFormThree.getId(), applications.get(2).getCode());
+        Assert.assertEquals(applicationFormFour.getId(), applications.get(3).getCode());
     }
 
     @Test
@@ -705,10 +705,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<Application> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
 
-        Assert.assertEquals(applicationFormFour.getId(), applications.get(0).getApplicationNumber());
-        Assert.assertEquals(applicationFormTwo.getId(), applications.get(1).getApplicationNumber());
-        Assert.assertEquals(applicationFormThree.getId(), applications.get(2).getApplicationNumber());
-        Assert.assertEquals(applicationFormOne.getId(), applications.get(3).getApplicationNumber());
+        Assert.assertEquals(applicationFormFour.getId(), applications.get(0).getCode());
+        Assert.assertEquals(applicationFormTwo.getId(), applications.get(1).getCode());
+        Assert.assertEquals(applicationFormThree.getId(), applications.get(2).getCode());
+        Assert.assertEquals(applicationFormOne.getId(), applications.get(3).getCode());
 
     }
 
@@ -834,10 +834,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<Application> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, filter));
 
-        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationNumber());
-        assertEquals(applicationFormTwo.getId(), applications.get(1).getApplicationNumber());
-        assertEquals(applicationFormFour.getId(), applications.get(2).getApplicationNumber());
-        assertEquals(applicationFormThree.getId(), applications.get(3).getApplicationNumber());
+        assertEquals(applicationFormOne.getId(), applications.get(0).getCode());
+        assertEquals(applicationFormTwo.getId(), applications.get(1).getCode());
+        assertEquals(applicationFormFour.getId(), applications.get(2).getCode());
+        assertEquals(applicationFormThree.getId(), applications.get(3).getCode());
     }
 
     @Test
@@ -862,7 +862,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     private boolean listContainsId(Application application, List<Application> applications) {
         for (Application entry : applications) {
-            if (application.getId().equals(entry.getApplicationNumber())) {
+            if (application.getId().equals(entry.getCode())) {
                 return true;
             }
         }

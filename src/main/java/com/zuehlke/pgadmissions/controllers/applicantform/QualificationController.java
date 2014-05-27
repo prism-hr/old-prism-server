@@ -104,13 +104,13 @@ public class QualificationController {
             return returnView(modelMap, qualification);
         }
         qualificationService.saveOrUpdate(applicationForm, qualificationId, qualification);
-        return RedirectLocation.UPDATE_APPLICATION_QUALIFICATION + qualification.getApplication().getApplicationNumber();
+        return RedirectLocation.UPDATE_APPLICATION_QUALIFICATION + qualification.getApplication().getCode();
     }
 
     @RequestMapping(value = "/deleteQualification", method = RequestMethod.POST)
     public String deleteQualification(@RequestParam("id") Integer qualificationId, @ModelAttribute Application applicationForm) {
         qualificationService.delete(qualificationId);
-        return RedirectLocation.UPDATE_APPLICATION_QUALIFICATION + applicationForm.getApplicationNumber() + "&message=deleted";
+        return RedirectLocation.UPDATE_APPLICATION_QUALIFICATION + applicationForm.getCode() + "&message=deleted";
     }
 
     @ModelAttribute("institutions")

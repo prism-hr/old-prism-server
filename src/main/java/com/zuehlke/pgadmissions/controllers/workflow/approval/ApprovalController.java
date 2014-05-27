@@ -101,12 +101,12 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
 
         actionService.validateAction(applicationForm, user, SystemAction.APPLICATION_ASSIGN_SUPERVISORS);
 
-        modelMap.put("approvalRound", getApprovalRound(applicationForm.getApplicationNumber()));
+        modelMap.put("approvalRound", getApprovalRound(applicationForm.getCode()));
 
         Comment latestApprovalComment = applicationsService.getLatestStateChangeComment(applicationForm, SystemAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
         if (latestApprovalComment != null) {
             SendToPorticoDataDTO porticoData = new SendToPorticoDataDTO();
-            porticoData.setApplicationNumber(applicationForm.getApplicationNumber());
+            porticoData.setApplicationNumber(applicationForm.getCode());
             porticoData.setQualificationsSendToPortico(porticoService.getQualificationsToSendToPorticoIds(applicationForm));
             porticoData.setRefereesSendToPortico(porticoService.getRefereesToSendToPorticoIds(applicationForm));
             porticoData.setEmptyQualificationsExplanation(latestApprovalComment.getEquivalentExperience());

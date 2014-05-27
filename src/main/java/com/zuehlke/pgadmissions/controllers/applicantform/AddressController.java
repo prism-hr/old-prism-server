@@ -59,7 +59,7 @@ public class AddressController {
             return returnView(modelMap, applicationFormAddress);
         }
         applicationFormAddressService.saveOrUpdate(applicationForm, applicationFormAddress);
-        return RedirectLocation.UPDATE_APPLICATION_ADDRESS + applicationForm.getApplicationNumber();
+        return RedirectLocation.UPDATE_APPLICATION_ADDRESS + applicationForm.getCode();
     }
 
     @InitBinder(value = "addressSectionDTO")

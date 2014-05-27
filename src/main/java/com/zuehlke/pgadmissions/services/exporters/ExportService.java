@@ -76,7 +76,7 @@ public class ExportService {
 
     public void sendToPortico(final Application form)  {
         try {
-            log.info(String.format("Submitting application to PORTICO [applicationNumber=%s]", form.getApplicationNumber()));
+            log.info(String.format("Submitting application to PORTICO [applicationNumber=%s]", form.getCode()));
             ExportService proxy = context.getBean(this.getClass());
             proxy.prepareApplicationForm(form);
             proxy.sendWebServiceRequest(form);
@@ -109,7 +109,7 @@ public class ExportService {
         SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory()).applicationForm(form)
                 .isOverseasStudent(isOverseasStudent).primarySupervisor(primarySupervisor).build();
 
-        log.info(String.format("Calling PORTICO web service [applicationNumber=%s]", form.getApplicationNumber()));
+        log.info(String.format("Calling PORTICO web service [applicationNumber=%s]", form.getCode()));
 
         AdmissionsApplicationResponse response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request,
                 new WebServiceMessageCallback() {
@@ -118,21 +118,21 @@ public class ExportService {
                     }
                 });
 
-        log.trace(String.format("Sent web service request [applicationNumber=%s, request=%s]", form.getApplicationNumber(), requestMessageBuffer.toString()));
-        log.trace(String.format("Received response from web service [applicationNumber=%s, applicantId=%s, applicationId=%s]", form.getApplicationNumber(),
+        log.trace(String.format("Sent web service request [applicationNumber=%s, request=%s]", form.getCode(), requestMessageBuffer.toString()));
+        log.trace(String.format("Received response from web service [applicationNumber=%s, applicantId=%s, applicationId=%s]", form.getCode(),
                 response.getReference().getApplicantID(), response.getReference().getApplicationID()));
         // TODO store external application and applicant IDs
         // applicationFormTransferService.updateApplicationFormPorticoIds(form, response);
         // applicationFormTransferService.updateTransferPorticoIds(transfer, response);
         // applicationFormTransferService.updateTransferStatus(transfer, ApplicationTransferState.QUEUED_FOR_ATTACHMENTS_SENDING);
-        log.info(String.format("Finished PORTICO web service [applicationNumber=%s]", form.getApplicationNumber()));
+        log.info(String.format("Finished PORTICO web service [applicationNumber=%s]", form.getCode()));
     }
 
     @Transactional
     public void uploadDocuments(final Application form) throws Exception {
-        log.info(String.format("Calling PORTICO SFTP service [applicationNumber=%s]", form.getApplicationNumber()));
+        log.info(String.format("Calling PORTICO SFTP service [applicationNumber=%s]", form.getCode()));
         String zipFileName = sftpAttachmentsSendingService.sendApplicationFormDocuments(form);
-        log.info(String.format("Finished PORTICO SFTP service [applicationNumber=%s, zipFileName=%s]", form.getApplicationNumber(), zipFileName));
+        log.info(String.format("Finished PORTICO SFTP service [applicationNumber=%s, zipFileName=%s]", form.getCode(), zipFileName));
     }
 
     /*

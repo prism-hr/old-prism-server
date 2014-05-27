@@ -108,7 +108,7 @@ public class InterviewService {
         }
 
         if (timeslot == null) {
-            throw new RuntimeException("Incorrect timeslotId " + timeslotId + ", application: " + applicationForm.getApplicationNumber());
+            throw new RuntimeException("Incorrect timeslotId " + timeslotId + ", application: " + applicationForm.getCode());
         }
 
         InterviewScheduleComment scheduleComment = createInterviewScheduleComment(user, applicationForm, interviewConfirmDTO.getInterviewInstructions(),

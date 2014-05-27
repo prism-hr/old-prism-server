@@ -71,7 +71,7 @@ public class PorticoAttachmentsZipCreator {
 
     protected void addContentsFiles(Application applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException {
-        contentsProperties.put("applicationNumber", applicationForm.getApplicationNumber());
+        contentsProperties.put("applicationNumber", applicationForm.getCode());
         contentsProperties.put("bookingReferenceNumber", referenceNumber);
         zos.putNextEntry(new ZipEntry(referenceNumber + "Contents.txt"));
         contentsProperties.store(zos, StringUtils.EMPTY);
@@ -181,7 +181,7 @@ public class PorticoAttachmentsZipCreator {
     protected void addApplicationForm(Application applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException, CouldNotCreateAttachmentsPack {
         String serverfilename = "ApplicationForm" + referenceNumber + ".pdf";
-        String applicationFilename = "ApplicationForm" + applicationForm.getApplicationNumber() + ".pdf";
+        String applicationFilename = "ApplicationForm" + applicationForm.getCode() + ".pdf";
         zos.putNextEntry(new ZipEntry(serverfilename));
         try {
             pdfDocumentBuilder.build(
@@ -198,7 +198,7 @@ public class PorticoAttachmentsZipCreator {
     protected void addMergedApplicationForm(Application applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException, CouldNotCreateAttachmentsPack {
         String serverfilename = "MergedApplicationForm" + referenceNumber + ".pdf";
-        String applicationFilename = "MergedApplicationForm" + applicationForm.getApplicationNumber() + ".pdf";
+        String applicationFilename = "MergedApplicationForm" + applicationForm.getCode() + ".pdf";
         zos.putNextEntry(new ZipEntry(serverfilename));
         try {
             pdfDocumentBuilder.build(new PdfModelBuilder().includeReferences(true), zos, applicationForm);
@@ -238,7 +238,7 @@ public class PorticoAttachmentsZipCreator {
     
     private String getAlternativeMergedFileContents(Application application) {
         return ("We are sorry but we were unable to read and merge the contents of this document. " + "Please contact us at " + emailAddressTo
-                + " to obtain an original copy, " + "quoting our application reference number: " + application.getApplicationNumber() + ".");
+                + " to obtain an original copy, " + "quoting our application reference number: " + application.getCode() + ".");
     }
 
 }

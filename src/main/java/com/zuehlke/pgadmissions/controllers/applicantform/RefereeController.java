@@ -83,7 +83,7 @@ public class RefereeController {
 
         refereeService.saveOrUpdate(applicationForm, refereeId, newReferee);
 
-        return "redirect:/update/getReferee?applicationId=" + applicationForm.getApplicationNumber();
+        return "redirect:/update/getReferee?applicationId=" + applicationForm.getCode();
     }
 
     @RequestMapping(value = "/deleteReferee", method = RequestMethod.POST)
@@ -91,7 +91,7 @@ public class RefereeController {
         
         Referee referee = refereeService.getRefereeById(refereeId);
         refereeService.delete(referee);
-        return "redirect:/update/getReferee?applicationId=" + referee.getApplication().getApplicationNumber() + "&message=deleted";
+        return "redirect:/update/getReferee?applicationId=" + referee.getApplication().getCode() + "&message=deleted";
     }
 
     @ModelAttribute("domiciles")

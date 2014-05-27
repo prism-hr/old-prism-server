@@ -68,7 +68,7 @@ public class SubmitApplicationFormController {
             return TemplateLocation.APPLICATION_APPLICANT_FORM;
         }
         applicationService.submitApplication(application);
-        return "redirect:/applications?messageCode=application.submitted&application=" + application.getApplicationNumber();
+        return "redirect:/applications?messageCode=application.submitted&application=" + application.getCode();
     }
 
     @InitBinder("applicationForm")

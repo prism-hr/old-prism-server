@@ -142,7 +142,7 @@ public class ReferenceController {
 
         applicationsService.save(applicationForm);
         applicationFormUserRoleService.applicationUpdated(applicationForm, user);
-        return "redirect:/applications?messageCode=reference.uploaded&application=" + comment.getApplication().getApplicationNumber();
+        return "redirect:/applications?messageCode=reference.uploaded&application=" + comment.getApplication().getCode();
     }
 
     private List<Question> getCustomQuestions(Application applicationForm) throws ScoringDefinitionParseException {

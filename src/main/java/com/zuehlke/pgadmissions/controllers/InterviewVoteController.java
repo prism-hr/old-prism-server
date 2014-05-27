@@ -121,7 +121,7 @@ public class InterviewVoteController {
         interviewVoteComment.setUser(user);
         interviewService.postVote(interviewVoteComment, user);
 
-        return "redirect:/applications?messageCode=interview.vote.feedback&application=" + applicationForm.getApplicationNumber();
+        return "redirect:/applications?messageCode=interview.vote.feedback&application=" + applicationForm.getCode();
     }
 
 }

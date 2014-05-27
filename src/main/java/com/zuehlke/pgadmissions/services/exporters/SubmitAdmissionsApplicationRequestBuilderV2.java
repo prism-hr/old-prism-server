@@ -385,7 +385,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
         applicationTp.setSourcesOfInterest(buildSourcesOfInterest(applicationTp));
         applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedTimestamp()));
-        applicationTp.setExternalApplicationID(applicationForm.getApplicationNumber());
+        applicationTp.setExternalApplicationID(applicationForm.getCode());
 
         // FIXME set ip address
         // applicationTp.setIpAddress(applicationForm.getIpAddressAsString());

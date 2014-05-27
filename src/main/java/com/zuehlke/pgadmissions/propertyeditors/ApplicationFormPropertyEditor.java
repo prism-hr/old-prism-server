@@ -36,6 +36,6 @@ public class ApplicationFormPropertyEditor extends PropertyEditorSupport {
 		if (getValue() == null ) {
 			return null;
 		}
-		return ((Application) getValue()).getApplicationNumber().toString();
+		return ((Application) getValue()).getCode().toString();
 	}
 }

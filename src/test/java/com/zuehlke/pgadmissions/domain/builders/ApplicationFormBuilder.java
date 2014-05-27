@@ -185,7 +185,7 @@ public class ApplicationFormBuilder {
         application.setAdditionalInformation(info);
         application.setAcceptedTerms(acceptedTerms);
         application.getApplicationComments().addAll(comments);
-        application.setApplicationNumber(applicationNumber);
+        application.setCode(applicationNumber);
         application.setClosingDate(closingDate);
         application.getEmploymentPositions().addAll(employmentPositions);
         return application;

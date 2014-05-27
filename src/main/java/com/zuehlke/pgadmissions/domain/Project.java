@@ -27,10 +27,13 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Project extends Advert {
 
+    @Column(name = "code")
+    private String code;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
@@ -42,7 +45,7 @@ public class Project extends Advert {
     @ManyToOne
     @JoinColumn(name = "state_id", nullable = false)
     private State state;
-    
+
     @ManyToOne
     @JoinColumn(name = "previous_state_id", nullable = true)
     private State previousState;
@@ -50,13 +53,21 @@ public class Project extends Advert {
     @Column(name = "due_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dueDate;
-    
+
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     @Column(name = "title")
     private String title;
 
     public Project() {
         super.setAdvertType(AdvertType.PROJECT);
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public State getState() {
@@ -84,7 +95,7 @@ public class Project extends Advert {
     public System getSystem() {
         return system;
     }
-    
+
     @Override
     public void setSystem(System system) {
         this.system = system;
@@ -94,12 +105,12 @@ public class Project extends Advert {
     public Institution getInstitution() {
         return institution;
     }
-    
+
     @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
-    
+
     @Override
     public Program getProgram() {
         return program;
@@ -114,11 +125,11 @@ public class Project extends Advert {
     public Project getProject() {
         return this;
     }
-    
+
     @Override
     public void setProject(Project project) {
     }
-    
+
     @Override
     public State getPreviousState() {
         return previousState;

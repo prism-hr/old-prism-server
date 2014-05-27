@@ -56,7 +56,7 @@ public class CombinedReferencesPdfBuilder extends AbstractPdfModelBuilder {
                     document.add(new Paragraph(
                             "We are sorry but we were unable to read and merge the contents of this document. " +
                                     "Please contact us at " + emailAddressTo + " to obtain an original copy, " +
-                                    "quoting our application reference number: " + referenceComment.getApplication().getApplicationNumber() + " " +
+                                    "quoting our application reference number: " + referenceComment.getApplication().getCode() + " " +
                                     "and document identifier: " + in.getId().toString() + "."));    
                 }
             }

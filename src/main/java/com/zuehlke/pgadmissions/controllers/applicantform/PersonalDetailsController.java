@@ -96,7 +96,7 @@ public class PersonalDetailsController {
             returnView(modelMap, personalDetails, updatedUser);
         }
         personalDetailsService.saveOrUpdate(applicationForm, personalDetails, updatedUser);
-        return RedirectLocation.UPDATE_APPLICATION_PERSONAL_DETAIL + applicationForm.getApplicationNumber();
+        return RedirectLocation.UPDATE_APPLICATION_PERSONAL_DETAIL + applicationForm.getCode();
     }
 
     @InitBinder(value = "personalDetails")

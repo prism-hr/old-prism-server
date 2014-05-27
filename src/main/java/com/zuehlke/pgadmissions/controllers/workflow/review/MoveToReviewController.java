@@ -66,7 +66,7 @@ public class MoveToReviewController {
     @RequestMapping(method = RequestMethod.GET, value = "reviewersSection")
     public String getReviewersSectionView(ModelMap modelMap) {
         Application application = (Application) modelMap.get("applicationForm");
-        modelMap.put("comment", createAssignReviewersComment(application.getApplicationNumber()));
+        modelMap.put("comment", createAssignReviewersComment(application.getCode()));
         return REVIEWERS_SECTION_NAME;
     }
 

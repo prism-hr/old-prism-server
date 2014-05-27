@@ -68,7 +68,7 @@ public class PdfDocumentBuilder {
                 try {
                     modelBuilder.build(form, pdfDocument, pdfWriter);
                 } catch (PdfDocumentBuilderException e) {
-                    log.warn("Error in generating pdf for application " + form.getApplicationNumber(), e);
+                    log.warn("Error in generating pdf for application " + form.getCode(), e);
                 }
                 pdfDocument.newPage();
             }

@@ -133,7 +133,7 @@ public class ReviewCommentController {
         WorkflowService.reviewPosted(comment);
         WorkflowService.applicationUpdated(applicationForm, user);
 
-        return "redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber();
+        return "redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getCode();
     }
 
     private List<Question> getCustomQuestions(@RequestParam String applicationId) throws ScoringDefinitionParseException {

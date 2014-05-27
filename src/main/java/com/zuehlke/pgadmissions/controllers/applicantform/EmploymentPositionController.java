@@ -87,13 +87,13 @@ public class EmploymentPositionController {
             return returnView(modelMap, employmentPosition);
         }
         employmentPositionService.saveOrUpdate(applicationForm, employmentPositionId, employmentPosition);
-        return RedirectLocation.UPDATE_APPLICATION_EMPLOYMENT_POSITION + applicationForm.getApplicationNumber();
+        return RedirectLocation.UPDATE_APPLICATION_EMPLOYMENT_POSITION + applicationForm.getCode();
     }
 
     @RequestMapping(value = "/deleteEmploymentPosition", method = RequestMethod.POST)
     public String deleteEmployment(@RequestParam("id") Integer employmentPositionId, @ModelAttribute Application applicationForm) {
         employmentPositionService.delete(employmentPositionId);
-        return RedirectLocation.UPDATE_APPLICATION_EMPLOYMENT_POSITION + applicationForm.getApplicationNumber() + "&message=deleted";
+        return RedirectLocation.UPDATE_APPLICATION_EMPLOYMENT_POSITION + applicationForm.getCode() + "&message=deleted";
     }
 
     @ModelAttribute("languages")

@@ -41,8 +41,8 @@ public class Application extends PrismResourceTransient {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "application_number", nullable = false)
-    private String applicationNumber;
+    @Column(name = "code")
+    private String code;
 
     @ManyToOne
     @JoinColumn(name = "state_id", nullable = false)
@@ -153,12 +153,12 @@ public class Application extends PrismResourceTransient {
         this.id = id;
     }
 
-    public String getApplicationNumber() {
-        return applicationNumber;
+    public String getCode() {
+        return code;
     }
 
-    public void setApplicationNumber(String applicationNumber) {
-        this.applicationNumber = applicationNumber;
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public ApplicationAddress getApplicationAddress() {
@@ -275,8 +275,8 @@ public class Application extends PrismResourceTransient {
         return this;
     }
 
-    public Application withApplicationNumber(String applicationNumber) {
-        this.applicationNumber = applicationNumber;
+    public Application withCode(String code) {
+        this.code = code;
         return this;
     }
     

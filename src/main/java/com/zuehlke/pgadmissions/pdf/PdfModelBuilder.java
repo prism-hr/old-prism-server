@@ -194,7 +194,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             submittedDateHeader = new Chunk("", SMALLER_FONT);
         }
 
-        headerEvent = new HeaderEvent(new Chunk(form.getAdvert().getTitle(), SMALLER_FONT), new Chunk(form.getApplicationNumber(), SMALLER_FONT),
+        headerEvent = new HeaderEvent(new Chunk(form.getAdvert().getTitle(), SMALLER_FONT), new Chunk(form.getCode(), SMALLER_FONT),
                 submittedDateHeader);
         writer.setPageEvent(headerEvent);
     }
@@ -235,7 +235,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         addClosingDateToTable(table, form);
 
         table.addCell(newTableCell("Application Number", SMALL_BOLD_FONT));
-        table.addCell(newTableCell(form.getApplicationNumber(), SMALL_FONT));
+        table.addCell(newTableCell(form.getCode(), SMALL_FONT));
 
         if (form.getSubmittedTimestamp() != null) {
             table.addCell(newTableCell("Submission date", SMALL_BOLD_FONT));
@@ -972,7 +972,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                         readPdf(pdfDocument, doc, pdfWriter);
                     } catch (Exception e) {
                         log.warn(
-                                String.format("Error in generating pdf while appending supporting document %s for %s", form.getApplicationNumber(),
+                                String.format("Error in generating pdf while appending supporting document %s for %s", form.getCode(),
                                         doc.getFileName()), e);
                     }
                 }
@@ -1016,7 +1016,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                         readPdf(pdfDocument, refDocument, pdfWriter);
                     } catch (Exception e) {
                         log.warn(
-                                String.format("Error in generating pdf while appending supporting document %s for %s", form.getApplicationNumber(),
+                                String.format("Error in generating pdf while appending supporting document %s for %s", form.getCode(),
                                         refDocument.getFileName()), e);
                     }
                 }

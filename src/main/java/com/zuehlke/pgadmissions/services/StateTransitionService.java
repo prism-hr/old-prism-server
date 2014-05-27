@@ -33,7 +33,7 @@ public class StateTransitionService {
     public String resolveView(Application application, String action) {
 
         if (!application.getProgram().isFertile()) {
-            return REJECTION_VIEW + application.getApplicationNumber() + "&rejectionId=" + REJECTION_REASON_WHEN_PROGAMME_EXPIRED.toString()
+            return REJECTION_VIEW + application.getCode() + "&rejectionId=" + REJECTION_REASON_WHEN_PROGAMME_EXPIRED.toString()
                     + "&rejectionIdForced=true";
         } else if ("abort".equals(action)) {
             return STATE_TRANSITION_VIEW;
@@ -42,15 +42,15 @@ public class StateTransitionService {
             if (status != null) {
                 switch (status) {
                 case APPLICATION_REVIEW:
-                    return REVIEW_VIEW + application.getApplicationNumber();
+                    return REVIEW_VIEW + application.getCode();
                 case APPLICATION_INTERVIEW:
-                    return INTERVIEW_VIEW + application.getApplicationNumber();
+                    return INTERVIEW_VIEW + application.getCode();
                 case APPLICATION_APPROVAL:
-                    return APPROVAL_VIEW + application.getApplicationNumber();
+                    return APPROVAL_VIEW + application.getCode();
                 case APPLICATION_REJECTED:
-                    return REJECTION_VIEW + application.getApplicationNumber();
+                    return REJECTION_VIEW + application.getCode();
                 case APPLICATION_APPROVED:
-                    return OFFER_RECOMMENDATION_VIEW + application.getApplicationNumber();
+                    return OFFER_RECOMMENDATION_VIEW + application.getCode();
                 default:
                 }
             }

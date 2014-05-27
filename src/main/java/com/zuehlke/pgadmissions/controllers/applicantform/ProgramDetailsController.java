@@ -79,7 +79,7 @@ public class ProgramDetailsController {
             return returnView(modelMap, programDetails);
         }
         programDetailsService.saveOrUpdate(applicationForm, programDetails);
-        return RedirectLocation.UPDATE_APPLICATION_PROGRAM_DETAIL + applicationForm.getApplicationNumber();
+        return RedirectLocation.UPDATE_APPLICATION_PROGRAM_DETAIL + applicationForm.getCode();
     }
 
     @RequestMapping(value = "/getDefaultStartDate", method = RequestMethod.GET)

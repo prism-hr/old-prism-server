@@ -4,10 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -87,11 +85,7 @@ public class FundingValidatorTest {
 	
 	@Test
 	public void shouldRejectIfAwardFateIsFutureDate(){
-		Date tomorrow;
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.DATE, 1);
-		tomorrow = calendar.getTime();
-		funding.setAwardDate(tomorrow);
+		funding.setAwardDate(new LocalDate().plusDays(1));
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "awardDate");
 		fundingValidator.validate(funding, mappingResult);
 		assertEquals(1, mappingResult.getErrorCount());
@@ -115,7 +109,7 @@ public class FundingValidatorTest {
     public void setup() throws ParseException{
 		funding = new Funding();
 		funding.setApplication(new ApplicationFormBuilder().id(3).build());
-		funding.setAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"));
+		funding.setAwardDate(new LocalDate(2006, 4, 23));
 		funding.setDescription("Description");
 		funding.setId(2);
 		funding.setType(FundingType.EMPLOYER);

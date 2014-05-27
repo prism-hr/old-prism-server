@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -22,9 +21,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
 @Table(name = "APPLICATION_REFEREE")
-public class Referee implements Serializable, FormSectionObject {
-
-    private static final long serialVersionUID = 4591043630090924738L;
+public class Referee {
 
     @Id
     @GeneratedValue

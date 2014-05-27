@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,26 +11,24 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name="APPLICATION_ADDRESS")
-public class ApplicationAddress implements Serializable, FormSectionObject {
+@Table(name = "APPLICATION_ADDRESS")
+public class ApplicationAddress {
 
-    private static final long serialVersionUID = -9022421958392952549L;
-    
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "current_address_id")
     private Address currentAddress;
-    
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "contact_address_id")
     private Address contactAddress;
-    
+
     @OneToOne(mappedBy = "applicationAddress", fetch = FetchType.LAZY)
     private Application application;
-    
+
     @Transient
     private boolean acceptedTerms;
 
@@ -75,11 +71,11 @@ public class ApplicationAddress implements Serializable, FormSectionObject {
     public void setAcceptedTerms(boolean acceptedTerms) {
         this.acceptedTerms = acceptedTerms;
     }
-    
+
     public boolean currentAddressIsContactAddress() {
         return currentAddress == contactAddress;
     }
-    
+
     public ApplicationAddress withCurrentAddress(Address address) {
         this.currentAddress = address;
         return this;

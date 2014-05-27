@@ -7,12 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 
 @Component
-public class PersonalDetailsValidator extends FormSectionObjectValidator implements Validator {
+public class PersonalDetailsValidator extends AbstractValidator {
 
     private PassportValidator passportInformationValidator;
 
@@ -34,12 +33,7 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
 
     @Override
     public void addExtraValidation(Object target, Errors errors) {
-
         PersonalDetails personalDetail = (PersonalDetails) target;
-        if (personalDetail.getApplication() != null) {
-            super.addExtraValidation(target, errors);
-        }
-
         LocalDate today = new LocalDate();
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "title", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "gender", EMPTY_DROPDOWN_ERROR_MESSAGE);

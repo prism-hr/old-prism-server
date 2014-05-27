@@ -77,3 +77,7 @@ INSERT INTO STATE_ACTION_ASSIGNMENT(state_action_id, role_id)
 ALTER TABLE USER_ROLE
 	DROP COLUMN requesting_user_id
 ;
+
+/* Add code and timestamp fields to missing entities */
+
+

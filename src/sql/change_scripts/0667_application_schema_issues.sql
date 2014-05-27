@@ -303,13 +303,11 @@ SET system_id = 1,
 
 ALTER TABLE STATE
 	CHANGE COLUMN is_under_assessment is_assessment_state INT(1) UNSIGNED NOT NULL,
-	ADD COLUMN is_fertile_state INT(1) UNSIGNED AFTER parent_state_id,
-	ADD COLUMN is_duplicatable_state INT(1) UNSIGNED AFTER is_assessment_state
+	ADD COLUMN is_fertile_state INT(1) UNSIGNED AFTER parent_state_id
 ;
 
 UPDATE STATE
-SET is_fertile_state = 0,
-	is_duplicatable_state = 0
+SET is_fertile_state = 0
 ;
 
 UPDATE STATE
@@ -321,14 +319,8 @@ WHERE id LIKE "SYSTEM%"
 			AND id NOT LIKE "%COMPLETED")
 ;
 
-UPDATE STATE
-SET is_duplicatable_state = 1
-WHERE id LIKE "%_COMPLETED"
-;
-
 ALTER TABLE STATE
-	MODIFY COLUMN is_fertile_state INT(1) UNSIGNED NOT NULL,
-	MODIFY COLUMN is_duplicatable_state INT(1) UNSIGNED NOT NULL
+	MODIFY COLUMN is_fertile_state INT(1) UNSIGNED NOT NULL
 ;
 
 /* Add users to system and institution */

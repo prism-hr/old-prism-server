@@ -86,6 +86,8 @@ public class PrismWorkflowTest {
     
     @Autowired
     private SystemService systemService;
+    
+    @Autowired
     private CommentService commentService;
 
     @Test
@@ -95,7 +97,6 @@ public class PrismWorkflowTest {
         User programAdministrator = manageUsersService.setUserRoles("Jerzy", "Urban", "jerzy@urban.pl", true, program, Authority.PROGRAM_ADMINISTRATOR);
 
         User applicant = registerAndActivateApplicant(program, "Kuba", "Fibinger", "kuba@fibinger.pl");
-
 
         Comment createApplicationComment = new Comment().withCreatedTimestamp(new DateTime()).withUser(applicant);
         commentService.save(createApplicationComment);

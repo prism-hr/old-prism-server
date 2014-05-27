@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.validators;
 
-import java.util.Date;
-
+import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -22,14 +21,14 @@ public class FundingValidator extends FormSectionObjectValidator implements Vali
 		super.addExtraValidation(target, errors);	
 		Funding funding = (Funding) target;
 		
-		Date today = new Date();
+		LocalDate today = new LocalDate();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "type", EMPTY_DROPDOWN_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", EMPTY_FIELD_ERROR_MESSAGE);
 	    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "value", EMPTY_FIELD_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "awardDate", EMPTY_FIELD_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "document", "file.upload.empty");
 		
-		if (funding.getAwardDate() != null && funding.getAwardDate().after(today)) {
+		if (funding.getAwardDate() != null && funding.getAwardDate().isAfter(today)) {
 			errors.rejectValue("awardDate", "date.field.notpast");
 		}
 		

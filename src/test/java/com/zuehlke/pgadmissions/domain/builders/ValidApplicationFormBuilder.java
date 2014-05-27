@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.SessionFactory;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -180,8 +179,8 @@ public class ValidApplicationFormBuilder {
         qualification2 = new Qualification().withId(Integer.MAX_VALUE - 2).withAwardDate(new LocalDate()).withGrade("6").withInstitution(importedInstitution)
                 .withLanguage("English").withStartDate(new LocalDate().minusYears(1)).withSubject("Engineering")
                 .withTitle("MSc").withType(qualificationType).withCompleted(true).withDocument(proofOfAwardDocument).withIncludeInExport(true);
-        funding = new FundingBuilder().awardDate(DateUtils.addYears(new Date(), -1)).description("Received a funding").document(fundingDocument)
-                .type(FundingType.SCHOLARSHIP).value("5").build();
+        funding = new Funding().withAwardDate(new LocalDate().minusYears(1)).withDescription("Received a funding").withDocument(fundingDocument)
+                .withType(FundingType.SCHOLARSHIP).withValue("5");
         applicationFormBuilder = new ApplicationFormBuilder().applicant(user).acceptedTerms(true).additionalInformation(additionalInformation)
                 .createdTimestamp(new DateTime()).applicant(user).applicationNumber("TMRMBISING01-2012-999999").closingDate(new LocalDate().plusMonths(1))
                 .applicationFormAddress(new ApplicationAddress().withCurrentAddress(address).withContactAddress(address))

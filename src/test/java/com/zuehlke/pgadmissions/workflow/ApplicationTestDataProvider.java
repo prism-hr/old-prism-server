@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -22,16 +24,20 @@ import com.zuehlke.pgadmissions.domain.Passport;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.QualificationType;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.TestObjectProvider;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
+import com.zuehlke.pgadmissions.services.AdditionalInformationService;
 import com.zuehlke.pgadmissions.services.ApplicationAddressService;
-import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.ApplicationDocumentService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.FundingService;
 import com.zuehlke.pgadmissions.services.PersonalDetailsService;
 import com.zuehlke.pgadmissions.services.QualificationService;
+import com.zuehlke.pgadmissions.services.RefereeService;
 
 @Service
 @Transactional
@@ -53,7 +59,13 @@ public class ApplicationTestDataProvider {
     private FundingService fundingService;
 
     @Autowired
-    private DocumentService documentService;
+    private RefereeService refereeService;
+
+    @Autowired
+    private ApplicationDocumentService applicationDocumentService;
+
+    @Autowired
+    private AdditionalInformationService additionalInformationService;
 
     @Autowired
     private TestObjectProvider testObjectProvider;
@@ -64,6 +76,9 @@ public class ApplicationTestDataProvider {
         createQualifications(application);
         createEmployments(application);
         createFunding(application);
+        createReferees(application);
+        createDocuments(application);
+        createAdditionalInformation(application);
     }
 
     private void createPersonalDetails(Application application) {
@@ -158,6 +173,38 @@ public class ApplicationTestDataProvider {
         funding.setAwardDate(new LocalDate().minusYears(1));
         funding.setDocument(testObjectProvider.get(Document.class));
         fundingService.saveOrUpdate(application, null, funding);
+    }
+
+    private void createReferees(Application application) {
+        for (int i = 0; i < 3; i++) {
+            Referee referee = new Referee();
+            referee.setUser(testObjectProvider.getEnabledUserInRole(Authority.APPLICATION_REFEREE));
+            referee.setJobEmployer("Kozacka firma");
+            referee.setJobTitle("Szef wszystkich szefow");
+            Address address = new Address();
+            address.setAddressLine1("ul. Piastowska 84");
+            address.setAddressLine2("Bielsko-Biala");
+            address.setAddressRegion("woj. Slaskie");
+            address.setAddressCode("43-300");
+            address.setDomicile(testObjectProvider.get(Domicile.class));
+            referee.setAddress(address);
+            referee.setPhoneNumber("+44(0)5435435");
+            referee.setMessenger("szefwszystkichszefow");
+            refereeService.saveOrUpdate(application, null, referee);
+        }
+    }
+
+    private void createDocuments(Application application) {
+        ApplicationDocument applicationDocument = new ApplicationDocument();
+        applicationDocument.setPersonalStatement(testObjectProvider.get(Document.class));
+        applicationDocument.setCv(testObjectProvider.get(Document.class));
+        applicationDocumentService.saveOrUpdate(application, applicationDocument);
+    }
+
+    private void createAdditionalInformation(Application application) {
+        AdditionalInformation additionalInformation = new AdditionalInformation();
+        additionalInformation.setConvictions(true);
+        additionalInformation.setConvictionsText("I was a bad person");
     }
 
 }

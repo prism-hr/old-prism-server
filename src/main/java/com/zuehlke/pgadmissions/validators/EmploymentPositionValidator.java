@@ -5,12 +5,11 @@ import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 
 @Component
-public class EmploymentPositionValidator extends FormSectionObjectValidator implements Validator {
+public class EmploymentPositionValidator extends AbstractValidator {
 
     private static final int MAX_NUMBER_OF_POSITIONS = 5;
     
@@ -21,8 +20,6 @@ public class EmploymentPositionValidator extends FormSectionObjectValidator impl
 
 	@Override
 	public void addExtraValidation(Object target, Errors errors) {
-		super.addExtraValidation(target, errors);
-		
 		LocalDate today = new LocalDate();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerName", EMPTY_FIELD_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerAddress", EMPTY_FIELD_ERROR_MESSAGE);

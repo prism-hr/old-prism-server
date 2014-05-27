@@ -4,12 +4,11 @@ import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Funding;
 
 @Component
-public class FundingValidator extends FormSectionObjectValidator implements Validator {
+public class FundingValidator extends AbstractValidator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -18,7 +17,6 @@ public class FundingValidator extends FormSectionObjectValidator implements Vali
 
 	@Override
 	public void addExtraValidation(Object target, Errors errors) {
-		super.addExtraValidation(target, errors);	
 		Funding funding = (Funding) target;
 		
 		LocalDate today = new LocalDate();

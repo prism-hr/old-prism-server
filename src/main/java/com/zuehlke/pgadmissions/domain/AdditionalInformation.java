@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,9 +17,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Entity
 @Table(name = "APPLICATION_FORM_ADDITIONAL_INFO")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class AdditionalInformation implements Serializable, FormSectionObject {
-
-    private static final long serialVersionUID = -1761742614792933388L;
+public class AdditionalInformation {
 
     @Id
     @GeneratedValue

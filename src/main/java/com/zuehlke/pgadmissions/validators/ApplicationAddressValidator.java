@@ -3,12 +3,11 @@ package com.zuehlke.pgadmissions.validators;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 
 @Component
-public class ApplicationAddressValidator extends FormSectionObjectValidator implements Validator {
+public class ApplicationAddressValidator extends AbstractValidator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -17,7 +16,6 @@ public class ApplicationAddressValidator extends FormSectionObjectValidator impl
 
 	@Override
 	public void addExtraValidation(Object target, Errors errors) {
-		super.addExtraValidation(target, errors);		
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddress.address1", EMPTY_FIELD_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddress.address3", EMPTY_FIELD_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddress.domicile", EMPTY_DROPDOWN_ERROR_MESSAGE);

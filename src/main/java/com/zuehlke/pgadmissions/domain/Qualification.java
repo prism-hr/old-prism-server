@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,9 +19,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
 @Table(name = "APPLICATION_QUALIFICATION")
-public class Qualification implements Serializable, FormSectionObject {
-
-    private static final long serialVersionUID = -8949535622435302565L;
+public class Qualification {
 
     @Id
     @GeneratedValue

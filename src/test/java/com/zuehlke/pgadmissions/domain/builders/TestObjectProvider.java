@@ -10,6 +10,8 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
@@ -30,10 +32,12 @@ import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 
+@Component
 public class TestObjectProvider {
 
-    private final SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
+    @Autowired
     public TestObjectProvider(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
@@ -245,6 +249,11 @@ public class TestObjectProvider {
 
     public Domicile getDomicile() {
         return (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).setMaxResults(1).uniqueResult();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public <T> T get(Class<T> entityClass) {
+        return (T) sessionFactory.getCurrentSession().createCriteria(entityClass).setMaxResults(1).uniqueResult();
     }
 
     public InstitutionDomicile getInstitutionDomicile() {

@@ -23,10 +23,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.enums.SystemAction;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAddressService;
+import com.zuehlke.pgadmissions.services.ApplicationAddressService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
-import com.zuehlke.pgadmissions.validators.ApplicationFormAddressValidator;
+import com.zuehlke.pgadmissions.validators.ApplicationAddressValidator;
 
 @RequestMapping("/update")
 @Controller
@@ -36,10 +36,10 @@ public class AddressController {
     private ApplicationService applicationFormService;
 
     @Autowired
-    private ApplicationFormAddressService applicationFormAddressService;
+    private ApplicationAddressService applicationFormAddressService;
 
     @Autowired
-    private ApplicationFormAddressValidator applicationFormAddressValidator;
+    private ApplicationAddressValidator applicationFormAddressValidator;
 
     @Autowired
     private ImportedEntityService importedEntityService;

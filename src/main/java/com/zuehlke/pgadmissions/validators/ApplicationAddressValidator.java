@@ -8,7 +8,7 @@ import org.springframework.validation.Validator;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 
 @Component
-public class ApplicationFormAddressValidator extends FormSectionObjectValidator implements Validator {
+public class ApplicationAddressValidator extends FormSectionObjectValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {

@@ -29,7 +29,7 @@ public class ApplicationFormValidator extends AbstractValidator {
     private PersonalDetailsValidator personalDetailsValidator;
 
     @Autowired
-    private ApplicationFormAddressValidator applicationFormAddressValidator;
+    private ApplicationAddressValidator applicationFormAddressValidator;
 
     @Autowired
     private AdditionalInformationValidator additionalInformationValidator;

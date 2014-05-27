@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 
 @Service
 @Transactional
-public class ApplicationFormAddressService {
+public class ApplicationAddressService {
 
     @Autowired
     private ApplicationService applicationFormService;

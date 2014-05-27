@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,9 +14,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
@@ -50,9 +50,9 @@ public class Funding implements Serializable, FormSectionObject {
     @ESAPIConstraint(rule = "NumbersOnly", maxLength = 100)
     private String value;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "award_date")
-    private Date awardDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate awardDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_form_id")
@@ -97,11 +97,11 @@ public class Funding implements Serializable, FormSectionObject {
         return 0;
     }
 
-    public Date getAwardDate() {
+    public LocalDate getAwardDate() {
         return awardDate;
     }
 
-    public void setAwardDate(Date awardDate) {
+    public void setAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
     }
 
@@ -127,5 +127,40 @@ public class Funding implements Serializable, FormSectionObject {
 
     public void setAcceptedTerms(boolean acceptedTerms) {
         this.acceptedTerms = acceptedTerms;
+    }
+
+    public Funding withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public Funding withType(FundingType type) {
+        this.type = type;
+        return this;
+    }
+
+    public Funding withDocument(Document document) {
+        this.document = document;
+        return this;
+    }
+
+    public Funding withDescription(String description) {
+        this.description = description;
+        return this;
+    }
+
+    public Funding withValue(String value) {
+        this.value = value;
+        return this;
+    }
+
+    public Funding withAwardDate(LocalDate awardDate) {
+        this.awardDate = awardDate;
+        return this;
+    }
+    
+    public Funding withApplication(Application application) {
+        this.application = application;
+        return this;
     }
 }

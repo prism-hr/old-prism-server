@@ -27,6 +27,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -356,10 +357,17 @@ public class Application extends PrismResourceTransient {
         this.referees.addAll(Arrays.asList(referees));
         return this;
     }
+    
+    public Application withResourceSignature(User user, Program program, Project project) {
+        this.user = Preconditions.checkNotNull(user);
+        this.program = Preconditions.checkNotNull(program);
+        this.project = project;
+        return this;
+    }
 
     @Override
     public System getSystem() {
-        return getInstitution().getSystem();
+        return system;
     }
 
     @Override
@@ -369,7 +377,7 @@ public class Application extends PrismResourceTransient {
 
     @Override
     public Institution getInstitution() {
-        return getProgram().getInstitution();
+        return institution;
     }
 
     @Override

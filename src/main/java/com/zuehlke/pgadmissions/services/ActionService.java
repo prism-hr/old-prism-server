@@ -67,8 +67,9 @@ public class ActionService {
     }
 
     public ActionOutcome executeAction(PrismResource resource, User invoker, PrismAction action, Comment comment) {
-        if (!userService.checkUserEnabled(invoker) || !checkActionEnabled(resource, action)) {
-            throw new CannotExecuteActionException(resource);
+        PrismResource operativeResource = getOperativeResource(resource, action);
+        if (!userService.checkUserEnabled(invoker) || !checkActionEnabled(operativeResource, action)) {
+            throw new CannotExecuteActionException(operativeResource);
         }
 
         if (isResourceCreationAction(action)) {
@@ -78,13 +79,14 @@ public class ActionService {
             }
         }
 
-        List<Role> actionInvokerRoles = getActionInvokerRoles(invoker, resource, action);
+        List<Role> actionInvokerRoles = getActionInvokerRoles(invoker, operativeResource, action);
         PrismAction nextAction = executeStateTransition(resource, invoker, actionInvokerRoles, action, comment);
-        PrismResource nextActionResource = resource.getEnclosingResource(PrismResourceType.valueOf(nextAction.getResourceName()));
+        PrismResource nextActionResource = resource.getEnclosingResource(nextAction.getResourceType());
         return new ActionOutcome(invoker, nextActionResource, nextAction);
     }
 
     private PrismAction executeStateTransition(PrismResource resource, User invoker, List<Role> actionInvokerRoles, PrismAction action, Comment comment) {                
+        getOperativeResource(resource, action);
         StateTransition transition = stateService.getStateTransition(resource, action, comment);
         resource.setState(transition.getTransitionState());
         
@@ -129,6 +131,14 @@ public class ActionService {
 
     private boolean checkActionEnabled(PrismResource resource, PrismAction action) {
         return !actionDAO.getValidAction(resource, action).isEmpty();
+    }
+    
+    private PrismResource getOperativeResource(PrismResource resource, PrismAction action) {
+        PrismResource operativeResource = resource;
+        if(!resource.getClass().equals(action.getResourceClass())) {
+            operativeResource = resource.getParentResource(action.getResourceType()); 
+        }
+        return operativeResource;
     }
 
     private List<Role> getActionInvokerRoles(User user, PrismResource resource, PrismAction action) {

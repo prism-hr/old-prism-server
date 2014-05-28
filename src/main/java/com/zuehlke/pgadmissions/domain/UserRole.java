@@ -15,6 +15,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -57,7 +58,7 @@ public class UserRole implements IUniqueResource {
     @Column(name = "assigned_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime assignedTimestamp;
-    
+
     public Integer getId() {
         return id;
     }
@@ -105,7 +106,7 @@ public class UserRole implements IUniqueResource {
     public void setApplication(Application application) {
         this.application = application;
     }
-    
+
     public User getUser() {
         return user;
     }
@@ -169,33 +170,19 @@ public class UserRole implements IUniqueResource {
         this.assignedTimestamp = assignedTimestamp;
         return this;
     }
-    
+
     public UserRole withScope(PrismResource resource) {
         this.setResource(resource);
         return this;
     }
     
-    @Override
-    public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        if (system != null) {
-            properties.put("system", system);
-        } else if (institution != null) {
-            properties.put("institution", institution);          
-        } else if (program != null) {
-            properties.put("program", program);          
-        } else if (project != null) {
-            properties.put("program", project);               
-        } else if (application != null) {
-            properties.put("application", application);
-        }
-        properties.put("user", user);
-        properties.put("role", role);
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
+    public UserRole withResourceSignature(PrismResource prismResource, User user, Role role) {
+        setResource(prismResource);
+        this.user = Preconditions.checkNotNull(user);
+        this.role = Preconditions.checkNotNull(role);
+        return this;
     }
-    
+
     public PrismResource getResource() {
         if (system != null) {
             return system;
@@ -208,13 +195,34 @@ public class UserRole implements IUniqueResource {
         }
         return application;
     }
-    
+
     public void setResource(PrismResource resource) {
         try {
             PropertyUtils.setSimpleProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
         } catch (Exception e) {
             throw new Error("Tried to assign user role to invalid prism resource", e);
         }
+    }
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        if (system != null) {
+            properties.put("system", system);
+        } else if (institution != null) {
+            properties.put("institution", institution);
+        } else if (program != null) {
+            properties.put("program", program);
+        } else if (project != null) {
+            properties.put("program", project);
+        } else if (application != null) {
+            properties.put("application", application);
+        }
+        properties.put("user", user);
+        properties.put("role", role);
+        propertiesWrapper.add(properties);
+        return new ResourceSignature(propertiesWrapper);
     }
 
 }

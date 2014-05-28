@@ -68,16 +68,16 @@ public enum PrismAction {
     @SuppressWarnings("unchecked")
     public Class<? extends PrismResource> getResourceClass() {
         try {
-            return (Class<? extends PrismResource>) Class.forName(PrismResourceType.valueOf(getResourceName()).getCanonicalName());
+            return (Class<? extends PrismResource>) Class.forName(getResourceType().getCanonicalName());
         } catch (ClassNotFoundException e) {
             throw new Error("Tried to create a prism resource of invalid type", e);
         }
     }
 
-    public String getResourceName() {
+    public PrismResourceType getResourceType() {
         String actionName = name();
         String resourceName = actionName.substring(0, actionName.indexOf('_'));
-        return resourceName;
+        return PrismResourceType.valueOf(resourceName);
     }
     
 }

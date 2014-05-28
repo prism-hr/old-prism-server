@@ -6,6 +6,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
@@ -68,7 +69,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("action.id", action)).add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("precedence")) //
-                                .add(Subqueries.eq("precedence", getActionPrecedence(resource, user)))) //
+                                .add(Property.forName("precedence").eq(getActionPrecedence(resource, user)))) //
                         .add(Restrictions.isNull("precedence"))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
@@ -93,7 +94,7 @@ public class ActionDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("precedence")) //
-                                .add(Subqueries.eq("precedence", getActionPrecedence(resource, user)))) //
+                                .add(Property.forName("precedence").eq(getActionPrecedence(resource, user)))) //
                         .add(Restrictions.isNull("precedence"))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
@@ -108,16 +109,11 @@ public class ActionDAO {
     }
 
     private DetachedCriteria getActionPrecedence(PrismResource resource, User user) {
-        return DetachedCriteria.forClass(StateAction.class)
-                //
-                .setProjection(Projections.max("precedence"))
-                //
-                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN)
-                //
-                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN)
-                //
-                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN)
-                //
+        return DetachedCriteria.forClass(StateAction.class) //
+                .setProjection(Projections.max("precedence")) //
+                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN).createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.isNotNull("precedence")) //

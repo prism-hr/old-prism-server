@@ -27,7 +27,6 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
@@ -45,9 +44,6 @@ public class PrintController {
     @Autowired
 	private UserService userService;
 	
-    @Autowired
-	private RefereeService refereeService;
-
 	@RequestMapping(method = RequestMethod.GET)
 	public void printPage(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletRequestBindingException {
 		String applicationFormNumber = ServletRequestUtils.getStringParameter(request, "applicationFormId");
@@ -65,7 +61,8 @@ public class PrintController {
 		    pdfModelBuilder.includeCriminialConvictions(true);
 		    pdfModelBuilder.includeDisability(true);
 		    pdfModelBuilder.includeEthnicity(true);
-		} else if (!refereeService.isRefereeOfApplicationForm(user, form)) {
+		    //  FIXME check VIEW_AS_*_ACTION
+		} else if (true) {
 		    pdfModelBuilder.includeReferences(true);
 		}
 		
@@ -91,7 +88,8 @@ public class PrintController {
 			    pdfModelBuilder.includeCriminialConvictions(true);
 			    pdfModelBuilder.includeDisability(true);
 			    pdfModelBuilder.includeEthnicity(true);
-			} else if (!refereeService.isRefereeOfApplicationForm(user, form)) {
+			} else if (true) {
+		         //  FIXME check VIEW_AS_*_ACTION
 			    // TODO specify visible IDs of references
 	            pdfModelBuilder.includeReferences(true);
 	        }

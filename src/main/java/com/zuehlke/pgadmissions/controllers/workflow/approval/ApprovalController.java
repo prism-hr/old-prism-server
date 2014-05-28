@@ -30,8 +30,8 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -192,7 +192,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             throw new ResourceNotFoundException();
         }
 
-        qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData.getQualificationsSendToPortico());
+        qualificationService.selectForSendingToPortico(applicationForm.getId(), sendToPorticoData.getQualificationsSendToPortico());
         refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData.getRefereesSendToPortico());
 
         if (result.hasErrors()) {
@@ -211,7 +211,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             throw new ResourceNotFoundException();
         }
 
-        qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData.getQualificationsSendToPortico());
+        qualificationService.selectForSendingToPortico(applicationForm.getId(), sendToPorticoData.getQualificationsSendToPortico());
         applicationFormUserRoleService.applicationUpdated(applicationForm, getCurrentUser());
         return QUALIFICATION_SECTION;
     }
@@ -222,7 +222,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult referenceResult,
             @RequestParam(required = false) Boolean forceSavingReference, Model model) throws ScoringDefinitionParseException {
 
-        String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
+        Integer editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
         model.addAttribute("editedRefereeId", editedRefereeId);
 
         // save "send to UCL" data first
@@ -232,8 +232,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         }
 
         if (!"newReferee".equals(editedRefereeId)) {
-            Integer decryptedId = encryptionHelper.decryptToInteger(editedRefereeId);
-            Referee referee = refereeService.getRefereeById(decryptedId);
+            Referee referee = refereeService.getById(editedRefereeId);
             if (referee.getComment() != null) {
                 return REFERENCE_SECTION;
             }
@@ -259,8 +258,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             applicationFormUserRoleService.applicationUpdated(applicationForm, getCurrentUser());
             applicationsService.save(applicationForm);
 
-            String newRefereeId = encryptionHelper.encrypt(referee.getId());
-            model.addAttribute("editedRefereeId", newRefereeId);
+            model.addAttribute("editedRefereeId", referee.getId());
 
             if (refereesSendToPortico != null && !refereesSendToPortico.contains(referee.getId())) {
                 refereesSendToPortico.add(referee.getId());

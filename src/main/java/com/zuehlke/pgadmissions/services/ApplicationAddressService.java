@@ -13,13 +13,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 public class ApplicationAddressService {
 
     @Autowired
-    private ApplicationService applicationFormService;
+    private ApplicationService applicationService;
     
     @Autowired
     private ApplicationCopyHelper applicationCopyHelper;
-
-    @Autowired
-    private EntityService entityService;
 
     public ApplicationAddress getOrCreate(Application application) {
         ApplicationAddress applicationFormAddress = application.getApplicationAddress();
@@ -29,16 +26,15 @@ public class ApplicationAddressService {
         return applicationFormAddress;
     }
     
-	public void saveOrUpdate(Application application, ApplicationAddress applicationFormAddress) {
+	public void saveOrUpdate(int applicationId, ApplicationAddress applicationFormAddress) {
+	    Application application = applicationService.getById(applicationId);
 	    ApplicationAddress persistentApplicationFormAddress = application.getApplicationAddress();
         if (persistentApplicationFormAddress == null) {
             persistentApplicationFormAddress = new ApplicationAddress();         
             persistentApplicationFormAddress.setApplication(application);
             application.setApplicationAddress(persistentApplicationFormAddress);
-            entityService.save(application);
         }
         applicationCopyHelper.copyApplicationFormAddress(persistentApplicationFormAddress, applicationFormAddress, false);
-        applicationFormService.saveOrUpdateApplicationSection(application);
 	}
 	
 }

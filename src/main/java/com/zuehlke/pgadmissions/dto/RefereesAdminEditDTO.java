@@ -8,7 +8,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 public class RefereesAdminEditDTO {
 
-    private String editedRefereeId;
+    private Integer editedRefereeId;
 
     // reference data
     
@@ -91,11 +91,11 @@ public class RefereesAdminEditDTO {
         this.applicantRating = applicantRating;
     }
 
-    public String getEditedRefereeId() {
+    public Integer getEditedRefereeId() {
         return editedRefereeId;
     }
 
-    public void setEditedRefereeId(String editedRefereeId) {
+    public void setEditedRefereeId(Integer editedRefereeId) {
         this.editedRefereeId = editedRefereeId;
     }
 

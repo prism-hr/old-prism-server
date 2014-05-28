@@ -16,6 +16,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -92,6 +93,13 @@ public class Project extends Advert {
 
     public Project withId(Integer id) {
         setId(id);
+        return this;
+    }
+    
+    public Project withResourceSignature(User user, Program program, String title) {
+        setUser(Preconditions.checkNotNull(user));
+        this.program = Preconditions.checkNotNull(program);
+        this.title = Preconditions.checkNotNull(title);
         return this;
     }
 

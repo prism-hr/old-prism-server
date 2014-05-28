@@ -23,6 +23,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -227,6 +228,13 @@ public class Program extends Advert {
 
     public Program withProgramType(ProgramType programType) {
         this.programType = programType;
+        return this;
+    }
+    
+    public Program withResourceSignature(Institution institution, String code, String title) {
+        this.institution = Preconditions.checkNotNull(institution);
+        this.code = code;
+        this.title = Preconditions.checkNotNull(title);
         return this;
     }
 

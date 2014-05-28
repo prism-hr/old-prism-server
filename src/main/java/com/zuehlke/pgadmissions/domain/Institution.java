@@ -23,6 +23,7 @@ import org.hibernate.search.annotations.Parameter;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -127,6 +128,11 @@ public class Institution extends PrismResource {
     
     public Institution withHomepage(String homepage) {
         this.homepage = homepage;
+        return this;
+    }
+    
+    public Institution withResourceSignature(String name) {
+        this.name = Preconditions.checkNotNull(name);
         return this;
     }
 

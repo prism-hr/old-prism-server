@@ -30,9 +30,6 @@ public class State {
     @Column(name = "is_fertile_state", nullable = false)
     private boolean fertileState;
     
-    @Column(name = "is_duplicatable_state", nullable = false)
-    private boolean duplicatableState;
-
     public PrismState getId() {
         return id;
     }
@@ -63,14 +60,6 @@ public class State {
 
     public void setFertileState(boolean fertileState) {
         this.fertileState = fertileState;
-    }
-
-    public boolean isDuplicatableState() {
-        return duplicatableState;
-    }
-
-    public void setDuplicatableState(boolean duplicatableState) {
-        this.duplicatableState = duplicatableState;
     }
 
     public State withId(PrismState id) {

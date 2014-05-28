@@ -107,7 +107,8 @@ public class RoleService {
     }
 
     public User getUserInRole(PrismResource scope, Authority... authorities) {
-        return roleDAO.getUserInRole(scope, authorities);
+        List<User> users = roleDAO.getUsersInRole(scope, authorities);
+        return users.get(0);
     }
 
     public List<Program> getProgramsByUserAndRole(User currentUser, Authority administrator) {

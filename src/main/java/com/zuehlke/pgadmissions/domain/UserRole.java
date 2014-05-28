@@ -193,7 +193,7 @@ public class UserRole implements IUniqueResource {
         properties.put("user", user);
         properties.put("role", role);
         propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper, null);
+        return new ResourceSignature(propertiesWrapper);
     }
     
     public PrismResource getResource() {

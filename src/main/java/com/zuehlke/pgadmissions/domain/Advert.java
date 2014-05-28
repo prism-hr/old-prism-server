@@ -50,10 +50,6 @@ public abstract class Advert extends PrismResourceTransient {
     @JoinColumn(name = "advert_closing_date_id")
     private AdvertClosingDate closingDate;
     
-    @Column(name = "created_timestamp", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime createdTimestamp;
-
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
     private List<AdvertClosingDate> closingDates = new ArrayList<AdvertClosingDate>();

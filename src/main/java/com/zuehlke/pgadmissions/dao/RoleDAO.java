@@ -43,14 +43,12 @@ public class RoleDAO {
         return (Integer) sessionFactory.getCurrentSession().save(userRole);
     }
 
+    @SuppressWarnings("unchecked")
     public List<User> getUsersInRole(PrismResource scope, Authority[] authorities) {
-        // TODO Auto-generated method stub, sort by first and last names
-        return null;
-    }
-
-    public User getUserInRole(PrismResource scope, Authority[] authorities) {
-        // TODO Auto-generated method stub
-        return null;
+        return sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .createAlias("userRoles", "userRole") //
+                .add(Restrictions.in("userRole.role.id", authorities)) //
+                .list();
     }
 
     public UserRole get(User user, PrismResource resource, Authority authority) {
@@ -68,8 +66,7 @@ public class RoleDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.eq("restrictToInvoker", true)) //
-                                .add(Restrictions.disjunction()
-                                        .add(Restrictions.eq("roleTransitionType", RoleTransitionType.CREATE)) //
+                                .add(Restrictions.disjunction().add(Restrictions.eq("roleTransitionType", RoleTransitionType.CREATE)) //
                                         .add(Restrictions.in("role", invokerRoles)))) //
                         .add(Restrictions.ne("restrictToInvoker", true))) //
                 .addOrder(Order.asc("role")) //
@@ -78,7 +75,8 @@ public class RoleDAO {
     }
 
     public Role getCreatorRole(PrismAction action, PrismResource resource) {
-        return (Role) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
+        return (Role) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class)
+                //
                 .setProjection(Projections.groupProperty("role")).createAlias("stateTransition", "stateTransition", JoinType.INNER_JOIN)
                 .createAlias("stateTransition.stateAction", "stateAction", JoinType.INNER_JOIN).add(Restrictions.eq("stateAction.state", resource.getState())) //
                 .add(Restrictions.eq("stateAction.action.id", action)) //
@@ -96,7 +94,7 @@ public class RoleDAO {
                 .add(Restrictions.eq("action.id", action)) //
                 .list();
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<Role> getActionInvokerRoles(User user, PrismResource resource, PrismAction action) {
         return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
@@ -117,28 +115,28 @@ public class RoleDAO {
                 .add(Restrictions.eq("user.parentUser", user)) //
                 .list();
     }
-    
-//    @SuppressWarnings("unchecked")
-//    public List<Role> getExecutorRoles(User user, PrismResource resource, SystemAction action) {
-//        // Check that the action is valid
-//        return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-//                .setProjection(Projections.groupProperty("stateActionAssignment.role")) //
-//                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-//                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
-//                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-//                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-//                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-//                .add(Restrictions.eq("state", resource.getState())) //
-//                .add(Restrictions.eq("action.id", action)) //
-//                .add(Restrictions.disjunction() //
-//                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
-//                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
-//                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
-//                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
-//                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
-//                .add(Restrictions.eq("user.parentUser", user)) //
-//                .list();
-//    }
+
+    // @SuppressWarnings("unchecked")
+    // public List<Role> getExecutorRoles(User user, PrismResource resource, SystemAction action) {
+    // // Check that the action is valid
+    // return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+    // .setProjection(Projections.groupProperty("stateActionAssignment.role")) //
+    // .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+    // .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
+    // .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+    // .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+    // .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+    // .add(Restrictions.eq("state", resource.getState())) //
+    // .add(Restrictions.eq("action.id", action)) //
+    // .add(Restrictions.disjunction() //
+    // .add(Restrictions.eq("userRole.application", resource.getApplication())) //
+    // .add(Restrictions.eq("userRole.project", resource.getProject())) //
+    // .add(Restrictions.eq("userRole.program", resource.getProgram())) //
+    // .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
+    // .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
+    // .add(Restrictions.eq("user.parentUser", user)) //
+    // .list();
+    // }
 
     @SuppressWarnings("unchecked")
     public List<User> getBy(Role role, PrismResource resource) {

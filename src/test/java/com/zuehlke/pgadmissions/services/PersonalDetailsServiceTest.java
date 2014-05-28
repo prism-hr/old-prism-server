@@ -64,7 +64,7 @@ public class PersonalDetailsServiceTest {
         applicationFormDAOMock.save(applicationForm);
 
         replay();
-        service.saveOrUpdate(null, newPersonalDetails, newApplicant);
+        service.saveOrUpdate(8, newPersonalDetails, newApplicant);
 
         assertSame(personalDetails, applicationForm.getPersonalDetails());
     }

@@ -92,9 +92,8 @@ public class QualificationController {
     }
 
     @RequestMapping(value = "/getQualification", method = RequestMethod.GET)
-    public String getQualificationView(@ModelAttribute Application applicationForm, @RequestParam(required = false) Integer qualificationId,
-            ModelMap modelMap) {
-        return returnView(modelMap, qualificationService.getOrCreate(qualificationId));
+    public String getQualificationView(@ModelAttribute Application applicationForm, @RequestParam(required = false) Integer qualificationId, ModelMap modelMap) {
+        return returnView(modelMap, qualificationId != null ? qualificationService.getById(qualificationId) : new Qualification());
     }
 
     @RequestMapping(value = "/editQualification", method = RequestMethod.POST)
@@ -103,7 +102,7 @@ public class QualificationController {
         if (result.hasErrors()) {
             return returnView(modelMap, qualification);
         }
-        qualificationService.saveOrUpdate(applicationForm, qualificationId, qualification);
+        qualificationService.saveOrUpdate(applicationForm.getId(), qualificationId, qualification);
         return RedirectLocation.UPDATE_APPLICATION_QUALIFICATION + qualification.getApplication().getCode();
     }
 

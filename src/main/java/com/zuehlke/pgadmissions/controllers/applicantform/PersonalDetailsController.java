@@ -95,7 +95,7 @@ public class PersonalDetailsController {
         if (personalDetailsResult.hasErrors() || userResult.hasErrors()) {
             returnView(modelMap, personalDetails, updatedUser);
         }
-        personalDetailsService.saveOrUpdate(applicationForm, personalDetails, updatedUser);
+        personalDetailsService.saveOrUpdate(applicationForm.getId(), personalDetails, updatedUser);
         return RedirectLocation.UPDATE_APPLICATION_PERSONAL_DETAIL + applicationForm.getCode();
     }
 

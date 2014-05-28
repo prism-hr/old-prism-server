@@ -54,7 +54,7 @@ public class AdditionalInformationController {
         if (result.hasErrors()) {
             return returnView(modelMap, additionalInformation);
         }
-        additionalInformationService.saveOrUpdate(applicationForm, additionalInformation);
+        additionalInformationService.saveOrUpdate(applicationForm.getId(), additionalInformation);
         return RedirectLocation.UPDATE_APPLICATION_ADDITIONAL_INFORMATION + applicationForm.getCode();
     }
 

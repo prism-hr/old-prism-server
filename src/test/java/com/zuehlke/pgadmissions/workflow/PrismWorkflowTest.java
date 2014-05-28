@@ -105,6 +105,7 @@ public class PrismWorkflowTest {
         Application createdApplication = (Application) actionOutcome.getResource();
         assertEquals(PrismAction.APPLICATION_COMPLETE, actionOutcome.getNextAction());
 
+        entityService.update(createdApplication);
         applicationTestDataProvider.fillWithData(createdApplication);
 
         Comment completeApplicationComment = null;

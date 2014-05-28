@@ -77,7 +77,7 @@ public class EmploymentPositionController {
     @RequestMapping(value = "/getEmploymentPosition", method = RequestMethod.GET)
     public String getEmploymentView(@ModelAttribute Application applicationForm, @RequestParam(required = false) Integer employmentPositionId,
             ModelMap modelMap) {
-        return returnView(modelMap, employmentPositionService.getOrCreate(employmentPositionId));
+        return returnView(modelMap, employmentPositionId != null ? employmentPositionService.getById(employmentPositionId) : new EmploymentPosition());
     }
 
     @RequestMapping(value = "/editEmploymentPosition", method = RequestMethod.POST)
@@ -86,7 +86,7 @@ public class EmploymentPositionController {
         if (result.hasErrors()) {
             return returnView(modelMap, employmentPosition);
         }
-        employmentPositionService.saveOrUpdate(applicationForm, employmentPositionId, employmentPosition);
+        employmentPositionService.saveOrUpdate(applicationForm.getId(), employmentPositionId, employmentPosition);
         return RedirectLocation.UPDATE_APPLICATION_EMPLOYMENT_POSITION + applicationForm.getCode();
     }
 

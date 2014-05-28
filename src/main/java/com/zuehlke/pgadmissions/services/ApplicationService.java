@@ -95,7 +95,7 @@ public class ApplicationService {
     
     // TODO: Rewrite/remove the following
 
-    public Application getById(Integer id) {
+    public Application getById(int id) {
         return applicationDAO.getById(id);
     }
 

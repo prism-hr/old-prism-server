@@ -29,12 +29,11 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
@@ -77,9 +76,6 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @Autowired
     protected SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor;
-
-    @Autowired
-    protected EncryptionHelper encryptionHelper;
 
     @Autowired
     protected ImportedEntityService importedEntityService;
@@ -125,7 +121,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     @ResponseBody
     public String updateReference(@ModelAttribute Application applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
             BindingResult refereesAdminEditDTOResult, ModelMap modelMap) throws ScoringDefinitionParseException {
-        String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
+        Integer editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
         modelMap.addAttribute("editedRefereeId", editedRefereeId);
 
         refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, refereesAdminEditDTOResult);
@@ -149,15 +145,14 @@ public class EditApplicationFormAsProgrammeAdminController {
             BindingResult referenceResult, @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData,
             @RequestParam(required = false) Boolean forceSavingReference, Model model) throws ScoringDefinitionParseException {
 
-        String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
+        Integer editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
         model.addAttribute("editedRefereeId", editedRefereeId);
         if (sendToPorticoData.getRefereesSendToPortico() != null) {
             refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData.getRefereesSendToPortico());
         }
 
         if (!"newReferee".equals(editedRefereeId)) {
-            Integer decryptedId = encryptionHelper.decryptToInteger(editedRefereeId);
-            Referee referee = refereeService.getRefereeById(decryptedId);
+            Referee referee = refereeService.getById(editedRefereeId);
             if (referee.getComment() != null) {
                 return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
             }
@@ -184,8 +179,7 @@ public class EditApplicationFormAsProgrammeAdminController {
             applicationFormUserRoleService.referencePosted(newComment);
             applicationFormUserRoleService.applicationUpdated(applicationForm, getCurrentUser());
 
-            String newRefereeId = encryptionHelper.encrypt(referee.getId());
-            model.addAttribute("editedRefereeId", newRefereeId);
+            model.addAttribute("editedRefereeId", referee.getId());
         }
 
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;

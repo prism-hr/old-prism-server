@@ -58,7 +58,7 @@ public class AddressController {
         if (result.hasErrors()) {
             return returnView(modelMap, applicationFormAddress);
         }
-        applicationFormAddressService.saveOrUpdate(applicationForm, applicationFormAddress);
+        applicationFormAddressService.saveOrUpdate(applicationForm.getId(), applicationFormAddress);
         return RedirectLocation.UPDATE_APPLICATION_ADDRESS + applicationForm.getCode();
     }
 

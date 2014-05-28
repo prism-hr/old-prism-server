@@ -55,7 +55,7 @@ public class DocumentsController {
         if (result.hasErrors()) {
             return returnView(modelMap, applicationFormDocument);
         }
-        applicationFormDocumentService.saveOrUpdate(applicationForm, applicationFormDocument);
+        applicationFormDocumentService.saveOrUpdate(applicationForm.getId(), applicationFormDocument);
         return RedirectLocation.UPDATE_APPLICATION_DOCUMENT + applicationForm.getCode();
     }
 

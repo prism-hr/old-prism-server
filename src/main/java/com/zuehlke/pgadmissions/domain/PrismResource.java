@@ -7,7 +7,7 @@ import com.zuehlke.pgadmissions.domain.enums.PrismResourceType;
 public abstract class PrismResource implements IUniqueResource {
 
     public abstract Integer getId();
-    
+
     public abstract void setId(Integer id);
 
     public abstract System getSystem();
@@ -25,21 +25,21 @@ public abstract class PrismResource implements IUniqueResource {
     public abstract Project getProject();
 
     public abstract void setProject(Project project);
-    
+
     public abstract Application getApplication();
 
     public abstract State getState();
 
     public abstract void setState(State state);
-    
+
     public abstract User getUser();
-    
+
     public abstract void setUser(User user);
-    
+
     public PrismResourceType getResourceType() {
         return PrismResourceType.valueOf(this.getClass().getSimpleName().toUpperCase());
     }
-    
+
     public PrismResource getEnclosingResource(PrismResourceType resourceType) {
         return getResourceType().equals(resourceType) ? this : getParentResource(resourceType);
     }
@@ -52,24 +52,17 @@ public abstract class PrismResource implements IUniqueResource {
         }
     }
 
-    public void setParentResource(PrismResource enclosingResource) {
-        Program enclosingProgram = enclosingResource.getProgram();
-        Institution enclosingInstitution = enclosingResource.getInstitution();
-        System enclosingSystem = enclosingResource.getSystem();
-
-        if (enclosingSystem == null || (!(enclosingResource instanceof System) && enclosingInstitution == null)
-                || (!(enclosingResource instanceof System || enclosingResource instanceof Institution) && enclosingProgram == null)) {
-            throw new Error("Attempted to create new " + enclosingResource.getResourceType().toString() + " with invalid parent scope");
+    public void setParentResource(PrismResource parentResource) {
+        if (parentResource.getId() != null) {
+            setProject(parentResource.getProject());
+            setProgram(parentResource.getProgram());
+            setInstitution(parentResource.getInstitution());
+            setSystem(parentResource.getSystem());
         }
-
-        setProject(enclosingResource.getProject());
-        setProgram(enclosingResource.getProgram());
-        setInstitution(enclosingResource.getInstitution());
-        setSystem(enclosingResource.getSystem());
     }
-    
+
     public boolean isFertile() {
         return this.getState().isFertileState();
     }
-    
+
 }

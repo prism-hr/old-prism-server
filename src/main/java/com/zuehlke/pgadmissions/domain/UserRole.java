@@ -176,7 +176,7 @@ public class UserRole implements IUniqueResource {
         return this;
     }
     
-    public UserRole withResourceSignature(PrismResource prismResource, User user, Role role) {
+    public UserRole withInitialData(PrismResource prismResource, User user, Role role) {
         setResource(prismResource);
         this.user = Preconditions.checkNotNull(user);
         this.role = Preconditions.checkNotNull(role);

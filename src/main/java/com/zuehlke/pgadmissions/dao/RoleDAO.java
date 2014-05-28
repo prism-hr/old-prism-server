@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -19,8 +20,8 @@ import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
 
 @Repository
 public class RoleDAO {
@@ -61,21 +62,25 @@ public class RoleDAO {
 
     @SuppressWarnings("unchecked")
     public List<RoleTransition> getRoleTransitions(StateTransition stateTransition, List<Role> invokerRoles) {
+        Criterion restrictToInvokerCriterion = invokerRoles.isEmpty() ? //
+        Restrictions.eq("roleTransitionType", RoleTransitionType.CREATE)
+                : Restrictions.in("role", invokerRoles);
+
         return (List<RoleTransition>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
                 .add(Restrictions.eq("stateTransition", stateTransition)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.eq("restrictToInvoker", true)) //
-                                .add(Restrictions.disjunction().add(Restrictions.eq("roleTransitionType", RoleTransitionType.CREATE)) //
-                                        .add(Restrictions.in("role", invokerRoles)))) //
-                        .add(Restrictions.ne("restrictToInvoker", true))) //
+                                .add(restrictToInvokerCriterion)) //
+                        .add(Restrictions.eq("restrictToInvoker", false))) //
                 .addOrder(Order.asc("role")) //
                 .addOrder(Order.asc("processingOrder")) //
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
     public Role getCreatorRole(PrismAction action, PrismResource resource) {
-        return (Role) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
+        return (Role) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class)
+                //
                 .setProjection(Projections.groupProperty("role")).createAlias("stateTransition", "stateTransition", JoinType.INNER_JOIN)
                 .createAlias("stateTransition.stateAction", "stateAction", JoinType.INNER_JOIN).add(Restrictions.eq("stateAction.state", resource.getState())) //
                 .add(Restrictions.eq("stateAction.action.id", action)) //

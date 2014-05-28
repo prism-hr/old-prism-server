@@ -100,7 +100,7 @@ public class PrismWorkflowTest {
 
         Comment createApplicationComment = new Comment().withCreatedTimestamp(new DateTime()).withUser(applicant);
         commentService.save(createApplicationComment);
-        Application application = new Application().withResourceSignature(applicant, program, null);
+        Application application = new Application().withInitialData(applicant, program, null);
         ActionOutcome actionOutcome = actionService.executeAction(application, applicant, PrismAction.PROGRAM_CREATE_APPLICATION, createApplicationComment);
         Application createdApplication = (Application) actionOutcome.getResource();
         assertEquals(PrismAction.APPLICATION_COMPLETE, actionOutcome.getNextAction());

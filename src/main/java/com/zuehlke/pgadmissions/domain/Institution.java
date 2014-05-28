@@ -131,7 +131,7 @@ public class Institution extends PrismResource {
         return this;
     }
     
-    public Institution withResourceSignature(String name) {
+    public Institution withInitialData(String name) {
         this.name = Preconditions.checkNotNull(name);
         return this;
     }

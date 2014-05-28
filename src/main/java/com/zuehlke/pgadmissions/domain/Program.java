@@ -231,7 +231,7 @@ public class Program extends Advert {
         return this;
     }
     
-    public Program withResourceSignature(Institution institution, String code, String title) {
+    public Program withInitialData(Institution institution, String code, String title) {
         this.institution = Preconditions.checkNotNull(institution);
         this.code = code;
         this.title = Preconditions.checkNotNull(title);

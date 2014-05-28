@@ -358,10 +358,11 @@ public class Application extends PrismResourceTransient {
         return this;
     }
     
-    public Application withResourceSignature(User user, Program program, Project project) {
+    public Application withInitialData(User user, Program program, Project project) {
         this.user = Preconditions.checkNotNull(user);
         this.program = Preconditions.checkNotNull(program);
         this.project = project;
+        this.createdTimestamp = new DateTime();
         return this;
     }
 

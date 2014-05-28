@@ -96,10 +96,11 @@ public class Project extends Advert {
         return this;
     }
     
-    public Project withResourceSignature(User user, Program program, String title) {
+    public Project withInitialData(User user, Program program, String title) {
         setUser(Preconditions.checkNotNull(user));
         this.program = Preconditions.checkNotNull(program);
         this.title = Preconditions.checkNotNull(title);
+        this.createdTimestamp = new DateTime();
         return this;
     }
 

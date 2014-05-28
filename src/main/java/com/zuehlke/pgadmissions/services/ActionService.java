@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -91,10 +92,11 @@ public class ActionService {
     }
 
     private PrismAction executeStateTransition(PrismResource operativeResource, PrismResource resource, User invoker, List<Role> actionInvokerRoles, PrismAction action, Comment comment) {
-        StateTransition transition = stateService.getStateTransition(resource, action, comment);
+        StateTransition transition = stateService.getStateTransition(operativeResource, action, comment);
         resource.setState(transition.getTransitionState());
         
         if (operativeResource != resource) {
+            resource.setParentResource(operativeResource);
             entityService.save(resource);
             
             if (resource instanceof PrismResourceTransient) {
@@ -103,7 +105,7 @@ public class ActionService {
             }
         }
 
-        executeRoleTransitions(invoker, operativeResource, actionInvokerRoles, transition);
+        executeRoleTransitions(invoker, operativeResource, resource, actionInvokerRoles, transition);
         
         if (transition.isDoPostComment()) {
             comment.setRoles(getActionInvokerRolesAsString(actionInvokerRoles));
@@ -114,11 +116,12 @@ public class ActionService {
         return transition.getTransitionAction().getId();
     }
 
-    private void executeRoleTransitions(User invoker, PrismResource resource, List<Role> actionInvokerRoles, StateTransition stateTransition) {
+    private void executeRoleTransitions(User invoker, PrismResource operativeResource, PrismResource resource, List<Role> actionInvokerRoles, StateTransition stateTransition) {
         List<RoleTransition> roleTransitions = roleService.getRoleTransitions(stateTransition, actionInvokerRoles);
         for (RoleTransition roleTransition : roleTransitions) {
-            if (roleTransition.getRoleTransitionType() == RoleTransitionType.CREATE) {
+            if (operativeResource != resource) {
                 roleService.executeRoleTransition(resource, invoker, roleTransition);
+                actionInvokerRoles.add(roleTransition.getRole());
             }
             List<User> otherUsers = roleService.getByRoleTransitionAndResource(roleTransition.getRole(), resource);
             for (User otherUser : otherUsers) {

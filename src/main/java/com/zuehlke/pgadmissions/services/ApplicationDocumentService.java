@@ -12,9 +12,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 @Transactional
 public class ApplicationDocumentService {
 
-    @Autowired 
-    private EntityService entityService;
-    
     @Autowired
     private ApplicationService applicationService;
     
@@ -29,16 +26,15 @@ public class ApplicationDocumentService {
         return applicationFormDocument;
     }
     
-	public void saveOrUpdate(Application application, ApplicationDocument applicationFormDocument) {
+	public void saveOrUpdate(int applicationId, ApplicationDocument applicationFormDocument) {
+	    Application application = applicationService.getById(applicationId);
 	    ApplicationDocument persistentApplicationFormDocument = application.getApplicationDocument();
         if (persistentApplicationFormDocument == null) {
             persistentApplicationFormDocument = new ApplicationDocument();
             persistentApplicationFormDocument.setApplication(application);
             application.setApplicationDocument(persistentApplicationFormDocument);
-            entityService.save(application);
         }
         applicationCopyHelper.copyApplicationFormDocument(persistentApplicationFormDocument, applicationFormDocument, false);
-        applicationService.saveOrUpdateApplicationSection(application);
 	}
 	
 }

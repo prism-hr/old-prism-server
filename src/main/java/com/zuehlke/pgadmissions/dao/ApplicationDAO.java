@@ -43,7 +43,7 @@ public class ApplicationDAO {
         sessionFactory.getCurrentSession().refresh(applicationForm);
     }
 
-    public Application getById(Integer id) {
+    public Application getById(int id) {
         return (Application) sessionFactory.getCurrentSession().get(Application.class, id);
     }
 

@@ -26,16 +26,15 @@ public class AdditionalInformationService {
         return additionalInformation;
     }
     
-	public void saveOrUpdate(Application application, AdditionalInformation additionalInformation) {
+	public void saveOrUpdate(int applicationId, AdditionalInformation additionalInformation) {
+	    Application application = applicationService.getById(applicationId);
 	    AdditionalInformation persistentAdditionalInformation = application.getAdditionalInformation();
 	    if (persistentAdditionalInformation == null) {
 	        persistentAdditionalInformation = new AdditionalInformation();
 	        persistentAdditionalInformation.setApplication(application);
 	        application.setAdditionalInformation(persistentAdditionalInformation);
-	        applicationService.save(application);
 	    }
 	    applicationFormCopyHelper.copyAdditionalInformation(persistentAdditionalInformation, additionalInformation);
-	    applicationService.saveOrUpdateApplicationSection(application);
 	}
 	
 }

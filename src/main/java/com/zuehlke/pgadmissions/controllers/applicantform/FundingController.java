@@ -64,17 +64,17 @@ public class FundingController {
     @RequestMapping(value = "/getFunding", method = RequestMethod.GET)
     public String getFundingView(@RequestParam(value = "fundingId", required = false) Integer fundingId, @ModelAttribute Application applicationForm,
             ModelMap modelMap) {
-        return returnView(modelMap, fundingService.getOrCreate(fundingId));
+        return returnView(modelMap, fundingId != null ? fundingService.getById(fundingId) : new Funding());
     }
 
     @RequestMapping(value = "/editFunding", method = RequestMethod.POST)
     public String editFunding(@RequestParam(value = "fundingId", required = false) Integer fundingId, @Valid Funding funding, BindingResult result,
-            ModelMap modelMap, @ModelAttribute Application applicationForm) {
+            ModelMap modelMap, @ModelAttribute Application application) {
         if (result.hasErrors()) {
             return returnView(modelMap, funding);
         }
-        fundingService.saveOrUpdate(applicationForm, fundingId, funding);
-        return RedirectLocation.UPDATE_APPLICATION_FUNDING + applicationForm.getCode();
+        fundingService.saveOrUpdate(application.getId(), fundingId, funding);
+        return RedirectLocation.UPDATE_APPLICATION_FUNDING + application.getCode();
     }
 
     @RequestMapping(value = "/deleteFunding", method = RequestMethod.POST)
@@ -90,8 +90,7 @@ public class FundingController {
 
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(@RequestParam String applicationId) {
-        return applicationFormService.getSecuredApplication(applicationId, PrismAction.APPLICATION_COMPLETE,
-                PrismAction.APPLICATION_CORRECT);
+        return applicationFormService.getSecuredApplication(applicationId, PrismAction.APPLICATION_COMPLETE, PrismAction.APPLICATION_CORRECT);
     }
 
     private String returnView(ModelMap modelMap, Funding funding) {

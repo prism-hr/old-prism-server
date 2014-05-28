@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
-import com.zuehlke.pgadmissions.domain.enums.PrismResourceType;
 import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
@@ -65,14 +62,22 @@ public class ActionService {
         PrismResource resource = entityService.getById(action.getResourceClass(), resourceId);
         return executeAction(resource, user, action, comment);
     }
+    
+    public ActionOutcome executeAction(PrismResource resource, User user, PrismAction action, Comment comment) {
+        PrismResource operativeResource = resource;
+        if(!resource.getClass().equals(action.getResourceClass())) {
+            operativeResource = resource.getParentResource(action.getResourceType()); 
+        }
+        return executeAction(operativeResource, resource, user, action, comment);
+    }
 
-    public ActionOutcome executeAction(PrismResource resource, User invoker, PrismAction action, Comment comment) {
-        PrismResource operativeResource = getOperativeResource(resource, action);
+    public ActionOutcome executeAction(PrismResource operativeResource, PrismResource resource, User invoker, PrismAction action, Comment comment) {
         if (!userService.checkUserEnabled(invoker) || !checkActionEnabled(operativeResource, action)) {
             throw new CannotExecuteActionException(operativeResource);
         }
 
-        if (isResourceCreationAction(action)) {
+        // This is a resource creation action
+        if (operativeResource != resource) {
             PrismResource duplicateResource = entityService.getDuplicateEntity(resource);
             if (duplicateResource != null) {
                 return new ActionOutcome(invoker, resource, actionDAO.getRedirectAction(duplicateResource, action, invoker));
@@ -80,17 +85,16 @@ public class ActionService {
         }
 
         List<Role> actionInvokerRoles = getActionInvokerRoles(invoker, operativeResource, action);
-        PrismAction nextAction = executeStateTransition(resource, invoker, actionInvokerRoles, action, comment);
+        PrismAction nextAction = executeStateTransition(operativeResource, resource, invoker, actionInvokerRoles, action, comment);
         PrismResource nextActionResource = resource.getEnclosingResource(nextAction.getResourceType());
         return new ActionOutcome(invoker, nextActionResource, nextAction);
     }
 
-    private PrismAction executeStateTransition(PrismResource resource, User invoker, List<Role> actionInvokerRoles, PrismAction action, Comment comment) {                
-        getOperativeResource(resource, action);
+    private PrismAction executeStateTransition(PrismResource operativeResource, PrismResource resource, User invoker, List<Role> actionInvokerRoles, PrismAction action, Comment comment) {
         StateTransition transition = stateService.getStateTransition(resource, action, comment);
         resource.setState(transition.getTransitionState());
         
-        if (isResourceCreationAction(action)) {
+        if (operativeResource != resource) {
             entityService.save(resource);
             
             if (resource instanceof PrismResourceTransient) {
@@ -99,7 +103,7 @@ public class ActionService {
             }
         }
 
-        executeRoleTransitions(invoker, resource, actionInvokerRoles, transition);
+        executeRoleTransitions(invoker, operativeResource, actionInvokerRoles, transition);
         
         if (transition.isDoPostComment()) {
             comment.setRoles(getActionInvokerRolesAsString(actionInvokerRoles));
@@ -122,29 +126,15 @@ public class ActionService {
             }
         }
     }
-    
-    private boolean isResourceCreationAction(PrismAction action) {
-        Pattern createPattern = Pattern.compile("([A-Z]+)_CREATE_([A-Z]+)");
-        Matcher createMatcher = createPattern.matcher(action.name());
-        return createMatcher.matches();
-    }
 
     private boolean checkActionEnabled(PrismResource resource, PrismAction action) {
         return !actionDAO.getValidAction(resource, action).isEmpty();
     }
-    
-    private PrismResource getOperativeResource(PrismResource resource, PrismAction action) {
-        PrismResource operativeResource = resource;
-        if(!resource.getClass().equals(action.getResourceClass())) {
-            operativeResource = resource.getParentResource(action.getResourceType()); 
-        }
-        return operativeResource;
-    }
 
-    private List<Role> getActionInvokerRoles(User user, PrismResource resource, PrismAction action) {
-        List<Role> actionInvokerRoles = roleService.getActionInvokerRoles(user, resource, action);
-        if (!roleService.getActionRoles(resource, action).isEmpty() && actionInvokerRoles.isEmpty()) {
-            throw new CannotExecuteActionException(resource);
+    private List<Role> getActionInvokerRoles(User user, PrismResource operativeResource, PrismAction action) {
+        List<Role> actionInvokerRoles = roleService.getActionInvokerRoles(user, operativeResource, action);
+        if (!roleService.getActionRoles(operativeResource, action).isEmpty() && actionInvokerRoles.isEmpty()) {
+            throw new CannotExecuteActionException(operativeResource);
         }
         return actionInvokerRoles;
     }

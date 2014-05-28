@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -10,26 +9,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
-import com.zuehlke.pgadmissions.dao.RefereeDAO;
+import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
 @Transactional
 public class RefereeService {
-    // TODO fix tests
-
+    
     @Autowired
-    private RefereeDAO refereeDAO;
+    private EntityDAO entityDAO;
 
     @Autowired
     private UserService userService;
@@ -41,10 +36,7 @@ public class RefereeService {
     private CommentService commentService;
 
     @Autowired
-    private ApplicationDAO applicationFormDAO;
-
-    @Autowired
-    private EncryptionUtils encryptionUtils;
+    private ApplicationDAO applicationDAO;
 
     @Autowired
     private EncryptionHelper encryptionHelper;
@@ -58,18 +50,12 @@ public class RefereeService {
     @Autowired
     private ApplicationCopyHelper applicationFormCopyHelper;
 
-    public Referee getRefereeById(Integer id) {
-        return refereeDAO.getRefereeById(id);
+    public Referee getById(Integer id) {
+        return entityDAO.getById(Referee.class, id);
     }
 
-    public Referee getOrCreate(Integer refereeId) {
-        if (refereeId == null) {
-            return new Referee();
-        }
-        return getSecuredInstance(refereeId);
-    }
-
-    public void saveOrUpdate(Application application, Integer refereeId, Referee referee) {
+    public void saveOrUpdate(int applicationId, Integer refereeId, Referee referee) {
+        Application application = applicationDAO.getById(applicationId);
         Referee persistentReferee;
         if (refereeId == null) {
             persistentReferee = new Referee();
@@ -77,14 +63,9 @@ public class RefereeService {
             application.getReferees().add(persistentReferee);
             applicationFormService.save(application);
         } else {
-            persistentReferee = getSecuredInstance(refereeId);
+            persistentReferee = entityDAO.getById(Referee.class, refereeId);
         }
         applicationFormCopyHelper.copyReferee(persistentReferee, referee, false);
-        applicationFormService.saveOrUpdateApplicationSection(application);
-        // FIXME check if can edit referees
-        // if (application.getState().isModifiable()) {
-        processRefereeAndGetAsUser(referee);
-        // }
     }
 
     // TODO finish it
@@ -114,36 +95,9 @@ public class RefereeService {
     //
     // }
 
-    public void processRefereesRoles(List<Referee> referees) {
-        for (Referee referee : referees) {
-            processRefereeAndGetAsUser(referee);
-        }
-    }
-
-    public User processRefereeAndGetAsUser(Referee referee) {
-        User user = referee.getUser();
-        if (user.getActivationCode() == null) {
-            user.setActivationCode(encryptionUtils.generateUUID());
-        }
-
-        if (!roleService.hasRole(user, Authority.APPLICATION_REFEREE, referee.getApplication())) {
-            // user.getRoles().add(refereeRole);
-            if (user.getActivationCode() == null) {
-
-            }
-        }
-        referee.setUser(user);
-        applicationFormUserRoleService.createRefereeRole(referee);
-        return user;
-    }
-
-    public void delete(Referee referee) {
-        User refereeUser = referee.getUser();
-        if (refereeUser != null) {
-            referee.getUser().getReferees().remove(referee);
-            applicationFormUserRoleService.deleteApplicationRole(referee.getApplication(), refereeUser, Authority.APPLICATION_REFEREE);
-        }
-        refereeDAO.delete(referee);
+    public void delete(int refereeId) {
+        Referee referee = entityDAO.getById(Referee.class, refereeId);
+        referee.getApplication().getReferees().remove(referee);
     }
 
     public void declineToActAsRefereeAndSendNotification(int refereeId) {
@@ -158,14 +112,13 @@ public class RefereeService {
         }
 
         for (Integer refereeId : refereesSendToPortico) {
-            Referee referee = refereeDAO.getRefereeById(refereeId);
+            Referee referee = entityDAO.getById(Referee.class, refereeId);
             referee.setSendToUCL(true);
         }
     }
 
     public Comment editReferenceComment(Application applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) {
-        Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
-        Referee referee = getRefereeById(refereeId);
+        Referee referee = entityDAO.getById(Referee.class, refereesAdminEditDTO.getEditedRefereeId());
         Comment reference = referee.getComment();
         reference.setContent(refereesAdminEditDTO.getComment());
         reference.setSuitableForInstitution(refereesAdminEditDTO.getSuitableForUCL());
@@ -185,13 +138,13 @@ public class RefereeService {
         if (BooleanUtils.isTrue(refereesAdminEditDTO.getContainsRefereeData())) {
             referee = createReferee(refereesAdminEditDTO, applicationForm);
         } else {
-            Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
-            referee = getRefereeById(refereeId);
+            referee = entityDAO.getById(Referee.class, refereesAdminEditDTO.getEditedRefereeId());
         }
 
-        if (referee.getUser() == null) {
-            processRefereesRoles(Arrays.asList(referee));
-        }
+        // TODO make sure uses exists
+//        if (referee.getUser() == null) {
+//            processRefereesRoles(Arrays.asList(referee));
+//        }
 
         ReferenceComment referenceComment = createReferenceComment(refereesAdminEditDTO, referee, applicationForm);
         applicationForm.getApplicationComments().add(referenceComment);
@@ -210,7 +163,7 @@ public class RefereeService {
 
     private Referee createReferee(RefereesAdminEditDTO refereesAdminEditDTO, Application applicationForm) {
         User user = userService.getOrCreateUser(refereesAdminEditDTO.getFirstname(), refereesAdminEditDTO.getLastname(),
-                refereesAdminEditDTO.getEditedRefereeId());
+                refereesAdminEditDTO.getEmail());
 
         Referee referee = new Referee();
         referee.setApplication(applicationForm);
@@ -220,7 +173,7 @@ public class RefereeService {
         referee.setJobTitle(refereesAdminEditDTO.getJobTitle());
         referee.setPhoneNumber(refereesAdminEditDTO.getPhoneNumber());
         referee.setMessenger(refereesAdminEditDTO.getMessenger());
-        refereeDAO.save(referee);
+        entityDAO.save(referee);
         return referee;
     }
 
@@ -239,19 +192,6 @@ public class RefereeService {
             referenceComment.setDocument(document);
         }
         return referenceComment;
-    }
-
-    private Referee getSecuredInstance(Integer refereeId) {
-        Referee referee = getRefereeById(refereeId);
-        if (referee == null) {
-            throw new ResourceNotFoundException();
-        }
-        return referee;
-    }
-
-    public boolean isRefereeOfApplicationForm(User currentUser, Application form) {
-        // TODO Auto-generated method stub
-        return false;
     }
 
 }

@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.domain.User;
 public class PersonalDetailsService {
 
     @Autowired
-    private ApplicationService applicationFormService;
+    private ApplicationService applicationService;
 
     @Autowired
     private ApplicationCopyHelper applicationFormCopyHelper;
@@ -27,17 +27,17 @@ public class PersonalDetailsService {
         return personalDetails;
     }
     
-    public void saveOrUpdate(Application application, PersonalDetails personalDetails, User updatedUser) {
+    public void saveOrUpdate(int applicationId, PersonalDetails personalDetails, User updatedUser) {
+        Application application = applicationService.getById(applicationId);
+        
         PersonalDetails persistentPersonalDetails = application.getPersonalDetails();
         if (persistentPersonalDetails == null) {
             persistentPersonalDetails = new PersonalDetails();
             persistentPersonalDetails.setApplication(application);
             application.setPersonalDetails(persistentPersonalDetails);
-            applicationFormService.save(application);
         }
         updateApplicantData(application, updatedUser);
         applicationFormCopyHelper.copyPersonalDetails(persistentPersonalDetails, personalDetails, false);
-        applicationFormService.saveOrUpdateApplicationSection(application);
     }
      
     private void updateApplicantData(Application application, User updatedUser) {

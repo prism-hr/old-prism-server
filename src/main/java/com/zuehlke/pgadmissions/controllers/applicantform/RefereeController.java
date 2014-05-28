@@ -62,7 +62,7 @@ public class RefereeController {
     
     @RequestMapping(value = "/getReferee", method = RequestMethod.GET)
     public String getRefereeView(@ModelAttribute Application applicationForm, @RequestParam(required = false) Integer refereeId, ModelMap modelMap) {
-        return returnView(modelMap, refereeService.getOrCreate(refereeId));
+        return returnView(modelMap, refereeId != null ? refereeService.getById(refereeId) : new Referee());
     }
 
     @RequestMapping(value = "/editReferee", method = RequestMethod.POST)
@@ -70,7 +70,7 @@ public class RefereeController {
             @ModelAttribute Application applicationForm) {
         Referee referee = null;
         if (refereeId != null) {
-            referee = refereeService.getRefereeById(refereeId);
+            referee = refereeService.getById(refereeId);
         }
 
         if (result.hasErrors()) {
@@ -81,16 +81,15 @@ public class RefereeController {
             return STUDENTS_FORM_REFEREES_VIEW;
         }
 
-        refereeService.saveOrUpdate(applicationForm, refereeId, newReferee);
+        refereeService.saveOrUpdate(applicationForm.getId(), refereeId, newReferee);
 
         return "redirect:/update/getReferee?applicationId=" + applicationForm.getCode();
     }
 
     @RequestMapping(value = "/deleteReferee", method = RequestMethod.POST)
     public String deleteReferee(@RequestParam("id") Integer refereeId) {
-        
-        Referee referee = refereeService.getRefereeById(refereeId);
-        refereeService.delete(referee);
+        Referee referee = refereeService.getById(refereeId);
+        refereeService.delete(refereeId);
         return "redirect:/update/getReferee?applicationId=" + referee.getApplication().getCode() + "&message=deleted";
     }
 

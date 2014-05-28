@@ -119,7 +119,7 @@ public class ApplicationTestDataProvider {
         personalDetails.setEthnicity(testObjectProvider.get(Ethnicity.class));
         personalDetails.setDisability(testObjectProvider.get(Disability.class));
 
-        personalDetailsService.saveOrUpdate(application, personalDetails, application.getUser());
+        personalDetailsService.saveOrUpdate(application.getId(), personalDetails, application.getUser());
     }
 
     private void createAddress(Application application) {
@@ -133,7 +133,7 @@ public class ApplicationTestDataProvider {
         applicationAddress.setCurrentAddress(address);
         applicationAddress.setContactAddress(address);
 
-        applicationAdressService.saveOrUpdate(application, applicationAddress);
+        applicationAdressService.saveOrUpdate(application.getId(), applicationAddress);
     }
 
     private void createQualifications(Application application) {
@@ -149,7 +149,7 @@ public class ApplicationTestDataProvider {
             qualification.setGrade("6");
             qualification.setAwardDate(new LocalDate().minusYears(10));
             qualification.setDocument(testObjectProvider.get(Document.class));
-            qualificationService.saveOrUpdate(application, null, qualification);
+            qualificationService.saveOrUpdate(application.getId(), null, qualification);
         }
     }
 
@@ -167,7 +167,7 @@ public class ApplicationTestDataProvider {
         employment.setRemit("Nic ino zapierdalac trza bylo");
         employment.setStartDate(new LocalDate().minusYears(2));
         employment.setCurrent(true);
-        employmentPositionService.saveOrUpdate(application, null, employment);
+        employmentPositionService.saveOrUpdate(application.getId(), null, employment);
     }
 
     private void createFunding(Application application) {
@@ -177,7 +177,7 @@ public class ApplicationTestDataProvider {
         funding.setValue("2000000");
         funding.setAwardDate(new LocalDate().minusYears(1));
         funding.setDocument(testObjectProvider.get(Document.class));
-        fundingService.saveOrUpdate(application, null, funding);
+        fundingService.saveOrUpdate(application.getId(), null, funding);
     }
 
     private void createReferees(Application application) {
@@ -195,7 +195,7 @@ public class ApplicationTestDataProvider {
             referee.setAddress(address);
             referee.setPhoneNumber("+44(0)5435435");
             referee.setMessenger("szefwszystkichszefow");
-            refereeService.saveOrUpdate(application, null, referee);
+            refereeService.saveOrUpdate(application.getId(), null, referee);
         }
     }
 
@@ -203,13 +203,14 @@ public class ApplicationTestDataProvider {
         ApplicationDocument applicationDocument = new ApplicationDocument();
         applicationDocument.setPersonalStatement(testObjectProvider.get(Document.class));
         applicationDocument.setCv(testObjectProvider.get(Document.class));
-        applicationDocumentService.saveOrUpdate(application, applicationDocument);
+        applicationDocumentService.saveOrUpdate(application.getId(), applicationDocument);
     }
 
     private void createAdditionalInformation(Application application) {
         AdditionalInformation additionalInformation = new AdditionalInformation();
         additionalInformation.setConvictions(true);
         additionalInformation.setConvictionsText("I was a bad person");
+        additionalInformationService.saveOrUpdate(application.getId(), additionalInformation);
     }
 
 }

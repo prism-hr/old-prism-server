@@ -357,7 +357,12 @@ public class Application extends PrismResourceTransient {
         this.referees.addAll(Arrays.asList(referees));
         return this;
     }
-    
+
+    public Application withQualifications(Qualification... qualifications) {
+        this.qualifications.addAll(Arrays.asList(qualifications));
+        return this;
+    }
+
     public Application withInitialData(User user, Program program, Project project) {
         this.user = Preconditions.checkNotNull(user);
         this.program = Preconditions.checkNotNull(program);

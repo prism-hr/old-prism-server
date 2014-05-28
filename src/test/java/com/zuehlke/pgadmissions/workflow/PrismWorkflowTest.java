@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.workflow;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Random;
-
 import org.apache.commons.lang.WordUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;

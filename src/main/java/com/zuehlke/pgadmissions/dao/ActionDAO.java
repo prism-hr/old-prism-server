@@ -51,9 +51,11 @@ public class ActionDAO {
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("precedence")).add(Subqueries.eq("precedence", getActionPrecedence(resource, user))) //
+                                .add(Restrictions.isNotNull("precedence")) //
+                                .add(Property.forName("precedence").eq(getActionPrecedence(resource, user))) //
                                 .add(Restrictions.eq("stateActionAssignments.defaultAction", true))) //
-                        .add(Restrictions.eq("stateActionAssignments", true))).add(Restrictions.eq("precedence", 1))//
+                        .add(Restrictions.eq("stateActionAssignments.defaultAction", true))) //
+                .add(Restrictions.eq("precedence", 1))//
                 .add(Restrictions.eq("stateActionAssignments.defaultAction", true)).uniqueResult();
     }
 
@@ -109,11 +111,16 @@ public class ActionDAO {
     }
 
     private DetachedCriteria getActionPrecedence(PrismResource resource, User user) {
-        return DetachedCriteria.forClass(StateAction.class) //
-                .setProjection(Projections.max("precedence")) //
-                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+        return DetachedCriteria.forClass(StateAction.class)
+                //
+                .setProjection(Projections.max("precedence"))
+                //
+                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN)
+                //
+                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN)
+                //
+                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN)
+                //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN).createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.isNotNull("precedence")) //

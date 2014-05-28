@@ -58,7 +58,7 @@ public class PrismWorkflowTest {
 
     @Autowired
     private ManageUsersService manageUsersService;
-    
+
     @Autowired
     private RegistrationService registrationService;
 
@@ -82,13 +82,13 @@ public class PrismWorkflowTest {
 
     @Autowired
     private MailSenderMock mailSenderMock;
-    
+
     @Autowired
     private ApplicationTestDataProvider applicationTestDataProvider;
-    
+
     @Autowired
     private SystemService systemService;
-    
+
     @Autowired
     private CommentService commentService;
 
@@ -102,16 +102,14 @@ public class PrismWorkflowTest {
 
         Comment createApplicationComment = new Comment().withCreatedTimestamp(new DateTime()).withUser(applicant);
         commentService.save(createApplicationComment);
-        ActionOutcome actionOutcome = actionService.executeAction(program.getId(), applicant, PrismAction.PROGRAM_CREATE_APPLICATION,
-                createApplicationComment);
+        ActionOutcome actionOutcome = actionService.executeAction(program.getId(), applicant, PrismAction.PROGRAM_CREATE_APPLICATION, createApplicationComment);
         Application createdApplication = (Application) actionOutcome.getResource();
         assertEquals(PrismAction.APPLICATION_COMPLETE, actionOutcome.getNextAction());
 
         applicationTestDataProvider.fillWithData(createdApplication);
-        
+
         Comment completeApplicationComment = null;
-        actionOutcome = actionService.executeAction(createdApplication.getId(), applicant, PrismAction.APPLICATION_COMPLETE,
-                completeApplicationComment);
+        actionOutcome = actionService.executeAction(createdApplication.getId(), applicant, PrismAction.APPLICATION_COMPLETE, completeApplicationComment);
         assertEquals(PrismAction.SYSTEM_VIEW_APPLICATION_LIST, actionOutcome.getNextAction());
         assertEquals(systemService.getSystem().getId(), actionOutcome.getResource().getId());
 
@@ -119,7 +117,7 @@ public class PrismWorkflowTest {
         actionService.executeAction(1, programAdministrator, PrismAction.APPLICATION_ASSIGN_REVIEWERS, assignReviewerComment);
 
         mailSenderMock.verify();
-        
+
     }
 
     private User registerAndActivateApplicant(Advert advert, String firstName, String lastName, String email) {
@@ -133,6 +131,8 @@ public class PrismWorkflowTest {
 
     @Before
     public void initializeData() {
+        manageUsersService.setUserRoles("Jozef", "Oleksy", "jozek@oleksy.pl", true, systemService.getSystem(), Authority.SYSTEM_ADMINISTRATOR);
+
         for (ImportedEntityFeed feed : entityImportService.getImportedEntityFeeds()) {
             String entityName = WordUtils.uncapitalize(feed.getImportedEntityType().getEntityClass().getSimpleName());
             String url = "reference_data/2014-05-08/" + entityName + ".xml";

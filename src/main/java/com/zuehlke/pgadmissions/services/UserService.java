@@ -91,6 +91,9 @@ public class UserService {
         user.setLastName(lastname);
         user.setEmail(email);
         user.setActivationCode(encryptionUtils.generateUUID());
+        if(user.getUserAccount() == null) {
+            user.setUserAccount(new UserAccount());
+        }
         user.getUserAccount().setEnabled(false);
 
         userDAO.save(user);

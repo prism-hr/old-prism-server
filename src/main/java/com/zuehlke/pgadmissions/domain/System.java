@@ -122,7 +122,7 @@ public class System extends PrismResource {
         HashMap<String, Object> properties = Maps.newHashMap();
         properties.put("name", name);
         propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper, null);
+        return new ResourceSignature(propertiesWrapper);
     }
     
 }

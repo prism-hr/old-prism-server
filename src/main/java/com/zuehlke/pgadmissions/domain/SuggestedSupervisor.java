@@ -1,17 +1,15 @@
 package com.zuehlke.pgadmissions.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "SUGGESTED_SUPERVISOR")
-@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "APPLICATION_SUPERVISOR")
 public class SuggestedSupervisor {
 
     @Id
@@ -19,21 +17,30 @@ public class SuggestedSupervisor {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "application_form_id")
-    private Application application;
+    @JoinColumn(name = "application_program_detail_id")
+    private PersonalDetails personalDetails;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "aware_of_application")
     private boolean aware;
 
-    public Application getApplication() {
-        return application;
+    public Integer getId() {
+        return id;
     }
 
-    public void setApplication(Application application) {
-        this.application = application;
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public PersonalDetails getPersonalDetails() {
+        return personalDetails;
+    }
+
+    public void setPersonalDetails(PersonalDetails personalDetails) {
+        this.personalDetails = personalDetails;
     }
 
     public User getUser() {
@@ -52,8 +59,13 @@ public class SuggestedSupervisor {
         this.aware = aware;
     }
 
-    public SuggestedSupervisor withApplication(Application application) {
-        this.application = application;
+    public SuggestedSupervisor withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public SuggestedSupervisor withPersonalDetails(PersonalDetails personalDetails) {
+        this.personalDetails = personalDetails;
         return this;
     }
 

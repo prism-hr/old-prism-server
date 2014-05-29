@@ -61,9 +61,7 @@ public class CommentAssignedUserPropertyEditor extends PropertyEditorSupport {
 
         CommentAssignedUser assignedUser = new CommentAssignedUser();
         assignedUser.setUser(user);
-        if (split.length == 3 && "primary".equals(split[2])) {
-            assignedUser.setPrimary(true);
-        }
+        // TODO set role
 
         setValue(assignedUser);
     }

@@ -106,7 +106,6 @@ public class CommentService {
     public CommentAssignedUser assignUser(AssignSupervisorsComment approvalComment, User user, boolean isPrimary) {
         CommentAssignedUser assignedUser = new CommentAssignedUser();
         assignedUser.setUser(user);
-        assignedUser.setPrimary(isPrimary);
         approvalComment.getCommentAssignedUsers().add(assignedUser);
         return assignedUser;
     }

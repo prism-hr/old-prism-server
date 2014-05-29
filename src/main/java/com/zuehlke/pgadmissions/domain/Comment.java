@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -181,9 +179,20 @@ public class Comment implements Serializable {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "comment")
+    private Set<CommentAssignedUser> assignedUsers = Sets.newHashSet();
+
     @OneToMany
     @JoinColumn(name = "comment_id")
-    private List<Document> documents = new ArrayList<Document>();
+    private Set<Document> documents = Sets.newHashSet();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "comment_id")
+    private Set<AppointmentTimeslot> availableAppointmentTimeslots = Sets.newHashSet();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "comment_id")
+    private Set<AppointmentPreference> availableAppointmentPreferences = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -521,12 +530,16 @@ public class Comment implements Serializable {
         this.createdTimestamp = createdTimestamp;
     }
 
-    public List<Document> getDocuments() {
+    public Set<Document> getDocuments() {
         return documents;
     }
 
     public Set<CommentAssignedUser> getCommentAssignedUsers() {
         return commentAssignedUser;
+    }
+
+    public Set<AppointmentTimeslot> getAvailableAppointmentTimeslots() {
+        return availableAppointmentTimeslots;
     }
 
     public void addDocument(Document document) {
@@ -565,7 +578,7 @@ public class Comment implements Serializable {
         this.user = user;
         return this;
     }
-    
+
     public Comment withRole(String role) {
         this.role = role;
         return this;
@@ -610,22 +623,6 @@ public class Comment implements Serializable {
         return String.format("%s %s (%s) as: %s", user.getFirstName(), user.getLastName(), user.getEmail(), StringUtils.capitalize(role));
     }
 
-    public CommentAssignedUser getPrimaryAssignedUser() {
         for (CommentAssignedUser user : getCommentAssignedUsers()) {
-            if (user.isPrimary()) {
-                return user;
-            }
-        }
-        return null;
-    }
-
-    public CommentAssignedUser getSecondaryAssignedUser() {
         for (CommentAssignedUser user : getCommentAssignedUsers()) {
-            if (!user.isPrimary()) {
-                return user;
-            }
-        }
-        return null;
-    }
-
 }

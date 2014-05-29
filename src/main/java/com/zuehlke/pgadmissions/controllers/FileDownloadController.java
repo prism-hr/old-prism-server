@@ -59,7 +59,7 @@ public class FileDownloadController {
             throw new ResourceNotFoundException();
         }
 
-        Document document = reference.getDocuments().get(0);
+        Document document = reference.getDocuments().iterator().next();
         sendDocument(response, document.getFileName(), PDF_CONTENT_TYPE, document.getContent());
 
     }

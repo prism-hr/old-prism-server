@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -20,16 +19,14 @@ public class CommentAssignedUser {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id")
     private Role role;
-
     @ManyToOne
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    @Column(name = "is_primary")
-    private boolean primary;
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 
     public Integer getId() {
         return id;
@@ -48,13 +45,7 @@ public class CommentAssignedUser {
     }
 
     public Role getRole() {
-        return role;
-    }
-
     public void setRole(Role role) {
-        this.role = role;
-    }
-
     public Comment getComment() {
         return comment;
     }
@@ -63,12 +54,12 @@ public class CommentAssignedUser {
         this.comment = comment;
     }
 
-    public boolean isPrimary() {
-        return primary;
+    public Role getRole() {
+        return role;
     }
 
-    public void setPrimary(boolean primary) {
-        this.primary = primary;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public CommentAssignedUser withUser(User user) {

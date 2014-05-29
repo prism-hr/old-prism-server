@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dto;
 
 import java.util.List;
+import java.util.Set;
 
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -21,7 +22,7 @@ public class StateChangeDTO {
 
     private String comment;
 
-    private List<Document> documents;
+    private Set<Document> documents;
 
     private ValidationQuestionOptions qualifiedForPhd;
 
@@ -107,11 +108,11 @@ public class StateChangeDTO {
         this.comment = comment;
     }
 
-    public List<Document> getDocuments() {
+    public Set<Document> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(List<Document> documents) {
+    public void setDocuments(Set<Document> documents) {
         this.documents = documents;
     }
 

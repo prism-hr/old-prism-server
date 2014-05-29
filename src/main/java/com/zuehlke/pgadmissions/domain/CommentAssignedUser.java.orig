@@ -6,10 +6,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "COMMENT_ASSIGNED_USER", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "user_id", "role_id" }) })
+@Table(name = "COMMENT_ASSIGNED_USER")
 public class CommentAssignedUser {
 
     @Id
@@ -23,8 +22,8 @@ public class CommentAssignedUser {
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    @ManyToOne
     @JoinColumn(name = "role_id")
+    @ManyToOne
     private Role role;
 
     public Integer getId() {

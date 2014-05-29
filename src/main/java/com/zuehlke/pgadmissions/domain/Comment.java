@@ -180,7 +180,7 @@ public class Comment implements Serializable {
     private DateTime createdTimestamp;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "comment")
-    private Set<CommentAssignedUser> assignedUsers = Sets.newHashSet();
+    private Set<CommentAssignedUser> commentAssignedUsers = Sets.newHashSet();
 
     @OneToMany
     @JoinColumn(name = "comment_id")
@@ -522,6 +522,10 @@ public class Comment implements Serializable {
         this.creatorIpAddress = creatorIpAddress;
     }
 
+    public Set<CommentAssignedUser> getCommentAssignedUsers() {
+        return commentAssignedUser;
+    }
+
     public DateTime getCreatedTimestamp() {
         return createdTimestamp;
     }
@@ -532,10 +536,6 @@ public class Comment implements Serializable {
 
     public Set<Document> getDocuments() {
         return documents;
-    }
-
-    public Set<CommentAssignedUser> getCommentAssignedUsers() {
-        return commentAssignedUser;
     }
 
     public Set<AppointmentTimeslot> getAvailableAppointmentTimeslots() {
@@ -623,6 +623,4 @@ public class Comment implements Serializable {
         return String.format("%s %s (%s) as: %s", user.getFirstName(), user.getLastName(), user.getEmail(), StringUtils.capitalize(role));
     }
 
-        for (CommentAssignedUser user : getCommentAssignedUsers()) {
-        for (CommentAssignedUser user : getCommentAssignedUsers()) {
 }

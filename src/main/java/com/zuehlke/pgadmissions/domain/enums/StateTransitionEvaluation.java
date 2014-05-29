@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.domain.enums;
 import org.springframework.util.StringUtils;
 
 public enum StateTransitionEvaluation {
-
+    
     APPLICATION_COMPLETED_OUTCOME, //
     APPLICATION_ELIGIBILITY_ASSESSED_OUTCOME, //
     APPLICATION_EXPORTED_OUTCOME, //
@@ -18,7 +18,9 @@ public enum StateTransitionEvaluation {
     PROJECT_CONFIGURED_OUTCOME, //
     PROJECT_REACTIVATED_OUTCOME;
     
-    public String getProcessorMethodName() {
+    public static String INCORRECT_PROCESSOR_TYPE = "Tried to invoke state transition processor on incorrect resource type";
+    
+    public String getMethodName() {
         String[] methodNameParts = name().split("_");
         String methodName = "get";
         for (String methodNamePart : methodNameParts) {

@@ -172,9 +172,6 @@ public class Comment implements Serializable {
     @Column(name = "creator_ip_address")
     private String creatorIpAddress;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "comment")
-    private Set<CommentAssignedUser> commentAssignedUser = Sets.newHashSet();
-
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
@@ -535,7 +532,7 @@ public class Comment implements Serializable {
     }
 
     public Set<CommentAssignedUser> getAssignedUsers() {
-        return commentAssignedUser;
+        return assignedUsers;
     }
 
     public Set<AppointmentTimeslot> getAvailableAppointmentTimeslots() {

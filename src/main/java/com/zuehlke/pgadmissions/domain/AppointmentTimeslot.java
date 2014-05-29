@@ -1,15 +1,15 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
 @Entity
 @Table(name = "COMMENT_APPOINTMENT_TIMESLOT")
@@ -21,9 +21,9 @@ public class AppointmentTimeslot implements Serializable {
     @GeneratedValue
     private Integer id;
 
-    @Temporal(TemporalType.DATE)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @Column(name = "timeslot_datetime")
-    private Date dateTime;
+    private DateTime dateTime;
 
     public Integer getId() {
         return id;
@@ -33,11 +33,11 @@ public class AppointmentTimeslot implements Serializable {
         this.id = id;
     }
 
-    public Date getDateTime() {
+    public DateTime getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(Date dateTime) {
+    public void setDateTime(DateTime dateTime) {
         this.dateTime = dateTime;
     }
 

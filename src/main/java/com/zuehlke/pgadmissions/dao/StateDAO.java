@@ -47,9 +47,16 @@ public class StateDAO {
     public List<StateTransition> getStateTransitions(PrismResource resource, PrismAction action) {
         return (List<StateTransition>) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("stateAction.state.id", resource.getState().getId())) //
+                .add(Restrictions.eq("stateAction.state", resource.getState())) //
                 .add(Restrictions.eq("stateAction.action.id", action)) //
                 .list();
+    }
+    
+    public StateTransition getStateTransition(List<StateTransition> permittedTransitions, State candidateTransitionState) {
+        return (StateTransition) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
+                .add(Restrictions.in("id", permittedTransitions)) //
+                .add(Restrictions.eq("transitionState", candidateTransitionState)) //
+                .uniqueResult();
     }
 
 }

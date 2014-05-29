@@ -14,7 +14,6 @@ import org.springframework.validation.Validator;
 
 import com.google.common.base.Strings;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
@@ -59,7 +58,7 @@ public class GenericCommentValidatorTest {
 
 	@Before
 	public void setup() {
-		comment = new CommentBuilder().comment("hi").build();
+		comment = new Comment().withContent("hi");
 		genericCommentValidator = new GenericCommentValidator();
 		genericCommentValidator.setValidator((javax.validation.Validator) validator);
 	}

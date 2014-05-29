@@ -36,7 +36,6 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.AdvertClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -244,7 +243,7 @@ public class ProgramsServiceTest {
     @Test
     public void shouldUpdateClosingDate() {
         Program program = new Program().withCode("AAA_00018").withDescription("program").withStudyDuration(12).withState(new State().withId(PrismState.PROGRAM_APPROVED));
-        AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new LocalDate()).advert(program).build();
+        AdvertClosingDate closingDate = new AdvertClosingDate().withClosingDate(new LocalDate()).withAdvert(program);
         programDAOMock.updateClosingDate(closingDate);
         replay();
         programsService.updateClosingDate(closingDate);
@@ -254,7 +253,7 @@ public class ProgramsServiceTest {
     @Test
     public void shouldAddClosingDateToProgram() {
         Program program = new Program().withCode("AAA_00018").withDescription("program").withStudyDuration(12).withState(new State().withId(PrismState.PROGRAM_APPROVED));
-        AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new LocalDate()).advert(program).build();
+        AdvertClosingDate closingDate = new AdvertClosingDate().withClosingDate(new LocalDate()).withAdvert(program);
         programDAOMock.save(program);
         replay();
         programsService.addClosingDateToProgram(program, closingDate);
@@ -263,7 +262,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldDeleteClosingDateById() {
-        AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new LocalDate()).build();
+        AdvertClosingDate closingDate = new AdvertClosingDate().withClosingDate(new LocalDate());
         expect(programDAOMock.getClosingDateById(closingDate.getId())).andReturn(closingDate);
         programDAOMock.deleteClosingDate(closingDate);
         replay();

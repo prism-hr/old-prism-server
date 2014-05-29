@@ -13,7 +13,6 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
@@ -26,7 +25,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
     @Test(expected = NullPointerException.class)
     public void shouldThrowNullPointerException() {
         CommentDAO reviewDAO = new CommentDAO();
-        Comment review = new CommentBuilder().id(1).build();
+        Comment review = new Comment();
         reviewDAO.save(review);
     }
 

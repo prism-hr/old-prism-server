@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.AdvertClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.TestData;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -121,9 +120,9 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldReturnNextClosingDateForProgram() {
         LocalDate closingDates = new LocalDate();
-        AdvertClosingDate badge1 = new AdvertClosingDateBuilder().closingDate(closingDates.minusMonths(1)).build();
-        AdvertClosingDate badge2 = new AdvertClosingDateBuilder().closingDate(closingDates.plusMonths(1)).build();
-        AdvertClosingDate badge3 = new AdvertClosingDateBuilder().closingDate(closingDates.plusMonths(2)).build();
+        AdvertClosingDate badge1 = new AdvertClosingDate().withClosingDate(closingDates.minusMonths(1));
+        AdvertClosingDate badge2 = new AdvertClosingDate().withClosingDate(closingDates.plusMonths(1));
+        AdvertClosingDate badge3 = new AdvertClosingDate().withClosingDate(closingDates.plusMonths(2));
         Program program = TestData.aProgram(programType, institution, user, state).withClosingDates(badge1, badge2, badge3);
         badge1.setAdvert(program);
         badge2.setAdvert(program);
@@ -149,7 +148,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetClosingDateById() {
-        AdvertClosingDate putClosingDate = new AdvertClosingDateBuilder().closingDate(new LocalDate()).build();
+        AdvertClosingDate putClosingDate = new AdvertClosingDate().withClosingDate(new LocalDate());
         Program program = TestData.aProgram(programType, institution, user, state).withClosingDates(putClosingDate);
         sessionFactory.getCurrentSession().save(program);
         ProgramDAO programDAO = new ProgramDAO(sessionFactory);
@@ -160,7 +159,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetClosingDateByDate() {
         LocalDate closingDate = new LocalDate();
-        AdvertClosingDate putClosingDate = new AdvertClosingDateBuilder().closingDate(closingDate).build();
+        AdvertClosingDate putClosingDate = new AdvertClosingDate().withClosingDate(closingDate);
         Program program = TestData.aProgram(programType, institution, user, state).withClosingDates(putClosingDate);
         sessionFactory.getCurrentSession().save(program);
         ProgramDAO programDAO = new ProgramDAO(sessionFactory);
@@ -173,7 +172,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         DateTime dateToday = new DateTime(new Date());
         LocalDate truncatedDateToday = new LocalDate(dateToday.getYear(), dateToday.getMonthOfYear(), dateToday.getDayOfMonth());
         LocalDate truncatedDateTomorrow = truncatedDateToday.plusDays(1);
-        AdvertClosingDate putClosingDate = new AdvertClosingDateBuilder().closingDate(truncatedDateToday).build();
+        AdvertClosingDate putClosingDate = new AdvertClosingDate().withClosingDate(truncatedDateToday);
         Program program = TestData.aProgram(programType, institution, user, state).withClosingDates(putClosingDate);
         sessionFactory.getCurrentSession().save(program);
         sessionFactory.getCurrentSession().flush();
@@ -189,7 +188,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldDeleteClosingDate() {
-        AdvertClosingDate putClosingDate = new AdvertClosingDateBuilder().closingDate(new LocalDate()).build();
+        AdvertClosingDate putClosingDate = new AdvertClosingDate().withClosingDate(new LocalDate());
         Integer putClosingDateId = putClosingDate.getId();
         Program program = TestData.aProgram(programType, institution, user, state).withClosingDates(putClosingDate);
         sessionFactory.getCurrentSession().save(program);

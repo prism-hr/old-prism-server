@@ -106,7 +106,7 @@ public class ActionService {
         executeRoleTransitions(invoker, operativeResource, resource, actionInvokerRoles, transition);
         
         if (transition.isDoPostComment()) {
-            comment.setRoles(getActionInvokerRolesAsString(actionInvokerRoles));
+            comment.setRole(getActionInvokerRolesAsString(actionInvokerRoles));
             comment.setCreatedTimestamp(new DateTime());
             entityService.save(comment);
         }

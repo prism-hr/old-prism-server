@@ -7,17 +7,22 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "COMMENT_ASSIGNED_REGISTERED_USER")
+@Table(name = "COMMENT_ASSIGNED_USER", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "user_id", "role_id" }) })
 public class CommentAssignedUser {
 
     @Id
     private Integer id;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id")
+    private User role;
 
     @ManyToOne
     @JoinColumn(name = "comment_id")
@@ -26,12 +31,28 @@ public class CommentAssignedUser {
     @Column(name = "is_primary")
     private boolean primary;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public User getRole() {
+        return role;
+    }
+
+    public void setRole(User role) {
+        this.role = role;
     }
 
     public Comment getComment() {
@@ -49,7 +70,7 @@ public class CommentAssignedUser {
     public void setPrimary(boolean primary) {
         this.primary = primary;
     }
-    
+
     public CommentAssignedUser withUser(User user) {
         this.user = user;
         return this;

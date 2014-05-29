@@ -68,7 +68,6 @@ public class MailSendingService extends AbstractMailSendingService {
             String subject = resolveMessage(APPLICATION_PROVIDE_REFERENCE_REQUEST, application);
             message = buildMessage(referee.getUser(), subject, modelBuilder.build(), APPLICATION_PROVIDE_REFERENCE_REQUEST);
             sendEmail(message);
-            referee.setLastNotified(new Date());
         } catch (Exception e) {
             log.error("Error while sending reference request mail: {}", e);
         }

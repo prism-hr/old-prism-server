@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,9 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.Valid;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
@@ -26,13 +21,6 @@ public class Referee {
     @Id
     @GeneratedValue
     private Integer id;
-
-    @Transient
-    private boolean acceptedTerms;
-
-    @Column(name = "last_notified")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastNotified;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -52,7 +40,7 @@ public class Referee {
 
     @Column(name = "skype")
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
-    private String messenger;
+    private String skype;
 
     @Column(name = "job_employer")
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
@@ -67,8 +55,8 @@ public class Referee {
     @Valid
     private Address address;
 
-    @Column(name = "send_to_ucl")
-    private Boolean sendToUCL;
+    @Column(name = "include_in_export")
+    private Boolean includeInExport;
 
     public Application getApplication() {
         return application;
@@ -118,12 +106,12 @@ public class Referee {
         return id;
     }
 
-    public String getMessenger() {
-        return messenger;
+    public String getSkype() {
+        return skype;
     }
 
-    public void setMessenger(String messenger) {
-        this.messenger = messenger;
+    public void setSkype(String skype) {
+        this.skype = skype;
     }
 
     public User getUser() {
@@ -142,29 +130,62 @@ public class Referee {
         this.phoneNumber = phoneNumber;
     }
 
-    public Date getLastNotified() {
-        return lastNotified;
+    public void setIncludeInExport(Boolean includeInExport) {
+        this.includeInExport = includeInExport;
     }
 
-    public void setLastNotified(Date lastNotified) {
-        // TODO reimplement that using new actions
-        this.lastNotified = lastNotified;
+    public Boolean getIncludeInExport() {
+        return includeInExport;
     }
 
-    public boolean isAcceptedTerms() {
-        return acceptedTerms;
+    public Referee withId(Integer id) {
+        this.id = id;
+        return this;
     }
-
-    public void setAcceptedTerms(boolean acceptedTerms) {
-        this.acceptedTerms = acceptedTerms;
+    
+    public Referee withUser(User user) {
+        this.user = user;
+        return this;
     }
-
-    public void setSendToUCL(Boolean sendToUCL) {
-        this.sendToUCL = sendToUCL;
+    
+    public Referee withApplication(Application application) {
+        this.application = application;
+        return this;
     }
-
-    public Boolean getSendToUCL() {
-        return sendToUCL;
+    
+    public Referee withComment(Comment comment) {
+        this.comment = comment;
+        return this;
     }
-
+    
+    public Referee withPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+        return this;
+    }
+    
+    public Referee withSkype(String skype) {
+        this.skype = skype;
+        return this;
+    }
+    
+    public Referee withJobEmployer(String jobEmployer) {
+        this.jobEmployer = jobEmployer;
+        return this;
+    }
+    
+    public Referee withJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
+        return this;
+    }
+    
+    public Referee withAddress(Address address) {
+        this.address = address;
+        return this;
+    }
+    
+    public Referee withIncludeInExport(Boolean includeInExport) {
+        this.includeInExport = includeInExport;
+        return this;
+    }
+    
 }

@@ -10,7 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.Valid;
 
 import org.hibernate.annotations.Type;
@@ -55,9 +54,6 @@ public class EmploymentPosition {
     @Column(name = "end_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate endDate;
-
-    @Transient
-    private boolean acceptedTerms;
 
     public void setId(Integer id) {
         this.id = id;
@@ -129,14 +125,6 @@ public class EmploymentPosition {
 
     public void setCurrent(boolean current) {
         this.current = current;
-    }
-
-    public boolean isAcceptedTerms() {
-        return acceptedTerms;
-    }
-
-    public void setAcceptedTerms(boolean acceptedTerms) {
-        this.acceptedTerms = acceptedTerms;
     }
 
     public EmploymentPosition withId(Integer id) {

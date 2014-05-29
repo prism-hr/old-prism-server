@@ -31,9 +31,6 @@ public class PersonalDetails implements ApplicationSection {
     @GeneratedValue
     private Integer id;
 
-    @Transient
-    private boolean acceptedTerms;
-
     @Column(name = "skype")
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
     private String messenger;
@@ -239,14 +236,6 @@ public class PersonalDetails implements ApplicationSection {
 
     public void setPassport(Passport passport) {
         this.passport = passport;
-    }
-
-    public boolean isAcceptedTerms() {
-        return acceptedTerms;
-    }
-
-    public void setAcceptedTerms(boolean acceptedTerms) {
-        this.acceptedTerms = acceptedTerms;
     }
 
     public Boolean getLanguageQualificationAvailable() {

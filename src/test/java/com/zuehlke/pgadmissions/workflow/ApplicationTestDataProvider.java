@@ -194,7 +194,7 @@ public class ApplicationTestDataProvider {
             address.setDomicile(testObjectProvider.get(Domicile.class));
             referee.setAddress(address);
             referee.setPhoneNumber("+44(0)5435435");
-            referee.setMessenger("szefwszystkichszefow");
+            referee.setSkype("szefwszystkichszefow");
             refereeService.saveOrUpdate(application.getId(), null, referee);
         }
     }
@@ -208,7 +208,7 @@ public class ApplicationTestDataProvider {
 
     private void createAdditionalInformation(Application application) {
         AdditionalInformation additionalInformation = new AdditionalInformation();
-        additionalInformation.setConvictions(true);
+        additionalInformation.setHasConvictions(true);
         additionalInformation.setConvictionsText("I was a bad person");
         additionalInformationService.saveOrUpdate(application.getId(), additionalInformation);
     }

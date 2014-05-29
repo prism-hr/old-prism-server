@@ -191,7 +191,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
                     adminsEmails, referee, application, application.getUser(), getHostName() });
             message = buildMessage(referee.getUser(), subject, modelBuilder.build(), APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER);
             sendEmail(message);
-            referee.setLastNotified(new Date());
             refereeDAO.save(referee);
         } catch (Exception e) {
             log.error("Error while sending reference reminder email to referee: ", e);

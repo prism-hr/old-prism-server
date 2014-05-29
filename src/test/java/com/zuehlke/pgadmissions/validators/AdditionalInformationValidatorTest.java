@@ -13,8 +13,7 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
-import com.zuehlke.pgadmissions.domain.builders.AdditionalInformationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.Application;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
@@ -29,7 +28,7 @@ public class AdditionalInformationValidatorTest {
 
 	@Before
 	public void setup() {
-		info = new AdditionalInformationBuilder().convictionsText("blabla").setConvictions(true).applicationForm(new ApplicationFormBuilder().id(8).build()).build();
+		info = new AdditionalInformation().withConvictionsText("blabla").withHasConvictions(true).withApplication(new Application());
 		infoValidator = new AdditionalInformationValidator();
 		infoValidator.setValidator((javax.validation.Validator) validator);
 	}
@@ -48,7 +47,7 @@ public class AdditionalInformationValidatorTest {
 
 	@Test
 	public void validateGoodAddInfoEmpty() {
-		info.setConvictions(false);
+		info.setHasConvictions(false);
 		info.setConvictionsText(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(info, "convictions");
 		infoValidator.validate(info, mappingResult);
@@ -57,7 +56,7 @@ public class AdditionalInformationValidatorTest {
 
 	@Test
 	public void shouldRejectIfConvictionsNotSet() {
-		info.setConvictions(null);
+		info.setHasConvictions(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(info, "convictions");
 		infoValidator.validate(info, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());

@@ -12,7 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
@@ -27,9 +26,6 @@ public class Funding {
     @Id
     @GeneratedValue
     private Integer id;
-
-    @Transient
-    private boolean acceptedTerms;
 
     @Column(name = "award_type")
     @Enumerated(EnumType.STRING)
@@ -115,14 +111,6 @@ public class Funding {
 
     public void setDocument(Document document) {
         this.document = document;
-    }
-
-    public boolean isAcceptedTerms() {
-        return acceptedTerms;
-    }
-
-    public void setAcceptedTerms(boolean acceptedTerms) {
-        this.acceptedTerms = acceptedTerms;
     }
 
     public Funding withId(Integer id) {

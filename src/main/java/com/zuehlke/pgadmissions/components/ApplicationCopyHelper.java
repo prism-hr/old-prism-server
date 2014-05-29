@@ -95,7 +95,7 @@ public class ApplicationCopyHelper {
     }
 
     public void copyAdditionalInformation(AdditionalInformation to, AdditionalInformation from) {
-        to.setConvictions(from.getConvictions());
+        to.setHasConvictions(from.getHasConvictions());
         to.setConvictionsText(from.getConvictionsText());
     }
 
@@ -104,7 +104,7 @@ public class ApplicationCopyHelper {
         to.setJobEmployer(from.getJobEmployer());
         to.setJobTitle(from.getJobTitle());
         to.setPhoneNumber(from.getPhoneNumber());
-        to.setMessenger(from.getMessenger());
+        to.setSkype(from.getSkype());
         if (doPerformDeepCopy) {
             to.setAddress(copyAddress(from.getAddress()));
         } else {

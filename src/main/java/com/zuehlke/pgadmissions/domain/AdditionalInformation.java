@@ -7,7 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -24,7 +23,7 @@ public class AdditionalInformation {
     private Integer id;
 
     @Column(name = "has_convictions")
-    private Boolean convictions;
+    private Boolean hasConvictions;
 
     @Column(name = "convictions_text")
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 400)
@@ -32,9 +31,6 @@ public class AdditionalInformation {
 
     @OneToOne(mappedBy = "additionalInformation", fetch = FetchType.LAZY)
     private Application application;
-
-    @Transient
-    private boolean acceptedTerms;
 
     public void setId(Integer id) {
         this.id = id;
@@ -44,12 +40,12 @@ public class AdditionalInformation {
         return id;
     }
 
-    public Boolean getConvictions() {
-        return convictions;
+    public Boolean getHasConvictions() {
+        return hasConvictions;
     }
 
-    public void setConvictions(Boolean convictions) {
-        this.convictions = convictions;
+    public void setHasConvictions(Boolean hasConvictions) {
+        this.hasConvictions = hasConvictions;
     }
 
     public String getConvictionsText() {
@@ -68,12 +64,23 @@ public class AdditionalInformation {
         this.application = application;
     }
 
-    public boolean isAcceptedTerms() {
-        return acceptedTerms;
+    public AdditionalInformation withId(Integer id) {
+        this.id = id;
+        return this;
     }
 
-    public void setAcceptedTerms(boolean acceptedTerms) {
-        this.acceptedTerms = acceptedTerms;
+    public AdditionalInformation withHasConvictions(Boolean hasConvictions) {
+        this.hasConvictions = hasConvictions;
+        return this;
     }
 
+    public AdditionalInformation withConvictionsText(String convictionsText) {
+        this.convictionsText = convictionsText;
+        return this;
+    }
+
+    public AdditionalInformation withApplication(Application application) {
+        this.application = application;
+        return this;
+    }
 }

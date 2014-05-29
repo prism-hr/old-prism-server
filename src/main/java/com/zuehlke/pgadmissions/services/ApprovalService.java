@@ -105,7 +105,7 @@ public class ApprovalService {
         LocalDate startDate = application.getProgramDetails().getStartDate();
         if (latestApprovalComment != null) {
             List<CommentAssignedUser> supervisors = commentService.getNotDecliningSupervisorsFromLatestApprovalStage(application);
-            approvalComment.getCommentAssignedUsers().addAll(supervisors);
+            approvalComment.getAssignedUsers().addAll(supervisors);
             approvalComment.setPositionTitle(latestApprovalComment.getPositionTitle());
             approvalComment.setPositionDescription(latestApprovalComment.getPositionDescription());
             approvalComment.setAppointmentConditions(latestApprovalComment.getAppointmentConditions());
@@ -140,7 +140,7 @@ public class ApprovalService {
         approvalComment.setPositionTitle(newComment.getPositionTitle());
         approvalComment.setAppointmentConditions(newComment.getAppointmentConditions());
         approvalComment.setPositionProvisionalStartDate(newComment.getPositionProvisionalStartDate());
-        approvalComment.getCommentAssignedUsers().addAll(newComment.getCommentAssignedUsers());
+        approvalComment.getAssignedUsers().addAll(newComment.getAssignedUsers());
         approvalComment.setUser(userService.getCurrentUser());
 
         commentService.save(approvalComment);

@@ -102,7 +102,7 @@ public class MoveToReviewController {
         AssignReviewersComment assignReviewersComment = new AssignReviewersComment();
         
         for (User user : getUsersInterestedInApplication(applicationId)) {
-            assignReviewersComment.getCommentAssignedUsers().add(new CommentAssignedUser().withUser(user));
+            assignReviewersComment.getAssignedUsers().add(new CommentAssignedUser().withUser(user));
         }
         
         return assignReviewersComment;

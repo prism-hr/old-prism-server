@@ -88,7 +88,7 @@ public class OfferRecommendationController {
 
             offerRecommendedComment.setPositionProvisionalStartDate(startDate);
             offerRecommendedComment.setAppointmentConditions(approvalComment.getAppointmentConditions());
-            offerRecommendedComment.getCommentAssignedUsers().addAll(approvalComment.getCommentAssignedUsers());
+            offerRecommendedComment.getAssignedUsers().addAll(approvalComment.getAssignedUsers());
         }
 
         modelMap.put("offerRecommendedComment", offerRecommendedComment);

@@ -180,7 +180,7 @@ public class Comment implements Serializable {
     private String creatorIpAddress;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "comment")
-    private Set<CommentAssignedUser> assignedUsers = Sets.newHashSet();
+    private Set<CommentAssignedUser> commentAssignedUser = Sets.newHashSet();
 
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -530,8 +530,8 @@ public class Comment implements Serializable {
         return documents;
     }
 
-    public Set<CommentAssignedUser> getAssignedUsers() {
-        return assignedUsers;
+    public Set<CommentAssignedUser> getCommentAssignedUsers() {
+        return commentAssignedUser;
     }
 
     public void addDocument(Document document) {
@@ -616,7 +616,7 @@ public class Comment implements Serializable {
     }
 
     public CommentAssignedUser getPrimaryAssignedUser() {
-        for (CommentAssignedUser user : getAssignedUsers()) {
+        for (CommentAssignedUser user : getCommentAssignedUsers()) {
             if (user.isPrimary()) {
                 return user;
             }
@@ -625,7 +625,7 @@ public class Comment implements Serializable {
     }
 
     public CommentAssignedUser getSecondaryAssignedUser() {
-        for (CommentAssignedUser user : getAssignedUsers()) {
+        for (CommentAssignedUser user : getCommentAssignedUsers()) {
             if (!user.isPrimary()) {
                 return user;
             }

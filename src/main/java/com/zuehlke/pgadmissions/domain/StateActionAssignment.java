@@ -25,7 +25,7 @@ public class StateActionAssignment {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
     
-    @Column (name = "is_default_action")
+    @Column (name = "is_default_action", nullable = false)
     private boolean defaultAction;
     
     public Integer getId() {

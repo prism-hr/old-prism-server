@@ -323,8 +323,6 @@ public class Program extends Advert {
         propertiesWrapper.add(properties1);
         propertiesWrapper.add(properties2);
         HashMultimap<String, Object> exclusions = HashMultimap.create();
-        exclusions.put("state.id", PrismState.PROGRAM_DISABLED);
-        exclusions.put("state.id", PrismState.PROGRAM_DISABLED_COMPLETED);
         exclusions.put("state.id", PrismState.PROGRAM_REJECTED);
         exclusions.put("state.id", PrismState.PROGRAM_WITHDRAWN);
         return new ResourceSignature(propertiesWrapper, exclusions);

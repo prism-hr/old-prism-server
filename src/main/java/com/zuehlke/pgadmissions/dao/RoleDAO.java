@@ -119,20 +119,60 @@ public class RoleDAO {
                 .list();
     }
 
+    public List<UserRoleTransition> getRoleTransitions(StateTransition stateTransition, PrismResource resource, User invoker) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
     @SuppressWarnings("unchecked")
-    public List<User> getBy(Role role, PrismResource resource) {
-        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.distinct(Projections.property("user"))) //
-                .add(Restrictions.eq("role", role)) //
-                .add(Restrictions.eq(resource.getResourceType().toString().toLowerCase(), resource)) //
+    public List<RoleTransition> getCreatorRoleTransitions(StateTransition stateTransition) {
+        return (List<RoleTransition>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
+                .add(Restrictions.eq("stateTransition", stateTransition))
+                .add(Restrictions.eq("roleTransitionType", RoleTransitionType.CREATE))
                 .list();
     }
-
+    
     public UserRole getUserRole(User user, Authority authority) {
         return (UserRole) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .add(Restrictions.eq("role.id", authority)) //
                 .add(Restrictions.eq("user", user)) //
                 .uniqueResult();
+    }
+    
+    public class UserRoleTransition {
+        
+        private User user;
+        
+        private RoleTransition roleTransition;
+
+        public User getUser() {
+            return user;
+        }
+
+        public void setUser(User user) {
+            this.user = user;
+        }
+
+        public RoleTransition getRoleTransition() {
+            return roleTransition;
+        }
+
+        public void setRoleTransition(RoleTransition roleTransition) {
+            this.roleTransition = roleTransition;
+        }
+        
+    }
+    
+    public class creatorRoleTransition {
+        
+        private Role role;
+        
+        private int minimumPermitted;
+        
+        private int maximumPermitted;
+        
+        private boolean restrictToInvoker;
+        
     }
 
 }

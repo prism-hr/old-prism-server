@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
 
 @Repository
@@ -28,19 +31,42 @@ public class CommentDAO {
     public CommentDAO(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
-
-    public void save(Comment comment) {
-        sessionFactory.getCurrentSession().saveOrUpdate(comment);
+    
+    public Comment getLastComment(PrismResourceTransient resource) {
+        return getLastCommentOfType(resource, Comment.class, null);
     }
-
-    public Comment get(Integer id) {
-        return (Comment) sessionFactory.getCurrentSession().get(Comment.class, id);
+    
+    public <T extends Comment> T getLastCommentOfType(PrismResourceTransient resource, Class<T> clazz) {
+        return getLastCommentOfType(resource, clazz, null);
     }
-
-    public List<Comment> getAllComments() {
-        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+    
+    public <T extends Comment> T getLastCommentOfType(PrismResourceTransient resource, Class<T> clazz, User author) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(clazz) //
+                .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
+                .addOrder(Order.desc("createdTimestamp")) //
+                .addOrder(Order.desc("id"));
+        
+        if (author != null) {
+            criteria.add(Restrictions.eq("user", author));
+        }
+        
+        return (T) criteria.uniqueResult();
     }
-
+    
+    public List<User> getAssignedUsersByRole(Comment comment, Role role, User invoker) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
+                .setProjection(Projections.property("user")) //
+                .add(Restrictions.eq("comment", comment));
+        
+        if (invoker != null) {
+            criteria.add(Restrictions.eq("user", invoker));
+        }
+                
+        return (List<User>) criteria.add(Restrictions.eq("role", role)).list();
+    }
+    
+    // TODO: rewrite/remove below here
+    
     public List<Comment> getVisibleComments(User user, Application applicationForm) {
         // TODO amend and add tests
         return sessionFactory
@@ -62,17 +88,4 @@ public class CommentDAO {
         return null;
     }
 
-    public <T extends Comment> T getLastCommentOfType(User user, Application application, Class<T> clazz) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(clazz).add(Restrictions.eq("application", application))
-                .addOrder(Order.desc("createdTimestamp")).addOrder(Order.desc("id"));
-        if (user != null) {
-            criteria.add(Restrictions.eq("user", user));
-        }
-        return (T) criteria.uniqueResult();
-    }
-
-    public Comment getById(int id) {
-        // TODO Auto-generated method stub
-        return null;
-    }
 }

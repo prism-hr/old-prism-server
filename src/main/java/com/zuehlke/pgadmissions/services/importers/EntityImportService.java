@@ -149,10 +149,8 @@ public class EntityImportService {
             Programme occurrenceProgram = occurrence.getProgramme();
             ModeOfAttendance modeOfAttendance = occurrence.getModeOfAttendance();
 
-            // create new program if does not exist
             Program program = thisBean.getOrCreateProgram(occurrenceProgram, institution);
 
-            // create new study option if does not exist yet
             StudyOption studyOption = thisBean.getOrCreateStudyOption(modeOfAttendance);
 
             LocalDate startDate = dtFormatter.parseLocalDate(occurrence.getStartDate());
@@ -214,11 +212,13 @@ public class EntityImportService {
         persistentProgramInstance.setEnabled(true);
     }
 
+    //TODO: integrate with workflow engine when finished
     @Transactional
     public Program getOrCreateProgram(Programme programme, Institution institution) {
-        Program program = programService.getProgramByCode(programme.getCode());
+        String prefixedProgramCode = institution.getCode() + "-" + programme.getCode();
+        Program program = programService.getProgramByCode(prefixedProgramCode);
         if (program == null) {
-            program = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withCode(programme.getCode())
+            program = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withCode(prefixedProgramCode)
                     .withState(new State().withId(PrismState.PROGRAM_APPROVED)).withImported(true);
             entityDAO.save(program);
         }

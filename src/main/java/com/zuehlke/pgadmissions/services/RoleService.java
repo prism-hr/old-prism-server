@@ -7,21 +7,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.dao.RoleDAO.RoleTransitionInstruction;
 import com.zuehlke.pgadmissions.dao.RoleDAO.UserRoleTransition;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityScope;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
 
 @Service
 @Transactional
@@ -29,6 +30,9 @@ public class RoleService {
 
     @Autowired
     private RoleDAO roleDAO;
+    
+    @Autowired
+    private CommentService commentService;
 
     @Autowired
     private EntityService entityService;
@@ -45,7 +49,7 @@ public class RoleService {
         userRole.setAssignedTimestamp(new DateTime());
         return userRole;
     }
-    
+
     public UserRole getOrCreateUserRole(PrismResource resource, User user, Role role) {
         UserRole transientUserRole = createUserRole(resource, user, role);
         return entityService.getOrCreate(transientUserRole);
@@ -53,32 +57,25 @@ public class RoleService {
 
     public void saveUserRole(UserRole userRole) {
         entityService.save(userRole);
-    }   
-    
+    }
+
     public void deleteUserRole(UserRole userRole) {
         entityService.delete(userRole);
     }
 
     public void executeRoleTransition(PrismResource resource, UserRoleTransition userRoleTransition) {
-        User user = userRoleTransition.getUser();
-        RoleTransition roleTransition = userRoleTransition.getRoleTransition();
-        
-        switch (roleTransition.getRoleTransitionType()) {
+        switch (userRoleTransition.getRoleTransitionType()) {
         case BRANCH:
-            saveUserRole(getOrCreateUserRole(resource, user, roleTransition.getTransitionRole()));
-            break;
         case CREATE:
-            saveUserRole(getOrCreateUserRole(resource, user, roleTransition.getRole()));
+            saveUserRole(getOrCreateUserRole(resource, userRoleTransition.getUser(), userRoleTransition.getTransitionRole()));
             break;
         case REJOIN:
-            saveUserRole(getOrCreateUserRole(resource, user, roleTransition.getTransitionRole()));
-            deleteUserRole(getOrCreateUserRole(resource, user, roleTransition.getRole()));
+            saveUserRole(getOrCreateUserRole(resource, userRoleTransition.getUser(), userRoleTransition.getTransitionRole()));
+            deleteUserRole(getOrCreateUserRole(resource, userRoleTransition.getUser(), userRoleTransition.getRole()));
             break;
-        case REMOVE:
-            deleteUserRole(getOrCreateUserRole(resource, user, roleTransition.getRole()));
         case UPDATE:
-            UserRole userRole = getOrCreateUserRole(resource, user, roleTransition.getRole());
-            userRole.setRole(roleTransition.getTransitionRole());
+            UserRole userRole = getOrCreateUserRole(resource, userRoleTransition.getUser(), userRoleTransition.getRole());
+            userRole.setRole(userRoleTransition.getTransitionRole());
             saveUserRole(userRole);
             break;
         }
@@ -115,16 +112,6 @@ public class RoleService {
         return null;
     }
 
-    /**
-     * Removes given roles from the user.
-     * 
-     * @param user
-     *            user to remove roles from
-     * @param scope
-     *            specifies roles' scope, system scope when <code>null</code>
-     * @param authorities
-     *            role to remove, when <code>null</code> removes all the roles in given scope
-     */
     public void removeRoles(User user, PrismResource scope, Authority... authorities) {
         // TODO Auto-generated method stub
     }
@@ -151,23 +138,46 @@ public class RoleService {
     public List<Role> getActionRoles(PrismResource resource, PrismAction action) {
         return roleDAO.getActionRoles(resource, action);
     }
-    
+
     public List<Role> getActionInvokerRoles(User user, PrismResource resource, PrismAction action) {
         return roleDAO.getActionInvokerRoles(user, resource, action);
     }
 
-//    public List<UserRoleTransition> getUserRoleTransitions(StateTransition stateTransition, PrismResource resource, User invoker, Comment comment) {
-//        // Handle the creator roles. They are not stored yet so we need a different strategy
-//        List<UserRoleTransition> userRoleTransitions = Lists.newArrayList();
-//        
-//        List<RoleTransition> creatorRoleTransitions = roleDAO.getCreatorRoleTransitions(stateTransition);
-//        for (CommentAssignedUser assignedUser : comment.getCommentAssignedUsers()) {
-//            if (assignedUser.getRole() == )
-//        }
-//        
-//        // Then handle the other 
-//        
-//        return roleDAO.getRoleTransitions(stateTransition, resource, invoker);
-//    }
+    // TODO: exclusions
+    public List<UserRoleTransition> getUserRoleTransitions(StateTransition stateTransition, PrismResource resource, User invoker, Comment comment) {
+        List<UserRoleTransition> transitions = Lists.newArrayList();
+        transitions.addAll(roleDAO.getRoleTransitions(stateTransition, resource, invoker));
+        transitions.addAll(getUserCreationRoleTransitions(stateTransition, invoker, comment));
+        return transitions;
+    }
+
+    private List<UserRoleTransition> getUserCreationRoleTransitions(StateTransition stateTransition, User invoker, Comment comment) {
+        List<UserRoleTransition> transitions = Lists.newArrayList();
+        
+        HashMultimap<Role, RoleTransitionInstruction> instructions = roleDAO.getUserRoleCreationInsructions(stateTransition);
+        for (Role role : instructions.keySet()) {
+            for (RoleTransitionInstruction instruction : instructions.get(role)) {
+                User restrictedToUser = null;
+                if (instruction.isRestrictToInvoker()) {
+                    restrictedToUser = invoker;
+                }
+                
+                List<User> users = commentService.getAssignedUsersByRole(comment, role, restrictedToUser);
+                
+                Integer minimumPermitted = instruction.getMinimumPermitted();
+                Integer maximumPermitted = instruction.getMinimumPermitted();
+                
+                if (minimumPermitted == null || users.size() >= minimumPermitted && (maximumPermitted == null || users.size() <= maximumPermitted)) {
+                    for (User user : users) {
+                        transitions.add(roleDAO.new UserRoleTransition(user, role, RoleTransitionType.CREATE, role));
+                    }
+                }
+                
+                throw new Error("Attempted to process an invalid role creation transition");
+            }
+        }
+        
+        return transitions;
+    }
 
 }

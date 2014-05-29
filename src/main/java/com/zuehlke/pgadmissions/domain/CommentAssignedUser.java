@@ -22,7 +22,7 @@ public class CommentAssignedUser {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
-    private User role;
+    private Role role;
 
     @ManyToOne
     @JoinColumn(name = "comment_id")
@@ -47,11 +47,11 @@ public class CommentAssignedUser {
         this.user = user;
     }
 
-    public User getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(User role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 

@@ -334,7 +334,7 @@ public class Program extends Advert {
         if (!imported) {
             postfix = String.format("%010d", getId());
         }
-        return String.format("%010d", institution.getId()) + "-" + postfix;
+        return String.format("%010d", institution.getCode()) + "-" + postfix;
     }
 
 }

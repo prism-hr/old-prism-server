@@ -525,7 +525,7 @@ public class Comment implements Serializable {
         return documents;
     }
 
-    public Set<CommentAssignedUser> getAssignedUsers() {
+    public Set<CommentAssignedUser> getCommentAssignedUsers() {
         return commentAssignedUser;
     }
 
@@ -611,7 +611,7 @@ public class Comment implements Serializable {
     }
 
     public CommentAssignedUser getPrimaryAssignedUser() {
-        for (CommentAssignedUser user : getAssignedUsers()) {
+        for (CommentAssignedUser user : getCommentAssignedUsers()) {
             if (user.isPrimary()) {
                 return user;
             }
@@ -620,7 +620,7 @@ public class Comment implements Serializable {
     }
 
     public CommentAssignedUser getSecondaryAssignedUser() {
-        for (CommentAssignedUser user : getAssignedUsers()) {
+        for (CommentAssignedUser user : getCommentAssignedUsers()) {
             if (!user.isPrimary()) {
                 return user;
             }

@@ -1,5 +1,5 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
 public enum RoleTransitionType {
-    BRANCH, CREATE, REJOIN, REMOVE, UPDATE
+    BRANCH, CREATE, REJOIN, UPDATE
 }

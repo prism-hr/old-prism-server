@@ -17,7 +17,9 @@ import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.CompleteApprovalComment;
 import com.zuehlke.pgadmissions.domain.CompleteInterviewComment;
 import com.zuehlke.pgadmissions.domain.CompleteReviewComment;
+import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -48,14 +50,35 @@ public class CommentService {
     
     @Autowired
     private SystemService systemService;
-
-    public void save(Comment comment) {
-        commentDAO.save(comment);
-    }
+    
+    @Autowired
+    private EntityService entityService;
     
     public Comment getById(int id) {
-        return commentDAO.getById(id);
+        return entityService.getById(Comment.class, id);
     }
+    
+    public void save(Comment comment) {
+        entityService.save(comment);
+    }
+    
+    public Comment getLastComment(PrismResourceTransient resource) {
+        return commentDAO.getLastComment(resource);
+    }
+    
+    public <T extends Comment> T getLastCommentOfType(PrismResourceTransient resource, Class<T> clazz) {
+        return getLastCommentOfType(resource, clazz);
+    }
+    
+    public <T extends Comment> T getLastCommentOfType(PrismResourceTransient resource, Class<T> clazz, User author) {
+        return commentDAO.getLastCommentOfType(resource, clazz, author);
+    }
+    
+    public List<User> getAssignedUsersByRole(Comment comment, Role role, User invoker) {
+        return commentDAO.getAssignedUsersByRole(comment, role, invoker);
+    }
+    
+    // TODO: rewrite below
 
     public List<Comment> getVisibleComments(User user, Application applicationForm) {
         return commentDAO.getVisibleComments(user, applicationForm);
@@ -84,7 +107,7 @@ public class CommentService {
         CommentAssignedUser assignedUser = new CommentAssignedUser();
         assignedUser.setUser(user);
         assignedUser.setPrimary(isPrimary);
-        approvalComment.getAssignedUsers().add(assignedUser);
+        approvalComment.getCommentAssignedUsers().add(assignedUser);
         return assignedUser;
     }
 
@@ -129,19 +152,6 @@ public class CommentService {
         applicationsService.refresh(applicationForm);
         applicationFormUserRoleService.stateChanged(stateChangeComment);
         applicationFormUserRoleService.applicationUpdated(applicationForm, user);
-    }
-
-    public <T extends Comment> T getLastCommentOfType(User user, Application applicationForm, Class<T> clazz) {
-        return commentDAO.getLastCommentOfType(user, applicationForm, clazz);
-    }
-
-    public <T extends Comment> T getLastCommentOfType(Application applicationForm, Class<T> clazz) {
-        return getLastCommentOfType(null, applicationForm, clazz);
-    }
-
-    public Comment getLastComment(Application form) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

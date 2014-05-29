@@ -259,15 +259,9 @@ INSERT INTO STATE_TRANSITION (state_action_id, transition_state_id, transition_a
 
 /* Tidying up problems in code generation and intransient prism resource entities */
 
-ALTER TABLE SYSTEM
-	DROP FOREIGN KEY system_ibfk_1,
-	DROP COLUMN state_id
-;
-
 ALTER TABLE INSTITUTION
-	DROP FOREIGN KEY institution_ibfk_2,
-	DROP COLUMN state_id,
-	ADD COLUMN code VARCHAR(4) AFTER institution_domicile_id
+	ADD COLUMN code VARCHAR(4) AFTER institution_domicile_id,
+	ADD UNIQUE INDEX (code)
 ;
 
 UPDATE INSTITUTION
@@ -284,4 +278,17 @@ SET code = REPLACE(code, "0000005243", "0UCL")
 
 UPDATE APPLICATION
 SET code = REPLACE(code, "0000005243", "0UCL")
+;
+
+/* Conceptual issue in workflow */
+
+ALTER TABLE COMMENT
+	MODIFY COLUMN role_id VARCHAR(1000)
+;
+
+/* Remove ununsed role transition types */
+
+DELETE
+FROM ROLE_TRANSITION_TYPE
+WHERE id = "REMOVE"
 ;

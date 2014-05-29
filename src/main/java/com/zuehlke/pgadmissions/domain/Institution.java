@@ -51,6 +51,9 @@ public class Institution extends PrismResource {
     @ManyToOne
     @JoinColumn(name = "institution_domicile_id", nullable = false)
     private InstitutionDomicile domicile;
+  
+    @Column(name = "code")
+    private String code;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -78,6 +81,14 @@ public class Institution extends PrismResource {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public InstitutionDomicile getDomicile() {
@@ -201,9 +212,11 @@ public class Institution extends PrismResource {
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("name", name);
-        propertiesWrapper.add(properties);
+        HashMap<String, Object> properties1 = Maps.newHashMap();
+        properties1.put("name", name);
+        HashMap<String, Object> properties2 = Maps.newHashMap();
+        properties2.put("name", name);
+        propertiesWrapper.add(properties2);
         return new ResourceSignature(propertiesWrapper);
     }
 

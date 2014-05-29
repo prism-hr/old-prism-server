@@ -19,7 +19,6 @@ public class CommentAssignedUser {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private Role role;
     @ManyToOne
     @JoinColumn(name = "comment_id")
     private Comment comment;
@@ -44,8 +43,6 @@ public class CommentAssignedUser {
         this.user = user;
     }
 
-    public Role getRole() {
-    public void setRole(Role role) {
     public Comment getComment() {
         return comment;
     }

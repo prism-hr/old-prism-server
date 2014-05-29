@@ -141,7 +141,7 @@ public class InterviewService {
         try {
             mailService.sendInterviewConfirmationToApplicant(applicationForm);
             List<User> interviewerUsers = Lists.newArrayList();
-            for (CommentAssignedUser interviewer : comment.getCommentAssignedUsers()) {
+            for (CommentAssignedUser interviewer : comment.getAssignedUsers()) {
                 interviewerUsers.add(interviewer.getUser());
             }
             mailService.sendInterviewConfirmationToInterviewers(applicationForm, interviewerUsers);

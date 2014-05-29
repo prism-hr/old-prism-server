@@ -185,7 +185,7 @@ public class MailSendingService extends AbstractMailSendingService {
 
         List<User> recipients = Lists.newLinkedList();
 
-        for (CommentAssignedUser assignedUser : assignInterviewersComment.getAssignedUsers()) {
+        for (CommentAssignedUser assignedUser : assignInterviewersComment.getCommentAssignedUsers()) {
             try {
                 List<User> admins = roleService.getProgramAdministrators(application.getProgram());
                 EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "participant", "application", "host" }, new Object[] {

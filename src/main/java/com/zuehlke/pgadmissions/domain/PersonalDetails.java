@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
 @Table(name = "APPLICATION_FORM_PERSONAL_DETAIL")
-public class PersonalDetails implements ApplicationSection {
+public class PersonalDetails {
 
     @Id
     @GeneratedValue

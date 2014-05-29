@@ -135,7 +135,7 @@ public class MoveToInterviewController {
             for (User user : getUsersInterestedInApplication(applicationId)) {
                 CommentAssignedUser interviewer = new CommentAssignedUser();
                 interviewer.setUser(user);
-                interviewComment.getAssignedUsers().add(interviewer);
+                interviewComment.getCommentAssignedUsers().add(interviewer);
             }
         }
 

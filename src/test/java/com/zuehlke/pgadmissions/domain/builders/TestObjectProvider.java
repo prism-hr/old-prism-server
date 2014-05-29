@@ -29,8 +29,8 @@ import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Component
 public class TestObjectProvider {

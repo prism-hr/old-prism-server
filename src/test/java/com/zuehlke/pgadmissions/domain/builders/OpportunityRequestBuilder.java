@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestType;
-import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 
 public class OpportunityRequestBuilder {
 

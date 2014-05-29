@@ -108,12 +108,12 @@ public class RefereeService {
 
     public void selectForSendingToPortico(final Application applicationForm, final List<Integer> refereesSendToPortico) {
         for (Referee referee : applicationForm.getReferees()) {
-            referee.setSendToUCL(false);
+            referee.setIncludeInExport(false);
         }
 
         for (Integer refereeId : refereesSendToPortico) {
             Referee referee = entityDAO.getById(Referee.class, refereeId);
-            referee.setSendToUCL(true);
+            referee.setIncludeInExport(true);
         }
     }
 
@@ -172,7 +172,7 @@ public class RefereeService {
         referee.setJobEmployer(refereesAdminEditDTO.getJobEmployer());
         referee.setJobTitle(refereesAdminEditDTO.getJobTitle());
         referee.setPhoneNumber(refereesAdminEditDTO.getPhoneNumber());
-        referee.setMessenger(refereesAdminEditDTO.getMessenger());
+        referee.setSkype(refereesAdminEditDTO.getMessenger());
         entityDAO.save(referee);
         return referee;
     }

@@ -130,12 +130,12 @@ public class ValidApplicationFormBuilder {
         // .suitableForUcl(true).user(user).build();
         // referenceComment2 = new ReferenceCommentBuilder().comment("Hello From Jane").document(referenceDocument).providedBy(user).suitableForProgramme(true)
         // .suitableForUcl(true).user(user).build();
-        refereeOne = new RefereeBuilder().id(Integer.MAX_VALUE - 1).user(approverUser).address(TestData.anAddress(domicile))
-                .jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234")
-                .sendToUCL(true).reference(referenceComment1).build();
-        refereeTwo = new RefereeBuilder().id(Integer.MAX_VALUE - 2).user(approverUser).address(TestData.anAddress(domicile))
-                .jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234")
-                .sendToUCL(true).reference(referenceComment2).build();
+        refereeOne = new Referee().withId(Integer.MAX_VALUE - 1).withUser(approverUser).withAddress(TestData.anAddress(domicile))
+                .withJobEmployer("Zuhlke Engineering Ltd.").withJobTitle("Software Engineer").withSkype("skypeAddress").withPhoneNumber("+44 (0) 123 123 1234")
+                .withIncludeInExport(true).withComment(referenceComment1);
+        refereeTwo = new Referee().withId(Integer.MAX_VALUE - 2).withUser(approverUser).withAddress(TestData.anAddress(domicile))
+                .withJobEmployer("Zuhlke Engineering Ltd.").withJobTitle("Software Engineer").withSkype("skypeAddress").withPhoneNumber("+44 (0) 123 123 1234")
+                .withIncludeInExport(true).withComment(referenceComment2);
         refereeOne.setComment(referenceComment1);
         refereeTwo.setComment(referenceComment2);
         employmentPosition = new EmploymentPosition().withCurrent(true).withEmployerAddress(TestData.anAddress(domicile)).withPosition("Software Engineer")
@@ -161,7 +161,7 @@ public class ValidApplicationFormBuilder {
                                 .withListeningScore("1").withQualificationTypeOther("FooBar").withOverallScore("1").withReadingScore("1")
                                 .withSpeakingScore("1").withWritingScore("1").withProofOfAward(languageQualificationDocument))
                 .withPhoneNumber("+44 (0) 123 123 1234").withResidenceCountry(domicile).withTitle(Title.MR);
-        additionalInformation = new AdditionalInformationBuilder().setConvictions(false).build();
+        additionalInformation = new AdditionalInformation().withHasConvictions(false);
         instance = new ProgramInstance().withAcademicYear("2013").withApplicationDeadline(new LocalDate().plusYears(1))
                 .withApplicationStartDate(new LocalDate().plusMonths(5)).withEnabled(true).withStudyOption("F+++++", "Full-time").withIdentifier("0009");
         importedInstitution = new ImportedInstitution().withCode("code").withName("jakas instytucja").withDomicile(domicile).withEnabled(true);

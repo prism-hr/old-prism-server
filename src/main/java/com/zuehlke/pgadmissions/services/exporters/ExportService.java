@@ -150,10 +150,10 @@ public class ExportService {
                         break;
                     }
 
-                    if (BooleanUtils.isTrue(referee.getSendToUCL())) {
+                    if (BooleanUtils.isTrue(referee.getIncludeInExport())) {
                         refereesToSend.put(referee.getId(), referee);
                     } else if (referee.getComment() != null && !referee.getComment().getDeclinedResponse()) {
-                        referee.setSendToUCL(true);
+                        referee.setIncludeInExport(true);
                         refereesToSend.put(referee.getId(), referee);
                     }
                 }
@@ -165,7 +165,7 @@ public class ExportService {
                     }
 
                     if (!refereesToSend.containsKey(referee.getId())) {
-                        referee.setSendToUCL(true);
+                        referee.setIncludeInExport(true);
                         refereesToSend.put(referee.getId(), referee);
                     }
                 }

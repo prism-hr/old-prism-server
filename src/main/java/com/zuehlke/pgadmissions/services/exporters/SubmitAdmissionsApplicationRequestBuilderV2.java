@@ -185,7 +185,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         applicant.setHomeAddress(buildHomeAddress());
         applicant.setCorrespondenceAddress(buildCorrespondenceAddress());
         applicant.setCriminalConvictionDetails(cleanString(applicationForm.getAdditionalInformation().getConvictionsText()));
-        applicant.setCriminalConvictions(applicationForm.getAdditionalInformation().getConvictions());
+        applicant.setCriminalConvictions(applicationForm.getAdditionalInformation().getHasConvictions());
         applicant.setQualificationList(buildQualificationDetails());
         applicant.setEmployerList(buildEmployer());
 

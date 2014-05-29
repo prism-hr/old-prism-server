@@ -844,7 +844,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 table.addCell(newTableCell(referee.getPhoneNumber(), SMALL_FONT));
 
                 table.addCell(newTableCell("Skype", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(referee.getMessenger(), SMALL_FONT));
+                table.addCell(newTableCell(referee.getSkype(), SMALL_FONT));
 
                 if (includeReferences) {
                     table.addCell(newTableCell("Reference", SMALL_BOLD_FONT));
@@ -924,9 +924,9 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newTableCell("Do you have any unspent Criminial Convictions?", SMALL_BOLD_FONT));
-        if (additionalInformation == null || additionalInformation.getConvictions() == null) {
+        if (additionalInformation == null || additionalInformation.getHasConvictions() == null) {
             table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
-        } else if (BooleanUtils.isTrue(additionalInformation.getConvictions())) {
+        } else if (BooleanUtils.isTrue(additionalInformation.getHasConvictions())) {
             table.addCell(newTableCell("Yes", SMALL_FONT));
         } else {
             table.addCell(newTableCell("No", SMALL_FONT));

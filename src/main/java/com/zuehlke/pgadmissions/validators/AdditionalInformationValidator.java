@@ -18,7 +18,7 @@ public class AdditionalInformationValidator extends AbstractValidator {
     public void addExtraValidation(final Object target, final Errors errors) {
 		AdditionalInformation info = (AdditionalInformation) target;
 
-		Boolean hasConvictions = info.getConvictions();
+		Boolean hasConvictions = info.getHasConvictions();
 		if (hasConvictions == null) {
 			errors.rejectValue("convictions", EMPTY_DROPDOWN_ERROR_MESSAGE);
 		} else {

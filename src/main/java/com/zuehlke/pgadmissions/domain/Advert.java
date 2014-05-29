@@ -17,9 +17,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-
 import com.google.common.base.Objects;
 
 @Entity

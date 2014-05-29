@@ -13,17 +13,15 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.TestData;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
-    
     private RefereeDAO refereeDAO;
-    
+
     private User user;
-    
+
     private Application application;
 
     @Test(expected = NullPointerException.class)
@@ -34,8 +32,8 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldDeleteReferee() {
-        Referee referee = new RefereeBuilder().application(application).address(TestData.anAddress(testObjectProvider.getDomicile())).user(user)
-                .jobEmployer("sdfsdf").jobTitle("fsdsd").phoneNumber("hallihallo").build();
+        Referee referee = new Referee().withApplication(application).withAddress(TestData.anAddress(testObjectProvider.getDomicile())).withUser(user)
+                .withJobEmployer("sdfsdf").withJobEmployer("fsdsd").withPhoneNumber("hallihallo");
         save(referee);
         flushAndClearSession();
 
@@ -48,7 +46,8 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveReferee() throws ParseException {
-        Referee referee = new RefereeBuilder().application(application).address(TestData.anAddress(testObjectProvider.getDomicile())).user(user).phoneNumber("hallihallo").build();
+        Referee referee = new Referee().withApplication(application).withAddress(TestData.anAddress(testObjectProvider.getDomicile())).withUser(user)
+                .withPhoneNumber("hallihallo");
         flushAndClearSession();
 
         refereeDAO.save(referee);
@@ -57,7 +56,8 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetRefereeById() {
-        Referee referee = new RefereeBuilder().application(application).address(TestData.anAddress(testObjectProvider.getDomicile())).user(user).phoneNumber("hallihallo").build();
+        Referee referee = new Referee().withApplication(application).withAddress(TestData.anAddress(testObjectProvider.getDomicile())).withUser(user)
+                .withPhoneNumber("hallihallo");
         sessionFactory.getCurrentSession().save(referee);
         flushAndClearSession();
         assertEquals(referee.getId(), refereeDAO.getRefereeById(referee.getId()).getId());
@@ -65,14 +65,14 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Before
     public void prepare() {
-        
+
         user = new User().withFirstName("Jane").withLastName("Doe").withEmail("email2@test.com").withActivationCode("kod_aktywacyjny")
                 .withAccount(new UserAccount().withEnabled(false).withPassword("dupa"));
         application = testObjectProvider.getApplication(PrismState.APPLICATION_UNSUBMITTED);
-        
+
         save(user);
         flushAndClearSession();
-        
+
         refereeDAO = new RefereeDAO(sessionFactory);
     }
 

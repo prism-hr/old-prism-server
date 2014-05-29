@@ -10,7 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
@@ -70,9 +69,6 @@ public class Qualification {
 
     @Column(name = "include_in_export")
     private boolean includeInExport;
-
-    @Transient
-    private boolean acceptedTerms;
 
     public Integer getId() {
         return id;
@@ -176,14 +172,6 @@ public class Qualification {
 
     public void setApplication(Application application) {
         this.application = application;
-    }
-
-    public boolean isAcceptedTerms() {
-        return acceptedTerms;
-    }
-
-    public void setAcceptedTerms(boolean acceptedTerms) {
-        this.acceptedTerms = acceptedTerms;
     }
 
     public Qualification withId(Integer id) {

@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -30,23 +29,23 @@ public class DeclineControllerTest {
     @Mock
     @InjectIntoByType
     private ApplicationService applicationServiceMock;
-    
+
     @Mock
     @InjectIntoByType
     private UserService userServiceMock;
-    
+
     @Mock
     @InjectIntoByType
     private CommentService commentServiceMock;
-    
+
     @Mock
     @InjectIntoByType
     private RefereeService refereeServiceMock;
-    
+
     @Mock
     @InjectIntoByType
     private ActionService actionServiceMock;
-    
+
     @TestedObject
     private DeclineController controller;
 
@@ -91,7 +90,7 @@ public class DeclineControllerTest {
         User userMock = EasyMock.createMock(User.class);
         Application applicationForm = new ApplicationFormBuilder().id(5).build();
         EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(userMock);
-        Referee referee = new RefereeBuilder().id(5).build();
+        Referee referee = new Referee();
         EasyMock.replay(userServiceMock, userMock);
         Referee returnedReferee = controller.getReferee("5", applicationForm);
         assertEquals(referee, returnedReferee);
@@ -108,9 +107,8 @@ public class DeclineControllerTest {
 
     @Test
     public void shouldReturnConfirmationDialogForReference() {
-        final Application applicationForm = new ApplicationFormBuilder().applicationNumber("ABC")
-                .applicant(new User().withFirstName("").withLastName("")).id(5).build();
-        final Referee referee = new RefereeBuilder().application(applicationForm).id(5).build();
+        final Application application = new Application().withCode("ABC").withUser(new User().withFirstName("").withLastName(""));
+        final Referee referee = new Referee().withApplication(application);
         EasyMock.replay(refereeServiceMock);
         String view = controller.declineReference("5", "ABC", null, new ModelMap());
         EasyMock.verify(refereeServiceMock);

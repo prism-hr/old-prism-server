@@ -5,6 +5,7 @@ import static org.apache.commons.lang.BooleanUtils.isNotTrue;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -12,7 +13,6 @@ import org.springframework.validation.ValidationUtils;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Component
 public class ProjectDTOValidator extends AbstractValidator {
@@ -61,7 +61,7 @@ public class ProjectDTOValidator extends AbstractValidator {
             return;
         }
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "closingDate", EMPTY_FIELD_ERROR_MESSAGE);
-        if (closingDate != null && !closingDate.after(DateUtils.truncateToDay(new Date()))) {
+        if (closingDate != null && !closingDate.after(new LocalDate().toDate())) {
             errors.rejectValue("closingDate", MUST_SELECT_DATE_AND_TIMES_IN_THE_FUTURE);
         }
     }

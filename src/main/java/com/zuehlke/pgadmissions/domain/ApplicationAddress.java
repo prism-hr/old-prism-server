@@ -8,7 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
 @Table(name = "APPLICATION_ADDRESS")
@@ -28,9 +27,6 @@ public class ApplicationAddress {
 
     @OneToOne(mappedBy = "applicationAddress", fetch = FetchType.LAZY)
     private Application application;
-
-    @Transient
-    private boolean acceptedTerms;
 
     public Integer getId() {
         return id;
@@ -62,14 +58,6 @@ public class ApplicationAddress {
 
     public void setApplication(Application application) {
         this.application = application;
-    }
-
-    public boolean isAcceptedTerms() {
-        return acceptedTerms;
-    }
-
-    public void setAcceptedTerms(boolean acceptedTerms) {
-        this.acceptedTerms = acceptedTerms;
     }
 
     public boolean currentAddressIsContactAddress() {

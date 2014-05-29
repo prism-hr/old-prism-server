@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<programmeOccurrences>
+  <programmeOccurrence>
+    <programme>
+      <code>1</code>
+      <name>new_program1</name>
+      <atasRegistered>false</atasRegistered>
+    </programme>
+    <identifier>0009</identifier>
+    <academicYear>2013</academicYear>
+    <modeOfAttendance>
+      <code>F+++++</code>
+      <name>Full-time</name>
+    </modeOfAttendance>
+    <startDate>23-SEP-13</startDate>
+    <endDate>15-SEP-14</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>1</code>
+      <name>new_program1</name>
+      <atasRegistered>false</atasRegistered>
+    </programme>
+    <identifier>0008</identifier>
+    <academicYear>2014</academicYear>
+    <modeOfAttendance>
+      <code>P+++++</code>
+      <name>Fart-time</name>
+    </modeOfAttendance>
+    <startDate>23-SEP-13</startDate>
+    <endDate>15-SEP-14</endDate>
+  </programmeOccurrence>
+</programmeOccurrences>
+

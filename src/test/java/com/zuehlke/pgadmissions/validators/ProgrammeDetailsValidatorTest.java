@@ -33,7 +33,6 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
-import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -138,7 +137,7 @@ public class ProgrammeDetailsValidatorTest {
 
     @Test
     public void shouldRejectIfSourcesOfInterestFreeTextIsEmpty() {
-        SourcesOfInterest sourcesOfInterest = new SourcesOfInterestBuilder().id(1).code("OTHER").name("Other").enabled(true).build();
+        SourcesOfInterest sourcesOfInterest = new SourcesOfInterest().withId(1).withCode("OTHER").withName("Other");
         programmeDetail.setSourceOfInterest(sourcesOfInterest);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "sourcesOfInterest");
         EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(
@@ -365,7 +364,7 @@ public class ProgrammeDetailsValidatorTest {
 
     @Before
     public void setup() throws ParseException {
-        SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").build();
+        SourcesOfInterest interest = new SourcesOfInterest().withId(1).withName("ZZ").withCode("ZZ");
         Role role = new Role().withId(Authority.APPLICATION_CREATOR);
         User currentUser = new User().withId(1);
         SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisor().withUser(

@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,11 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
-import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -27,9 +23,6 @@ public class RejectService {
 	private ApplicationDAO applicationDao;
 	
 	@Autowired
-	private RejectReasonDAO rejectDao;
-	
-	@Autowired
 	private MailSendingService mailService;
 	
 	@Autowired
@@ -37,14 +30,6 @@ public class RejectService {
 	
 	@Autowired
 	private StateDAO stateDAO;
-
-	public List<RejectReason> getAllRejectionReasons() {
-		return rejectDao.getAllReasons();
-	}
-
-	public RejectReason getRejectReasonById(Integer id) {
-		return rejectDao.getRejectReasonById(id);
-	}
 
 	public void moveApplicationToReject(final Application form, final Comment rejection) {
 

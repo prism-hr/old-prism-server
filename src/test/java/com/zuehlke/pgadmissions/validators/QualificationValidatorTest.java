@@ -17,8 +17,8 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationTypeBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
@@ -168,7 +168,7 @@ public class QualificationValidatorTest {
         qualification.setTitle("MS");
         qualification.setCompleted(true);
         qualification.setStartDate(new LocalDate(2006, 9, 9));
-        qualification.setType(new QualificationTypeBuilder().name("degree").build());
+        qualification.setType(new QualificationType().withName("degree"));
 
         qualificationValidator = new QualificationValidator();
         qualificationValidator.setValidator((javax.validation.Validator) validator);

@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.workflow.rejection;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.domain.enums.RejectionReason;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.RejectService;
@@ -41,11 +38,8 @@ public class RejectApplicationController {
     private RejectService rejectService;
 
     @Autowired
-    private RejectReasonPropertyEditor rejectReasonPropertyEditor;
-
-    @Autowired
     private UserService userService;
-    
+
     @Autowired
     private RejectionValidator rejectionValidator;
 
@@ -57,7 +51,6 @@ public class RejectApplicationController {
 
     @Autowired
     private ActionService actionService;
-
 
     @RequestMapping(method = RequestMethod.GET)
     public String getRejectPage(ModelMap modelMap) {
@@ -73,7 +66,7 @@ public class RejectApplicationController {
         Application application = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(application, user, PrismAction.APPLICATION_CONFIRM_REJECTION);
-        
+
         if (errors.hasErrors()) {
             return REJECT_VIEW_NAME;
         }
@@ -85,8 +78,8 @@ public class RejectApplicationController {
     }
 
     @ModelAttribute("availableReasons")
-    public List<RejectReason> getAvailableReasons() {
-        return rejectService.getAllRejectionReasons();
+    public RejectionReason[] getAvailableReasons() {
+        return RejectionReason.values();
     }
 
     @ModelAttribute("applicationForm")
@@ -111,7 +104,6 @@ public class RejectApplicationController {
 
     @InitBinder("rejection")
     public void registerBindersAndValidators(WebDataBinder binder) {
-        binder.registerCustomEditor(RejectReason.class, rejectReasonPropertyEditor);
         binder.setValidator(rejectionValidator);
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
     }

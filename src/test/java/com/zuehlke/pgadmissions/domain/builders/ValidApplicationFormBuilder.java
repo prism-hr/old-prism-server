@@ -126,10 +126,10 @@ public class ValidApplicationFormBuilder {
         country = new Country().withCode("XK").withName("United Kingdom");
         domicile = new Domicile().withCode("XK").withName("United Kingdom");
         address = TestData.anAddress(domicile);
-//        referenceComment1 = new ReferenceCommentBuilder().comment("Hello From Bob").document(referenceDocument).providedBy(user).suitableForProgramme(true)
-//                .suitableForUcl(true).user(user).build();
-//        referenceComment2 = new ReferenceCommentBuilder().comment("Hello From Jane").document(referenceDocument).providedBy(user).suitableForProgramme(true)
-//                .suitableForUcl(true).user(user).build();
+        // referenceComment1 = new ReferenceCommentBuilder().comment("Hello From Bob").document(referenceDocument).providedBy(user).suitableForProgramme(true)
+        // .suitableForUcl(true).user(user).build();
+        // referenceComment2 = new ReferenceCommentBuilder().comment("Hello From Jane").document(referenceDocument).providedBy(user).suitableForProgramme(true)
+        // .suitableForUcl(true).user(user).build();
         refereeOne = new RefereeBuilder().id(Integer.MAX_VALUE - 1).user(approverUser).address(TestData.anAddress(domicile))
                 .jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234")
                 .sendToUCL(true).reference(referenceComment1).build();
@@ -140,7 +140,7 @@ public class ValidApplicationFormBuilder {
         refereeTwo.setComment(referenceComment2);
         employmentPosition = new EmploymentPosition().withCurrent(true).withEmployerAddress(TestData.anAddress(domicile)).withPosition("Software Engineer")
                 .withCurrent(true).withStartDate(new LocalDate().minusYears(2)).withRemit("Developer").withEmployerName("Zuhlke Ltd.");
-        language = new LanguageBuilder().code("GB").name("England").enabled(true).build();
+        language = new Language().withCode("GB").withName("England");
         disability = new Disability().withCode("0").withName("No Disability");
         ethnicity = new Ethnicity().withCode("10").withName("White");
         personalDetails = new PersonalDetails()
@@ -158,27 +158,26 @@ public class ValidApplicationFormBuilder {
                 .withLanguageQualificationAvailable(true)
                 .withLanguageQualification(
                         new LanguageQualification().withExamDate(new LocalDate()).withExamOnline(false).withQualificationType(LanguageQualificationEnum.OTHER)
-                                .withListeningScore("1").withQualificationTypeOther("FooBar").withOverallScore("1").withReadingScore("1").withSpeakingScore("1").withWritingScore("1")
-                                .withProofOfAward(languageQualificationDocument)).withPhoneNumber("+44 (0) 123 123 1234")
-                .withResidenceCountry(domicile).withTitle(Title.MR);
+                                .withListeningScore("1").withQualificationTypeOther("FooBar").withOverallScore("1").withReadingScore("1")
+                                .withSpeakingScore("1").withWritingScore("1").withProofOfAward(languageQualificationDocument))
+                .withPhoneNumber("+44 (0) 123 123 1234").withResidenceCountry(domicile).withTitle(Title.MR);
         additionalInformation = new AdditionalInformationBuilder().setConvictions(false).build();
         instance = new ProgramInstance().withAcademicYear("2013").withApplicationDeadline(new LocalDate().plusYears(1))
-                .withApplicationStartDate(new LocalDate().plusMonths(5)).withEnabled(true).withStudyOption("F+++++", "Full-time")
-                .withIdentifier("0009");
+                .withApplicationStartDate(new LocalDate().plusMonths(5)).withEnabled(true).withStudyOption("F+++++", "Full-time").withIdentifier("0009");
         importedInstitution = new ImportedInstitution().withCode("code").withName("jakas instytucja").withDomicile(domicile).withEnabled(true);
         state = new State().withId(PrismState.PROGRAM_APPROVED);
         program = new Program().withUser(approverUser).withCode("TMRMBISING99").withState(state).withInstances(instance)
                 .withTitle("MRes Medical and Biomedical Imaging").withInstitution(institution);
-        interest = new SourcesOfInterestBuilder().code("BRIT_COUN").name("British Council").build();
+        interest = new SourcesOfInterest().withCode("BRIT_COUN").withName("British Council");
         programDetails = new ProgrammeDetailsBuilder().sourcesOfInterest(interest).startDate(new LocalDate().plusDays(1))
                 .studyOption(new StudyOption("F+++++", "Full-time")).build();
-        qualificationType = new QualificationTypeBuilder().code("DEGTRE").name("Bachelors Degree - France").enabled(true).build();
+        qualificationType = new QualificationType().withCode("DEGTRE").withName("Bachelors Degree - France");
         qualification1 = new Qualification().withId(Integer.MAX_VALUE - 1).withAwardDate(new LocalDate()).withGrade("6").withInstitution(importedInstitution)
-                .withLanguage("English").withStartDate(new LocalDate().minusYears(1)).withSubject("Engineering")
-                .withTitle("MSc").withType(qualificationType).withCompleted(true).withDocument(proofOfAwardDocument).withIncludeInExport(true);
+                .withLanguage("English").withStartDate(new LocalDate().minusYears(1)).withSubject("Engineering").withTitle("MSc").withType(qualificationType)
+                .withCompleted(true).withDocument(proofOfAwardDocument).withIncludeInExport(true);
         qualification2 = new Qualification().withId(Integer.MAX_VALUE - 2).withAwardDate(new LocalDate()).withGrade("6").withInstitution(importedInstitution)
-                .withLanguage("English").withStartDate(new LocalDate().minusYears(1)).withSubject("Engineering")
-                .withTitle("MSc").withType(qualificationType).withCompleted(true).withDocument(proofOfAwardDocument).withIncludeInExport(true);
+                .withLanguage("English").withStartDate(new LocalDate().minusYears(1)).withSubject("Engineering").withTitle("MSc").withType(qualificationType)
+                .withCompleted(true).withDocument(proofOfAwardDocument).withIncludeInExport(true);
         funding = new Funding().withAwardDate(new LocalDate().minusYears(1)).withDescription("Received a funding").withDocument(fundingDocument)
                 .withType(FundingType.SCHOLARSHIP).withValue("5");
         applicationFormBuilder = new ApplicationFormBuilder().applicant(user).acceptedTerms(true).additionalInformation(additionalInformation)

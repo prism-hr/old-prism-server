@@ -45,7 +45,6 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilteringBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
-import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
@@ -745,7 +744,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ;
         SuggestedSupervisor supervisor = new SuggestedSupervisor().withAware(true).withUser(
                 new User().withEmail("threepwood@monkeyisland.com").withFirstName("Guybrush").withLastName("Threepwood"));
-        SourcesOfInterest sourcesOfInterest = new SourcesOfInterestBuilder().name("foo").code("foo").build();
+        SourcesOfInterest sourcesOfInterest = new SourcesOfInterest().withName("foo").withCode("foo");
         ProgramDetails programmeDetails = new ProgrammeDetailsBuilder().studyOption(new StudyOption("Half", "Half")).startDate(new LocalDate())
                 .sourcesOfInterest(sourcesOfInterest).suggestedSupervisors(supervisor).build();
         Application formWithSupervisor = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_REVIEW)).applicant(applicant)

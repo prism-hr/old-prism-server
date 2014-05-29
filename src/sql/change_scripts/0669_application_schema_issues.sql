@@ -183,3 +183,105 @@ UPDATE STATE_ACTION INNER JOIN STATE_ACTION_ASSIGNMENT
 SET STATE_ACTION_ASSIGNMENT.is_default = 1
 WHERE STATE_ACTION.action_id = "PROGRAM_CONFIGURE"
 ;
+
+/* Restrict to invoker never null */
+
+UPDATE ROLE_TRANSITION
+SET restrict_to_invoker = 0
+WHERE restrict_to_invoker IS NULL
+;
+
+ALTER TABLE ROLE_TRANSITION
+	MODIFY COLUMN restrict_to_invoker INT(1) UNSIGNED NOT NULL
+;
+
+/* Fix conceptual problem in workflow implementation (remove role transition processing order) */
+
+DELETE FROM ROLE_TRANSITION
+WHERE role_id LIKE "APPLICATION_%"
+	AND role_id LIKE "%_SUPERVISOR"
+	AND transition_role_id = "APPLICATION_VIEWER_RECRUITER"
+	AND role_transition_type_id = "UPDATE"
+	AND processing_order = 1
+;
+
+ALTER TABLE ROLE_TRANSITION
+	DROP COLUMN processing_order
+;
+	
+UPDATE STATE_ACTION_ASSIGNMENT
+SET is_default = 0
+WHERE is_default IS NULL
+;
+
+ALTER TABLE STATE_ACTION_ASSIGNMENT
+	MODIFY COLUMN is_default INT(1) UNSIGNED NOT NULL
+;
+
+INSERT INTO STATE_ACTION_ASSIGNMENT (state_action_id, role_id, is_default)
+	SELECT STATE_ACTION.id, ROLE.id, 0
+	FROM STATE_ACTION_ASSIGNMENT INNER JOIN STATE_ACTION
+		ON STATE_ACTION_ASSIGNMENT.state_action_id = STATE_ACTION.id
+	INNER JOIN ROLE
+	WHERE STATE_ACTION.state_id LIKE "APPLICATION_APPROVED_%"
+		AND STATE_ACTION_ASSIGNMENT.role_id = "APPLICATION_VIEWER_RECRUITER"
+		AND ROLE.id IN ("APPLICATION_PRIMARY_SUPERVISOR", "APPLICATION_SECONDARY_SUPERVISOR")
+;
+
+ALTER TABLE ROLE_TRANSITION
+	MODIFY COLUMN restrict_to_invoker INT(1) UNSIGNED AFTER role_transition_type_id,
+	DROP INDEX state_transition_id,
+	ADD UNIQUE INDEX (state_transition_id, role_id, role_transition_type_id, restrict_to_invoker, transition_role_id)
+;
+
+UPDATE ROLE_TRANSITION
+SET transition_role_id = role_id
+WHERE transition_role_id IS NULL
+;
+
+ALTER TABLE ROLE_TRANSITION
+	MODIFY COLUMN transition_role_id VARCHAR(50) NOT NULL
+;
+
+/* Program reactivated from cold shutdown */
+
+INSERT INTO STATE_ACTION (state_id, action_id, raises_urgent_flag)
+VALUES ("PROGRAM_DISABLED", "PROGRAM_RESTORE", 0),
+	("PROGRAM_DISABLED_COMPLETED", "PROGRAM_RESTORE", 0)
+;
+
+INSERT INTO STATE_TRANSITION (state_action_id, transition_state_id, transition_action_id, do_post_comment)
+	SELECT id, "PROGRAM_APPROVED", "PROGRAM_RESTORE", 1
+	FROM STATE_ACTION
+	WHERE state_id IN ("PROGRAM_DISABLED_COMPLETED", "PROGRAM_DISABLED")
+		AND action_id = "PROGRAM_RESTORE"
+;
+
+/* Tidying up problems in code generation and intransient prism resource entities */
+
+ALTER TABLE SYSTEM
+	DROP FOREIGN KEY system_ibfk_1,
+	DROP COLUMN state_id
+;
+
+ALTER TABLE INSTITUTION
+	DROP FOREIGN KEY institution_ibfk_2,
+	DROP COLUMN state_id,
+	ADD COLUMN code VARCHAR(4) AFTER institution_domicile_id
+;
+
+UPDATE INSTITUTION
+SET code = "0UCL"
+;
+
+UPDATE PROGRAM
+SET code = REPLACE(code, "0000005243", "0UCL")
+;
+
+UPDATE PROJECT
+SET code = REPLACE(code, "0000005243", "0UCL")
+;
+
+UPDATE APPLICATION
+SET code = REPLACE(code, "0000005243", "0UCL")
+;

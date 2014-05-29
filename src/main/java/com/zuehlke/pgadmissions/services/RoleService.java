@@ -7,7 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.dao.RoleDAO.UserRoleTransition;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -55,7 +59,10 @@ public class RoleService {
         entityService.delete(userRole);
     }
 
-    public void executeRoleTransition(PrismResource resource, User user, RoleTransition roleTransition) {    
+    public void executeRoleTransition(PrismResource resource, UserRoleTransition userRoleTransition) {
+        User user = userRoleTransition.getUser();
+        RoleTransition roleTransition = userRoleTransition.getRoleTransition();
+        
         switch (roleTransition.getRoleTransitionType()) {
         case BRANCH:
             saveUserRole(getOrCreateUserRole(resource, user, roleTransition.getTransitionRole()));
@@ -75,14 +82,6 @@ public class RoleService {
             saveUserRole(userRole);
             break;
         }
-    }
-    
-    public List<User> getByRoleTransitionAndResource(Role role, PrismResource resource) {
-        return roleDAO.getBy(role, resource);
-    }
-
-    public Role getCreatorRole(PrismAction action, PrismResource scope) {
-        return roleDAO.getCreatorRole(action, scope);
     }
 
     public boolean hasAnyRole(User user, Authority... authorities) {
@@ -149,10 +148,6 @@ public class RoleService {
         return roleDAO.getUserRole(user, authority);
     }
 
-    public List<RoleTransition> getRoleTransitions(StateTransition stateTransition, List<Role> invokerRoles) {
-        return roleDAO.getRoleTransitions(stateTransition, invokerRoles);
-    }
-
     public List<Role> getActionRoles(PrismResource resource, PrismAction action) {
         return roleDAO.getActionRoles(resource, action);
     }
@@ -160,5 +155,19 @@ public class RoleService {
     public List<Role> getActionInvokerRoles(User user, PrismResource resource, PrismAction action) {
         return roleDAO.getActionInvokerRoles(user, resource, action);
     }
+
+//    public List<UserRoleTransition> getUserRoleTransitions(StateTransition stateTransition, PrismResource resource, User invoker, Comment comment) {
+//        // Handle the creator roles. They are not stored yet so we need a different strategy
+//        List<UserRoleTransition> userRoleTransitions = Lists.newArrayList();
+//        
+//        List<RoleTransition> creatorRoleTransitions = roleDAO.getCreatorRoleTransitions(stateTransition);
+//        for (CommentAssignedUser assignedUser : comment.getCommentAssignedUsers()) {
+//            if (assignedUser.getRole() == )
+//        }
+//        
+//        // Then handle the other 
+//        
+//        return roleDAO.getRoleTransitions(stateTransition, resource, invoker);
+//    }
 
 }

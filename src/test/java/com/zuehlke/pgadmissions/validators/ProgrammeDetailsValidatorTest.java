@@ -25,15 +25,12 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.services.ProgramService;
 
@@ -344,17 +341,6 @@ public class ProgrammeDetailsValidatorTest {
     }
 
     @Test
-    public void shouldNotRejectIfApplicationsubmittedAndTermsAcceptedIsTrue() {
-        programmeDetail.setAcceptedTerms(true);
-        State validationState = new State();
-        validationState.setId(PrismState.APPLICATION_VALIDATION);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "acceptedTerms");
-        programmeDetailsValidator.validate(programmeDetail, mappingResult);
-
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-    }
-
-    @Test
     public void shouldNotRejectIfApplicationUnsubmittedAndTermsAcceptedIsFalse() {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "acceptedTerms");
         programmeDetailsValidator.validate(programmeDetail, mappingResult);
@@ -365,7 +351,6 @@ public class ProgrammeDetailsValidatorTest {
     @Before
     public void setup() throws ParseException {
         SourcesOfInterest interest = new SourcesOfInterest().withId(1).withName("ZZ").withCode("ZZ");
-        Role role = new Role().withId(Authority.APPLICATION_CREATOR);
         User currentUser = new User().withId(1);
         SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisor().withUser(
                 new User().withFirstName("Mark").withLastName("Johnson").withEmail("mark@gmail.com")).withAware(true);
@@ -374,8 +359,8 @@ public class ProgrammeDetailsValidatorTest {
                 .withApplicationDeadline(new LocalDate(2030, 8, 6)).withEnabled(true);
         form = new ApplicationFormBuilder().id(2).program(program).applicant(currentUser).status(new State().withId(PrismState.APPLICATION_UNSUBMITTED))
                 .build();
-        programmeDetail = new ProgrammeDetailsBuilder().id(5).suggestedSupervisors(suggestedSupervisor).sourcesOfInterest(interest)
-                .startDate(new LocalDate().plusDays(10)).applicationForm(form).studyOption(new StudyOption("1", "Full-time")).build();
+        programmeDetail = new ProgramDetails().withId(5).withSuggestedSupervisors(suggestedSupervisor).withSourceOfInterest(interest)
+                .withStartDate(new LocalDate().plusDays(10)).withApplication(form).withStudyOption(new StudyOption("1", "Full-time"));
 
         programServiceMock = EasyMock.createMock(ProgramService.class);
 

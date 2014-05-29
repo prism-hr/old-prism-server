@@ -67,4 +67,23 @@ public class AdvertClosingDate implements Serializable {
         this.id = id;
     }
 
+    public AdvertClosingDate withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+    
+    public AdvertClosingDate withAdvert(Advert advert) {
+        this.advert = advert;
+        return this;
+    }
+    
+    public AdvertClosingDate withClosingDate(LocalDate closingDate) {
+        this.closingDate = closingDate;
+        return this;
+    }
+    
+    public AdvertClosingDate withStudyPlaces(Integer studyPlaces) {
+        this.studyPlaces = studyPlaces;
+        return this;
+    }
 }

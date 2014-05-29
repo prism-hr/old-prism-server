@@ -37,7 +37,6 @@ import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.services.ProgramService;
 
@@ -193,7 +192,7 @@ public class ApplicationFormValidatorTest {
         programInstance = new ProgramInstance().withStudyOption("1", "Full-time").withApplicationDeadline(new LocalDate(2030, 8, 6));
         program.getInstances().addAll(Arrays.asList(programInstance));
         personalDetails = new PersonalDetails();
-        programmeDetails = new ProgrammeDetailsBuilder().studyOption(new StudyOption("1", "Full-time")).build();
+        programmeDetails = new ProgramDetails().withStudyOption(new StudyOption("1", "Full-time"));
         address = new ApplicationAddress();
         additionalInformation = new AdditionalInformation();
         document = new ApplicationDocument().withPersonalStatement(new Document());

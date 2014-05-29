@@ -169,8 +169,8 @@ public class ValidApplicationFormBuilder {
         program = new Program().withUser(approverUser).withCode("TMRMBISING99").withState(state).withInstances(instance)
                 .withTitle("MRes Medical and Biomedical Imaging").withInstitution(institution);
         interest = new SourcesOfInterest().withCode("BRIT_COUN").withName("British Council");
-        programDetails = new ProgrammeDetailsBuilder().sourcesOfInterest(interest).startDate(new LocalDate().plusDays(1))
-                .studyOption(new StudyOption("F+++++", "Full-time")).build();
+        programDetails = new ProgramDetails().withSourceOfInterest(interest).withStartDate(new LocalDate().plusDays(1))
+                .withStudyOption(new StudyOption("F+++++", "Full-time"));
         qualificationType = new QualificationType().withCode("DEGTRE").withName("Bachelors Degree - France");
         qualification1 = new Qualification().withId(Integer.MAX_VALUE - 1).withAwardDate(new LocalDate()).withGrade("6").withInstitution(importedInstitution)
                 .withLanguage("English").withStartDate(new LocalDate().minusYears(1)).withSubject("Engineering").withTitle("MSc").withType(qualificationType)

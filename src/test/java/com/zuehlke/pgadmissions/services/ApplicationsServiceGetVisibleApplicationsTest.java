@@ -44,7 +44,6 @@ import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilteringBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
@@ -117,8 +116,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         // .withRole(new RoleBuilder().id(Authority.APPLICANT).build())
         ;
         ApplicationFilterGroup filtering = newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1);
-        EasyMock.expect(applicationFormListDAOMock.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE)).andReturn(
-                Arrays.asList(application));
+        EasyMock.expect(applicationFormListDAOMock.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE))
+                .andReturn(Arrays.asList(application));
         EasyMock.replay(applicationFormListDAOMock);
         List<Application> visibleApplications = applicationsService.getApplicationsForList(user, filtering);
         EasyMock.verify(applicationFormListDAOMock);
@@ -184,7 +183,6 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         Application applicationFormThree = new ApplicationFormBuilder().applicationNumber("ABCD").program(program)
                 .createdTimestamp(new DateTime(2012, 3, 3, 0, 0)).applicant(applicant).status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
- 
 
         Application applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
                 .createdTimestamp(new DateTime(2012, 3, 3, 0, 0)).applicant(applicant).status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
@@ -745,8 +743,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         SuggestedSupervisor supervisor = new SuggestedSupervisor().withAware(true).withUser(
                 new User().withEmail("threepwood@monkeyisland.com").withFirstName("Guybrush").withLastName("Threepwood"));
         SourcesOfInterest sourcesOfInterest = new SourcesOfInterest().withName("foo").withCode("foo");
-        ProgramDetails programmeDetails = new ProgrammeDetailsBuilder().studyOption(new StudyOption("Half", "Half")).startDate(new LocalDate())
-                .sourcesOfInterest(sourcesOfInterest).suggestedSupervisors(supervisor).build();
+        ProgramDetails programmeDetails = new ProgramDetails().withStudyOption(new StudyOption("Half", "Half")).withStartDate(new LocalDate())
+                .withSourceOfInterest(sourcesOfInterest).withSuggestedSupervisors(supervisor);
         Application formWithSupervisor = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_REVIEW)).applicant(applicant)
                 .programmeDetails(programmeDetails).program(program).build();
 
@@ -762,8 +760,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<Application> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
         assertEquals(1, applications.size());
-        assertEquals(supervisor.getUser().getLastName(), applicationFormDAO.getById(applications.get(0).getId()).getProgramDetails()
-                .getSuggestedSupervisors().get(0).getUser().getLastName());
+        assertEquals(supervisor.getUser().getLastName(), applicationFormDAO.getById(applications.get(0).getId()).getProgramDetails().getSuggestedSupervisors()
+                .get(0).getUser().getLastName());
     }
 
     // TODO fix test (approvalComment instead of approvalRound)

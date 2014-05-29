@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
@@ -27,9 +26,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 
@@ -60,14 +57,15 @@ public class Comment implements Serializable {
     private User user;
 
     @Column(name = "role_id")
-    private String roles;
+    private String role;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "delegate_user_id")
     private User delegateUser;
 
-    @Column(name = "delegate_role_id")
-    private String delegateRoles;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "delegate_role_id")
+    private Role delegateRole;
 
     @ManyToOne
     @JoinColumn(name = "action_id")
@@ -103,7 +101,7 @@ public class Comment implements Serializable {
     private Boolean suitableForOpportunity;
 
     @Column(name = "application_desire_to_interview")
-    private Boolean willingToInterview;
+    private Boolean desireToInterview;
 
     @Column(name = "application_desire_to_recruit")
     private Boolean desireToRecruit;
@@ -132,15 +130,12 @@ public class Comment implements Serializable {
 
     @Column(name = "application_position_title")
     private String positionTitle;
-    
+
     @Column(name = "application_position_description")
     private String positionDescription;
 
-    @Column(name = "desire_to_interview")
-    private Boolean desireToInterview;
-
-    @Column(name = "desire_to_supervise")
-    private Boolean desireToSupervise;
+    @Column(name = "application_position_provisional_start_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate positionProvisionalStartDate;
 
     @Column(name = "application_appointment_conditions")
@@ -230,12 +225,12 @@ public class Comment implements Serializable {
         this.user = user;
     }
 
-    public List<Authority> getRoles() {  
-        return explodeRolesToList(roles);
+    public String getRole() {
+        return role;
     }
 
-    public void setRoles(String roles) {
-        this.roles = roles;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public User getDelegateUser() {
@@ -246,12 +241,12 @@ public class Comment implements Serializable {
         this.delegateUser = delegateUser;
     }
 
-    public List<Authority> getDelegateRoles() {
-        return explodeRolesToList(delegateRoles);
+    public Role getDelegateRole() {
+        return delegateRole;
     }
 
-    public void setDelegateRole(String delegateRole) {
-        this.delegateRoles = delegateRole;
+    public void setDelegateRole(Role delegateRole) {
+        this.delegateRole = delegateRole;
     }
 
     public Action getAction() {
@@ -327,11 +322,11 @@ public class Comment implements Serializable {
     }
 
     public Boolean getDesireToInterview() {
-        return willingToInterview;
+        return desireToInterview;
     }
 
     public void setDesireToInterview(Boolean desireToInterview) {
-        this.willingToInterview = desireToInterview;
+        this.desireToInterview = desireToInterview;
     }
 
     public Boolean getDesireToRecruit() {
@@ -572,7 +567,7 @@ public class Comment implements Serializable {
     }
     
     public Comment withRole(String role) {
-        this.roles = role;
+        this.role = role;
         return this;
     }
 
@@ -581,8 +576,8 @@ public class Comment implements Serializable {
         return this;
     }
 
-    public Comment withDelegateRole(String delegateRole) {
-        this.delegateRoles = delegateRole;
+    public Comment withDelegateRole(Role delegateRole) {
+        this.delegateRole = delegateRole;
         return this;
     }
 
@@ -631,15 +626,6 @@ public class Comment implements Serializable {
             }
         }
         return null;
-    }
-    
-    private List<Authority> explodeRolesToList(String roles) {
-        List<String> splitRoles = Arrays.asList(roles.split("|"));
-        List<Authority> splitRolesParsed = Lists.newArrayList();
-        for (String role : splitRoles) {
-            splitRolesParsed.add(Authority.valueOf(role));
-        }
-        return splitRolesParsed;
     }
 
 }

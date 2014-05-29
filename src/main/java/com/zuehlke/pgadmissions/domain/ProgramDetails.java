@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -14,7 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.Valid;
 
 import org.hibernate.annotations.Type;
@@ -28,10 +28,10 @@ public class ProgramDetails {
 
     @Id
     @GeneratedValue
-    protected Integer id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "study_option_id")
+    @JoinColumn(name = "program_study_option_id")
     private StudyOption studyOption;
 
     @Column(name = "start_date")
@@ -53,9 +53,6 @@ public class ProgramDetails {
 
     @OneToOne(mappedBy = "programDetails", fetch = FetchType.LAZY)
     private Application application;
-
-    @Transient
-    private boolean acceptedTerms;
 
     public Integer getId() {
         return id;
@@ -113,12 +110,39 @@ public class ProgramDetails {
         this.application = application;
     }
 
-    public boolean isAcceptedTerms() {
-        return acceptedTerms;
+    public ProgramDetails withId(Integer id) {
+        this.id = id;
+        return this;
     }
-
-    public void setAcceptedTerms(boolean acceptedTerms) {
-        this.acceptedTerms = acceptedTerms;
+    
+    public ProgramDetails withStudyOption(StudyOption studyOption) {
+        this.studyOption = studyOption;
+        return this;
     }
-
+    
+    public ProgramDetails withStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+        return this;
+    }
+    
+    public ProgramDetails withSourceOfInterest(SourcesOfInterest sourceOfInterest) {
+        this.sourceOfInterest = sourceOfInterest;
+        return this;
+    }
+    
+    public ProgramDetails withSourceOfInterestText(String sourceOfInterestText) {
+        this.sourceOfInterestText = sourceOfInterestText;
+        return this;
+    }
+    
+    public ProgramDetails withSuggestedSupervisors(SuggestedSupervisor... suggestedSupervisors) {
+        this.suggestedSupervisors.addAll(Arrays.asList(suggestedSupervisors));
+        return this;
+    }
+    
+    public ProgramDetails withApplication(Application application) {
+        this.application = application;
+        return this;
+    }
+    
 }

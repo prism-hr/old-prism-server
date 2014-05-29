@@ -8,11 +8,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
 
 @Entity
-@Table(name = "ROLE_TRANSITION")
+@Table(name = "ROLE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_transition_id", "role_id", "role_transition_type_id",
+        "restrict_to_invoker", "transition_role_id" }) })
 public class RoleTransition {
 
     @Id
@@ -30,11 +32,11 @@ public class RoleTransition {
     @Enumerated(EnumType.STRING)
     private RoleTransitionType roleTransitionType;
 
-    @Column(name = "processing_order")
-    private Integer processingOrder;
+    @Column(name = "restrict_to_invoker", nullable = false)
+    private boolean restrictToInvoker;
 
     @ManyToOne
-    @JoinColumn(name = "transition_role_id")
+    @JoinColumn(name = "transition_role_id", nullable = false)
     private Role transitionRole;
 
     @Column(name = "minimum_permitted")
@@ -42,9 +44,6 @@ public class RoleTransition {
 
     @Column(name = "maximum_permitted")
     private Integer maximumPermitted;
-
-    @Column(name = "restrict_to_invoker")
-    private Boolean restrictToInvoker;
 
     public Integer getId() {
         return id;
@@ -78,12 +77,12 @@ public class RoleTransition {
         this.roleTransitionType = roleTransitionType;
     }
 
-    public Integer getProcessingOrder() {
-        return processingOrder;
+    public boolean isRestrictToInvoker() {
+        return restrictToInvoker;
     }
 
-    public void setProcessingOrder(Integer processingOrder) {
-        this.processingOrder = processingOrder;
+    public void setRestrictToInvoker(boolean restrictToInvoker) {
+        this.restrictToInvoker = restrictToInvoker;
     }
 
     public Role getTransitionRole() {
@@ -108,14 +107,6 @@ public class RoleTransition {
 
     public void setMaximumPermitted(Integer maximumPermitted) {
         this.maximumPermitted = maximumPermitted;
-    }
-
-    public Boolean getRestrictToInvoker() {
-        return restrictToInvoker;
-    }
-
-    public void setRestrictToInvoker(Boolean restrictToInvoker) {
-        this.restrictToInvoker = restrictToInvoker;
     }
 
 }

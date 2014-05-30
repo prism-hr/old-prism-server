@@ -24,18 +24,18 @@ public class Passport implements Serializable {
     private Integer id;
 
     @ESAPIConstraint(rule = "LettersAndNumbersOnly", maxLength = 35, message = "{text.field.nonlettersandnumbers}")
-    @Column(name = "number")
+    @Column(name = "number", nullable = false)
     private String number;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "issue_date")
+    @Column(name = "issue_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate issueDate;
 
-    @Column(name = "expiry_date")
+    @Column(name = "expiry_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate expiryDate;
 

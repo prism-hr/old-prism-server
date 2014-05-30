@@ -32,19 +32,19 @@ public class ProgramExport implements Serializable {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "program_export_format_id")
+    @Column(name = "program_export_format_id", nullable = false)
     private ProgramExportFormat format;
 
     @ManyToMany(cascade = ALL)
-    @JoinTable(name = "program_export_program", joinColumns = { @JoinColumn(name = "program_export_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
+    @JoinTable(name = "program_export_program", joinColumns = { @JoinColumn(name = "program_export_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "program_id", nullable = false) })
     private Set<Program> programs = Sets.newHashSet();
 
     public Integer getId() {

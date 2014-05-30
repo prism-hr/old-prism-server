@@ -31,7 +31,7 @@ public class StateDuration {
     private State state;
 
     @Column(name = "expiry_duration", nullable = false)
-    private boolean expiryDuration;
+    private Integer expiryDuration;
 
     public Integer getId() {
         return id;
@@ -73,11 +73,11 @@ public class StateDuration {
         this.state = state;
     }
 
-    public boolean isExpiryDuration() {
+    public Integer getExpiryDuration() {
         return expiryDuration;
     }
 
-    public void setExpiryDuration(boolean expiryDuration) {
+    public void setExpiryDuration(Integer expiryDuration) {
         this.expiryDuration = expiryDuration;
     }
 

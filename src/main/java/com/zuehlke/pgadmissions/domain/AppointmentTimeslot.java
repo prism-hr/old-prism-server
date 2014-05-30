@@ -18,7 +18,7 @@ public class AppointmentTimeslot {
     private Integer id;
 
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    @Column(name = "timeslot_datetime")
+    @Column(name = "timeslot_datetime", nullable = false)
     private DateTime dateTime;
 
     public Integer getId() {

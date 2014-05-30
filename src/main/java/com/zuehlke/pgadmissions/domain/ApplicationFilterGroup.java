@@ -31,18 +31,18 @@ public class ApplicationFilterGroup implements Serializable {
     private Integer id;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_filter_group_id")
+    @JoinColumn(name = "application_filter_group_id", nullable = false)
     @OrderColumn(name = "filter_position")
     private List<ApplicationFilter> filters = new ArrayList<ApplicationFilter>();
 
-    @Column(name = "satisfy_all_conditions")
+    @Column(name = "satisfy_all_conditions", nullable = false)
     private Boolean satisfyAllConditions = false;
 
-    @Column(name = "sort_category")
+    @Column(name = "sort_category", nullable = false)
     @Enumerated(EnumType.STRING)
     private SortCategory sortCategory = SortCategory.APPLICATION_DATE;
 
-    @Column(name = "sort_order")
+    @Column(name = "sort_order", nullable = false)
     @Enumerated(EnumType.STRING)
     private SortOrder order = SortOrder.DESCENDING;
 

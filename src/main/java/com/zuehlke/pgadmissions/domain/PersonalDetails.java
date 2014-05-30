@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.enums.Title;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
-@Table(name = "APPLICATION_FORM_PERSONAL_DETAIL")
+@Table(name = "APPLICATION_PERSONAL_DETAIL")
 public class PersonalDetails {
 
     @Id
@@ -35,65 +35,66 @@ public class PersonalDetails {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
     private String messenger;
 
-    @Column(name = "phone")
+    @Column(name = "phone", nullable = false)
     @ESAPIConstraint(rule = "PhoneNumber", maxLength = 35, message = "{text.field.notphonenumber}")
     private String phoneNumber;
 
-    @Column(name = "english_first_language")
+    @Column(name = "english_first_language", nullable = false)
     private Boolean englishFirstLanguage;
 
     @Transient
     private Boolean languageQualificationAvailable;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_form_language_qualification_id")
+    @JoinColumn(name = "application_language_qualification_id")
     @Valid
-    private LanguageQualification languageQualification = null;
+    private LanguageQualification languageQualification;
 
-    @Column(name = "requires_visa")
+    @Column(name = "requires_visa", nullable = false)
     private Boolean requiresVisa;
 
     @Transient
     private Boolean passportAvailable;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_form_passport")
+    @JoinColumn(name = "application_passport")
     @Valid
-    private Passport passport = null;
+    private Passport passport;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "first_nationality")
+    @JoinColumn(name = "first_nationality", nullable = false)
     private Language firstNationality;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "second_nationality")
-    private Language secondNationality = null;
+    private Language secondNationality;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     @Enumerated(EnumType.STRING)
     private Title title;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "gender", nullable = false)
     private Gender gender;
 
-    @Column(name = "date_of_birth")
+    @Column(name = "date_of_birth", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dateOfBirth;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "country_id")
+    @JoinColumn(name = "country_id", nullable = false)
     private Country country;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "ethnicity_id")
+    @JoinColumn(name = "ethnicity_id", nullable = false)
     private Ethnicity ethnicity;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "disability_id")
+    @JoinColumn(name = "disability_id", nullable = false)
     private Disability disability;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "domicile_id")
+    @JoinColumn(name = "domicile_id", nullable = false)
     private Domicile residenceCountry;
 
     @OneToOne(mappedBy = "personalDetails", fetch = FetchType.LAZY)

@@ -53,7 +53,7 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
     @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
-    @Column(name = "first_name")
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
@@ -68,14 +68,15 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
     @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
-    @Column(name = "last_name")
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
     @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "activation_code")
+    @Column(name = "activation_code", nullable = false)
     private String activationCode;
 
     @OneToMany(mappedBy = "user")

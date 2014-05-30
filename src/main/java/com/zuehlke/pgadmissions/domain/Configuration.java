@@ -21,7 +21,7 @@ public class Configuration {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "institution_id")
+    @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
     @ManyToOne
@@ -33,10 +33,10 @@ public class Configuration {
     private Program program;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "configuration_parameter_id")
+    @Column(name = "configuration_parameter_id", nullable = false)
     private ConfigurationParameter parameter;
 
-    @Column(name = "parameter_value")
+    @Column(name = "parameter_value", nullable = false)
     private Integer value;
 
     public Integer getId() {

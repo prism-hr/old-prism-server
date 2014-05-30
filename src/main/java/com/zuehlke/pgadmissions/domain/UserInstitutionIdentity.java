@@ -26,11 +26,11 @@ public class UserInstitutionIdentity {
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
-    @Column(name = "user_identity_type")
+    @Column(name = "user_identity_type_id", nullable = false)
     @Enumerated(EnumType.STRING)
     private UserIdentityType type;
 
-    @Column(name = "identifier")
+    @Column(name = "identifier", nullable = false)
     private String identifier;
 
     public Integer getId() {

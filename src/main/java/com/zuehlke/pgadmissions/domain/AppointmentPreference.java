@@ -16,7 +16,7 @@ public class AppointmentPreference {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "comment_appointment_timeslot_id")
+    @JoinColumn(name = "comment_appointment_timeslot_id", nullable = false)
     private AppointmentTimeslot appointmentTimeslot;
 
     public Integer getId() {

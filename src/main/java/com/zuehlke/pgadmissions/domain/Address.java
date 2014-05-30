@@ -25,11 +25,11 @@ public class Address implements Serializable {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "domicile_id")
+    @JoinColumn(name = "domicile_id", nullable = false)
     private Domicile domicile;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
-    @Column(name = "address_line_1")
+    @Column(name = "address_line_1", nullable = false)
     private String addressLine1;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
@@ -37,7 +37,7 @@ public class Address implements Serializable {
     private String addressLine2;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
-    @Column(name = "address_town")
+    @Column(name = "address_town", nullable = false)
     private String addressTown;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)

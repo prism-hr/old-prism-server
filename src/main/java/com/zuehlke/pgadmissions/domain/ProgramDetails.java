@@ -23,7 +23,7 @@ import org.joda.time.LocalDate;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
-@Table(name = "APPLICATION_FORM_PROGRAM_DETAIL")
+@Table(name = "APPLICATION_PROGRAM_DETAIL")
 public class ProgramDetails {
 
     @Id
@@ -31,7 +31,7 @@ public class ProgramDetails {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "program_study_option_id")
+    @JoinColumn(name = "program_study_option_id", nullable = false)
     private StudyOption studyOption;
 
     @Column(name = "start_date")
@@ -39,7 +39,7 @@ public class ProgramDetails {
     private LocalDate startDate;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sources_of_interest_id")
+    @JoinColumn(name = "referral_source_id", nullable = false)
     private SourcesOfInterest sourceOfInterest;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)

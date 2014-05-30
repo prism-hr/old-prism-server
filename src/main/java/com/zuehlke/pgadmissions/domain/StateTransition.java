@@ -39,8 +39,8 @@ public class StateTransition {
     private StateTransitionEvaluation evaluation;
 
     @ManyToMany
-    @JoinTable(name = "state_transition_propagation", joinColumns = { @JoinColumn(name = "state_transition_id") }, //
-    inverseJoinColumns = { @JoinColumn(name = "propagated_state_transition_id") })
+    @JoinTable(name = "state_transition_propagation", joinColumns = { @JoinColumn(name = "state_transition_id", nullable = false) }, //
+    inverseJoinColumns = { @JoinColumn(name = "propagated_state_transition_id", nullable = false) })
     private Set<StateTransition> propagatedStates;
 
     @Column(name = "display_order")

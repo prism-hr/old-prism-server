@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
-@Table(name = "APPLICATION_FORM_LANGUAGE_QUALIFICATION")
+@Table(name = "APPLICATION_LANGUAGE_QUALIFICATION")
 public class LanguageQualification implements Serializable {
 
     private static final long serialVersionUID = -2695332340505084549L;
@@ -29,7 +29,7 @@ public class LanguageQualification implements Serializable {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "qualification_type")
+    @Column(name = "qualification_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private LanguageQualificationEnum qualificationType;
 
@@ -37,30 +37,30 @@ public class LanguageQualification implements Serializable {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
     private String qualificationTypeOther;
 
-    @Column(name = "exam_date")
+    @Column(name = "exam_date", nullable = false)
     private LocalDate examDate;
 
-    @Column(name = "overall_score")
+    @Column(name = "overall_score", nullable = false)
     private String overallScore;
 
-    @Column(name = "reading_score")
+    @Column(name = "reading_score", nullable = false)
     private String readingScore;
 
-    @Column(name = "writing_score")
+    @Column(name = "writing_score", nullable = false)
     private String writingScore;
 
-    @Column(name = "speaking_score")
+    @Column(name = "speaking_score", nullable = false)
     private String speakingScore;
 
-    @Column(name = "listening_score")
+    @Column(name = "listening_score", nullable = false)
     private String listeningScore;
 
-    @Column(name = "exam_online")
+    @Column(name = "exam_online", nullable = false)
     private Boolean examOnline;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "document_id")
-    private Document proofOfAward = null;
+    @JoinColumn(name = "document_id", nullable = false)
+    private Document proofOfAward;
     
     public Integer getId() {
         return id;

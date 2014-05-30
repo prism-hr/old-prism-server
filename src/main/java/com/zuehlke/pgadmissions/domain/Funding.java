@@ -20,34 +20,35 @@ import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
-@Table(name = "APPLICATION_FORM_FUNDING")
+@Table(name = "APPLICATION_FUNDING")
 public class Funding {
 
     @Id
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "award_type")
+    @Column(name = "award_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private FundingType type;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "document_id")
+    @JoinColumn(name = "document_id", nullable = false)
     private Document document;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
+    @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "award_value")
+    @Column(name = "award_value", nullable = false)
     @ESAPIConstraint(rule = "NumbersOnly", maxLength = 100)
     private String value;
 
-    @Column(name = "award_date")
+    @Column(name = "award_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate awardDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_form_id")
+    @ManyToOne
+    @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
     private Application application;
 
     public void setId(Integer id) {

@@ -22,17 +22,17 @@ public class NotificationTemplateVersion {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "notification_template_id")
+    @JoinColumn(name = "notification_template_id", nullable = false)
     private NotificationTemplate notificationTemplate;
 
-    @Column(name = "subject")
+    @Column(name = "subject", nullable = false)
     private String subject;
 
     @Lob
-    @Column(name = "content")
+    @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name = "created_timestamp")
+    @Column(name = "created_timestamp", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTimestamp;
 

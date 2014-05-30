@@ -18,11 +18,11 @@ public class ApplicationAddress {
     private Integer id;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "current_address_id")
+    @JoinColumn(name = "current_address_id", nullable = false)
     private Address currentAddress;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "contact_address_id")
+    @JoinColumn(name = "contact_address_id", nullable = false)
     private Address contactAddress;
 
     @OneToOne(mappedBy = "applicationAddress", fetch = FetchType.LAZY)

@@ -5,17 +5,21 @@ import org.apache.commons.beanutils.ConstructorUtils;
 
 import com.google.common.base.Function;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.Institution;
 
 public class ImportEntityConverter<E extends ImportedEntity> implements Function<Object, E> {
 
     private Class<E> importedEntityType;
+    
+    private Institution institution;
 
-    private ImportEntityConverter(Class<E> importedEntityType) {
+    private ImportEntityConverter(Class<E> importedEntityType, Institution institution) {
         this.importedEntityType = importedEntityType;
+        this.institution = institution;
     }
 
-    public static <E extends ImportedEntity> ImportEntityConverter<E> create(Class<E> importedEntityType) {
-        return new ImportEntityConverter<E>(importedEntityType);
+    public static <E extends ImportedEntity> ImportEntityConverter<E> create(Class<E> importedEntityType, Institution institution) {
+        return new ImportEntityConverter<E>(importedEntityType, institution);
     }
 
     @SuppressWarnings("unchecked")
@@ -28,9 +32,11 @@ public class ImportEntityConverter<E extends ImportedEntity> implements Function
             importedEntity.setName(name);
             importedEntity.setCode(code);
             importedEntity.setEnabled(true);
+            importedEntity.setInstitution(institution);
             return importedEntity;
         } catch (Exception e) {
             throw new RuntimeException();
         }
     }
+
 }

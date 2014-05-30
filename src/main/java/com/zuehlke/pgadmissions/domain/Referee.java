@@ -27,7 +27,7 @@ public class Referee {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_id", nullable = false)
+    @JoinColumn(name = "application_id", nullable = false, updatable = false, insertable = false)
     private Application application;
 
     @OneToOne(fetch = FetchType.LAZY)

@@ -26,7 +26,7 @@ public class EmploymentPosition {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_id", nullable = false)
+    @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
     private Application application;
 
     @Column(name = "employer_name", nullable = false)

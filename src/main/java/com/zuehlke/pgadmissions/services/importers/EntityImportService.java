@@ -87,7 +87,7 @@ public class EntityImportService {
             if (entityClass.equals(Program.class)) {
                 thisBean.mergePrograms((List<ProgrammeOccurrence>) unmarshalled, importedEntityFeed.getInstitution());
             } else {
-                ImportEntityConverter<ImportedEntity> entityConverter = ImportEntityConverter.create(entityClass);
+                ImportEntityConverter<ImportedEntity> entityConverter = ImportEntityConverter.create(entityClass, importedEntityFeed.getInstitution());
 
                 Iterable<ImportedEntity> newEntities = Iterables.transform(unmarshalled, entityConverter);
 
@@ -212,7 +212,7 @@ public class EntityImportService {
         persistentProgramInstance.setEnabled(true);
     }
 
-    //TODO: integrate with workflow engine when finished
+    // TODO: integrate with workflow engine when finished
     @Transactional
     public Program getOrCreateProgram(Programme programme, Institution institution) {
         String prefixedProgramCode = institution.getCode() + "-" + programme.getCode();

@@ -12,12 +12,8 @@ import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.CompleteApprovalComment;
-import com.zuehlke.pgadmissions.domain.CompleteInterviewComment;
-import com.zuehlke.pgadmissions.domain.CompleteReviewComment;
 import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -36,9 +32,6 @@ public class CommentService {
 
     @Autowired
     private ApplicationService applicationsService;
-
-    @Autowired
-    private WorkflowService applicationFormUserRoleService;
 
     @Autowired
     private UserService userService;
@@ -104,7 +97,7 @@ public class CommentService {
         return commentDAO.getNotDecliningSupervisorsFromLatestApprovalStage(application);
     }
 
-    public CommentAssignedUser assignUser(AssignSupervisorsComment approvalComment, User user, boolean isPrimary) {
+    public CommentAssignedUser assignUser(Comment approvalComment, User user, boolean isPrimary) {
         CommentAssignedUser assignedUser = new CommentAssignedUser();
         assignedUser.setUser(user);
         approvalComment.getCommentAssignedUsers().add(assignedUser);
@@ -127,13 +120,9 @@ public class CommentService {
             stateChangeComment.setUseCustomRefereeQuestions(BooleanUtils.toBooleanObject(stateChangeDTO.getUseCustomReferenceQuestions()));
             break;
         case APPLICATION_REVIEW:
-            stateChangeComment = new CompleteReviewComment();
-            break;
         case APPLICATION_INTERVIEW:
-            stateChangeComment = new CompleteInterviewComment();
-            break;
         case APPLICATION_APPROVAL:
-            stateChangeComment = new CompleteApprovalComment();
+            stateChangeComment = new Comment();
             break;
         default:
             throw new CannotExecuteActionException(applicationForm);
@@ -150,8 +139,6 @@ public class CommentService {
         save(stateChangeComment);
         applicationsService.save(applicationForm);
         applicationsService.refresh(applicationForm);
-        applicationFormUserRoleService.stateChanged(stateChangeComment);
-        applicationFormUserRoleService.applicationUpdated(applicationForm, user);
     }
 
 }

@@ -33,9 +33,6 @@ public class OfferRecommendationService {
     @Autowired
     private MailSendingService mailSendingService;
     
-    @Autowired
-    private WorkflowService applicationFormUserRoleService;
-
     public boolean moveToApproved(Application form, OfferRecommendedComment offerRecommendedComment) {
 //        if (ApplicationFormStatus.APPROVAL != form.getStatus().getId()) {
 //            throw new IllegalStateException();

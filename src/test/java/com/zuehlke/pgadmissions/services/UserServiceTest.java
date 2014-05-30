@@ -35,10 +35,6 @@ public class UserServiceTest {
     @InjectIntoByType
     private MailSendingService mailServiceMock;
 
-    @Mock
-    @InjectIntoByType
-    private WorkflowService applicationFormUserRoleServiceMock;
-
     @TestedObject
     private UserService userService;
 

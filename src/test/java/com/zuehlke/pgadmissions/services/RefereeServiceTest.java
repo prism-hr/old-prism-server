@@ -40,10 +40,6 @@ public class RefereeServiceTest {
     @InjectIntoByType
     private EncryptionHelper encryptionHelper;
     
-    @Mock
-    @InjectIntoByType
-    private WorkflowService applicationFormUserRoleServiceMock;
-
     @TestedObject
     private RefereeService service;
 

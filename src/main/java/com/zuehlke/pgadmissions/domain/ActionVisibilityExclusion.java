@@ -24,16 +24,16 @@ public class ActionVisibilityExclusion {
     @GeneratedValue
     private Integer id;
 
-    @JoinColumn(name = "action_id")
+    @JoinColumn(name = "action_id", nullable = false)
     @ManyToOne
     private Action action;
 
-    @JoinColumn(name = "role_id")
+    @JoinColumn(name = "role_id", nullable = false)
     @ManyToOne
     private Role role;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "action_visibility_exclusion_rule_id")
+    @Column(name = "action_visibility_exclusion_rule_id", nullable = false)
     private ActionVisibilityExclusionRule rule;
 
     @Column(name = "precedence")

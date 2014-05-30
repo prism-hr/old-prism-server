@@ -30,14 +30,13 @@ import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 
 @Controller
 @RequestMapping(value = { "/interviewFeedback" })
 public class InterviewCommentController {
     // TODO use interview comment instead interview, fix tests and ftl's
-    
+
     private static final String INTERVIEW_FEEDBACK_PAGE = "private/staff/interviewers/feedback/interview_feedback";
 
     @Autowired
@@ -57,9 +56,6 @@ public class InterviewCommentController {
 
     @Autowired
     private ScoringDefinitionParser scoringDefinitionParser;
-
-    @Autowired
-    private WorkflowService applicationFormUserRoleService;
 
     @Autowired
     private ActionService actionService;
@@ -98,7 +94,6 @@ public class InterviewCommentController {
 
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.INTERVIEW);
 
-
         return interviewComment;
     }
 
@@ -113,7 +108,6 @@ public class InterviewCommentController {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, PrismAction.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK);
-        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return INTERVIEW_FEEDBACK_PAGE;
     }
 
@@ -132,8 +126,6 @@ public class InterviewCommentController {
         applicationForm.getApplicationComments().add(comment);
 
         applicationsService.save(applicationForm);
-        applicationFormUserRoleService.interviewFeedbackPosted(comment);
-        applicationFormUserRoleService.applicationUpdated(applicationForm, user);
         return "redirect:/applications?messageCode=interview.feedback&application=" + applicationForm.getCode();
     }
 

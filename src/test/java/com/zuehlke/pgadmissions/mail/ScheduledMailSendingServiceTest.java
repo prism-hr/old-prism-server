@@ -7,7 +7,6 @@ import org.unitils.UnitilsJUnit4TestClassRunner;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
-import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -22,8 +21,6 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
     private ApplicationContext applicationContextMock;
 
     private EncryptionUtils encryptionUtilsMock;
-
-    private WorkflowService applicationFormUserRoleService;
 
     private OpportunitiesService opportunitiesServiceMock;
 

@@ -5,11 +5,12 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -36,12 +37,17 @@ public class StateAction {
 
     @Column(name = "precedence")
     private Integer precedence;
-    
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "stateAction")
+
+    @OneToMany(mappedBy = "stateAction")
     private Set<StateActionAssignment> stateActionAssignments = new HashSet<StateActionAssignment>();
-    
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "stateAction")
+
+    @OneToMany(mappedBy = "stateAction")
     private Set<StateTransition> stateTransitions = new HashSet<StateTransition>();
+
+    @OneToOne
+    @JoinTable(name = "state_action_inheritance", joinColumns = { @JoinColumn(name = "state_action_id", unique = true) }, //
+    inverseJoinColumns = { @JoinColumn(name = "inherited_state_action_id", unique = true) })
+    private StateAction inheritedStateAction;
 
     public Integer getId() {
         return id;
@@ -89,6 +95,14 @@ public class StateAction {
 
     public void setPrecedence(Integer precedence) {
         this.precedence = precedence;
+    }
+
+    public StateAction getInheritedStateAction() {
+        return inheritedStateAction;
+    }
+
+    public void setInheritedStateAction(StateAction inheritedStateAction) {
+        this.inheritedStateAction = inheritedStateAction;
     }
 
     public Set<StateActionAssignment> getStateActionAssignments() {

@@ -1,0 +1,8 @@
+INSERT INTO USER_ROLE_LINK (registered_user_id, application_role_id)
+	SELECT APPLICATION_FORM_USER_ROLE.registered_user_id, APPLICATION_FORM_USER_ROLE.application_role_id
+	FROM APPLICATION_FORM_USER_ROLE LEFT JOIN USER_ROLE_LINK
+		ON APPLICATION_FORM_USER_ROLE.registered_user_id = USER_ROLE_LINK.registered_user_id
+	WHERE USER_ROLE_LINK.registered_user_id IS NULL
+		AND APPLICATION_FORM_USER_ROLE.application_role_id = "SUGGESTEDSUPERVISOR"
+	GROUP BY APPLICATION_FORM_USER_ROLE.registered_user_id
+;

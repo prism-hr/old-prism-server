@@ -41,7 +41,7 @@ public class Program extends Advert {
     private String code;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "require_project_definition")
@@ -71,7 +71,7 @@ public class Program extends Advert {
     private List<Project> projects = new ArrayList<Project>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "program_type_id")
+    @JoinColumn(name = "program_type_id", nullable = false)
     private ProgramType programType;
 
     @Column(name = "due_date")

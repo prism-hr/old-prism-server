@@ -14,15 +14,15 @@ public class CustomQuestion {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "program_id")
+    @JoinColumn(name = "program_id", nullable = false)
     private Program program;
 
     @ManyToOne
-    @JoinColumn(name = "action_id")
+    @JoinColumn(name = "action_id", nullable = false)
     private Action action;
 
     @ManyToOne
-    @JoinColumn(name = "comment_custom_question_version_id")
+    @JoinColumn(name = "comment_custom_question_version_id", nullable = false)
     private CustomQuestionVersion version;
 
     public Integer getId() {

@@ -77,11 +77,11 @@ public class Application extends PrismResourceTransient {
 
     @Column(name = "closing_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate closingDate = null;
+    private LocalDate closingDate;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user = null;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "system_id", nullable = false)
@@ -100,11 +100,11 @@ public class Application extends PrismResourceTransient {
     private Project project;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_personal_detail_id")
+    @JoinColumn(name = "application_personal_detail_id", nullable = false)
     private PersonalDetails personalDetails;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_program_detail_id")
+    @JoinColumn(name = "application_program_detail_id", nullable = false)
     @Valid
     private ProgramDetails programDetails;
 
@@ -113,27 +113,27 @@ public class Application extends PrismResourceTransient {
     private List<Comment> applicationComments = Lists.newArrayList();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_id")
+    @JoinColumn(name = "application_id", nullable = false)
     @Valid
     private List<Qualification> qualifications = new ArrayList<Qualification>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_id")
+    @JoinColumn(name = "application_id", nullable = false)
     @Valid
     private List<Funding> fundings = new ArrayList<Funding>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_id")
+    @JoinColumn(name = "application_id", nullable = false)
     @Valid
     private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_id")
+    @JoinColumn(name = "application_id", nullable = false)
     @Valid
     private List<Referee> referees = new ArrayList<Referee>();
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_additional_information_id")
+    @JoinColumn(name = "application_additional_information_id", nullable = false)
     @Valid
     private AdditionalInformation additionalInformation;
 

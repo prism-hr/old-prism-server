@@ -45,8 +45,8 @@ public class StateAction {
     private Set<StateTransition> stateTransitions = new HashSet<StateTransition>();
 
     @OneToOne
-    @JoinTable(name = "state_action_inheritance", joinColumns = { @JoinColumn(name = "state_action_id", unique = true) }, //
-    inverseJoinColumns = { @JoinColumn(name = "inherited_state_action_id", unique = true) })
+    @JoinTable(name = "state_action_inheritance", joinColumns = { @JoinColumn(name = "state_action_id", unique = true, nullable = false) }, //
+    inverseJoinColumns = { @JoinColumn(name = "inherited_state_action_id", nullable = false) })
     private StateAction inheritedStateAction;
 
     public Integer getId() {

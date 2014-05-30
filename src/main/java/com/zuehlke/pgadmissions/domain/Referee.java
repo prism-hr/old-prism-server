@@ -27,7 +27,7 @@ public class Referee {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_id")
+    @JoinColumn(name = "application_id", nullable = false)
     private Application application;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -35,7 +35,7 @@ public class Referee {
     private Comment comment;
 
     @ESAPIConstraint(rule = "PhoneNumber", maxLength = 35, message = "{text.field.notphonenumber}")
-    @Column(name = "phone")
+    @Column(name = "phone", nullable = false)
     private String phoneNumber;
 
     @Column(name = "skype")
@@ -51,7 +51,7 @@ public class Referee {
     private String jobTitle;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "address_id")
+    @JoinColumn(name = "address_id", nullable = false)
     @Valid
     private Address address;
 

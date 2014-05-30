@@ -27,14 +27,14 @@ public class ApplicationFilter implements Serializable {
     private Integer id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "search_predicate")
+    @Column(name = "search_predicate", nullable = false)
     private SearchPredicate searchPredicate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "search_category")
+    @Column(name = "search_category", nullable = false)
     private SearchCategory searchCategory;
 
-    @Column(name = "search_term")
+    @Column(name = "search_term", nullable = false)
     private String searchTerm;
     
     @ManyToOne

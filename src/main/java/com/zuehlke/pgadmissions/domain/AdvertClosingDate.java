@@ -28,7 +28,7 @@ public class AdvertClosingDate implements Serializable {
     @JoinColumn(name = "advert_id", nullable = false, updatable = false, insertable = false)
     private Advert advert;
 
-    @Column(name = "closing_date")
+    @Column(name = "closing_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate closingDate;
 

@@ -21,10 +21,10 @@ public class ImportedEntityFeed {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "institution_id")
+    @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
-    @Column(name = "imported_entity_type_id")
+    @Column(name = "imported_entity_type_id", nullable = false)
     @Enumerated(EnumType.STRING)
     private ImportedEntityType importedEntityType;
 
@@ -34,7 +34,7 @@ public class ImportedEntityFeed {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "location")
+    @Column(name = "location", nullable = false)
     private String location;
 
     public Integer getId() {

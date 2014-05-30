@@ -17,14 +17,14 @@ public class SuggestedSupervisor {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "application_program_detail_id")
+    @JoinColumn(name = "application_program_detail_id", nullable = false)
     private PersonalDetails personalDetails;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "aware_of_application")
+    @Column(name = "aware_of_application", nullable = false)
     private boolean aware;
 
     public Integer getId() {

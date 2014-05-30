@@ -37,29 +37,29 @@ public class StateService {
         return stateDAO.getAllConfigurableStates();
     }
     
-    public List<StateTransition> getStateTransitions(PrismResource resource, PrismAction action) {
-        return stateDAO.getStateTransitions(resource, action);
-    }
-    
     public StateTransition getStateTransition(PrismResource resource, PrismAction action, Comment comment) {
         StateTransition stateTransition = null;
         
-        List<StateTransition> stateTransitions = getStateTransitions(resource, action);     
-        if (stateTransitions.size() > 1) {
+        List<StateTransition> potentialStateTransitions = getPotentialStateTransitions(resource, action);     
+        if (potentialStateTransitions.size() > 1) {
             try {
-                String method = stateTransitions.get(0).getEvaluation().getMethodName(); 
-                stateTransition = (StateTransition) MethodUtils.invokeExactMethod(this, method, new Object[] {resource, comment, stateTransitions});
+                String method = potentialStateTransitions.get(0).getEvaluation().getMethodName(); 
+                stateTransition = (StateTransition) MethodUtils.invokeExactMethod(this, method, new Object[] {resource, comment, potentialStateTransitions});
             } catch (Exception e) {
                 
             }
         } else {
-            stateTransition = stateTransitions.get(0);
+            stateTransition = potentialStateTransitions.get(0);
         }
         
         return stateTransition;
     }
+    
+    public StateTransition getDelegateStateTransition(PrismResource resource, PrismAction delegateAction) {
+        return getPotentialStateTransitions(resource, delegateAction).get(0);
+    }
 
-    public StateTransition getApplicationCompletedOutcome(PrismResource resource, Comment comment, List<StateTransition> stateTransitions) {
+    public StateTransition getApplicationCompletedOutcome(PrismResource resource, List<StateTransition> stateTransitions) {
         State transitionState = resource.getState();
         try {
             Application application = (Application) resource;
@@ -109,6 +109,10 @@ public class StateService {
             }
         }
         return stateDAO.getStateTransition(stateTransitions, transitionState);
+    }
+    
+    private List<StateTransition> getPotentialStateTransitions(PrismResource resource, PrismAction action) {
+        return stateDAO.getStateTransitions(resource, action);
     }
     
 }

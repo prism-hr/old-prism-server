@@ -29,6 +29,8 @@ public class Role implements GrantedAuthority {
     
     @OneToMany(mappedBy = "role")
     private Set<UserRole> userRoles;
+    
+    
 
     public Authority getId() {
         return id;

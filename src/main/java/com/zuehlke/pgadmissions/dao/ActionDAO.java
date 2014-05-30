@@ -32,15 +32,9 @@ public class ActionDAO {
     }
 
     public Action getById(PrismAction actionId) {
-        return (Action) sessionFactory.getCurrentSession().createCriteria(Action.class).add(Restrictions.eq("id", actionId)).uniqueResult();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<StateAction> getValidAction(PrismResource resource, PrismAction action) {
-        return (List<StateAction>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .add(Restrictions.eq("state", resource.getState())) //
-                .add(Restrictions.eq("action.id", action)) //
-                .list();
+        return (Action) sessionFactory.getCurrentSession().createCriteria(Action.class) //
+                .add(Restrictions.eq("id", actionId)) //
+                .uniqueResult();
     }
 
     public PrismAction getRedirectAction(PrismResource resource, PrismAction action, User user) {
@@ -104,23 +98,18 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //
                         .add(Restrictions.eq("user.parentUser", user))) //
-                .add(Restrictions.eq("userAccount.enabled", true))//
+                .add(Restrictions.eq("userAccount.enabled", true))
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.asc("action.id")) //
                 .list();
     }
 
     private DetachedCriteria getActionPrecedence(PrismResource resource, User user) {
-        return DetachedCriteria.forClass(StateAction.class)
-                //
-                .setProjection(Projections.max("precedence"))
-                //
-                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN)
-                //
-                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN)
-                //
-                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN)
-                //
+        return DetachedCriteria.forClass(StateAction.class) //
+                .setProjection(Projections.max("precedence")) //
+                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN).createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.isNotNull("precedence")) //

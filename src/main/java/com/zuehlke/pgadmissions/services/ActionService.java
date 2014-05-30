@@ -80,8 +80,7 @@ public class ActionService {
                 return new ActionOutcome(invoker, resource, actionDAO.getRedirectAction(duplicateResource, action, invoker));
             }
         }
-        
-        validateAction(resource, invoker, action);
+
         PrismAction nextAction = executeStateTransition(operativeResource, resource, invoker, action, comment);
         PrismResource nextActionResource = resource.getEnclosingResource(nextAction.getResourceType());
         return new ActionOutcome(invoker, nextActionResource, nextAction);
@@ -96,13 +95,18 @@ public class ActionService {
             entityService.save(resource);
             PrismResourceTransient codableResource = (PrismResourceTransient) resource;
             codableResource.setCode(codableResource.generateCode());
+        } else {
+            // TODO project creation
+            validateAction(resource, invoker, action);
         }
+
 
         if (stateTransition.isDoPostComment()) {
             comment.setCreatedTimestamp(new DateTime());
             entityService.save(comment);
+            entityService.flush();
         }
-        
+
         executeRoleTransitions(stateTransition, resource, invoker, comment);
         comment.setRole(Joiner.on("|").join(roleService.getActionInvokerRoles(invoker, resource, action)));
         return stateTransition.getTransitionAction().getId();

@@ -79,7 +79,7 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //
                         .add(Restrictions.eq("user.parentUser", user))) //
-                .add(Restrictions.eq("userAccount.enabled", true)).addOrder(Order.desc("stateActionAssignment.raisesUrgentFlag")) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
                 .uniqueResult();
     }
 
@@ -104,7 +104,8 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //
                         .add(Restrictions.eq("user.parentUser", user))) //
-                .add(Restrictions.eq("userAccount.enabled", true)).addOrder(Order.desc("stateActionAssignment.raisesUrgentFlag")) //
+                .add(Restrictions.eq("userAccount.enabled", true))//
+                .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.asc("action.id")) //
                 .list();
     }

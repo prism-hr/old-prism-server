@@ -80,7 +80,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
-    @Valid
     private List<Comment> comments = new ArrayList<Comment>();
 
     @OneToMany(cascade = CascadeType.ALL)

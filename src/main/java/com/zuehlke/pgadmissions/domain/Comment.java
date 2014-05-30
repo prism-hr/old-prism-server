@@ -172,9 +172,6 @@ public class Comment implements Serializable {
     @Column(name = "creator_ip_address")
     private String creatorIpAddress;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "comment")
-    private Set<CommentAssignedUser> commentAssignedUser = Sets.newHashSet();
-
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
@@ -188,11 +185,11 @@ public class Comment implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id")
-    private Set<AppointmentTimeslot> availableAppointmentTimeslots = Sets.newHashSet();
+    private Set<AppointmentTimeslot> appointmentTimeslots = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id")
-    private Set<AppointmentPreference> availableAppointmentPreferences = Sets.newHashSet();
+    private Set<AppointmentPreference> appointmentPreferences = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -523,7 +520,7 @@ public class Comment implements Serializable {
     }
 
     public Set<CommentAssignedUser> getCommentAssignedUsers() {
-        return commentAssignedUser;
+        return commentAssignedUsers;
     }
 
     public DateTime getCreatedTimestamp() {
@@ -538,8 +535,12 @@ public class Comment implements Serializable {
         return documents;
     }
 
-    public Set<AppointmentTimeslot> getAvailableAppointmentTimeslots() {
-        return availableAppointmentTimeslots;
+    public Set<AppointmentTimeslot> getAppointmentTimeslots() {
+        return appointmentTimeslots;
+    }
+
+    public Set<AppointmentPreference> getAppointmentPreferences() {
+        return appointmentPreferences;
     }
 
     public void addDocument(Document document) {

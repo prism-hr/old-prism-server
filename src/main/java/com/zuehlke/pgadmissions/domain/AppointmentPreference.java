@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -18,6 +19,7 @@ public class AppointmentPreference implements Serializable {
     @GeneratedValue
     private Integer id;
 
+    @ManyToOne
     @JoinColumn(name = "comment_appointment_timeslot_id")
     private AppointmentTimeslot appointmentTimeslot;
 

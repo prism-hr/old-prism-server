@@ -100,7 +100,7 @@ public class InterviewService {
         AppointmentTimeslot timeslot = null;
         AssignInterviewersComment assignInterviewersComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(applicationForm,
                 PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
-        for (AppointmentTimeslot t : assignInterviewersComment.getAvailableAppointmentTimeslots()) {
+        for (AppointmentTimeslot t : assignInterviewersComment.getAppointmentTimeslots()) {
             if (t.getId().equals(timeslotId)) {
                 timeslot = t;
             }

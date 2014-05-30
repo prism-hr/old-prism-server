@@ -27,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
-import com.zuehlke.pgadmissions.services.WorkflowService;
 
 @Service
 public class ScheduledMailSendingService extends AbstractMailSendingService {
@@ -43,9 +42,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Autowired
     private ApplicationContext applicationContext;
-
-    @Autowired
-    private WorkflowService applicationFormUserRoleService;
 
     @Autowired
     private OpportunitiesService opportunitiesService;
@@ -79,21 +75,17 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         log.trace("Finished sending opportunity request notification to users");
     }
 
-    @Transactional
     public List<Integer> getUsersForTaskNotification(Date baselineDate) {
-        applicationFormUserRoleService.updateUrgentApplications();
         return userDAO.getUsersDueTaskNotification(baselineDate);
     }
 
     @Transactional
     public List<Integer> getUsersForTaskReminder(Date baselineDate) {
-        applicationFormUserRoleService.updateUrgentApplications();
         return userDAO.getUsersDueTaskReminder(baselineDate);
     }
 
     @Transactional
     public List<Integer> getUsersForUpdateNotification(Date baselineDate) {
-        applicationFormUserRoleService.updateUrgentApplications();
         return userDAO.getUsersDueUpdateNotification(baselineDate);
     }
 

@@ -23,8 +23,8 @@ public class ApplicationDocument {
     private Document personalStatement;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "cv_id")
-    private Document cv = null;
+    @JoinColumn(name = "cv_id", nullable = false)
+    private Document cv;
 
     @OneToOne(mappedBy = "applicationDocument", fetch = FetchType.LAZY)
     private Application application;

@@ -99,7 +99,6 @@ public class PrismWorkflowTest {
         User applicant = registerAndActivateApplicant(program, "Kuba", "Fibinger", "kuba@fibinger.pl");
 
         Comment createApplicationComment = new Comment().withCreatedTimestamp(new DateTime()).withUser(applicant);
-        commentService.save(createApplicationComment);
         Application application = new Application().withInitialData(applicant, program, null);
         ActionOutcome actionOutcome = actionService.executeAction(application, applicant, PrismAction.PROGRAM_CREATE_APPLICATION, createApplicationComment);
         Application createdApplication = (Application) actionOutcome.getResource();

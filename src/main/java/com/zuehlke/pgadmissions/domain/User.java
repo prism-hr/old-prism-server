@@ -17,7 +17,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.Valid;
 
 import org.apache.solr.analysis.LowerCaseFilterFactory;
 import org.apache.solr.analysis.StandardTokenizerFactory;
@@ -36,6 +35,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @AnalyzerDef(name = "userAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = { @TokenFilterDef(factory = LowerCaseFilterFactory.class) })
@@ -53,7 +53,7 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
     @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
-    @Column(name = "first_name")
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
@@ -68,19 +68,18 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
     @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
-    @Column(name = "last_name")
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
     @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "activation_code")
+    @Column(name = "activation_code", nullable = false)
     private String activationCode;
 
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    @Valid
+    @OneToMany(mappedBy = "user")
     private List<Comment> comments = new ArrayList<Comment>();
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -95,10 +94,10 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     private User parentUser;
 
     @OneToMany(mappedBy = "user")
-    private Set<UserRole> userRoles;
+    private Set<UserRole> userRoles = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
-    private List<ProgramExport> programExports = new ArrayList<ProgramExport>();
+    private Set<ProgramExport> programExports = Sets.newHashSet();
 
     @JoinColumn(name = "user_account_id")
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -184,7 +183,7 @@ public class User implements UserDetails, Comparable<User>, Serializable {
         this.parentUser = parentUser;
     }
 
-    public List<ProgramExport> getProgramExports() {
+    public Set<ProgramExport> getProgramExports() {
         return programExports;
     }
 

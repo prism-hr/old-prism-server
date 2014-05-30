@@ -44,9 +44,6 @@ public class UserService {
     private MailSendingService mailService;
 
     @Autowired
-    private WorkflowService applicationFormUserRoleService;
-
-    @Autowired
     private EntityService entityService;
     
     public void save(User user) {

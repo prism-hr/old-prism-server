@@ -15,10 +15,10 @@ public class CustomQuestionVersion {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "comment_custom__id")
+    @JoinColumn(name = "comment_custom__id", nullable = false)
     private CustomQuestion customQuestion;
 
-    @Column(name = "content")
+    @Column(name = "content", nullable = false)
     private String content;
 
     public Integer getId() {

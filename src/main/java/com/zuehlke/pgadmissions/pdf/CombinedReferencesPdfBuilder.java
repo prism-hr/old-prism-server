@@ -14,7 +14,7 @@ import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 
 @Component
@@ -23,7 +23,7 @@ public class CombinedReferencesPdfBuilder extends AbstractPdfModelBuilder {
     @Value("${email.address.to}")
     private String emailAddressTo;
     
-    public void build(final ReferenceComment referenceComment, final OutputStream outputStream) {
+    public void build(final Comment referenceComment, final OutputStream outputStream) {
         try {
             Document document = new Document(PageSize.A4, 50, 50, 100, 50);
             PdfWriter writer = PdfWriter.getInstance(document, outputStream);

@@ -14,7 +14,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
-@Table(name = "APPLICATION_FORM_ADDITIONAL_INFO")
+@Table(name = "APPLICATION_ADDITIONAL_INFO")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class AdditionalInformation {
 
@@ -22,7 +22,7 @@ public class AdditionalInformation {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "has_convictions")
+    @Column(name = "has_convictions", nullable = false)
     private Boolean hasConvictions;
 
     @Column(name = "convictions_text")

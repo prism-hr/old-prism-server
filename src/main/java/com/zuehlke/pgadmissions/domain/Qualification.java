@@ -24,47 +24,47 @@ public class Qualification {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "subject")
+    @Column(name = "subject", nullable = false)
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
     private String subject;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
     private String title;
 
-    @Column(name = "start_date")
+    @Column(name = "start_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate startDate;
 
-    @Column(name = "award_date")
+    @Column(name = "award_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate awardDate;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
-    @Column(name = "qualification_language")
+    @Column(name = "qualification_language", nullable = false)
     private String language;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "qualification_type_id")
+    @JoinColumn(name = "qualification_type_id", nullable = false)
     private QualificationType type;
 
-    @Column(name = "grade")
+    @Column(name = "grade", nullable = false)
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
     private String grade;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "document_id")
+    @JoinColumn(name = "document_id", nullable = false)
     private Document document;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "institution_id")
+    @JoinColumn(name = "institution_id", nullable = false)
     private ImportedInstitution institution;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_id")
+    @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
     private Application application;
 
-    @Column(name = "completed")
+    @Column(name = "completed", nullable = false)
     private Boolean completed;
 
     @Column(name = "include_in_export")

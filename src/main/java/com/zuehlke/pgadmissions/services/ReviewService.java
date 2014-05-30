@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
@@ -27,9 +26,6 @@ public class ReviewService {
     private MailSendingService mailService;
 
     @Autowired
-    private WorkflowService applicationFormUserRoleService;
-
-    @Autowired
     private StateDAO stateDAO;
 
     @Autowired
@@ -38,7 +34,7 @@ public class ReviewService {
     @Autowired
     private CommentService commentService;
 
-    public void moveApplicationToReview(int applicationId, AssignReviewersComment comment) {
+    public void moveApplicationToReview(int applicationId, Comment comment) {
         Application application = applicationsService.getById(applicationId);
         User user = userService.getCurrentUser();
         Comment latestAssignReviewersComment = applicationsService.getLatestStateChangeComment(application, PrismAction.APPLICATION_ASSIGN_REVIEWERS);
@@ -61,8 +57,6 @@ public class ReviewService {
         comment.setApplication(application);
         commentService.save(comment);
 
-        applicationFormUserRoleService.movedToReviewStage(comment);
-        applicationFormUserRoleService.applicationUpdated(application, comment.getUser());
     }
 
 }

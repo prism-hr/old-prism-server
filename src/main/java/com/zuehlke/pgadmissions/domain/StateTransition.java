@@ -1,19 +1,22 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.enums.StateTransitionEvaluation;
 
 @Entity
-@Table(name = "STATE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "transition_state_id" }) })
+@Table(name = "STATE_TRANSITION")
 public class StateTransition {
 
     @Id
@@ -34,6 +37,11 @@ public class StateTransition {
     @Column(name = "state_transition_evaluation_id")
     @Enumerated(EnumType.STRING)
     private StateTransitionEvaluation evaluation;
+
+    @ManyToMany
+    @JoinTable(name = "state_transition_propagation", joinColumns = { @JoinColumn(name = "state_transition_id", nullable = false) }, //
+    inverseJoinColumns = { @JoinColumn(name = "propagated_state_transition_id", nullable = false) })
+    private Set<StateTransition> propagatedStates;
 
     @Column(name = "display_order")
     private Integer displayOrder;

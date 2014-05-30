@@ -38,20 +38,20 @@ public class Document implements Serializable {
     private Date createdTimestamp;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "document_type")
+    @Column(name = "document_type", nullable = false)
     private DocumentType type;
 
-    @Column(name = "content_type")
+    @Column(name = "content_type", nullable = false)
     private String contentType;
 
-    @Column(name = "file_name")
+    @Column(name = "file_name", nullable = false)
     private String fileName;
 
     @Column(name = "file_content", nullable = false)
     @Type(type = "binary")
     private byte[] content;
 
-    @Column(name = "is_referenced")
+    @Column(name = "is_referenced", nullable = false)
     private boolean isReferenced;
 
     @Transient

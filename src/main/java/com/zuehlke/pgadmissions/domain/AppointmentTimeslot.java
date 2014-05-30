@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,16 +11,14 @@ import org.joda.time.DateTime;
 
 @Entity
 @Table(name = "COMMENT_APPOINTMENT_TIMESLOT")
-public class AppointmentTimeslot implements Serializable {
-
-    private static final long serialVersionUID = -730673777949846236L;
+public class AppointmentTimeslot {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    @Column(name = "timeslot_datetime")
+    @Column(name = "timeslot_datetime", nullable = false)
     private DateTime dateTime;
 
     public Integer getId() {

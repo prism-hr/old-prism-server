@@ -25,6 +25,7 @@ public class UserAccount {
     private Integer id;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Transient
@@ -41,6 +42,7 @@ public class UserAccount {
     @Temporal(TemporalType.TIMESTAMP)
     private Date applicationListLastAccessTimestamp;
 
+    @Column(name = "enabled", nullable = false)
     private boolean enabled;
 
     public String getPassword() {

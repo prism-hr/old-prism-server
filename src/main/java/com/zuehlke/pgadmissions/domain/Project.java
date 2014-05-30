@@ -56,7 +56,7 @@ public class Project extends Advert {
     private LocalDate dueDate;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
     
     @Column(name = "created_timestamp", nullable = false)

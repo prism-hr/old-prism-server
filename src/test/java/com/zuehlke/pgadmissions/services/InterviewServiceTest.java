@@ -25,10 +25,6 @@ public class InterviewServiceTest {
 
     @Mock
     @InjectIntoByType
-    private WorkflowService applicationFormUserRoleService;
-
-    @Mock
-    @InjectIntoByType
     private ApplicationContext applicationContext;
 
     // @Test

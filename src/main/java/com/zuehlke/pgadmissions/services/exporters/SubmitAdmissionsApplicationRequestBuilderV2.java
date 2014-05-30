@@ -49,10 +49,10 @@ import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SourceOfInterestTp;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
-import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
@@ -424,7 +424,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         }
 
         // FIXME get offer recommended comment (this class should be Spring component so it can access CommentService)
-        OfferRecommendedComment offerRecommendedComment = null; // applicationForm.getOfferRecommendedComment();
+        Comment offerRecommendedComment = null; // applicationForm.getOfferRecommendedComment();
         if (offerRecommendedComment != null) {
             if (isOverseasStudent && BooleanUtils.isTrue(applicationForm.getProgram().getRequireProjectDefinition())) {
                 applicationTp.setAtasStatement(offerRecommendedComment.getPositionDescription());

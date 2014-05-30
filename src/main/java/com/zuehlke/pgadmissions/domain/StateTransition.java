@@ -38,19 +38,17 @@ public class StateTransition {
     @Enumerated(EnumType.STRING)
     private StateTransitionEvaluation evaluation;
 
-    @ManyToMany
-    @JoinTable(name = "state_transition_propagation", joinColumns = { @JoinColumn(name = "state_transition_id", nullable = false) }, //
-    inverseJoinColumns = { @JoinColumn(name = "propagated_state_transition_id", nullable = false) })
-    private Set<StateTransition> propagatedStates;
-
     @Column(name = "display_order")
     private Integer displayOrder;
 
     @Column(name = "do_post_comment", nullable = false)
     private boolean doPostComment;
     
+    @ManyToMany
+    @JoinTable(name = "state_transition_propagation", joinColumns = { @JoinColumn(name = "state_transition_id", nullable = false) }, //
+    inverseJoinColumns = { @JoinColumn(name = "propagated_state_transition_id", nullable = false) })
+    private Set<StateTransition> propagatedStateTransitions;
     
-
     public Integer getId() {
         return id;
     }
@@ -105,6 +103,10 @@ public class StateTransition {
 
     public void setDoPostComment(boolean doPostComment) {
         this.doPostComment = doPostComment;
+    }
+
+    public Set<StateTransition> getPropagatedStateTransitions() {
+        return propagatedStateTransitions;
     }
 
 }

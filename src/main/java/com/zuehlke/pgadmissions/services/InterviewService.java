@@ -14,8 +14,6 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.InterviewScheduleComment;
-import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
@@ -77,7 +75,7 @@ public class InterviewService {
 
     }
 
-    public void postVote(InterviewVoteComment interviewVoteComment, User user) {
+    public void postVote(Comment interviewVoteComment, User user) {
         Application application = interviewVoteComment.getApplication();
         Comment assignInterviewersComment = applicationsService.getLatestStateChangeComment(application, PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
         commentService.save(interviewVoteComment);
@@ -100,7 +98,7 @@ public class InterviewService {
             throw new RuntimeException("Incorrect timeslotId " + timeslotId + ", application: " + applicationForm.getCode());
         }
 
-        InterviewScheduleComment scheduleComment = createInterviewScheduleComment(user, applicationForm, interviewConfirmDTO.getInterviewInstructions(),
+        Comment scheduleComment = createInterviewScheduleComment(user, applicationForm, interviewConfirmDTO.getInterviewInstructions(),
                 interviewConfirmDTO.getInterviewInstructions());
         commentService.save(scheduleComment);
 
@@ -124,7 +122,7 @@ public class InterviewService {
     // interview.getParticipants().addAll(participants);
     // }
 
-    protected void sendConfirmationEmails(InterviewScheduleComment comment) {
+    protected void sendConfirmationEmails(Comment comment) {
         final Application applicationForm = comment.getApplication();
         try {
             mailService.sendInterviewConfirmationToApplicant(applicationForm);
@@ -138,8 +136,8 @@ public class InterviewService {
         }
     }
 
-    private InterviewScheduleComment createInterviewScheduleComment(User user, Application application, String interviewInstructions, String locationUrl) {
-        InterviewScheduleComment scheduleComment = new InterviewScheduleComment();
+    private Comment createInterviewScheduleComment(User user, Application application, String interviewInstructions, String locationUrl) {
+        Comment scheduleComment = new Comment();
         scheduleComment.setContent("");
         scheduleComment.setIntervieweeInstructions(interviewInstructions);
         scheduleComment.setInterviewLocation(locationUrl);

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -52,7 +52,7 @@ public class FileDownloadController {
 
     @RequestMapping(value = "/reference", method = RequestMethod.GET)
     public void downloadReferenceDocument(@RequestParam("referenceId") String encryptedReferenceId, HttpServletResponse response) throws IOException {
-        ReferenceComment reference = (ReferenceComment) commentService.getById(encryptionHelper.decryptToInteger(encryptedReferenceId));
+        Comment reference = commentService.getById(encryptionHelper.decryptToInteger(encryptedReferenceId));
         User currentUser = userService.getCurrentUser();
         // FIXME check if user can see reference
         if (reference == null /* || !currentUser.canSeeReference(reference) */) {

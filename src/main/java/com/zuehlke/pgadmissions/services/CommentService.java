@@ -15,10 +15,8 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
-import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.dto.StateChangeDTO;
 import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
@@ -84,7 +82,7 @@ public class CommentService {
         // return;
         // }
 
-        ReviewComment reviewComment = new ReviewComment();
+        Comment reviewComment = new Comment();
         reviewComment.setApplication(application);
         reviewComment.setUser(user);
         reviewComment.setDeclinedResponse(true);
@@ -112,7 +110,7 @@ public class CommentService {
 
         switch (status) {
         case APPLICATION_VALIDATION:
-            ValidationComment validationComment = new ValidationComment();
+            Comment validationComment = new Comment();
             validationComment.setQualified(stateChangeDTO.getQualifiedForPhd());
             validationComment.setCompetentInWorkLanguage(stateChangeDTO.getEnglishCompentencyOk());
             validationComment.setResidenceStatus(stateChangeDTO.getHomeOrOverseas());

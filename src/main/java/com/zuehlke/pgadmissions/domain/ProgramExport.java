@@ -1,15 +1,15 @@
 package com.zuehlke.pgadmissions.domain;
 
+import static javax.persistence.CascadeType.ALL;
+
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -18,10 +18,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
 
 @Entity
-@Table(name = "PROGRAM_EXPORT")
+@Table(name = "program_export")
 public class ProgramExport implements Serializable {
 
     private static final long serialVersionUID = 2739581666640036046L;
@@ -34,7 +35,7 @@ public class ProgramExport implements Serializable {
     @Column(name = "title")
     private String title;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -42,9 +43,9 @@ public class ProgramExport implements Serializable {
     @Column(name = "program_export_format_id")
     private ProgramExportFormat format;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "RESEARCH_OPPORTUNITIES_FEED_PROGRAM_LINK", joinColumns = @JoinColumn(name = "feed_id"), inverseJoinColumns = @JoinColumn(name = "program_id"))
-    private List<Program> programs = new ArrayList<Program>();
+    @ManyToMany(cascade = ALL)
+    @JoinTable(name = "program_export_program", joinColumns = { @JoinColumn(name = "program_export_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
+    private Set<Program> programs = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -70,20 +71,16 @@ public class ProgramExport implements Serializable {
         this.format = format;
     }
 
-    public List<Program> getPrograms() {
-        return programs;
-    }
-
-    public void setPrograms(List<Program> programs) {
-        this.programs = programs;
-    }
-
     public String getTitle() {
         return title;
     }
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Set<Program> getPrograms() {
+        return programs;
     }
 
     public ProgramExport withId(Integer id) {
@@ -110,4 +107,5 @@ public class ProgramExport implements Serializable {
         this.programs.addAll(Arrays.asList(programs));
         return this;
     }
+
 }

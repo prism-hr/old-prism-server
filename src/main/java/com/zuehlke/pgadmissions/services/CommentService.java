@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.CommentDAO;
+import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
@@ -52,14 +53,14 @@ public class CommentService {
     private SystemService systemService;
     
     @Autowired
-    private EntityService entityService;
+    private EntityDAO entityDAO;
     
     public Comment getById(int id) {
-        return entityService.getById(Comment.class, id);
+        return entityDAO.getById(Comment.class, id);
     }
     
     public void save(Comment comment) {
-        entityService.save(comment);
+        entityDAO.save(comment);
     }
     
     public Comment getLastComment(PrismResourceTransient resource) {

@@ -21,8 +21,8 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.pdf.CombinedReferencesPdfBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
@@ -80,7 +80,7 @@ public class PorticoAttachmentsZipCreator {
 
     protected void addReferences(Application applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException, CouldNotCreateAttachmentsPack {
-        List<ReferenceComment> references = porticoService.getReferencesToSendToPortico(applicationForm);
+        List<Comment> references = porticoService.getReferencesToSendToPortico(applicationForm);
         String filename;
         switch (references.size()) {
         case 2:

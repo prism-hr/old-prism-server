@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -43,9 +42,6 @@ public class RefereeService {
 
     @Autowired
     private ApplicationService applicationFormService;
-
-    @Autowired
-    private WorkflowService applicationFormUserRoleService;
 
     @Autowired
     private ApplicationCopyHelper applicationFormCopyHelper;
@@ -133,7 +129,7 @@ public class RefereeService {
         return reference;
     }
 
-    public ReferenceComment postCommentOnBehalfOfReferee(Application applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) {
+    public Comment postCommentOnBehalfOfReferee(Application applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) {
         Referee referee;
         if (BooleanUtils.isTrue(refereesAdminEditDTO.getContainsRefereeData())) {
             referee = createReferee(refereesAdminEditDTO, applicationForm);
@@ -146,7 +142,7 @@ public class RefereeService {
 //            processRefereesRoles(Arrays.asList(referee));
 //        }
 
-        ReferenceComment referenceComment = createReferenceComment(refereesAdminEditDTO, referee, applicationForm);
+        Comment referenceComment = createReferenceComment(refereesAdminEditDTO, referee, applicationForm);
         applicationForm.getApplicationComments().add(referenceComment);
         commentService.save(referenceComment);
 
@@ -154,7 +150,6 @@ public class RefereeService {
         // if ( applicationForm.getReferencesToSendToPortico().size() < 2) {
         // referee.setSendToUCL(true);
         // }
-        applicationFormUserRoleService.referencePosted(referenceComment);
 
         // FIXME call mail sending service
         // saveReferenceAndSendMailNotifications(referee);
@@ -177,8 +172,8 @@ public class RefereeService {
         return referee;
     }
 
-    private ReferenceComment createReferenceComment(RefereesAdminEditDTO refereesAdminEditDTO, Referee referee, Application applicationForm) {
-        ReferenceComment referenceComment = new ReferenceComment();
+    private Comment createReferenceComment(RefereesAdminEditDTO refereesAdminEditDTO, Referee referee, Application applicationForm) {
+        Comment referenceComment = new Comment();
         referenceComment.setApplication(applicationForm);
         referenceComment.setUser(referee.getUser());
         referenceComment.setDelegateUser(userService.getCurrentUser());

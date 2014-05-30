@@ -23,29 +23,29 @@ public class ProgramInstance {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "deadline")
+    @Column(name = "deadline", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate applicationDeadline;
 
-    @Column(name = "start_date")
+    @Column(name = "start_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate applicationStartDate;
 
-    @Column(name = "academic_year")
+    @Column(name = "academic_year", nullable = false)
     private String academicYear;
 
-    @Column(name = "identifier")
+    @Column(name = "sequence_identifier", nullable = false)
     private String identifier;
 
     @ManyToOne
-    @JoinColumn(name = "program_study_option_id")
+    @JoinColumn(name = "program_study_option_id", nullable = false)
     private StudyOption studyOption;
 
-    @Column(name = "enabled")
+    @Column(name = "enabled", nullable = false)
     private boolean enabled;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "program_id")
+    @JoinColumn(name = "program_id", nullable = false)
     private Program program;
 
     public void setId(Integer id) {

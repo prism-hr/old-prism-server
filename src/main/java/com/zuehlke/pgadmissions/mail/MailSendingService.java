@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -174,7 +174,7 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendInterviewVoteNotificationToInterviewerParticipants(AssignInterviewersComment assignInterviewersComment) {
+    public void sendInterviewVoteNotificationToInterviewerParticipants(Comment assignInterviewersComment) {
         Application application = assignInterviewersComment.getApplication();
         String subject = resolveMessage(NotificationTemplateId.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST, application);
         PrismEmailMessage message = null;

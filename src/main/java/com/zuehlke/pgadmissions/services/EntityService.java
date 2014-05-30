@@ -34,7 +34,7 @@ public class EntityService {
         }
         return persistentResource;
     }
-
+    
     public void save(Object entity) {
         entityDAO.save(entity);
     }
@@ -46,5 +46,9 @@ public class EntityService {
     public void delete(Object entity) {
         entityDAO.delete(entity);
     }
-    
+
+    public void flush() {
+        entityDAO.flush();
+    }
+
 }

@@ -87,4 +87,8 @@ public class EntityDAO {
         sessionFactory.getCurrentSession().delete(entity);
     }
 
+    public void flush() {
+        sessionFactory.getCurrentSession().flush();
+    }
+
 }

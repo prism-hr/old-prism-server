@@ -19,10 +19,6 @@ public class ReviewServiceTest {
     @InjectIntoByType
     private MailSendingService mailService;
 
-    @Mock
-    @InjectIntoByType
-    private WorkflowService applicationFormUserRoleService;
-
     @TestedObject
     private ReviewService reviewService;
 

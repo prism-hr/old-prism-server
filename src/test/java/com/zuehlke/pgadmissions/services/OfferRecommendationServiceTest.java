@@ -33,10 +33,6 @@ public class OfferRecommendationServiceTest {
     @InjectIntoByType
     private MailSendingService mailSendingServiceMock;
 
-    @Mock
-    @InjectIntoByType
-    private WorkflowService applicationFormUserRoleService;
-
     @TestedObject
     private OfferRecommendationService service;
 

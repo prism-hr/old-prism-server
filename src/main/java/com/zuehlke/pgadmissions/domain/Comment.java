@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -9,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -30,23 +28,21 @@ import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 
 @Entity
 @Table(name = "COMMENT")
-public class Comment implements Serializable {
-
-    private static final long serialVersionUID = 2861325991249900547L;
+public class Comment {
 
     @Id
     @GeneratedValue
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "program_id")
     private Program program;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "application_id")
     private Application application;
 
@@ -57,11 +53,11 @@ public class Comment implements Serializable {
     @Column(name = "role_id")
     private String role;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "delegate_user_id")
     private User delegateUser;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "delegate_role_id")
     private Role delegateRole;
 
@@ -76,7 +72,7 @@ public class Comment implements Serializable {
     @Lob
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "transition_state_id")
     private State transitionState;
 
@@ -172,9 +168,6 @@ public class Comment implements Serializable {
     @Column(name = "creator_ip_address")
     private String creatorIpAddress;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "comment")
-    private Set<CommentAssignedUser> commentAssignedUser = Sets.newHashSet();
-
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
@@ -186,13 +179,13 @@ public class Comment implements Serializable {
     @JoinColumn(name = "comment_id")
     private Set<Document> documents = Sets.newHashSet();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "comment_id")
-    private Set<AppointmentTimeslot> availableAppointmentTimeslots = Sets.newHashSet();
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "comment_id", nullable = false)
+    private Set<AppointmentTimeslot> appointmentTimeslots = Sets.newHashSet();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "comment_id")
-    private Set<AppointmentPreference> availableAppointmentPreferences = Sets.newHashSet();
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "comment_id", nullable = false)
+    private Set<AppointmentPreference> appointmentPreferences = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -523,7 +516,7 @@ public class Comment implements Serializable {
     }
 
     public Set<CommentAssignedUser> getCommentAssignedUsers() {
-        return commentAssignedUser;
+        return commentAssignedUsers;
     }
 
     public DateTime getCreatedTimestamp() {
@@ -538,8 +531,12 @@ public class Comment implements Serializable {
         return documents;
     }
 
-    public Set<AppointmentTimeslot> getAvailableAppointmentTimeslots() {
-        return availableAppointmentTimeslots;
+    public Set<AppointmentTimeslot> getAppointmentTimeslots() {
+        return appointmentTimeslots;
+    }
+
+    public Set<AppointmentPreference> getAppointmentPreferences() {
+        return appointmentPreferences;
     }
 
     public void addDocument(Document document) {

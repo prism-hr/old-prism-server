@@ -12,11 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AppointmentTimeslot;
-import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.InterviewScheduleComment;
-import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
@@ -41,15 +38,12 @@ public class InterviewService {
     private CommentService commentService;
 
     @Autowired
-    private WorkflowService applicationFormUserRoleService;
-
-    @Autowired
     private ApplicationContext applicationContext;
 
-    public void moveApplicationToInterview(User user, final AssignInterviewersComment interviewComment, Application applicationForm) {
+    public void moveApplicationToInterview(User user, final Comment interviewComment, Application applicationForm) {
         interviewComment.setApplication(applicationForm);
-     // TODO: remove class and integrate with workflow engine
-     //   applicationsService.setApplicationStatus(applicationForm, PrismState.APPLICATION_INTERVIEW);
+        // TODO: remove class and integrate with workflow engine
+        // applicationsService.setApplicationStatus(applicationForm, PrismState.APPLICATION_INTERVIEW);
 
         // TODO add interview status transient field to the comment and use it here
         // if (!interview.getTakenPlace()) {
@@ -79,17 +73,12 @@ public class InterviewService {
         // applicationFormUserRoleService.validationStageCompleted(applicationForm);
         // }
 
-        applicationFormUserRoleService.movedToInterviewStage(interviewComment);
-        applicationFormUserRoleService.applicationUpdated(applicationForm, user);
     }
 
-    public void postVote(InterviewVoteComment interviewVoteComment, User user) {
+    public void postVote(Comment interviewVoteComment, User user) {
         Application application = interviewVoteComment.getApplication();
-        AssignInterviewersComment assignInterviewersComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(application,
-                PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
+        Comment assignInterviewersComment = applicationsService.getLatestStateChangeComment(application, PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
         commentService.save(interviewVoteComment);
-        applicationFormUserRoleService.interviewParticipantResponded(interviewVoteComment);
-        applicationFormUserRoleService.applicationUpdated(interviewVoteComment.getApplication(), user);
         mailService.sendInterviewVoteConfirmationToAdministrators(application, user);
     }
 
@@ -98,9 +87,8 @@ public class InterviewService {
 
         Integer timeslotId = interviewConfirmDTO.getTimeslotId();
         AppointmentTimeslot timeslot = null;
-        AssignInterviewersComment assignInterviewersComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(applicationForm,
-                PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
-        for (AppointmentTimeslot t : assignInterviewersComment.getAvailableAppointmentTimeslots()) {
+        Comment assignInterviewersComment = applicationsService.getLatestStateChangeComment(applicationForm, PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
+        for (AppointmentTimeslot t : assignInterviewersComment.getAppointmentTimeslots()) {
             if (t.getId().equals(timeslotId)) {
                 timeslot = t;
             }
@@ -110,15 +98,13 @@ public class InterviewService {
             throw new RuntimeException("Incorrect timeslotId " + timeslotId + ", application: " + applicationForm.getCode());
         }
 
-        InterviewScheduleComment scheduleComment = createInterviewScheduleComment(user, applicationForm, interviewConfirmDTO.getInterviewInstructions(),
+        Comment scheduleComment = createInterviewScheduleComment(user, applicationForm, interviewConfirmDTO.getInterviewInstructions(),
                 interviewConfirmDTO.getInterviewInstructions());
         commentService.save(scheduleComment);
 
         // TODO set due date
         // thisBean.assignInterviewDueDate(scheduleComment, applicationForm);
         thisBean.sendConfirmationEmails(scheduleComment);
-        applicationFormUserRoleService.interviewConfirmed(scheduleComment);
-        applicationFormUserRoleService.applicationUpdated(applicationForm, user);
     }
 
     // FIXME change to createAssignedUsers, used in moveApplicationToInterview() method
@@ -136,7 +122,7 @@ public class InterviewService {
     // interview.getParticipants().addAll(participants);
     // }
 
-    protected void sendConfirmationEmails(InterviewScheduleComment comment) {
+    protected void sendConfirmationEmails(Comment comment) {
         final Application applicationForm = comment.getApplication();
         try {
             mailService.sendInterviewConfirmationToApplicant(applicationForm);
@@ -150,8 +136,8 @@ public class InterviewService {
         }
     }
 
-    private InterviewScheduleComment createInterviewScheduleComment(User user, Application application, String interviewInstructions, String locationUrl) {
-        InterviewScheduleComment scheduleComment = new InterviewScheduleComment();
+    private Comment createInterviewScheduleComment(User user, Application application, String interviewInstructions, String locationUrl) {
+        Comment scheduleComment = new Comment();
         scheduleComment.setContent("");
         scheduleComment.setIntervieweeInstructions(interviewInstructions);
         scheduleComment.setInterviewLocation(locationUrl);

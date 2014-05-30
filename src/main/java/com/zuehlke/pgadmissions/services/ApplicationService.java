@@ -64,9 +64,6 @@ public class ApplicationService {
     @Autowired
     private RoleService roleService;
 
-    @Autowired
-    private WorkflowService workflowService;
-    
     public Application create(User user, Advert advert) {
         Application application = new Application();
         application.setUser(user);
@@ -141,7 +138,6 @@ public class ApplicationService {
     }
 
     public void saveOrUpdateApplicationSection(Application application) {
-        workflowService.applicationUpdated(application, userService.getCurrentUser());
     }
 
     public Date getDefaultStartDateForApplication(Application application) {

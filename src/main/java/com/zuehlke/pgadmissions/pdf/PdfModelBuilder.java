@@ -38,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
@@ -46,7 +47,6 @@ import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
@@ -976,8 +976,9 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                                         doc.getFileName()), e);
                     }
                 }
-            } else if (obj instanceof ReferenceComment) {
-                ReferenceComment reference = (ReferenceComment) obj;
+            } else if (obj instanceof Comment) {
+                // TODO make sure it's only reference comment
+                Comment reference = (Comment) obj;
                 pdfDocument.add(new Chunk("APPENDIX (" + integer + ")").setLocalDestination(integer.toString()));
 
                 pdfDocument.add(new Chunk(" - Reference"));

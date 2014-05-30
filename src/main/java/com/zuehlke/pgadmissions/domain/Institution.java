@@ -52,7 +52,7 @@ public class Institution extends PrismResource {
     @JoinColumn(name = "institution_domicile_id", nullable = false)
     private InstitutionDomicile domicile;
   
-    @Column(name = "code")
+    @Column(name = "code", nullable = false)
     private String code;
 
     @Column(name = "name", nullable = false)

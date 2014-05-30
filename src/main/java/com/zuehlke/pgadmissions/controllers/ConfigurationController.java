@@ -20,8 +20,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,7 +51,6 @@ import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
-import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 
 @Controller
 @RequestMapping("/configuration")
@@ -80,9 +77,6 @@ public class ConfigurationController {
 
     @Autowired
     private ScoringDefinitionParser scoringDefinitionParser;
-
-    @Autowired
-    private FeedbackCommentValidator dummyCommentValidator;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -288,12 +282,6 @@ public class ConfigurationController {
             }
         }
         return Collections.emptyMap();
-    }
-
-    @InitBinder(value = "dummyComment")
-    public void registerBinders(WebDataBinder binder) {
-        binder.setValidator(dummyCommentValidator);
-        // binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/fakeSubmitScores")

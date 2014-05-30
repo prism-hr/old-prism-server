@@ -46,10 +46,6 @@ public class UserServiceResetPasswordTest {
     @InjectIntoByType
     private MailSendingService mailServiceMock;
 
-    @Mock
-    @InjectIntoByType
-    private WorkflowService applicationFormUserRoleServiceMock;
-
     @TestedObject
     private UserService service;
 

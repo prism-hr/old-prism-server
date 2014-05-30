@@ -13,7 +13,6 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.PorticoService;
-import com.zuehlke.pgadmissions.services.WorkflowService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testUclIntegrationContext.xml")
@@ -50,8 +49,6 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
     private ApplicationDAO applicationFormDAOMock;
 
     private ApplicationService applicationsServiceMock;
-
-    private WorkflowService applicationFormUserRoleServiceMock;
 
     private ApplicationContext applicationContextMock;
 

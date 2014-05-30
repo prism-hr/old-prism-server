@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
@@ -7,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -23,10 +25,16 @@ public abstract class ImportedEntity {
     @GeneratedValue
     private Integer id;
 
+    @JoinColumn(name = "institution_id", nullable = false)
+    private Institution institution;
+
+    @Column(name = "code", nullable = false)
     private String code;
 
+    @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "enabled", nullable = false)
     private boolean enabled;
 
     public Integer getId() {
@@ -35,6 +43,14 @@ public abstract class ImportedEntity {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
     }
 
     public String getCode() {

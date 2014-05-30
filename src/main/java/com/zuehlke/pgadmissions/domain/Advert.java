@@ -32,7 +32,7 @@ public abstract class Advert extends PrismResourceTransient {
     @Column(name = "description", nullable = false)
     private String description = "Advert coming soon!";
 
-    @Column(name = "study_duration")
+    @Column(name = "study_duration", nullable = false)
     private Integer studyDuration;
 
     @Size(max = 2000, message = "A maximum of 1000 characters are allowed.")

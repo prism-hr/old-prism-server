@@ -26,28 +26,30 @@ public class EmploymentPosition {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_id")
+    @JoinColumn(name = "application_id", nullable = false)
     private Application application;
 
-    @Column(name = "employer_name")
+    @Column(name = "employer_name", nullable = false)
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 150)
     private String employerName;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "address_id")
+    @JoinColumn(name = "address_id", nullable = false)
     @Valid
     private Address employerAddress;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
+    @Column(name = "position", nullable = false)
     private String position;
 
-    @Column(name = "is_current")
+    @Column(name = "is_current", nullable = false)
     private boolean current;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 250)
+    @Column(name = "remit", nullable = false)
     private String remit;
 
-    @Column(name = "start_date")
+    @Column(name = "start_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate startDate;
 

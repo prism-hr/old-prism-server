@@ -29,7 +29,7 @@ public class NotificationTemplate implements Serializable {
     @Enumerated(EnumType.STRING)
     private NotificationTemplateId id;
 
-    @Column(name = "notification_type_id")
+    @Column(name = "notification_type_id", nullable = false)
     @Enumerated(EnumType.STRING)
     private NotificationType type;
 

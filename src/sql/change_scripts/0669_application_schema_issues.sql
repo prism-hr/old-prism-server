@@ -292,3 +292,10 @@ DELETE
 FROM ROLE_TRANSITION_TYPE
 WHERE id = "REMOVE"
 ;
+
+/* Unique index in role transition exclusion */
+
+ALTER TABLE ROLE_TRANSITION_EXCLUSION
+	DROP INDEX role_transition_id,
+	ADD UNIQUE INDEX (role_transition_id, role_id)
+;

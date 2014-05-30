@@ -66,8 +66,8 @@ public class CommentService {
         return commentDAO.getLastCommentOfType(resource, clazz, author);
     }
     
-    public List<User> getAssignedUsersByRole(Comment comment, Role role, User invoker) {
-        return commentDAO.getAssignedUsersByRole(comment, role, invoker);
+    public List<User> getAssignedUsers(Comment comment, Role role, User invoker) {
+        return commentDAO.getAssignedUsers(comment, role, invoker);
     }
     
     // TODO: rewrite below

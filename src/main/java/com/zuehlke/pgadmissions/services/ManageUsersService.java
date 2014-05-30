@@ -25,11 +25,11 @@ public class ManageUsersService {
     @Autowired
     private SystemService systemService;
 
-    public User setUserRoles(String firstname, String lastname, String email, boolean replaceRoles, PrismResource resource,
+    public User setUserRoles(String firstname, String lastname, String email, boolean overwriteRoles, PrismResource resource,
             Authority... authorities) {
         User user = userService.getOrCreateUser(firstname, lastname, email);
-        if (replaceRoles) {
-            roleService.removeRoles(user, resource);
+        if (overwriteRoles) {
+            roleService.removeUserRoles(user, resource);
         }
         for (Authority authority : authorities) {
             roleService.getOrCreateUserRole(systemService.getSystem(), user, roleService.getById(authority));

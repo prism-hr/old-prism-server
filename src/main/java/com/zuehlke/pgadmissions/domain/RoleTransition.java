@@ -51,7 +51,7 @@ public class RoleTransition {
     private Integer maximumPermitted;
 
     @ManyToMany
-    @JoinTable(name = "role_transition_exclusion", joinColumns = { @JoinColumn(name = "role_transition_id", nullable = false) }, //
+    @JoinTable(name = "ROLE_TRANSITION_EXCLUSION", joinColumns = { @JoinColumn(name = "role_transition_id", nullable = false) }, //
             inverseJoinColumns = { @JoinColumn(name = "role_id", nullable = false) }, //
             uniqueConstraints = { @UniqueConstraint(columnNames = { "role_transition_id", "role_id" }) })
     private Set<Role> excludedRoles = Sets.newHashSet();

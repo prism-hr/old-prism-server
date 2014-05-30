@@ -135,12 +135,12 @@ public class RoleService {
 
     public HashMap<User, RoleTransition> getUserRoleTransitions(StateTransition stateTransition, PrismResource resource, User invoker, Comment comment) {
         HashMap<User, RoleTransition> transitions = Maps.newHashMap();
-        transitions.putAll(getUserRoleTransitions(stateTransition, resource, invoker));
+        transitions.putAll(getUserRoleUpdateTransitions(stateTransition, resource, invoker));
         transitions.putAll(getUserCreationRoleTransitions(stateTransition, resource, invoker, comment));
         return transitions;
     }
 
-    private HashMap<User, RoleTransition> getUserRoleTransitions(StateTransition stateTransition, PrismResource resource, User invoker) {
+    public HashMap<User, RoleTransition> getUserRoleUpdateTransitions(StateTransition stateTransition, PrismResource resource, User invoker) {
         HashMap<User, RoleTransition> userRoleTransitions = Maps.newHashMap();
         
         HashMultimap<RoleTransition, User> roleTransitionUsers = roleDAO.getRoleTransitionUsers(stateTransition, resource, invoker);

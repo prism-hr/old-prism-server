@@ -46,13 +46,15 @@ public class UserService {
     @Autowired
     private WorkflowService applicationFormUserRoleService;
 
+    @Autowired
+    private EntityService entityService;
+    
     public void save(User user) {
         userDAO.save(user);
     }
 
     public User getById(int id) {
-        // TODO Auto-generated method stub
-        return null;
+        return entityService.getById(User.class, id);
     }
 
     public User getCurrentUser() {

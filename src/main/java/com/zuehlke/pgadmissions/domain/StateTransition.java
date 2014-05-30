@@ -40,6 +40,8 @@ public class StateTransition {
 
     @Column(name = "do_post_comment", nullable = false)
     private boolean doPostComment;
+    
+    
 
     public Integer getId() {
         return id;

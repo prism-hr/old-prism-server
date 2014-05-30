@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -9,10 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
-import com.zuehlke.pgadmissions.dao.RoleDAO.UserRoleTransition;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
+import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
@@ -42,14 +43,14 @@ public class ActionService {
     @Autowired
     private UserService userService;
 
-    public void validateAction(PrismResource resource, User user, PrismAction action) {
-        if (!checkActionAvailable(resource, user, action)) {
+    public void validateAction(PrismResource resource, User invoker, PrismAction action) {
+        if (!checkActionAvailable(resource, invoker, action)) {
             throw new CannotExecuteActionException(resource);
         }
     }
 
-    public boolean checkActionAvailable(PrismResource resource, User user, PrismAction action) {
-        return actionDAO.getPermittedAction(user, resource, action) != null;
+    public boolean checkActionAvailable(PrismResource resource, User invoker, PrismAction action) {
+        return roleService.getActionRoles(resource, action).size() == 0 || actionDAO.getPermittedAction(invoker, resource, action) != null;
     }
 
     public List<StateAction> getPermittedActions(User user, PrismResource resource) {
@@ -70,9 +71,7 @@ public class ActionService {
     }
 
     public ActionOutcome executeAction(PrismResource operativeResource, PrismResource resource, User invoker, PrismAction action, Comment comment) {
-        if (!userService.checkUserEnabled(invoker) || !checkActionEnabled(operativeResource, action)) {
-            throw new CannotExecuteActionException(operativeResource);
-        }
+        validateAction(resource, invoker, action);
 
         if (operativeResource != resource) {
             PrismResource duplicateResource = entityService.getDuplicateEntity(resource);
@@ -81,9 +80,9 @@ public class ActionService {
             }
         }
         
-        validateAction(resource, invoker, action);
         PrismAction nextAction = executeStateTransition(operativeResource, resource, invoker, action, comment);
         PrismResource nextActionResource = resource.getEnclosingResource(nextAction.getResourceType());
+        
         return new ActionOutcome(invoker, nextActionResource, nextAction);
     }
 
@@ -102,21 +101,17 @@ public class ActionService {
             comment.setCreatedTimestamp(new DateTime());
             entityService.save(comment);
         }
-        
+
         executeRoleTransitions(stateTransition, resource, invoker, comment);
         comment.setRole(Joiner.on("|").join(roleService.getActionInvokerRoles(invoker, resource, action)));
         return stateTransition.getTransitionAction().getId();
     }
 
     private void executeRoleTransitions(StateTransition stateTransition, PrismResource resource, User invoker, Comment comment) {
-        List<UserRoleTransition> userRoleTransitions = roleService.getUserRoleTransitions(stateTransition, resource, invoker, comment);
-        for (UserRoleTransition userRoleTransition : userRoleTransitions) {
-            roleService.executeRoleTransition(resource, userRoleTransition);
+        HashMap<User, RoleTransition> userRoleTransitions = roleService.getUserRoleTransitions(stateTransition, resource, invoker, comment);
+        for (User user : userRoleTransitions.keySet()) {
+            roleService.executeRoleTransition(resource, user, userRoleTransitions.get(user));
         }
-    }
-
-    private boolean checkActionEnabled(PrismResource resource, PrismAction action) {
-        return !actionDAO.getValidAction(resource, action).isEmpty();
     }
 
 }

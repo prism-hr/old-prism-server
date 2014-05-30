@@ -2,9 +2,7 @@ package com.zuehlke.pgadmissions.controllers.usermanagement;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
-import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 
 import java.util.Arrays;
@@ -115,17 +113,6 @@ public class ManageUsersControllerTest {
 
         assertEquals(2, programs.size());
         assertTrue(programs.containsAll(Arrays.asList(program1, program2)));
-    }
-
-    @Test
-    public void shouldReturnCorrectPossibleRoles() {
-        replay();
-
-        List<Authority> authorities = controller.getAuthorities();
-        assertThat(authorities, contains( //
-                Authority.PROGRAM_ADMINISTRATOR, //
-                Authority.PROGRAM_APPROVER, //
-                Authority.PROGRAM_VIEWER));
     }
 
     @Test(expected = ResourceNotFoundException.class)

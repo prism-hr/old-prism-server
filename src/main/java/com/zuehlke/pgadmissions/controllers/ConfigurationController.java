@@ -266,6 +266,7 @@ public class ConfigurationController {
 
     @ModelAttribute("programs")
     public List<Program> getPrograms() {
+        // TODO: We can write this as a single query now
         User user = userService.getCurrentUser();
         if (roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR)) {
             return programsService.getAllEnabledPrograms();

@@ -12,7 +12,6 @@ import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.PROGR
 import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
 import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.SYSTEM_IMPORT_ERROR_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.SYSTEM_PASSWORD_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.SYSTEM_REGISTRATION_REQUEST;
 
 import java.util.Collection;
 import java.util.Date;
@@ -24,8 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Application;
@@ -271,26 +268,6 @@ public class MailSendingService extends AbstractMailSendingService {
         } catch (Exception e) {
             log.error("Error while sending reset password email: {}", e);
         }
-    }
-    
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendNewUserInvitation(Integer userId) {
-        PrismEmailMessage message = null;
-        User user = userDAO.getById(userId);
-        String subject = resolveMessage(SYSTEM_REGISTRATION_REQUEST, (Object[]) null);
-        
-        User admin = roleService.getInvitingAdmin(user);
-
-        try {
-            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "newUser", "admin", "host" }, new Object[] { user, admin, getHostName() });
-            message = buildMessage(user, subject, modelBuilder.build(), SYSTEM_REGISTRATION_REQUEST);
-            sendEmail(message);
-            userDAO.save(user);
-        } catch (Exception e) {
-            log.error("Error while sending reference reminder email to referee: ", e);
-            return false;
-        }
-        return true;
     }
 
 }

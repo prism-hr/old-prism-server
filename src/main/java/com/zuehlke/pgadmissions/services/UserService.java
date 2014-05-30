@@ -43,9 +43,6 @@ public class UserService {
     @Autowired
     private MailSendingService mailService;
 
-    @Autowired
-    private WorkflowService applicationFormUserRoleService;
-
     public void save(User user) {
         userDAO.save(user);
     }

@@ -11,11 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
@@ -39,9 +37,6 @@ public class ApprovalService {
     private MailSendingService mailSendingService;
 
     @Autowired
-    private WorkflowService applicationFormUserRoleService;
-
-    @Autowired
     private ProgramInstanceService programInstanceService;
 
     @Autowired
@@ -56,50 +51,18 @@ public class ApprovalService {
     public void confirmOrDeclineSupervision(Application form, ConfirmSupervisionDTO confirmSupervisionDTO) {
         ApprovalService thisBean = applicationContext.getBean(ApprovalService.class);
 
-        AssignSupervisorsComment approvalComment = (AssignSupervisorsComment) applicationsService.getLatestStateChangeComment(form,
+        Comment approvalComment = applicationsService.getLatestStateChangeComment(form,
                 PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
-        SupervisionConfirmationComment supervisionConfirmationComment = thisBean.createSupervisionConfirmationComment(approvalComment, confirmSupervisionDTO);
 
-        if (BooleanUtils.isTrue(supervisionConfirmationComment.getDeclinedResponse())) {
+        if (BooleanUtils.isTrue(approvalComment.getDeclinedResponse())) {
             form.setDueDate(new LocalDate());
         }
 
-        applicationFormUserRoleService.supervisionConfirmed(supervisionConfirmationComment);
     }
 
-    protected SupervisionConfirmationComment createSupervisionConfirmationComment(AssignSupervisorsComment approvalComment,
-            ConfirmSupervisionDTO confirmSupervisionDTO) {
-        // TODO use approval comment (before: approvalRound), fix tests and ftl's.
-
-        SupervisionConfirmationComment supervisionConfirmationComment = new SupervisionConfirmationComment();
-        // supervisionConfirmationComment.setApplication(approvalComment.getApplication());
-        // supervisionConfirmationComment.setDate(new Date());
-        // supervisionConfirmationComment.setSupervisor(supervisor);
-        // supervisionConfirmationComment.setType(CommentType.SUPERVISION_CONFIRMATION);
-        // supervisionConfirmationComment.setUser(userService.getCurrentUser());
-        // supervisionConfirmationComment.setComment(StringUtils.EMPTY);
-        // supervisionConfirmationComment.setSecondarySupervisor(approvalComment.getSecondarySupervisor());
-        //
-        // if (BooleanUtils.isTrue(confirmSupervisionDTO.getConfirmedSupervision())) {
-        // supervisionConfirmationComment.setProjectTitle(confirmSupervisionDTO.getProjectTitle());
-        // supervisionConfirmationComment.setProjectAbstract(confirmSupervisionDTO.getProjectAbstract());
-        // supervisionConfirmationComment.setRecommendedStartDate(confirmSupervisionDTO.getRecommendedStartDate());
-        // Boolean recommendedConditionsAvailable = confirmSupervisionDTO.getRecommendedConditionsAvailable();
-        // supervisionConfirmationComment.setRecommendedConditionsAvailable(recommendedConditionsAvailable);
-        // if (BooleanUtils.isTrue(recommendedConditionsAvailable)) {
-        // supervisionConfirmationComment.setRecommendedConditions(confirmSupervisionDTO.getRecommendedConditions());
-        // } else {
-        // supervisionConfirmationComment.setRecommendedConditions(null);
-        // }
-        // }
-        //
-        // commentService.save(supervisionConfirmationComment);
-        return supervisionConfirmationComment;
-    }
-
-    public AssignSupervisorsComment initiateApprovalComment(String applicationId) {
+    public Comment initiateApprovalComment(String applicationId) {
         Application application = applicationsService.getByApplicationNumber(applicationId);
-        AssignSupervisorsComment approvalComment = new AssignSupervisorsComment();
+        Comment approvalComment = new Comment();
         Comment latestApprovalComment = applicationsService.getLatestStateChangeComment(application, PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
         Project project = application.getProject();
         LocalDate startDate = application.getProgramDetails().getStartDate();
@@ -133,7 +96,7 @@ public class ApprovalService {
      // TODO: remove class and integrate with workflow engine
   //      applicationsService.setApplicationStatus(form, PrismState.APPLICATION_APPROVAL);
 
-        AssignSupervisorsComment approvalComment = new AssignSupervisorsComment();
+        Comment approvalComment = new Comment();
         approvalComment.setApplication(form);
         approvalComment.setContent(StringUtils.EMPTY);
         approvalComment.setPositionDescription(newComment.getPositionDescription());
@@ -144,8 +107,6 @@ public class ApprovalService {
         approvalComment.setUser(userService.getCurrentUser());
 
         commentService.save(approvalComment);
-        applicationFormUserRoleService.movedToApprovalStage(approvalComment);
-        applicationFormUserRoleService.applicationUpdated(form, initiator);
     }
 
     private void checkSendToPorticoStatus(Application form) {

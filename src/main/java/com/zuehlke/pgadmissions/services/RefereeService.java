@@ -45,9 +45,6 @@ public class RefereeService {
     private ApplicationService applicationFormService;
 
     @Autowired
-    private WorkflowService applicationFormUserRoleService;
-
-    @Autowired
     private ApplicationCopyHelper applicationFormCopyHelper;
 
     public Referee getById(Integer id) {
@@ -154,7 +151,6 @@ public class RefereeService {
         // if ( applicationForm.getReferencesToSendToPortico().size() < 2) {
         // referee.setSendToUCL(true);
         // }
-        applicationFormUserRoleService.referencePosted(referenceComment);
 
         // FIXME call mail sending service
         // saveReferenceAndSendMailNotifications(referee);

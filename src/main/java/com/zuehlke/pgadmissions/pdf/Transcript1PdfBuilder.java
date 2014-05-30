@@ -12,7 +12,7 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -39,7 +39,7 @@ public class Transcript1PdfBuilder extends AbstractPdfModelBuilder {
             document.add(table);
             document.add(addSectionSeparators());
 
-            AssignSupervisorsComment latestApprovalRound = (AssignSupervisorsComment) applicationsService.getLatestStateChangeComment(form, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
+            Comment latestApprovalRound = applicationsService.getLatestStateChangeComment(form, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
             if (latestApprovalRound != null) {
                 if (StringUtils.isBlank(latestApprovalRound.getEquivalentExperience())) {
                     document.add(new Paragraph(String.format("Approval Round Comment:\n%s", latestApprovalRound.getEquivalentExperience())));

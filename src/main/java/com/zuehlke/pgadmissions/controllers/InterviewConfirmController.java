@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
@@ -24,7 +24,6 @@ import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.InterviewConfirmDTOValidator;
 
 @Controller
@@ -44,15 +43,10 @@ public class InterviewConfirmController {
     private InterviewService interviewService;
 
     @Autowired
-    private WorkflowService applicationFormUserRoleService;
-
-    @Autowired
     private ActionService actionService;
 
     @Autowired
     private InterviewConfirmDTOValidator interviewConfirmDTOValidator;
-
-
 
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(@RequestParam String applicationId) {
@@ -91,21 +85,21 @@ public class InterviewConfirmController {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS);
-        
-        AssignInterviewersComment latestComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(applicationForm, PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
-        
+
+        Comment latestComment = applicationsService.getLatestStateChangeComment(applicationForm,
+                PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
+
         InterviewConfirmDTO interviewConfirmDTO = new InterviewConfirmDTO();
-        
+
         interviewConfirmDTO.setInterviewInstructions(latestComment.getIntervieweeInstructions());
         interviewConfirmDTO.setLocationUrl(latestComment.getInterviewLocation());
         modelMap.put("interviewConfirmDTO", interviewConfirmDTO);
-        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return INTERVIEW_CONFIRM_PAGE;
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public String submitInterviewConfirmation(@ModelAttribute(value = "interviewConfirmDTO") @Valid InterviewConfirmDTO interviewConfirmDTO,
-                    BindingResult result, ModelMap modelMap) {
+            BindingResult result, ModelMap modelMap) {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS);
@@ -113,10 +107,10 @@ public class InterviewConfirmController {
         if (result.hasErrors()) {
             return INTERVIEW_CONFIRM_PAGE;
         }
-        
+
         interviewService.confirmInterview(user, applicationForm, interviewConfirmDTO);
         applicationsService.save(applicationForm);
-        
+
         return "redirect:/applications?messageCode=interview.confirm&application=" + applicationForm.getCode();
     }
 

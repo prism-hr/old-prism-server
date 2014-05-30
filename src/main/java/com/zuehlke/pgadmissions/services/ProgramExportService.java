@@ -116,7 +116,7 @@ public class ProgramExportService {
         defaultFeedSmall.setId(format == ProgramExportFormat.SMALL ? DEFAULT_SMALL_FEED_ID : DEFAULT_LARGE_FEED_ID);
         String title = format == ProgramExportFormat.SMALL ? "My Opportunities Feed - Small" : "My Opportunities Feed - Large";
         defaultFeedSmall.setTitle(title);
-        defaultFeedSmall.setPrograms(defaultPrograms);
+        defaultFeedSmall.getPrograms().addAll(defaultPrograms);
         defaultFeedSmall.setUser(user);
         defaultFeedSmall.setFormat(format);
         return defaultFeedSmall;

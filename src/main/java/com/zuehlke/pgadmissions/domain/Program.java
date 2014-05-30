@@ -58,7 +58,7 @@ public class Program extends Advert {
     @Column(name = "is_imported", nullable = false)
     private boolean imported;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
+    @OneToMany(mappedBy = "program")
     @OrderBy("applicationStartDate")
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
 

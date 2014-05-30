@@ -110,7 +110,7 @@ public class ProgramExportServiceTest {
 
         EasyMock.verify(programServiceMock, daoMock);
 
-        Assert.assertEquals(saveNewFeed.getPrograms().get(0), program);
+        Assert.assertEquals(saveNewFeed.getPrograms().iterator().next(), program);
         Assert.assertEquals(saveNewFeed.getTitle(), "hello");
         Assert.assertEquals(saveNewFeed.getFormat(), ProgramExportFormat.LARGE);
     }
@@ -180,7 +180,7 @@ public class ProgramExportServiceTest {
 
         EasyMock.verify(programServiceMock, daoMock, userServiceMock);
 
-        assertEquals(saveNewFeed.getPrograms().get(0), program);
+        assertEquals(saveNewFeed.getPrograms().iterator().next(), program);
         assertEquals(saveNewFeed.getTitle(), "hello1");
         assertEquals(saveNewFeed.getFormat(), ProgramExportFormat.SMALL);
     }

@@ -108,10 +108,9 @@ public class Application extends PrismResourceTransient {
     @Valid
     private ProgramDetails programDetails;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "application")
     @OrderBy("date")
-    @JoinColumn(name = "application_id")
-    private List<Comment> applicationComments = new ArrayList<Comment>();
+    private List<Comment> applicationComments = Lists.newArrayList();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id")

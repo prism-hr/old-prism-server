@@ -18,4 +18,6 @@ public abstract class PrismResourceTransient extends PrismResource {
     
     public abstract String generateCode();
     
+    public abstract LocalDate getDueDateBaseline();
+    
 }

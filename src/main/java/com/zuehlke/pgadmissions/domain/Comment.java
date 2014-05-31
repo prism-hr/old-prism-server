@@ -75,6 +75,9 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "transition_state_id")
     private State transitionState;
+    
+    @Column(name = "user_specified_due_date")
+    private LocalDate userSpecifiedDueDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "application_qualified")
@@ -281,6 +284,14 @@ public class Comment {
 
     public void setTransitionState(State transitionState) {
         this.transitionState = transitionState;
+    }
+    
+    public LocalDate getUserSpecifiedDueDate() {
+        return userSpecifiedDueDate;
+    }
+    
+    public void setUserSpecifiedDueDate(LocalDate userSpecifiedDueDate) {
+        this.userSpecifiedDueDate = userSpecifiedDueDate;
     }
 
     public ValidationQuestionOptions getQualified() {

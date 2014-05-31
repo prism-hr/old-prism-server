@@ -66,6 +66,23 @@ public class RoleService {
     public void deleteUserRole(UserRole userRole) {
         entityService.delete(userRole);
     }
+    
+    public void executeUserRoleTransitions(StateTransition stateTransition, PrismResource resource, User invoker, Comment comment) {
+        HashMap<User, RoleTransition> userRoleTransitions = Maps.newHashMap();
+        userRoleTransitions.putAll(getUserRoleUpdateTransitions(stateTransition, resource, invoker));
+        
+        if (comment != null) {
+            userRoleTransitions.putAll(getUserCreationRoleTransitions(stateTransition, resource, invoker, comment));
+        }
+        
+        for (User user : userRoleTransitions.keySet()) {
+            executeRoleTransition(resource, user, userRoleTransitions.get(user));
+        }
+    }
+    
+    public void executeDelegateUserRoleTransitions(PrismResource resource, StateTransition delegateStateTransition, User invoker) {
+        executeUserRoleTransitions(delegateStateTransition, resource, invoker, null);
+    }
 
     public void executeRoleTransition(PrismResource resource, User user, RoleTransition roleTransition) {
         switch (roleTransition.getRoleTransitionType()) {
@@ -133,14 +150,7 @@ public class RoleService {
         return roleDAO.getActionInvokerRoles(user, resource, action);
     }
 
-    public HashMap<User, RoleTransition> getUserRoleTransitions(StateTransition stateTransition, PrismResource resource, User invoker, Comment comment) {
-        HashMap<User, RoleTransition> transitions = Maps.newHashMap();
-        transitions.putAll(getUserRoleUpdateTransitions(stateTransition, resource, invoker));
-        transitions.putAll(getUserCreationRoleTransitions(stateTransition, resource, invoker, comment));
-        return transitions;
-    }
-
-    public HashMap<User, RoleTransition> getUserRoleUpdateTransitions(StateTransition stateTransition, PrismResource resource, User invoker) {
+    private HashMap<User, RoleTransition> getUserRoleUpdateTransitions(StateTransition stateTransition, PrismResource resource, User invoker) {
         HashMap<User, RoleTransition> userRoleTransitions = Maps.newHashMap();
         
         HashMultimap<RoleTransition, User> roleTransitionUsers = roleDAO.getRoleTransitionUsers(stateTransition, resource, invoker);

@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.services;
 
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.IUniqueResource;
+import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
 
 @Service
 @Transactional
@@ -47,8 +49,13 @@ public class EntityService {
         entityDAO.delete(entity);
     }
 
-    public void flush() {
-        entityDAO.flush();
+    public LocalDate getResourceDueDate(PrismResourceTransient resource, LocalDate customDueDateBaseline) {
+        LocalDate dueDateBaseline = customDueDateBaseline;
+        if (dueDateBaseline == null) {
+            dueDateBaseline = resource.getDueDateBaseline();
+        }
+        // TODO: State duration service ... add the service level
+        return dueDateBaseline;
     }
 
 }

@@ -54,7 +54,7 @@ public class StateService {
     public StateTransition getStateTransition(PrismResource resource, PrismAction action, Comment comment) {
         StateTransition stateTransition = null;
 
-        List<StateTransition> potentialStateTransitions = getPotentialStateTransitions(resource, action);
+        List<StateTransition> potentialStateTransitions = stateDAO.getStateTransitions(resource, action);
         if (potentialStateTransitions.size() > 1) {
             try {
                 String method = potentialStateTransitions.get(0).getEvaluation().getMethodName();
@@ -145,10 +145,6 @@ public class StateService {
             }
         }
         return stateDAO.getStateTransition(stateTransitions, transitionState);
-    }
-
-    private List<StateTransition> getPotentialStateTransitions(PrismResource resource, PrismAction action) {
-        return stateDAO.getStateTransitions(resource, action);
     }
 
     private void transitionResourceState(PrismResourceTransient resource, StateTransition stateTransition, LocalDate userSpecifiedDueDate) {

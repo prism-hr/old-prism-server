@@ -155,8 +155,7 @@ public class StateService {
         resource.setState(stateTransition.getTransitionState());
 
         LocalDate dueDate = userSpecifiedDueDate;
-        if (dueDate == null
-                && actionDAO.getValidResourceAction(resource, PrismAction.valueOf(resource.getClass().getSimpleName().toUpperCase() + "_ESCALATE")) != null) {
+        if (dueDate == null && actionDAO.getValidResourceAction(resource, PrismAction.valueOf(resource.getResourceType().toString() + "_ESCALATE")) != null) {
             LocalDate dueDateBaseline = resource.getDueDateBaseline();
             Integer stateDurationSeconds = stateDAO.getStateDuration(resource);
             dueDate = dueDateBaseline.plusDays(stateDurationSeconds != null ? stateDurationSeconds / SECONDS_IN_DAY : 0);

@@ -80,11 +80,11 @@ public class ActionService {
 
         StateTransition delegateStateTransition = stateTransition.getDelegateStateTransition();
         if (delegateStateTransition != null) {
-            stateService.executeDelegateStateTransition(operativeResource, delegateStateTransition, comment.getUser());
+            stateService.executeDelegateStateTransition(resource, delegateStateTransition, comment.getUser());
         }
         
         if (!stateTransition.getPropagatedStateTransitions().isEmpty()) {
-            stateService.executePropagatedStateTransitions(operativeResource, stateTransition);
+            stateService.executePropagatedStateTransitions(resource, stateTransition);
         }
         
         // TODO: dispatch update emails

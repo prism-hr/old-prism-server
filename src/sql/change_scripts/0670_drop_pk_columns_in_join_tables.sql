@@ -27,8 +27,6 @@
 
 /* State duration expiry not null */
 
-/* Is require due date in state, or find out if there is no transition state? */
-
 /* Remove fertile and assessment states (unused) */
 
 /* User specified due date in comment */

@@ -23,15 +23,6 @@ public class State {
     @ManyToOne
     @JoinColumn(name = "parent_state_id", nullable = false)
     private State parentState;
-
-    @Column(name = "require_due_date", nullable = false)
-    private boolean requireDueDate;
-    
-    @Column(name = "is_assessment_state", nullable = false)
-    private boolean assessmentState;
-    
-    @Column(name = "is_fertile_state", nullable = false)
-    private boolean fertileState;
     
     public PrismState getId() {
         return id;
@@ -47,14 +38,6 @@ public class State {
 
     public void setParentState(State parentState) {
         this.parentState = parentState;
-    }
-
-    public boolean isRequireDueDate() {
-        return requireDueDate;
-    }
-    
-    public void setRequireDueDate(boolean requireDueDate) {
-        this.requireDueDate = requireDueDate;
     }
     
     public State withId(PrismState id) {

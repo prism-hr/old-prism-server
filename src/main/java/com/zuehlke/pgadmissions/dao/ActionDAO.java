@@ -12,15 +12,15 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 
 @Repository
 public class ActionDAO {
-
+    
     private SessionFactory sessionFactory;
 
     public ActionDAO() {
@@ -30,10 +30,12 @@ public class ActionDAO {
     public ActionDAO(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
-
-    public Action getById(PrismAction actionId) {
-        return (Action) sessionFactory.getCurrentSession().createCriteria(Action.class) //
-                .add(Restrictions.eq("id", actionId)) //
+    
+    public PrismAction getValidResourceAction(PrismResourceTransient resource, PrismAction action) {
+        return (PrismAction) sessionFactory.getCurrentSession().createCriteria(StateAction.class)
+                .setProjection(Projections.property("action.id"))
+                .add(Restrictions.eq("state", resource.getState()))
+                .add(Restrictions.eq("action.id", action))
                 .uniqueResult();
     }
 
@@ -51,7 +53,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("precedence", 1))//
                 .add(Restrictions.eq("stateActionAssignments.defaultAction", true)).uniqueResult();
     }
-
+    
     public PrismAction getPermittedAction(User user, PrismResource resource, PrismAction action) {
         return (PrismAction) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action.id")) //

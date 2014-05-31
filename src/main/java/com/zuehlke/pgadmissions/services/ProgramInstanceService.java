@@ -14,16 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
-import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 
 @Service
 public class ProgramInstanceService {
-
-    private static final int CONSIDERATION_PERIOD_MONTHS = 1;
 
     @Autowired
     private ApplicationExportConfigurationService throttleService;
@@ -34,46 +30,50 @@ public class ProgramInstanceService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public LocalDate getEarliestPossibleStartDate(Application applicationForm) {
-        LocalDate result = null;
-        ProgramDetails details = applicationForm.getProgramDetails();
-        LocalDate today = new LocalDate();
-        LocalDate todayPlusConsiderationPeriod = today.plusMonths(CONSIDERATION_PERIOD_MONTHS);
-        for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
-            LocalDate applicationStartDate = instance.getApplicationStartDate();
-            boolean startDateInFuture = today.isBefore(applicationStartDate);
-            boolean beforeEndDate = todayPlusConsiderationPeriod.isBefore(instance.getApplicationDeadline());
-            boolean sameStudyOption = details.getStudyOption().getId().equals(instance.getStudyOption().getId());
-            if (applicationForm.getAdvert().isFertile() && isActive(instance) && (startDateInFuture || beforeEndDate) && sameStudyOption) {
-                if (startDateInFuture && (result == null || result.isAfter(applicationStartDate))) {
-                    result = applicationStartDate;
-                } else if (result == null || result.isAfter(todayPlusConsiderationPeriod)) {
-                    result = todayPlusConsiderationPeriod;
-                }
-            }
-        }
-        return result;
-    }
+// TODO: rewrite as a query    
+    
+//    public LocalDate getEarliestPossibleStartDate(Application applicationForm) {
+//        LocalDate result = null;
+//        ProgramDetails details = applicationForm.getProgramDetails();
+//        LocalDate today = new LocalDate();
+//        LocalDate todayPlusConsiderationPeriod = today.plusMonths(CONSIDERATION_PERIOD_MONTHS);
+//        for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
+//            LocalDate applicationStartDate = instance.getApplicationStartDate();
+//            boolean startDateInFuture = today.isBefore(applicationStartDate);
+//            boolean beforeEndDate = todayPlusConsiderationPeriod.isBefore(instance.getApplicationDeadline());
+//            boolean sameStudyOption = details.getStudyOption().getId().equals(instance.getStudyOption().getId());
+//            if (applicationForm.getAdvert().isFertile() && isActive(instance) && (startDateInFuture || beforeEndDate) && sameStudyOption) {
+//                if (startDateInFuture && (result == null || result.isAfter(applicationStartDate))) {
+//                    result = applicationStartDate;
+//                } else if (result == null || result.isAfter(todayPlusConsiderationPeriod)) {
+//                    result = todayPlusConsiderationPeriod;
+//                }
+//            }
+//        }
+//        return result;
+//    }
 
-    public boolean isPrefferedStartDateWithinBounds(Application applicationForm) {
-        return isPreferredStartDateWithinBounds(applicationForm, applicationForm.getProgramDetails(), applicationForm.getProgramDetails().getStartDate());
-    }
-
-    public boolean isPrefferedStartDateWithinBounds(Application applicationForm, LocalDate startDate) {
-        return isPreferredStartDateWithinBounds(applicationForm, applicationForm.getProgramDetails(), startDate);
-    }
-
-    private boolean isPreferredStartDateWithinBounds(Application applicationForm, ProgramDetails programDetails, LocalDate startDate) {
-        for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
-            boolean afterStartDate = startDate.isAfter(instance.getApplicationStartDate());
-            boolean beforeEndDate = startDate.isBefore(instance.getApplicationDeadline());
-            boolean sameStudyOption = programDetails.getStudyOption().getId().equals(instance.getStudyOption().getId());
-            if (applicationForm.getAdvert().isFertile() && isActive(instance) && afterStartDate && beforeEndDate && sameStudyOption) {
-                return true;
-            }
-        }
-        return false;
-    }
+// TODO: reconsider/rewrite as queries    
+    
+//    public boolean isPrefferedStartDateWithinBounds(Application applicationForm) {
+//        return isPreferredStartDateWithinBounds(applicationForm, applicationForm.getProgramDetails(), applicationForm.getProgramDetails().getStartDate());
+//    }
+//
+//    public boolean isPrefferedStartDateWithinBounds(Application applicationForm, LocalDate startDate) {
+//        return isPreferredStartDateWithinBounds(applicationForm, applicationForm.getProgramDetails(), startDate);
+//    }
+//
+//    private boolean isPreferredStartDateWithinBounds(Application applicationForm, ProgramDetails programDetails, LocalDate startDate) {
+//        for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
+//            boolean afterStartDate = startDate.isAfter(instance.getApplicationStartDate());
+//            boolean beforeEndDate = startDate.isBefore(instance.getApplicationDeadline());
+//            boolean sameStudyOption = programDetails.getStudyOption().getId().equals(instance.getStudyOption().getId());
+//            if (applicationForm.getAdvert().isFertile() && isActive(instance) && afterStartDate && beforeEndDate && sameStudyOption) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     public boolean isActive(ProgramInstance programInstance) {
         // TODO use program.isEnabled()

@@ -49,8 +49,6 @@ public class ApprovalService {
     private ApplicationContext applicationContext;
 
     public void confirmOrDeclineSupervision(Application form, ConfirmSupervisionDTO confirmSupervisionDTO) {
-        ApprovalService thisBean = applicationContext.getBean(ApprovalService.class);
-
         Comment approvalComment = applicationsService.getLatestStateChangeComment(form,
                 PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
 
@@ -82,9 +80,9 @@ public class ApprovalService {
             approvalComment.setPositionTitle(project.getTitle());
         }
 
-        if (!programInstanceService.isPrefferedStartDateWithinBounds(application, startDate)) {
-            startDate = programInstanceService.getEarliestPossibleStartDate(application);
-        }
+//        if (!programInstanceService.isPrefferedStartDateWithinBounds(application, startDate)) {
+//            startDate = programInstanceService.getEarliestPossibleStartDate(application);
+//        }
 
         approvalComment.setPositionProvisionalStartDate(startDate);
         commentService.save(approvalComment);

@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
-import com.zuehlke.pgadmissions.services.OpportunitiesService;
 
 @Service
 public class ScheduledMailSendingService extends AbstractMailSendingService {
@@ -42,9 +41,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Autowired
     private ApplicationContext applicationContext;
-
-    @Autowired
-    private OpportunitiesService opportunitiesService;
 
     public void sendDigestsToUsers() {
         ScheduledMailSendingService thisProxy = applicationContext.getBean(this.getClass());

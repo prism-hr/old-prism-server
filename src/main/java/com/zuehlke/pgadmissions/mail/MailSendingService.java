@@ -8,7 +8,6 @@ import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLI
 import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST;
 import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_PROVIDE_REFERENCE_REQUEST;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
 import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.SYSTEM_IMPORT_ERROR_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.SYSTEM_PASSWORD_NOTIFICATION;
@@ -24,11 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -178,9 +175,7 @@ public class MailSendingService extends AbstractMailSendingService {
         Application application = assignInterviewersComment.getApplication();
         String subject = resolveMessage(NotificationTemplateId.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST, application);
         PrismEmailMessage message = null;
-
-        List<User> recipients = Lists.newLinkedList();
-
+        
         for (CommentAssignedUser assignedUser : assignInterviewersComment.getCommentAssignedUsers()) {
             try {
                 List<User> admins = roleService.getProgramAdministrators(application.getProgram());
@@ -210,19 +205,6 @@ public class MailSendingService extends AbstractMailSendingService {
             } catch (Exception e) {
                 log.error("Error while sending interview vote confirmation email to administrator: " + administrator.getUsername(), e.getMessage());
             }
-        }
-    }
-
-    public void sendOpportunityRequestOutcome(OpportunityRequestComment comment) {
-        User user = comment.getOpportunityRequest().getAuthor();
-        PrismEmailMessage message = null;
-        String subject = resolveMessage(PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION);
-        try {
-            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "comment", "host" }, new Object[] { user, comment, getHostName() });
-            message = buildMessage(user, subject, modelBuilder.build(), PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION);
-            sendEmail(message);
-        } catch (Exception e) {
-            log.error("Error while sending opportunity request outcome confirmation: " + user.getUsername(), e.getMessage());
         }
     }
 

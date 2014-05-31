@@ -7,16 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -26,16 +22,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -45,7 +38,6 @@ import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
-import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -55,7 +47,6 @@ import com.zuehlke.pgadmissions.utils.GsonExclusionStrategies;
 import com.zuehlke.pgadmissions.utils.HibernateProxyTypeAdapter;
 import com.zuehlke.pgadmissions.validators.AbstractValidator;
 import com.zuehlke.pgadmissions.validators.AdvertClosingDateValidator;
-import com.zuehlke.pgadmissions.validators.OpportunityRequestValidator;
 
 import freemarker.template.TemplateException;
 
@@ -77,9 +68,6 @@ public class ProgramConfigurationController {
 
     @Autowired
     private EntityPropertyEditor<Domicile> domicilePropertyEditor;
-
-    @Resource(name = "programValidator")
-    private OpportunityRequestValidator opportunityRequestValidator;
 
     @Autowired
     private AdvertClosingDateValidator closingDateValidator;
@@ -103,9 +91,6 @@ public class ProgramConfigurationController {
     private ImportedEntityService importedEntityService;
 
     @Autowired
-    private OpportunitiesService opportunitiesService;
-
-    @Autowired
     private ProgramTypePropertyEditor programTypePropertyEditor;
 
     @Autowired
@@ -117,15 +102,6 @@ public class ProgramConfigurationController {
     public void customizeGsonBuilder() throws IOException {
         gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
                 .setExclusionStrategies(GsonExclusionStrategies.excludeClass(Program.class)).create();
-    }
-
-    @InitBinder("opportunityRequest")
-    public void registerPropertyEditorsForOpportunityRequest(WebDataBinder binder) {
-        binder.setValidator(opportunityRequestValidator);
-        binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
-        binder.registerCustomEditor(Program.class, programPropertyEditor);
-        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
-        binder.registerCustomEditor(ProgramType.class, programTypePropertyEditor);
     }
 
     @InitBinder("programClosingDate")
@@ -178,32 +154,6 @@ public class ProgramConfigurationController {
         result.put("linkToApply", templateRenderer.renderLink(dataMap));
 
         return gson.toJson(result);
-    }
-
-    @RequestMapping(value = "/saveProgramAdvert", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public String saveOpportunity(@Valid OpportunityRequest opportunityRequest, BindingResult result) {
-        Map<String, Object> map;
-        if (result.hasErrors()) {
-            map = FieldErrorUtils.populateMapWithErrors(result, applicationContext);
-            FieldError otherInstitutionError = result.getFieldError("otherInstitution");
-            if (otherInstitutionError != null && "institution.did.you.mean".equals(otherInstitutionError.getCode())) {
-                map.put("otherInstitution", ImmutableMap.of("errorCode", "institution.did.you.mean", "institutions", otherInstitutionError.getDefaultMessage()));
-            }
-        } else {
-            map = Maps.newHashMap();
-            User currentUser = getUser();
-            opportunityRequest.setAuthor(currentUser);
-            if (programsService.canChangeInstitution(currentUser, opportunityRequest)) {
-                Program program = programsService.saveProgramOpportunity(opportunityRequest);
-                map.put("success", (Object) true);
-                map.put("programCode", program.getCode());
-            } else {
-                opportunitiesService.createOpportunityRequest(opportunityRequest, false);
-                map.put("changeRequestCreated", (Object) true);
-            }
-        }
-        return gson.toJson(map);
     }
 
     @RequestMapping(value = "/addClosingDate", method = RequestMethod.POST)

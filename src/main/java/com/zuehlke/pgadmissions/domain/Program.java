@@ -337,4 +337,12 @@ public class Program extends Advert {
         return String.format("%010d", institution.getCode()) + "-" + postfix;
     }
 
+    @Override
+    public LocalDate getDueDateBaseline() {
+        if (state.isRequireDueDate()) {
+            return new LocalDate();
+        }
+        return null;
+    }
+
 }

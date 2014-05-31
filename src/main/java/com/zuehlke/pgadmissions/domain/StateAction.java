@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -43,10 +42,6 @@ public class StateAction {
 
     @OneToMany(mappedBy = "stateAction")
     private Set<StateTransition> stateTransitions = new HashSet<StateTransition>();
-    
-    @OneToOne
-    @JoinColumn (name = "id")
-    private StateAction delegateStateAction;
 
     public Integer getId() {
         return id;
@@ -94,14 +89,6 @@ public class StateAction {
 
     public void setPrecedence(Integer precedence) {
         this.precedence = precedence;
-    }
-
-    public StateAction getDelgateStateAction() {
-        return delegateStateAction;
-    }
-
-    public void setDelegateStateAction(StateAction delegateStateAction) {
-        this.delegateStateAction = delegateStateAction;
     }
 
     public Set<StateActionAssignment> getStateActionAssignments() {

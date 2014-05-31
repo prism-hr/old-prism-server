@@ -195,4 +195,16 @@ public class Project extends Advert {
         return program.getCode() + "-" + createdTimestamp.getYear() + "-" + String.format("%010d", getId());
     }
 
+    @Override
+    public LocalDate getDueDateBaseline() {
+        if (state.isRequireDueDate()) {
+            AdvertClosingDate closingDate = getClosingDate();
+            if (closingDate != null) {
+                return closingDate.getClosingDate();
+            }
+            return new LocalDate();
+        }
+        return null;
+    }
+
 }

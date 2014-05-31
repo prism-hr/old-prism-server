@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.ProgramService;
+import com.zuehlke.pgadmissions.services.StateService;
 
 @Service
 public class DataMaintenanceTask {
@@ -19,12 +20,17 @@ public class DataMaintenanceTask {
     
     @Autowired
     private ProgramService programService;
+    
+    @Autowired
+    private StateService stateService;
 
+    // TODO: unify the timer tasks
     @Scheduled(cron = "${data.maintenance.cron}")
     public void maintainData() {
         log.info("Running data maintenance tasks");
         documentService.deleteOrphanDocuments();
         programService.deleteInactiveAdverts();
+        stateService.executeEscalatedStateTransitions();
         log.info("Completed data maintenance tasks");
     }
 

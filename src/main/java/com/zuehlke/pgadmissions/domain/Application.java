@@ -475,4 +475,16 @@ public class Application extends PrismResourceTransient {
         return program.getCode() + "-" + getCreatedTimestamp().getYear() + "-" + String.format("%010d", getId());
     }
 
+    @Override
+    public LocalDate getDueDateBaseline() {
+        if (state.isRequireDueDate()) {
+            LocalDate dueDateBaseline = new LocalDate();
+            if (state.getParentState().getId() == PrismState.APPLICATION_REVIEW_PENDING_FEEDBACK && closingDate != null && closingDate.isAfter(dueDateBaseline)) {
+                return closingDate;
+            }
+            return dueDateBaseline;
+        }
+        return null;
+    }
+
 }

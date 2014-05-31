@@ -24,6 +24,9 @@ public class State {
     @JoinColumn(name = "parent_state_id", nullable = false)
     private State parentState;
 
+    @Column(name = "require_due_date", nullable = false)
+    private boolean requireDueDate;
+    
     @Column(name = "is_assessment_state", nullable = false)
     private boolean assessmentState;
     
@@ -46,22 +49,14 @@ public class State {
         this.parentState = parentState;
     }
 
-    public boolean isAssessmentState() {
-        return assessmentState;
+    public boolean isRequireDueDate() {
+        return requireDueDate;
     }
-
-    public void setAssessmentState(boolean assessmentState) {
-        this.assessmentState = assessmentState;
+    
+    public void setRequireDueDate(boolean requireDueDate) {
+        this.requireDueDate = requireDueDate;
     }
-
-    public boolean isFertileState() {
-        return fertileState;
-    }
-
-    public void setFertileState(boolean fertileState) {
-        this.fertileState = fertileState;
-    }
-
+    
     public State withId(PrismState id) {
         this.id = id;
         return this;

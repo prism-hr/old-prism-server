@@ -8,15 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.dao.StateDAO;
-import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateTransition;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.StateTransitionEvaluation;
 
 @Service
 @Transactional
@@ -24,6 +25,12 @@ public class StateService {
 
     @Autowired
     private StateDAO stateDAO;
+    
+    @Autowired
+    private EntityService entityService;
+    
+    @Autowired
+    private RoleService roleService;
 
     public State getById(PrismState id) {
         return stateDAO.getById(id);
@@ -55,21 +62,43 @@ public class StateService {
         return stateTransition;
     }
     
-    public StateTransition getDelegateStateTransition(PrismResource resource, PrismAction delegateAction) {
-        return getPotentialStateTransitions(resource, delegateAction).get(0);
+    public StateTransition executeStateTransition(PrismResource operativeResource, PrismResourceTransient resource, User invoker, PrismAction action, Comment comment) {
+        StateTransition stateTransition = getStateTransition(operativeResource, action, comment);
+        resource.setState(stateTransition.getTransitionState());
+        resource.setDueDate(entityService.getResourceDueDate(resource, comment.getUserSpecifiedDueDate()));
+
+        if (operativeResource != resource) {
+            resource.setParentResource(operativeResource);
+            entityService.save(resource);
+            PrismResourceTransient codableResource = (PrismResourceTransient) resource;
+            codableResource.setCode(codableResource.generateCode());
+        }
+
+        if (stateTransition.isDoPostComment()) {
+            comment.setCreatedTimestamp(new DateTime());
+            entityService.save(comment);
+        }
+
+        roleService.executeUserRoleTransitions(stateTransition, resource, invoker, comment);
+        comment.setRole(Joiner.on("|").join(roleService.getActionInvokerRoles(invoker, resource, action)));
+        return stateTransition;
     }
 
-    public StateTransition getApplicationCompletedOutcome(PrismResource resource, List<StateTransition> stateTransitions) {
-        State transitionState = resource.getState();
-        try {
-            Application application = (Application) resource;
-            if (application.getSubmittedTimestamp() != null) {
-                transitionState = stateDAO.getById(PrismState.APPLICATION_VALIDATION_PENDING_FEEDBACK);
-            }
-        } catch (ClassCastException e) {
-            throw new Error(StateTransitionEvaluation.INCORRECT_PROCESSOR_TYPE, e);
-        }
-        return stateDAO.getStateTransition(stateTransitions, transitionState);
+    public void executeDelegateStateTransition(PrismResource resource, StateTransition delegateStateTransition, User invoker) {
+        resource.setState(delegateStateTransition.getTransitionState());
+        roleService.executeDelegateUserRoleTransitions(resource, delegateStateTransition, invoker);
+    }
+
+    public void executePropagatedStateTransitions(PrismResource resource, StateTransition stateTransition) {
+        stateDAO.executePropagatedStateTransitions(resource, stateTransition);
+    }
+    
+    public void executeEscalatedStateTransitions() {
+        stateDAO.executeEscalatedStateTransitions();
+    }
+    
+    public StateTransition getApplicationCompletedOutcome(PrismResource resource, Comment comment, List<StateTransition> stateTransitions) {
+        return stateDAO.getStateTransition(stateTransitions, comment.getTransitionState());
     }
     
     public StateTransition getApplicationEligibilityAssessedOutcome(PrismResource resource, Comment comment, List<StateTransition> stateTransitions) {

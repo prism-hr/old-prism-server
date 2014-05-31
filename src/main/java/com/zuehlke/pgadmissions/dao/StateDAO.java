@@ -59,4 +59,12 @@ public class StateDAO {
                 .uniqueResult();
     }
 
+    public void executePropagatedStateTransitions(PrismResource resource, StateTransition stateTransition) {
+        // TODO: Write the HQL update statements
+    }
+
+    public void executeEscalatedStateTransitions() {
+        // TODO: Write the HQL update statements
+    }
+
 }

@@ -61,8 +61,4 @@ public abstract class PrismResource implements IUniqueResource {
         }
     }
 
-    public boolean isFertile() {
-        return this.getState().isFertileState();
-    }
-
 }

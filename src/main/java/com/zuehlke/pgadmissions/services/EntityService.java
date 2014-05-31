@@ -20,8 +20,12 @@ public class EntityService {
         return entityDAO.getById(klass, id);
     }
 
-    public <T> T getBy(Class<T> klass, String propertyName, Object propertyValue) {
-        return entityDAO.getBy(klass, propertyName, propertyValue);
+    public <T> T getByProperty(Class<T> klass, String propertyName, Object propertyValue) {
+        return entityDAO.getByProperty(klass, propertyName, propertyValue);
+    }
+    
+    public <T> T getByPropertyNotNull(Class<T> klass, String propertyName) {
+        return entityDAO.getByPropertyNotNull(klass, propertyName);
     }
 
     public <T extends IUniqueResource> T getDuplicateEntity(T resource) {

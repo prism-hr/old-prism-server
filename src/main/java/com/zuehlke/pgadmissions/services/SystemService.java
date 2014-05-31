@@ -12,7 +12,7 @@ public class SystemService {
     private EntityService entityService;
     
     public com.zuehlke.pgadmissions.domain.System getSystem() {
-        return (com.zuehlke.pgadmissions.domain.System) entityService.getBy(com.zuehlke.pgadmissions.domain.System.class, "name", "PRiSM");
+        return (com.zuehlke.pgadmissions.domain.System) entityService.getByProperty(com.zuehlke.pgadmissions.domain.System.class, "name", "PRiSM");
     }
     
 }

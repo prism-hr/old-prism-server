@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.EmploymentPosition;
+import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.Passport;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
-import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.TestObjectProvider;
@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.services.ApplicationDocumentService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.FundingService;
 import com.zuehlke.pgadmissions.services.PersonalDetailsService;
-import com.zuehlke.pgadmissions.services.QualificationService;
+import com.zuehlke.pgadmissions.services.ApplicationQualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -55,7 +55,7 @@ public class ApplicationTestDataProvider {
     private ApplicationAddressService applicationAdressService;
 
     @Autowired
-    private QualificationService qualificationService;
+    private ApplicationQualificationService qualificationService;
 
     @Autowired
     private EmploymentPositionService employmentPositionService;
@@ -138,7 +138,7 @@ public class ApplicationTestDataProvider {
 
     private void createQualifications(Application application) {
         for (int i = 0; i < 3; i++) {
-            Qualification qualification = new Qualification();
+            ApplicationQualification qualification = new ApplicationQualification();
             qualification.setInstitution(testObjectProvider.get(ImportedInstitution.class));
             qualification.setType(testObjectProvider.get(QualificationType.class));
             qualification.setTitle("Mistrzostwo");
@@ -154,7 +154,7 @@ public class ApplicationTestDataProvider {
     }
 
     private void createEmployments(Application application) {
-        EmploymentPosition employment = new EmploymentPosition();
+        ApplicationEmploymentPosition employment = new ApplicationEmploymentPosition();
         employment.setEmployerName("Szef");
         Address address = new Address();
         address.setAddressLine1("ul. Leszczynska");

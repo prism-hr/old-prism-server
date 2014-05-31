@@ -10,14 +10,14 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.EmploymentPosition;
+import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.Passport;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
-import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.services.DocumentService;
 
@@ -43,15 +43,15 @@ public class ApplicationCopyHelper {
             copyApplicationFormAddress(to.getApplicationAddress(), from.getApplicationAddress(), true);
         }
 
-        for (Qualification fromQualification : from.getQualifications()) {
-            Qualification qualification = new Qualification();
+        for (ApplicationQualification fromQualification : from.getQualifications()) {
+            ApplicationQualification qualification = new ApplicationQualification();
             to.getQualifications().add(qualification);
             qualification.setApplication(to);
             copyQualification(qualification, fromQualification, false);
         }
 
-        for (EmploymentPosition fromEmployment : from.getEmploymentPositions()) {
-            EmploymentPosition employment = new EmploymentPosition();
+        for (ApplicationEmploymentPosition fromEmployment : from.getEmploymentPositions()) {
+            ApplicationEmploymentPosition employment = new ApplicationEmploymentPosition();
             to.getEmploymentPositions().add(employment);
             employment.setApplication(to);
             copyEmploymentPosition(employment, fromEmployment, true);
@@ -125,7 +125,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    public void copyEmploymentPosition(EmploymentPosition to, EmploymentPosition from, boolean doPerformDeepCopy) {
+    public void copyEmploymentPosition(ApplicationEmploymentPosition to, ApplicationEmploymentPosition from, boolean doPerformDeepCopy) {
         to.setEmployerName(from.getEmployerName());
         to.setPosition(from.getPosition());
         to.setRemit(from.getRemit());
@@ -139,7 +139,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    public void copyQualification(Qualification to, Qualification from, boolean doPerformDeepCopy) {
+    public void copyQualification(ApplicationQualification to, ApplicationQualification from, boolean doPerformDeepCopy) {
         to.setInstitution(from.getInstitution());
         to.setType(getEnabledImportedObject(from.getType()));
         to.setTitle(from.getTitle());

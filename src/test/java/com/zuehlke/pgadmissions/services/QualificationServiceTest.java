@@ -17,7 +17,7 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class QualificationServiceTest {
@@ -31,14 +31,14 @@ public class QualificationServiceTest {
     private ApplicationService applicationService;
 
     @TestedObject
-    private QualificationService service;
+    private ApplicationQualificationService service;
 
     @Test
     public void shouldSetFlagSendToPorticoOnSelectedQualifications() {
-        Qualification qualification1 = new Qualification().withId(1).withIncludeInExport(true);
-        Qualification qualification2 = new Qualification().withId(2).withIncludeInExport(true);
-        Qualification qualification3 = new Qualification().withId(3).withIncludeInExport(false);
-        Qualification qualification4 = new Qualification().withId(4).withIncludeInExport(false);
+        ApplicationQualification qualification1 = new ApplicationQualification().withId(1).withIncludeInExport(true);
+        ApplicationQualification qualification2 = new ApplicationQualification().withId(2).withIncludeInExport(true);
+        ApplicationQualification qualification3 = new ApplicationQualification().withId(3).withIncludeInExport(false);
+        ApplicationQualification qualification4 = new ApplicationQualification().withId(4).withIncludeInExport(false);
 
         Application application = new Application().withQualifications(qualification1, qualification2, qualification3, qualification4);
 
@@ -55,10 +55,10 @@ public class QualificationServiceTest {
 
     @Test
     public void shouldSetNoFlagSendToPorticoOnQualifications() {
-        Qualification qualification1 = new Qualification().withId(1).withIncludeInExport(true);
-        Qualification qualification2 = new Qualification().withId(2).withIncludeInExport(true);
-        Qualification qualification3 = new Qualification().withId(3).withIncludeInExport(false);
-        Qualification qualification4 = new Qualification().withId(4).withIncludeInExport(false);
+        ApplicationQualification qualification1 = new ApplicationQualification().withId(1).withIncludeInExport(true);
+        ApplicationQualification qualification2 = new ApplicationQualification().withId(2).withIncludeInExport(true);
+        ApplicationQualification qualification3 = new ApplicationQualification().withId(3).withIncludeInExport(false);
+        ApplicationQualification qualification4 = new ApplicationQualification().withId(4).withIncludeInExport(false);
 
         Application application = new Application().withQualifications(qualification1, qualification2, qualification3, qualification4);
 

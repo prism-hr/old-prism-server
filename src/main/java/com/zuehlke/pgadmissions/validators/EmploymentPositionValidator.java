@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import com.zuehlke.pgadmissions.domain.EmploymentPosition;
+import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 
 @Component
 public class EmploymentPositionValidator extends AbstractValidator {
@@ -15,7 +15,7 @@ public class EmploymentPositionValidator extends AbstractValidator {
     
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return EmploymentPosition.class.equals(clazz);
+		return ApplicationEmploymentPosition.class.equals(clazz);
 	}
 
 	@Override
@@ -26,7 +26,7 @@ public class EmploymentPositionValidator extends AbstractValidator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "position", EMPTY_FIELD_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "remit", EMPTY_FIELD_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", EMPTY_FIELD_ERROR_MESSAGE);
-		EmploymentPosition position = (EmploymentPosition) target;
+		ApplicationEmploymentPosition position = (ApplicationEmploymentPosition) target;
 		
 		String startDate = position.getStartDate() == null ? "" : position.getStartDate().toString();
 		String endDate = position.getEndDate() == null ? "" : position.getEndDate().toString();

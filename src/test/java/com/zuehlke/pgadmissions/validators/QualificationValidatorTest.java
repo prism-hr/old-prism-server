@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
-import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 
@@ -27,13 +27,13 @@ public class QualificationValidatorTest {
     @Autowired
     private Validator validator;
 
-    private Qualification qualification;
+    private ApplicationQualification qualification;
 
     private QualificationValidator qualificationValidator;
 
     @Test
     public void shouldSupportQualification() {
-        assertTrue(qualificationValidator.supports(Qualification.class));
+        assertTrue(qualificationValidator.supports(ApplicationQualification.class));
     }
 
     @Test
@@ -158,7 +158,7 @@ public class QualificationValidatorTest {
 
     @Before
     public void setup() throws ParseException {
-        qualification = new Qualification();
+        qualification = new ApplicationQualification();
         qualification.setApplication(new ApplicationFormBuilder().id(9).build());
         qualification.setId(3);
         qualification.setAwardDate(new LocalDate(2010, 9, 9));

@@ -115,7 +115,7 @@ public class Application extends PrismResourceTransient {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     @Valid
-    private List<Qualification> qualifications = new ArrayList<Qualification>();
+    private List<ApplicationQualification> qualifications = new ArrayList<ApplicationQualification>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
@@ -125,7 +125,7 @@ public class Application extends PrismResourceTransient {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     @Valid
-    private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
+    private List<ApplicationEmploymentPosition> employmentPositions = new ArrayList<ApplicationEmploymentPosition>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
@@ -243,7 +243,7 @@ public class Application extends PrismResourceTransient {
         return applicationComments;
     }
 
-    public List<Qualification> getQualifications() {
+    public List<ApplicationQualification> getQualifications() {
         return qualifications;
     }
 
@@ -251,7 +251,7 @@ public class Application extends PrismResourceTransient {
         return fundings;
     }
 
-    public List<EmploymentPosition> getEmploymentPositions() {
+    public List<ApplicationEmploymentPosition> getEmploymentPositions() {
         return employmentPositions;
     }
 
@@ -357,7 +357,7 @@ public class Application extends PrismResourceTransient {
         return this;
     }
 
-    public Application withQualifications(Qualification... qualifications) {
+    public Application withQualifications(ApplicationQualification... qualifications) {
         this.qualifications.addAll(Arrays.asList(qualifications));
         return this;
     }

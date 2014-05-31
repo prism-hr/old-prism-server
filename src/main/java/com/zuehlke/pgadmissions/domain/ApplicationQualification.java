@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
 @Table(name = "APPLICATION_QUALIFICATION")
-public class Qualification {
+public class ApplicationQualification {
 
     @Id
     @GeneratedValue
@@ -174,67 +174,67 @@ public class Qualification {
         this.application = application;
     }
 
-    public Qualification withId(Integer id) {
+    public ApplicationQualification withId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public Qualification withSubject(String subject) {
+    public ApplicationQualification withSubject(String subject) {
         this.subject = subject;
         return this;
     }
 
-    public Qualification withTitle(String title) {
+    public ApplicationQualification withTitle(String title) {
         this.title = title;
         return this;
     }
 
-    public Qualification withStartDate(LocalDate startDate) {
+    public ApplicationQualification withStartDate(LocalDate startDate) {
         this.startDate = startDate;
         return this;
     }
 
-    public Qualification withAwardDate(LocalDate awardDate) {
+    public ApplicationQualification withAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
         return this;
     }
 
-    public Qualification withLanguage(String language) {
+    public ApplicationQualification withLanguage(String language) {
         this.language = language;
         return this;
     }
 
-    public Qualification withType(QualificationType type) {
+    public ApplicationQualification withType(QualificationType type) {
         this.type = type;
         return this;
     }
 
-    public Qualification withGrade(String grade) {
+    public ApplicationQualification withGrade(String grade) {
         this.grade = grade;
         return this;
     }
 
-    public Qualification withDocument(Document document) {
+    public ApplicationQualification withDocument(Document document) {
         this.document = document;
         return this;
     }
 
-    public Qualification withInstitution(ImportedInstitution institution) {
+    public ApplicationQualification withInstitution(ImportedInstitution institution) {
         this.institution = institution;
         return this;
     }
 
-    public Qualification withApplication(Application application) {
+    public ApplicationQualification withApplication(Application application) {
         this.application = application;
         return this;
     }
 
-    public Qualification withCompleted(Boolean completed) {
+    public ApplicationQualification withCompleted(Boolean completed) {
         this.completed = completed;
         return this;
     }
 
-    public Qualification withIncludeInExport(Boolean export) {
+    public ApplicationQualification withIncludeInExport(Boolean export) {
         this.includeInExport = export;
         return this;
     }

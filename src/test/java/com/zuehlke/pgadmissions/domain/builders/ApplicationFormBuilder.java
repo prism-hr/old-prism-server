@@ -11,12 +11,12 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.EmploymentPosition;
+import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
-import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
@@ -35,9 +35,9 @@ public class ApplicationFormBuilder {
     private LocalDate closingDate;
     private LocalDate dueDate;
     private Boolean acceptedTerms;
-    private List<Qualification> qualifications = new ArrayList<Qualification>();
+    private List<ApplicationQualification> qualifications = new ArrayList<ApplicationQualification>();
     private List<Referee> referees = new ArrayList<Referee>();
-    private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
+    private List<ApplicationEmploymentPosition> employmentPositions = new ArrayList<ApplicationEmploymentPosition>();
     private List<Comment> comments = new ArrayList<Comment>();
     private List<Funding> fundings = new ArrayList<Funding>();
     private ApplicationDocument applicationFormDocument;
@@ -89,8 +89,8 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder qualification(Qualification... qualifications) {
-        for (Qualification qual : qualifications) {
+    public ApplicationFormBuilder qualification(ApplicationQualification... qualifications) {
+        for (ApplicationQualification qual : qualifications) {
             this.qualifications.add(qual);
         }
         return this;
@@ -103,8 +103,8 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder qualifications(Qualification... qualifications) {
-        for (Qualification qualification : qualifications) {
+    public ApplicationFormBuilder qualifications(ApplicationQualification... qualifications) {
+        for (ApplicationQualification qualification : qualifications) {
             this.qualifications.add(qualification);
         }
         return this;
@@ -117,13 +117,13 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder employmentPosition(EmploymentPosition employmentPosition) {
+    public ApplicationFormBuilder employmentPosition(ApplicationEmploymentPosition employmentPosition) {
         this.employmentPositions.add(employmentPosition);
         return this;
     }
 
-    public ApplicationFormBuilder employmentPositions(EmploymentPosition... employmentPositions) {
-        for (EmploymentPosition employmentPosition : employmentPositions) {
+    public ApplicationFormBuilder employmentPositions(ApplicationEmploymentPosition... employmentPositions) {
+        for (ApplicationEmploymentPosition employmentPosition : employmentPositions) {
             this.employmentPositions.add(employmentPosition);
         }
         return this;

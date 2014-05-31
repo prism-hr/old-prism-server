@@ -230,7 +230,7 @@ public class EntityImportService {
 
     @Transactional
     public StudyOption getOrCreateStudyOption(ModeOfAttendance modeOfAttendance) {
-        StudyOption studyOption = entityDAO.getBy(StudyOption.class, "id", modeOfAttendance.getCode());
+        StudyOption studyOption = entityDAO.getByProperty(StudyOption.class, "id", modeOfAttendance.getCode());
         if (studyOption == null) {
             studyOption = new StudyOption().withId(modeOfAttendance.getCode()).withDisplayName(modeOfAttendance.getName());
             entityDAO.save(studyOption);

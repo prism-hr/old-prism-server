@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.EmploymentPosition;
+import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
@@ -77,11 +77,11 @@ public class EmploymentPositionController {
     @RequestMapping(value = "/getEmploymentPosition", method = RequestMethod.GET)
     public String getEmploymentView(@ModelAttribute Application applicationForm, @RequestParam(required = false) Integer employmentPositionId,
             ModelMap modelMap) {
-        return returnView(modelMap, employmentPositionId != null ? employmentPositionService.getById(employmentPositionId) : new EmploymentPosition());
+        return returnView(modelMap, employmentPositionId != null ? employmentPositionService.getById(employmentPositionId) : new ApplicationEmploymentPosition());
     }
 
     @RequestMapping(value = "/editEmploymentPosition", method = RequestMethod.POST)
-    public String editEmployment(@Valid EmploymentPosition employmentPosition, BindingResult result,
+    public String editEmployment(@Valid ApplicationEmploymentPosition employmentPosition, BindingResult result,
             @RequestParam(required = false) Integer employmentPositionId, @ModelAttribute Application applicationForm, ModelMap modelMap) {
         if (result.hasErrors()) {
             return returnView(modelMap, employmentPosition);
@@ -112,7 +112,7 @@ public class EmploymentPositionController {
                 PrismAction.APPLICATION_CORRECT);
     }
 
-    private String returnView(ModelMap modelMap, EmploymentPosition employmentPosition) {
+    private String returnView(ModelMap modelMap, ApplicationEmploymentPosition employmentPosition) {
         modelMap.put("employmentPosition", employmentPosition);
         return TemplateLocation.APPLCIATION_APPLICANT_EMPLOYMENT_POSITION;
     }

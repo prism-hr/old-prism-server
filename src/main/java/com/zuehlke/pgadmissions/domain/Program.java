@@ -339,10 +339,7 @@ public class Program extends Advert {
 
     @Override
     public LocalDate getDueDateBaseline() {
-        if (state.isRequireDueDate()) {
-            return new LocalDate();
-        }
-        return null;
+        return new LocalDate();
     }
 
 }

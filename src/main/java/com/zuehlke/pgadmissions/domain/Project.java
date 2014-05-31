@@ -197,14 +197,11 @@ public class Project extends Advert {
 
     @Override
     public LocalDate getDueDateBaseline() {
-        if (state.isRequireDueDate()) {
-            AdvertClosingDate closingDate = getClosingDate();
-            if (closingDate != null) {
-                return closingDate.getClosingDate();
-            }
-            return new LocalDate();
+        AdvertClosingDate closingDate = getClosingDate();
+        if (closingDate != null) {
+            return closingDate.getClosingDate();
         }
-        return null;
+        return new LocalDate();
     }
 
 }

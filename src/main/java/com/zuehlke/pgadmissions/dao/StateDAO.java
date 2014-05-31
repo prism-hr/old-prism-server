@@ -3,13 +3,16 @@ package com.zuehlke.pgadmissions.dao;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -56,6 +59,22 @@ public class StateDAO {
         return (StateTransition) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .add(Restrictions.in("id", permittedTransitions)) //
                 .add(Restrictions.eq("transitionState", candidateTransitionState)) //
+                .uniqueResult();
+    }
+    
+    public Integer getStateDuration(PrismResourceTransient resource) {
+        return (Integer) sessionFactory.getCurrentSession().createCriteria(StateDuration.class)
+                .setProjection(Projections.property("expiryDuration"))
+                .add(Restrictions.eq("state", resource.getState()))
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.conjunction()
+                                .add(Restrictions.eq("system", resource.getSystem()))
+                                .add(Restrictions.isNull("institution"))
+                                .add(Restrictions.isNull("program")))
+                        .add(Restrictions.conjunction()
+                                .add(Restrictions.eq("institution", resource.getInstitution()))
+                                .add(Restrictions.isNull("program")))
+                        .add(Restrictions.eq("program", resource.getProgram())))
                 .uniqueResult();
     }
 

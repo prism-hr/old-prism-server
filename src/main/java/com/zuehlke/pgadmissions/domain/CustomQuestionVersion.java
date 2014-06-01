@@ -16,7 +16,7 @@ public class CustomQuestionVersion {
 
     @ManyToOne
     @JoinColumn(name = "comment_custom__id", nullable = false)
-    private CustomQuestion customQuestion;
+    private CommentCustomQuestion customQuestion;
 
     @Column(name = "content", nullable = false)
     private String content;
@@ -29,11 +29,11 @@ public class CustomQuestionVersion {
         this.id = id;
     }
 
-    public CustomQuestion getCustomQuestion() {
+    public CommentCustomQuestion getCustomQuestion() {
         return customQuestion;
     }
 
-    public void setCustomQuestion(CustomQuestion customQuestion) {
+    public void setCustomQuestion(CommentCustomQuestion customQuestion) {
         this.customQuestion = customQuestion;
     }
 

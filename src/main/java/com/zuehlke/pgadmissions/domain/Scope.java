@@ -20,7 +20,7 @@ public class Scope {
     private PrismScope id;
     
     @Column(name = "precedence", nullable = false)
-    private int precedence;
+    private Integer precedence;
 
     public PrismScope getId() {
         return id;
@@ -30,7 +30,7 @@ public class Scope {
         this.id = id;
     }
 
-    public int getPrecedence() {
+    public Integer getPrecedence() {
         return precedence;
     }
 

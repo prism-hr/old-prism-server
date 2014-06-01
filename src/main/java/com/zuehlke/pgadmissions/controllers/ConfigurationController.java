@@ -253,11 +253,6 @@ public class ConfigurationController {
         return DurationUnitEnum.values();
     }
 
-    @ModelAttribute("scoringStages")
-    public ScoringStage[] getScoringStages() {
-        return ScoringStage.values();
-    }
-
     @ModelAttribute("programs")
     public List<Program> getPrograms() {
         // TODO: We can write this as a single query now

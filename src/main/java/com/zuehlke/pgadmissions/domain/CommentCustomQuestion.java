@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "COMMENT_CUSTOM_QUESTION")
-public class CustomQuestion {
+public class CommentCustomQuestion {
 
     @Id
     private Integer id;

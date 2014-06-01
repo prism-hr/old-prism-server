@@ -207,45 +207,4 @@ public class AdvertDAO {
                 .setResultTransformer(Transformers.aliasToBean(AdvertDTO.class)).list();
     }
 
-//  TODO: reimplement the algorithm in Java layer
-//    /**
-//     * Calls a stored procedure to get a list of recommended adverts for a given applicant.
-//     * The threshold value governs the number of recommended adverts that are returned.
-//     * Setting the threshold to 0.00 returns all of the recommended adverts.
-//     * Setting the threshold to 1.00 returns only the top recommended advert(s).
-//     * 
-//     * @author Alastair Knowles
-//     * @param feedKeyValue
-//     * @return List<AdvertDTO>
-//     */
-//    private List<AdvertDTO> getRecommendedAdvertFeed(String feedKeyValue) {
-//        Properties customDTOProperties = new Properties();
-//        customDTOProperties.put("enumClass", AdvertType.class.getCanonicalName());
-//        customDTOProperties.put("type", "12");
-//        Type advertTypeEnum = new TypeLocatorImpl(new TypeResolver()).custom(EnumType.class, customDTOProperties);
-//        
-//        return (List<AdvertDTO>) sessionFactory.getCurrentSession()
-//            .createSQLQuery("CALL SP_SELECT_RECOMMENDED_ADVERTS(?, ?);")
-//                .addScalar("id", IntegerType.INSTANCE)
-//                .addScalar("title", StringType.INSTANCE)
-//                .addScalar("description", StringType.INSTANCE)
-//                .addScalar("studyDuration", IntegerType.INSTANCE)
-//                .addScalar("funding", StringType.INSTANCE)
-//                .addScalar("programCode", StringType.INSTANCE)
-//                .addScalar("closingDate", DateType.INSTANCE)
-//                .addScalar("primarySupervisorFirstName", StringType.INSTANCE)
-//                .addScalar("primarySupervisorLastName", StringType.INSTANCE)
-//                .addScalar("primarySupervisorEmail", StringType.INSTANCE)
-//                .addScalar("advertType", advertTypeEnum)
-//                .addScalar("secondarySupervisorFirstName", StringType.INSTANCE)
-//                .addScalar("secondarySupervisorLastName", StringType.INSTANCE)
-//                .setInteger(0, Integer.parseInt(feedKeyValue))
-//                .setBigDecimal(1, RECOMMENDED_ADVERT_FEED_THRESHOLD)
-//            .setResultTransformer(Transformers.aliasToBean(AdvertDTO.class)).list();
-//    }
-//    
-//    private void deleteExpiredClosingDates() {
-//        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_EXPIRED_CLOSING_DATES();").executeUpdate();
-//    }
-
 }

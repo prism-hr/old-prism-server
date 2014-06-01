@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.mail.MailSendingService;
+import com.zuehlke.pgadmissions.mail.NotificationService;
 
 @Service
 @Transactional
@@ -23,7 +23,7 @@ public class ReviewService {
     private ApplicationService applicationsService;
 
     @Autowired
-    private MailSendingService mailService;
+    private NotificationService mailService;
 
     @Autowired
     private StateDAO stateDAO;

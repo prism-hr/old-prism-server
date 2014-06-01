@@ -37,8 +37,8 @@ public class RoleTransition {
     @Enumerated(EnumType.STRING)
     private RoleTransitionType roleTransitionType;
 
-    @Column(name = "restrict_to_invoker", nullable = false)
-    private boolean restrictToInvoker;
+    @Column(name = "restrict_to_action_owner", nullable = false)
+    private boolean restrictToActionOwner;
 
     @ManyToOne
     @JoinColumn(name = "transition_role_id", nullable = false)
@@ -88,12 +88,12 @@ public class RoleTransition {
         this.roleTransitionType = roleTransitionType;
     }
 
-    public boolean isRestrictToInvoker() {
-        return restrictToInvoker;
+    public boolean isRestrictToActionOwner() {
+        return restrictToActionOwner;
     }
 
-    public void setRestrictToInvoker(boolean restrictToInvoker) {
-        this.restrictToInvoker = restrictToInvoker;
+    public void setRestrictToActionOwner(boolean restrictToActionOwner) {
+        this.restrictToActionOwner = restrictToActionOwner;
     }
 
     public Role getTransitionRole() {

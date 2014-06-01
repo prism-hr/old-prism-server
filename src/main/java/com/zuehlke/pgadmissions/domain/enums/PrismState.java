@@ -75,5 +75,11 @@ public enum PrismState {
     public static PrismState convert(String searchStr) {
         return displayNameToStateMap.get(searchStr);
     }
+    
+    public PrismScope getResourceType() {
+        String stateName = name();
+        String resourceName = stateName.substring(0, stateName.indexOf('_'));
+        return PrismScope.valueOf(resourceName);
+    }
 
 }

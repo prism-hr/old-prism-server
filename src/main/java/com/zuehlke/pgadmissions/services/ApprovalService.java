@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
-import com.zuehlke.pgadmissions.mail.MailSendingService;
+import com.zuehlke.pgadmissions.mail.NotificationService;
 
 @Service
 @Transactional
@@ -34,7 +34,7 @@ public class ApprovalService {
     private UserService userService;
 
     @Autowired
-    private MailSendingService mailSendingService;
+    private NotificationService mailSendingService;
 
     @Autowired
     private ProgramInstanceService programInstanceService;

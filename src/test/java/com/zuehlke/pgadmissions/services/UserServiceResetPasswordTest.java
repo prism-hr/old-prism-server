@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.mail.MailSendingService;
+import com.zuehlke.pgadmissions.mail.NotificationService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -44,7 +44,7 @@ public class UserServiceResetPasswordTest {
 
     @Mock
     @InjectIntoByType
-    private MailSendingService mailServiceMock;
+    private NotificationService mailServiceMock;
 
     @TestedObject
     private UserService service;

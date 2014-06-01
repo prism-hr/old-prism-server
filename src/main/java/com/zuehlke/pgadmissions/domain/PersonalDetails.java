@@ -45,7 +45,7 @@ public class PersonalDetails {
     @Transient
     private Boolean languageQualificationAvailable;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_language_qualification_id")
     @Valid
     private LanguageQualification languageQualification;
@@ -56,7 +56,7 @@ public class PersonalDetails {
     @Transient
     private Boolean passportAvailable;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_passport")
     @Valid
     private Passport passport;
@@ -97,7 +97,7 @@ public class PersonalDetails {
     @JoinColumn(name = "domicile_id", nullable = false)
     private Domicile residenceCountry;
 
-    @OneToOne(mappedBy = "personalDetails", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "personalDetails")
     private Application application = null;
 
     public void setId(Integer id) {

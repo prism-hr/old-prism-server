@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -30,7 +29,7 @@ public class ProgramDetails {
     @GeneratedValue
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "program_study_option_id", nullable = false)
     private StudyOption studyOption;
 
@@ -38,7 +37,7 @@ public class ProgramDetails {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate startDate;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "referral_source_id", nullable = false)
     private SourcesOfInterest sourceOfInterest;
 
@@ -46,12 +45,12 @@ public class ProgramDetails {
     @Column(name = "sources_of_interest_text")
     private String sourceOfInterestText;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "programme_detail_id")
     @Valid
     private List<SuggestedSupervisor> suggestedSupervisors = new ArrayList<SuggestedSupervisor>();
 
-    @OneToOne(mappedBy = "programDetails", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "programDetails")
     private Application application;
 
     public Integer getId() {

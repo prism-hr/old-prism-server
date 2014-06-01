@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
-import com.zuehlke.pgadmissions.domain.enums.PrismResourceType;
+import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 
 public abstract class PrismResource implements IUniqueResource {
 
@@ -36,15 +36,15 @@ public abstract class PrismResource implements IUniqueResource {
 
     public abstract void setUser(User user);
 
-    public PrismResourceType getResourceType() {
-        return PrismResourceType.valueOf(this.getClass().getSimpleName().toUpperCase());
+    public PrismScope getResourceType() {
+        return PrismScope.valueOf(this.getClass().getSimpleName().toUpperCase());
     }
 
-    public PrismResource getEnclosingResource(PrismResourceType resourceType) {
+    public PrismResource getEnclosingResource(PrismScope resourceType) {
         return getResourceType().equals(resourceType) ? this : getParentResource(resourceType);
     }
 
-    public PrismResource getParentResource(PrismResourceType resourceType) {
+    public PrismResource getParentResource(PrismScope resourceType) {
         try {
             return (PrismResource) PropertyUtils.getSimpleProperty(this, resourceType.getLowerCaseName());
         } catch (Exception e) {

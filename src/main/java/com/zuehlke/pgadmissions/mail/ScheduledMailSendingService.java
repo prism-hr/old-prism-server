@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 
 @Service
-public class ScheduledMailSendingService extends AbstractMailSendingService {
+public class ScheduledMailSendingService extends AbstractNotificationService {
     // TODO fix tests
 
     private final Logger log = LoggerFactory.getLogger(ScheduledMailSendingService.class);

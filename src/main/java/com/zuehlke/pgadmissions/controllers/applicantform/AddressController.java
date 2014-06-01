@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationAddressService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -33,7 +32,7 @@ import com.zuehlke.pgadmissions.validators.ApplicationAddressValidator;
 public class AddressController {
 
     @Autowired
-    private ApplicationService applicationFormService;
+    private ApplicationService applicationService;
 
     @Autowired
     private ApplicationAddressService applicationFormAddressService;
@@ -75,10 +74,10 @@ public class AddressController {
 
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(String applicationId) {
-        return applicationFormService.getSecuredApplication(applicationId, PrismAction.APPLICATION_COMPLETE,
-                PrismAction.APPLICATION_CORRECT);
+        // TODO: check actions
+        return applicationService.getByApplicationNumber(applicationId);
     }
-
+    
     @ModelAttribute("message")
     public String getMessage(@RequestParam(required = false) String message) {
         return message;

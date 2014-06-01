@@ -24,6 +24,10 @@ public class State {
     @JoinColumn(name = "parent_state_id", nullable = false)
     private State parentState;
     
+    @ManyToOne
+    @JoinColumn(name = "state_id", nullable = false)
+    private StateAction stateActions;
+    
     public PrismState getId() {
         return id;
     }
@@ -40,6 +44,10 @@ public class State {
         this.parentState = parentState;
     }
     
+    public StateAction getStateActions() {
+        return stateActions;
+    }
+
     public State withId(PrismState id) {
         this.id = id;
         return this;

@@ -15,8 +15,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType;
 
 @Entity
 @Table(name = "NOTIFICATION_TEMPLATE")
@@ -27,11 +26,11 @@ public class NotificationTemplate implements Serializable {
     @Id
     @Column(name = "id")
     @Enumerated(EnumType.STRING)
-    private NotificationTemplateId id;
+    private NotificationTemplateType id;
 
     @Column(name = "notification_type_id", nullable = false)
     @Enumerated(EnumType.STRING)
-    private NotificationType type;
+    private NotificationTemplateType notificationTemplateType;
 
     @OneToOne
     @JoinColumn(name = "notification_template_version_id")
@@ -48,20 +47,20 @@ public class NotificationTemplate implements Serializable {
     @OrderBy("createdTimestamp")
     private Set<NotificationTemplateVersion> versions = Sets.newLinkedHashSet();
 
-    public NotificationTemplateId getId() {
+    public NotificationTemplateType getId() {
         return id;
     }
 
-    public void setId(NotificationTemplateId id) {
+    public void setId(NotificationTemplateType id) {
         this.id = id;
     }
 
-    public NotificationType getType() {
-        return type;
+    public NotificationTemplateType getType() {
+        return notificationTemplateType;
     }
 
-    public void setType(NotificationType type) {
-        this.type = type;
+    public void setType(NotificationTemplateType notificationTemplateType) {
+        this.notificationTemplateType = notificationTemplateType;
     }
 
     public NotificationTemplateVersion getVersion() {
@@ -92,13 +91,13 @@ public class NotificationTemplate implements Serializable {
         return versions;
     }
 
-    public NotificationTemplate withId(NotificationTemplateId id) {
+    public NotificationTemplate withId(NotificationTemplateType id) {
         this.id = id;
         return this;
     }
 
-    public NotificationTemplate withType(NotificationType type) {
-        this.type = type;
+    public NotificationTemplate withType(NotificationTemplateType notificationTemplateType) {
+        this.notificationTemplateType = notificationTemplateType;
         return this;
     }
 

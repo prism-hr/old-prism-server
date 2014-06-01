@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -12,7 +11,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -29,7 +27,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
@@ -68,12 +65,6 @@ public class Program extends Advert {
     @OneToMany(mappedBy = "program")
     @OrderBy("applicationStartDate")
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
-
-    // FIXME: repair the mapping once the new table has been mapped
-    @MapKey(name = "stage")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "program_id")
-    private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
 
     @ManyToOne
     @JoinColumn(name = "program_type_id", nullable = false)
@@ -123,20 +114,12 @@ public class Program extends Advert {
         this.requireProjectDefinition = requireProjectDefinition;
     }
 
-    public Map<ScoringStage, ScoringDefinition> getScoringDefinitions() {
-        return scoringDefinitions;
-    }
-
     public boolean isImported() {
         return imported;
     }
 
     public void setImported(boolean imported) {
         this.imported = imported;
-    }
-
-    public List<ScoringStage> getCustomQuestionCoverage() {
-        return new ArrayList<ScoringStage>(getScoringDefinitions().keySet());
     }
 
     public Set<Project> getProjects() {
@@ -193,11 +176,6 @@ public class Program extends Advert {
 
     public Program withInstances(ProgramInstance... instances) {
         this.instances.addAll(Arrays.asList(instances));
-        return this;
-    }
-
-    public Program withScoringDefinitions(Map<ScoringStage, ScoringDefinition> scoringDefinitions) {
-        this.scoringDefinitions.putAll(scoringDefinitions);
         return this;
     }
 

@@ -49,7 +49,7 @@ public class StateService {
 
     @Autowired
     private SystemService systemService;
-    
+
     @Autowired
     private NotificationService notificationService;
 
@@ -90,22 +90,30 @@ public class StateService {
 
         roleService.executeUserRoleTransitions(resource, stateTransition, comment);
         notificationService.setStateTransitionNotifications(resource, stateTransition);
-        executePropagatedStateTransitions(resource, stateTransition);
+        
+        executePropagatedStateTransitions(resource, stateTransition, comment);
+        
         return stateTransition;
     }
 
     public void executeEscalatedStateTransitions() {
         executeThreadedStateTransitions(stateDAO.getEscalatedStateTransitions());
     }
-    
-    private void executePropagatedStateTransitions(PrismResourceTransient resource, StateTransition stateTransition) {
+
+    private void executePropagatedStateTransitions(PrismResourceTransient resource, StateTransition stateTransition, Comment comment) {
         executeThreadedStateTransitions(stateDAO.getPropagatedStateTransitions(resource, stateTransition));
     }
-    
-    private void executeThreadedStateTransitions(HashMultimap<Action, PrismResourceTransient> transitions) {
-        for (final Action escalatedAction : transitions.keySet()) {
-            for (final PrismResourceTransient escalatedResource : transitions.get(escalatedAction)) {
-                threadedStateTransitionPool.submit(new ThreadedStateTransition(escalatedResource, escalatedAction));
+
+    private void executeThreadedStateTransitions(HashMultimap<Action, PrismResourceTransient> threadedStateTransitions) {
+        for (final Action action : threadedStateTransitions.keySet()) {
+            for (final PrismResourceTransient resource : threadedStateTransitions.get(action)) {
+                threadedStateTransitionPool.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action);
+                        executeStateTransition(resource, resource, action, comment);
+                    }
+                });
             }
         }
     }
@@ -195,41 +203,6 @@ public class StateService {
             }
         }
         return stateDAO.getStateTransition(stateTransitions, transitionState);
-    }
-
-    public class ThreadedStateTransition implements Runnable {
-
-        private PrismResourceTransient resource;
-
-        private Action action;
-
-        public ThreadedStateTransition(PrismResourceTransient resource, Action action) {
-            this.resource = resource;
-            this.action = action;
-        }
-
-        @Override
-        public void run() {
-            Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action);
-            executeStateTransition(resource, resource, action, comment);
-        }
-
-        public PrismResourceTransient getResource() {
-            return resource;
-        }
-
-        public void setResource(PrismResourceTransient resource) {
-            this.resource = resource;
-        }
-
-        public Action getAction() {
-            return action;
-        }
-
-        public void setAction(Action action) {
-            this.action = action;
-        }
-
     }
 
 }

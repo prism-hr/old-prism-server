@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -46,7 +45,6 @@ public class RefereeDAO {
 
     public List<Integer> getRefereesDueReminder() {
         // TODO use ApplicationFormUserRole
-        Date today = Calendar.getInstance().getTime();
         Date dateWithSubtractedInterval = new Date();
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Referee.class)
                 .setProjection(Projections.groupProperty("id"))

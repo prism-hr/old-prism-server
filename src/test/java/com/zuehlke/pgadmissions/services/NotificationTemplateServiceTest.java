@@ -13,7 +13,7 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.NotificationTemplateDAO;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
-import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
+import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class NotificationTemplateServiceTest {
@@ -29,11 +29,11 @@ public class NotificationTemplateServiceTest {
     public void shouldGetById(){
         NotificationTemplate template = new NotificationTemplate();
         
-        expect(daoMock.getById(NotificationTemplateId.APPLICATION_TASK_REQUEST)).andReturn(template);
+        expect(daoMock.getById(NotificationTemplateType.APPLICATION_TASK_REQUEST)).andReturn(template);
         
         EasyMockUnitils.replay();
         
-        NotificationTemplate returned = service.getById(NotificationTemplateId.APPLICATION_TASK_REQUEST);
+        NotificationTemplate returned = service.getById(NotificationTemplateType.APPLICATION_TASK_REQUEST);
         assertSame(returned, template);
     }
 

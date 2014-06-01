@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.NotificationTemplateDAO;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
+import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType;
 import com.zuehlke.pgadmissions.exceptions.NotificationTemplateException;
 
 @Service
@@ -19,7 +19,7 @@ public class NotificationTemplateService {
     @Autowired
     private NotificationTemplateDAO notificationTemplateDAO;
 
-    public NotificationTemplate getById(NotificationTemplateId name) {
+    public NotificationTemplate getById(NotificationTemplateType name) {
         return notificationTemplateDAO.getById(name);
     }
 
@@ -27,7 +27,7 @@ public class NotificationTemplateService {
         return notificationTemplateDAO.getVersionById(id);
     }
 
-    public NotificationTemplateVersion saveTemplateVersion(NotificationTemplateId templateId, String content, String subject) {
+    public NotificationTemplateVersion saveTemplateVersion(NotificationTemplateType templateId, String content, String subject) {
         NotificationTemplate notificationTemplate = notificationTemplateDAO.getById(templateId);
         NotificationTemplateVersion templateVersion = new NotificationTemplateVersion();
 
@@ -41,7 +41,7 @@ public class NotificationTemplateService {
         return templateVersion;
     }
     
-    public void activateTemplateVersion(NotificationTemplateId name, Integer idToActivate) throws NotificationTemplateException {
+    public void activateTemplateVersion(NotificationTemplateType name, Integer idToActivate) throws NotificationTemplateException {
         NotificationTemplateVersion toActivate = notificationTemplateDAO.getVersionById(idToActivate);
         if (toActivate == null) {
             throw new NotificationTemplateException("Could not find template version with ID: \"" + idToActivate + "\"");

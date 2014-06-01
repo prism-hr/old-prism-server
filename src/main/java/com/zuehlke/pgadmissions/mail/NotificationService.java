@@ -1,16 +1,16 @@
 package com.zuehlke.pgadmissions.mail;
 
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_COMPLETE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION_INTERVIEWEE;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION_INTERVIEWER;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_CONFIRM_REJECTION_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_PROVIDE_REFERENCE_REQUEST;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.SYSTEM_IMPORT_ERROR_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.SYSTEM_PASSWORD_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_COMPLETE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION_INTERVIEWEE;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION_INTERVIEWER;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_CONFIRM_REJECTION_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_PROVIDE_REFERENCE_REQUEST;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.SYSTEM_IMPORT_ERROR_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.SYSTEM_PASSWORD_NOTIFICATION;
 
 import java.util.Collection;
 import java.util.Date;
@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
+import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
@@ -180,7 +180,7 @@ public class NotificationService extends AbstractNotificationService {
 
     public void sendInterviewVoteNotificationToInterviewerParticipants(Comment assignInterviewersComment) {
         Application application = assignInterviewersComment.getApplication();
-        String subject = resolveMessage(NotificationTemplateId.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST, application);
+        String subject = resolveMessage(NotificationTemplateType.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST, application);
         PrismEmailMessage message = null;
         
         for (CommentAssignedUser assignedUser : assignInterviewersComment.getCommentAssignedUsers()) {

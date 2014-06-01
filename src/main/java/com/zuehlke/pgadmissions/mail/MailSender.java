@@ -23,7 +23,7 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
-import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
+import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.services.NotificationTemplateService;
 
@@ -75,7 +75,7 @@ public class MailSender {
         }
     }
 
-    protected String resolveSubject(final NotificationTemplateId templateName, final Object... args) {
+    protected String resolveSubject(final NotificationTemplateType templateName, final Object... args) {
         String subjectFormat = emailTemplateService.getById(templateName).getVersion().getSubject();
         return args == null ? subjectFormat : String.format(subjectFormat, args);
     }

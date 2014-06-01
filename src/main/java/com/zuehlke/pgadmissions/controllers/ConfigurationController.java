@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.valueOf;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.valueOf;
 import static java.util.Arrays.sort;
 
 import java.io.IOException;
@@ -36,8 +36,8 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
-import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
-import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
+import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.ApplicationExportConfigurationDTO;
 import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
 import com.zuehlke.pgadmissions.exceptions.NotificationTemplateException;
@@ -153,14 +153,14 @@ public class ConfigurationController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/editScoringDefinition")
     @ResponseBody
-    public Map<String, String> editScoringDefinition(@RequestParam String programCode, @RequestParam ScoringStage scoringStage,
+    public Map<String, String> editScoringDefinition(@RequestParam String programCode, @RequestParam PrismAction prismAction,
             @RequestParam String scoringContent, HttpServletResponse response) {
         Map<String, String> errors = validateScoringDefinition(programCode, scoringContent);
         if (errors.isEmpty()) {
             if (scoringContent.equals("")) {
-                programsService.removeScoringDefinition(programCode, scoringStage);
+                programsService.removeScoringDefinition(programCode, prismAction);
             } else {
-                programsService.applyScoringDefinition(programCode, scoringStage, scoringContent);
+                programsService.applyScoringDefinition(programCode, prismAction, scoringContent);
             }
         }
         return errors;
@@ -191,11 +191,11 @@ public class ConfigurationController {
 
     @RequestMapping(method = RequestMethod.POST, value = { "saveEmailTemplate/{templateName:[a-zA-Z_]+}" })
     @ResponseBody
-    public Map<String, Object> saveTemplate(@PathVariable NotificationTemplateId templateName, @RequestParam String content, @RequestParam String subject) {
+    public Map<String, Object> saveTemplate(@PathVariable NotificationTemplateType templateName, @RequestParam String content, @RequestParam String subject) {
         return saveNewTemplateVersion(templateName, content, subject);
     }
 
-    private Map<String, Object> saveNewTemplateVersion(NotificationTemplateId templateId, String content, String subject) {
+    private Map<String, Object> saveNewTemplateVersion(NotificationTemplateType templateId, String content, String subject) {
         NotificationTemplateVersion newVersion = templateService.saveTemplateVersion(templateId, content, subject);
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("id", newVersion.getId());
@@ -227,11 +227,11 @@ public class ConfigurationController {
     }
 
     @ModelAttribute("templateTypes")
-    public NotificationTemplateId[] getTemplateTypes() {
-        NotificationTemplateId[] names = NotificationTemplateId.values();
-        sort(names, new Comparator<NotificationTemplateId>() {
+    public NotificationTemplateType[] getTemplateTypes() {
+        NotificationTemplateType[] names = NotificationTemplateType.values();
+        sort(names, new Comparator<NotificationTemplateType>() {
             @Override
-            public int compare(NotificationTemplateId o1, NotificationTemplateId o2) {
+            public int compare(NotificationTemplateType o1, NotificationTemplateType o2) {
                 return o1.displayValue().compareTo(o2.displayValue());
             }
         });

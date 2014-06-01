@@ -11,8 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
-import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
-
 // FIXME: map to the correct table - this does not exist any more
 @Entity
 @Table(name = "SCORING_DEFINITION")

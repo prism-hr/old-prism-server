@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.mail;
 
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_TASK_REQUEST;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_TASK_REQUEST_REMINDER;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_UPDATE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_TASK_REQUEST;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_TASK_REQUEST_REMINDER;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_UPDATE_NOTIFICATION;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -24,8 +24,7 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
-import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
+import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType;
 
 @Service
 public class ScheduledMailSendingService extends AbstractNotificationService {
@@ -48,7 +47,7 @@ public class ScheduledMailSendingService extends AbstractNotificationService {
 
         log.trace("Sending task reminder to users");
         for (Integer userId : thisProxy.getUsersForTaskReminder(baselineDate)) {
-            thisProxy.sendDigestEmail(userId, DigestNotificationType.TASK_REMINDER);
+            thisProxy.sendDigestEmail(userId);
         }
         log.trace("Finished sending task reminder to users");
 
@@ -117,7 +116,7 @@ public class ScheduledMailSendingService extends AbstractNotificationService {
             PrismEmailMessageBuilder messageBuilder = new PrismEmailMessageBuilder();
             messageBuilder.model(modelBuilder);
             messageBuilder.to(user);
-            NotificationTemplateId templateName;
+            NotificationTemplateType templateName;
 
             switch (digestNotificationType) {
             case TASK_REMINDER:
@@ -130,7 +129,7 @@ public class ScheduledMailSendingService extends AbstractNotificationService {
                 templateName = APPLICATION_UPDATE_NOTIFICATION;
                 break;
             case OPPORTUNITY_REQUEST_NOTIFICATION:
-                templateName = NotificationTemplateId.PROGRAM_TASK_REQUEST;
+                templateName = NotificationTemplateType.PROGRAM_TASK_REQUEST;
                 break;
             default:
                 throw new RuntimeException();

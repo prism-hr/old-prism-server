@@ -35,3 +35,10 @@
 /* Is system action */
 
 /* Scope table */
+
+/* Add new parent resource state to comment */
+
+/* Application funding type table */
+
+/* Language qualification type table */
+

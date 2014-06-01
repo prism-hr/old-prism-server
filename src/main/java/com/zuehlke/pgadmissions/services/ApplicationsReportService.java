@@ -43,7 +43,7 @@ public class ApplicationsReportService {
 
         ArrayList<ColumnDescription> cd = Lists.newArrayList();
 
-        if (reportType == ReportFormat.SHORT) {
+        if (reportType == ReportFormat.SUMMARY) {
             cd.add(new ColumnDescription("applicationId", ValueType.TEXT, "Application ID"));
             cd.add(new ColumnDescription("firstNames", ValueType.TEXT, "First Name(s)"));
             cd.add(new ColumnDescription("lastName", ValueType.TEXT, "Last Name"));
@@ -167,7 +167,7 @@ public class ApplicationsReportService {
 
                 TableRow row = new TableRow();
 
-                if (reportType == ReportFormat.SHORT) {
+                if (reportType == ReportFormat.SUMMARY) {
 //                    row.addCell(app.getApplicationNumber());
 //                    row.addCell(firstNames);
 //                    row.addCell(applicant.getLastName());

@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.mail.MailSendingService;
+import com.zuehlke.pgadmissions.mail.NotificationService;
 
 @Service
 @Transactional
@@ -23,7 +23,7 @@ public class RejectService {
 	private ApplicationDAO applicationDao;
 	
 	@Autowired
-	private MailSendingService mailService;
+	private NotificationService mailService;
 	
 	@Autowired
 	private ActionService actionService;

@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
-public abstract class AbstractMailSendingService {
+public abstract class AbstractNotificationService {
 
     @Autowired
     protected ApplicationDAO applicationDAO;

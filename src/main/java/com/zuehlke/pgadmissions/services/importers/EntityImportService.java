@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
-import com.zuehlke.pgadmissions.mail.MailSendingService;
+import com.zuehlke.pgadmissions.mail.NotificationService;
 import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
@@ -68,7 +68,7 @@ public class EntityImportService {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private MailSendingService mailSendingService;
+    private NotificationService mailSendingService;
 
     @Autowired
     private RoleService roleService;

@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -44,7 +43,7 @@ public class ApplicationQualification {
     @Column(name = "qualification_language", nullable = false)
     private String language;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "qualification_type_id", nullable = false)
     private QualificationType type;
 
@@ -52,15 +51,15 @@ public class ApplicationQualification {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
     private String grade;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "document_id", nullable = false)
     private Document document;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
     private ImportedInstitution institution;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
     private Application application;
 

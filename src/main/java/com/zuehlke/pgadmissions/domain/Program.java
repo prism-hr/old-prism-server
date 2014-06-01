@@ -5,11 +5,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
@@ -27,6 +27,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
@@ -47,13 +48,19 @@ public class Program extends Advert {
     @Column(name = "require_project_definition")
     private Boolean requireProjectDefinition;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "program")
+    private Set<Project> projects = Sets.newHashSet();
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
+    private Set<Application> applications = Sets.newHashSet();
 
     @Column(name = "is_imported", nullable = false)
     private boolean imported;
@@ -62,15 +69,13 @@ public class Program extends Advert {
     @OrderBy("applicationStartDate")
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
 
+    // FIXME: repair the mapping once the new table has been mapped
     @MapKey(name = "stage")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "program_id")
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
-    private List<Project> projects = new ArrayList<Project>();
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "program_type_id", nullable = false)
     private ProgramType programType;
 
@@ -134,7 +139,7 @@ public class Program extends Advert {
         return new ArrayList<ScoringStage>(getScoringDefinitions().keySet());
     }
 
-    public List<Project> getProjects() {
+    public Set<Project> getProjects() {
         return projects;
     }
 

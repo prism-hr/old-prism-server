@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
@@ -75,7 +76,7 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "transition_state_id")
     private State transitionState;
-    
+
     @Column(name = "user_specified_due_date")
     private LocalDate userSpecifiedDueDate;
 
@@ -198,6 +199,14 @@ public class Comment {
         this.id = id;
     }
 
+    public void setResource(PrismResourceTransient resource) {
+        try {
+            PropertyUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
+        } catch (Exception e) {
+            new Error("Tried to post comment for invalid prism resource type", e);
+        }
+    }
+    
     public Program getProgram() {
         return program;
     }
@@ -285,11 +294,11 @@ public class Comment {
     public void setTransitionState(State transitionState) {
         this.transitionState = transitionState;
     }
-    
+
     public LocalDate getUserSpecifiedDueDate() {
         return userSpecifiedDueDate;
     }
-    
+
     public void setUserSpecifiedDueDate(LocalDate userSpecifiedDueDate) {
         this.userSpecifiedDueDate = userSpecifiedDueDate;
     }
@@ -564,6 +573,11 @@ public class Comment {
 
     public Comment withId(Integer id) {
         this.id = id;
+        return this;
+    }
+
+    public Comment withResource(PrismResourceTransient resource) {
+        setResource(resource);
         return this;
     }
 

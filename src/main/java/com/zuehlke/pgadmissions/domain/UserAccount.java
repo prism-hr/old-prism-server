@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -35,7 +34,7 @@ public class UserAccount {
     private String confirmPassword;
 
     @JoinColumn(name = "application_filter_group_id")
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     private ApplicationFilterGroup filterGroup;
 
     @Column(name = "application_list_last_access_timestamp")

@@ -17,8 +17,8 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Address;
-import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)

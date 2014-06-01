@@ -2,12 +2,6 @@ package com.zuehlke.pgadmissions.cucumber;
 
 import junit.framework.Assert;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-
-import cucumber.annotation.en.Given;
-import cucumber.annotation.en.Then;
-
 
 public class ProjectsPageStepdefs {
 	private final WebDriver webDriver = new HtmlUnitDriver();

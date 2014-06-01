@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.mail.MailSendingService;
+import com.zuehlke.pgadmissions.mail.NotificationService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
@@ -32,7 +32,7 @@ public class RegistrationService {
     private RefereeDAO refereeDAO;
 
     @Autowired
-    private MailSendingService mailService;
+    private NotificationService mailService;
 
     @Autowired
     private EntityService entityService;

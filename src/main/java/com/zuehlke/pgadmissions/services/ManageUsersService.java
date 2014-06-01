@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.mail.MailSendingService;
+import com.zuehlke.pgadmissions.mail.NotificationService;
 
 @Service
 @Transactional
@@ -20,7 +20,7 @@ public class ManageUsersService {
     private RoleService roleService;
 
     @Autowired
-    private MailSendingService mailService;
+    private NotificationService mailService;
     
     @Autowired
     private SystemService systemService;

@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -17,15 +16,15 @@ public class ApplicationAddress {
     @GeneratedValue
     private Integer id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "current_address_id", nullable = false)
     private Address currentAddress;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "contact_address_id", nullable = false)
     private Address contactAddress;
 
-    @OneToOne(mappedBy = "applicationAddress", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "applicationAddress")
     private Application application;
 
     public Integer getId() {

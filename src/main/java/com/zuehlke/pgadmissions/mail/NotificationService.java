@@ -26,7 +26,9 @@ import org.springframework.stereotype.Service;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
@@ -34,10 +36,10 @@ import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
 @Service
-public class MailSendingService extends AbstractMailSendingService {
+public class NotificationService extends AbstractNotificationService {
     // TODO fix tests
 
-    private static final Logger log = LoggerFactory.getLogger(MailSendingService.class);
+    private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
 
     @Autowired
     @Value("${admissions.servicelevel.offer}")
@@ -52,6 +54,11 @@ public class MailSendingService extends AbstractMailSendingService {
     
     @Autowired
     private SystemService systemService;
+    
+    public void setStateTransitionNotifications(PrismResourceTransient resource, StateTransition stateTransition) {
+        // TODO Auto-generated method stub
+        // Work out how to generalise the methods below
+    }
 
     private void sendReferenceRequest(Referee referee, Application application) {
         PrismEmailMessage message = null;

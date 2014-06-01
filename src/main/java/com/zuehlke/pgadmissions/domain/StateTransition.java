@@ -1,17 +1,12 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.zuehlke.pgadmissions.domain.enums.StateTransitionEvaluation;
@@ -44,15 +39,6 @@ public class StateTransition {
 
     @Column(name = "do_post_comment", nullable = false)
     private boolean doPostComment;
-    
-    @OneToOne
-    @JoinColumn(name = "delegate_state_transition_id")
-    private StateTransition delegateStateTransition;
-    
-    @ManyToMany
-    @JoinTable(name = "state_transition_propagation", joinColumns = { @JoinColumn(name = "state_transition_id", nullable = false) }, //
-    inverseJoinColumns = { @JoinColumn(name = "propagated_state_transition_id", nullable = false) })
-    private Set<StateTransition> propagatedStateTransitions;
     
     public Integer getId() {
         return id;
@@ -108,14 +94,6 @@ public class StateTransition {
 
     public void setDoPostComment(boolean doPostComment) {
         this.doPostComment = doPostComment;
-    }
-
-    public StateTransition getDelegateStateTransition() {
-        return delegateStateTransition;
-    }
-    
-    public Set<StateTransition> getPropagatedStateTransitions() {
-        return propagatedStateTransitions;
     }
 
 }

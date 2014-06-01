@@ -76,7 +76,7 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
             @Override
             public AlertDefinition handlePgadmissionsException(CannotExecuteActionException ex, HttpServletRequest request) {
                 return new AlertDefinition(AlertType.INFO, "Cannot perform action", "You do not have sufficient privileges on this "
-                        + ex.getPrismScope().getResourceType() + ".");
+                        + ex.getResource().getResourceType() + ".");
             }
         });
         addHandler(CannotApplyException.class, new PgadmissionExceptionHandler<CannotApplyException>() {

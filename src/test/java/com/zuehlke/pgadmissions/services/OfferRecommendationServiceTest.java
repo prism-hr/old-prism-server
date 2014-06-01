@@ -8,7 +8,7 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
-import com.zuehlke.pgadmissions.mail.MailSendingService;
+import com.zuehlke.pgadmissions.mail.NotificationService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class OfferRecommendationServiceTest {
@@ -31,7 +31,7 @@ public class OfferRecommendationServiceTest {
 
     @Mock
     @InjectIntoByType
-    private MailSendingService mailSendingServiceMock;
+    private NotificationService mailSendingServiceMock;
 
     @TestedObject
     private OfferRecommendationService service;

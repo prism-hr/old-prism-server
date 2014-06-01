@@ -74,10 +74,10 @@ public enum PrismAction {
         }
     }
 
-    public PrismResourceType getResourceType() {
+    public PrismScope getResourceType() {
         String actionName = name();
         String resourceName = actionName.substring(0, actionName.indexOf('_'));
-        return PrismResourceType.valueOf(resourceName);
+        return PrismScope.valueOf(resourceName);
     }
     
 }

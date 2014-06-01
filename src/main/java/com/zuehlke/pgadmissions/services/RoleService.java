@@ -11,8 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
@@ -67,21 +69,14 @@ public class RoleService {
         entityService.delete(userRole);
     }
     
-    public void executeUserRoleTransitions(StateTransition stateTransition, PrismResource resource, User invoker, Comment comment) {
+    public void executeUserRoleTransitions(PrismResource resource, StateTransition stateTransition, Comment comment) {
         HashMap<User, RoleTransition> userRoleTransitions = Maps.newHashMap();
-        userRoleTransitions.putAll(getUserRoleUpdateTransitions(stateTransition, resource, invoker));
-        
-        if (comment != null) {
-            userRoleTransitions.putAll(getUserCreationRoleTransitions(stateTransition, resource, invoker, comment));
-        }
+        userRoleTransitions.putAll(getUserRoleUpdateTransitions(stateTransition, resource, comment.getUser()));
+        userRoleTransitions.putAll(getUserCreationRoleTransitions(stateTransition, resource, comment.getUser(), comment));
         
         for (User user : userRoleTransitions.keySet()) {
             executeRoleTransition(resource, user, userRoleTransitions.get(user));
         }
-    }
-    
-    public void executeDelegateUserRoleTransitions(PrismResource resource, StateTransition delegateStateTransition, User invoker) {
-        executeUserRoleTransitions(delegateStateTransition, resource, invoker, null);
     }
 
     public void executeRoleTransition(PrismResource resource, User user, RoleTransition roleTransition) {
@@ -146,14 +141,14 @@ public class RoleService {
         return roleDAO.getActionRoles(resource, action);
     }
 
-    public List<Role> getActionInvokerRoles(User user, PrismResource resource, PrismAction action) {
-        return roleDAO.getActionInvokerRoles(user, resource, action);
+    public List<Role> getActionOwnerRoles(User user, PrismResource resource, Action action) {
+        return roleDAO.getActionOwnerRoles(user, resource, action);
     }
 
-    private HashMap<User, RoleTransition> getUserRoleUpdateTransitions(StateTransition stateTransition, PrismResource resource, User invoker) {
+    private HashMap<User, RoleTransition> getUserRoleUpdateTransitions(StateTransition stateTransition, PrismResource resource, User actionOwner) {
         HashMap<User, RoleTransition> userRoleTransitions = Maps.newHashMap();
         
-        HashMultimap<RoleTransition, User> roleTransitionUsers = roleDAO.getRoleTransitionUsers(stateTransition, resource, invoker);
+        HashMultimap<RoleTransition, User> roleTransitionUsers = roleDAO.getRoleTransitionUsers(stateTransition, resource, actionOwner);
         for (RoleTransition roleTransition : roleTransitionUsers.keySet()) {
             for (User user : roleTransitionUsers.get(roleTransition)) {
                 validateUserRoleTransition(resource, userRoleTransitions, roleTransition, user);
@@ -164,15 +159,20 @@ public class RoleService {
 
     }
 
-    private HashMap<User, RoleTransition> getUserCreationRoleTransitions(StateTransition stateTransition, PrismResource resource, User invoker, Comment comment) {
+    public Role getResourceCreatorRole(PrismResourceTransient resource) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    private HashMap<User, RoleTransition> getUserCreationRoleTransitions(StateTransition stateTransition, PrismResource resource, User actionOwner, Comment comment) {
         HashMap<User, RoleTransition> userRoleTransitions = Maps.newHashMap();
 
         HashMultimap<Role, RoleTransition> roleCreationTransitions = roleDAO.getRoleCreationTransitions(stateTransition);
         for (Role role : roleCreationTransitions.keySet()) {
             for (RoleTransition roleTransition : roleCreationTransitions.get(role)) {
                 User restrictedToUser = null;
-                if (roleTransition.isRestrictToInvoker()) {
-                    restrictedToUser = invoker;
+                if (roleTransition.isRestrictToActionOwner()) {
+                    restrictedToUser = actionOwner;
                 }
 
                 List<User> users = commentService.getAssignedUsers(comment, role, restrictedToUser);

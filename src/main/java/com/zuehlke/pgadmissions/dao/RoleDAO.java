@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
@@ -117,23 +118,27 @@ public class RoleDAO {
     public List<Role> getActionRoles(PrismResource resource, PrismAction action) {
         return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("stateActionAssignment.role")) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.eq("action.id", action)) //
+                .add(Restrictions.eq("action.systemAction", false)) //
                 .list();
     }
 
     @SuppressWarnings("unchecked")
-    public List<Role> getActionInvokerRoles(User user, PrismResource resource, PrismAction action) {
+    public List<Role> getActionOwnerRoles(User user, PrismResource resource, Action action) {
         return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("stateActionAssignment.role")) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
-                .add(Restrictions.eq("action.id", action)) //
+                .add(Restrictions.eq("action", action)) //
+                .add(Restrictions.eq("action.systemAction", false)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //

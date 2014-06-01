@@ -1,19 +1,27 @@
 package com.zuehlke.pgadmissions.exceptions;
 
 import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 
 public class CannotExecuteActionException extends PrismException {
 
     private static final long serialVersionUID = -1058592315562054622L;
+    
+    private PrismResource resource;
+    
+    private PrismAction action;
 
-    private PrismResource prismScope;
-
-    public CannotExecuteActionException(PrismResource prismScope) {
-        this.prismScope = prismScope;
+    public CannotExecuteActionException(PrismResource resource, PrismAction action) {
+        this.resource = resource;
+        this.action = action;
     }
 
-    public PrismResource getPrismScope() {
-        return prismScope;
+    public PrismResource getResource() {
+        return resource;
+    }
+
+    public PrismAction getAction() {
+        return action;
     }
 
 }

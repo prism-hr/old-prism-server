@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-public enum PrismResourceType {
+public enum PrismScope {
     
     SYSTEM("System"),
     INSTITUTION("Institution"),
@@ -10,7 +10,7 @@ public enum PrismResourceType {
     
     private String simpleName;
     
-    private PrismResourceType(String simpleName) {
+    private PrismScope(String simpleName) {
         this.simpleName = simpleName;
     }
     

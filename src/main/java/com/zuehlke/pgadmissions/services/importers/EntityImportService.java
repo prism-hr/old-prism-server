@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Iterables;
+import com.zuehlke.pgadmissions.dao.ConfigurationDAO;
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
@@ -29,9 +30,11 @@ import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.mail.NotificationService;
 import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
@@ -72,6 +75,9 @@ public class EntityImportService {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private ConfigurationDAO configurationDAO;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void importEntities(ImportedEntityFeed importedEntityFeed) throws XMLDataImportException {
@@ -218,8 +224,11 @@ public class EntityImportService {
         String prefixedProgramCode = institution.getCode() + "-" + programme.getCode();
         Program program = programService.getProgramByCode(prefixedProgramCode);
         if (program == null) {
+            ProgramTypeId programTypeId = ProgramTypeId.findValueFromString(programme.getName());
+            ProgramType programType = entityDAO.getById(ProgramType.class, programTypeId);
             program = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withCode(prefixedProgramCode)
-                    .withState(new State().withId(PrismState.PROGRAM_APPROVED)).withImported(true);
+                    .withTitle(programme.getName()).withState(new State().withId(PrismState.PROGRAM_APPROVED)).withImported(true).withProgramType(programType)
+                    .withStudyDuration(configurationDAO.getStudyDuration(institution, programType));
             entityDAO.save(program);
         }
 

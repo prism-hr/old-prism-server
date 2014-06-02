@@ -30,7 +30,7 @@ public class EntityDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getById(Class<T> klass, int id) {
+    public <T> T getById(Class<T> klass, Object id) {
         return (T) sessionFactory.getCurrentSession().createCriteria(klass).add(Restrictions.eq("id", id)).uniqueResult();
     }
 

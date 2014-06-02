@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
@@ -14,10 +13,6 @@ import com.zuehlke.pgadmissions.domain.User;
 
 @Component
 public class SuggestedSupervisorJSONPropertyEditor extends PropertyEditorSupport {
-
-    @Autowired
-    public SuggestedSupervisorJSONPropertyEditor() {
-    }
 
     @SuppressWarnings("unchecked")
     @Override

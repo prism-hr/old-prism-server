@@ -132,10 +132,6 @@ public class StateService {
         executePropagatedStateTransitions(resource, stateTransition);
     }
 
-    public ThreadPoolExecutor getThreadedStateTransitionPool() {
-        return threadedStateTransitionPool;
-    }
-
     private StateTransition getStateTransition(PrismResource resource, Action action, Comment comment) {
         StateTransition stateTransition = null;
 

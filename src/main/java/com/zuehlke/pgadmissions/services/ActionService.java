@@ -100,7 +100,7 @@ public class ActionService {
             }
         }
 
-        StateTransition stateTransition = stateService.executeStateTransition(operativeResource, resource, getById(action), comment);
+        StateTransition stateTransition = stateService.executeThreadedStateTransition(operativeResource, resource, getById(action), comment);
         PrismAction transitionAction = stateTransition.getTransitionAction().getId();
         PrismResource nextActionResource = resource.getEnclosingResource(transitionAction.getResourceType());
         return new ActionOutcome(actionOwner, nextActionResource, transitionAction);

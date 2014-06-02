@@ -67,9 +67,47 @@ public class StateService {
         return stateDAO.getAllConfigurableStates();
     }
 
+    public StateTransition executeThreadedStateTransition(final PrismResource operativeResource, final PrismResourceTransient resource, final Action action,
+            final Comment comment) {
+        final StateTransition stateTransition = getStateTransition(operativeResource, action, comment);
+
+        threadedStateTransitionPool.submit(new Runnable() {
+            @Override
+            public void run() {
+                executeStateTransition(operativeResource, resource, stateTransition, action, comment);
+            }
+
+        });
+
+        return stateTransition;
+    }
+
+    public void executeEscalatedStateTransitions() {
+        HashMultimap<Action, PrismResourceTransient> escalations = stateDAO.getEscalatedStateTransitions();
+        for (Action escalatedAction : escalations.keySet()) {
+            for (PrismResourceTransient escalatedResource : escalations.get(escalatedAction)) {
+                Comment escalatedComment = new Comment().withResource(escalatedResource).withUser(systemService.getSystem().getUser())
+                        .withAction(escalatedAction);
+                executeThreadedStateTransition(escalatedResource, escalatedResource, escalatedAction, escalatedComment);
+            }
+        }
+    }
+
+    private void executePropagatedStateTransitions(PrismResourceTransient resource, StateTransition stateTransition) {
+        HashMultimap<Action, PrismResourceTransient> propagations = stateDAO.getPropagatedStateTransitions(resource, stateTransition);
+        for (Action propagatedAction : propagations.keySet()) {
+            for (PrismResourceTransient propagatedResource : propagations.get(propagatedAction)) {
+                Comment propagatedComment = new Comment().withResource(propagatedResource).withUser(systemService.getSystem().getUser())
+                        .withAction(propagatedAction);
+                StateTransition propagatedStateTransition = getStateTransition(propagatedResource, propagatedAction, propagatedComment);
+                executeStateTransition(propagatedResource, propagatedResource, propagatedStateTransition, propagatedAction, propagatedComment);
+            }
+        }
+    }
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public StateTransition executeStateTransition(PrismResource operativeResource, PrismResourceTransient resource, Action action, Comment comment) {
-        StateTransition stateTransition = getStateTransition(operativeResource, action, comment);
+    private void executeStateTransition(PrismResource operativeResource, PrismResourceTransient resource, StateTransition stateTransition, Action action,
+            Comment comment) {
         transitionResourceState(resource, stateTransition, comment.getUserSpecifiedDueDate());
 
         if (operativeResource != resource) {
@@ -90,32 +128,8 @@ public class StateService {
 
         roleService.executeUserRoleTransitions(resource, stateTransition, comment);
         notificationService.setStateTransitionNotifications(resource, stateTransition);
-        
-        executePropagatedStateTransitions(resource, stateTransition, comment);
-        
-        return stateTransition;
-    }
 
-    public void executeEscalatedStateTransitions() {
-        executeThreadedStateTransitions(stateDAO.getEscalatedStateTransitions());
-    }
-
-    private void executePropagatedStateTransitions(PrismResourceTransient resource, StateTransition stateTransition, Comment comment) {
-        executeThreadedStateTransitions(stateDAO.getPropagatedStateTransitions(resource, stateTransition));
-    }
-
-    private void executeThreadedStateTransitions(HashMultimap<Action, PrismResourceTransient> threadedStateTransitions) {
-        for (final Action action : threadedStateTransitions.keySet()) {
-            for (final PrismResourceTransient resource : threadedStateTransitions.get(action)) {
-                threadedStateTransitionPool.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action);
-                        executeStateTransition(resource, resource, action, comment);
-                    }
-                });
-            }
-        }
+        executePropagatedStateTransitions(resource, stateTransition);
     }
 
     public ThreadPoolExecutor getThreadedStateTransitionPool() {

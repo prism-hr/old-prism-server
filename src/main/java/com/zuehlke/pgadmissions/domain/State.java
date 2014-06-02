@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -7,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -24,9 +27,8 @@ public class State {
     @JoinColumn(name = "parent_state_id", nullable = false)
     private State parentState;
     
-    @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
-    private StateAction stateActions;
+    @OneToMany(mappedBy = "state")
+    private Set<StateAction> stateActions;
     
     public PrismState getId() {
         return id;
@@ -43,11 +45,11 @@ public class State {
     public void setParentState(State parentState) {
         this.parentState = parentState;
     }
-    
-    public StateAction getStateActions() {
+
+    public Set<StateAction> getStateActions() {
         return stateActions;
     }
-
+    
     public State withId(PrismState id) {
         this.id = id;
         return this;

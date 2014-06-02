@@ -82,6 +82,10 @@ public class Program extends Advert {
     @JoinColumn(name = "previous_state_id", nullable = true)
     private State previousState;
     
+    @ManyToOne
+    @JoinColumn(name = "previous_state_id", nullable = true)
+    private StateTransition pendingStateTransition;
+    
     @Override
     public void setCode(final String code) {
         this.code = code;
@@ -323,6 +327,16 @@ public class Program extends Advert {
     @Override
     public LocalDate getDueDateBaseline() {
         return new LocalDate();
+    }
+    
+    @Override
+    public StateTransition getPendingStateTransition() {
+        return pendingStateTransition;
+    }
+
+    @Override
+    public void setPendingStateTransition(StateTransition pendingStateTransition) {
+        this.pendingStateTransition = pendingStateTransition;
     }
 
 }

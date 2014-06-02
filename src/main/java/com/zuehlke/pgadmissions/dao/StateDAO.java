@@ -83,33 +83,31 @@ public class StateDAO {
                 .uniqueResult();
     }
 
-    public HashMultimap<Action, PrismResourceTransient> getPropagatedStateTransitions(PrismResourceTransient resource, StateTransition stateTransition) {
+    public HashMultimap<Action, PrismResourceTransient> getPropagatedStateTransitions() {
         List<Action> propagateActions = sessionFactory.getCurrentSession().createCriteria(StateTransitionPropagation.class) //
                 .setProjection(Projections.property("action")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("stateTransition", stateTransition)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.ilike("action.id", "_COMPLETE_RECRUITMENT", MatchMode.END)) //
+                        .add(Restrictions.ilike("action.id", "_TERMINATE", MatchMode.END)) //
+                        .add(Restrictions.ilike("action.id", "_SUSPEND", MatchMode.END)) //
+                        .add(Restrictions.ilike("action.id", "_RESTORE", MatchMode.END))) //
                 .addOrder(Order.desc("scope.precedence")) //
                 .list();
 
         HashMultimap<Action, PrismResourceTransient> propagations = HashMultimap.create();
         for (Action propagateAction : propagateActions) {
-            String propagateResourceName = resource.getResourceType().getLowerCaseName();
+            String propagateResourceName = propagateAction.getScope().getId().getLowerCaseName();
             List<PrismResourceTransient> propagateResources;
             
             try {
-                String propagateResourceReference = propagateResourceName;
-                if (stateTransition.getStateAction().getAction().getScope().getPrecedence() > propagateAction.getScope().getPrecedence()) {
-                    propagateResourceReference = propagateResourceReference + "s";
-                }
-                
                 propagateResources = sessionFactory.getCurrentSession() //
                         .createCriteria(propagateAction.getScope().getClass()) //
-                        .createAlias(propagateResourceReference, propagateResourceName, JoinType.INNER_JOIN) //
+                        .createAlias(propagateResourceName, propagateResourceName, JoinType.INNER_JOIN) //
                         .createAlias("state", "state", JoinType.INNER_JOIN) //
                         .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                         .createAlias("stateAction.action", "action") //
-                        .add(Restrictions.eq(propagateResourceName + ".id", resource.getId())) //
                         .add(Restrictions.eq("action", propagateAction)).list();
                 
                 if (propagateResources.size() > 0) {
@@ -126,7 +124,8 @@ public class StateDAO {
     public HashMultimap<Action, PrismResourceTransient> getEscalatedStateTransitions() {
         List<Action> escalateActions = sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action")) //
-                .createAlias("action.scope", "scope", JoinType.INNER_JOIN).add(Restrictions.ilike("action.id", "_ESCALATE", MatchMode.END)) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
+                .add(Restrictions.ilike("action.id", "_ESCALATE", MatchMode.END)) //
                 .addOrder(Order.desc("scope.precedence")) //
                 .list();
 

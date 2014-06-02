@@ -135,6 +135,10 @@ public class Application extends PrismResourceTransient {
     @JoinColumn(name = "application_additional_information_id", nullable = false)
     @Valid
     private AdditionalInformation additionalInformation;
+    
+    @ManyToOne
+    @JoinColumn(name = "pending_state_transition_id", nullable = true)
+    private StateTransition pendingStateTransition;
 
     @Transient
     private Boolean acceptedTerms;
@@ -481,6 +485,16 @@ public class Application extends PrismResourceTransient {
             return closingDate;
         }
         return dueDateBaseline;
+    }
+
+    @Override
+    public StateTransition getPendingStateTransition() {
+        return pendingStateTransition;
+    }
+
+    @Override
+    public void setPendingStateTransition(StateTransition pendingStateTransition) {
+        this.pendingStateTransition = pendingStateTransition;
     }
 
 }

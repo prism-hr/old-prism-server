@@ -35,7 +35,7 @@ public class MailSendingServiceTest {
 
     protected static final String SERVICE_OFFER = "5 working days";
 
-    protected MailSendingService service;
+    protected NotificationService service;
 
     protected MailSender mockMailSender;
 

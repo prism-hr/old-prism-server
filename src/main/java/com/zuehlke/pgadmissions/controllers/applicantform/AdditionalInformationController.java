@@ -17,7 +17,6 @@ import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.BooleanPropertyEditor;
 import com.zuehlke.pgadmissions.services.AdditionalInformationService;
@@ -29,7 +28,7 @@ import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
 public class AdditionalInformationController {
 
     @Autowired
-    private ApplicationService applicationFormService;
+    private ApplicationService applicationService;
 
     @Autowired
     private AdditionalInformationService additionalInformationService;
@@ -72,8 +71,8 @@ public class AdditionalInformationController {
 
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(String applicationId) {
-        return applicationFormService.getSecuredApplication(applicationId, PrismAction.APPLICATION_COMPLETE,
-                PrismAction.APPLICATION_CORRECT);
+        // TODO: check actions
+        return applicationService.getByApplicationNumber(applicationId);
     }
 
     private String returnView(ModelMap modelMap, AdditionalInformation additionalInformation) {

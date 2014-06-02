@@ -20,10 +20,10 @@ import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
-import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -71,15 +71,15 @@ public class ApplicationSummaryService {
     }
 
     private void addQualifications(final Application form, final Map<String, String> result) {
-        List<Qualification> qualifications = form.getQualifications();
+        List<ApplicationQualification> qualifications = form.getQualifications();
         if (qualifications.isEmpty()) {
             result.put("mostRecentQualification", NONE_PROVIDED);
             return;
         }
 
-        Qualification mostRecentQualification = Collections.max(qualifications, new Comparator<Qualification>() {
+        ApplicationQualification mostRecentQualification = Collections.max(qualifications, new Comparator<ApplicationQualification>() {
             @Override
-            public int compare(Qualification o1, Qualification o2) {
+            public int compare(ApplicationQualification o1, ApplicationQualification o2) {
                 return o1.getAwardDate().compareTo(o2.getAwardDate());
             }
         });
@@ -112,7 +112,7 @@ public class ApplicationSummaryService {
 
     private void addEmployments(final Application form, Map<String, String> result) {
         // TODO implement query
-        EmploymentPosition recentEmployment = null;
+        ApplicationEmploymentPosition recentEmployment = null;
         result.put("mostRecentEmployment", recentEmployment.getEmployerName());
     }
 

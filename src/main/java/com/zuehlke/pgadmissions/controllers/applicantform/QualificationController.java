@@ -21,21 +21,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.QualificationType;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationQualificationService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
-import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.validators.QualificationValidator;
 
 @RequestMapping("/update")
@@ -43,10 +42,10 @@ import com.zuehlke.pgadmissions.validators.QualificationValidator;
 public class QualificationController {
 
     @Autowired
-    private QualificationService qualificationService;
+    private ApplicationQualificationService qualificationService;
 
     @Autowired
-    private ApplicationService applicationsService;
+    private ApplicationService applicationService;
 
     @Autowired
     private LocalDatePropertyEditor datePropertyEditor;
@@ -93,11 +92,11 @@ public class QualificationController {
 
     @RequestMapping(value = "/getQualification", method = RequestMethod.GET)
     public String getQualificationView(@ModelAttribute Application applicationForm, @RequestParam(required = false) Integer qualificationId, ModelMap modelMap) {
-        return returnView(modelMap, qualificationId != null ? qualificationService.getById(qualificationId) : new Qualification());
+        return returnView(modelMap, qualificationId != null ? qualificationService.getById(qualificationId) : new ApplicationQualification());
     }
 
     @RequestMapping(value = "/editQualification", method = RequestMethod.POST)
-    public String editQualification(@RequestParam(required = false) Integer qualificationId, @Valid Qualification qualification, BindingResult result,
+    public String editQualification(@RequestParam(required = false) Integer qualificationId, @Valid ApplicationQualification qualification, BindingResult result,
             ModelMap modelMap, @ModelAttribute Application applicationForm) {
         if (result.hasErrors()) {
             return returnView(modelMap, qualification);
@@ -134,10 +133,11 @@ public class QualificationController {
 
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(String applicationId) {
-        return applicationsService.getSecuredApplication(applicationId, PrismAction.APPLICATION_COMPLETE, PrismAction.APPLICATION_CORRECT);
+        // TODO: check actions
+        return applicationService.getByApplicationNumber(applicationId);
     }
 
-    private String returnView(ModelMap modelMap, Qualification qualification) {
+    private String returnView(ModelMap modelMap, ApplicationQualification qualification) {
         modelMap.put("qualification", qualification);
         ImportedInstitution institution = qualification.getInstitution();
         if (institution != null) {

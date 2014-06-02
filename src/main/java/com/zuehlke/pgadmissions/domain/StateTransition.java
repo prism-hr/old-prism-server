@@ -1,15 +1,11 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -38,17 +34,12 @@ public class StateTransition {
     @Enumerated(EnumType.STRING)
     private StateTransitionEvaluation evaluation;
 
-    @ManyToMany
-    @JoinTable(name = "state_transition_propagation", joinColumns = { @JoinColumn(name = "state_transition_id", nullable = false) }, //
-    inverseJoinColumns = { @JoinColumn(name = "propagated_state_transition_id", nullable = false) })
-    private Set<StateTransition> propagatedStates;
-
     @Column(name = "display_order")
     private Integer displayOrder;
 
     @Column(name = "do_post_comment", nullable = false)
     private boolean doPostComment;
-
+    
     public Integer getId() {
         return id;
     }

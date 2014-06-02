@@ -2,14 +2,12 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
-import com.zuehlke.pgadmissions.dao.RoleDAO.UserRoleTransition;
+import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
@@ -42,85 +40,70 @@ public class ActionService {
     @Autowired
     private UserService userService;
 
-    public void validateAction(PrismResource resource, User user, PrismAction action) {
-        if (!checkActionAvailable(resource, user, action)) {
-            throw new CannotExecuteActionException(resource);
+    public Action getById(PrismAction id) {
+        return entityService.getByProperty(Action.class, "id", id);
+    }
+
+    public void validateGetAction(PrismResource resource, PrismAction action, User invoker) {
+        if (!checkActionAvailable(resource, action, invoker)) {
+            throw new CannotExecuteActionException(resource, action);
         }
     }
 
-    public boolean checkActionAvailable(PrismResource resource, User user, PrismAction action) {
-        return actionDAO.getPermittedAction(user, resource, action) != null;
+    public void validatePostAction(PrismResource resource, PrismAction action, Comment comment) {
+        User invoker = comment.getUser();
+        User delegateInvoker = comment.getDelegateUser();
+        if (!checkActionAvailable(resource, action, invoker)) {
+            if (!checkActionAvailable(resource, action, delegateInvoker)) {
+                if (!checkDelegateActionAvailable(resource, action, delegateInvoker)) {
+                    throw new CannotExecuteActionException(resource, action);
+                }
+            }
+        }
+    }
+
+    public boolean checkActionAvailable(PrismResource resource, PrismAction action, User invoker) {
+        return roleService.getActionRoles(resource, action).size() == 0 || actionDAO.getPermittedAction(resource, action, invoker) != null;
+    }
+    
+    public boolean checkDelegateActionAvailable(PrismResource resource, PrismAction action, User invoker) {
+        PrismAction delegateAction = actionDAO.getDelegateAction(resource, action);
+        return checkActionAvailable(resource, delegateAction, invoker);
     }
 
     public List<StateAction> getPermittedActions(User user, PrismResource resource) {
-        return actionDAO.getPermittedActions(user, resource);
+        return actionDAO.getPermittedActions(resource, user);
     }
 
     public ActionOutcome executeAction(Integer resourceId, User user, PrismAction action, Comment comment) {
-        PrismResource resource = entityService.getById(action.getResourceClass(), resourceId);
+        PrismResourceTransient resource = (PrismResourceTransient) entityService.getById(action.getResourceClass(), resourceId);
         return executeAction(resource, user, action, comment);
     }
 
-    public ActionOutcome executeAction(PrismResource resource, User user, PrismAction action, Comment comment) {
+    public ActionOutcome executeAction(PrismResourceTransient resource, User user, PrismAction action, Comment comment) {
         PrismResource operativeResource = resource;
         if (!resource.getClass().equals(action.getResourceClass())) {
             operativeResource = resource.getParentResource(action.getResourceType());
         }
-        return executeAction(operativeResource, resource, user, action, comment);
+        return executeAction(operativeResource, resource, action, comment);
     }
 
-    public ActionOutcome executeAction(PrismResource operativeResource, PrismResource resource, User invoker, PrismAction action, Comment comment) {
-        if (!userService.checkUserEnabled(invoker) || !checkActionEnabled(operativeResource, action)) {
-            throw new CannotExecuteActionException(operativeResource);
-        }
+    public ActionOutcome executeAction(PrismResource operativeResource, PrismResourceTransient resource, PrismAction action, Comment comment) {
+        validatePostAction(resource, action, comment);
 
+        User actionOwner = comment.getUser();
+        
         if (operativeResource != resource) {
             PrismResource duplicateResource = entityService.getDuplicateEntity(resource);
             if (duplicateResource != null) {
-                return new ActionOutcome(invoker, resource, actionDAO.getRedirectAction(duplicateResource, action, invoker));
+                return new ActionOutcome(actionOwner, resource, actionDAO.getRedirectAction(duplicateResource, action, actionOwner));
             }
         }
 
-        PrismAction nextAction = executeStateTransition(operativeResource, resource, invoker, action, comment);
-        PrismResource nextActionResource = resource.getEnclosingResource(nextAction.getResourceType());
-        return new ActionOutcome(invoker, nextActionResource, nextAction);
-    }
-
-    private PrismAction executeStateTransition(PrismResource operativeResource, PrismResource resource, User invoker, PrismAction action, Comment comment) {
-        StateTransition stateTransition = stateService.getStateTransition(operativeResource, action, comment);
-        resource.setState(stateTransition.getTransitionState());
-
-        if (operativeResource != resource) {
-            resource.setParentResource(operativeResource);
-            entityService.save(resource);
-            PrismResourceTransient codableResource = (PrismResourceTransient) resource;
-            codableResource.setCode(codableResource.generateCode());
-        } else {
-            // TODO project creation
-            validateAction(resource, invoker, action);
-        }
-
-
-        if (stateTransition.isDoPostComment()) {
-            comment.setCreatedTimestamp(new DateTime());
-            entityService.save(comment);
-            entityService.flush();
-        }
-
-        executeRoleTransitions(stateTransition, resource, invoker, comment);
-        comment.setRole(Joiner.on("|").join(roleService.getActionInvokerRoles(invoker, resource, action)));
-        return stateTransition.getTransitionAction().getId();
-    }
-
-    private void executeRoleTransitions(StateTransition stateTransition, PrismResource resource, User invoker, Comment comment) {
-        List<UserRoleTransition> userRoleTransitions = roleService.getUserRoleTransitions(stateTransition, resource, invoker, comment);
-        for (UserRoleTransition userRoleTransition : userRoleTransitions) {
-            roleService.executeRoleTransition(resource, userRoleTransition);
-        }
-    }
-
-    private boolean checkActionEnabled(PrismResource resource, PrismAction action) {
-        return !actionDAO.getValidAction(resource, action).isEmpty();
+        StateTransition stateTransition = stateService.executeStateTransition(operativeResource, resource, getById(action), comment);
+        PrismAction transitionAction = stateTransition.getTransitionAction().getId();
+        PrismResource nextActionResource = resource.getEnclosingResource(transitionAction.getResourceType());
+        return new ActionOutcome(actionOwner, nextActionResource, transitionAction);
     }
 
 }

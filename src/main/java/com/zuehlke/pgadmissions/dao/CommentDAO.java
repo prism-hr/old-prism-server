@@ -53,7 +53,7 @@ public class CommentDAO {
         return (T) criteria.uniqueResult();
     }
     
-    public List<User> getAssignedUsersByRole(Comment comment, Role role, User invoker) {
+    public List<User> getAssignedUsers(Comment comment, Role role, User invoker) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .setProjection(Projections.property("user")) //
                 .add(Restrictions.eq("comment", comment));

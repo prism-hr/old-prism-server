@@ -1,15 +1,20 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
 
 @Entity
@@ -32,8 +37,8 @@ public class RoleTransition {
     @Enumerated(EnumType.STRING)
     private RoleTransitionType roleTransitionType;
 
-    @Column(name = "restrict_to_invoker", nullable = false)
-    private boolean restrictToInvoker;
+    @Column(name = "restrict_to_action_owner", nullable = false)
+    private boolean restrictToActionOwner;
 
     @ManyToOne
     @JoinColumn(name = "transition_role_id", nullable = false)
@@ -44,6 +49,12 @@ public class RoleTransition {
 
     @Column(name = "maximum_permitted")
     private Integer maximumPermitted;
+
+    @ManyToMany
+    @JoinTable(name = "ROLE_TRANSITION_EXCLUSION", joinColumns = { @JoinColumn(name = "role_transition_id", nullable = false) }, //
+            inverseJoinColumns = { @JoinColumn(name = "role_id", nullable = false) }, //
+            uniqueConstraints = { @UniqueConstraint(columnNames = { "role_transition_id", "role_id" }) })
+    private Set<Role> excludedRoles = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -77,12 +88,12 @@ public class RoleTransition {
         this.roleTransitionType = roleTransitionType;
     }
 
-    public boolean isRestrictToInvoker() {
-        return restrictToInvoker;
+    public boolean isRestrictToActionOwner() {
+        return restrictToActionOwner;
     }
 
-    public void setRestrictToInvoker(boolean restrictToInvoker) {
-        this.restrictToInvoker = restrictToInvoker;
+    public void setRestrictToActionOwner(boolean restrictToActionOwner) {
+        this.restrictToActionOwner = restrictToActionOwner;
     }
 
     public Role getTransitionRole() {
@@ -107,6 +118,10 @@ public class RoleTransition {
 
     public void setMaximumPermitted(Integer maximumPermitted) {
         this.maximumPermitted = maximumPermitted;
+    }
+
+    public Set<Role> getExcludedRoles() {
+        return excludedRoles;
     }
 
 }

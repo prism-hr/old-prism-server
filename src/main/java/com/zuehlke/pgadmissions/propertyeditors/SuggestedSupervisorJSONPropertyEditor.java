@@ -11,16 +11,12 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
 @Component
 public class SuggestedSupervisorJSONPropertyEditor extends PropertyEditorSupport {
 
-    private final EncryptionHelper encryptionHelper;
-
     @Autowired
-    public SuggestedSupervisorJSONPropertyEditor(EncryptionHelper encryptionHelper) {
-        this.encryptionHelper = encryptionHelper;
+    public SuggestedSupervisorJSONPropertyEditor() {
     }
 
     @SuppressWarnings("unchecked")

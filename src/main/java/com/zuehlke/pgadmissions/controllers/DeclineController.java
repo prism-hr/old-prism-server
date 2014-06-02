@@ -44,7 +44,7 @@ public class DeclineController {
 	    User reviewer = getReviewer(activationCode);
 	    Application application = getApplicationForm(applicationId);
 	    
-	    actionService.validateAction(application, reviewer, PrismAction.APPLICATION_PROVIDE_REVIEW);
+	    actionService.validateGetAction(application, PrismAction.APPLICATION_PROVIDE_REVIEW, reviewer);
 	    
 		if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
 		    commentService.declineReview(reviewer, application);
@@ -82,7 +82,8 @@ public class DeclineController {
 	    Referee referee = getReferee(activationCode, applicationForm);
 	    User user = userService.getUserByActivationCode(activationCode);
 	    
-	    actionService.validateAction(applicationForm, user, PrismAction.APPLICATION_PROVIDE_REFERENCE);
+	    // TOTO: comment posting
+	    actionService.validatePostAction(applicationForm, PrismAction.APPLICATION_PROVIDE_REFERENCE, null);
 	    
 	    if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
 	        // the user clicked on "Confirm"

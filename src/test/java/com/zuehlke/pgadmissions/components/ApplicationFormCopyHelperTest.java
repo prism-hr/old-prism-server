@@ -19,9 +19,9 @@ import org.springframework.validation.ValidationUtils;
 import org.unitils.inject.util.InjectionUtils;
 
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.EmploymentPosition;
+import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.Funding;
-import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
@@ -76,14 +76,14 @@ public class ApplicationFormCopyHelperTest {
         bindingResult.popNestedPath();
 
         int i = 0;
-        for (Qualification qualification : applicationForm.getQualifications()) {
+        for (ApplicationQualification qualification : applicationForm.getQualifications()) {
             bindingResult.pushNestedPath("qualifications[" + (i++) + "]");
             ValidationUtils.invokeValidator(qualificationValidator, qualification, bindingResult);
             bindingResult.popNestedPath();
         }
 
         i = 0;
-        for (EmploymentPosition employmentPosition : applicationForm.getEmploymentPositions()) {
+        for (ApplicationEmploymentPosition employmentPosition : applicationForm.getEmploymentPositions()) {
             bindingResult.pushNestedPath("employmentPositions[" + (i++) + "]");
             ValidationUtils.invokeValidator(employmentPositionValidator, employmentPosition, bindingResult);
             bindingResult.popNestedPath();

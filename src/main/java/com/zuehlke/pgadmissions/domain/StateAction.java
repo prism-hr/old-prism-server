@@ -7,14 +7,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "STATE_ACTION")
+@Table(name = "STATE_ACTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_id", "action_id" }) })
 public class StateAction {
 
     @Id
@@ -37,17 +37,16 @@ public class StateAction {
 
     @Column(name = "precedence")
     private Integer precedence;
+    
+    @OneToOne
+    @JoinColumn(name = "delegate_action_id")
+    private Action delegateAction;
 
     @OneToMany(mappedBy = "stateAction")
     private Set<StateActionAssignment> stateActionAssignments = new HashSet<StateActionAssignment>();
 
     @OneToMany(mappedBy = "stateAction")
     private Set<StateTransition> stateTransitions = new HashSet<StateTransition>();
-
-    @OneToOne
-    @JoinTable(name = "state_action_inheritance", joinColumns = { @JoinColumn(name = "state_action_id", unique = true, nullable = false) }, //
-    inverseJoinColumns = { @JoinColumn(name = "inherited_state_action_id", nullable = false) })
-    private StateAction inheritedStateAction;
 
     public Integer getId() {
         return id;
@@ -97,12 +96,12 @@ public class StateAction {
         this.precedence = precedence;
     }
 
-    public StateAction getInheritedStateAction() {
-        return inheritedStateAction;
+    public Action getDelegateAction() {
+        return delegateAction;
     }
 
-    public void setInheritedStateAction(StateAction inheritedStateAction) {
-        this.inheritedStateAction = inheritedStateAction;
+    public void setDelegateStateAction(Action delegateAction) {
+        this.delegateAction = delegateAction;
     }
 
     public Set<StateActionAssignment> getStateActionAssignments() {

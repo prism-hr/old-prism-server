@@ -49,15 +49,15 @@ import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SourceOfInterestTp;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
@@ -539,9 +539,9 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private QualificationDetailsTp buildQualificationDetails() {
         QualificationDetailsTp resultList = xmlFactory.createQualificationDetailsTp();
 
-        List<Qualification> qualifications = applicationForm.getQualifications();
+        List<ApplicationQualification> qualifications = applicationForm.getQualifications();
         if (!qualifications.isEmpty()) {
-            for (Qualification qualification : qualifications) {
+            for (ApplicationQualification qualification : qualifications) {
                 QualificationsTp qualificationsTp = xmlFactory.createQualificationsTp();
 
                 qualificationsTp.setStartDate(buildXmlDate(qualification.getStartDate()));
@@ -599,9 +599,9 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
     private EmploymentDetailsTp buildEmployer() {
         EmploymentDetailsTp resultList = xmlFactory.createEmploymentDetailsTp();
-        List<EmploymentPosition> employmentPositions = applicationForm.getEmploymentPositions();
+        List<ApplicationEmploymentPosition> employmentPositions = applicationForm.getEmploymentPositions();
         if (!employmentPositions.isEmpty()) {
-            for (EmploymentPosition employmentPosition : employmentPositions) {
+            for (ApplicationEmploymentPosition employmentPosition : employmentPositions) {
                 AppointmentTp appointmentTp = xmlFactory.createAppointmentTp();
 
                 appointmentTp.setJobTitle(employmentPosition.getPosition());

@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,15 +17,12 @@ import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
-import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 
 @Service
 @Transactional
@@ -123,20 +119,6 @@ public class ApplicationService {
         return applicationDAO.getApplicationsByProject(project);
     }
 
-    public Application getSecuredApplication(final String applicationId, final PrismAction... actions) {
-        Application application = getByApplicationNumber(applicationId);
-        if (application == null) {
-            throw new ResourceNotFoundException();
-        }
-        User user = userService.getCurrentUser();
-        for (PrismAction action : actions) {
-            if (actionService.checkActionAvailable(application, user, action)) {
-                return application;
-            }
-        }
-        throw new CannotExecuteActionException(application);
-    }
-
     public void saveOrUpdateApplicationSection(Application application) {
     }
 
@@ -179,27 +161,6 @@ public class ApplicationService {
         supervisor.setUser(user);
         supervisor.setAware(true);
         return supervisor;
-    }
-
-    private LocalDate getClosingDateForApplication(Application application) {
-        return application.getAdvert().getClosingDate().getClosingDate();
-    }
-
-    private LocalDate getDueDateForApplication(Application application) {
-        LocalDate baselineDate = new LocalDate();
-        LocalDate closingDate = application.getClosingDate();
-        State status = application.getState();
-        if (status.getId() == PrismState.APPLICATION_REVIEW && closingDate != null) {
-            if (closingDate.isAfter(baselineDate)) {
-                baselineDate = new LocalDate(closingDate);
-            }
-        }
-        // TODO write query to get duration
-        Integer daysToAdd = 0; //status.getDurationInDays();
-        if (daysToAdd != null) {
-            application.setDueDate(baselineDate.plusDays(daysToAdd));
-        }
-        return null;
     }
 
 }

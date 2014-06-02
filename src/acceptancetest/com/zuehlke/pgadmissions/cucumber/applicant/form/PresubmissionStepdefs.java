@@ -1,21 +1,10 @@
 package com.zuehlke.pgadmissions.cucumber.applicant.form;
-import gherkin.formatter.model.DataTableRow;
-
 import java.util.List;
 
 import junit.framework.Assert;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-
+import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.cucumber.WebDriverProvider;
-
-import cucumber.annotation.After;
-import cucumber.annotation.en.Given;
-import cucumber.annotation.en.Then;
-import cucumber.annotation.en.When;
-import cucumber.table.DataTable;
 
 public class PresubmissionStepdefs {
 

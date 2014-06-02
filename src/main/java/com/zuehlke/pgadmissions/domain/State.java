@@ -23,12 +23,10 @@ public class State {
     @ManyToOne
     @JoinColumn(name = "parent_state_id", nullable = false)
     private State parentState;
-
-    @Column(name = "is_assessment_state", nullable = false)
-    private boolean assessmentState;
     
-    @Column(name = "is_fertile_state", nullable = false)
-    private boolean fertileState;
+    @ManyToOne
+    @JoinColumn(name = "state_id", nullable = false)
+    private StateAction stateActions;
     
     public PrismState getId() {
         return id;
@@ -45,21 +43,9 @@ public class State {
     public void setParentState(State parentState) {
         this.parentState = parentState;
     }
-
-    public boolean isAssessmentState() {
-        return assessmentState;
-    }
-
-    public void setAssessmentState(boolean assessmentState) {
-        this.assessmentState = assessmentState;
-    }
-
-    public boolean isFertileState() {
-        return fertileState;
-    }
-
-    public void setFertileState(boolean fertileState) {
-        this.fertileState = fertileState;
+    
+    public StateAction getStateActions() {
+        return stateActions;
     }
 
     public State withId(PrismState id) {

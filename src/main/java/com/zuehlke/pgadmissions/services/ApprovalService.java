@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
-import com.zuehlke.pgadmissions.mail.MailSendingService;
+import com.zuehlke.pgadmissions.mail.NotificationService;
 
 @Service
 @Transactional
@@ -34,7 +34,7 @@ public class ApprovalService {
     private UserService userService;
 
     @Autowired
-    private MailSendingService mailSendingService;
+    private NotificationService mailSendingService;
 
     @Autowired
     private ProgramInstanceService programInstanceService;
@@ -49,8 +49,6 @@ public class ApprovalService {
     private ApplicationContext applicationContext;
 
     public void confirmOrDeclineSupervision(Application form, ConfirmSupervisionDTO confirmSupervisionDTO) {
-        ApprovalService thisBean = applicationContext.getBean(ApprovalService.class);
-
         Comment approvalComment = applicationsService.getLatestStateChangeComment(form,
                 PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
 
@@ -82,9 +80,9 @@ public class ApprovalService {
             approvalComment.setPositionTitle(project.getTitle());
         }
 
-        if (!programInstanceService.isPrefferedStartDateWithinBounds(application, startDate)) {
-            startDate = programInstanceService.getEarliestPossibleStartDate(application);
-        }
+//        if (!programInstanceService.isPrefferedStartDateWithinBounds(application, startDate)) {
+//            startDate = programInstanceService.getEarliestPossibleStartDate(application);
+//        }
 
         approvalComment.setPositionProvisionalStartDate(startDate);
         commentService.save(approvalComment);

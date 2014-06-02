@@ -6,7 +6,9 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -27,6 +29,10 @@ public class Role implements GrantedAuthority {
     @Enumerated(EnumType.STRING)
     private Authority id;
     
+    @OneToOne
+    @JoinColumn(name = "scope_id", nullable = false)
+    private Scope scope;
+
     @OneToMany(mappedBy = "role")
     private Set<UserRole> userRoles;
 
@@ -38,6 +44,18 @@ public class Role implements GrantedAuthority {
         this.id = id;
     }
 
+    public Scope getScope() {
+        return scope;
+    }
+
+    public void setScope(Scope scope) {
+        this.scope = scope;
+    }
+
+    public Set<UserRole> getUserRoles() {
+        return userRoles;
+    }
+    
     @Override
     public String getAuthority() {
         return id.toString();

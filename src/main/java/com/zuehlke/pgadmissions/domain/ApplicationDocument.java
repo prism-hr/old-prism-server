@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -18,15 +17,15 @@ public class ApplicationDocument {
     @GeneratedValue
     private Integer id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "personal_statement_id")
     private Document personalStatement;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "cv_id", nullable = false)
     private Document cv;
 
-    @OneToOne(mappedBy = "applicationDocument", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "applicationDocument")
     private Application application;
 
     @Transient

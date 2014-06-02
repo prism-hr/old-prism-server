@@ -17,15 +17,15 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Address;
+import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
 public class EmploymentPositionValidatorTest {
 
-    private EmploymentPosition position;
+    private ApplicationEmploymentPosition position;
 
     @Autowired
     private Validator validator;
@@ -34,7 +34,7 @@ public class EmploymentPositionValidatorTest {
 
     @Test
     public void shouldSupportEmploymentPosition() {
-        assertTrue(positionValidator.supports(EmploymentPosition.class));
+        assertTrue(positionValidator.supports(ApplicationEmploymentPosition.class));
     }
 
     @Test
@@ -127,7 +127,7 @@ public class EmploymentPositionValidatorTest {
 
     @Before
     public void setup() throws ParseException {
-        position = new EmploymentPosition();
+        position = new ApplicationEmploymentPosition();
         position.setApplication(new ApplicationFormBuilder().id(4).build());
         position.setEmployerName("Mark");
         position.setEndDate(new LocalDate(2010, 8, 6));

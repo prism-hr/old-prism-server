@@ -67,8 +67,6 @@ public class EntityImportIT {
         assertSame(ProgramTypeId.MRES, program1.getProgramType().getId());
         assertEquals("Internship otherProgram", otherProgram.getTitle());
         assertSame(ProgramTypeId.INTERNSHIP, otherProgram.getProgramType().getId());
-        assertTrue(program1.isFertile());
-        assertTrue(otherProgram.isFertile());
         assertTrue(program1.getRequireProjectDefinition());
         assertTrue(otherProgram.getRequireProjectDefinition());
 

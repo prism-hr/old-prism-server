@@ -79,14 +79,6 @@ public class ApplicationFormValidator extends AbstractValidator {
             errors.rejectValue("acceptedTerms", EMPTY_FIELD_ERROR_MESSAGE);
         }
 
-        if (!applicationForm.getProgram().isFertile()) {
-            errors.rejectValue("program", "application.program.invalid");
-        }
-
-        if (applicationForm.getProject() != null && !applicationForm.getProject().isFertile()) {
-            applicationForm.setProject(null);
-        }
-
         if (programDetails != null && programDetails.getStudyOption() != null) {
             List<ProgramInstance> programInstances = programService.getActiveProgramInstancesForStudyOption(applicationForm.getProgram(),
                     programDetails.getStudyOption());

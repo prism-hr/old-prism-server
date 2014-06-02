@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
-import com.zuehlke.pgadmissions.mail.MailSendingService;
+import com.zuehlke.pgadmissions.mail.NotificationService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 
@@ -23,7 +23,7 @@ public class XMLDataImportTask {
     private EntityImportService entityImportService;
 
     @Autowired
-    private MailSendingService mailService;
+    private NotificationService mailService;
 
     @Autowired
     private RoleService roleService;

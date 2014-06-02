@@ -1,0 +1,9 @@
+syntax: glob
+.classpath
+.project
+.settings
+.metadata
+target/*
+testIndexes/*
+bin/*
+.externalToolBuilders/*

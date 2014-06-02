@@ -1,17 +1,18 @@
 package com.zuehlke.pgadmissions.mail;
 
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_COMPLETE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION_INTERVIEWEE;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION_INTERVIEWER;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_CONFIRM_REJECTION_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_PROVIDE_REFERENCE_REQUEST;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.SYSTEM_IMPORT_ERROR_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.SYSTEM_PASSWORD_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.APPLICATION_COMPLETE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION_INTERVIEWEE;
+import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION_INTERVIEWER;
+import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.APPLICATION_CONFIRM_REJECTION_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST;
+import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.APPLICATION_PROVIDE_REFERENCE_REQUEST;
+import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
+import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.SYSTEM_IMPORT_ERROR_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -26,12 +27,12 @@ import org.springframework.stereotype.Service;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
+import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType;
+import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
@@ -55,10 +56,9 @@ public class NotificationService extends AbstractNotificationService {
     @Autowired
     private SystemService systemService;
     
-    public void sendStateTransitionNotifications(PrismResourceTransient resource, StateTransition stateTransition) {
+    public void sendStateTransitionNotifications(PrismResourceDynamic resource, StateTransition stateTransition) {
         // TODO Auto-generated method stub
         // Work out how to generalise the methods below
-        return null;
     }
 
     private void sendReferenceRequest(Referee referee, Application application) {
@@ -181,7 +181,7 @@ public class NotificationService extends AbstractNotificationService {
 
     public void sendInterviewVoteNotificationToInterviewerParticipants(Comment assignInterviewersComment) {
         Application application = assignInterviewersComment.getApplication();
-        String subject = resolveMessage(NotificationTemplateType.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST, application);
+        String subject = resolveMessage(PrismNotificationTemplate.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST, application);
         PrismEmailMessage message = null;
         
         for (CommentAssignedUser assignedUser : assignInterviewersComment.getCommentAssignedUsers()) {
@@ -198,7 +198,8 @@ public class NotificationService extends AbstractNotificationService {
     }
 
     public void sendInterviewVoteConfirmationToAdministrators(Application application, User user) {
-        Collection<User> administrators = userDAO.getInterviewAdministrators(application);
+        // TODO: write the query to get the users that should be updated when an action is performed
+        Collection<User> administrators = new ArrayList<User>();
         PrismEmailMessage message = null;
         String subject = resolveMessage(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION, application);
         for (User administrator : administrators) {

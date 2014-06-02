@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType;
+import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 
 @Repository
 public class NotificationTemplateDAO {
@@ -23,7 +23,7 @@ public class NotificationTemplateDAO {
         this.sessionFactory = sessionFactory;
     }
 
-    public NotificationTemplate getById(NotificationTemplateType templateId) {
+    public NotificationTemplate getById(PrismNotificationTemplate templateId) {
         return (NotificationTemplate) sessionFactory.getCurrentSession().createCriteria(NotificationTemplate.class).add(Restrictions.eq("id", templateId))
                 .uniqueResult();
     }

@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType;
+import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
@@ -118,7 +118,7 @@ public class PrismWorkflowIT {
     private User registerAndActivateApplicant(Advert advert, String firstName, String lastName, String email) {
         User applicant = registrationService.submitRegistration(
                 new User().withFirstName(firstName).withLastName(lastName).withEmail(email).withAccount(new UserAccount().withPassword("password")), advert);
-        mailSenderMock.assertEmailSent(applicant, NotificationTemplateType.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+        mailSenderMock.assertEmailSent(applicant, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
 
         applicant = registrationService.activateAccount(applicant.getActivationCode());
         return applicant;

@@ -21,7 +21,7 @@ import com.google.common.base.Objects;
 @Entity
 @Table(name = "ADVERT")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Advert extends PrismResourceTransient {
+public abstract class Advert extends PrismResourceDynamic {
 
     @Id
     @GeneratedValue

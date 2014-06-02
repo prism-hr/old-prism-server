@@ -5,7 +5,7 @@ import static junit.framework.Assert.assertNotNull;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
-import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType;
+import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 
 public class NotificationTemplateDAOTest extends AutomaticRollbackTestCase {
 
@@ -13,7 +13,7 @@ public class NotificationTemplateDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void defaultEmailTemnplateShouldHaveNullVersion() {
-        NotificationTemplate result = dao.getById(NotificationTemplateType.APPLICATION_PROVIDE_REFERENCE_REQUEST);
+        NotificationTemplate result = dao.getById(PrismNotificationTemplate.APPLICATION_PROVIDE_REFERENCE_REQUEST);
         assertNotNull(result);
         assertNotNull(result.getVersion());
     }

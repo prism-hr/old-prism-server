@@ -29,7 +29,7 @@ public class Scope {
     public void setId(PrismScope id) {
         this.id = id;
     }
-
+    
     public Integer getPrecedence() {
         return precedence;
     }

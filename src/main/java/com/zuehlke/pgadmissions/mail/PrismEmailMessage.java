@@ -17,7 +17,7 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType;
+import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 
 public final class PrismEmailMessage {
@@ -40,7 +40,7 @@ public final class PrismEmailMessage {
     
     private Map<String, Object> model;
     
-    private NotificationTemplateType templateName;
+    private PrismNotificationTemplate templateName;
     
     private List<PdfAttachmentInputSource> attachments;
     
@@ -132,11 +132,11 @@ public final class PrismEmailMessage {
         return model;
     }
     
-    public NotificationTemplateType getTemplateName() {
+    public PrismNotificationTemplate getTemplateName() {
         return templateName;
     }
 
-    public void setTemplateName(final NotificationTemplateType templateName) {
+    public void setTemplateName(final PrismNotificationTemplate templateName) {
         this.templateName = templateName;
     }
     

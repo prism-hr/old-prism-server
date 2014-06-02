@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.NotificationTemplateDAO;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType;
+import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.exceptions.NotificationTemplateException;
 
 @Service
@@ -19,7 +19,7 @@ public class NotificationTemplateService {
     @Autowired
     private NotificationTemplateDAO notificationTemplateDAO;
 
-    public NotificationTemplate getById(NotificationTemplateType name) {
+    public NotificationTemplate getById(PrismNotificationTemplate name) {
         return notificationTemplateDAO.getById(name);
     }
 
@@ -27,7 +27,7 @@ public class NotificationTemplateService {
         return notificationTemplateDAO.getVersionById(id);
     }
 
-    public NotificationTemplateVersion saveTemplateVersion(NotificationTemplateType templateId, String content, String subject) {
+    public NotificationTemplateVersion saveTemplateVersion(PrismNotificationTemplate templateId, String content, String subject) {
         NotificationTemplate notificationTemplate = notificationTemplateDAO.getById(templateId);
         NotificationTemplateVersion templateVersion = new NotificationTemplateVersion();
 
@@ -41,7 +41,7 @@ public class NotificationTemplateService {
         return templateVersion;
     }
     
-    public void activateTemplateVersion(NotificationTemplateType name, Integer idToActivate) throws NotificationTemplateException {
+    public void activateTemplateVersion(PrismNotificationTemplate name, Integer idToActivate) throws NotificationTemplateException {
         NotificationTemplateVersion toActivate = notificationTemplateDAO.getVersionById(idToActivate);
         if (toActivate == null) {
             throw new NotificationTemplateException("Could not find template version with ID: \"" + idToActivate + "\"");

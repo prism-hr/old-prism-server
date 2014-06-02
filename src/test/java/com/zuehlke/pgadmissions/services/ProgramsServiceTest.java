@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services;
 import static junit.framework.Assert.assertSame;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
@@ -29,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -73,17 +71,6 @@ public class ProgramsServiceTest {
     }
 
     @Test
-    public void shouldGetProgramById() {
-        Program program = EasyMock.createMock(Program.class);
-        program.setId(2);
-        EasyMock.expect(programDAOMock.getById(2)).andReturn(program);
-
-        replay();
-        assertEquals(program, programsService.getById(2));
-        verify();
-    }
-
-    @Test
     public void shouldGetProgramByCode() {
         Program program = EasyMock.createMock(Program.class);
         EasyMock.expect(programDAOMock.getProgramByCode("code")).andReturn(program);
@@ -118,31 +105,6 @@ public class ProgramsServiceTest {
     }
 
     @Test
-    public void shouldApplyScoringDefinition() {
-        Program program = new Program();
-
-        EasyMock.expect(programDAOMock.getProgramByCode("any_code")).andReturn(program);
-
-        replay();
-        programsService.applyScoringDefinition("any_code", ScoringStage.REFERENCE, "Siala baba mak");
-        verify();
-
-        ScoringDefinition definition = program.getScoringDefinitions().get(ScoringStage.REFERENCE);
-        assertNotNull(definition);
-        assertEquals("Siala baba mak", definition.getContent());
-    }
-
-    @Test
-    public void shouldGetProjectById() {
-        Project project = EasyMock.createMock(Project.class);
-        expect(programDAOMock.getById(1)).andReturn(project);
-
-        replay();
-        assertEquals(project, programsService.getById(1));
-        verify();
-    }
-
-    @Test
     public void shouldDelegateSaveProjectToDAO() {
         Project project = EasyMock.createMock(Project.class);
         programDAOMock.save(project);
@@ -150,19 +112,6 @@ public class ProgramsServiceTest {
         replay();
         programsService.save(project);
         verify();
-    }
-
-    @Test
-    public void shouldDisableProjectAndAdvertOnRemoveProject() {
-        Project project = new Project();
-        expect(programDAOMock.getById(1)).andReturn(project);
-        programDAOMock.save(project);
-
-        replay();
-        programsService.removeProject(1);
-        verify();
-
-        assertEquals(PrismState.PROJECT_DISABLED, project.getState().getId());
     }
 
     @Test

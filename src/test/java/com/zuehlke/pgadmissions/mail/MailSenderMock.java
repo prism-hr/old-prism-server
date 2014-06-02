@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType;
+import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
 public class MailSenderMock extends MailSender {
@@ -17,7 +17,7 @@ public class MailSenderMock extends MailSender {
         sentMessages.addAll(emailMessages);
     }
 
-    public PrismEmailMessage assertEmailSent(User recipient, NotificationTemplateType templateId) {
+    public PrismEmailMessage assertEmailSent(User recipient, PrismNotificationTemplate templateId) {
         for (PrismEmailMessage message : sentMessages) {
             if (HibernateUtils.sameEntities(recipient, message.getTo().get(0)) && templateId == message.getTemplateName()) {
                 sentMessages.remove(message);

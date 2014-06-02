@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType;
+import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -55,12 +55,12 @@ public abstract class AbstractNotificationService {
         return StringUtils.join(administratorMails.toArray(new String[] {}), ", ");
     }
 
-    protected PrismEmailMessage buildMessage(User recipient, String subject, Map<String, Object> model, NotificationTemplateType templateName) {
+    protected PrismEmailMessage buildMessage(User recipient, String subject, Map<String, Object> model, PrismNotificationTemplate templateName) {
         return buildMessage(recipient, null, subject, model, templateName);
     }
 
     protected PrismEmailMessage buildMessage(User recipient, List<User> ccRecipients, String subject, Map<String, Object> model,
-            NotificationTemplateType templateName) {
+            PrismNotificationTemplate templateName) {
         return new PrismEmailMessageBuilder().to(recipient).cc(ccRecipients).subject(subject).model(model).emailTemplate(templateName).build();
     }
 
@@ -77,7 +77,7 @@ public abstract class AbstractNotificationService {
         };
     }
 
-    protected String resolveMessage(NotificationTemplateType templateName, Application applicationForm) {
+    protected String resolveMessage(PrismNotificationTemplate templateName, Application applicationForm) {
         User applicant = applicationForm.getUser();
         if (applicant == null) {
             return mailSender.resolveSubject(templateName, applicationForm.getCode(), applicationForm.getAdvert().getTitle());
@@ -87,7 +87,7 @@ public abstract class AbstractNotificationService {
         }
     }
 
-    protected String resolveMessage(NotificationTemplateType templateName, Object... args) {
+    protected String resolveMessage(PrismNotificationTemplate templateName, Object... args) {
         return mailSender.resolveSubject(templateName, args);
     }
 

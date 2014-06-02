@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
 
 @Entity
 @Table(name = "ROLE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_transition_id", "role_id", "role_transition_type_id",
-        "restrict_to_invoker", "transition_role_id" }) })
+        "restrict_to_action_owner", "transition_role_id" }) })
 public class RoleTransition {
 
     @Id

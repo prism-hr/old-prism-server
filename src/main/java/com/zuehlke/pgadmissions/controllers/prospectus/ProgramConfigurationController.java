@@ -35,7 +35,6 @@ import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
@@ -91,9 +90,6 @@ public class ProgramConfigurationController {
     private ImportedEntityService importedEntityService;
 
     @Autowired
-    private ProgramTypePropertyEditor programTypePropertyEditor;
-
-    @Autowired
     private RoleService roleService;
 
     private Gson gson;
@@ -144,7 +140,7 @@ public class ProgramConfigurationController {
         result.put("programState", program.getState());
         result.put("isCustomProgram", !program.isImported());
         result.put("atasRequired", program.getRequireProjectDefinition());
-        result.put("programType", program.getProgramType().getId());
+        result.put("programType", program.getProgramType());
         result.put("institutionCountryCode", encryptionHelper.encrypt(institutionCountry.getId()));
         // TODO check if locked
 //        result.put("programLock", program.getLocked());

@@ -3,7 +3,7 @@
   <programmeOccurrence>
     <programme>
       <code>1</code>
-      <name>program1</name>
+      <name>MRes program1</name>
       <atasRegistered>true</atasRegistered>
     </programme>
     <identifier>0009</identifier>
@@ -18,7 +18,7 @@
   <programmeOccurrence>
     <programme>
       <code>99</code>
-      <name>otherProgram</name>
+      <name>Internship otherProgram</name>
       <atasRegistered>true</atasRegistered>
     </programme>
     <identifier>0014</identifier>

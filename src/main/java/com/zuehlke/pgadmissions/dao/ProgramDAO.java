@@ -29,7 +29,6 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -148,11 +147,11 @@ public class ProgramDAO {
         return (List<ProgramType>) sessionFactory.getCurrentSession().createCriteria(ProgramType.class).list();
     }
 
-    public ProgramType getProgramTypeById(ProgramTypeId programTypeId) {
+    public ProgramType getProgramTypeById(ProgramType programTypeId) {
         return (ProgramType) sessionFactory.getCurrentSession().createCriteria(ProgramType.class).add(Restrictions.eq("id", programTypeId)).uniqueResult();
     }
 
-    public Integer getDefaultStudyDurationForProgramType(ProgramTypeId programTypeId) {
+    public Integer getDefaultStudyDurationForProgramType(ProgramType programTypeId) {
         return (Integer) sessionFactory.getCurrentSession().createCriteria(ProgramType.class).setProjection(Projections.property("defaultStudyDuration"))
                 .add(Restrictions.eq("id", programTypeId)).uniqueResult();
     }

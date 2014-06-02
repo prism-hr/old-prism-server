@@ -34,7 +34,7 @@ public class Scope {
         return precedence;
     }
 
-    public void setPrecedence(int precedence) {
+    public void setPrecedence(Integer precedence) {
         this.precedence = precedence;
     }
     

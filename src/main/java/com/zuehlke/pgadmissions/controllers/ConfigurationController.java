@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.valueOf;
+import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.valueOf;
 import static java.util.Arrays.sort;
 
 import java.io.IOException;
@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.CommentCustomQuestion;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -35,8 +36,8 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
-import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.dto.ApplicationExportConfigurationDTO;
 import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
 import com.zuehlke.pgadmissions.exceptions.NotificationTemplateException;
@@ -152,14 +153,14 @@ public class ConfigurationController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/editScoringDefinition")
     @ResponseBody
-    public Map<String, String> editScoringDefinition(@RequestParam String programCode, @RequestParam PrismAction prismAction,
-            @RequestParam String scoringContent, HttpServletResponse response) {
-        Map<String, String> errors = validateScoringDefinition(programCode, scoringContent);
+    public Map<String, String> editScoringDefinition(@RequestParam Integer programId, @RequestParam PrismAction actionId,
+            @RequestParam String definition) {
+        Map<String, String> errors = validateScoringDefinition(programId, definition);
         if (errors.isEmpty()) {
-            if (scoringContent.equals("")) {
-                programsService.removeScoringDefinition(programCode, prismAction);
+            if (definition.equals("")) {
+                programsService.disableCustomQuestionsForProgram(programId, actionId);
             } else {
-                programsService.applyScoringDefinition(programCode, prismAction, scoringContent);
+                programsService.createCustomQuestionsForProgram(programId, actionId, definition);
             }
         }
         return errors;
@@ -167,11 +168,10 @@ public class ConfigurationController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/getScoringDefinition")
     @ResponseBody
-    public String getScoringDefinition(@RequestParam String programCode, @RequestParam ScoringStage scoringStage) {
-        Program program = programsService.getProgramByCode(programCode);
-        ScoringDefinition scoringDefinition = program.getScoringDefinitions().get(scoringStage);
-        if (scoringDefinition != null) {
-            return scoringDefinition.getContent();
+    public String getScoringDefinition(@RequestParam Integer programId, @RequestParam PrismAction actionId) {
+        CommentCustomQuestion customQuestions = programsService.getCustomQuestionsForProgram(programId, actionId);
+        if (customQuestions != null) {
+            return customQuestions.getVersion().getContent();
         } else {
             return "";
         }
@@ -190,11 +190,11 @@ public class ConfigurationController {
 
     @RequestMapping(method = RequestMethod.POST, value = { "saveEmailTemplate/{templateName:[a-zA-Z_]+}" })
     @ResponseBody
-    public Map<String, Object> saveTemplate(@PathVariable NotificationTemplateType templateName, @RequestParam String content, @RequestParam String subject) {
+    public Map<String, Object> saveTemplate(@PathVariable PrismNotificationTemplate templateName, @RequestParam String content, @RequestParam String subject) {
         return saveNewTemplateVersion(templateName, content, subject);
     }
 
-    private Map<String, Object> saveNewTemplateVersion(NotificationTemplateType templateId, String content, String subject) {
+    private Map<String, Object> saveNewTemplateVersion(PrismNotificationTemplate templateId, String content, String subject) {
         NotificationTemplateVersion newVersion = templateService.saveTemplateVersion(templateId, content, subject);
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("id", newVersion.getId());
@@ -226,11 +226,11 @@ public class ConfigurationController {
     }
 
     @ModelAttribute("templateTypes")
-    public NotificationTemplateType[] getTemplateTypes() {
-        NotificationTemplateType[] names = NotificationTemplateType.values();
-        sort(names, new Comparator<NotificationTemplateType>() {
+    public PrismNotificationTemplate[] getTemplateTypes() {
+        PrismNotificationTemplate[] names = PrismNotificationTemplate.values();
+        sort(names, new Comparator<PrismNotificationTemplate>() {
             @Override
-            public int compare(NotificationTemplateType o1, NotificationTemplateType o2) {
+            public int compare(PrismNotificationTemplate o1, PrismNotificationTemplate o2) {
                 return o1.displayValue().compareTo(o2.displayValue());
             }
         });
@@ -262,8 +262,8 @@ public class ConfigurationController {
         return roleService.getProgramsByUserAndRole(user, Authority.PROGRAM_ADMINISTRATOR);
     }
 
-    private Map<String, String> validateScoringDefinition(String programCode, String scoringContent) {
-        Program program = programsService.getProgramByCode(programCode);
+    private Map<String, String> validateScoringDefinition(Integer programId, String scoringContent) {
+        Program program = programsService.getById(programId).getProgram();
         if (program == null) {
             return Collections.singletonMap("programCode", "Given program code is not valid");
         }

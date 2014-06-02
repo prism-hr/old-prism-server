@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
 import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
 
 @Repository
@@ -122,7 +123,7 @@ public class RoleDAO {
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.eq("action.id", action)) //
-                .add(Restrictions.eq("action.systemAction", false)) //
+                .add(Restrictions.eq("action.actionType", PrismActionType.USER)) //
                 .list();
     }
 
@@ -138,7 +139,7 @@ public class RoleDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.eq("action", action)) //
-                .add(Restrictions.eq("action.systemAction", false)) //
+                .add(Restrictions.eq("action.actionType", PrismActionType.USER)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //

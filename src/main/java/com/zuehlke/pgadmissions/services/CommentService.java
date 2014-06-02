@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
+import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
 
@@ -50,15 +50,15 @@ public class CommentService {
         entityDAO.save(comment);
     }
     
-    public Comment getLastComment(PrismResourceTransient resource) {
+    public Comment getLastComment(PrismResourceDynamic resource) {
         return commentDAO.getLastComment(resource);
     }
     
-    public <T extends Comment> T getLastCommentOfType(PrismResourceTransient resource, Class<T> clazz) {
+    public <T extends Comment> T getLastCommentOfType(PrismResourceDynamic resource, Class<T> clazz) {
         return getLastCommentOfType(resource, clazz);
     }
     
-    public <T extends Comment> T getLastCommentOfType(PrismResourceTransient resource, Class<T> clazz, User author) {
+    public <T extends Comment> T getLastCommentOfType(PrismResourceDynamic resource, Class<T> clazz, User author) {
         return commentDAO.getLastCommentOfType(resource, clazz, author);
     }
     

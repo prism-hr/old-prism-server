@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.HashMap;
+
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -7,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.IUniqueResource;
-import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
+import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
 
 @Service
 @Transactional
@@ -30,6 +32,10 @@ public class EntityService {
     
     public <T> T getByPropertyNotNull(Class<T> klass, String propertyName) {
         return entityDAO.getByPropertyNotNull(klass, propertyName);
+    }
+    
+    public <T> T getByProperties(Class<T> klass, HashMap<String, Object> properties) {
+        return entityDAO.getByProperties(klass, properties);
     }
 
     public <T extends IUniqueResource> T getDuplicateEntity(T resource) {
@@ -57,7 +63,7 @@ public class EntityService {
         entityDAO.delete(entity);
     }
 
-    public LocalDate getResourceDueDate(PrismResourceTransient resource, LocalDate customDueDateBaseline) {
+    public LocalDate getResourceDueDate(PrismResourceDynamic resource, LocalDate customDueDateBaseline) {
         LocalDate dueDateBaseline = customDueDateBaseline;
         if (dueDateBaseline == null) {
             dueDateBaseline = resource.getDueDateBaseline();

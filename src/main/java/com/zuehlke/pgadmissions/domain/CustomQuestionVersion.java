@@ -8,7 +8,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "COMMENT_CUSTOM_QUESTION")
+@Table(name = "COMMENT_CUSTOM_QUESTION_VERSION")
 public class CustomQuestionVersion {
 
     @Id
@@ -43,6 +43,16 @@ public class CustomQuestionVersion {
 
     public void setContent(String content) {
         this.content = content;
+    }
+    
+    public CustomQuestionVersion withCustomQuestion(CommentCustomQuestion customQuestion) {
+        this.customQuestion = customQuestion;
+        return this;
+    }
+    
+    public CustomQuestionVersion withContent(String content) {
+        this.content = content;
+        return this;
     }
 
 }

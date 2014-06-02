@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
+import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
 
@@ -32,15 +32,15 @@ public class CommentDAO {
         this.sessionFactory = sessionFactory;
     }
     
-    public Comment getLastComment(PrismResourceTransient resource) {
+    public Comment getLastComment(PrismResourceDynamic resource) {
         return getLastCommentOfType(resource, Comment.class, null);
     }
     
-    public <T extends Comment> T getLastCommentOfType(PrismResourceTransient resource, Class<T> clazz) {
+    public <T extends Comment> T getLastCommentOfType(PrismResourceDynamic resource, Class<T> clazz) {
         return getLastCommentOfType(resource, clazz, null);
     }
     
-    public <T extends Comment> T getLastCommentOfType(PrismResourceTransient resource, Class<T> clazz, User author) {
+    public <T extends Comment> T getLastCommentOfType(PrismResourceDynamic resource, Class<T> clazz, User author) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(clazz) //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
                 .addOrder(Order.desc("createdTimestamp")) //

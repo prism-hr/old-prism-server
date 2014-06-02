@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.dao;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -12,14 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.PrismResource;
-import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
+import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
+import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
-import com.zuehlke.pgadmissions.domain.StateTransitionPropagation;
+import com.zuehlke.pgadmissions.domain.StateTransitionPending;
+import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Repository
@@ -67,7 +69,7 @@ public class StateDAO {
                 .uniqueResult();
     }
 
-    public Integer getStateDuration(PrismResourceTransient resource) {
+    public Integer getStateDuration(PrismResourceDynamic resource) {
         return (Integer) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
                 .setProjection(Projections.property("expiryDuration")) //
                 .add(Restrictions.eq("state", resource.getState())) //
@@ -82,56 +84,67 @@ public class StateDAO {
                         .add(Restrictions.eq("program", resource.getProgram()))) //
                 .uniqueResult();
     }
-
-    public HashMultimap<Action, PrismResourceTransient> getPropagatedStateTransitions() {
-        List<Action> propagateActions = sessionFactory.getCurrentSession().createCriteria(StateTransitionPropagation.class) //
-                .setProjection(Projections.property("action")) //
-                .createAlias("action", "action", JoinType.INNER_JOIN) //
-                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.ilike("action.id", "_COMPLETE_RECRUITMENT", MatchMode.END)) //
-                        .add(Restrictions.ilike("action.id", "_TERMINATE", MatchMode.END)) //
-                        .add(Restrictions.ilike("action.id", "_SUSPEND", MatchMode.END)) //
-                        .add(Restrictions.ilike("action.id", "_RESTORE", MatchMode.END))) //
-                .addOrder(Order.desc("scope.precedence")) //
+    
+    public List<StateTransitionPending> getPendingStateTransitions() {
+        List<Scope> scopes = sessionFactory.getCurrentSession().createCriteria(Scope.class) //
+                .addOrder(Order.desc("precedence")) //
                 .list();
-
-        HashMultimap<Action, PrismResourceTransient> propagations = HashMultimap.create();
-        for (Action propagateAction : propagateActions) {
+        
+        List<StateTransitionPending> pendingStateTransitions = Lists.newArrayList();
+        for (Scope scope : scopes) {
+            String scopeName = scope.getId().getLowerCaseName();
+            pendingStateTransitions.addAll(sessionFactory.getCurrentSession().createCriteria(StateTransitionPending.class) //
+                    .add(Restrictions.isNotNull(scopeName)) //
+                    .addOrder(Order.asc(scopeName)) //
+                    .addOrder(Order.asc("id")) //
+                    .list());
+        }
+        
+        return pendingStateTransitions;
+    }
+    
+    public HashMultimap<Action, PrismResourceDynamic> getPropagatedStateTransitions(StateTransitionPending pendingStateTransition) {
+        HashMultimap<Action, PrismResourceDynamic> propagations = HashMultimap.create();
+        for (Action propagateAction : pendingStateTransition.getStateTransition().getPropagatedActions()) {
             String propagateResourceName = propagateAction.getScope().getId().getLowerCaseName();
-            List<PrismResourceTransient> propagateResources;
+            String propagateResourceReference = propagateResourceName;
+            
+            if (pendingStateTransition.getStateTransition().getStateAction().getAction().getScope().getPrecedence() > propagateAction.getScope().getPrecedence()) {
+                propagateResourceReference = propagateResourceName + "s";
+            }
+            
+            List<PrismResourceDynamic> propagateResources;
             
             try {
                 propagateResources = sessionFactory.getCurrentSession() //
                         .createCriteria(propagateAction.getScope().getClass()) //
-                        .createAlias(propagateResourceName, propagateResourceName, JoinType.INNER_JOIN) //
-                        .createAlias("state", "state", JoinType.INNER_JOIN) //
+                        .createAlias(propagateResourceReference, propagateResourceName, JoinType.INNER_JOIN) //
+                        .createAlias(propagateResourceName + "state", "state", JoinType.INNER_JOIN) //
                         .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                        .createAlias("stateAction.action", "action") //
+                        .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                         .add(Restrictions.eq("action", propagateAction)).list();
                 
-                if (propagateResources.size() > 0) {
-                    propagations.putAll(propagateAction, propagateResources);
-                }
+                propagations.putAll(propagateAction, propagateResources);
             } catch (Exception e) {
-                throw new Error("Tried to propagate an invalid prism resource type", e);
+                throw new Error("Tried to propagate an invalid prism resource", e);
             }
         }
-
+        
         return propagations;
     }
 
-    public HashMultimap<Action, PrismResourceTransient> getEscalatedStateTransitions() {
+    public HashMultimap<Action, PrismResourceDynamic> getEscalatedStateTransitions() {
         List<Action> escalateActions = sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action")) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
-                .add(Restrictions.ilike("action.id", "_ESCALATE", MatchMode.END)) //
+                .add(Restrictions.eq("action.actionType", PrismActionType.SYSTEM_ESCALATION)) //
                 .addOrder(Order.desc("scope.precedence")) //
                 .list();
 
-        HashMultimap<Action, PrismResourceTransient> escalations = HashMultimap.create();
+        HashMultimap<Action, PrismResourceDynamic> escalations = HashMultimap.create();
         for (Action escalateAction : escalateActions) {
-            List<PrismResourceTransient> escalateResources;
+            List<PrismResourceDynamic> escalateResources;
             
             try {
                 escalateResources = sessionFactory.getCurrentSession() //
@@ -146,7 +159,7 @@ public class StateDAO {
                     escalations.putAll(escalateAction, escalateResources);
                 }
             } catch (Exception e) {
-                throw new Error("Tried to escalate an invalid prism resource type", e);
+                throw new Error("Tried to escalate an invalid prism resource", e);
             }
         }
 

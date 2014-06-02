@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.PrismResource;
-import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
+import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
@@ -159,7 +159,7 @@ public class RoleService {
 
     }
 
-    public Role getResourceCreatorRole(PrismResourceTransient resource) {
+    public Role getResourceCreatorRole(PrismResourceDynamic resource) {
         // TODO Auto-generated method stub
         return null;
     }

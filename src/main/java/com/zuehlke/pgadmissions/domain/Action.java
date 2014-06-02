@@ -13,6 +13,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
 
 @Entity
 @Table(name = "ACTION")
@@ -24,12 +25,13 @@ public class Action {
     @Enumerated(EnumType.STRING)
     private PrismAction id;
     
-    @Column(name = "is_system_action", nullable = false)
-    private boolean systemAction;
-    
     @OneToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
+    
+    @Column(name = "action_type_id", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismActionType actionType;
 
     public PrismAction getId() {
         return id;
@@ -37,14 +39,6 @@ public class Action {
 
     public void setId(PrismAction id) {
         this.id = id;
-    }
-    
-    public boolean isSystemAction() {
-        return systemAction;
-    }
-
-    public void setSystemAction(boolean systemAction) {
-        this.systemAction = systemAction;
     }
 
     public Scope getScope() {
@@ -55,6 +49,14 @@ public class Action {
         this.scope = scope;
     }
     
+    public PrismActionType getActionType() {
+        return actionType;
+    }
+
+    public void setActionType(PrismActionType actionType) {
+        this.actionType = actionType;
+    }
+
     public Action withId(PrismAction id) {
         this.id = id;
         return this;

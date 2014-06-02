@@ -15,7 +15,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType;
+import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 
 @Entity
 @Table(name = "NOTIFICATION_TEMPLATE")
@@ -26,11 +26,11 @@ public class NotificationTemplate implements Serializable {
     @Id
     @Column(name = "id")
     @Enumerated(EnumType.STRING)
-    private NotificationTemplateType id;
+    private PrismNotificationTemplate id;
 
     @Column(name = "notification_type_id", nullable = false)
     @Enumerated(EnumType.STRING)
-    private NotificationTemplateType notificationTemplateType;
+    private PrismNotificationTemplate notificationTemplateType;
 
     @OneToOne
     @JoinColumn(name = "notification_template_version_id")
@@ -47,19 +47,19 @@ public class NotificationTemplate implements Serializable {
     @OrderBy("createdTimestamp")
     private Set<NotificationTemplateVersion> versions = Sets.newLinkedHashSet();
 
-    public NotificationTemplateType getId() {
+    public PrismNotificationTemplate getId() {
         return id;
     }
 
-    public void setId(NotificationTemplateType id) {
+    public void setId(PrismNotificationTemplate id) {
         this.id = id;
     }
 
-    public NotificationTemplateType getType() {
+    public PrismNotificationTemplate getType() {
         return notificationTemplateType;
     }
 
-    public void setType(NotificationTemplateType notificationTemplateType) {
+    public void setType(PrismNotificationTemplate notificationTemplateType) {
         this.notificationTemplateType = notificationTemplateType;
     }
 
@@ -91,12 +91,12 @@ public class NotificationTemplate implements Serializable {
         return versions;
     }
 
-    public NotificationTemplate withId(NotificationTemplateType id) {
+    public NotificationTemplate withId(PrismNotificationTemplate id) {
         this.id = id;
         return this;
     }
 
-    public NotificationTemplate withType(NotificationTemplateType notificationTemplateType) {
+    public NotificationTemplate withType(PrismNotificationTemplate notificationTemplateType) {
         this.notificationTemplateType = notificationTemplateType;
         return this;
     }

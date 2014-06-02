@@ -34,7 +34,7 @@
 
 /* Is system action */
 
-/* Scope table */
+/* Scope table and scope type */
 
 /* Add new parent resource state to comment */
 
@@ -44,4 +44,8 @@
 
 /* Pending state transition */
 
-/* Action type (USER, ESCALATION, PROPAGATION") */
+/* Action type (USER, SYSTEM_ESCALATION, SYSTEM_PROPAGATION") */
+
+/* Parent version tables (mail and custom question) ... version column nullable */
+
+/* Turn off scoring definition */

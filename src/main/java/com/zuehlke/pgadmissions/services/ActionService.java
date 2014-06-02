@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.PrismResource;
-import com.zuehlke.pgadmissions.domain.PrismResourceTransient;
+import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
@@ -76,11 +76,11 @@ public class ActionService {
     }
 
     public ActionOutcome executeAction(Integer resourceId, User user, PrismAction action, Comment comment) {
-        PrismResourceTransient resource = (PrismResourceTransient) entityService.getById(action.getResourceClass(), resourceId);
+        PrismResourceDynamic resource = (PrismResourceDynamic) entityService.getById(action.getResourceClass(), resourceId);
         return executeAction(resource, user, action, comment);
     }
 
-    public ActionOutcome executeAction(PrismResourceTransient resource, User user, PrismAction action, Comment comment) {
+    public ActionOutcome executeAction(PrismResourceDynamic resource, User user, PrismAction action, Comment comment) {
         PrismResource operativeResource = resource;
         if (!resource.getClass().equals(action.getResourceClass())) {
             operativeResource = resource.getParentResource(action.getResourceType());
@@ -88,7 +88,7 @@ public class ActionService {
         return executeAction(operativeResource, resource, action, comment);
     }
 
-    public ActionOutcome executeAction(PrismResource operativeResource, PrismResourceTransient resource, PrismAction action, Comment comment) {
+    public ActionOutcome executeAction(PrismResource operativeResource, PrismResourceDynamic resource, PrismAction action, Comment comment) {
         validatePostAction(resource, action, comment);
 
         User actionOwner = comment.getUser();

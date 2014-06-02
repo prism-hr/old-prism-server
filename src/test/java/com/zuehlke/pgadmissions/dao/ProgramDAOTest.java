@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
@@ -22,13 +21,11 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.TestData;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
 public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
@@ -67,14 +64,6 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
     }
 
     @Test
-    public void shouldGetProgramById() {
-        Program program = TestData.aProgram(programType, institution, user, state);
-        sessionFactory.getCurrentSession().save(program);
-        flushAndClearSession();
-        assertEquals(program.getId(), programDAO.getById(program.getId()).getId());
-    }
-
-    @Test
     public void shouldGetProgramByCode() {
         Program program = TestData.aProgram(programType, institution, user, state).withCode("code1");
         sessionFactory.getCurrentSession().save(program);
@@ -87,34 +76,6 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         Program program = TestData.aProgram(programType, institution, user, state);
         programDAO.save(program);
         Assert.assertNotNull(program.getId());
-    }
-
-    @Test
-    public void shouldGetProgramWithScoringDefinitions() {
-        Program program = TestData.aProgram(programType, institution, user, state).withCode("code1");
-
-        ScoringDefinition scoringDef1 = new ScoringDefinition();
-        scoringDef1.setContent("aaa");
-        scoringDef1.setStage(ScoringStage.INTERVIEW);
-        ScoringDefinition scoringDef2 = new ScoringDefinition();
-        scoringDef2.setContent("bb");
-        scoringDef2.setStage(ScoringStage.REVIEW);
-        program.getScoringDefinitions().put(ScoringStage.INTERVIEW, scoringDef1);
-        program.getScoringDefinitions().put(ScoringStage.REVIEW, scoringDef2);
-
-        sessionFactory.getCurrentSession().save(program);
-        flushAndClearSession();
-
-        Program loadedProgram = programDAO.getProgramByCode("code1");
-        assertEquals(program.getId(), loadedProgram.getId());
-        Map<ScoringStage, ScoringDefinition> scoringDefinitions = loadedProgram.getScoringDefinitions();
-        assertEquals(2, scoringDefinitions.size());
-        ScoringDefinition interviewDefinition1 = scoringDefinitions.get(ScoringStage.INTERVIEW);
-        assertEquals("aaa", interviewDefinition1.getContent());
-        assertEquals(ScoringStage.INTERVIEW, interviewDefinition1.getStage());
-        ScoringDefinition interviewDefinition2 = scoringDefinitions.get(ScoringStage.REVIEW);
-        assertEquals("bb", interviewDefinition2.getContent());
-        assertEquals(ScoringStage.REVIEW, interviewDefinition2.getStage());
     }
 
     @Test
@@ -207,13 +168,6 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         programDAO.save(project);
         flushAndClearSession();
         assertNotNull(project.getId());
-    }
-
-    @Test
-    public void shouldLoadProjectAndAdvert() {
-        Project loadedProject = (Project) programDAO.getById(project.getId());
-        assertNotNull(loadedProject);
-        assertEquals(loadedProject.getId(), project.getId());
     }
 
     @Test

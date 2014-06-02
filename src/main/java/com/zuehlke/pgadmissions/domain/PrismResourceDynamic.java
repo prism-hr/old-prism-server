@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import org.joda.time.LocalDate;
 
-public abstract class PrismResourceTransient extends PrismResource {
+public abstract class PrismResourceDynamic extends PrismResource {
 
     public abstract State getPreviousState();
 
@@ -19,9 +19,5 @@ public abstract class PrismResourceTransient extends PrismResource {
     public abstract String generateCode();
     
     public abstract LocalDate getDueDateBaseline();
-    
-    public abstract StateTransition getPendingStateTransition();
-    
-    public abstract void setPendingStateTransition(StateTransition stateTransition);
     
 }

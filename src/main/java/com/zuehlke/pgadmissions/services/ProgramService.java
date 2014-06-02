@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.joda.time.LocalDate;
@@ -9,17 +10,21 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
+import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.CommentCustomQuestion;
+import com.zuehlke.pgadmissions.domain.CustomQuestionVersion;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 
@@ -41,7 +46,12 @@ public class ProgramService {
 
     @Autowired
     private RoleService roleService;
-
+    
+    @Autowired
+    private EntityService entityService;
+    
+    @Autowired
+    private ActionService actionService;
     
     // TODO: Rewrite below
     
@@ -49,8 +59,8 @@ public class ProgramService {
         return programDAO.getAllEnabledPrograms();
     }
 
-    public Advert getById(Integer advertId) {
-        return programDAO.getById(advertId);
+    public Advert getById(Integer id) {
+        return entityService.getById(Advert.class, id);
     }
     
     @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
@@ -70,24 +80,37 @@ public class ProgramService {
     public List<Program> getProgramsForWhichCanManageProjects(User user) {
         return programDAO.getProgramsForWhichUserCanManageProjects(user);
     }
-
-    public void applyScoringDefinition(String programCode, ScoringStage scoringStage, String scoringContent) {
-        Program program = programDAO.getProgramByCode(programCode);
-        ScoringDefinition scoringDefinition = new ScoringDefinition();
-        scoringDefinition.setContent(scoringContent);
-        scoringDefinition.setStage(scoringStage);
-        program.getScoringDefinitions().put(scoringStage, scoringDefinition);
+    
+    public CommentCustomQuestion getCustomQuestionsForProgram(Integer programId, PrismAction actionId) {
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("program.id", programId);
+        properties.put("action.id", actionId);
+        properties.put("enabled", true);
+        return entityService.getByProperties(CommentCustomQuestion.class, properties);
     }
 
-    public void removeScoringDefinition(String programCode, ScoringStage scoringStage) {
-        Program program = programDAO.getProgramByCode(programCode);
-        program.getScoringDefinitions().put(scoringStage, null);
+    public void createCustomQuestionsForProgram(Integer programId, PrismAction actionId, String definition) {
+        Program program = getById(programId).getProgram();
+        Action action = actionService.getById(actionId);
+        CommentCustomQuestion persistentCustomQuestionDefinition = entityService.getOrCreate(new CommentCustomQuestion().withProgram(program).withAction(action));
+        CustomQuestionVersion version = new CustomQuestionVersion().withCustomQuestion(persistentCustomQuestionDefinition).withContent(definition);
+        entityService.save(version);
+        persistentCustomQuestionDefinition.setVersion(version);
+        persistentCustomQuestionDefinition.setEnabled(true);
+    }
+
+    public void disableCustomQuestionsForProgram(Integer programId, PrismAction actionId) {
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("program.id", programId);
+        properties.put("action.id", actionId);
+        CommentCustomQuestion customQuestions = entityService.getByProperties(CommentCustomQuestion.class, properties);
+        customQuestions.setEnabled(false);
     }
 
     public void removeProject(Integer projectId) {
         Project project = (Project) getById(projectId);
         if (project != null) {
-//            project.setState(ProjectState.PROJECT_DISABLED);
+// TODO - state transition project.setState(ProjectState.PROJECT_DISABLED);
         }
     }
 

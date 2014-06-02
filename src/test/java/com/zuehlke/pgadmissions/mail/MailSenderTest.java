@@ -16,7 +16,7 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType;
+import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.services.NotificationTemplateService;
 
 @RunWith(UnitilsBlockJUnit4ClassRunner.class)
@@ -42,10 +42,10 @@ public class MailSenderTest {
         NotificationTemplate notificationTemplate = new NotificationTemplate().withVersion(new NotificationTemplateVersion()
                 .withSubject("Subject without arguments"));
 
-        expect(emailTemplateServiceMock.getById(isA(NotificationTemplateType.class))).andReturn(notificationTemplate);
+        expect(emailTemplateServiceMock.getById(isA(PrismNotificationTemplate.class))).andReturn(notificationTemplate);
 
         replay();
-        String result = service.resolveSubject(NotificationTemplateType.SYSTEM_COMPLETE_REGISTRATION_REQUEST, (Object[]) null);
+        String result = service.resolveSubject(PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST, (Object[]) null);
 
         assertEquals("Subject without arguments", result);
     }
@@ -55,10 +55,10 @@ public class MailSenderTest {
         NotificationTemplate notificationTemplate = new NotificationTemplate().withVersion(new NotificationTemplateVersion()
                 .withSubject("Dear %s, welcome to the 105 Zoo"));
 
-        expect(emailTemplateServiceMock.getById(isA(NotificationTemplateType.class))).andReturn(notificationTemplate);
+        expect(emailTemplateServiceMock.getById(isA(PrismNotificationTemplate.class))).andReturn(notificationTemplate);
 
         replay();
-        String result = service.resolveSubject(NotificationTemplateType.SYSTEM_COMPLETE_REGISTRATION_REQUEST, new Object[] { "Beppe" });
+        String result = service.resolveSubject(PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST, new Object[] { "Beppe" });
 
         assertEquals("Dear Beppe, welcome to the 105 Zoo", result);
     }

@@ -199,11 +199,11 @@ public class Comment {
         this.id = id;
     }
 
-    public void setResource(PrismResourceTransient resource) {
+    public void setResource(PrismResourceDynamic resource) {
         try {
             PropertyUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
         } catch (Exception e) {
-            new Error("Tried to post comment for invalid prism resource type", e);
+            new Error("Tried to post comment for invalid prism resource", e);
         }
     }
     
@@ -576,7 +576,7 @@ public class Comment {
         return this;
     }
 
-    public Comment withResource(PrismResourceTransient resource) {
+    public Comment withResource(PrismResourceDynamic resource) {
         setResource(resource);
         return this;
     }

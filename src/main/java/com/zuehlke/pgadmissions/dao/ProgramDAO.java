@@ -45,10 +45,6 @@ public class ProgramDAO {
         this.sessionFactory = sessionFactory;
     }
 
-    public Advert getById(Integer advertId) {
-        return (Advert) sessionFactory.getCurrentSession().createCriteria(Advert.class).add(Restrictions.eq("id", advertId)).uniqueResult();
-    }
-
     public Advert getAcceptingApplicationsById(Integer advertId) {
         Advert project = (Advert) sessionFactory.getCurrentSession() //
                 .createCriteria(Project.class)//

@@ -1,9 +1,6 @@
 package com.zuehlke.pgadmissions.mail;
 
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_TASK_REQUEST;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_TASK_REQUEST_REMINDER;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType.APPLICATION_UPDATE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -24,7 +21,7 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateType;
+import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 
 @Service
 public class ScheduledMailSendingService extends AbstractNotificationService {
@@ -41,33 +38,24 @@ public class ScheduledMailSendingService extends AbstractNotificationService {
     @Autowired
     private ApplicationContext applicationContext;
 
+    // TODO: Write the queries to get the individual and syndicated mail lists.
+    // TODO: Write a generalised dispatcher for the mails.
+    
     public void sendDigestsToUsers() {
         ScheduledMailSendingService thisProxy = applicationContext.getBean(this.getClass());
         Date baselineDate = new Date();
 
-        log.trace("Sending task reminder to users");
-        for (Integer userId : thisProxy.getUsersForTaskReminder(baselineDate)) {
-            thisProxy.sendDigestEmail(userId);
-        }
-        log.trace("Finished sending task reminder to users");
-
         log.trace("Sending task notification to users");
-        for (Integer userId : thisProxy.getUsersForTaskNotification(baselineDate)) {
-            thisProxy.sendDigestEmail(userId, DigestNotificationType.TASK_NOTIFICATION);
+        for (Integer userId : thisProxy.getUsersForTaskReminder(baselineDate)) {
+            thisProxy.sendDigestEmail(userId, PrismNotificationTemplate.APPLICATION_TASK_REQUEST);
         }
         log.trace("Finished sending task notification to users");
 
         log.trace("Sending update notification to users");
         for (Integer userId : thisProxy.getUsersForUpdateNotification(baselineDate)) {
-            thisProxy.sendDigestEmail(userId, DigestNotificationType.UPDATE_NOTIFICATION);
+            thisProxy.sendDigestEmail(userId, PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION);
         }
         log.trace("Finished sending update notification to users");
-
-        log.trace("Sending opportunity request notification to users");
-        for (Integer userId : thisProxy.getUsersForOpportunityRequestNotification(baselineDate)) {
-            thisProxy.sendDigestEmail(userId, DigestNotificationType.OPPORTUNITY_REQUEST_NOTIFICATION);
-        }
-        log.trace("Finished sending opportunity request notification to users");
     }
 
     public List<Integer> getUsersForTaskNotification(Date baselineDate) {
@@ -95,12 +83,12 @@ public class ScheduledMailSendingService extends AbstractNotificationService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendDigestEmail(Integer userId, DigestNotificationType digestNotificationType) {
+    public boolean sendDigestEmail(Integer userId, PrismNotificationTemplate template) {
         final User user = userDAO.getById(userId);
-        return sendDigest(user, digestNotificationType);
+        return sendDigest(user, template);
     }
 
-    private boolean sendDigest(final User user, DigestNotificationType digestNotificationType) {
+    private boolean sendDigest(final User user, PrismNotificationTemplate template) {
         try {
             EmailModelBuilder modelBuilder = new EmailModelBuilder() {
 
@@ -116,27 +104,9 @@ public class ScheduledMailSendingService extends AbstractNotificationService {
             PrismEmailMessageBuilder messageBuilder = new PrismEmailMessageBuilder();
             messageBuilder.model(modelBuilder);
             messageBuilder.to(user);
-            NotificationTemplateType templateName;
 
-            switch (digestNotificationType) {
-            case TASK_REMINDER:
-                templateName = APPLICATION_TASK_REQUEST_REMINDER;
-                break;
-            case TASK_NOTIFICATION:
-                templateName = APPLICATION_TASK_REQUEST;
-                break;
-            case UPDATE_NOTIFICATION:
-                templateName = APPLICATION_UPDATE_NOTIFICATION;
-                break;
-            case OPPORTUNITY_REQUEST_NOTIFICATION:
-                templateName = NotificationTemplateType.PROGRAM_TASK_REQUEST;
-                break;
-            default:
-                throw new RuntimeException();
-            }
-
-            messageBuilder.subject(resolveMessage(templateName, (Object[]) null));
-            messageBuilder.emailTemplate(templateName);
+            messageBuilder.subject(resolveMessage(template, (Object[]) null));
+            messageBuilder.emailTemplate(template);
             PrismEmailMessage message = messageBuilder.build();
             sendEmail(message);
 

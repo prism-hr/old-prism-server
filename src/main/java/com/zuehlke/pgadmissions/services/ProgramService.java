@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
@@ -242,7 +241,7 @@ public class ProgramService {
         return programDAO.getProgamTypes();
     }
 
-    public ProgramType getProgramTypeById(ProgramTypeId programTypeId) {
+    public ProgramType getProgramTypeById(ProgramType programTypeId) {
         return programDAO.getProgramTypeById(programTypeId);
     }
 

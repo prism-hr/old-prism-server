@@ -27,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
@@ -72,15 +71,11 @@ public class CreateNewOpportunityController {
     @Autowired
     private ProgramInstanceService programInstanceService;
     
-    @Autowired
-    private ProgramTypePropertyEditor programTypePropertyEditor;
-
     @InitBinder(value = "opportunityRequest")
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(opportunityRequestValidator);
         binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(Date.class, datePropertyEditor);
-        binder.registerCustomEditor(ProgramType.class, programTypePropertyEditor);
     }
 
     @RequestMapping(method = RequestMethod.GET)

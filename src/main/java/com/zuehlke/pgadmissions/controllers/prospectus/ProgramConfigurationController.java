@@ -35,14 +35,12 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
@@ -106,9 +104,6 @@ public class ProgramConfigurationController {
     private OpportunitiesService opportunitiesService;
 
     @Autowired
-    private ProgramTypePropertyEditor programTypePropertyEditor;
-
-    @Autowired
     private RoleService roleService;
 
     private Gson gson;
@@ -125,7 +120,6 @@ public class ProgramConfigurationController {
         binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(Program.class, programPropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
-        binder.registerCustomEditor(ProgramType.class, programTypePropertyEditor);
     }
 
     @InitBinder("programClosingDate")
@@ -168,7 +162,7 @@ public class ProgramConfigurationController {
         result.put("programState", program.getState());
         result.put("isCustomProgram", !program.isImported());
         result.put("atasRequired", program.getRequireProjectDefinition());
-        result.put("programType", program.getProgramType().getId());
+        result.put("programType", program.getProgramType());
         result.put("institutionCountryCode", encryptionHelper.encrypt(institutionCountry.getId()));
         // TODO check if locked
 //        result.put("programLock", program.getLocked());

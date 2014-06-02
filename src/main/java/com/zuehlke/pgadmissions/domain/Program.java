@@ -47,11 +47,11 @@ public class Program extends Advert {
     @Column(name = "require_project_definition")
     private Boolean requireProjectDefinition;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
@@ -70,7 +70,7 @@ public class Program extends Advert {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
     private List<Project> projects = new ArrayList<Project>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "program_type_id", nullable = false)
     private ProgramType programType;
 

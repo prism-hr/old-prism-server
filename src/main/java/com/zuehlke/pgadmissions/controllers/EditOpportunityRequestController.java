@@ -30,7 +30,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.PermissionsService;
@@ -74,9 +73,6 @@ public class EditOpportunityRequestController {
 
     @Autowired
     private ApplicationContext applicationContext;
-
-    @Autowired
-    private ProgramTypePropertyEditor programTypePropertyEditor;
 
     @Autowired
     private PermissionsService permissionsService;
@@ -144,7 +140,6 @@ public class EditOpportunityRequestController {
         binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
-        binder.registerCustomEditor(ProgramType.class, programTypePropertyEditor);
     }
 
     @InitBinder(value = "comment")

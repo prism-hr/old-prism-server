@@ -18,6 +18,10 @@ public class EntityService {
         return entityDAO.getById(klass, id);
     }
 
+    public <T> T getByCode(Class<T> klass, String code) {
+        return entityDAO.getBy(klass, "code", code);
+    }
+
     public <T> T getBy(Class<T> klass, String propertyName, Object propertyValue) {
         return entityDAO.getBy(klass, propertyName, propertyValue);
     }
@@ -34,7 +38,7 @@ public class EntityService {
         }
         return persistentResource;
     }
-    
+
     public void save(Object entity) {
         entityDAO.save(entity);
     }

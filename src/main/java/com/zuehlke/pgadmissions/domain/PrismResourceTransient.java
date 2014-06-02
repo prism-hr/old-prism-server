@@ -20,4 +20,8 @@ public abstract class PrismResourceTransient extends PrismResource {
     
     public abstract LocalDate getDueDateBaseline();
     
+    public abstract StateTransition getPendingStateTransition();
+    
+    public abstract void setPendingStateTransition(StateTransition stateTransition);
+    
 }

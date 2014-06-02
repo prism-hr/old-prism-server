@@ -142,7 +142,7 @@ public abstract class Advert extends PrismResourceTransient {
         final Advert other = (Advert) obj;
         return Objects.equal(id, other.getId());
     }
-
+    
     public abstract String getTitle();
     
     public abstract void setTitle(String title);

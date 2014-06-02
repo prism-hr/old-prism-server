@@ -42,3 +42,6 @@
 
 /* Language qualification type table */
 
+/* Pending state transition */
+
+/* Action type (USER, ESCALATION, PROPAGATION") */

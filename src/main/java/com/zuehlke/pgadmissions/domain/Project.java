@@ -70,6 +70,10 @@ public class Project extends Advert {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
 
+    @ManyToOne
+    @JoinColumn(name = "previous_state_id", nullable = true)
+    private StateTransition pendingStateTransition;
+
     @Override
     public String getCode() {
         return code;
@@ -209,6 +213,16 @@ public class Project extends Advert {
             return closingDate.getClosingDate();
         }
         return new LocalDate();
+    }
+    
+    @Override
+    public StateTransition getPendingStateTransition() {
+        return pendingStateTransition;
+    }
+
+    @Override
+    public void setPendingStateTransition(StateTransition pendingStateTransition) {
+        this.pendingStateTransition = pendingStateTransition;
     }
 
 }

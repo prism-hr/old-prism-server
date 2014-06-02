@@ -55,9 +55,10 @@ public class NotificationService extends AbstractNotificationService {
     @Autowired
     private SystemService systemService;
     
-    public void setStateTransitionNotifications(PrismResourceTransient resource, StateTransition stateTransition) {
+    public void sendStateTransitionNotifications(PrismResourceTransient resource, StateTransition stateTransition) {
         // TODO Auto-generated method stub
         // Work out how to generalise the methods below
+        return null;
     }
 
     private void sendReferenceRequest(Referee referee, Application application) {

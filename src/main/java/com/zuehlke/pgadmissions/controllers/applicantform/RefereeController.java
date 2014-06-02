@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
@@ -43,7 +42,7 @@ public class RefereeController {
     private ImportedEntityService importedEntityService;
 
     @Autowired
-    private ApplicationService applicationsService;
+    private ApplicationService applicationService;
 
     @Autowired
     private EntityPropertyEditor<Domicile> domicilePropertyEditor;
@@ -99,8 +98,9 @@ public class RefereeController {
     }
 
     @ModelAttribute("applicationForm")
-    public Application getApplicationForm(@RequestParam String applicationId) {
-        return applicationsService.getSecuredApplication(applicationId, PrismAction.APPLICATION_EDIT_AS_CREATOR, PrismAction.APPLICATION_CORRECT);
+    public Application getApplicationForm(String applicationId) {
+        // TODO: check actions
+        return applicationService.getByApplicationNumber(applicationId);
     }
 
     @InitBinder(value = "referee")

@@ -13,7 +13,6 @@ import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
@@ -21,11 +20,9 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
-import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
 @Service
 @Transactional
@@ -131,41 +128,41 @@ public class ProgramService {
         return String.format("%05d", codeNumber);
     }
 
-    protected Program getOrCreateProgram(OpportunityRequest opportunityRequest) {
-        ProgramService thisBean = applicationContext.getBean(ProgramService.class);
-
-        Program program = opportunityRequest.getSourceProgram();
-
-        if (program != null) {
-            program = (Program) merge(program);
-            program.setUser(thisBean.getContactUserForProgram(program, opportunityRequest.getAuthor()));
-        } else {
-            program = new Program();
-//            program.setState(ProgramState.PROGRAM_APPROVED);
-            program.setUser(opportunityRequest.getAuthor());
-        }
-
-        if (program.isImported()) {
-            if (program.getInstitution() == null || !HibernateUtils.sameEntities(program.getInstitution(), opportunityRequest.getInstitutionCode())) {
-                Institution institution = qualificationInstitutionService.getOrCreate(opportunityRequest.getInstitutionCode(),
-                        opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
-                program.setInstitution(institution);
-                program.setCode(thisBean.generateNextProgramCode(institution));
-            }
-            program.setTitle(opportunityRequest.getProgramTitle());
-            program.setRequireProjectDefinition(opportunityRequest.getAtasRequired());
-            program.setProgramType(opportunityRequest.getProgramType());
-        }
-
-        program.setDescription(opportunityRequest.getProgramDescription());
-        program.setStudyDuration(opportunityRequest.getStudyDuration());
-        program.setFunding(opportunityRequest.getFunding());
-        // FIXME set the right state, not that it can be overridden by programInstanceService#createRemoveProgramInstances() (when there are no active instanes)
-        // program.setActive(opportunityRequest.getAcceptingApplications());
-
-        save(program);
-        return program;
-    }
+// TODO: rewrite for new workflow paradigm    
+    
+//    protected Program getOrCreateProgram(Program program) {
+//        ProgramService thisBean = applicationContext.getBean(ProgramService.class);
+//
+//        if (program != null) {
+//            program = (Program) merge(program);
+//            program.setUser(thisBean.getContactUserForProgram(program, program.getUser()));
+//        } else {
+//            program = new Program();
+////            program.setState(ProgramState.PROGRAM_APPROVED);
+//            program.setUser(program.getUser());
+//        }
+//
+//        if (program.isImported()) {
+//            if (program.getInstitution() == null || !HibernateUtils.sameEntities(program.getInstitution(), opportunityRequest.getInstitutionCode())) {
+//                Institution institution = qualificationInstitutionService.getOrCreate(opportunityRequest.getInstitutionCode(),
+//                        opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
+//                program.setInstitution(institution);
+//                program.setCode(thisBean.generateNextProgramCode(institution));
+//            }
+//            program.setTitle(opportunityRequest.getProgramTitle());
+//            program.setRequireProjectDefinition(opportunityRequest.getAtasRequired());
+//            program.setProgramType(opportunityRequest.getProgramType());
+//        }
+//
+//        program.setDescription(opportunityRequest.getProgramDescription());
+//        program.setStudyDuration(opportunityRequest.getStudyDuration());
+//        program.setFunding(opportunityRequest.getFunding());
+//        // FIXME set the right state, not that it can be overridden by programInstanceService#createRemoveProgramInstances() (when there are no active instanes)
+//        // program.setActive(opportunityRequest.getAcceptingApplications());
+//
+//        save(program);
+//        return program;
+//    }
 
     protected void grantAdminPermissionsForProgram(User user, Program program) {
         // TODO try to reuse any method from RoleService
@@ -187,41 +184,6 @@ public class ProgramService {
         // if (!HibernateUtils.containsEntity(user.getProgramsOfWhichApprover(), program)) {
         // user.getProgramsOfWhichApprover().add(program);
         // }
-    }
-
-    public Program saveProgramOpportunity(OpportunityRequest opportunityRequest) {
-        ProgramService thisBean = applicationContext.getBean(ProgramService.class);
-
-        Program program = thisBean.getOrCreateProgram(opportunityRequest);
-
-        if (program.isImported()) {
-            programInstanceService.createRemoveProgramInstances(program, opportunityRequest.getStudyOptions(), opportunityRequest.getAdvertisingDeadlineYear());
-        }
-
-        thisBean.grantAdminPermissionsForProgram(opportunityRequest.getAuthor(), program);
-
-        return program;
-    }
-
-    public boolean canChangeInstitution(User user, OpportunityRequest opportunityRequest) {
-        if (roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR)) {
-            return true;
-        }
-
-        Program existingProgram = opportunityRequest.getSourceProgram();
-        if (existingProgram != null && HibernateUtils.sameEntities(existingProgram.getInstitution(), opportunityRequest.getInstitutionCode())) {
-            return true;
-        }
-
-        // TODO reimplement
-        // for (Institution institution : user.getInstitutions()) {
-        // if (institution.getCode().equals(opportunityRequest.getInstitutionCode())) {
-        // return true;
-        // }
-        // }
-
-        return false;
-
     }
 
     public Advert getValidProgramProjectAdvert(Integer advertId) {

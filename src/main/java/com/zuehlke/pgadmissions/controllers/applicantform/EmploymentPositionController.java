@@ -20,10 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
@@ -44,7 +43,7 @@ public class EmploymentPositionController {
     private ImportedEntityService importedEntityService;
 
     @Autowired
-    private ApplicationService applicationFormService;
+    private ApplicationService applicationService;
 
     @Autowired
     private EntityPropertyEditor<Language> languagePropertyEditor;
@@ -77,11 +76,11 @@ public class EmploymentPositionController {
     @RequestMapping(value = "/getEmploymentPosition", method = RequestMethod.GET)
     public String getEmploymentView(@ModelAttribute Application applicationForm, @RequestParam(required = false) Integer employmentPositionId,
             ModelMap modelMap) {
-        return returnView(modelMap, employmentPositionId != null ? employmentPositionService.getById(employmentPositionId) : new EmploymentPosition());
+        return returnView(modelMap, employmentPositionId != null ? employmentPositionService.getById(employmentPositionId) : new ApplicationEmploymentPosition());
     }
 
     @RequestMapping(value = "/editEmploymentPosition", method = RequestMethod.POST)
-    public String editEmployment(@Valid EmploymentPosition employmentPosition, BindingResult result,
+    public String editEmployment(@Valid ApplicationEmploymentPosition employmentPosition, BindingResult result,
             @RequestParam(required = false) Integer employmentPositionId, @ModelAttribute Application applicationForm, ModelMap modelMap) {
         if (result.hasErrors()) {
             return returnView(modelMap, employmentPosition);
@@ -108,11 +107,11 @@ public class EmploymentPositionController {
 
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(String applicationId) {
-        return applicationFormService.getSecuredApplication(applicationId, PrismAction.APPLICATION_COMPLETE,
-                PrismAction.APPLICATION_CORRECT);
+        // TODO: check actions
+        return applicationService.getByApplicationNumber(applicationId);
     }
 
-    private String returnView(ModelMap modelMap, EmploymentPosition employmentPosition) {
+    private String returnView(ModelMap modelMap, ApplicationEmploymentPosition employmentPosition) {
         modelMap.put("employmentPosition", employmentPosition);
         return TemplateLocation.APPLCIATION_APPLICANT_EMPLOYMENT_POSITION;
     }

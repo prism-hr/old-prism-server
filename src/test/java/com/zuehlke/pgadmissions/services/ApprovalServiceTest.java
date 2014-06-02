@@ -8,7 +8,7 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
-import com.zuehlke.pgadmissions.mail.MailSendingService;
+import com.zuehlke.pgadmissions.mail.NotificationService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class ApprovalServiceTest {
@@ -27,7 +27,7 @@ public class ApprovalServiceTest {
 
     @Mock
     @InjectIntoByType
-    private MailSendingService mailSendingService;
+    private NotificationService mailSendingService;
 
     @Mock
     @InjectIntoByType

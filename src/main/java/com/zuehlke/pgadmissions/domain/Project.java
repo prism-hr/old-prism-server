@@ -2,12 +2,15 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -20,6 +23,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -31,17 +35,20 @@ public class Project extends Advert {
     @Column(name = "code", nullable = true)
     private String code;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
+    private Set<Application> applications = Sets.newHashSet();
 
     @ManyToOne
     @JoinColumn(name = "state_id", nullable = false)
@@ -193,6 +200,15 @@ public class Project extends Advert {
     @Override
     public String generateCode() {
         return program.getCode() + "-" + createdTimestamp.getYear() + "-" + String.format("%010d", getId());
+    }
+
+    @Override
+    public LocalDate getDueDateBaseline() {
+        AdvertClosingDate closingDate = getClosingDate();
+        if (closingDate != null) {
+            return closingDate.getClosingDate();
+        }
+        return new LocalDate();
     }
 
 }

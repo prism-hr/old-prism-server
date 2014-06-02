@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
@@ -35,7 +34,7 @@ import com.zuehlke.pgadmissions.validators.FundingValidator;
 public class FundingController {
 
     @Autowired
-    private ApplicationService applicationFormService;
+    private ApplicationService applicationService;
 
     @Autowired
     private LocalDatePropertyEditor datePropertyEditor;
@@ -89,8 +88,9 @@ public class FundingController {
     }
 
     @ModelAttribute("applicationForm")
-    public Application getApplicationForm(@RequestParam String applicationId) {
-        return applicationFormService.getSecuredApplication(applicationId, PrismAction.APPLICATION_COMPLETE, PrismAction.APPLICATION_CORRECT);
+    public Application getApplicationForm(String applicationId) {
+        // TODO: check actions
+        return applicationService.getByApplicationNumber(applicationId);
     }
 
     private String returnView(ModelMap modelMap, Funding funding) {

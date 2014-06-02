@@ -1,14 +1,6 @@
 package com.zuehlke.pgadmissions.cucumber;
 
 import org.junit.Assert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-
-import cucumber.annotation.en.Given;
-import cucumber.annotation.en.Then;
-import cucumber.annotation.en.When;
 
 public class RejectApplicationAsAdminStepdefs {
 	private final WebDriver webDriver = new HtmlUnitDriver();

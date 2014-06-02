@@ -35,8 +35,13 @@ public class EntityDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getBy(Class<T> klass, String propertyName, Object propertyValue) {
+    public <T> T getByProperty(Class<T> klass, String propertyName, Object propertyValue) {
         return (T) sessionFactory.getCurrentSession().createCriteria(klass).add(Restrictions.eq(propertyName, propertyValue)).uniqueResult();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public <T> T getByPropertyNotNull(Class<T> klass, String propertyName) {
+        return (T) sessionFactory.getCurrentSession().createCriteria(klass).add(Restrictions.isNotNull(propertyName)).uniqueResult();
     }
 
     public Serializable save(Object entity) {

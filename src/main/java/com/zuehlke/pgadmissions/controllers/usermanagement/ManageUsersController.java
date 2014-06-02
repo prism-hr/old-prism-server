@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.AuthorityScope;
 import com.zuehlke.pgadmissions.dto.UserDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -93,11 +92,6 @@ public class ManageUsersController {
     @ModelAttribute("user")
     public User getUser() {
         return userService.getCurrentUser();
-    }
-
-    @ModelAttribute("authorities")
-    public List<Authority> getAuthorities() {
-        return roleService.getAuthorities(AuthorityScope.PROGRAM);
     }
 
     @ModelAttribute("superadministrators")

@@ -18,7 +18,6 @@ import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationDocumentService;
@@ -30,7 +29,7 @@ import com.zuehlke.pgadmissions.validators.ApplicationFormDocumentValidator;
 public class DocumentsController {
 
     @Autowired
-    private ApplicationService applicationFormService;
+    private ApplicationService applicationService;
     
     @Autowired
     private ApplicationDocumentService applicationFormDocumentService;
@@ -61,8 +60,8 @@ public class DocumentsController {
 
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(String applicationId) {
-        return applicationFormService.getSecuredApplication(applicationId, PrismAction.APPLICATION_COMPLETE,
-                PrismAction.APPLICATION_CORRECT);
+        // TODO: check actions
+        return applicationService.getByApplicationNumber(applicationId);
     }
 
     @ModelAttribute("message")

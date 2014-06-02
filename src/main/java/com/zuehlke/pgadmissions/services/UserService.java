@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
-import com.zuehlke.pgadmissions.mail.MailSendingService;
+import com.zuehlke.pgadmissions.mail.NotificationService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
@@ -41,15 +41,17 @@ public class UserService {
     private EncryptionUtils encryptionUtils;
 
     @Autowired
-    private MailSendingService mailService;
+    private NotificationService mailService;
 
+    @Autowired
+    private EntityService entityService;
+    
     public void save(User user) {
         userDAO.save(user);
     }
 
     public User getById(int id) {
-        // TODO Auto-generated method stub
-        return null;
+        return entityService.getById(User.class, id);
     }
 
     public User getCurrentUser() {

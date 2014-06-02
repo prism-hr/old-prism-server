@@ -38,14 +38,14 @@ import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.Passport;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
@@ -600,7 +600,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             pdfDocument.add(table);
         } else {
             int counter = 1;
-            for (Qualification qualification : form.getQualifications()) {
+            for (ApplicationQualification qualification : form.getQualifications()) {
                 table = new PdfPTable(2);
                 table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                 PdfPCell headerCell = newTableCell("Qualification (" + counter++ + ")", SMALL_BOLD_FONT);
@@ -696,7 +696,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             pdfDocument.add(table);
         } else {
             int counter = 1;
-            for (EmploymentPosition position : form.getEmploymentPositions()) {
+            for (ApplicationEmploymentPosition position : form.getEmploymentPositions()) {
                 table = new PdfPTable(2);
                 table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                 PdfPCell headerCell = newTableCell("Position (" + counter++ + ")", SMALL_BOLD_FONT);

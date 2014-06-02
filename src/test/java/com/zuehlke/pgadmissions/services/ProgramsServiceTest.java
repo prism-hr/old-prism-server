@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import static junit.framework.Assert.assertSame;
-import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -13,7 +12,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.joda.time.LocalDate;
 import org.junit.Test;
@@ -29,14 +27,11 @@ import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
@@ -169,61 +164,6 @@ public class ProgramsServiceTest {
         verify();
 
         assertEquals(PrismState.PROJECT_DISABLED, project.getState().getId());
-    }
-
-    @Test
-    public void shouldCreateNewCustomProgram() {
-        InstitutionDomicile domicile = new InstitutionDomicile();
-        ProgramService thisBean = EasyMockUnitils.createMock(ProgramService.class);
-
-        User requestAuthor = new User();
-        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(requestAuthor, domicile).otherInstitution("other_name").build();
-        Institution institution = new Institution();
-
-        expect(applicationContext.getBean(ProgramService.class)).andReturn(thisBean);
-        expect(qualificationInstitutionService.getOrCreate("AGH", domicile, "other_name")).andReturn(institution);
-        Capture<Program> programCapture = new Capture<Program>();
-        expect(thisBean.generateNextProgramCode(institution)).andReturn("AAA_00000");
-        programDAOMock.save(capture(programCapture));
-
-        replay();
-        Program program = programsService.getOrCreateProgram(opportunityRequest);
-        verify();
-
-        assertSame(program.getUser(), requestAuthor);
-        assertSame(programCapture.getValue(), program);
-        assertEquals(opportunityRequest.getAtasRequired(), program.getRequireProjectDefinition());
-        assertSame(institution, program.getInstitution());
-        assertEquals(opportunityRequest.getProgramTitle(), program.getTitle());
-        assertEquals("AAA_00000", program.getCode());
-    }
-
-    @Test
-    public void shouldGetCustomProgram() {
-        ProgramService thisBean = EasyMockUnitils.createMock(ProgramService.class);
-        Program program = new Program().withInstitution(new Institution());
-        User requestAuthor = new User();
-        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(requestAuthor, null).institutionCode("any_inst")
-                .atasRequired(true).sourceProgram(program).acceptingApplications(true).build();
-
-        expect(applicationContext.getBean(ProgramService.class)).andReturn(thisBean);
-        expect(thisBean.getContactUserForProgram(program, requestAuthor)).andReturn(requestAuthor);
-        programDAOMock.merge(program);
-        programDAOMock.save(program);
-
-        replay();
-        Program returned = programsService.getOrCreateProgram(opportunityRequest);
-        verify();
-
-        assertTrue(returned.getRequireProjectDefinition());
-        assertEquals(program.getTitle(), opportunityRequest.getProgramTitle());
-        assertEquals(program.getDescription(), opportunityRequest.getProgramDescription());
-        assertEquals(program.getRequireProjectDefinition(), opportunityRequest.getAtasRequired());
-        assertEquals(program.getStudyDuration(), opportunityRequest.getStudyDuration());
-        assertEquals(program.getFunding(), opportunityRequest.getFunding());
-        assertEquals(PrismState.PROGRAM_APPROVED, program.getState().getId());
-        assertSame(program.getProgramType(), opportunityRequest.getProgramType());
-        assertSame(program.getUser(), requestAuthor);
     }
 
     @Test

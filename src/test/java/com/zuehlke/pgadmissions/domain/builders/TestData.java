@@ -5,6 +5,7 @@ import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
@@ -12,7 +13,6 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramType;
-import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
@@ -69,8 +69,8 @@ public class TestData {
                 .withType(DocumentType.CV);
     }
 
-    public static Qualification aQualification(Application application, QualificationType qualificationType, Document document, ImportedInstitution institution) {
-        return new Qualification().withAwardDate(new LocalDate()).withGrade("").withTitle("").withLanguage("Abkhazian").withSubject("").withCompleted(true)
+    public static ApplicationQualification aQualification(Application application, QualificationType qualificationType, Document document, ImportedInstitution institution) {
+        return new ApplicationQualification().withAwardDate(new LocalDate()).withGrade("").withTitle("").withLanguage("Abkhazian").withSubject("").withCompleted(true)
                 .withStartDate(new LocalDate()).withType(qualificationType).withApplication(application).withDocument(document).withIncludeInExport(false)
                 .withInstitution(institution);
     }

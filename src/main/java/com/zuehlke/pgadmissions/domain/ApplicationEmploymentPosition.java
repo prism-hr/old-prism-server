@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -19,13 +18,13 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
 @Table(name = "APPLICATION_EMPLOYMENT_POSITION")
-public class EmploymentPosition {
+public class ApplicationEmploymentPosition {
 
     @Id
     @GeneratedValue
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
     private Application application;
 
@@ -33,7 +32,7 @@ public class EmploymentPosition {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 150)
     private String employerName;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id", nullable = false)
     @Valid
     private Address employerAddress;
@@ -129,47 +128,47 @@ public class EmploymentPosition {
         this.current = current;
     }
 
-    public EmploymentPosition withId(Integer id) {
+    public ApplicationEmploymentPosition withId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public EmploymentPosition withApplication(Application application) {
+    public ApplicationEmploymentPosition withApplication(Application application) {
         this.application = application;
         return this;
     }
 
-    public EmploymentPosition withEmployerName(String employerName) {
+    public ApplicationEmploymentPosition withEmployerName(String employerName) {
         this.employerName = employerName;
         return this;
     }
 
-    public EmploymentPosition withEmployerAddress(Address employerAddress) {
+    public ApplicationEmploymentPosition withEmployerAddress(Address employerAddress) {
         this.employerAddress = employerAddress;
         return this;
     }
 
-    public EmploymentPosition withPosition(String position) {
+    public ApplicationEmploymentPosition withPosition(String position) {
         this.position = position;
         return this;
     }
 
-    public EmploymentPosition withCurrent(boolean current) {
+    public ApplicationEmploymentPosition withCurrent(boolean current) {
         this.current = current;
         return this;
     }
 
-    public EmploymentPosition withRemit(String remit) {
+    public ApplicationEmploymentPosition withRemit(String remit) {
         this.remit = remit;
         return this;
     }
 
-    public EmploymentPosition withStartDate(LocalDate startDate) {
+    public ApplicationEmploymentPosition withStartDate(LocalDate startDate) {
         this.startDate = startDate;
         return this;
     }
 
-    public EmploymentPosition withEndDate(LocalDate endDate) {
+    public ApplicationEmploymentPosition withEndDate(LocalDate endDate) {
         this.endDate = endDate;
         return this;
     }

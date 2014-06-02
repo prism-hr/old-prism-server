@@ -10,24 +10,23 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "STATE_ACTION_ASSIGNMENT", //
-    uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "role_id" }) })
+@Table(name = "STATE_ACTION_ASSIGNMENT", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "role_id" }) })
 public class StateActionAssignment {
 
     @Id
     private Integer id;
-    
+
     @ManyToOne
     @JoinColumn(name = "state_action_id", nullable = false)
     private StateAction stateAction;
-    
+
     @OneToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
-    
-    @Column (name = "is_default_action", nullable = false)
+
+    @Column(name = "is_default_action", nullable = false)
     private boolean defaultAction;
-    
+
     public Integer getId() {
         return id;
     }
@@ -59,5 +58,5 @@ public class StateActionAssignment {
     public void setDefaultAction(boolean defaultAction) {
         this.defaultAction = defaultAction;
     }
-    
+
 }

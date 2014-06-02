@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 
 @Component
 public class QualificationValidator extends AbstractValidator {
@@ -14,7 +14,7 @@ public class QualificationValidator extends AbstractValidator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return Qualification.class.equals(clazz);
+        return ApplicationQualification.class.equals(clazz);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class QualificationValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationGrade", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationAwardDate", EMPTY_FIELD_ERROR_MESSAGE);
 
-        Qualification qualification = (Qualification) target;
+        ApplicationQualification qualification = (ApplicationQualification) target;
 
         if (qualification.getStartDate() != null) {
             if (qualification.getStartDate().isAfter(today)) {

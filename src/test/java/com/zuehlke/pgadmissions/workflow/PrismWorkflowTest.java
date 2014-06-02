@@ -29,7 +29,6 @@ import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ManageUsersService;
-import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.ReviewService;
@@ -59,9 +58,6 @@ public class PrismWorkflowTest {
 
     @Autowired
     private RegistrationService registrationService;
-
-    @Autowired
-    private OpportunitiesService opportunitiesService;
 
     @Autowired
     private AuthenticationProvider authenticationProvider;

@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
@@ -41,7 +40,7 @@ import com.zuehlke.pgadmissions.validators.ProgramDetailsValidator;
 public class ProgramDetailsController {
 
     @Autowired
-    private ApplicationService applicationFormService;
+    private ApplicationService applicationService;
 
     @Autowired
     private ApplicationFormPropertyEditor applicationFormPropertyEditor;
@@ -85,7 +84,7 @@ public class ProgramDetailsController {
     @RequestMapping(value = "/getDefaultStartDate", method = RequestMethod.GET)
     @ResponseBody
     public Date getDefaultStartDate(@ModelAttribute Application applicationForm) {
-        return applicationFormService.getDefaultStartDateForApplication(applicationForm);
+        return applicationService.getDefaultStartDateForApplication(applicationForm);
     }
 
     @ModelAttribute("studyOptions")
@@ -100,10 +99,10 @@ public class ProgramDetailsController {
 
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(String applicationId) {
-        return applicationFormService.getSecuredApplication(applicationId, PrismAction.APPLICATION_COMPLETE,
-                PrismAction.APPLICATION_CORRECT);
+        // TODO: check actions
+        return applicationService.getByApplicationNumber(applicationId);
     }
-
+    
     @InitBinder(value = "programmeDetails")
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(programmeDetailsValidator);

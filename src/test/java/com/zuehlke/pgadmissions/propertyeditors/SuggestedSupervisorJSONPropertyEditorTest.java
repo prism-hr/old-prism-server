@@ -65,7 +65,6 @@ public class SuggestedSupervisorJSONPropertyEditorTest {
 
     @Before
     public void setup() {
-        encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
-        editor = new SuggestedSupervisorJSONPropertyEditor(encryptionHelperMock);
+        editor = new SuggestedSupervisorJSONPropertyEditor();
     }
 }

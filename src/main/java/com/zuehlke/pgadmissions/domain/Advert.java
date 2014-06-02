@@ -6,7 +6,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -39,7 +38,7 @@ public abstract class Advert extends PrismResourceTransient {
     @Column(name = "funding")
     private String funding;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -47,7 +46,7 @@ public abstract class Advert extends PrismResourceTransient {
     @JoinColumn(name = "advert_closing_date_id")
     private AdvertClosingDate closingDate;
     
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
     private List<AdvertClosingDate> closingDates = new ArrayList<AdvertClosingDate>();
 

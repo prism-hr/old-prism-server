@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
-public class MailSendingServiceTest {
+public class NotificationServiceTest {
 
     protected static final String SAMPLE_REJECTION_REASON = "You ain't goog enough";
 

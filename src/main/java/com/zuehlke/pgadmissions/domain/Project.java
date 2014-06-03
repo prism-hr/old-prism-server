@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Project extends Advert {
 
-    @Column(name = "code", nullable = true)
+    @Column(name = "code", nullable = true, unique = true)
     private String code;
 
     @OneToOne
@@ -46,7 +46,7 @@ public class Project extends Advert {
     @OneToOne
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     private Set<Application> applications = Sets.newHashSet();
 
@@ -65,7 +65,7 @@ public class Project extends Advert {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     @Column(name = "title", nullable = false)
     private String title;
-    
+
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
@@ -102,7 +102,7 @@ public class Project extends Advert {
         setId(id);
         return this;
     }
-    
+
     public Project withInitialData(User user, Program program, String title) {
         setUser(Preconditions.checkNotNull(user));
         this.program = Preconditions.checkNotNull(program);

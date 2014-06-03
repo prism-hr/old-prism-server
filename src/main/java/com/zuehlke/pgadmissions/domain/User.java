@@ -73,10 +73,10 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
     @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "activation_code", nullable = false)
+    @Column(name = "activation_code", nullable = false, unique = true)
     private String activationCode;
 
     @OneToMany(mappedBy = "user")
@@ -267,17 +267,17 @@ public class User implements UserDetails, Comparable<User>, Serializable {
         this.email = email;
         return this;
     }
-    
+
     public User withActivationCode(String activationCode) {
         this.activationCode = activationCode;
         return this;
     }
-    
+
     public User withAccount(UserAccount account) {
         this.userAccount = account;
         return this;
     }
-    
+
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("firstName", firstName).add("lastName", lastName).add("email", email).toString();

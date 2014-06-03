@@ -16,8 +16,8 @@ import javax.persistence.UniqueConstraint;
 import com.google.common.base.Objects;
 
 @Entity
-@Table(name = "imported_entity", uniqueConstraints = { @UniqueConstraint(columnNames = { "code", "imported_entity_type_id" }),
-        @UniqueConstraint(columnNames = { "name", "imported_entity_type_id" }) })
+@Table(name = "imported_entity", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_entity_type_id", "code" }),
+        @UniqueConstraint(columnNames = { "institution_id", "imported_entity_type_id", "name" }) })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "imported_entity_type_id", discriminatorType = DiscriminatorType.STRING)
 public abstract class ImportedEntity {

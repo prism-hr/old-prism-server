@@ -28,8 +28,8 @@ public class System extends PrismResource {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    
-    @Column(name = "name", nullable = false)
+
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @ManyToOne
@@ -63,12 +63,12 @@ public class System extends PrismResource {
     public void setState(State state) {
         this.state = state;
     }
-    
+
     @Override
     public System getSystem() {
         return this;
     }
-    
+
     @Override
     public void setSystem(System system) {
     }
@@ -77,7 +77,7 @@ public class System extends PrismResource {
     public Institution getInstitution() {
         return null;
     }
-    
+
     @Override
     public void setInstitution(Institution institution) {
     }
@@ -86,11 +86,11 @@ public class System extends PrismResource {
     public Program getProgram() {
         return null;
     }
-    
+
     @Override
-    public void setProgram(Program program) {  
+    public void setProgram(Program program) {
     }
-    
+
     @Override
     public Project getProject() {
         return null;
@@ -104,7 +104,7 @@ public class System extends PrismResource {
     public Application getApplication() {
         return null;
     }
-    
+
     @Override
     public User getUser() {
         return user;
@@ -114,7 +114,7 @@ public class System extends PrismResource {
     public void setUser(User user) {
         this.user = user;
     }
-    
+
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
@@ -123,5 +123,5 @@ public class System extends PrismResource {
         propertiesWrapper.add(properties);
         return new ResourceSignature(propertiesWrapper);
     }
-    
+
 }

@@ -73,7 +73,7 @@ public class StateService {
     public StateTransition executeStateTransition(PrismResource operativeResource, PrismResourceDynamic resource, Action action, Comment comment) {
         StateTransition stateTransition = getStateTransition(operativeResource, action, comment);
         transitionResourceState(resource, stateTransition, comment.getUserSpecifiedDueDate());
-
+        
         if (operativeResource != resource) {
             resource.setParentResource(operativeResource);
             entityService.save(resource);
@@ -83,6 +83,9 @@ public class StateService {
             comment.setRole(Authority.SYSTEM_ADMINISTRATOR.toString());
         } else {
             comment.setRole(Joiner.on("|").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action)));
+            if (comment.getDelegateUser() != null) {
+                comment.setDelegateRole(Joiner.on("|").join(roleService.getActionOwnerRoles(comment.getDelegateUser(), resource, action.getDelegateAction())));
+            }
         }
 
         if (stateTransition.isDoPostComment()) {
@@ -103,13 +106,20 @@ public class StateService {
 
     @Scheduled(cron="0 0/1 * * *")
     public void executePropagatedStateTransitions() {
+        PrismResource lastResource = null;
         for (StateTransitionPending pendingStateTransition : stateDAO.getPendingStateTransitions()) {
-            HashMultimap<Action, PrismResourceDynamic> propagations = stateDAO.getPropagatedStateTransitions(pendingStateTransition);
-            executeThreadedStateTransitions(propagations, systemService.getSystem().getUser());
+            PrismResource thisResource = pendingStateTransition.getResource();
             
-            if (propagations.isEmpty()) {
-                entityService.delete(pendingStateTransition);
+            if (thisResource != lastResource) {
+                HashMultimap<Action, PrismResourceDynamic> propagations = stateDAO.getPropagatedStateTransitions(pendingStateTransition);
+                executeThreadedStateTransitions(propagations, systemService.getSystem().getUser());
+                
+                if (propagations.isEmpty()) {
+                    entityService.delete(pendingStateTransition);
+                }
             }
+            
+            lastResource = thisResource;
         }
     }
     
@@ -218,5 +228,5 @@ public class StateService {
         }
         return stateDAO.getStateTransition(stateTransitions, transitionState);
     }
-
+    
 }

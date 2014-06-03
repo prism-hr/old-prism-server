@@ -93,9 +93,10 @@ public class StateDAO {
         List<StateTransitionPending> pendingStateTransitions = Lists.newArrayList();
         for (Scope scope : scopes) {
             String scopeName = scope.getId().getLowerCaseName();
+            
             pendingStateTransitions.addAll(sessionFactory.getCurrentSession().createCriteria(StateTransitionPending.class) //
                     .add(Restrictions.isNotNull(scopeName)) //
-                    .addOrder(Order.asc(scopeName)) //
+                    .addOrder(Order.asc(scopeName + ".id")) //
                     .addOrder(Order.asc("id")) //
                     .list());
         }

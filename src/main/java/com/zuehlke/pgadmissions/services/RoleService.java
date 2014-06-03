@@ -137,8 +137,8 @@ public class RoleService {
         return roleDAO.getUserRole(user, authority);
     }
 
-    public List<Role> getActionRoles(PrismResource resource, PrismAction action) {
-        return roleDAO.getActionRoles(resource, action);
+    public List<Role> getActionRoles(PrismResource resource, PrismAction actionId) {
+        return roleDAO.getActionRoles(resource, actionId);
     }
 
     public List<Role> getActionOwnerRoles(User user, PrismResource resource, Action action) {

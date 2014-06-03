@@ -41,19 +41,19 @@ public class ActionDAO {
                 .uniqueResult();
     }
     
-    public PrismAction getDelegateAction(PrismResource resource, PrismAction action) {
+    public PrismAction getDelegateAction(PrismResource resource, PrismAction actionId) {
         return (PrismAction) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.property("delegateAction.id")) //
-                .createAlias("action", "action", JoinType.INNER_JOIN) //              
-                .createAlias("delegateAction", "delegateAction", JoinType.INNER_JOIN) //
+                .setProjection(Projections.property("action.delegateAction.id")) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .createAlias("action.delegateAction", "delegateAction", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("state", resource.getState())) //
-                .add(Restrictions.eq("action.id", action)) //
-                .add(Restrictions.eq("action.systemAction", false)) //
-                .add(Restrictions.eq("delegateAction.systemAction", false)) //
+                .add(Restrictions.eq("action.id", actionId)) //
+                .add(Restrictions.eq("action.actionType", PrismActionType.USER)) //
+                .add(Restrictions.eq("delegateAction.actionType", PrismActionType.USER)) //
                 .uniqueResult();
     }
 
-    public PrismAction getRedirectAction(PrismResource resource, PrismAction action, User user) {
+    public PrismAction getRedirectAction(PrismResource resource, User user) {
         return (PrismAction) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action.id")) //
                 .createAlias("stateActionAssignments", "stateActionAssignments", JoinType.INNER_JOIN) //
@@ -69,7 +69,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("stateActionAssignments.defaultAction", true)).uniqueResult();
     }
     
-    public PrismAction getPermittedAction(PrismResource resource, PrismAction action, User user) {
+    public PrismAction getPermittedAction(PrismResource resource, PrismAction actionId, User user) {
         return (PrismAction) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action.id")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
@@ -79,7 +79,7 @@ public class ActionDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
-                .add(Restrictions.eq("action", action)) //
+                .add(Restrictions.eq("action.id", actionId)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("precedence")) //

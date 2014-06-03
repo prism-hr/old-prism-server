@@ -18,7 +18,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.StateTransitionEvaluation;
 
 @Entity
-@Table(name = "STATE_TRANSITION")
+@Table(name = "STATE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "transition_state_id" }) })
 public class StateTransition {
 
     @Id
@@ -45,13 +45,13 @@ public class StateTransition {
 
     @Column(name = "do_post_comment", nullable = false)
     private boolean doPostComment;
-    
+
     @ManyToMany
     @JoinTable(name = "STATE_TRANSITION_PROPAGATION", joinColumns = { @JoinColumn(name = "state_transition_id", nullable = false) }, //
-            inverseJoinColumns = { @JoinColumn(name = "action_id", nullable = false) }, //
-            uniqueConstraints = { @UniqueConstraint(columnNames = { "state_transition_id", "action_id" }) })
+    inverseJoinColumns = { @JoinColumn(name = "action_id", nullable = false) }, //
+    uniqueConstraints = { @UniqueConstraint(columnNames = { "state_transition_id", "action_id" }) })
     private Set<Action> propagatedActions = Sets.newHashSet();
-    
+
     public Integer getId() {
         return id;
     }

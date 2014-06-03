@@ -14,10 +14,10 @@ public class InstitutionDomicile {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "code", nullable = false)
+    @Column(name = "code", nullable = false, unique = true)
     private String code;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @Column

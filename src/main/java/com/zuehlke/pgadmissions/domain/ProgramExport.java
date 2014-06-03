@@ -17,12 +17,13 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
 
 @Entity
-@Table(name = "program_export")
+@Table(name = "program_export", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "title" }) })
 public class ProgramExport implements Serializable {
 
     private static final long serialVersionUID = 2739581666640036046L;

@@ -6,12 +6,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 @Entity
-@Table(name = "user_notification_individual")
+@Table(name = "user_notification_individual", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_role_id", "notification_template_id" }) })
 public class UserNotificationIndividual {
 
     @Id

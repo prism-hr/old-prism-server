@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
 import org.apache.solr.analysis.LowerCaseFilterFactory;
@@ -31,7 +32,7 @@ import com.google.common.collect.Maps;
         @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
         @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class) })
 @Entity
-@Table(name = "INSTITUTION")
+@Table(name = "INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_domicile_id", "name" }) })
 @Indexed
 public class Institution extends PrismResource {
 
@@ -42,7 +43,7 @@ public class Institution extends PrismResource {
     @ManyToOne
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
-    
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -50,8 +51,8 @@ public class Institution extends PrismResource {
     @ManyToOne
     @JoinColumn(name = "institution_domicile_id", nullable = false)
     private InstitutionDomicile domicile;
-  
-    @Column(name = "code", nullable = false)
+
+    @Column(name = "code", nullable = false, unique = true)
     private String code;
 
     @Column(name = "name", nullable = false)
@@ -68,12 +69,12 @@ public class Institution extends PrismResource {
     public Integer getId() {
         return id;
     }
-    
+
     @Override
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -115,7 +116,7 @@ public class Institution extends PrismResource {
         this.system = system;
         return this;
     }
-    
+
     public Institution withUser(User user) {
         this.user = user;
         return this;
@@ -135,12 +136,12 @@ public class Institution extends PrismResource {
         this.state = state;
         return this;
     }
-    
+
     public Institution withHomepage(String homepage) {
         this.homepage = homepage;
         return this;
     }
-    
+
     public Institution withInitialData(String name) {
         this.name = Preconditions.checkNotNull(name);
         return this;
@@ -162,14 +163,14 @@ public class Institution extends PrismResource {
     }
 
     @Override
-    public void setInstitution(Institution institution) {  
+    public void setInstitution(Institution institution) {
     }
 
     @Override
     public Program getProgram() {
         return null;
     }
-    
+
     @Override
     public void setProgram(Program program) {
     }
@@ -182,7 +183,7 @@ public class Institution extends PrismResource {
     @Override
     public void setProject(Project project) {
     }
-    
+
     @Override
     public State getState() {
         return state;
@@ -207,7 +208,7 @@ public class Institution extends PrismResource {
     public void setUser(User user) {
         this.user = user;
     }
-    
+
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();

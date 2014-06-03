@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
 import org.apache.solr.analysis.LowerCaseFilterFactory;
@@ -29,7 +30,7 @@ import org.hibernate.search.annotations.TokenizerDef;
         @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
         @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class) })
 @Entity
-@Table(name = "IMPORTED_INSTITUTION")
+@Table(name = "IMPORTED_INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "domicile_id", "code" }) })
 @Indexed
 public class ImportedInstitution {
 

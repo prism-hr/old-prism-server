@@ -9,11 +9,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.enums.ImportedEntityType;
 
 @Entity
-@Table(name = "imported_entity_feed")
+@Table(name = "imported_entity_feed", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_entity_type_id" }) })
 public class ImportedEntityFeed {
 
     @Id

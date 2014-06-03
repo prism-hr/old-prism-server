@@ -100,7 +100,7 @@ public class EntityImportService {
                 thisBean.mergeImportedEntities(entityClass, newEntities);
             }
         } catch (Exception e) {
-            throw new XMLDataImportException("Error during the import of file: " + fileLocation, e);
+            throw new XMLDataImportException("Error during the import of file: " + fileLocation);
         }
     }
 
@@ -139,14 +139,13 @@ public class EntityImportService {
                         log.error("Couldn't insert entity", e);
                         log.error("Couldn't update entity by code", e1);
                         log.error("Couldn't update entity by name", e2);
-                        mailSendingService.sendImportErrorMessage("Could not merge: " + entity + " due to a data integrity problem in the import feed.");
                     }
                 }
             }
         }
     }
 
-    public void mergePrograms(List<ProgrammeOccurrence> programOccurrences, Institution institution) {
+    public void mergePrograms(List<ProgrammeOccurrence> programOccurrences, Institution institution) throws XMLDataImportException {
         EntityImportService thisBean = applicationContext.getBean(EntityImportService.class);
 
         thisBean.disableAllProgramInstances(institution);
@@ -173,7 +172,7 @@ public class EntityImportService {
                 } catch (Exception e1) {
                     log.error("Couldn't insert program instance", e);
                     log.error("Couldn't update program instance", e1);
-                    mailSendingService.sendImportErrorMessage("Could not merge: " + programInstance + " due to a data integrity problem in the import feed.");
+                    throw new XMLDataImportException("Could not merge: " + programInstance + " due to a data integrity problem in the import feed.");
                 }
             }
         }

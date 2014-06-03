@@ -4,8 +4,8 @@ public class XMLDataImportException extends Exception {
 
     private static final long serialVersionUID = 649448905824352045L;
 
-    public XMLDataImportException(String message, Throwable cause) {
-		super(message, cause);
+    public XMLDataImportException(String message) {
+		super(message);
 	}
 
 }

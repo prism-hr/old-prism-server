@@ -35,17 +35,7 @@ public class RejectService {
 
 		form.setState(stateDAO.getById(PrismState.APPLICATION_REJECTED));		
 		
-		sendRejectNotificationToApplicant(form);
 		applicationDao.save(form);
-	}
-	
-	private void sendRejectNotificationToApplicant(Application form) {
-		try {
-			mailService.sendRejectionConfirmationToApplicant(form);
-		}
-		catch (Exception e) {
-    		log.warn("{}", e);
-		}
 	}
 	
 	public void sendToPortico(Application form) {

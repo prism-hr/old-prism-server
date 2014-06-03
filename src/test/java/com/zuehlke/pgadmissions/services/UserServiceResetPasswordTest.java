@@ -69,7 +69,7 @@ public class UserServiceResetPasswordTest {
         String hashedNewPassword = "some ol' celtic bollocks";
         EasyMock.expect(encryptionUtilsMock.generateUserPassword()).andReturn(newPassword);
 
-        mailServiceMock.sendResetPasswordMessage(storedUser, newPassword);
+//        mailServiceMock.sendResetPasswordMessage(storedUser, newPassword);
 
         EasyMock.expect(encryptionUtilsMock.getMD5Hash(newPassword)).andReturn(hashedNewPassword);
         userDAOMock.save(storedUser);
@@ -92,7 +92,7 @@ public class UserServiceResetPasswordTest {
         String newPassword = "this is better";
         EasyMock.expect(encryptionUtilsMock.generateUserPassword()).andReturn(newPassword);
 
-        mailServiceMock.sendResetPasswordMessage(storedUser, newPassword);
+//        mailServiceMock.sendResetPasswordMessage(storedUser, newPassword);
         EasyMock.expectLastCall().andThrow(new RuntimeException("intentional exception"));
 
         replay();

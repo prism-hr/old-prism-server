@@ -60,14 +60,6 @@ public class OfferRecommendationService {
         return true;
     }
 
-    private void sendNotificationToApplicant(Application form) {
-        try {
-            mailSendingService.sendApprovedNotification(form);
-        } catch (Exception e) {
-            log.warn("{}", e);
-        }
-    }
-    
     public void sendToPortico(Application form) {
         if (form.getProgram().isImported()) {
 //            approvedSenderService.sendToPortico(form);

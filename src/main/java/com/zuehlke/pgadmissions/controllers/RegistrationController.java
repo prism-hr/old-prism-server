@@ -84,7 +84,8 @@ public class RegistrationController {
         if (user == null) {
             throw new ResourceNotFoundException();
         }
-        registrationService.resendConfirmationEmail(user);
+        // TODO resend confirmation email
+        registrationService.sendConfirmationEmail(user);
         model.addAttribute("pendingUser", user);
         return TemplateLocation.REGISTRATION_SUCCESS_CONFIRMATION;
     }

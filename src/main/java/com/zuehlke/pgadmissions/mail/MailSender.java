@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import com.zuehlke.pgadmissions.domain.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.services.NotificationTemplateService;
@@ -120,18 +120,20 @@ public class MailSender {
                         messageHelper.setReplyTo(message.getReplyToAddress());
                     }
 
-                    messageHelper.setSubject(message.getSubjectCode());
-
                     for (PdfAttachmentInputSource attachment : message.getAttachments()) {
                         messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");
                     }
 
-                    NotificationTemplate notificationTemplate = emailTemplateService.getById(message.getTemplateName());
-                    Template template = new Template(message.getTemplateName().displayValue(),
-                            new StringReader(notificationTemplate.getVersion().getContent()), freemarkerConfig.getConfiguration());
+                    NotificationTemplateVersion notificationTemplate = message.getTemplate();
 
+                    Template subjectTemplate = new Template(null, new StringReader(notificationTemplate.getSubject()), freemarkerConfig.getConfiguration());
+                    String subject = FreeMarkerTemplateUtils.processTemplateIntoString(subjectTemplate, message.getModel());
+
+                    messageHelper.setSubject(subject);
+
+                    Template contentTemplate = new Template(null, new StringReader(notificationTemplate.getContent()), freemarkerConfig.getConfiguration());
                     HtmlToPlainText htmlFormatter = new HtmlToPlainText();
-                    String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(template, message.getModel());
+                    String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(contentTemplate, message.getModel());
                     String plainText = htmlFormatter.getPlainText(htmlText);
                     plainText = plainText + PLAIN_TEXT_NOTE;
 
@@ -162,7 +164,6 @@ public class MailSender {
 
                     StringBuilder subjectBuilder = new StringBuilder();
                     // the subject should be built anywhere else even with the new editable subject!!
-                    subjectBuilder.append(message.getSubjectCode());
                     subjectBuilder.append("<NON-PROD-Message: TO: ").append(message.getToAsInternetAddresses().toString());
                     subjectBuilder.append(" CC: ").append(message.getCcAsInternetAddresses().toString());
                     subjectBuilder.append(" BCC: ").append(message.getBccAsInternetAddresses().toString());
@@ -173,12 +174,16 @@ public class MailSender {
                         messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");
                     }
 
-                    NotificationTemplate notificationTemplate = emailTemplateService.getById(message.getTemplateName());
-                    Template template = new Template(message.getTemplateName().displayValue(),
-                            new StringReader(notificationTemplate.getVersion().getContent()), freemarkerConfig.getConfiguration());
+                    NotificationTemplateVersion notificationTemplate = message.getTemplate();
 
+                    Template subjectTemplate = new Template(null, new StringReader(notificationTemplate.getSubject()), freemarkerConfig.getConfiguration());
+                    String subject = FreeMarkerTemplateUtils.processTemplateIntoString(subjectTemplate, message.getModel());
+
+                    messageHelper.setSubject(subject);
+
+                    Template contentTemplate = new Template(null, new StringReader(notificationTemplate.getContent()), freemarkerConfig.getConfiguration());
                     HtmlToPlainText htmlFormatter = new HtmlToPlainText();
-                    String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(template, message.getModel());
+                    String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(contentTemplate, message.getModel());
                     String plainText = htmlFormatter.getPlainText(htmlText);
                     plainText = plainText + PLAIN_TEXT_NOTE;
 

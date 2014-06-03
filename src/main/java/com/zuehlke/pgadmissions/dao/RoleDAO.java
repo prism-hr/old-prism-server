@@ -116,13 +116,13 @@ public class RoleDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Role> getActionRoles(PrismResource resource, PrismAction action) {
+    public List<Role> getActionRoles(PrismResource resource, PrismAction actionId) {
         return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("stateActionAssignment.role")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
-                .add(Restrictions.eq("action.id", action)) //
+                .add(Restrictions.eq("action.id", actionId)) //
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER)) //
                 .list();
     }

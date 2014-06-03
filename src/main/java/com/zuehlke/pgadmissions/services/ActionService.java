@@ -62,12 +62,12 @@ public class ActionService {
         }
     }
 
-    public boolean checkActionAvailable(PrismResource resource, PrismAction action, User invoker) {
-        return roleService.getActionRoles(resource, action).size() == 0 || actionDAO.getPermittedAction(resource, action, invoker) != null;
+    public boolean checkActionAvailable(PrismResource resource, PrismAction actionId, User invoker) {
+        return roleService.getActionRoles(resource, actionId).size() == 0 || actionDAO.getPermittedAction(resource, actionId, invoker) != null;
     }
     
-    public boolean checkDelegateActionAvailable(PrismResource resource, PrismAction action, User invoker) {
-        PrismAction delegateAction = actionDAO.getDelegateAction(resource, action);
+    public boolean checkDelegateActionAvailable(PrismResource resource, PrismAction actionId, User invoker) {
+        PrismAction delegateAction = actionDAO.getDelegateAction(resource, actionId);
         return checkActionAvailable(resource, delegateAction, invoker);
     }
 
@@ -96,7 +96,7 @@ public class ActionService {
         if (operativeResource != resource) {
             PrismResource duplicateResource = entityService.getDuplicateEntity(resource);
             if (duplicateResource != null) {
-                return new ActionOutcome(actionOwner, resource, actionDAO.getRedirectAction(duplicateResource, action, actionOwner));
+                return new ActionOutcome(actionOwner, resource, actionDAO.getRedirectAction(duplicateResource, actionOwner));
             }
         }
 

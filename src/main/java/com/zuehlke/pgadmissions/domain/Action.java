@@ -32,6 +32,10 @@ public class Action {
     @Column(name = "action_type_id", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismActionType actionType;
+    
+    @OneToOne
+    @JoinColumn(name = "delegate_action_id")
+    private Action delegateAction;
 
     public PrismAction getId() {
         return id;
@@ -55,6 +59,14 @@ public class Action {
 
     public void setActionType(PrismActionType actionType) {
         this.actionType = actionType;
+    }
+
+    public Action getDelegateAction() {
+        return delegateAction;
+    }
+
+    public void setDelegateAction(Action delegateAction) {
+        this.delegateAction = delegateAction;
     }
 
     public Action withId(PrismAction id) {

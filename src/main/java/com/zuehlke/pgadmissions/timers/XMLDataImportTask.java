@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.timers;
 
 import java.net.Authenticator;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.mail.NotificationService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -45,7 +48,11 @@ public class XMLDataImportTask {
                     message += "\n" + cause.toString();
                 }
 
-                mailService.sendImportErrorMessage(message);
+                // TODO get admin recipients
+                List<User> recipients = Lists.newArrayList();
+                for (User recipient : recipients) {
+                    // mailService.sendEmailNotification(recipient, null, SYSTEM_IMPORT_ERROR_NOTIFICATION, null, ImmutableMap.of("errorMessage", message));
+                }
 
             } finally {
                 Authenticator.setDefault(null);

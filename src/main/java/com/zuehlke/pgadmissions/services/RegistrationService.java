@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +47,7 @@ public class RegistrationService {
         }
 
         user.getUserAccount().setPassword(encryptionUtils.getMD5Hash(pendingUser.getPassword()));
-        mailService.sendRegistrationConfirmation(user);
+        sendConfirmationEmail(user);
         return user;
     }
 
@@ -55,8 +57,8 @@ public class RegistrationService {
         return user;
     }
 
-    public void resendConfirmationEmail(User newUser) {
-        mailService.sendRegistrationConfirmation(newUser);
+    public void sendConfirmationEmail(User newUser) {
+        mailService.sendEmailNotification(newUser, null, SYSTEM_COMPLETE_REGISTRATION_REQUEST, null);
     }
 
     public User findUserForActivationCode(String activationCode) {

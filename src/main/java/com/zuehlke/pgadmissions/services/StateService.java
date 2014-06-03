@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Action;
@@ -73,7 +74,7 @@ public class StateService {
     public StateTransition executeStateTransition(PrismResource operativeResource, PrismResourceDynamic resource, Action action, Comment comment) {
         StateTransition stateTransition = getStateTransition(operativeResource, action, comment);
         transitionResourceState(resource, stateTransition, comment.getUserSpecifiedDueDate());
-        
+
         if (operativeResource != resource) {
             resource.setParentResource(operativeResource);
             entityService.save(resource);
@@ -94,35 +95,40 @@ public class StateService {
         }
 
         roleService.executeUserRoleTransitions(resource, stateTransition, comment);
-        notificationService.sendStateTransitionNotifications(resource, stateTransition);
-        
+
+        // TODO create list of recipients
+        List<User> recipients = Lists.newArrayList();
+        for (User recipient : recipients) {
+            notificationService.sendEmailNotification(recipient, resource, stateTransition.getStateAction().getNotificationTemplate().getId(), comment);
+        }
+
         if (stateTransition.getPropagatedActions().size() > 0) {
             StateTransitionPending pendingStateTransition = new StateTransitionPending().withResource(operativeResource).withStateTransition(stateTransition);
             entityService.save(pendingStateTransition);
         }
-        
+
         return stateTransition;
     }
 
-    @Scheduled(cron="0 0/1 * * *")
+    @Scheduled(cron = "0 0/1 * * *")
     public void executePropagatedStateTransitions() {
         PrismResource lastResource = null;
         for (StateTransitionPending pendingStateTransition : stateDAO.getPendingStateTransitions()) {
             PrismResource thisResource = pendingStateTransition.getResource();
-            
+
             if (thisResource != lastResource) {
                 HashMultimap<Action, PrismResourceDynamic> propagations = stateDAO.getPropagatedStateTransitions(pendingStateTransition);
                 executeThreadedStateTransitions(propagations, systemService.getSystem().getUser());
-                
+
                 if (propagations.isEmpty()) {
                     entityService.delete(pendingStateTransition);
                 }
             }
-            
+
             lastResource = thisResource;
         }
     }
-    
+
     public void executeEscalatedStateTransitions() {
         executeThreadedStateTransitions(stateDAO.getEscalatedStateTransitions(), systemService.getSystem().getUser());
     }
@@ -130,7 +136,7 @@ public class StateService {
     private void executeThreadedStateTransitions(final HashMultimap<Action, PrismResourceDynamic> threadedStateTransitions, final User invoker) {
         for (final Action action : threadedStateTransitions.keySet()) {
             for (final PrismResourceDynamic resource : threadedStateTransitions.get(action)) {
-                threadedStateTransitionPool.submit(new Runnable() {       
+                threadedStateTransitionPool.submit(new Runnable() {
                     @Override
                     public void run() {
                         Comment comment = new Comment().withResource(resource).withUser(invoker).withAction(action);
@@ -228,5 +234,5 @@ public class StateService {
         }
         return stateDAO.getStateTransition(stateTransitions, transitionState);
     }
-    
+
 }

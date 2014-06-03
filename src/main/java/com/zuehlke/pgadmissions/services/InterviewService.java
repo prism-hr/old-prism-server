@@ -79,7 +79,6 @@ public class InterviewService {
         Application application = interviewVoteComment.getApplication();
         Comment assignInterviewersComment = applicationsService.getLatestStateChangeComment(application, PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
         commentService.save(interviewVoteComment);
-        mailService.sendInterviewVoteConfirmationToAdministrators(application, user);
     }
 
     public void confirmInterview(User user, Application applicationForm, InterviewConfirmDTO interviewConfirmDTO) {
@@ -104,7 +103,6 @@ public class InterviewService {
 
         // TODO set due date
         // thisBean.assignInterviewDueDate(scheduleComment, applicationForm);
-        thisBean.sendConfirmationEmails(scheduleComment);
     }
 
     // FIXME change to createAssignedUsers, used in moveApplicationToInterview() method
@@ -121,20 +119,6 @@ public class InterviewService {
     // }
     // interview.getParticipants().addAll(participants);
     // }
-
-    protected void sendConfirmationEmails(Comment comment) {
-        final Application applicationForm = comment.getApplication();
-        try {
-            mailService.sendInterviewConfirmationToApplicant(applicationForm);
-            List<User> interviewerUsers = Lists.newArrayList();
-            for (CommentAssignedUser interviewer : comment.getCommentAssignedUsers()) {
-                interviewerUsers.add(interviewer.getUser());
-            }
-            mailService.sendInterviewConfirmationToInterviewers(applicationForm, interviewerUsers);
-        } catch (Exception e) {
-            log.warn("{}", e);
-        }
-    }
 
     private Comment createInterviewScheduleComment(User user, Application application, String interviewInstructions, String locationUrl) {
         Comment scheduleComment = new Comment();

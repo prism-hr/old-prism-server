@@ -11,14 +11,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
+import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.NotificationService;
+import com.zuehlke.pgadmissions.mail.TaskNotificationDescriptor;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
@@ -45,7 +49,7 @@ public class UserService {
 
     @Autowired
     private EntityService entityService;
-    
+
     public void save(User user) {
         userDAO.save(user);
     }
@@ -62,7 +66,7 @@ public class UserService {
         }
         return null;
     }
-    
+
     public boolean checkUserEnabled(User user) {
         UserAccount userAccount = user.getUserAccount();
         if (userAccount != null) {
@@ -93,7 +97,7 @@ public class UserService {
 
         userDAO.save(user);
         user.setParentUser(user);
-        
+
         return user;
     }
 
@@ -127,7 +131,8 @@ public class UserService {
         try {
             String newPassword = encryptionUtils.generateUserPassword();
 
-            mailService.sendResetPasswordMessage(storedUser, newPassword);
+            mailService.sendEmailNotification(storedUser, null, PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION, null,
+                    ImmutableMap.of("newPassword", newPassword));
 
             String hashPassword = encryptionUtils.getMD5Hash(newPassword);
             storedUser.getUserAccount().setPassword(hashPassword);
@@ -203,6 +208,10 @@ public class UserService {
 
     public Long getNumberOfActiveApplicationsForApplicant(final User applicant) {
         return userDAO.getNumberOfActiveApplicationsForApplicant(applicant);
+    }
+
+    public List<TaskNotificationDescriptor> getUsersDueTaskNotification() {
+        return userDAO.getUseDueTaskNotification();
     }
 
 }

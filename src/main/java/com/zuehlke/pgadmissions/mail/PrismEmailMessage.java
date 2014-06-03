@@ -16,34 +16,30 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 
 public final class PrismEmailMessage {
-    
+
     private Application form;
-    
+
     private String replyToAddress;
 
     private String fromAddress;
-    
-    private List<Object> subjectArgs;
-    
-    private String subjectCode;
-    
+
     private List<User> to = new ArrayList<User>();
-    
+
     private List<User> cc = new ArrayList<User>();
 
     private List<User> bcc = new ArrayList<User>();
-    
+
     private Map<String, Object> model;
-    
-    private PrismNotificationTemplate templateName;
-    
+
+    private NotificationTemplateVersion template;
+
     private List<PdfAttachmentInputSource> attachments;
-    
+
     private static final String SPACE = " ";
 
     private static Transformer convertToInternetAddresses = new Transformer() {
@@ -65,25 +61,25 @@ public final class PrismEmailMessage {
             }
         }
     };
-    
+
     public PrismEmailMessage() {
     }
-    
+
     @SuppressWarnings("unchecked")
     public Collection<InternetAddress> getToAsInternetAddresses() {
         return CollectionUtils.collect(to, convertToInternetAddresses);
     }
-    
+
     @SuppressWarnings("unchecked")
     public Collection<InternetAddress> getCcAsInternetAddresses() {
         return CollectionUtils.collect(cc, convertToInternetAddresses);
     }
-    
+
     @SuppressWarnings("unchecked")
     public Collection<InternetAddress> getBccAsInternetAddresses() {
         return CollectionUtils.collect(bcc, convertToInternetAddresses);
     }
-    
+
     public String getFromAddress() {
         return fromAddress;
     }
@@ -115,14 +111,6 @@ public final class PrismEmailMessage {
     public void setBcc(final List<User> bcc) {
         this.bcc = bcc;
     }
-    
-    public List<Object> getSubjectArgs() {
-        return subjectArgs;
-    }
-
-    public void setSubjectArgs(final List<Object> subjectArgs) {
-        this.subjectArgs = subjectArgs;
-    }
 
     public void setModel(final Map<String, Object> model) {
         this.model = model;
@@ -131,15 +119,15 @@ public final class PrismEmailMessage {
     public Map<String, Object> getModel() {
         return model;
     }
-    
-    public PrismNotificationTemplate getTemplateName() {
-        return templateName;
+
+    public NotificationTemplateVersion getTemplate() {
+        return template;
     }
 
-    public void setTemplateName(final PrismNotificationTemplate templateName) {
-        this.templateName = templateName;
+    public void setTemplate(NotificationTemplateVersion template) {
+        this.template = template;
     }
-    
+
     public List<PdfAttachmentInputSource> getAttachments() {
         return attachments;
     }
@@ -147,7 +135,7 @@ public final class PrismEmailMessage {
     public void setAttachments(final List<PdfAttachmentInputSource> attachments) {
         this.attachments = attachments;
     }
-    
+
     public String getReplyToAddress() {
         return replyToAddress;
     }
@@ -163,14 +151,6 @@ public final class PrismEmailMessage {
     public void setApplicationForm(final Application form) {
         this.form = form;
     }
-    
-    public String getSubjectCode() {
-        return subjectCode;
-    }
-
-    public void setSubjectCode(final String subjectCode) {
-        this.subjectCode = subjectCode;
-    }
 
     public Address getFromAddressAsInternetAddress() {
         try {
@@ -179,7 +159,7 @@ public final class PrismEmailMessage {
             throw new IllegalArgumentException(e);
         }
     }
-    
+
     @Override
     public String toString() {
         return ReflectionToStringBuilder.toString(this);

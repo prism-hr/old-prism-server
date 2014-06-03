@@ -14,12 +14,12 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.mail.TaskNotificationDescriptor;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -117,58 +117,6 @@ public class UserDAO {
         save(user);
     }
 
-    public List<Integer> getUsersDueTaskReminder(Date seedDate) {
-
-        // TODO reimplement
-        return Lists.newArrayList();
-//        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class).setProjection(Projections.groupProperty("primaryAccount.id"))
-//                .createAlias("user", "registeredUser", JoinType.INNER_JOIN).createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
-//                .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN)
-//                .add(Restrictions.eq("action.notification", NotificationMethod.SYNDICATED)).add(Restrictions.eq("raisesUrgentFlag", true))
-//                .add(Restrictions.eq("registeredUser.latestTaskNotificationDate", reminderBaseline))
-//                .add(Restrictions.gt("applicationFormActionRequired.deadlineTimestamp", expiryBaseline)).add(Restrictions.eq("registeredUser.enabled", true))
-//                .add(Restrictions.eq("registeredUser.accountNonExpired", true)).add(Restrictions.eq("registeredUser.accountNonLocked", true))
-//                .add(Restrictions.eq("registeredUser.credentialsNonExpired", true)).list();
-    }
-
-    public List<Integer> getUsersDueTaskNotification(Date seedDate) {
-
-        // TODO reimplement
-        return Lists.newArrayList();
-//        return (List<Integer>) sessionFactory
-//                .getCurrentSession()
-//                .createCriteria(UserRole.class)
-//                .setProjection(Projections.groupProperty("primaryAccount.id"))
-//                .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
-//                .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
-//                .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN)
-//                .add(Restrictions.eq("action.notification", NotificationMethod.SYNDICATED))
-//                .add(Restrictions.eq("raisesUrgentFlag", true))
-//                .add(Restrictions.disjunction().add(Restrictions.isNull("registeredUser.latestTaskNotificationDate"))
-//                        .add(Restrictions.lt("registeredUser.latestTaskNotificationDate", reminderBaseline)))
-//                .add(Restrictions.gt("applicationFormActionRequired.deadlineTimestamp", expiryBaseline)).add(Restrictions.eq("registeredUser.enabled", true))
-//                .add(Restrictions.eq("registeredUser.accountNonExpired", true)).add(Restrictions.eq("registeredUser.accountNonLocked", true))
-//                .add(Restrictions.eq("registeredUser.credentialsNonExpired", true)).list();
-    }
-
-    public List<Integer> getUsersDueUpdateNotification(Date seedDate) {
-
-        // TODO reimplement
-        return Lists.newArrayList();
-//        return (List<Integer>) sessionFactory
-//                .getCurrentSession()
-//                .createCriteria(UserRole.class)
-//                .setProjection(Projections.groupProperty("primaryAccount.id"))
-//                .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
-//                .createAlias("role", "role", JoinType.INNER_JOIN)
-//                .add(Restrictions.eq("role.doSendUpdateNotification", true))
-//                .add(Restrictions.eq("raisesUpdateFlag", true))
-//                .add(Restrictions.disjunction().add(Restrictions.isNull("registeredUser.latestUpdateNotificationDate"))
-//                        .add(Restrictions.lt("registeredUser.latestUpdateNotificationDate", baseline))).add(Restrictions.ge("updateTimestamp", baseline))
-//                .add(Restrictions.eq("registeredUser.enabled", true)).add(Restrictions.eq("registeredUser.accountNonExpired", true))
-//                .add(Restrictions.eq("registeredUser.accountNonLocked", true)).add(Restrictions.eq("registeredUser.credentialsNonExpired", true)).list();
-    }
-
     //TODO rewrite the query - HQL
     public List<User> getUsersInterestedInApplication(Application application) {
         return new ArrayList<User>();
@@ -177,6 +125,11 @@ public class UserDAO {
     //TODO rewrite the query - HQL
     public List<User> getUsersPotentiallyInterestedInApplication(Application application) {
         return new ArrayList<User>();
+    }
+
+    public List<TaskNotificationDescriptor> getUseDueTaskNotification() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

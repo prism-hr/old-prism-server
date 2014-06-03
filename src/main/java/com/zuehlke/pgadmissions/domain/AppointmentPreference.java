@@ -6,9 +6,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "COMMENT_APPOINTMENT_PREFERENCE")
+@Table(name = "COMMENT_APPOINTMENT_PREFERENCE", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "comment_appointment_timeslot_id" }) })
 public class AppointmentPreference {
 
     @Id

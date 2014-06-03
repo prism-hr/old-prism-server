@@ -41,7 +41,7 @@ public class Application extends PrismResourceDynamic {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "code", nullable = true)
+    @Column(name = "code", nullable = true, unique = true)
     private String code;
 
     @ManyToOne
@@ -53,12 +53,12 @@ public class Application extends PrismResourceDynamic {
     private State previousState;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_address_id")
+    @JoinColumn(name = "application_address_id", unique = true)
     @Valid
     private ApplicationAddress applicationAddress;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_document_id")
+    @JoinColumn(name = "application_document_id", unique = true)
     @Valid
     private ApplicationDocument applicationDocument;
 
@@ -132,7 +132,7 @@ public class Application extends PrismResourceDynamic {
     private List<Referee> referees = new ArrayList<Referee>();
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_additional_information_id", nullable = false)
+    @JoinColumn(name = "application_additional_information_id", nullable = false, unique = true)
     @Valid
     private AdditionalInformation additionalInformation;
 

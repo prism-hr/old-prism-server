@@ -18,8 +18,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 import org.unitils.inject.util.InjectionUtils;
 
@@ -52,7 +50,6 @@ public class PorticoAttachmentsZipCreatorTest {
     private static final String RANDOM_FILENAME = "RANDOM_FILENAME";
 
     @Test
-    @PrepareForTest(SecurityContextHolder.class)
     public void shouldWriteZipFile() throws IOException, CouldNotCreateAttachmentsPack {
         // Given
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

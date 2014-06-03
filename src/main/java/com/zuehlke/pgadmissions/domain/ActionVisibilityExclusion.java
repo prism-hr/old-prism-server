@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -16,7 +17,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import com.zuehlke.pgadmissions.domain.enums.ActionVisibilityExclusionRule;
 
 @Entity
-@Table(name = "ACTION_VISIBILITY_EXCLUSION")
+@Table(name = "ACTION_VISIBILITY_EXCLUSION", uniqueConstraints = { @UniqueConstraint(columnNames = { "action_id", "role_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class ActionVisibilityExclusion {
 

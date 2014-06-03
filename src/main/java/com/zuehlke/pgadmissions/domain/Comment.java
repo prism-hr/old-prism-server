@@ -183,11 +183,11 @@ public class Comment {
     private Set<Document> documents = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "comment_id", nullable = false)
+    @JoinColumn(name = "comment_id", nullable = false, unique = true)
     private Set<AppointmentTimeslot> appointmentTimeslots = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "comment_id", nullable = false)
+    @JoinColumn(name = "comment_id", nullable = false, unique = true)
     private Set<AppointmentPreference> appointmentPreferences = Sets.newHashSet();
 
     public Integer getId() {

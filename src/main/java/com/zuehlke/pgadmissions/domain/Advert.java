@@ -39,15 +39,15 @@ public abstract class Advert extends PrismResourceDynamic {
     private String funding;
 
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", unique = true)
     private User user;
 
     @OneToOne
-    @JoinColumn(name = "advert_closing_date_id")
+    @JoinColumn(name = "advert_closing_date_id", unique = true)
     private AdvertClosingDate closingDate;
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "advert_id", nullable = false)
+    @JoinColumn(name = "advert_id", nullable = false, unique = true)
     private List<AdvertClosingDate> closingDates = new ArrayList<AdvertClosingDate>();
 
     @Override

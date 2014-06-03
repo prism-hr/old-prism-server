@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.timers;
 
+import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.SYSTEM_IMPORT_ERROR_NOTIFICATION;
+
 import java.net.Authenticator;
 import java.util.List;
 
@@ -9,9 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.mail.NotificationService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -51,7 +55,7 @@ public class XMLDataImportTask {
                 // TODO get admin recipients
                 List<User> recipients = Lists.newArrayList();
                 for (User recipient : recipients) {
-                    // mailService.sendEmailNotification(recipient, null, SYSTEM_IMPORT_ERROR_NOTIFICATION, null, ImmutableMap.of("errorMessage", message));
+                     mailService.sendEmailNotification(recipient, null, SYSTEM_IMPORT_ERROR_NOTIFICATION, null, ImmutableMap.of("errorMessage", message));
                 }
 
             } finally {

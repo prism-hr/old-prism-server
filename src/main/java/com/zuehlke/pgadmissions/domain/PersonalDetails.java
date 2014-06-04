@@ -39,8 +39,8 @@ public class PersonalDetails {
     @ESAPIConstraint(rule = "PhoneNumber", maxLength = 35, message = "{text.field.notphonenumber}")
     private String phoneNumber;
 
-    @Column(name = "english_first_language", nullable = false)
-    private Boolean englishFirstLanguage;
+    @Column(name = "first_language_english", nullable = false)
+    private Boolean firstLanguageEnglish;
 
     @Transient
     private Boolean languageQualificationAvailable;
@@ -50,26 +50,26 @@ public class PersonalDetails {
     @Valid
     private LanguageQualification languageQualification;
 
-    @Column(name = "requires_visa", nullable = false)
-    private Boolean requiresVisa;
+    @Column(name = "visa_required", nullable = false)
+    private Boolean visaRequired;
 
     @Transient
     private Boolean passportAvailable;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_passport")
+    @JoinColumn(name = "application_passport_id")
     @Valid
     private Passport passport;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "first_nationality", nullable = false)
+    @JoinColumn(name = "nationality_id1", nullable = false)
     private Language firstNationality;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "second_nationality")
+    @JoinColumn(name = "nationality_id2")
     private Language secondNationality;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title_id", nullable = false)
     @Enumerated(EnumType.STRING)
     private Title title;
 
@@ -207,20 +207,20 @@ public class PersonalDetails {
         this.phoneNumber = phoneNumber;
     }
 
-    public Boolean getEnglishFirstLanguage() {
-        return englishFirstLanguage;
+    public Boolean getFirstLanguageEnglish() {
+        return firstLanguageEnglish;
     }
 
-    public void setEnglishFirstLanguage(Boolean englishFirstLanguage) {
-        this.englishFirstLanguage = englishFirstLanguage;
+    public void setFirstLanguageEnglish(Boolean firstLanguageEnglish) {
+        this.firstLanguageEnglish = firstLanguageEnglish;
     }
 
-    public Boolean getRequiresVisa() {
-        return requiresVisa;
+    public Boolean getVisaRequired() {
+        return visaRequired;
     }
 
-    public void setRequiresVisa(Boolean requiresVisa) {
-        this.requiresVisa = requiresVisa;
+    public void setVisaRequired(Boolean visaRequired) {
+        this.visaRequired = visaRequired;
     }
 
     public Boolean getPassportAvailable() {
@@ -296,7 +296,7 @@ public class PersonalDetails {
     }
 
     public PersonalDetails withEnglishFirstLanguage(Boolean englishFirstLanguage) {
-        this.englishFirstLanguage = englishFirstLanguage;
+        this.firstLanguageEnglish = englishFirstLanguage;
         return this;
     }
 
@@ -316,7 +316,7 @@ public class PersonalDetails {
     }
 
     public PersonalDetails withRequiresVisa(Boolean requiresVisa) {
-        this.requiresVisa = requiresVisa;
+        this.visaRequired = requiresVisa;
         return this;
     }
 

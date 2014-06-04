@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 
 import org.hibernate.annotations.Type;
@@ -41,8 +42,7 @@ public class ProgramDetails {
     @JoinColumn(name = "referral_source_id", nullable = false)
     private SourcesOfInterest sourceOfInterest;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
-    @Column(name = "sources_of_interest_text")
+    @Transient
     private String sourceOfInterestText;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

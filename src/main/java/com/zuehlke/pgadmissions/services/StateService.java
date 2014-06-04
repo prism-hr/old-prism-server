@@ -174,14 +174,18 @@ public class StateService {
     }
     
     private void updateResource(PrismResourceDynamic resource, Action action, Comment comment) {
+        String role;
+        String delegateRole = null;
         if (action.getActionType() != PrismActionType.USER_INVOCATION) {
-            comment.setRole(Authority.SYSTEM_ADMINISTRATOR.toString());
+            role = Authority.SYSTEM_ADMINISTRATOR.toString();
         } else {
-            comment.setRole(Joiner.on("|").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action)));
+            role = Joiner.on("|").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action));
             if (comment.getDelegateUser() != null) {
-                comment.setDelegateRole(Joiner.on("|").join(roleService.getActionOwnerRoles(comment.getDelegateUser(), resource, action.getDelegateAction())));
+                delegateRole = Joiner.on("|").join(roleService.getActionOwnerRoles(comment.getDelegateUser(), resource, action.getDelegateAction()));
             }
         }
+        comment.setRole(role);
+        comment.setDelegateRole(delegateRole);
     }
 
     private StateTransition getStateTransition(PrismResource resource, Action action, Comment comment) {

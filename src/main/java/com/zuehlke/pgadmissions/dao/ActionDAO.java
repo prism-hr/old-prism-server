@@ -12,6 +12,7 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.User;
@@ -53,9 +54,9 @@ public class ActionDAO {
                 .uniqueResult();
     }
 
-    public PrismAction getRedirectAction(PrismResource resource, User user) {
-        return (PrismAction) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.property("action.id")) //
+    public Action getRedirectAction(PrismResource resource, User user) {
+        return (Action) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.property("action")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignments", "stateActionAssignments", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //

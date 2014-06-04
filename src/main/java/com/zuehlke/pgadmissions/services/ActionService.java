@@ -98,9 +98,11 @@ public class ActionService {
         User actionOwner = comment.getUser();
 
         if (operativeResource != resource) {
-            PrismResource duplicateResource = entityService.getDuplicateEntity(resource);
+            PrismResourceDynamic duplicateResource = entityService.getDuplicateEntity(resource);
             if (duplicateResource != null) {
-                return new ActionOutcome(actionOwner, resource, actionDAO.getRedirectAction(duplicateResource, actionOwner));
+                Action redirectAction = actionDAO.getRedirectAction(duplicateResource, actionOwner);
+                comment = new Comment().withResource(duplicateResource).withUser(actionOwner).withAction(redirectAction);
+                executeAction(duplicateResource, actionOwner, redirectAction.getId(), comment);
             }
         }
 

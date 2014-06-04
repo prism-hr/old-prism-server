@@ -520,7 +520,7 @@ ALTER TABLE APPLICATION_FUNDING
 /* Map title to imported entity */
 
 INSERT INTO IMPORTED_ENTITY (institution_id, imported_entity_type_id, code, name, enabled)
-	SELECT 5243, "FUNDING_SOURCE", title, CONCAT(SUBSTRING(title, 1, 1), LOWER(SUBSTRING(title, 2))), 1
+	SELECT 5243, "TITLE", title, CONCAT(SUBSTRING(title, 1, 1), LOWER(SUBSTRING(title, 2))), 1
 	FROM APPLICATION_PERSONAL_DETAIL
 	GROUP BY title
 ;

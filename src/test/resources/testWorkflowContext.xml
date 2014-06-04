@@ -70,14 +70,6 @@
     <constructor-arg value="com.zuehlke.pgadmissions.domain.Domicile" />
   </bean>
 
-  <bean id="porticoQueue" class="org.easymock.EasyMock" factory-method="createMock" primary="true">
-    <constructor-arg value="javax.jms.Queue" />
-  </bean>
-
-  <bean id="jmsTemplate" class="org.easymock.EasyMock" factory-method="createMock" primary="true">
-    <constructor-arg value="org.springframework.jms.core.JmsTemplate" />
-  </bean>
-
   <bean id="webServiceTemplate" class="com.zuehlke.pgadmissions.utils.EasyMockFactoryBean" primary="true">
     <constructor-arg value="org.springframework.ws.client.core.WebServiceTemplate" />
   </bean>

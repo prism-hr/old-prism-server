@@ -10,7 +10,7 @@
 
   <wsdl:types>
     <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-      <xsd:import namespace="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1.0" schemaLocation="../export.v2/admissionsApplicationsService_v1.xsd"></xsd:import>
+      <xsd:import namespace="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1.0" schemaLocation="../export/admissionsApplicationsService_v1.xsd"></xsd:import>
     </xsd:schema>
   </wsdl:types>
 

@@ -23,11 +23,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
-import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AdmissionsApplicationResponse;
-import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ApplicationTp;
-import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.CourseApplicationTp;
-import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ObjectFactory;
-import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResponse;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.ApplicationTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.CourseApplicationTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.jaxb.GMonthAdapter;

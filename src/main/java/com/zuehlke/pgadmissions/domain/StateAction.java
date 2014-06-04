@@ -14,7 +14,7 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "STATE_ACTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_id", "action_id" }) })
-public class StateAction {
+public class StateAction  {
 
     @Id
     private Integer id;
@@ -29,6 +29,9 @@ public class StateAction {
 
     @Column(name = "raises_urgent_flag", nullable = false)
     private boolean raisesUrgentFlag;
+    
+    @Column(name = "is_default_action", nullable = false)
+    private boolean defaultAction;    
 
     @ManyToOne
     @JoinColumn(name = "notification_template_id")
@@ -73,6 +76,14 @@ public class StateAction {
 
     public void setRaisesUrgentFlag(boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
+    }
+
+    public boolean isDefaultAction() {
+        return defaultAction;
+    }
+
+    public void setDefaultAction(boolean defaultAction) {
+        this.defaultAction = defaultAction;
     }
 
     public NotificationTemplate getNotificationTemplate() {

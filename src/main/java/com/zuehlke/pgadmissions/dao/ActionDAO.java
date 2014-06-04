@@ -37,7 +37,7 @@ public class ActionDAO {
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.eq("action.id", action)) //
-                .add(Restrictions.eq("action.actionType", PrismActionType.USER)) //
+                .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .uniqueResult();
     }
     
@@ -48,14 +48,15 @@ public class ActionDAO {
                 .createAlias("action.delegateAction", "delegateAction", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.eq("action.id", actionId)) //
-                .add(Restrictions.eq("action.actionType", PrismActionType.USER)) //
-                .add(Restrictions.eq("delegateAction.actionType", PrismActionType.USER)) //
+                .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
+                .add(Restrictions.eq("delegateAction.actionType", PrismActionType.USER_INVOCATION)) //
                 .uniqueResult();
     }
 
     public PrismAction getRedirectAction(PrismResource resource, User user) {
         return (PrismAction) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action.id")) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignments", "stateActionAssignments", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.disjunction() //
@@ -65,8 +66,18 @@ public class ActionDAO {
                                 .add(Restrictions.eq("stateActionAssignments.defaultAction", true))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNull("precedence")) //
-                                .add(Restrictions.eq("stateActionAssignments.defaultAction", true)))) //
-                .add(Restrictions.eq("stateActionAssignments.defaultAction", true)).uniqueResult();
+                                .add(Restrictions.eq("defaultAction", true)))) //
+                .add(Restrictions.eq("stateActionAssignments.defaultAction", true))
+                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
+                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
+                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
+                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
+                        .add(Restrictions.eq("userRole.system", resource.getSystem())) //
+                        .add(Restrictions.eq("user.parentUser", user))) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
+                .uniqueResult();
     }
     
     public PrismAction getPermittedAction(PrismResource resource, PrismAction actionId, User user) {
@@ -85,7 +96,7 @@ public class ActionDAO {
                                 .add(Restrictions.isNotNull("precedence")) //
                                 .add(Property.forName("precedence").eq(getActionPrecedence(resource, user)))) //
                         .add(Restrictions.isNull("precedence"))) //
-                .add(Restrictions.eq("action.actionType", PrismActionType.USER)) //
+                .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
@@ -112,7 +123,7 @@ public class ActionDAO {
                                 .add(Restrictions.isNotNull("precedence")) //
                                 .add(Property.forName("precedence").eq(getActionPrecedence(resource, user)))) //
                         .add(Restrictions.isNull("precedence"))) //
-                .add(Restrictions.eq("action.actionType", PrismActionType.USER)) //
+                .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
@@ -136,7 +147,7 @@ public class ActionDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN).createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.isNotNull("precedence")) //
-                .add(Restrictions.eq("action.actionType", PrismActionType.USER)) //
+                .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //

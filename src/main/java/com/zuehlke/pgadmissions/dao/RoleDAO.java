@@ -123,7 +123,7 @@ public class RoleDAO {
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.eq("action.id", actionId)) //
-                .add(Restrictions.eq("action.actionType", PrismActionType.USER)) //
+                .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .list();
     }
 
@@ -139,7 +139,7 @@ public class RoleDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.eq("action", action)) //
-                .add(Restrictions.eq("action.actionType", PrismActionType.USER)) //
+                .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //

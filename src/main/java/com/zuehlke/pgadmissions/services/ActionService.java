@@ -53,19 +53,23 @@ public class ActionService {
     public void validatePostAction(PrismResource resource, PrismAction action, Comment comment) {
         User invoker = comment.getUser();
         User delegateInvoker = comment.getDelegateUser();
-        if (!checkActionAvailable(resource, action, invoker)) {
-            if (!checkActionAvailable(resource, action, delegateInvoker)) {
-                if (!checkDelegateActionAvailable(resource, action, delegateInvoker)) {
-                    throw new CannotExecuteActionException(resource, action);
-                }
-            }
+
+        if (delegateInvoker == null && checkActionAvailable(resource, action, invoker)) {
+            return;
+        } else if (delegateInvoker != null && checkActionAvailable(resource, action, delegateInvoker)) {
+            return;
+        } else if (delegateInvoker != null && checkActionAvailable(resource, action, invoker)
+                && checkDelegateActionAvailable(resource, action, delegateInvoker)) {
+            return;
         }
+
+        throw new CannotExecuteActionException(resource, action);
     }
 
     public boolean checkActionAvailable(PrismResource resource, PrismAction actionId, User invoker) {
         return roleService.getActionRoles(resource, actionId).size() == 0 || actionDAO.getPermittedAction(resource, actionId, invoker) != null;
     }
-    
+
     public boolean checkDelegateActionAvailable(PrismResource resource, PrismAction actionId, User invoker) {
         PrismAction delegateAction = actionDAO.getDelegateAction(resource, actionId);
         return checkActionAvailable(resource, delegateAction, invoker);
@@ -92,7 +96,7 @@ public class ActionService {
         validatePostAction(resource, action, comment);
 
         User actionOwner = comment.getUser();
-        
+
         if (operativeResource != resource) {
             PrismResource duplicateResource = entityService.getDuplicateEntity(resource);
             if (duplicateResource != null) {

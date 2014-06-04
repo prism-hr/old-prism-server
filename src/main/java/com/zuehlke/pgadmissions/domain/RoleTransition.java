@@ -1,20 +1,15 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
 
 @Entity
@@ -49,12 +44,6 @@ public class RoleTransition {
 
     @Column(name = "maximum_permitted")
     private Integer maximumPermitted;
-
-    @ManyToMany
-    @JoinTable(name = "ROLE_TRANSITION_EXCLUSION", joinColumns = { @JoinColumn(name = "role_transition_id", nullable = false) }, //
-            inverseJoinColumns = { @JoinColumn(name = "role_id", nullable = false) }, //
-            uniqueConstraints = { @UniqueConstraint(columnNames = { "role_transition_id", "role_id" }) })
-    private Set<Role> excludedRoles = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -118,10 +107,6 @@ public class RoleTransition {
 
     public void setMaximumPermitted(Integer maximumPermitted) {
         this.maximumPermitted = maximumPermitted;
-    }
-
-    public Set<Role> getExcludedRoles() {
-        return excludedRoles;
     }
 
 }

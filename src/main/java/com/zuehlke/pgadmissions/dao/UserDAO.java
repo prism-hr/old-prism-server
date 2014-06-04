@@ -15,8 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.mail.TaskNotificationDescriptor;
@@ -80,12 +81,33 @@ public class UserDAO {
     public List<User> getUsersWithUpi(final String upi) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(User.class).add(Restrictions.eq("upi", upi)).list();
     }
-
-    public List<User> getUsersForProgram(Program program) {
-        // TODO implement using roleDAO
-        return null;
+    
+    public List<User> getUsersForResource(PrismResource resource) {
+        return sessionFactory.getCurrentSession().createCriteria(UserRole.class)
+                .setProjection(Projections.property("user")) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("application", resource.getApplication())) //
+                        .add(Restrictions.eq("project", resource.getProject())) //
+                        .add(Restrictions.eq("program", resource.getProgram())) //
+                        .add(Restrictions.eq("institution", resource.getInstitution())) //
+                        .add(Restrictions.eq("system", resource.getSystem()))) //
+                .list();
     }
 
+    public List<User> getUsersForResourceAndRole(PrismResource resource, Authority authority) {
+        return sessionFactory.getCurrentSession().createCriteria(UserRole.class)
+                .setProjection(Projections.property("user")) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("application", resource.getApplication())) //
+                        .add(Restrictions.eq("project", resource.getProject())) //
+                        .add(Restrictions.eq("program", resource.getProgram())) //
+                        .add(Restrictions.eq("institution", resource.getInstitution())) //
+                        .add(Restrictions.eq("system", resource.getSystem()))) //
+                .add(Restrictions.eq("role.id", authority)) //
+                .list();
+    }
+    
+    
     public User getUserByEmail(String email) {
         return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .add(Restrictions.eq("email", email)).uniqueResult();

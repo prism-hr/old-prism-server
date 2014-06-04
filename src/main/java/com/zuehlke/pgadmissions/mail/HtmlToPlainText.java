@@ -108,5 +108,6 @@ public class HtmlToPlainText {
         public String toString() {
             return accum.toString().replaceAll("\n\n\n+", "\n\n");
         }
+        
     }
 }

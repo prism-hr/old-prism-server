@@ -84,7 +84,7 @@ public class InterviewConfirmController {
     public String getInterviewConfirmPage(ModelMap modelMap) {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateGetAction(applicationForm, PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS, user);
+        actionService.validateAction(applicationForm, PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS, user, null);
 
         Comment latestComment = applicationsService.getLatestStateChangeComment(applicationForm,
                 PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
@@ -103,7 +103,7 @@ public class InterviewConfirmController {
         Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         // TODO comment posting
-        actionService.validatePostAction(applicationForm, PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS, null);
+        actionService.validateAction(applicationForm, PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS, user, null);
 
         if (result.hasErrors()) {
             return INTERVIEW_CONFIRM_PAGE;

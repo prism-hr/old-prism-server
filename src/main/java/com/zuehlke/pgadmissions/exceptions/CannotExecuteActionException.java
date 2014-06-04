@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.exceptions;
 
+import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.PrismResource;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 
 public class CannotExecuteActionException extends PrismException {
 
@@ -9,9 +9,9 @@ public class CannotExecuteActionException extends PrismException {
     
     private PrismResource resource;
     
-    private PrismAction action;
+    private Action action;
 
-    public CannotExecuteActionException(PrismResource resource, PrismAction action) {
+    public CannotExecuteActionException(PrismResource resource, Action action) {
         this.resource = resource;
         this.action = action;
     }
@@ -20,7 +20,7 @@ public class CannotExecuteActionException extends PrismException {
         return resource;
     }
 
-    public PrismAction getAction() {
+    public Action getAction() {
         return action;
     }
 

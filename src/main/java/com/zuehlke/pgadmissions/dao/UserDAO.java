@@ -84,7 +84,8 @@ public class UserDAO {
     
     public List<User> getUsersForResource(PrismResource resource) {
         return sessionFactory.getCurrentSession().createCriteria(UserRole.class)
-                .setProjection(Projections.property("user")) //
+                .setProjection(Projections.groupProperty("user.parentUser")) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("application", resource.getApplication())) //
                         .add(Restrictions.eq("project", resource.getProject())) //
@@ -96,7 +97,8 @@ public class UserDAO {
 
     public List<User> getUsersForResourceAndRole(PrismResource resource, Authority authority) {
         return sessionFactory.getCurrentSession().createCriteria(UserRole.class)
-                .setProjection(Projections.property("user")) //
+                .setProjection(Projections.groupProperty("user.parentUser")) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("application", resource.getApplication())) //
                         .add(Restrictions.eq("project", resource.getProject())) //

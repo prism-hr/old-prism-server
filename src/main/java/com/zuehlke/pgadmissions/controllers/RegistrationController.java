@@ -140,7 +140,8 @@ public class RegistrationController {
             Integer requestedAdvertId = Integer.valueOf(advert);
             Advert requestedAdvert = programService.getById(requestedAdvertId);
             modelMap.addAttribute("title", requestedAdvert.getTitle());
-            modelMap.addAttribute("description", requestedAdvert.getDescriptionForFacebook());
+// TODO: find a better way of handling this short advert requirement
+//            modelMap.addAttribute("description", requestedAdvert.getDescriptionForFacebook());
             modelMap.addAttribute("advertId", requestedAdvertId);
         }
 

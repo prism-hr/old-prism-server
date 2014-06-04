@@ -1225,8 +1225,10 @@ ALTER TABLE APPLICATION_LANGUAGE_QUALIFICATION
 
 UPDATE APPLICATION_LANGUAGE_QUALIFICATION INNER JOIN IMPORTED_ENTITY
 SET APPLICATION_LANGUAGE_QUALIFICATION.language_qualification_type_id = IMPORTED_ENTITY.id
-WHERE APPLICATION_LANGUAGE_QUALIFICATION.qualification_type = IMPORTED_ENTITY.code
-	OR APPLICATION_LANGUAGE_QUALIFICATION.qualification_type_other = IMPORTED_ENTITY.name
+WHERE IMPORTED_ENTITY.imported_entity_type_id = "LANGUAGE_QUALIFICATION_TYPE"
+	AND (APPLICATION_LANGUAGE_QUALIFICATION.qualification_type = IMPORTED_ENTITY.code
+		OR APPLICATION_LANGUAGE_QUALIFICATION.qualification_type_other = IMPORTED_ENTITY.name)
+	
 ;
 
 ALTER TABLE APPLICATION_LANGUAGE_QUALIFICATION
@@ -1245,4 +1247,155 @@ ALTER TABLE APPLICATION_REFEREE
 ALTER TABLE ADVERT_CLOSING_DATE
 	DROP INDEX program_closing_dates_fk,
 	ADD UNIQUE INDEX (advert_id, closing_date)
+;
+
+/* Small reformatting issues */
+
+ALTER TABLE APPLICATION_DOCUMENT
+	MODIFY personal_statement_id INT(10) UNSIGNED NOT NULL AFTER id
+;
+
+RENAME TABLE APPLICATION_FILTER_GROUP TO FILTER
+;
+
+/* Making filters generic to different resource types */
+
+ALTER TABLE FILTER
+	ADD COLUMN scope_id VARCHAR(50) AFTER id,
+	ADD INDEX (scope_id),
+	ADD FOREIGN KEY (scope_id) REFERENCES SCOPE (id)
+;
+
+UPDATE FILTER
+SET scope_id = "APPLICATION"
+;
+
+ALTER TABLE FILTER
+	MODIFY COLUMN scope_id VARCHAR(50) NOT NULL
+;
+
+ALTER TABLE FILTER
+	ADD COLUMN user_account_id INT(10) UNSIGNED AFTER id,
+	ADD INDEX (user_account_id),
+	ADD FOREIGN KEY (user_account_id) REFERENCES USER_ACCOUNT (id),
+	ADD COLUMN updated_timestamp DATETIME
+;
+
+UPDATE FILTER INNER JOIN USER_ACCOUNT
+	ON FILTER.id = USER_ACCOUNT.application_filter_group_id
+SET FILTER.user_account_id = USER_ACCOUNT.id,
+	FILTER.updated_timestamp = USER_ACCOUNT.application_list_last_access_timestamp
+;
+
+DELETE APPLICATION_FILTER.* 
+FROM FILTER INNER JOIN APPLICATION_FILTER
+	ON FILTER.id = APPLICATION_FILTER.application_filter_group_id
+WHERE FILTER.user_account_id IS NULL
+;
+
+DELETE FROM FILTER
+WHERE user_account_id IS NULL
+;
+
+UPDATE FILTER
+SET updated_timestamp = NOW()
+WHERE updated_timestamp IS NULL
+;
+
+ALTER TABLE FILTER
+	MODIFY COLUMN user_account_id INT(10) UNSIGNED NOT NULL,
+	MODIFY COLUMN updated_timestamp DATETIME NOT NULL
+;
+
+ALTER TABLE USER_ACCOUNT
+	DROP FOREIGN KEY user_account_ibfk_1,
+	DROP INDEX application_filter_group_id,
+	DROP COLUMN application_filter_group_id,
+	DROP COLUMN application_list_last_access_timestamp
+;
+
+ALTER TABLE FILTER
+	DROP INDEX user_account_id,
+	ADD UNIQUE INDEX (user_account_id, scope_id)
+;
+
+INSERT IGNORE INTO FILTER (user_account_id, scope_id, satisfy_all_conditions, sort_category, sort_order, updated_timestamp)
+	SELECT id, "APPLICATION", 0, "APPLICATION_DATE", "DESCENDING", CURRENT_TIMESTAMP()
+	FROM USER_ACCOUNT
+;
+
+RENAME TABLE APPLICATION_FILTER TO FILTER_CONSTRAINT
+;
+
+ALTER TABLE FILTER_CONSTRAINT
+	DROP INDEX filtering_fk,
+	DROP FOREIGN KEY filtering_fk,
+	CHANGE COLUMN application_filter_group_id filter_id INT(10) UNSIGNED NOT NULL AFTER id,
+	MODIFY COLUMN filter_position INT(3) NOT NULL AFTER filter_id,
+	ADD UNIQUE INDEX (filter_id, filter_position),
+	ADD FOREIGN KEY (filter_id) REFERENCES FILTER (id)
+;
+
+ALTER TABLE IMPORTED_INSTITUTION
+	MODIFY COLUMN code VARCHAR(20) NOT NULL
+;
+
+/* Metadata for language qualifications */
+
+CREATE TABLE IMPORTED_LANGUAGE_QUALIFICATION_TYPE (
+	id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	institution_id INT(10) UNSIGNED NOT NULL,
+	code VARCHAR(20) NOT NULL,
+	name VARCHAR(100) NOT NULL,
+	minumum_overall_score DECIMAL(5,2),
+	maximum_overall_score DECIMAL(5,2),
+	minumum_reading_score DECIMAL(5,2),
+	maximum_reading_score DECIMAL(5,2),
+	minumum_writing_score DECIMAL(5,2),
+	maximum_writing_score DECIMAL(5,2),
+	minumum_speaking_score DECIMAL(5,2),
+	maximum_speaking_score DECIMAL(5,2),
+	minumum_listening_score DECIMAL(5,2),
+	maximum_listening_score DECIMAL(5,2),
+	enabled INT(1) UNSIGNED NOT NULL,
+	PRIMARY KEY (id),
+	UNIQUE INDEX institution_id (institution_id, code),
+	UNIQUE INDEX institution_id_2 (institution_id, name),
+	INDEX (institution_id, enabled),
+	FOREIGN KEY (institution_id) REFERENCES INSTITUTION (id)
+) ENGINE = INNODB
+;
+
+INSERT INTO IMPORTED_LANGUAGE_QUALIFICATION_TYPE (institution_id, code, name, enabled)
+	SELECT institution_id, code, name, enabled
+	FROM IMPORTED_ENTITY
+	WHERE imported_entity_type_id LIKE "LANGUAGE_QUALIFICATION_TYPE"
+	AND code LIKE "CUST%"
+;
+
+INSERT INTO IMPORTED_LANGUAGE_QUALIFICATION_TYPE
+	SELECT NULL, 5243, "IELTS_ACADEMIC", "IELTS Academic", 4.00, 9.00, 4.00, 9.00, 4.00, 9.00, 4.00, 9.00, 4.00, 9.00, 1
+		UNION
+	SELECT NULL, 5243, "TOEFL", "TOEFL iBT", 0, 120, 0, 30, 0, 30, 0, 30, 0, 30, 1
+;
+
+ALTER TABLE APPLICATION_LANGUAGE_QUALIFICATION
+	DROP FOREIGN KEY application_language_qualification_ibfk_2
+;
+
+UPDATE APPLICATION_LANGUAGE_QUALIFICATION INNER JOIN IMPORTED_ENTITY
+	ON APPLICATION_LANGUAGE_QUALIFICATION.language_qualification_type_id = IMPORTED_ENTITY.id
+INNER JOIN IMPORTED_LANGUAGE_QUALIFICATION_TYPE
+	ON IMPORTED_ENTITY.code = IMPORTED_LANGUAGE_QUALIFICATION_TYPE.code
+	AND IMPORTED_ENTITY.name = IMPORTED_LANGUAGE_QUALIFICATION_TYPE.name
+SET APPLICATION_LANGUAGE_QUALIFICATION.language_qualification_type_id = IMPORTED_LANGUAGE_QUALIFICATION_TYPE.id
+;
+
+ALTER TABLE APPLICATION_LANGUAGE_QUALIFICATION
+	CHANGE COLUMN language_qualification_type_id imported_language_qualification_type_id INT(10) UNSIGNED NOT NULL,
+	ADD FOREIGN KEY (imported_language_qualification_type_id) REFERENCES IMPORTED_LANGUAGE_QUALIFICATION_TYPE (id)
+;
+
+DELETE FROM IMPORTED_ENTITY
+WHERE imported_entity_type_id = "LANGUAGE_QUALIFICATION_TYPE"
 ;

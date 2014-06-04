@@ -42,7 +42,7 @@ public class EmploymentPositionValidator extends AbstractValidator {
 		if (!position.isCurrent()  && StringUtils.isBlank(endDate)){
 			errors.rejectValue("endDate", EMPTY_FIELD_ERROR_MESSAGE);
 		}
-		if (position.getApplication().getEmploymentPositions().size() >= MAX_NUMBER_OF_POSITIONS + 1) {
+		if (position.getApplication().getApplicationEmploymentPositions().size() >= MAX_NUMBER_OF_POSITIONS + 1) {
 		    errors.reject("");
 		}
 		if (position.getEmployerAddress() != null && StringUtils.isBlank(position.getEmployerAddress().getAddressLine1())) {

@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Funding;
+import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -71,7 +71,7 @@ public class ApplicationSummaryService {
     }
 
     private void addQualifications(final Application form, final Map<String, String> result) {
-        List<ApplicationQualification> qualifications = form.getQualifications();
+        List<ApplicationQualification> qualifications = form.getApplicationQualifications();
         if (qualifications.isEmpty()) {
             result.put("mostRecentQualification", NONE_PROVIDED);
             return;
@@ -118,7 +118,7 @@ public class ApplicationSummaryService {
 
     private void addFundings(final Application form, Map<String, String> result, final Gson gson) {
         Integer fundingSum = 0;
-        for (Funding funding : form.getFundings()) {
+        for (ApplicationFunding funding : form.getApplicationFundings()) {
             fundingSum = fundingSum + funding.getValueAsInteger();
         }
         result.put("fundingRequirements", fundingSum.toString());

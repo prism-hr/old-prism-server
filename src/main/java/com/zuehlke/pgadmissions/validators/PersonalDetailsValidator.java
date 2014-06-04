@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import com.zuehlke.pgadmissions.domain.PersonalDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
 
 @Component
 public class PersonalDetailsValidator extends AbstractValidator {
@@ -28,12 +28,12 @@ public class PersonalDetailsValidator extends AbstractValidator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return PersonalDetails.class.isAssignableFrom(clazz);
+        return ApplicationPersonalDetails.class.isAssignableFrom(clazz);
     }
 
     @Override
     public void addExtraValidation(Object target, Errors errors) {
-        PersonalDetails personalDetail = (PersonalDetails) target;
+        ApplicationPersonalDetails personalDetail = (ApplicationPersonalDetails) target;
         LocalDate today = new LocalDate();
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "title", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "gender", EMPTY_DROPDOWN_ERROR_MESSAGE);

@@ -13,7 +13,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import com.zuehlke.pgadmissions.domain.ApplicationFilter;
+import com.zuehlke.pgadmissions.domain.FilterConstraint;
 
 @Component
 public class ApplicationsFiltersPropertyEditor extends PropertyEditorSupport {
@@ -30,14 +30,14 @@ public class ApplicationsFiltersPropertyEditor extends PropertyEditorSupport {
         }
 
         final GsonBuilder gson = new GsonBuilder();
-        gson.registerTypeAdapter(List.class, new JsonDeserializer<List<ApplicationFilter>>() {
+        gson.registerTypeAdapter(List.class, new JsonDeserializer<List<FilterConstraint>>() {
 
             @Override
-            public List<ApplicationFilter> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            public List<FilterConstraint> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
-                List<ApplicationFilter> filters = new ArrayList<ApplicationFilter>();
+                List<FilterConstraint> filters = new ArrayList<FilterConstraint>();
                 for (JsonElement jsonFilter : json.getAsJsonArray()) {
-                    ApplicationFilter filter = gson.create().fromJson(jsonFilter, ApplicationFilter.class);
+                    FilterConstraint filter = gson.create().fromJson(jsonFilter, FilterConstraint.class);
                     
                     String searchTerm = filter.getSearchTerm();
                     filter.setSearchTerm(searchTerm.trim());
@@ -47,7 +47,7 @@ public class ApplicationsFiltersPropertyEditor extends PropertyEditorSupport {
                 return filters;
             }
         });
-        List<ApplicationFilter> filters = gson.create().fromJson(applicationsFilter, List.class);
+        List<FilterConstraint> filters = gson.create().fromJson(applicationsFilter, List.class);
         setValue(filters);
     }
 

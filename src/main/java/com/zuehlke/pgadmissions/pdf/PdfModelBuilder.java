@@ -41,10 +41,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Funding;
-import com.zuehlke.pgadmissions.domain.LanguageQualification;
+import com.zuehlke.pgadmissions.domain.ApplicationFunding;
+import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.Passport;
-import com.zuehlke.pgadmissions.domain.PersonalDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
@@ -333,7 +333,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        PersonalDetails personalDetails = form.getPersonalDetails();
+        ApplicationPersonalDetails personalDetails = form.getPersonalDetails();
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
 
@@ -486,7 +486,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             table.addCell(newTableCell("English Language Qualification", SMALL_BOLD_FONT));
             table.addCell(newTableCell(null, SMALL_FONT));
         } else {
-            LanguageQualification qualification = personalDetails.getLanguageQualification();
+            ApplicationLanguageQualification qualification = personalDetails.getLanguageQualification();
             table = new PdfPTable(2);
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             PdfPCell headerCell = newTableCell("English Language Qualification", SMALL_BOLD_FONT);
@@ -494,10 +494,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             table.addCell(headerCell);
 
             table.addCell(newTableCell("Qualification Type", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(qualification.getQualificationType().getDisplayValue(), SMALL_FONT));
-
-            table.addCell(newTableCell("Other Qualification Type Name", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(qualification.getQualificationTypeOther(), SMALL_FONT));
+            table.addCell(newTableCell(qualification.getLanguageQualificationType().getName(), SMALL_FONT));
 
             table.addCell(newTableCell("Date of Examination", SMALL_BOLD_FONT));
             table.addCell(newTableCell(dateFormat.format(qualification.getExamDate()), SMALL_FONT));
@@ -592,7 +589,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        if (form.getQualifications().isEmpty()) {
+        if (form.getApplicationQualifications().isEmpty()) {
             table = new PdfPTable(2);
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             table.addCell(newTableCell("Qualification", SMALL_BOLD_FONT));
@@ -600,7 +597,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             pdfDocument.add(table);
         } else {
             int counter = 1;
-            for (ApplicationQualification qualification : form.getQualifications()) {
+            for (ApplicationQualification qualification : form.getApplicationQualifications()) {
                 table = new PdfPTable(2);
                 table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                 PdfPCell headerCell = newTableCell("Qualification (" + counter++ + ")", SMALL_BOLD_FONT);
@@ -688,7 +685,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        if (form.getEmploymentPositions().isEmpty()) {
+        if (form.getApplicationEmploymentPositions().isEmpty()) {
             table = new PdfPTable(2);
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             table.addCell(newTableCell("Position", SMALL_BOLD_FONT));
@@ -696,7 +693,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             pdfDocument.add(table);
         } else {
             int counter = 1;
-            for (ApplicationEmploymentPosition position : form.getEmploymentPositions()) {
+            for (ApplicationEmploymentPosition position : form.getApplicationEmploymentPositions()) {
                 table = new PdfPTable(2);
                 table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                 PdfPCell headerCell = newTableCell("Position (" + counter++ + ")", SMALL_BOLD_FONT);
@@ -749,7 +746,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        if (form.getFundings().isEmpty()) {
+        if (form.getApplicationFundings().isEmpty()) {
             table = new PdfPTable(2);
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             table.addCell(newTableCell("Funding", SMALL_BOLD_FONT));
@@ -757,14 +754,14 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             pdfDocument.add(table);
         } else {
             int counter = 1;
-            for (Funding funding : form.getFundings()) {
+            for (ApplicationFunding funding : form.getApplicationFundings()) {
                 table = new PdfPTable(2);
                 table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                 PdfPCell headerCell = newTableCell("Funding (" + counter++ + ")", SMALL_BOLD_FONT);
                 headerCell.setColspan(2);
                 table.addCell(headerCell);
                 table.addCell(newTableCell("Funding Type", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(funding.getType().getDisplayValue(), SMALL_FONT));
+                table.addCell(newTableCell(funding.getFundingSource().getName(), SMALL_FONT));
 
                 table.addCell(newTableCell("Description", SMALL_BOLD_FONT));
                 table.addCell(newTableCell(funding.getDescription(), SMALL_FONT));
@@ -924,7 +921,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newTableCell("Do you have any unspent Criminial Convictions?", SMALL_BOLD_FONT));
-        if (additionalInformation == null || additionalInformation.getHasConvictions() == null) {
+        if (additionalInformation == null) {
             table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
         } else if (BooleanUtils.isTrue(additionalInformation.getHasConvictions())) {
             table.addCell(newTableCell("Yes", SMALL_FONT));

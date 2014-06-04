@@ -12,10 +12,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.Funding;
-import com.zuehlke.pgadmissions.domain.PersonalDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationFunding;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
@@ -23,8 +23,8 @@ import com.zuehlke.pgadmissions.domain.User;
 public class ApplicationFormBuilder {
 
     private State status;
-    private ProgramDetails programmeDetails;
-    private PersonalDetails personalDetails;
+    private ApplicationProgramDetails programmeDetails;
+    private ApplicationPersonalDetails personalDetails;
     private ApplicationAddress applicationFormAddress;
     private Integer id;
     private User applicant;
@@ -37,7 +37,7 @@ public class ApplicationFormBuilder {
     private List<ApplicationQualification> qualifications = new ArrayList<ApplicationQualification>();
     private List<Referee> referees = new ArrayList<Referee>();
     private List<ApplicationEmploymentPosition> employmentPositions = new ArrayList<ApplicationEmploymentPosition>();
-    private List<Funding> fundings = new ArrayList<Funding>();
+    private List<ApplicationFunding> fundings = new ArrayList<ApplicationFunding>();
     private ApplicationDocument applicationFormDocument;
     private ApplicationAdditionalInformation info;
     private String applicationNumber;
@@ -57,12 +57,12 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder personalDetails(PersonalDetails personalDetails) {
+    public ApplicationFormBuilder personalDetails(ApplicationPersonalDetails personalDetails) {
         this.personalDetails = personalDetails;
         return this;
     }
 
-    public ApplicationFormBuilder programmeDetails(ProgramDetails programmeDetails) {
+    public ApplicationFormBuilder programmeDetails(ApplicationProgramDetails programmeDetails) {
         this.programmeDetails = programmeDetails;
         return this;
     }
@@ -120,8 +120,8 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder fundings(Funding... fundings) {
-        for (Funding funding : fundings) {
+    public ApplicationFormBuilder fundings(ApplicationFunding... fundings) {
+        for (ApplicationFunding funding : fundings) {
             this.fundings.add(funding);
         }
         return this;
@@ -165,9 +165,9 @@ public class ApplicationFormBuilder {
         application.setSubmittedTimestamp(submittedDate);
         application.getApplicationReferees().addAll(referees);
         application.setCreatedTimestamp(createdTimestamp);
-        application.getQualifications().addAll(qualifications);
+        application.getApplicationQualifications().addAll(qualifications);
         application.setProgramDetails(programmeDetails);
-        application.getFundings().addAll(fundings);
+        application.getApplicationFundings().addAll(fundings);
         application.setApplicationAddress(applicationFormAddress);
         application.setApplicationDocument(applicationFormDocument);
         application.setPersonalDetails(personalDetails);
@@ -177,7 +177,7 @@ public class ApplicationFormBuilder {
         application.setAcceptedTerms(acceptedTerms);
         application.setCode(applicationNumber);
         application.setClosingDate(closingDate);
-        application.getEmploymentPositions().addAll(employmentPositions);
+        application.getApplicationEmploymentPositions().addAll(employmentPositions);
         return application;
     }
 }

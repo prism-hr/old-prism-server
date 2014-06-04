@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -134,11 +133,6 @@ public class UserDAO {
     public List<User> getAdmitters() {
         return sessionFactory.getCurrentSession().createCriteria(User.class).createAlias("roles", "role")
                 .add(Restrictions.eq("role.id", Authority.INSTITUTION_ADMITTER)).list();
-    }
-
-    public void setApplicationFormListLastAccessTimestamp(User user) {
-        user.getUserAccount().setApplicationListLastAccessTimestamp(new Date());
-        save(user);
     }
 
     //TODO rewrite the query - HQL

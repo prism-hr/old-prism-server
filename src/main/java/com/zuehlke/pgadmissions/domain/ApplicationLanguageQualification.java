@@ -1,12 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -15,27 +11,18 @@ import javax.persistence.Table;
 
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
-import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
-
 @Entity
 @Table(name = "APPLICATION_LANGUAGE_QUALIFICATION")
-public class LanguageQualification implements Serializable {
-
-    private static final long serialVersionUID = -2695332340505084549L;
+public class ApplicationLanguageQualification {
 
     @Id
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "qualification_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private LanguageQualificationEnum qualificationType;
-
-    @Column(name = "qualification_type_other")
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
-    private String qualificationTypeOther;
-
+    @OneToOne
+    @JoinColumn(name = "imported_language_qualification_type_id", nullable = false)
+    private ImportedLanguageQualificationType languageQualificationType;
+    
     @Column(name = "exam_date", nullable = false)
     private LocalDate examDate;
 
@@ -69,20 +56,12 @@ public class LanguageQualification implements Serializable {
         this.id = id;
     }
 
-    public LanguageQualificationEnum getQualificationType() {
-        return qualificationType;
+    public ImportedLanguageQualificationType getLanguageQualificationType() {
+        return languageQualificationType;
     }
 
-    public void setQualificationType(LanguageQualificationEnum qualificationType) {
-        this.qualificationType = qualificationType;
-    }
-
-    public String getQualificationTypeOther() {
-        return qualificationTypeOther;
-    }
-
-    public void setQualificationTypeOther(String qualificationTypeOther) {
-        this.qualificationTypeOther = qualificationTypeOther;
+    public void setLanguageQualificationType(ImportedLanguageQualificationType languageQualificationType) {
+        this.languageQualificationType = languageQualificationType;
     }
 
     public LocalDate getExamDate() {
@@ -148,54 +127,43 @@ public class LanguageQualification implements Serializable {
     public void setProofOfAward(Document proofOfAward) {
         this.proofOfAward = proofOfAward;
     }
-    
 
-    public LanguageQualification withQualificationType(LanguageQualificationEnum qualificationType) {
-        this.qualificationType = qualificationType;
-        return this;
-    }
-
-    public LanguageQualification withQualificationTypeOther(String qualificationTypeOther) {
-        this.qualificationTypeOther = qualificationTypeOther;
-        return this;
-    }
-
-    public LanguageQualification withExamDate(LocalDate examDate) {
+    public ApplicationLanguageQualification withExamDate(LocalDate examDate) {
         this.examDate = examDate;
         return this;
     }
 
-    public LanguageQualification withOverallScore(String score) {
+    public ApplicationLanguageQualification withOverallScore(String score) {
         this.overallScore = score;
         return this;
     }
 
-    public LanguageQualification withReadingScore(String score) {
+    public ApplicationLanguageQualification withReadingScore(String score) {
         this.readingScore = score;
         return this;
     }
 
-    public LanguageQualification withWritingScore(String score) {
+    public ApplicationLanguageQualification withWritingScore(String score) {
         this.writingScore = score;
         return this;
     }
 
-    public LanguageQualification withSpeakingScore(String score) {
+    public ApplicationLanguageQualification withSpeakingScore(String score) {
         this.speakingScore = score;
         return this;
     }
 
-    public LanguageQualification withListeningScore(String score) {
+    public ApplicationLanguageQualification withListeningScore(String score) {
         this.listeningScore = score;
         return this;
     }
 
-    public LanguageQualification withExamOnline(Boolean online) {
+    public ApplicationLanguageQualification withExamOnline(Boolean online) {
         this.examOnline = online;
         return this;
     }
     
-    public LanguageQualification withProofOfAward(Document proofOfAward) {
+    public ApplicationLanguageQualification withProofOfAward(Document proofOfAward) {
         this.proofOfAward = proofOfAward;
         return this;
     }

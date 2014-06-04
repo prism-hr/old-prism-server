@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.ApplicationFilter;
-import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
+import com.zuehlke.pgadmissions.domain.FilterConstraint;
+import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
@@ -17,8 +17,8 @@ import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 @Transactional
 public class ApplicationsFilteringService {
 
-    public ApplicationFilterGroup getDefaultApplicationFiltering(User user) {
-        ApplicationFilterGroup filtering;
+    public Filter getDefaultApplicationFiltering(User user) {
+        Filter filtering;
         if (user.getUserAccount().getFilterGroup() != null) {
             filtering = user.getUserAccount().getFilterGroup();
         } else {
@@ -27,23 +27,23 @@ public class ApplicationsFilteringService {
         return filtering;
     }
 
-    public ApplicationFilterGroup getActiveApplicationFiltering() {
-        ApplicationFilterGroup filtering = new ApplicationFilterGroup();
-        List<ApplicationFilter> filters = filtering.getFilters();
+    public Filter getActiveApplicationFiltering() {
+        Filter filtering = new Filter();
+        List<FilterConstraint> filters = filtering.getFilters();
         filters.add(getFilterForNonStatus(PrismState.APPLICATION_APPROVED));
         filters.add(getFilterForNonStatus(PrismState.APPLICATION_REJECTED));
         filters.add(getFilterForNonStatus(PrismState.APPLICATION_WITHDRAWN));
         return filtering;
     }
     
-    public ApplicationFilterGroup getUrgentApplicationFiltering() {
-        ApplicationFilterGroup filtering = new ApplicationFilterGroup();
+    public Filter getUrgentApplicationFiltering() {
+        Filter filtering = new Filter();
         filtering.setSortCategory(SortCategory.URGENT);
         return filtering;
     }
 
-    private ApplicationFilter getFilterForNonStatus(PrismState status) {
-        ApplicationFilter filter = new ApplicationFilter();
+    private FilterConstraint getFilterForNonStatus(PrismState status) {
+        FilterConstraint filter = new FilterConstraint();
         filter.setSearchCategory(SearchCategory.APPLICATION_STATUS);
         filter.setSearchPredicate(SearchPredicate.NOT_CONTAINING);
         filter.setSearchTerm(status.name());

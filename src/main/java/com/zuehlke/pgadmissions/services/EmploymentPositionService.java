@@ -32,7 +32,7 @@ public class EmploymentPositionService {
         if (employmentPositionId == null) {
             persistentEmploymentPosition = new ApplicationEmploymentPosition();
             persistentEmploymentPosition.setApplication(application);
-            application.getEmploymentPositions().add(persistentEmploymentPosition);
+            application.getApplicationEmploymentPositions().add(persistentEmploymentPosition);
             applicationService.save(application);
         } else {
             persistentEmploymentPosition = entityDAO.getById(ApplicationEmploymentPosition.class, employmentPositionId);
@@ -42,7 +42,7 @@ public class EmploymentPositionService {
 
 	public void delete(Integer employmentPositionId) {
 	    ApplicationEmploymentPosition employment = entityDAO.getById(ApplicationEmploymentPosition.class, employmentPositionId);
-        employment.getApplication().getEmploymentPositions().remove(employment);
+        employment.getApplication().getApplicationEmploymentPositions().remove(employment);
 	}
 	
 }

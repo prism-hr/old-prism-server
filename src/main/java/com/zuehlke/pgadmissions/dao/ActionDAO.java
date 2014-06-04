@@ -42,13 +42,13 @@ public class ActionDAO {
                 .uniqueResult();
     }
     
-    public PrismAction getDelegateAction(PrismResource resource, PrismAction actionId) {
-        return (PrismAction) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+    public Action getDelegateAction(PrismResource resource, Action action) {
+        return (Action) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action.delegateAction.id")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("action.delegateAction", "delegateAction", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("state", resource.getState())) //
-                .add(Restrictions.eq("action.id", actionId)) //
+                .add(Restrictions.eq("action", action)) //
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .add(Restrictions.eq("delegateAction.actionType", PrismActionType.USER_INVOCATION)) //
                 .uniqueResult();
@@ -81,7 +81,7 @@ public class ActionDAO {
                 .uniqueResult();
     }
     
-    public PrismAction getPermittedAction(PrismResource resource, PrismAction actionId, User user) {
+    public PrismAction getPermittedAction(PrismResource resource, Action action, User user) {
         return (PrismAction) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action.id")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
@@ -91,7 +91,7 @@ public class ActionDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
-                .add(Restrictions.eq("action.id", actionId)) //
+                .add(Restrictions.eq("action.id", action)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("precedence")) //

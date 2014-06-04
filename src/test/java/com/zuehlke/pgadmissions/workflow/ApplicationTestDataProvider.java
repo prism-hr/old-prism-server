@@ -107,7 +107,7 @@ public class ApplicationTestDataProvider {
         languageQualification.setProofOfAward(testObjectProvider.get(Document.class));
         personalDetails.setLanguageQualification(languageQualification);
         personalDetails.setResidenceCountry(testObjectProvider.get(Domicile.class));
-        personalDetails.setRequiresVisa(true);
+        personalDetails.setVisaRequired(true);
         Passport passport = new Passport();
         passport.setNumber("666");
         passport.setName("Kubus Fibinger");

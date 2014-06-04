@@ -172,7 +172,7 @@ public class PersonalDetailsValidatorTest {
 
     @Test
     public void shouldRejectIfRequiresVisaIsNull() {
-        personalDetails.setRequiresVisa(null);
+        personalDetails.setVisaRequired(null);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -181,7 +181,7 @@ public class PersonalDetailsValidatorTest {
 
     @Test
     public void shouldRejectIfEnglishFirstLanguageIsNull() {
-        personalDetails.setEnglishFirstLanguage(null);
+        personalDetails.setFirstLanguageEnglish(null);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -190,7 +190,7 @@ public class PersonalDetailsValidatorTest {
 
     @Test
     public void shouldRejectIfLanguageQualificationsIsNull() {
-        personalDetails.setEnglishFirstLanguage(false);
+        personalDetails.setFirstLanguageEnglish(false);
         personalDetails.setLanguageQualificationAvailable(null);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
@@ -658,7 +658,7 @@ public class PersonalDetailsValidatorTest {
     @Test
     public void shouldNotThrowNullPointerExceptionForPassportInformationValidator() {
         personalDetails.setPassportAvailable(null);
-        personalDetails.setRequiresVisa(null);
+        personalDetails.setVisaRequired(null);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());

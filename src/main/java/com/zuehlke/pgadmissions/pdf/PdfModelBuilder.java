@@ -374,10 +374,10 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.addCell(newTableCell(sb.toString(), SMALL_FONT));
 
         table.addCell(newTableCell("Is English your first language?", SMALL_BOLD_FONT));
-        if (personalDetails == null || personalDetails.getEnglishFirstLanguage() == null) {
+        if (personalDetails == null || personalDetails.getFirstLanguageEnglish() == null) {
             table.addCell(newTableCell(null, SMALL_FONT));
         } else {
-            if (BooleanUtils.isTrue(personalDetails.getEnglishFirstLanguage())) {
+            if (BooleanUtils.isTrue(personalDetails.getFirstLanguageEnglish())) {
                 table.addCell(newTableCell("Yes", SMALL_FONT));
             } else {
                 table.addCell(newTableCell("No", SMALL_FONT));
@@ -403,10 +403,10 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
 
         table.addCell(newTableCell("Do you Require a Visa to Study in the UK?", SMALL_BOLD_FONT));
-        if (personalDetails == null || personalDetails.getRequiresVisa() == null) {
+        if (personalDetails == null || personalDetails.getVisaRequired() == null) {
             table.addCell(newTableCell(null, SMALL_FONT));
         } else {
-            if (BooleanUtils.isTrue(personalDetails.getRequiresVisa())) {
+            if (BooleanUtils.isTrue(personalDetails.getVisaRequired())) {
                 table.addCell(newTableCell("Yes", SMALL_FONT));
             } else {
                 table.addCell(newTableCell("No", SMALL_FONT));
@@ -424,7 +424,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             }
         }
 
-        if (personalDetails != null && BooleanUtils.isTrue(personalDetails.getRequiresVisa())) {
+        if (personalDetails != null && BooleanUtils.isTrue(personalDetails.getVisaRequired())) {
             Passport passportInformation = personalDetails.getPassport();
             if (passportInformation != null) {
                 table.addCell(newTableCell("Passport Number", SMALL_BOLD_FONT));

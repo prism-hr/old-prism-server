@@ -164,10 +164,10 @@ public class ApplicationCopyHelper {
         to.setCountry(getEnabledImportedObject(from.getCountry()));
         to.setFirstNationality(getEnabledImportedObject(from.getFirstNationality()));
         to.setSecondNationality(getEnabledImportedObject(from.getSecondNationality()));
-        to.setEnglishFirstLanguage(from.getEnglishFirstLanguage());
+        to.setFirstLanguageEnglish(from.getFirstLanguageEnglish());
         to.setLanguageQualificationAvailable(from.getLanguageQualificationAvailable());
         to.setResidenceCountry(getEnabledImportedObject(from.getResidenceCountry()));
-        to.setRequiresVisa(from.getRequiresVisa());
+        to.setVisaRequired(from.getVisaRequired());
         to.setPassportAvailable(from.getPassportAvailable());
         to.setPhoneNumber(from.getPhoneNumber());
         to.setMessenger(from.getMessenger());

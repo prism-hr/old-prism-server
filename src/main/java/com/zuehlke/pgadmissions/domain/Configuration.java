@@ -21,7 +21,11 @@ public class Configuration {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "institution_id", nullable = false)
+    @JoinColumn(name = "system_id")
+    private System system;
+
+    @ManyToOne
+    @JoinColumn(name = "institution_id")
     private Institution institution;
 
     @ManyToOne
@@ -45,6 +49,14 @@ public class Configuration {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public System getSystem() {
+        return system;
+    }
+
+    public void setSystem(System system) {
+        this.system = system;
     }
 
     public Institution getInstitution() {

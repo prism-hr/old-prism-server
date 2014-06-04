@@ -176,8 +176,8 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         applicant.setSecondaryNationality(buildSecondNationality());
         applicant.setCountryOfBirth(buildCountry());
         applicant.setCountryOfDomicile(buildDomicile());
-        applicant.setVisaRequired(BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getRequiresVisa()));
-        if (BooleanUtils.isTrue(applicationForm.getPersonalDetails().getRequiresVisa())) {
+        applicant.setVisaRequired(BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getVisaRequired()));
+        if (BooleanUtils.isTrue(applicationForm.getPersonalDetails().getVisaRequired())) {
             applicant.setPassport(buildPassport());
         }
         applicant.setDisability(buildDisability());
@@ -189,10 +189,10 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         applicant.setQualificationList(buildQualificationDetails());
         applicant.setEmployerList(buildEmployer());
 
-        applicant.setEnglishIsFirstLanguage(BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getEnglishFirstLanguage()));
+        applicant.setEnglishIsFirstLanguage(BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getFirstLanguageEnglish()));
         applicant.setEnglishLanguageQualificationList(buildEnglishLanguageQualification());
 
-        if (BooleanUtils.isNotTrue(applicationForm.getPersonalDetails().getEnglishFirstLanguage())
+        if (BooleanUtils.isNotTrue(applicationForm.getPersonalDetails().getFirstLanguageEnglish())
                 && BooleanUtils.isNotTrue(applicationForm.getPersonalDetails().getLanguageQualificationAvailable())) {
             printLanguageQualificationAdmissionsNote = true;
         }

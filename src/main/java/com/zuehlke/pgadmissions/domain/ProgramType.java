@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -21,23 +20,12 @@ public class ProgramType implements Serializable {
     @Enumerated(EnumType.STRING)
     private ProgramTypeId id;
 
-    @Column(name = "default_study_duration")
-    private Integer defaultStudyDuration;
-
     public ProgramTypeId getId() {
         return id;
     }
 
     public void setId(ProgramTypeId id) {
         this.id = id;
-    }
-
-    public Integer getDefaultStudyDuration() {
-        return defaultStudyDuration;
-    }
-
-    public void setDefaultStudyDuration(Integer defaultStudyDuration) {
-        this.defaultStudyDuration = defaultStudyDuration;
     }
 
     public String getDisplayValue() {

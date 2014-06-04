@@ -117,7 +117,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
     @Test
     public void shouldSetAdditionalTextInOfferConditionsIfLanguageQualificationIsNull() {
         applicationForm.getPersonalDetails().setLanguageQualificationAvailable(null);
-        applicationForm.getPersonalDetails().setEnglishFirstLanguage(null);
+        applicationForm.getPersonalDetails().setFirstLanguageEnglish(null);
         SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(applicationForm).build();
         assertEquals("Application predates mandatory language qualification. Please check qualifications for potential language certificates.", request
                 .getApplication().getCourseApplication().getDepartmentalOfferConditions());

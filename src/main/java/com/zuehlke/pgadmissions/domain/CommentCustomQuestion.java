@@ -15,7 +15,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @Entity
-@Table(name = "COMMENT_CUSTOM_QUESTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "program", "action_id", "comment_custom_question_version_id" }) })
+@Table(name = "COMMENT_CUSTOM_QUESTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_id", "action_id", "comment_custom_question_version_id" }) })
 public class CommentCustomQuestion implements IUniqueResource {
 
     @Id

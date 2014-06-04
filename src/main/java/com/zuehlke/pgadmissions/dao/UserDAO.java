@@ -109,7 +109,6 @@ public class UserDAO {
                 .list();
     }
     
-    
     public User getUserByEmail(String email) {
         return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .add(Restrictions.eq("email", email)).uniqueResult();

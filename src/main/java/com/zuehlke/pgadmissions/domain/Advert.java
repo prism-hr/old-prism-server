@@ -47,7 +47,7 @@ public abstract class Advert extends PrismResourceDynamic {
     private AdvertClosingDate closingDate;
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "advert_id", nullable = false, unique = true)
+    @JoinColumn(name = "advert_id", nullable = false)
     private List<AdvertClosingDate> closingDates = new ArrayList<AdvertClosingDate>();
 
     @Override
@@ -82,28 +82,6 @@ public abstract class Advert extends PrismResourceDynamic {
 
     public void setFunding(String funding) {
         this.funding = funding;
-    }
-
-    public String getDescriptionForFacebook() {
-        return getStudyDurationToRead().toLowerCase().replace("s", "")
-                + " research study programme delivered by UCL Engineering at London's global University. "
-                + "Click to find out more about the programme and apply for your place.";
-    }
-
-    public String getStudyDurationToRead() {
-        Integer studyDurationToRead = studyDuration;
-        String timeIntervalToRead = "Month";
-
-        if (studyDuration % 12 == 0) {
-            studyDurationToRead = studyDuration / 12;
-            timeIntervalToRead = "Year";
-        }
-
-        if (studyDurationToRead > 1) {
-            timeIntervalToRead = timeIntervalToRead + "s";
-        }
-
-        return studyDurationToRead.toString() + " " + timeIntervalToRead;
     }
 
     public User getUser() {

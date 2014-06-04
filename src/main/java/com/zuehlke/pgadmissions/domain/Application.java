@@ -68,13 +68,13 @@ public class Application extends PrismResourceDynamic {
     private LocalDate closingDate;
     
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_personal_detail_id", nullable = false)
-    private PersonalDetails personalDetails;
+    @JoinColumn(name = "application_personal_detail_id", unique = true)
+    private ApplicationPersonalDetails applicationPersonalDetails;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_program_detail_id", nullable = false)
+    @JoinColumn(name = "application_program_detail_id", unique = true)
     @Valid
-    private ProgramDetails programDetails;
+    private ApplicationProgramDetails applicationProgramDetails;
     
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_address_id", unique = true)
@@ -84,17 +84,17 @@ public class Application extends PrismResourceDynamic {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     @Valid
-    private List<ApplicationQualification> qualifications = new ArrayList<ApplicationQualification>();
+    private List<ApplicationQualification> applicationQualifications = new ArrayList<ApplicationQualification>();
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     @Valid
-    private List<ApplicationEmploymentPosition> employmentPositions = new ArrayList<ApplicationEmploymentPosition>();
+    private List<ApplicationEmploymentPosition> applicationEmploymentPositions = new ArrayList<ApplicationEmploymentPosition>();
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     @Valid
-    private List<Funding> fundings = new ArrayList<Funding>();
+    private List<ApplicationFunding> applicationFundings = new ArrayList<ApplicationFunding>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
@@ -107,7 +107,7 @@ public class Application extends PrismResourceDynamic {
     private ApplicationDocument applicationDocument;
     
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_additional_information_id", nullable = false, unique = true)
+    @JoinColumn(name = "application_additional_information_id", unique = true)
     @Valid
     private ApplicationAdditionalInformation additionalInformation;
     
@@ -225,20 +225,20 @@ public class Application extends PrismResourceDynamic {
         return Objects.firstNonNull(getProject(), getProgram());
     }
 
-    public PersonalDetails getPersonalDetails() {
-        return personalDetails;
+    public ApplicationPersonalDetails getPersonalDetails() {
+        return applicationPersonalDetails;
     }
 
-    public void setPersonalDetails(PersonalDetails personalDetails) {
-        this.personalDetails = personalDetails;
+    public void setPersonalDetails(ApplicationPersonalDetails personalDetails) {
+        this.applicationPersonalDetails = personalDetails;
     }
 
-    public ProgramDetails getProgramDetails() {
-        return programDetails;
+    public ApplicationProgramDetails getProgramDetails() {
+        return applicationProgramDetails;
     }
 
-    public void setProgramDetails(ProgramDetails programDetails) {
-        this.programDetails = programDetails;
+    public void setProgramDetails(ApplicationProgramDetails programDetails) {
+        this.applicationProgramDetails = programDetails;
     }
 
     public ApplicationAdditionalInformation getAdditionalInformation() {
@@ -249,16 +249,16 @@ public class Application extends PrismResourceDynamic {
         this.additionalInformation = additionalInformation;
     }
 
-    public List<ApplicationQualification> getQualifications() {
-        return qualifications;
+    public List<ApplicationQualification> getApplicationQualifications() {
+        return applicationQualifications;
     }
 
-    public List<Funding> getFundings() {
-        return fundings;
+    public List<ApplicationFunding> getApplicationFundings() {
+        return applicationFundings;
     }
 
-    public List<ApplicationEmploymentPosition> getEmploymentPositions() {
-        return employmentPositions;
+    public List<ApplicationEmploymentPosition> getApplicationEmploymentPositions() {
+        return applicationEmploymentPositions;
     }
 
     public List<Referee> getApplicationReferees() {
@@ -328,13 +328,13 @@ public class Application extends PrismResourceDynamic {
         return this;
     }
 
-    public Application withPersonalDetails(PersonalDetails personalDetails) {
-        this.personalDetails = personalDetails;
+    public Application withPersonalDetails(ApplicationPersonalDetails personalDetails) {
+        this.applicationPersonalDetails = personalDetails;
         return this;
     }
 
-    public Application withProgramDetails(ProgramDetails programDetails) {
-        this.programDetails = programDetails;
+    public Application withProgramDetails(ApplicationProgramDetails programDetails) {
+        this.applicationProgramDetails = programDetails;
         return this;
     }
 
@@ -364,7 +364,7 @@ public class Application extends PrismResourceDynamic {
     }
 
     public Application withQualifications(ApplicationQualification... qualifications) {
-        this.qualifications.addAll(Arrays.asList(qualifications));
+        this.applicationQualifications.addAll(Arrays.asList(qualifications));
         return this;
     }
 

@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,20 +9,26 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 
 @Entity
-@Table(name = "application_filter")
-public class ApplicationFilter implements Serializable {
-
-    private static final long serialVersionUID = -2766208328669781519L;
+@Table(name = "FILTER_CONSTRAINT", uniqueConstraints = { @UniqueConstraint(columnNames = { "filter_id", "filter_position_id" }) })
+public class FilterConstraint {
 
     @Id
     @GeneratedValue
     private Integer id;
+    
+    @ManyToOne
+    @JoinColumn(name = "filter_id", nullable = false, insertable = false, updatable = false)
+    private Filter filter;
+    
+    @Column(name = "filter_position", nullable = false)
+    private int filterPosition;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "search_predicate", nullable = false)
@@ -36,12 +40,24 @@ public class ApplicationFilter implements Serializable {
 
     @Column(name = "search_term", nullable = false)
     private String searchTerm;
-    
-    @ManyToOne
-    @JoinColumn(name = "application_filter_group_id", nullable = false, insertable = false, updatable = false)
-    private ApplicationFilterGroup filterGroup;
 
-    public ApplicationFilter() {
+    public FilterConstraint() {
+    }
+    
+    public Integer getId() {
+        return id;
+    }
+    
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    
+    public int getFilterPosition() {
+        return filterPosition;
+    }
+
+    public void setFilterPosition(int filterPosition) {
+        this.filterPosition = filterPosition;
     }
 
     public SearchPredicate getSearchPredicate() {
@@ -68,14 +84,6 @@ public class ApplicationFilter implements Serializable {
         this.searchTerm = searchTerm;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
     @Override
     public int hashCode() {
         return Objects.hashCode(searchCategory, searchPredicate, searchTerm);
@@ -89,7 +97,7 @@ public class ApplicationFilter implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ApplicationFilter other = (ApplicationFilter) obj;
+        final FilterConstraint other = (FilterConstraint) obj;
 
         return Objects.equal(this.searchCategory, other.searchCategory) && Objects.equal(this.searchPredicate, other.searchPredicate)
                 && Objects.equal(this.searchTerm, other.searchTerm);

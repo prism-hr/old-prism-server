@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
+import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 
@@ -16,10 +16,10 @@ public class ApplicationsFilteringServiceTest {
 
     @Test
     public void shouldReturnStoredFiltering() {
-        ApplicationFilterGroup filtering = new ApplicationFilterGroup();
+        Filter filtering = new Filter();
         User user = new User().withAccount(new UserAccount().withFilterGroup(filtering));
 
-        ApplicationFilterGroup actualFiltering = service.getDefaultApplicationFiltering(user);
+        Filter actualFiltering = service.getDefaultApplicationFiltering(user);
 
         assertSame(filtering, actualFiltering);
     }
@@ -27,7 +27,7 @@ public class ApplicationsFilteringServiceTest {
     @Test
     public void shouldReturnActiveApplicationFiltering() {
         User user = new User();
-        ApplicationFilterGroup actualFiltering = service.getDefaultApplicationFiltering(user);
+        Filter actualFiltering = service.getDefaultApplicationFiltering(user);
         Assert.assertEquals(3, actualFiltering.getFilters().size());
     }
 

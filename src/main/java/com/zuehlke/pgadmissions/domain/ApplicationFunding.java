@@ -3,8 +3,6 @@ package com.zuehlke.pgadmissions.domain;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -15,20 +13,19 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
 @Table(name = "APPLICATION_FUNDING")
-public class Funding {
+public class ApplicationFunding {
 
     @Id
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "award_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private FundingType type;
+    @OneToOne
+    @JoinColumn(name = "funding_source_id", nullable = false)
+    private FundingSource fundingSource;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "document_id", nullable = false)
@@ -58,12 +55,12 @@ public class Funding {
         return id;
     }
 
-    public FundingType getType() {
-        return type;
+    public FundingSource getFundingSource() {
+        return fundingSource;
     }
 
-    public void setType(FundingType type) {
-        this.type = type;
+    public void setFundingSource(FundingSource fundingSource) {
+        this.fundingSource = fundingSource;
     }
 
     public String getDescription() {
@@ -113,37 +110,37 @@ public class Funding {
         this.document = document;
     }
 
-    public Funding withId(Integer id) {
+    public ApplicationFunding withId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public Funding withType(FundingType type) {
-        this.type = type;
+    public ApplicationFunding withType(FundingSource fundingSource) {
+        this.fundingSource = fundingSource;
         return this;
     }
 
-    public Funding withDocument(Document document) {
+    public ApplicationFunding withDocument(Document document) {
         this.document = document;
         return this;
     }
 
-    public Funding withDescription(String description) {
+    public ApplicationFunding withDescription(String description) {
         this.description = description;
         return this;
     }
 
-    public Funding withValue(String value) {
+    public ApplicationFunding withValue(String value) {
         this.value = value;
         return this;
     }
 
-    public Funding withAwardDate(LocalDate awardDate) {
+    public ApplicationFunding withAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
         return this;
     }
 
-    public Funding withApplication(Application application) {
+    public ApplicationFunding withApplication(Application application) {
         this.application = application;
         return this;
     }

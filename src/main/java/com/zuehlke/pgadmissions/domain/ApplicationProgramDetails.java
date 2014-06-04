@@ -20,11 +20,9 @@ import javax.validation.Valid;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
-
 @Entity
 @Table(name = "APPLICATION_PROGRAM_DETAIL")
-public class ProgramDetails {
+public class ApplicationProgramDetails {
 
     @Id
     @GeneratedValue
@@ -109,37 +107,37 @@ public class ProgramDetails {
         this.application = application;
     }
 
-    public ProgramDetails withId(Integer id) {
+    public ApplicationProgramDetails withId(Integer id) {
         this.id = id;
         return this;
     }
     
-    public ProgramDetails withStudyOption(StudyOption studyOption) {
+    public ApplicationProgramDetails withStudyOption(StudyOption studyOption) {
         this.studyOption = studyOption;
         return this;
     }
     
-    public ProgramDetails withStartDate(LocalDate startDate) {
+    public ApplicationProgramDetails withStartDate(LocalDate startDate) {
         this.startDate = startDate;
         return this;
     }
     
-    public ProgramDetails withSourceOfInterest(SourcesOfInterest sourceOfInterest) {
+    public ApplicationProgramDetails withSourceOfInterest(SourcesOfInterest sourceOfInterest) {
         this.sourceOfInterest = sourceOfInterest;
         return this;
     }
     
-    public ProgramDetails withSourceOfInterestText(String sourceOfInterestText) {
+    public ApplicationProgramDetails withSourceOfInterestText(String sourceOfInterestText) {
         this.sourceOfInterestText = sourceOfInterestText;
         return this;
     }
     
-    public ProgramDetails withSuggestedSupervisors(SuggestedSupervisor... suggestedSupervisors) {
+    public ApplicationProgramDetails withSuggestedSupervisors(SuggestedSupervisor... suggestedSupervisors) {
         this.suggestedSupervisors.addAll(Arrays.asList(suggestedSupervisors));
         return this;
     }
     
-    public ProgramDetails withApplication(Application application) {
+    public ApplicationProgramDetails withApplication(Application application) {
         this.application = application;
         return this;
     }

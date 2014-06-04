@@ -18,7 +18,7 @@ public class SuggestedSupervisor {
 
     @ManyToOne
     @JoinColumn(name = "application_program_detail_id", nullable = false, unique = true)
-    private ProgramDetails programDetails;
+    private ApplicationProgramDetails programDetails;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
@@ -35,11 +35,11 @@ public class SuggestedSupervisor {
         this.id = id;
     }
 
-    public ProgramDetails getProgramDetails() {
+    public ApplicationProgramDetails getProgramDetails() {
         return programDetails;
     }
 
-    public void setProgramDetails(ProgramDetails programDetails) {
+    public void setProgramDetails(ApplicationProgramDetails programDetails) {
         this.programDetails = programDetails;
     }
 
@@ -64,7 +64,7 @@ public class SuggestedSupervisor {
         return this;
     }
 
-    public SuggestedSupervisor withProgramDetails(ProgramDetails programDetails) {
+    public SuggestedSupervisor withProgramDetails(ApplicationProgramDetails programDetails) {
         this.programDetails = programDetails;
         return this;
     }

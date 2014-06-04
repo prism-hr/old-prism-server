@@ -19,14 +19,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Funding;
-import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.FundingService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.validators.FundingValidator;
 
 @Controller
@@ -50,6 +50,9 @@ public class FundingController {
 
     @Autowired
     private DocumentPropertyEditor documentPropertyEditor;
+    
+    @Autowired
+    private ImportedEntityService importedEntityService;
 
     @InitBinder(value = "funding")
     public void registerPropertyEditors(WebDataBinder binder) {
@@ -63,11 +66,11 @@ public class FundingController {
     @RequestMapping(value = "/getFunding", method = RequestMethod.GET)
     public String getFundingView(@RequestParam(value = "fundingId", required = false) Integer fundingId, @ModelAttribute Application applicationForm,
             ModelMap modelMap) {
-        return returnView(modelMap, fundingId != null ? fundingService.getById(fundingId) : new Funding());
+        return returnView(modelMap, fundingId != null ? fundingService.getById(fundingId) : new ApplicationFunding());
     }
 
     @RequestMapping(value = "/editFunding", method = RequestMethod.POST)
-    public String editFunding(@RequestParam(value = "fundingId", required = false) Integer fundingId, @Valid Funding funding, BindingResult result,
+    public String editFunding(@RequestParam(value = "fundingId", required = false) Integer fundingId, @Valid ApplicationFunding funding, BindingResult result,
             ModelMap modelMap, @ModelAttribute Application application) {
         if (result.hasErrors()) {
             return returnView(modelMap, funding);
@@ -82,18 +85,13 @@ public class FundingController {
         return RedirectLocation.UPDATE_APPLICATION_FUNDING + applicationForm.getCode() + "&message=deleted";
     }
 
-    @ModelAttribute("fundingTypes")
-    public FundingType[] getFundingTypes() {
-        return FundingType.values();
-    }
-
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(String applicationId) {
         // TODO: check actions
         return applicationService.getByApplicationNumber(applicationId);
     }
 
-    private String returnView(ModelMap modelMap, Funding funding) {
+    private String returnView(ModelMap modelMap, ApplicationFunding funding) {
         modelMap.put("funding", funding);
         return TemplateLocation.APPLICATION_APPLICANT_FUNDING;
     }

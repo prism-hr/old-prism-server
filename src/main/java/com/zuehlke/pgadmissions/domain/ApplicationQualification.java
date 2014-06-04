@@ -66,8 +66,8 @@ public class ApplicationQualification {
     @Column(name = "completed", nullable = false)
     private Boolean completed;
 
-    @Column(name = "include_in_export")
-    private boolean includeInExport;
+    @Column(name = "include_in_export", nullable = false)
+    private boolean includeInExport = false;
 
     public Integer getId() {
         return id;

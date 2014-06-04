@@ -33,7 +33,7 @@ public class ApplicationQualificationService {
         if (qualificationId == null) {
             persistentQualification = new ApplicationQualification();
             persistentQualification.setApplication(application);
-            application.getQualifications().add(persistentQualification);
+            application.getApplicationQualifications().add(persistentQualification);
         } else {
             persistentQualification = entityService.getById(ApplicationQualification.class, qualificationId);
         }
@@ -42,12 +42,12 @@ public class ApplicationQualificationService {
 
     public void delete(Integer qualificationId) {
         ApplicationQualification qualification = entityService.getById(ApplicationQualification.class, qualificationId);
-        qualification.getApplication().getQualifications().remove(qualification);
+        qualification.getApplication().getApplicationQualifications().remove(qualification);
     }
 
     public void selectForSendingToPortico(int applicationId, final List<Integer> qualificationsSendToPortico) {
         Application application = applicationService.getById(applicationId);
-        for (ApplicationQualification qualification : application.getQualifications()) {
+        for (ApplicationQualification qualification : application.getApplicationQualifications()) {
             boolean toBeSelected = qualificationsSendToPortico.contains(qualification.getId());
             qualification.setIncludeInExport(toBeSelected);
         }

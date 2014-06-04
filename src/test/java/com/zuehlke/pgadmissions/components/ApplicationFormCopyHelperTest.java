@@ -21,7 +21,7 @@ import org.unitils.inject.util.InjectionUtils;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.Funding;
+import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
@@ -76,21 +76,21 @@ public class ApplicationFormCopyHelperTest {
         bindingResult.popNestedPath();
 
         int i = 0;
-        for (ApplicationQualification qualification : applicationForm.getQualifications()) {
+        for (ApplicationQualification qualification : applicationForm.getApplicationQualifications()) {
             bindingResult.pushNestedPath("qualifications[" + (i++) + "]");
             ValidationUtils.invokeValidator(qualificationValidator, qualification, bindingResult);
             bindingResult.popNestedPath();
         }
 
         i = 0;
-        for (ApplicationEmploymentPosition employmentPosition : applicationForm.getEmploymentPositions()) {
+        for (ApplicationEmploymentPosition employmentPosition : applicationForm.getApplicationEmploymentPositions()) {
             bindingResult.pushNestedPath("employmentPositions[" + (i++) + "]");
             ValidationUtils.invokeValidator(employmentPositionValidator, employmentPosition, bindingResult);
             bindingResult.popNestedPath();
         }
 
         i = 0;
-        for (Funding funding : applicationForm.getFundings()) {
+        for (ApplicationFunding funding : applicationForm.getApplicationFundings()) {
             bindingResult.pushNestedPath("fundings[" + (i++) + "]");
             ValidationUtils.invokeValidator(fundingValidator, funding, bindingResult);
             bindingResult.popNestedPath();

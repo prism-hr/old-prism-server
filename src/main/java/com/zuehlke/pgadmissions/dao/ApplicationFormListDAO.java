@@ -24,8 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationFilter;
-import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
+import com.zuehlke.pgadmissions.domain.Filter;
+import com.zuehlke.pgadmissions.domain.FilterConstraint;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -54,10 +54,11 @@ public class ApplicationFormListDAO {
         this.userDAO = userDAO;
     }
 
+    // TODO: generalise for different list types
+    
     @SuppressWarnings("unchecked")
-    public List<Application> getVisibleApplicationsForList(final User user, final ApplicationFilterGroup filtering, final int itemsPerPage) {
-        Integer blockCount = filtering.getBlockCount();
-        updateLastAccessTimestamp(user, blockCount);
+    public List<Application> getVisibleApplicationsForList(final User user, final Filter filter, final int itemsPerPage) {
+        Integer blockCount = filter.getBlockCount();
 
         Criteria criteria = sessionFactory
                 .getCurrentSession()
@@ -92,18 +93,18 @@ public class ApplicationFormListDAO {
 //                                .add(Projections.max("updateTimestamp"), "applicationFormUpdatedTimestamp"))
 
         appendJoinStatements(criteria);
-        appendWhereStatement(criteria, user, filtering);
+        appendWhereStatement(criteria, user, filter);
 
         criteria.add(Restrictions.leProperty("assignedTimestamp", "userAccount.applicationListLastAccessTimestamp"));
 
-        appendOrderStatement(criteria, filtering);
+        appendOrderStatement(criteria, filter);
         appendLimitStatement(criteria, (blockCount - 1) * itemsPerPage, itemsPerPage);
 
         return criteria.setResultTransformer(Transformers.aliasToBean(Application.class)).list();
     }
 
     @SuppressWarnings("unchecked")
-    public List<Application> getVisibleApplicationsForReport(final User user, final ApplicationFilterGroup filtering) {
+    public List<Application> getVisibleApplicationsForReport(final User user, final Filter filtering) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class).setReadOnly(true)
                 .setProjection(Projections.groupProperty("application"));
 
@@ -121,12 +122,12 @@ public class ApplicationFormListDAO {
                 .createAlias("application.project", "project", JoinType.LEFT_OUTER_JOIN).createAlias("application.applicationDocument", "applicationDocument", JoinType.LEFT_OUTER_JOIN);
     }
 
-    private void appendWhereStatement(Criteria criteria, User user, ApplicationFilterGroup filtering) {
+    private void appendWhereStatement(Criteria criteria, User user, Filter filtering) {
         if (filtering != null) {
-            boolean useDisjunction = filtering.getUseDisjunction();
+            boolean useDisjunction = filtering.isSatisfyAllConditions();
 
             List<Criterion> criterions = new ArrayList<Criterion>();
-            for (ApplicationFilter filter : filtering.getFilters()) {
+            for (FilterConstraint filter : filtering.getFilters()) {
                 SearchCategory searchCategory = filter.getSearchCategory();
                 String searchTerm = filter.getSearchTerm();
 
@@ -245,11 +246,11 @@ public class ApplicationFormListDAO {
         return criterion;
     }
 
-    private void appendOrderStatement(Criteria criteria, final ApplicationFilterGroup filtering) {
+    private void appendOrderStatement(Criteria criteria, final Filter filtering) {
         SortCategory sortCategory = filtering.getSortCategory();
 
         boolean doSortAscending = true;
-        if (filtering.getOrder() == SortOrder.DESCENDING) {
+        if (filtering.getSortOrder() == SortOrder.DESCENDING) {
             doSortAscending = false;
         }
 
@@ -315,12 +316,6 @@ public class ApplicationFormListDAO {
     private void appendLimitStatement(Criteria criteria, int recordStart, int recordCount) {
         criteria.setFirstResult(recordStart);
         criteria.setMaxResults(recordCount);
-    }
-
-    private void updateLastAccessTimestamp(User user, Integer blockCount) {
-        if (blockCount == 1) {
-            userDAO.setApplicationFormListLastAccessTimestamp(user);
-        }
     }
 
 }

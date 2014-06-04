@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Funding;
+import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 
 @Service
 @Transactional
@@ -22,26 +22,26 @@ public class FundingService {
     @Autowired
     private ApplicationCopyHelper applicationFormCopyHelper;
 
-    public Funding getById(Integer id) {
-        return entityDAO.getById(Funding.class, id);
+    public ApplicationFunding getById(Integer id) {
+        return entityDAO.getById(ApplicationFunding.class, id);
     }
 
-    public void saveOrUpdate(int applicationId, Integer fundingId, Funding funding) { 
+    public void saveOrUpdate(int applicationId, Integer fundingId, ApplicationFunding funding) { 
         Application application = applicationFormService.getById(applicationId);
-        Funding persistentFunding;
+        ApplicationFunding persistentFunding;
         if (fundingId == null) {
-            persistentFunding = new Funding();
+            persistentFunding = new ApplicationFunding();
             persistentFunding.setApplication(application);
-            application.getFundings().add(persistentFunding);
+            application.getApplicationFundings().add(persistentFunding);
         } else {
-            persistentFunding = entityDAO.getById(Funding.class, fundingId);
+            persistentFunding = entityDAO.getById(ApplicationFunding.class, fundingId);
         }
         applicationFormCopyHelper.copyFunding(persistentFunding, funding, true);
     }
     
     public void delete(Integer fundingId) {
-        Funding funding = entityDAO.getById(Funding.class, fundingId);
-        funding.getApplication().getFundings().remove(funding);
+        ApplicationFunding funding = entityDAO.getById(ApplicationFunding.class, fundingId);
+        funding.getApplication().getApplicationFundings().remove(funding);
     }
     
 }

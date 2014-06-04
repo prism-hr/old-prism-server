@@ -13,14 +13,15 @@ import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 
@@ -59,6 +60,9 @@ public class ApplicationService {
 
     @Autowired
     private RoleService roleService;
+    
+    @Autowired
+    private SystemService systemService;
 
     public Application create(User user, Advert advert) {
         Application application = new Application();
@@ -99,7 +103,12 @@ public class ApplicationService {
         return applicationDAO.getByApplicationNumber(applicationNumber);
     }
 
-    public List<Application> getApplicationsForList(final User user, final ApplicationFilterGroup filtering) {
+    public List<Application> getApplicationsForList(final User user, final Filter filtering) {
+        Filter userFilter = user.getUserAccount().getFilters().get(PrismScope.APPLICATION);
+        if (userFilter.getBlockCount() == 1) {
+            userFilter.setUpdatedTimestamp(new DateTime());
+        }
+
         List<Application> applications = applicationFormListDAO.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE);
         for (Application application : applications) {
             application.getPermittedActions().addAll(actionService.getPermittedActions(user, application));
@@ -107,7 +116,7 @@ public class ApplicationService {
         return applications;
     }
 
-    public List<Application> getApplicationsForReport(final User user, final ApplicationFilterGroup filtering, final ReportFormat reportType) {
+    public List<Application> getApplicationsForReport(final User user, final Filter filtering, final ReportFormat reportType) {
         return applicationFormListDAO.getVisibleApplicationsForReport(user, filtering);
     }
 

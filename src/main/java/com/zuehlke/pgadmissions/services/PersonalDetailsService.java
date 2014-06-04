@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.PersonalDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
 import com.zuehlke.pgadmissions.domain.User;
 
 @Service
@@ -19,20 +19,20 @@ public class PersonalDetailsService {
     @Autowired
     private ApplicationCopyHelper applicationFormCopyHelper;
     
-    public PersonalDetails getOrCreate(Application application) {
-        PersonalDetails personalDetails = application.getPersonalDetails();
+    public ApplicationPersonalDetails getOrCreate(Application application) {
+        ApplicationPersonalDetails personalDetails = application.getPersonalDetails();
         if (personalDetails == null) {
-            personalDetails = new PersonalDetails();
+            personalDetails = new ApplicationPersonalDetails();
         }
         return personalDetails;
     }
     
-    public void saveOrUpdate(int applicationId, PersonalDetails personalDetails, User updatedUser) {
+    public void saveOrUpdate(int applicationId, ApplicationPersonalDetails personalDetails, User updatedUser) {
         Application application = applicationService.getById(applicationId);
         
-        PersonalDetails persistentPersonalDetails = application.getPersonalDetails();
+        ApplicationPersonalDetails persistentPersonalDetails = application.getPersonalDetails();
         if (persistentPersonalDetails == null) {
-            persistentPersonalDetails = new PersonalDetails();
+            persistentPersonalDetails = new ApplicationPersonalDetails();
             persistentPersonalDetails.setApplication(application);
             application.setPersonalDetails(persistentPersonalDetails);
         }

@@ -23,15 +23,15 @@ import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
-import com.zuehlke.pgadmissions.domain.Funding;
+import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.LanguageQualification;
+import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.Passport;
-import com.zuehlke.pgadmissions.domain.PersonalDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -68,18 +68,18 @@ public class ValidApplicationFormBuilder {
     protected Disability disability;
     protected Ethnicity ethnicity;
     protected Domicile domicile;
-    protected PersonalDetails personalDetails;
+    protected ApplicationPersonalDetails personalDetails;
     protected ApplicationAdditionalInformation additionalInformation;
     protected ProgramInstance instance;
     protected ImportedInstitution importedInstitution;
     protected Institution institution;
     protected Program program;
     protected SourcesOfInterest interest;
-    protected ProgramDetails programDetails;
+    protected ApplicationProgramDetails programDetails;
     protected QualificationType qualificationType;
     protected ApplicationQualification qualification1;
     protected ApplicationQualification qualification2;
-    protected Funding funding;
+    protected ApplicationFunding funding;
     protected Application applicationForm;
     private ApplicationFormBuilder applicationFormBuilder;
     private State state;
@@ -143,7 +143,7 @@ public class ValidApplicationFormBuilder {
         language = new Language().withCode("GB").withName("England");
         disability = new Disability().withCode("0").withName("No Disability");
         ethnicity = new Ethnicity().withCode("10").withName("White");
-        personalDetails = new PersonalDetails()
+        personalDetails = new ApplicationPersonalDetails()
                 .withFirstNationality(language)
                 .withCountry(country)
                 .withDateOfBirth(new LocalDate().minusYears(28))
@@ -157,7 +157,7 @@ public class ValidApplicationFormBuilder {
                                 .withIssueDate(new LocalDate().minusYears(10)))
                 .withLanguageQualificationAvailable(true)
                 .withLanguageQualification(
-                        new LanguageQualification().withExamDate(new LocalDate()).withExamOnline(false).withQualificationType(LanguageQualificationEnum.OTHER)
+                        new ApplicationLanguageQualification().withExamDate(new LocalDate()).withExamOnline(false).withQualificationType(LanguageQualificationEnum.OTHER)
                                 .withListeningScore("1").withQualificationTypeOther("FooBar").withOverallScore("1").withReadingScore("1")
                                 .withSpeakingScore("1").withWritingScore("1").withProofOfAward(languageQualificationDocument))
                 .withPhoneNumber("+44 (0) 123 123 1234").withResidenceCountry(domicile).withTitle(Title.MR);
@@ -169,7 +169,7 @@ public class ValidApplicationFormBuilder {
         program = new Program().withUser(approverUser).withCode("TMRMBISING99").withState(state).withInstances(instance)
                 .withTitle("MRes Medical and Biomedical Imaging").withInstitution(institution);
         interest = new SourcesOfInterest().withCode("BRIT_COUN").withName("British Council");
-        programDetails = new ProgramDetails().withSourceOfInterest(interest).withStartDate(new LocalDate().plusDays(1))
+        programDetails = new ApplicationProgramDetails().withSourceOfInterest(interest).withStartDate(new LocalDate().plusDays(1))
                 .withStudyOption(new StudyOption("F+++++", "Full-time"));
         qualificationType = new QualificationType().withCode("DEGTRE").withName("Bachelors Degree - France");
         qualification1 = new ApplicationQualification().withId(Integer.MAX_VALUE - 1).withAwardDate(new LocalDate()).withGrade("6").withInstitution(importedInstitution)
@@ -178,7 +178,7 @@ public class ValidApplicationFormBuilder {
         qualification2 = new ApplicationQualification().withId(Integer.MAX_VALUE - 2).withAwardDate(new LocalDate()).withGrade("6").withInstitution(importedInstitution)
                 .withLanguage("English").withStartDate(new LocalDate().minusYears(1)).withSubject("Engineering").withTitle("MSc").withType(qualificationType)
                 .withCompleted(true).withDocument(proofOfAwardDocument).withIncludeInExport(true);
-        funding = new Funding().withAwardDate(new LocalDate().minusYears(1)).withDescription("Received a funding").withDocument(fundingDocument)
+        funding = new ApplicationFunding().withAwardDate(new LocalDate().minusYears(1)).withDescription("Received a funding").withDocument(fundingDocument)
                 .withType(FundingType.SCHOLARSHIP).withValue("5");
         applicationFormBuilder = new ApplicationFormBuilder().applicant(user).acceptedTerms(true).additionalInformation(additionalInformation)
                 .createdTimestamp(new DateTime()).applicant(user).applicationNumber("TMRMBISING01-2012-999999").closingDate(new LocalDate().plusMonths(1))

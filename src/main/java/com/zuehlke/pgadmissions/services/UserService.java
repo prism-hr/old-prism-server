@@ -12,13 +12,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
+import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.NotificationService;
@@ -124,7 +125,7 @@ public class UserService {
 
     public void resetPassword(String email) {
         User storedUser = userDAO.getUserByEmailIncludingDisabledAccounts(email);
-        if (storedUser == null) { // user-mail not found -> ignore
+        if (storedUser == null) {
             log.info("reset password request failed, e-mail not found: " + email);
             return;
         }
@@ -212,6 +213,10 @@ public class UserService {
 
     public List<TaskNotificationDescriptor> getUsersDueTaskNotification() {
         return userDAO.getUseDueTaskNotification();
+    }
+
+    public List<User> getUsersForResourceAndRole(PrismResource resource, Authority authority) {
+        return userDAO.getUsersForResourceAndRole(resource, authority);
     }
 
 }

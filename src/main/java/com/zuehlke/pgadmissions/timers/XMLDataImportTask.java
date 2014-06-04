@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.timers;
 import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.SYSTEM_IMPORT_ERROR_NOTIFICATION;
 
 import java.net.Authenticator;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,13 +11,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.mail.NotificationService;
-import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 
 @Service
@@ -27,13 +26,16 @@ public class XMLDataImportTask {
     private final Logger log = LoggerFactory.getLogger(XMLDataImportTask.class);
 
     @Autowired
+    private UserService userService;
+    
+    @Autowired
     private EntityImportService entityImportService;
 
     @Autowired
     private NotificationService mailService;
-
-    @Autowired
-    private RoleService roleService;
+    
+    @Autowired 
+    private SystemService systemService;
 
     @Scheduled(cron = "${xml.data.import.cron}")
     public void importData() {
@@ -52,9 +54,7 @@ public class XMLDataImportTask {
                     message += "\n" + cause.toString();
                 }
 
-                // TODO get admin recipients
-                List<User> recipients = Lists.newArrayList();
-                for (User recipient : recipients) {
+                for (User recipient : userService.getUsersForResourceAndRole(systemService.getSystem(), Authority.SYSTEM_ADMINISTRATOR)) {
                      mailService.sendEmailNotification(recipient, null, SYSTEM_IMPORT_ERROR_NOTIFICATION, null, ImmutableMap.of("errorMessage", message));
                 }
 
@@ -69,4 +69,5 @@ public class XMLDataImportTask {
 
         }
     }
+    
 }

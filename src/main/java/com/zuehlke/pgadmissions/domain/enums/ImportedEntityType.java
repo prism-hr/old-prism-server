@@ -11,14 +11,14 @@ import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 
 public enum ImportedEntityType {
 
-    COUNTRY(com.zuehlke.pgadmissions.referencedata.v2.jaxb.Countries.class, "country", Country.class), //
-    DISABILITY(com.zuehlke.pgadmissions.referencedata.v2.jaxb.Disabilities.class, "disability", Disability.class), //
-    DOMICILE(com.zuehlke.pgadmissions.referencedata.v2.jaxb.Domiciles.class, "domicile", Domicile.class), //
-    ETHNICITY(com.zuehlke.pgadmissions.referencedata.v2.jaxb.Ethnicities.class, "ethnicity", Ethnicity.class), //
-    NATIONALITY(com.zuehlke.pgadmissions.referencedata.v2.jaxb.Nationalities.class, "nationality", Language.class), //
-    PROGRAM(com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.class, "programmeOccurrence", Program.class), //
-    QUALIFICATION_TYPE(com.zuehlke.pgadmissions.referencedata.v2.jaxb.Qualifications.class, "qualification", QualificationType.class), //
-    REFERRAL_SOURCE(com.zuehlke.pgadmissions.referencedata.v2.jaxb.SourcesOfInterest.class, "sourceOfInterest", SourcesOfInterest.class);
+    COUNTRY(com.zuehlke.pgadmissions.referencedata.jaxb.Countries.class, "country", Country.class), //
+    DISABILITY(com.zuehlke.pgadmissions.referencedata.jaxb.Disabilities.class, "disability", Disability.class), //
+    DOMICILE(com.zuehlke.pgadmissions.referencedata.jaxb.Domiciles.class, "domicile", Domicile.class), //
+    ETHNICITY(com.zuehlke.pgadmissions.referencedata.jaxb.Ethnicities.class, "ethnicity", Ethnicity.class), //
+    NATIONALITY(com.zuehlke.pgadmissions.referencedata.jaxb.Nationalities.class, "nationality", Language.class), //
+    PROGRAM(com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.class, "programmeOccurrence", Program.class), //
+    QUALIFICATION_TYPE(com.zuehlke.pgadmissions.referencedata.jaxb.Qualifications.class, "qualification", QualificationType.class), //
+    REFERRAL_SOURCE(com.zuehlke.pgadmissions.referencedata.jaxb.SourcesOfInterest.class, "sourceOfInterest", SourcesOfInterest.class);
 
     private Class<?> jaxbClass;
 

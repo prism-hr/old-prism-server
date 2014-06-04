@@ -24,11 +24,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.EnglishLanguageScoreTp;
-import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.EnglishLanguageTp;
-import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.NameTp;
-import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ObjectFactory;
-import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.EnglishLanguageScoreTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.EnglishLanguageTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.NameTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.State;

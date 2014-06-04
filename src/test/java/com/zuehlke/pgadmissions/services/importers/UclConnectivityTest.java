@@ -15,7 +15,7 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Countries;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Countries;
 
 public class UclConnectivityTest {
 

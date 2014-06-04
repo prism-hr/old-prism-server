@@ -10,15 +10,15 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Countries;
-import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Disabilities;
-import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Domiciles;
-import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Ethnicities;
-import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Institutions;
-import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Nationalities;
-import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences;
-import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Qualifications;
-import com.zuehlke.pgadmissions.referencedata.v2.jaxb.SourcesOfInterest;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Countries;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Disabilities;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Domiciles;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Ethnicities;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Institutions;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Nationalities;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Qualifications;
+import com.zuehlke.pgadmissions.referencedata.jaxb.SourcesOfInterest;
 
 public class ReferenceDataXMLUnmarshallTest {
 

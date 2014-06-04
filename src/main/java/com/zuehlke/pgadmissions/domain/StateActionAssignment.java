@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -24,9 +23,6 @@ public class StateActionAssignment {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @Column(name = "is_default_action", nullable = false)
-    private boolean defaultAction;
-
     public Integer getId() {
         return id;
     }
@@ -49,14 +45,6 @@ public class StateActionAssignment {
 
     public void setRole(Role role) {
         this.role = role;
-    }
-
-    public boolean isDefaultAction() {
-        return defaultAction;
-    }
-
-    public void setDefaultAction(boolean defaultAction) {
-        this.defaultAction = defaultAction;
     }
 
 }

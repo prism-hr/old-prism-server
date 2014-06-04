@@ -7,15 +7,19 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Entity
@@ -33,6 +37,12 @@ public class Role implements GrantedAuthority {
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
 
+    @ManyToMany
+    @JoinTable(name = "ROLE_EXCLUSION", joinColumns = { @JoinColumn(name = "role_id", nullable = false) }, //
+            inverseJoinColumns = { @JoinColumn(name = "excluded_role_id", nullable = false) }, //
+            uniqueConstraints = { @UniqueConstraint(columnNames = { "role_id", "excluded_role_id" }) })
+    private Set<Role> excludedRoles = Sets.newHashSet();
+    
     @OneToMany(mappedBy = "role")
     private Set<UserRole> userRoles;
 
@@ -56,6 +66,10 @@ public class Role implements GrantedAuthority {
         return userRoles;
     }
     
+    public Set<Role> getExcludedRoles() {
+        return excludedRoles;
+    }
+
     @Override
     public String getAuthority() {
         return id.toString();

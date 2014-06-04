@@ -194,7 +194,7 @@ public class RoleService {
     }
 
     private void validateUserRoleTransition(PrismResource resource, HashMap<User, RoleTransition> userRoleTransitions, RoleTransition roleTransition, User user) {
-        if (roleDAO.getExcludingUserRole(user, resource, roleTransition.getExcludedRoles()).isEmpty()) {
+        if (roleDAO.getExcludingUserRole(user, resource, roleTransition.getRole().getExcludedRoles()).isEmpty()) {
             userRoleTransitions.put(user, roleTransition);
         } else {
             throw new Error("Attempted to process a conflicted role creation transition");

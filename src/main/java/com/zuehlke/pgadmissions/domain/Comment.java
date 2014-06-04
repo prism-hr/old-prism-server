@@ -51,7 +51,7 @@ public class Comment {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "role_id")
+    @Column(name = "role_id", nullable = false)
     private String role;
 
     @ManyToOne
@@ -65,7 +65,7 @@ public class Comment {
     @JoinColumn(name = "action_id")
     private Action action;
 
-    @Column(name = "declined_response")
+    @Column(name = "declined_response", nullable = false)
     private Boolean declinedResponse;
 
     @Size(max = 50000, message = "A maximum of 50000 characters are allowed.")

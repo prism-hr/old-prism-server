@@ -182,5 +182,27 @@ public class ImportedLanguageQualificationType {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+    
+    public ImportedLanguageQualificationType withInitialData(Institution institution, String code, String name) {
+        this.institution = institution;
+        this.code = code;
+        this.name = name;
+        return this;
+    }
+    
+    public ImportedLanguageQualificationType withInstitution(Institution institution) {
+        this.institution = institution;
+        return this;
+    }
+    
+    public ImportedLanguageQualificationType withCode(String code) {
+        this.code = code;
+        return this;
+    }
+    
+    public ImportedLanguageQualificationType withName(String name) {
+        this.name = name;
+        return this;
+    }
 
 }

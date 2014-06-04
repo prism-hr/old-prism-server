@@ -31,12 +31,13 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
+import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 public class SubmitAdmissionsApplicationRequestBuilderTest {
@@ -62,7 +63,6 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
     public void prepare() throws ParseException {
         applicationForm = new ValidApplicationFormBuilder().build();
         requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         recommendedStartDate = new LocalDate(2014, 10, 1);
     }
 
@@ -195,7 +195,8 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
         SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
 
-        applicationForm.getPersonalDetails().getLanguageQualification().setQualificationType(LanguageQualificationEnum.TOEFL);
+        applicationForm.getPersonalDetails().getLanguageQualification()
+                .setLanguageQualificationType(new ImportedLanguageQualificationType().withInitialData(new Institution().withInitialData("test"), "test", "test"));
 
         SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(applicationForm).build();
 

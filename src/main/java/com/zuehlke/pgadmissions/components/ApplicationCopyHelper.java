@@ -254,7 +254,6 @@ public class ApplicationCopyHelper {
         to.setWritingScore(from.getWritingScore());
         to.setSpeakingScore(from.getSpeakingScore());
         to.setListeningScore(from.getListeningScore());
-        to.setExamOnline(from.getExamOnline());
         to.setProofOfAward(copyDocument(from.getProofOfAward()));
         return to;
     }

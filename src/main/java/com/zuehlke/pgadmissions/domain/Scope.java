@@ -6,12 +6,12 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
+import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 
 @Entity
-@Table(name = "SCOPE", uniqueConstraints = { @UniqueConstraint(columnNames = { "precedence" }) })
+@Table(name = "SCOPE")
 public class Scope {
 
     @Id
@@ -19,7 +19,7 @@ public class Scope {
     @Enumerated(EnumType.STRING)
     private PrismScope id;
     
-    @Column(name = "precedence", nullable = false)
+    @Column(name = "precedence", nullable = false, unique = true)
     private Integer precedence;
 
     public PrismScope getId() {
@@ -36,6 +36,23 @@ public class Scope {
 
     public void setPrecedence(Integer precedence) {
         this.precedence = precedence;
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        final Scope otherScope = (Scope) object;
+        return Objects.equal(id, otherScope.getId());
     }
     
 }

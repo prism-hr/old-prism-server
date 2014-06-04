@@ -50,20 +50,19 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicati
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 public class SubmitAdmissionsApplicationRequestBuilderV2 {
@@ -218,7 +217,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         nameTp.setForename1(applicant.getFirstName());
         nameTp.setForename2(applicant.getFirstName2());
         nameTp.setForename3(applicant.getFirstName3());
-        nameTp.setTitle(personalDetails.getTitle().getDisplayValue());
+        nameTp.setTitle(personalDetails.getTitle().getName());
         return nameTp;
     }
 
@@ -682,21 +681,14 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             EnglishLanguageTp englishLanguageTp = xmlFactory.createEnglishLanguageTp();
             englishLanguageTp.setDateTaken(buildXmlDate(languageQualification.getExamDate()));
 
-            if (languageQualification.getQualificationType() == LanguageQualificationEnum.OTHER) {
+            if (languageQualification.getLanguageQualificationType().getCode().startsWith("CUST")) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.OTHER);
-                englishLanguageTp.setOtherLanguageExam(languageQualification.getQualificationTypeOther());
-            } else if (languageQualification.getQualificationType() == LanguageQualificationEnum.TOEFL) {
+                englishLanguageTp.setOtherLanguageExam(languageQualification.getLanguageQualificationType().getName());
+            } else if (languageQualification.getLanguageQualificationType().getCode().startsWith("TOEFL")) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.TOEFL);
-                if (languageQualification.getExamOnline()) {
-                    englishLanguageTp.setMethod("TOEFL_INTERNET");
-                } else {
-                    englishLanguageTp.setMethod("TOEFL_PAPER");
-                }
-            } else if (languageQualification.getQualificationType() == LanguageQualificationEnum.IELTS_ACADEMIC) {
-                englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.IELTS);
+                englishLanguageTp.setMethod(languageQualification.getLanguageQualificationType().getCode());
             } else {
-                throw new IllegalArgumentException(String.format("QualificationType type [%s] could not be converted",
-                        languageQualification.getQualificationType()));
+                englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.IELTS);
             }
 
             // The web service does not allow scores in the format "6.0" it only

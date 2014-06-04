@@ -516,8 +516,6 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
             table.addCell(newTableCell("Did you sit the exam online?", SMALL_BOLD_FONT));
 
-            table.addCell(newTableCell(BooleanUtils.toString(qualification.getExamOnline(), "Yes", "No"), SMALL_FONT));
-
             table.addCell(newTableCell("Certificate (PDF)", SMALL_BOLD_FONT));
             if (includeAttachments) {
                 if (qualification.getProofOfAward() != null) {

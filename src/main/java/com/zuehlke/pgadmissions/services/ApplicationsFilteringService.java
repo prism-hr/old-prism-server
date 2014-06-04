@@ -2,12 +2,14 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.FilterConstraint;
 import com.zuehlke.pgadmissions.domain.Filter;
+import com.zuehlke.pgadmissions.domain.FilterConstraint;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
@@ -16,11 +18,15 @@ import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 @Service
 @Transactional
 public class ApplicationsFilteringService {
+    
+    @Autowired
+    private SystemService systemService;
 
+    // TODO: Generalise for other list types
     public Filter getDefaultApplicationFiltering(User user) {
         Filter filtering;
-        if (user.getUserAccount().getFilterGroup() != null) {
-            filtering = user.getUserAccount().getFilterGroup();
+        if (user.getUserAccount().getFilters().get(PrismScope.APPLICATION) != null) {
+            filtering = user.getUserAccount().getFilters().get(systemService.getSystemScope(PrismScope.APPLICATION));
         } else {
             filtering = getActiveApplicationFiltering();
         }

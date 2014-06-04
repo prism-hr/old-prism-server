@@ -21,9 +21,9 @@ import com.ibm.icu.text.SimpleDateFormat;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -63,7 +63,7 @@ public class ApplicationSummaryService {
     }
 
     private void addApplicantDetails(final Application form, final Map<String, String> result) {
-        result.put("title", form.getPersonalDetails() == null ? "" : form.getPersonalDetails().getTitle().getDisplayValue());
+        result.put("title", form.getPersonalDetails() == null ? "" : form.getPersonalDetails().getTitle().getName());
         result.put("name", form.getUser().getDisplayName());
         result.put("phoneNumber", form.getPersonalDetails() == null ? "" : form.getPersonalDetails().getPhoneNumber());
         result.put("email", form.getUser().getEmail());

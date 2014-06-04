@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Disabilities.Disability;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Disabilities.Disability;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class ImportEntityConverterTest {

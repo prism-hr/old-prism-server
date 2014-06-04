@@ -25,13 +25,13 @@ public class Action {
     @Enumerated(EnumType.STRING)
     private PrismAction id;
     
-    @OneToOne
-    @JoinColumn(name = "scope_id", nullable = false)
-    private Scope scope;
-    
     @Column(name = "action_type_id", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismActionType actionType;
+    
+    @OneToOne
+    @JoinColumn(name = "scope_id", nullable = false)
+    private Scope scope;
     
     @OneToOne
     @JoinColumn(name = "delegate_action_id")
@@ -45,20 +45,20 @@ public class Action {
         this.id = id;
     }
 
-    public Scope getScope() {
-        return scope;
-    }
-
-    public void setScope(Scope scope) {
-        this.scope = scope;
-    }
-    
     public PrismActionType getActionType() {
         return actionType;
     }
 
     public void setActionType(PrismActionType actionType) {
         this.actionType = actionType;
+    }
+    
+    public Scope getScope() {
+        return scope;
+    }
+
+    public void setScope(Scope scope) {
+        this.scope = scope;
     }
 
     public Action getDelegateAction() {

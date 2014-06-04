@@ -34,7 +34,7 @@ import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
-import com.zuehlke.pgadmissions.domain.AdditionalInformation;
+import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
@@ -805,7 +805,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        if (form.getReferees().isEmpty()) {
+        if (form.getApplicationReferees().isEmpty()) {
             table = new PdfPTable(2);
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             table.addCell(newTableCell("Reference", SMALL_BOLD_FONT));
@@ -813,7 +813,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             pdfDocument.add(table);
         } else {
             int counter = 1;
-            for (Referee referee : form.getReferees()) {
+            for (Referee referee : form.getApplicationReferees()) {
                 table = new PdfPTable(2);
                 table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                 PdfPCell headerCell = newTableCell("Reference (" + counter++ + ")", SMALL_BOLD_FONT);
@@ -920,7 +920,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        AdditionalInformation additionalInformation = form.getAdditionalInformation();
+        ApplicationAdditionalInformation additionalInformation = form.getAdditionalInformation();
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newTableCell("Do you have any unspent Criminial Convictions?", SMALL_BOLD_FONT));

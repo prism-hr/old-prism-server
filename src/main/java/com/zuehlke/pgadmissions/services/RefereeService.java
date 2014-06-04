@@ -56,7 +56,7 @@ public class RefereeService {
         if (refereeId == null) {
             persistentReferee = new Referee();
             persistentReferee.setApplication(application);
-            application.getReferees().add(persistentReferee);
+            application.getApplicationReferees().add(persistentReferee);
             applicationFormService.save(application);
         } else {
             persistentReferee = entityDAO.getById(Referee.class, refereeId);
@@ -93,7 +93,7 @@ public class RefereeService {
 
     public void delete(int refereeId) {
         Referee referee = entityDAO.getById(Referee.class, refereeId);
-        referee.getApplication().getReferees().remove(referee);
+        referee.getApplication().getApplicationReferees().remove(referee);
     }
 
     public void declineToActAsRefereeAndSendNotification(int refereeId) {
@@ -103,7 +103,7 @@ public class RefereeService {
     }
 
     public void selectForSendingToPortico(final Application applicationForm, final List<Integer> refereesSendToPortico) {
-        for (Referee referee : applicationForm.getReferees()) {
+        for (Referee referee : applicationForm.getApplicationReferees()) {
             referee.setIncludeInExport(false);
         }
 
@@ -142,9 +142,10 @@ public class RefereeService {
 //            processRefereesRoles(Arrays.asList(referee));
 //        }
 
-        Comment referenceComment = createReferenceComment(refereesAdminEditDTO, referee, applicationForm);
-        applicationForm.getApplicationComments().add(referenceComment);
-        commentService.save(referenceComment);
+// TODO Integrate with workflow
+//        Comment referenceComment = createReferenceComment(refereesAdminEditDTO, referee, applicationForm);
+//        applicationForm.getApplicationComments().add(referenceComment);
+//        commentService.save(referenceComment);
 
         // FIXME try to notify PorticoService that reference comment has been posted
         // if ( applicationForm.getReferencesToSendToPortico().size() < 2) {
@@ -153,7 +154,7 @@ public class RefereeService {
 
         // FIXME call mail sending service
         // saveReferenceAndSendMailNotifications(referee);
-        return referenceComment;
+        return null;
     }
 
     private Referee createReferee(RefereesAdminEditDTO refereesAdminEditDTO, Application applicationForm) {

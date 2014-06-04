@@ -135,7 +135,7 @@ public class ApplicationSummaryService {
     }
 
     private void addReferences(Application form, Map<String, String> result) {
-        Integer numberOfResponsed = CollectionUtils.countMatches(form.getReferees(), new Predicate() {
+        Integer numberOfResponsed = CollectionUtils.countMatches(form.getApplicationReferees(), new Predicate() {
             @Override
             public boolean evaluate(Object object) {
                 return ((Referee) object).getComment() != null;

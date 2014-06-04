@@ -4,19 +4,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
-import com.zuehlke.pgadmissions.domain.AdditionalInformation;
+import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 
 @Component
 public class AdditionalInformationValidator extends AbstractValidator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return AdditionalInformation.class.isAssignableFrom(clazz);
+		return ApplicationAdditionalInformation.class.isAssignableFrom(clazz);
 	}
 
 	@Override
     public void addExtraValidation(final Object target, final Errors errors) {
-		AdditionalInformation info = (AdditionalInformation) target;
+		ApplicationAdditionalInformation info = (ApplicationAdditionalInformation) target;
 
 		Boolean hasConvictions = info.getHasConvictions();
 		if (hasConvictions == null) {

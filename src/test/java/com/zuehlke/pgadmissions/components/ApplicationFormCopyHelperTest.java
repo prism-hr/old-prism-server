@@ -97,7 +97,7 @@ public class ApplicationFormCopyHelperTest {
         }
 
         i = 0;
-        for (Referee referee : applicationForm.getReferees()) {
+        for (Referee referee : applicationForm.getApplicationReferees()) {
             referee.setId(i); // hack for validator
             bindingResult.pushNestedPath("referees[" + (i++) + "]");
             ValidationUtils.invokeValidator(refereeValidator, referee, bindingResult);

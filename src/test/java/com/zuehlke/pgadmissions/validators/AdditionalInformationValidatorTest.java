@@ -12,14 +12,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
-import com.zuehlke.pgadmissions.domain.AdditionalInformation;
+import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Application;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
 public class AdditionalInformationValidatorTest {
 
-	private AdditionalInformation info;
+	private ApplicationAdditionalInformation info;
 	
 	private AdditionalInformationValidator infoValidator;
 	
@@ -28,14 +28,14 @@ public class AdditionalInformationValidatorTest {
 
 	@Before
 	public void setup() {
-		info = new AdditionalInformation().withConvictionsText("blabla").withHasConvictions(true).withApplication(new Application());
+		info = new ApplicationAdditionalInformation().withConvictionsText("blabla").withHasConvictions(true).withApplication(new Application());
 		infoValidator = new AdditionalInformationValidator();
 		infoValidator.setValidator((javax.validation.Validator) validator);
 	}
 
 	@Test
 	public void shouldSupportPersonalDetail() {
-		assertTrue(infoValidator.supports(AdditionalInformation.class));
+		assertTrue(infoValidator.supports(ApplicationAdditionalInformation.class));
 	}
 
 	@Test

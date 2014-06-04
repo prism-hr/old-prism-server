@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.AdditionalInformation;
+import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
@@ -207,7 +207,7 @@ public class ApplicationTestDataProvider {
     }
 
     private void createAdditionalInformation(Application application) {
-        AdditionalInformation additionalInformation = new AdditionalInformation();
+        ApplicationAdditionalInformation additionalInformation = new ApplicationAdditionalInformation();
         additionalInformation.setHasConvictions(true);
         additionalInformation.setConvictionsText("I was a bad person");
         additionalInformationService.saveOrUpdate(application.getId(), additionalInformation);

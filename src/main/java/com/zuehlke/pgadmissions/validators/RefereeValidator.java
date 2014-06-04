@@ -56,7 +56,7 @@ public class RefereeValidator extends AbstractValidator {
             errors.rejectValue("addressLocation.domicile", EMPTY_FIELD_ERROR_MESSAGE);
         }
 
-        for (Referee existingReferee : referee.getApplication().getReferees()) {
+        for (Referee existingReferee : referee.getApplication().getApplicationReferees()) {
             if (referee.getId() == null && StringUtils.equalsIgnoreCase(existingReferee.getUser().getEmail(), referee.getUser().getEmail())) {
                 errors.rejectValue("email", "assignReferee.duplicate.email");
             }

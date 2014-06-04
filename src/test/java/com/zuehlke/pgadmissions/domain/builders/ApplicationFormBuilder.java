@@ -6,7 +6,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.AdditionalInformation;
+import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
@@ -41,7 +41,7 @@ public class ApplicationFormBuilder {
     private List<Comment> comments = new ArrayList<Comment>();
     private List<Funding> fundings = new ArrayList<Funding>();
     private ApplicationDocument applicationFormDocument;
-    private AdditionalInformation info;
+    private ApplicationAdditionalInformation info;
     private String applicationNumber;
 
     public ApplicationFormBuilder applicationNumber(String applicationNumber) {
@@ -161,7 +161,7 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder additionalInformation(AdditionalInformation info) {
+    public ApplicationFormBuilder additionalInformation(ApplicationAdditionalInformation info) {
         this.info = info;
         return this;
     }
@@ -172,7 +172,7 @@ public class ApplicationFormBuilder {
         application.setUser(applicant);
         application.setProgram(program);
         application.setSubmittedTimestamp(submittedDate);
-        application.getReferees().addAll(referees);
+        application.getApplicationReferees().addAll(referees);
         application.setCreatedTimestamp(createdTimestamp);
         application.getQualifications().addAll(qualifications);
         application.setProgramDetails(programmeDetails);

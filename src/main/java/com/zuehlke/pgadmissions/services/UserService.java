@@ -17,13 +17,14 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.NotificationService;
-import com.zuehlke.pgadmissions.mail.TaskNotificationDescriptor;
+import com.zuehlke.pgadmissions.mail.NotificationDescriptor;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
@@ -211,12 +212,16 @@ public class UserService {
         return userDAO.getNumberOfActiveApplicationsForApplicant(applicant);
     }
 
-    public List<TaskNotificationDescriptor> getUsersDueTaskNotification() {
+    public List<NotificationDescriptor> getUsersDueTaskNotification() {
         return userDAO.getUseDueTaskNotification();
     }
 
     public List<User> getUsersForResourceAndRole(PrismResource resource, Authority authority) {
         return userDAO.getUsersForResourceAndRole(resource, authority);
+    }
+
+    public List<NotificationDescriptor> getUserStateTransitionNotifications(StateTransition stateTransition) {
+        return userDAO.getUserStateTransitionNotifications(stateTransition);
     }
 
 }

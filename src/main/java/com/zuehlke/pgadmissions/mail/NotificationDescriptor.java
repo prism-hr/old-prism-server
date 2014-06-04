@@ -1,16 +1,19 @@
 package com.zuehlke.pgadmissions.mail;
 
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 
-public class TaskNotificationDescriptor {
+public class NotificationDescriptor {
 
     private User recipient;
 
     private PrismResourceDynamic resource;
 
     private PrismNotificationTemplate notificationTemplate;
+    
+    private Comment comment;
 
     public User getRecipient() {
         return recipient;
@@ -34,6 +37,14 @@ public class TaskNotificationDescriptor {
 
     public void setNotificationTemplate(PrismNotificationTemplate notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
+    }
+
+    public Comment getComment() {
+        return comment;
+    }
+
+    public void setComment(Comment comment) {
+        this.comment = comment;
     }
 
 }

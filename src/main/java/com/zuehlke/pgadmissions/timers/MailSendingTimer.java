@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.mail.NotificationService;
-import com.zuehlke.pgadmissions.mail.TaskNotificationDescriptor;
+import com.zuehlke.pgadmissions.mail.NotificationDescriptor;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
@@ -24,7 +24,7 @@ public class MailSendingTimer {
     @Scheduled(cron = "${email.digest.cron}")
     public void run() {
         log.trace("Sending task notification to users");
-        for (TaskNotificationDescriptor taskNotification : userService.getUsersDueTaskNotification()) {
+        for (NotificationDescriptor taskNotification : userService.getUsersDueTaskNotification()) {
             notificationService.sendEmailNotification(taskNotification.getRecipient(), taskNotification.getResource(),
                     taskNotification.getNotificationTemplate(), null);
         }

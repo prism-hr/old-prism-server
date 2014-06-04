@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.services.UserService;
 public class FileDownloadController {
 
     private static final String PDF_CONTENT_TYPE = "application/pdf";
-    private static final String TEXT_CONTENT_TYPE = "plain/text";
 
     @Autowired
     private DocumentService documentService;

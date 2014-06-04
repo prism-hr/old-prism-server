@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
+import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
@@ -44,7 +46,8 @@ public class DeclineController {
 	    User reviewer = getReviewer(activationCode);
 	    Application application = getApplicationForm(applicationId);
 	    
-	    actionService.validateGetAction(application, PrismAction.APPLICATION_PROVIDE_REVIEW, reviewer);
+	    Action action = actionService.getById(PrismAction.APPLICATION_PROVIDE_REVIEW);
+	    actionService.validateAction(application, action, reviewer, null);
 	    
 		if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
 		    commentService.declineReview(reviewer, application);
@@ -83,7 +86,8 @@ public class DeclineController {
 	    User user = userService.getUserByActivationCode(activationCode);
 	    
 	    // TOTO: comment posting
-	    actionService.validatePostAction(applicationForm, PrismAction.APPLICATION_PROVIDE_REFERENCE, null);
+	    Action action = actionService.getById(PrismAction.APPLICATION_PROVIDE_REFERENCE);
+	    actionService.validateAction((PrismResource) applicationForm, action, referee.getUser(), null);
 	    
 	    if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
 	        // the user clicked on "Confirm"

@@ -43,35 +43,30 @@ public class ActionService {
     public Action getById(PrismAction id) {
         return entityService.getByProperty(Action.class, "id", id);
     }
-
-    public void validateGetAction(PrismResource resource, PrismAction action, User invoker) {
-        if (!checkActionAvailable(resource, action, invoker)) {
-            throw new CannotExecuteActionException(resource, action);
-        }
+    
+    public void validateAction(PrismResource resource, PrismAction actionId, User actionOwner, User delegateOwner) {
+        Action action = getById(actionId);
+        validateAction(resource, action, actionOwner, delegateOwner);
     }
 
-    public void validatePostAction(PrismResource resource, PrismAction action, Comment comment) {
-        User invoker = comment.getUser();
-        User delegateInvoker = comment.getDelegateUser();
-
-        if (delegateInvoker == null && checkActionAvailable(resource, action, invoker)) {
+    public void validateAction(PrismResource resource, Action action, User actionOwner, User delegateOwner) {
+        if (delegateOwner == null && checkActionAvailable(resource, action, actionOwner)) {
             return;
-        } else if (delegateInvoker != null && checkActionAvailable(resource, action, delegateInvoker)) {
+        } else if (delegateOwner != null && checkActionAvailable(resource, action, delegateOwner)) {
             return;
-        } else if (delegateInvoker != null && checkActionAvailable(resource, action, invoker)
-                && checkDelegateActionAvailable(resource, action, delegateInvoker)) {
+        } else if (delegateOwner != null && checkDelegateActionAvailable(resource, action, delegateOwner)) {
             return;
         }
-
+        
         throw new CannotExecuteActionException(resource, action);
     }
 
-    public boolean checkActionAvailable(PrismResource resource, PrismAction actionId, User invoker) {
-        return roleService.getActionRoles(resource, actionId).size() == 0 || actionDAO.getPermittedAction(resource, actionId, invoker) != null;
+    public boolean checkActionAvailable(PrismResource resource, Action action, User invoker) {
+        return roleService.getActionRoles(resource, action).size() == 0 || actionDAO.getPermittedAction(resource, action, invoker) != null;
     }
 
-    public boolean checkDelegateActionAvailable(PrismResource resource, PrismAction actionId, User invoker) {
-        PrismAction delegateAction = actionDAO.getDelegateAction(resource, actionId);
+    public boolean checkDelegateActionAvailable(PrismResource resource, Action action, User invoker) {
+        Action delegateAction = actionDAO.getDelegateAction(resource, action);
         return checkActionAvailable(resource, delegateAction, invoker);
     }
 
@@ -79,21 +74,27 @@ public class ActionService {
         return actionDAO.getPermittedActions(resource, user);
     }
 
-    public ActionOutcome executeAction(Integer resourceId, User user, PrismAction action, Comment comment) {
-        PrismResourceDynamic resource = (PrismResourceDynamic) entityService.getById(action.getResourceClass(), resourceId);
-        return executeAction(resource, user, action, comment);
+    public ActionOutcome executeAction(Integer resourceId, PrismAction actionId, Comment comment) {
+        PrismResourceDynamic resource = (PrismResourceDynamic) entityService.getById(actionId.getResourceClass(), resourceId);
+        Action action = getById(actionId);
+        return executeAction(resource, action, comment);
+    }
+    
+    public ActionOutcome executeAction(PrismResourceDynamic resource, PrismAction actionId, Comment comment) {
+        Action action = getById(actionId);
+        return executeAction(resource, action, comment);
     }
 
-    public ActionOutcome executeAction(PrismResourceDynamic resource, User user, PrismAction action, Comment comment) {
+    public ActionOutcome executeAction(PrismResourceDynamic resource, Action action, Comment comment) {
         PrismResource operativeResource = resource;
-        if (!resource.getClass().equals(action.getResourceClass())) {
-            operativeResource = resource.getParentResource(action.getResourceType());
+        if (!resource.getClass().equals(action.getId().getResourceClass())) {
+            operativeResource = resource.getParentResource(action.getId().getResourceType());
         }
         return executeAction(operativeResource, resource, action, comment);
     }
 
-    public ActionOutcome executeAction(PrismResource operativeResource, PrismResourceDynamic resource, PrismAction action, Comment comment) {
-        validatePostAction(resource, action, comment);
+    public ActionOutcome executeAction(PrismResource operativeResource, PrismResourceDynamic resource, Action action, Comment comment) {
+        validateAction(resource, action.getId(), comment.getUser(), comment.getDelegateUser());
 
         User actionOwner = comment.getUser();
 
@@ -102,13 +103,14 @@ public class ActionService {
             if (duplicateResource != null) {
                 Action redirectAction = actionDAO.getRedirectAction(duplicateResource, actionOwner);
                 comment = new Comment().withResource(duplicateResource).withUser(actionOwner).withAction(redirectAction);
-                executeAction(duplicateResource, actionOwner, redirectAction.getId(), comment);
+                executeAction(duplicateResource, redirectAction, comment);
             }
         }
 
-        StateTransition stateTransition = stateService.executeStateTransition(operativeResource, resource, getById(action), comment);
+        StateTransition stateTransition = stateService.executeStateTransition(operativeResource, resource, action, comment);
         PrismAction transitionAction = stateTransition.getTransitionAction().getId();
         PrismResource nextActionResource = resource.getEnclosingResource(transitionAction.getResourceType());
+        
         return new ActionOutcome(actionOwner, nextActionResource, transitionAction);
     }
 

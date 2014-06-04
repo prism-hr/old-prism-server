@@ -6,13 +6,12 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -38,7 +37,6 @@ public class ApplicationFormBuilder {
     private List<ApplicationQualification> qualifications = new ArrayList<ApplicationQualification>();
     private List<Referee> referees = new ArrayList<Referee>();
     private List<ApplicationEmploymentPosition> employmentPositions = new ArrayList<ApplicationEmploymentPosition>();
-    private List<Comment> comments = new ArrayList<Comment>();
     private List<Funding> fundings = new ArrayList<Funding>();
     private ApplicationDocument applicationFormDocument;
     private ApplicationAdditionalInformation info;
@@ -92,13 +90,6 @@ public class ApplicationFormBuilder {
     public ApplicationFormBuilder qualification(ApplicationQualification... qualifications) {
         for (ApplicationQualification qual : qualifications) {
             this.qualifications.add(qual);
-        }
-        return this;
-    }
-
-    public ApplicationFormBuilder comments(Comment... comments) {
-        for (Comment comment : comments) {
-            this.comments.add(comment);
         }
         return this;
     }
@@ -184,7 +175,6 @@ public class ApplicationFormBuilder {
         application.setState(status);
         application.setAdditionalInformation(info);
         application.setAcceptedTerms(acceptedTerms);
-        application.getApplicationComments().addAll(comments);
         application.setCode(applicationNumber);
         application.setClosingDate(closingDate);
         application.getEmploymentPositions().addAll(employmentPositions);

@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 
 @Service
 @Transactional
@@ -137,8 +136,8 @@ public class RoleService {
         return roleDAO.getUserRole(user, authority);
     }
 
-    public List<Role> getActionRoles(PrismResource resource, PrismAction actionId) {
-        return roleDAO.getActionRoles(resource, actionId);
+    public List<Role> getActionRoles(PrismResource resource, Action action) {
+        return roleDAO.getActionRoles(resource, action);
     }
 
     public List<Role> getActionOwnerRoles(User user, PrismResource resource, Action action) {

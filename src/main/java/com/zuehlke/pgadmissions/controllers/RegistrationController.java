@@ -99,7 +99,7 @@ public class RegistrationController {
             return TemplateLocation.REGISTRATION_FAILURE_CONFIRMATION;
         }
 
-        ActionOutcome actionOutcome = actionService.executeAction(resourceId, user, action, new Comment());
+        ActionOutcome actionOutcome = actionService.executeAction(resourceId, action, new Comment());
         return actionOutcome.createRedirectionUrl();
     }
 

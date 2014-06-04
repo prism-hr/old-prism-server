@@ -1,5 +1,5 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
 public enum PrismActionType {
-    USER, SYSTEM_ESCALATION, SYSTEM_PROPAGATION
+    USER_INVOCATION, SYSTEM_ESCALATION, SYSTEM_PROPAGATION
 }

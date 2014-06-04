@@ -19,6 +19,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Preconditions;
@@ -81,6 +82,14 @@ public class Program extends Advert {
     @ManyToOne
     @JoinColumn(name = "previous_state_id", nullable = true)
     private State previousState;
+    
+    @Column(name = "created_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdTimestamp;
+    
+    @Column(name = "created_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime updatedTimestamp;
     
     @Override
     public void setCode(final String code) {
@@ -290,6 +299,31 @@ public class Program extends Advert {
     }
 
     @Override
+    public LocalDate getDueDateBaseline() {
+        return new LocalDate();
+    }
+
+    @Override
+    public DateTime getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    @Override
+    public void setCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+    }
+
+    @Override
+    public DateTime getUpdatedTimestamp() {
+        return updatedTimestamp;
+    }
+
+    @Override
+    public void setUpdatedTimestamp(DateTime updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
+    }
+    
+    @Override
     public Application getApplication() {
         return null;
     }
@@ -300,7 +334,7 @@ public class Program extends Advert {
         HashMap<String, Object> properties1 = Maps.newHashMap();    
         properties1.put("institution", institution);
         properties1.put("code", code);
-        HashMap<String, Object> properties2 = Maps.newHashMap();    
+        HashMap<String, Object> properties2 = Maps.newHashMap();
         properties2.put("institution", institution);
         properties2.put("title", title);  
         propertiesWrapper.add(properties1);
@@ -318,11 +352,6 @@ public class Program extends Advert {
             postfix = String.format("%010d", getId());
         }
         return String.format("%010d", institution.getCode()) + "-" + postfix;
-    }
-
-    @Override
-    public LocalDate getDueDateBaseline() {
-        return new LocalDate();
     }
 
 }

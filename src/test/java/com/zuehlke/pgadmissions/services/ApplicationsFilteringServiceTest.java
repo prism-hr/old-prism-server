@@ -9,19 +9,22 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
+import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 
 public class ApplicationsFilteringServiceTest {
 
+    private SystemService systemService;
     private ApplicationsFilteringService service;
 
     @Test
     public void shouldReturnStoredFiltering() {
-        Filter filtering = new Filter();
-        User user = new User().withAccount(new UserAccount().withFilterGroup(filtering));
+        Filter filter = new Filter();
+        User user = new User().withAccount(new UserAccount());
+        user.getUserAccount().getFilters().put(systemService.getSystemScope(PrismScope.APPLICATION), filter);
 
         Filter actualFiltering = service.getDefaultApplicationFiltering(user);
 
-        assertSame(filtering, actualFiltering);
+        assertSame(filter, actualFiltering);
     }
 
     @Test
@@ -34,6 +37,7 @@ public class ApplicationsFilteringServiceTest {
     @Before
     public void prepare() {
         service = new ApplicationsFilteringService();
+        systemService = new SystemService();
     }
 
 }

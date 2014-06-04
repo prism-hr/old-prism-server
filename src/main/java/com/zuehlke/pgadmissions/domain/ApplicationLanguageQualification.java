@@ -22,7 +22,7 @@ public class ApplicationLanguageQualification {
     @OneToOne
     @JoinColumn(name = "imported_language_qualification_type_id", nullable = false)
     private ImportedLanguageQualificationType languageQualificationType;
-    
+
     @Column(name = "exam_date", nullable = false)
     private LocalDate examDate;
 
@@ -41,13 +41,10 @@ public class ApplicationLanguageQualification {
     @Column(name = "listening_score", nullable = false)
     private String listeningScore;
 
-    @Column(name = "exam_online", nullable = false)
-    private Boolean examOnline;
-
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "document_id", nullable = false)
     private Document proofOfAward;
-    
+
     public Integer getId() {
         return id;
     }
@@ -112,20 +109,17 @@ public class ApplicationLanguageQualification {
         this.listeningScore = listeningScore;
     }
 
-    public Boolean getExamOnline() {
-        return examOnline;
-    }
-
-    public void setExamOnline(Boolean examOnline) {
-        this.examOnline = examOnline;
-    }
-
     public Document getProofOfAward() {
         return proofOfAward;
     }
 
     public void setProofOfAward(Document proofOfAward) {
         this.proofOfAward = proofOfAward;
+    }
+
+    public ApplicationLanguageQualification withLanguageQualificationType(ImportedLanguageQualificationType langaugeQualificationType) {
+        this.languageQualificationType = langaugeQualificationType;
+        return this;
     }
 
     public ApplicationLanguageQualification withExamDate(LocalDate examDate) {
@@ -157,16 +151,10 @@ public class ApplicationLanguageQualification {
         this.listeningScore = score;
         return this;
     }
-
-    public ApplicationLanguageQualification withExamOnline(Boolean online) {
-        this.examOnline = online;
-        return this;
-    }
     
     public ApplicationLanguageQualification withProofOfAward(Document proofOfAward) {
         this.proofOfAward = proofOfAward;
         return this;
     }
 
-    
 }

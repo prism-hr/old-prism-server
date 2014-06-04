@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,9 +13,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
 @Table(name = "ADDRESS")
-public class Address implements Serializable {
-
-    private static final long serialVersionUID = 2746228908173552617L;
+public class Address {
 
     @Id
     @GeneratedValue

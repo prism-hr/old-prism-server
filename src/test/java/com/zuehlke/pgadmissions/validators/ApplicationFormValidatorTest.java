@@ -25,7 +25,7 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 import org.unitils.inject.util.InjectionUtils;
 
-import com.zuehlke.pgadmissions.domain.AdditionalInformation;
+import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
@@ -71,7 +71,7 @@ public class ApplicationFormValidatorTest {
 
     private PersonalDetails personalDetails;
 
-    private AdditionalInformation additionalInformation;
+    private ApplicationAdditionalInformation additionalInformation;
 
     private ApplicationAddress address;
 
@@ -146,7 +146,7 @@ public class ApplicationFormValidatorTest {
 
     @Test
     public void shouldRejectIfFewerThanThreeReferees() {
-        application.getReferees().remove(2);
+        application.getApplicationReferees().remove(2);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(application, "applicationForm");
 
         applicationFormValidator.validate(application, mappingResult);
@@ -194,7 +194,7 @@ public class ApplicationFormValidatorTest {
         personalDetails = new PersonalDetails();
         programmeDetails = new ProgramDetails().withStudyOption(new StudyOption("1", "Full-time"));
         address = new ApplicationAddress();
-        additionalInformation = new AdditionalInformation();
+        additionalInformation = new ApplicationAdditionalInformation();
         document = new ApplicationDocument().withPersonalStatement(new Document());
 
         application = new Application() //

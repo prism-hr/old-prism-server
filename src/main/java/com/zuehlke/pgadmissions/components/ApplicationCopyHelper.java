@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.AdditionalInformation;
+import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
@@ -64,9 +64,9 @@ public class ApplicationCopyHelper {
             copyFunding(funding, fromFunding, true);
         }
 
-        for (Referee fromReferee : from.getReferees()) {
+        for (Referee fromReferee : from.getApplicationReferees()) {
             Referee referee = new Referee();
-            to.getReferees().add(referee);
+            to.getApplicationReferees().add(referee);
             referee.setApplication(to);
             copyReferee(referee, fromReferee, true);
         }
@@ -79,7 +79,7 @@ public class ApplicationCopyHelper {
         }
 
         if (from.getAdditionalInformation() != null) {
-            AdditionalInformation additionalInformation = new AdditionalInformation();
+            ApplicationAdditionalInformation additionalInformation = new ApplicationAdditionalInformation();
             to.setAdditionalInformation(additionalInformation);
             additionalInformation.setApplication(to);
             copyAdditionalInformation(additionalInformation, from.getAdditionalInformation());
@@ -94,7 +94,7 @@ public class ApplicationCopyHelper {
         to.getSuggestedSupervisors().addAll(from.getSuggestedSupervisors());
     }
 
-    public void copyAdditionalInformation(AdditionalInformation to, AdditionalInformation from) {
+    public void copyAdditionalInformation(ApplicationAdditionalInformation to, ApplicationAdditionalInformation from) {
         to.setHasConvictions(from.getHasConvictions());
         to.setConvictionsText(from.getConvictionsText());
     }

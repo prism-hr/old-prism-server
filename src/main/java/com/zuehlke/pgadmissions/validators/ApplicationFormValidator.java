@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
-import com.zuehlke.pgadmissions.domain.AdditionalInformation;
+import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
@@ -48,7 +48,7 @@ public class ApplicationFormValidator extends AbstractValidator {
         ProgramDetails programDetails = applicationForm.getProgramDetails();
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         ApplicationAddress applicationFormAddress = applicationForm.getApplicationAddress();
-        AdditionalInformation additionalInformation = applicationForm.getAdditionalInformation();
+        ApplicationAdditionalInformation additionalInformation = applicationForm.getAdditionalInformation();
         ApplicationDocument applicationFormDocument = applicationForm.getApplicationDocument();
 
         if (!programDetailsValidator.isValid(programDetails)) {
@@ -71,7 +71,7 @@ public class ApplicationFormValidator extends AbstractValidator {
             errors.rejectValue("applicationDocument", "documents.section.invalid");
         }
 
-        if (applicationForm.getReferees().size() < 3) {
+        if (applicationForm.getApplicationReferees().size() < 3) {
             errors.rejectValue("referees", "user.referees.notvalid");
         }
 

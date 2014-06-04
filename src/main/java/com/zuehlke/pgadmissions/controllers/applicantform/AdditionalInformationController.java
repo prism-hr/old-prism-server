@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
-import com.zuehlke.pgadmissions.domain.AdditionalInformation;
+import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.BooleanPropertyEditor;
@@ -48,7 +48,7 @@ public class AdditionalInformationController {
     }
 
     @RequestMapping(value = "/editAdditionalInformation", method = RequestMethod.POST)
-    public String editAdditionalInformation(@Valid AdditionalInformation additionalInformation, BindingResult result,
+    public String editAdditionalInformation(@Valid ApplicationAdditionalInformation additionalInformation, BindingResult result,
             @ModelAttribute Application applicationForm, ModelMap modelMap) {
         if (result.hasErrors()) {
             return returnView(modelMap, additionalInformation);
@@ -75,7 +75,7 @@ public class AdditionalInformationController {
         return applicationService.getByApplicationNumber(applicationId);
     }
 
-    private String returnView(ModelMap modelMap, AdditionalInformation additionalInformation) {
+    private String returnView(ModelMap modelMap, ApplicationAdditionalInformation additionalInformation) {
         modelMap.put("additionalInformation", additionalInformation);
         return TemplateLocation.APPLICATION_APPLICANT_ADDITIONAL_INFORMATION;
     }

@@ -1239,3 +1239,10 @@ ALTER TABLE APPLICATION_REFEREE
 	DROP INDEX application_form_referee_fk,
 	ADD UNIQUE INDEX (application_id, user_id)
 ;
+
+/* Closing date unique within advert */
+
+ALTER TABLE ADVERT_CLOSING_DATE
+	DROP INDEX program_closing_dates_fk,
+	ADD UNIQUE INDEX (advert_id, closing_date)
+;

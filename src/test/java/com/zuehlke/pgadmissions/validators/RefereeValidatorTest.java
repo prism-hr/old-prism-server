@@ -153,7 +153,7 @@ public class RefereeValidatorTest {
 
     @Test
     public void shouldRejectDuplicateReferees() {
-        referee.getApplication().getReferees().add(referee);
+        referee.getApplication().getApplicationReferees().add(referee);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "phoneNumber");
         refereeValidator.validate(referee, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());

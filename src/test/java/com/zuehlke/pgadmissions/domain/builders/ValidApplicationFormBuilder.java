@@ -10,7 +10,7 @@ import org.joda.time.LocalDate;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import com.zuehlke.pgadmissions.domain.AdditionalInformation;
+import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
@@ -69,7 +69,7 @@ public class ValidApplicationFormBuilder {
     protected Ethnicity ethnicity;
     protected Domicile domicile;
     protected PersonalDetails personalDetails;
-    protected AdditionalInformation additionalInformation;
+    protected ApplicationAdditionalInformation additionalInformation;
     protected ProgramInstance instance;
     protected ImportedInstitution importedInstitution;
     protected Institution institution;
@@ -161,7 +161,7 @@ public class ValidApplicationFormBuilder {
                                 .withListeningScore("1").withQualificationTypeOther("FooBar").withOverallScore("1").withReadingScore("1")
                                 .withSpeakingScore("1").withWritingScore("1").withProofOfAward(languageQualificationDocument))
                 .withPhoneNumber("+44 (0) 123 123 1234").withResidenceCountry(domicile).withTitle(Title.MR);
-        additionalInformation = new AdditionalInformation().withHasConvictions(false);
+        additionalInformation = new ApplicationAdditionalInformation().withHasConvictions(false);
         instance = new ProgramInstance().withAcademicYear("2013").withApplicationDeadline(new LocalDate().plusYears(1))
                 .withApplicationStartDate(new LocalDate().plusMonths(5)).withEnabled(true).withStudyOption("F+++++", "Full-time").withIdentifier("0009");
         importedInstitution = new ImportedInstitution().withCode("code").withName("jakas instytucja").withDomicile(domicile).withEnabled(true);

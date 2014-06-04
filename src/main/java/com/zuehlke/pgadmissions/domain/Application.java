@@ -14,7 +14,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.Valid;
@@ -41,51 +40,13 @@ public class Application extends PrismResourceDynamic {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "code", nullable = true, unique = true)
+    @Column(name = "code", unique = true)
     private String code;
-
-    @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
-    private State state;
-
-    @ManyToOne
-    @JoinColumn(name = "previous_state_id", nullable = true)
-    private State previousState;
-
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_address_id", unique = true)
-    @Valid
-    private ApplicationAddress applicationAddress;
-
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_document_id", unique = true)
-    @Valid
-    private ApplicationDocument applicationDocument;
-
-    @Column(name = "due_date")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate dueDate;
-
-    @Column(name = "created_timestamp", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime createdTimestamp;
     
-    @Column(name = "created_timestamp", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime updatedTimestamp;
-
-    @Column(name = "submitted_timestamp")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime submittedTimestamp;
-
-    @Column(name = "closing_date")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate closingDate;
-
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
+    
     @ManyToOne
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
@@ -101,7 +62,11 @@ public class Application extends PrismResourceDynamic {
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
-
+    
+    @Column(name = "closing_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate closingDate;
+    
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_personal_detail_id", nullable = false)
     private PersonalDetails personalDetails;
@@ -110,16 +75,22 @@ public class Application extends PrismResourceDynamic {
     @JoinColumn(name = "application_program_detail_id", nullable = false)
     @Valid
     private ProgramDetails programDetails;
-
-    @OneToMany(mappedBy = "application")
-    @OrderBy("date")
-    private List<Comment> applicationComments = Lists.newArrayList();
-
+    
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_address_id", unique = true)
+    @Valid
+    private ApplicationAddress applicationAddress;
+    
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     @Valid
     private List<ApplicationQualification> qualifications = new ArrayList<ApplicationQualification>();
-
+    
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_id", nullable = false)
+    @Valid
+    private List<ApplicationEmploymentPosition> employmentPositions = new ArrayList<ApplicationEmploymentPosition>();
+    
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     @Valid
@@ -128,17 +99,41 @@ public class Application extends PrismResourceDynamic {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     @Valid
-    private List<ApplicationEmploymentPosition> employmentPositions = new ArrayList<ApplicationEmploymentPosition>();
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_id", nullable = false)
+    private List<Referee> applicationReferees = new ArrayList<Referee>();
+    
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_document_id", unique = true)
     @Valid
-    private List<Referee> referees = new ArrayList<Referee>();
-
+    private ApplicationDocument applicationDocument;
+    
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_additional_information_id", nullable = false, unique = true)
     @Valid
-    private AdditionalInformation additionalInformation;
+    private ApplicationAdditionalInformation additionalInformation;
+    
+    @Column(name = "submitted_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime submittedTimestamp;
+    
+    @ManyToOne
+    @JoinColumn(name = "state_id", nullable = false)
+    private State state;
+
+    @ManyToOne
+    @JoinColumn(name = "previous_state_id")
+    private State previousState;
+
+    @Column(name = "due_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate dueDate;
+
+    @Column(name = "created_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdTimestamp;
+
+    @Column(name = "updated_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime updatedTimestamp;
 
     @Transient
     private Boolean acceptedTerms;
@@ -189,7 +184,7 @@ public class Application extends PrismResourceDynamic {
     public void setAcceptedTerms(Boolean acceptedTerms) {
         this.acceptedTerms = acceptedTerms;
     }
-    
+
     @Override
     public DateTime getCreatedTimestamp() {
         return createdTimestamp;
@@ -199,7 +194,7 @@ public class Application extends PrismResourceDynamic {
     public void setCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
     }
-    
+
     @Override
     public DateTime getUpdatedTimestamp() {
         return updatedTimestamp;
@@ -246,16 +241,12 @@ public class Application extends PrismResourceDynamic {
         this.programDetails = programDetails;
     }
 
-    public AdditionalInformation getAdditionalInformation() {
+    public ApplicationAdditionalInformation getAdditionalInformation() {
         return additionalInformation;
     }
 
-    public void setAdditionalInformation(AdditionalInformation additionalInformation) {
+    public void setAdditionalInformation(ApplicationAdditionalInformation additionalInformation) {
         this.additionalInformation = additionalInformation;
-    }
-
-    public List<Comment> getApplicationComments() {
-        return applicationComments;
     }
 
     public List<ApplicationQualification> getQualifications() {
@@ -270,8 +261,8 @@ public class Application extends PrismResourceDynamic {
         return employmentPositions;
     }
 
-    public List<Referee> getReferees() {
-        return referees;
+    public List<Referee> getApplicationReferees() {
+        return applicationReferees;
     }
 
     public List<StateAction> getPermittedActions() {
@@ -357,7 +348,7 @@ public class Application extends PrismResourceDynamic {
         return this;
     }
 
-    public Application withAdditionalInformation(AdditionalInformation additionalInformation) {
+    public Application withAdditionalInformation(ApplicationAdditionalInformation additionalInformation) {
         this.additionalInformation = additionalInformation;
         return this;
     }
@@ -368,7 +359,7 @@ public class Application extends PrismResourceDynamic {
     }
 
     public Application withReferees(Referee... referees) {
-        this.referees.addAll(Arrays.asList(referees));
+        this.applicationReferees.addAll(Arrays.asList(referees));
         return this;
     }
 

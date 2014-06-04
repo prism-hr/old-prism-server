@@ -13,9 +13,9 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
-@Table(name = "APPLICATION_ADDITIONAL_INFO")
+@Table(name = "APPLICATION_ADDITIONAL_INFORMATION")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class AdditionalInformation {
+public class ApplicationAdditionalInformation {
 
     @Id
     @GeneratedValue
@@ -63,22 +63,22 @@ public class AdditionalInformation {
         this.application = application;
     }
 
-    public AdditionalInformation withId(Integer id) {
+    public ApplicationAdditionalInformation withId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public AdditionalInformation withHasConvictions(Boolean hasConvictions) {
+    public ApplicationAdditionalInformation withHasConvictions(Boolean hasConvictions) {
         this.hasConvictions = hasConvictions;
         return this;
     }
 
-    public AdditionalInformation withConvictionsText(String convictionsText) {
+    public ApplicationAdditionalInformation withConvictionsText(String convictionsText) {
         this.convictionsText = convictionsText;
         return this;
     }
 
-    public AdditionalInformation withApplication(Application application) {
+    public ApplicationAdditionalInformation withApplication(Application application) {
         this.application = application;
         return this;
     }

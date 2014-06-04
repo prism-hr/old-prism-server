@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
-import com.zuehlke.pgadmissions.domain.AdditionalInformation;
+import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Application;
 
 @Service
@@ -18,19 +18,19 @@ public class AdditionalInformationService {
     @Autowired
     ApplicationCopyHelper applicationFormCopyHelper;
 
-    public AdditionalInformation getOrCreate(Application application) {
-        AdditionalInformation additionalInformation = application.getAdditionalInformation();
+    public ApplicationAdditionalInformation getOrCreate(Application application) {
+        ApplicationAdditionalInformation additionalInformation = application.getAdditionalInformation();
         if (additionalInformation == null) {
-            additionalInformation = new AdditionalInformation();
+            additionalInformation = new ApplicationAdditionalInformation();
         }
         return additionalInformation;
     }
     
-	public void saveOrUpdate(int applicationId, AdditionalInformation additionalInformation) {
+	public void saveOrUpdate(int applicationId, ApplicationAdditionalInformation additionalInformation) {
 	    Application application = applicationService.getById(applicationId);
-	    AdditionalInformation persistentAdditionalInformation = application.getAdditionalInformation();
+	    ApplicationAdditionalInformation persistentAdditionalInformation = application.getAdditionalInformation();
 	    if (persistentAdditionalInformation == null) {
-	        persistentAdditionalInformation = new AdditionalInformation();
+	        persistentAdditionalInformation = new ApplicationAdditionalInformation();
 	        persistentAdditionalInformation.setApplication(application);
 	        application.setAdditionalInformation(persistentAdditionalInformation);
 	    }

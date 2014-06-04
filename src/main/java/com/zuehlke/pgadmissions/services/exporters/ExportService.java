@@ -145,7 +145,7 @@ public class ExportService {
                 final HashMap<Integer, Referee> refereesToSend = new HashMap<Integer, Referee>();
 
                 // try to find two referees which have provided a reference.
-                for (Referee referee : application.getReferees()) {
+                for (Referee referee : application.getApplicationReferees()) {
                     if (refereesToSend.size() == 2) {
                         break;
                     }
@@ -159,7 +159,7 @@ public class ExportService {
                 }
 
                 // select x more referees until we've got 2
-                for (Referee referee : application.getReferees()) {
+                for (Referee referee : application.getApplicationReferees()) {
                     if (refereesToSend.size() == 2) {
                         break;
                     }

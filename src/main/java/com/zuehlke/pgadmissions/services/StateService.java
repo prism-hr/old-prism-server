@@ -54,7 +54,7 @@ public class StateService {
 
     @Autowired
     private NotificationService notificationService;
-    
+
     @Autowired
     private UserService userService;
 
@@ -74,7 +74,7 @@ public class StateService {
 
     public StateTransition executeStateTransition(PrismResource operativeResource, PrismResourceDynamic resource, Action action, Comment comment) {
         StateTransition stateTransition = getStateTransition(operativeResource, action, comment);
-        
+
         postResourceStateChange(resource, stateTransition, comment);
         postResourceUpdate(resource, comment);
         setResourceDueDate(resource, comment);
@@ -84,13 +84,13 @@ public class StateService {
         } else {
             updateResource(resource, action, comment);
         }
-        
+
         if (stateTransition.isDoPostComment()) {
             entityService.save(comment);
         }
 
         roleService.executeUserRoleTransitions(resource, stateTransition, comment);
-        
+
         for (NotificationDescriptor notification : userService.getUserStateTransitionNotifications(stateTransition)) {
             notificationService.sendEmailNotification(notification.getRecipient(), resource, notification.getNotificationTemplate(), comment);
         }
@@ -102,7 +102,7 @@ public class StateService {
         return stateTransition;
     }
 
-    @Scheduled(cron = "0 0/1 * * *")
+    @Scheduled(fixedRate = 60000)
     public void executePropagatedStateTransitions() {
         PrismResource lastResource = null;
         for (StateTransitionPending pendingStateTransition : stateDAO.getPendingStateTransitions()) {
@@ -142,20 +142,20 @@ public class StateService {
     public ThreadPoolExecutor getThreadedStateTransitionPool() {
         return threadedStateTransitionPool;
     }
-    
+
     private void postResourceStateChange(PrismResourceDynamic resource, StateTransition stateTransition, Comment comment) {
         State transitionState = stateTransition.getTransitionState();
         resource.setPreviousState(resource.getState());
         resource.setState(transitionState);
         comment.setTransitionState(transitionState);
     }
-    
+
     private void postResourceUpdate(PrismResourceDynamic resource, Comment comment) {
         DateTime transitionTimestamp = new DateTime();
         resource.setUpdatedTimestamp(transitionTimestamp);
         comment.setCreatedTimestamp(transitionTimestamp);
     }
-    
+
     private void setResourceDueDate(PrismResourceDynamic resource, Comment comment) {
         LocalDate dueDate = comment.getUserSpecifiedDueDate();
         if (dueDate == null && actionDAO.getValidAction(resource, PrismAction.valueOf(resource.getResourceType().toString() + "_ESCALATE")) != null) {
@@ -165,14 +165,14 @@ public class StateService {
         }
         resource.setDueDate(entityService.getResourceDueDate(resource, dueDate));
     }
-    
+
     private void createResource(PrismResource operativeResource, PrismResourceDynamic resource, Comment comment) {
         resource.setParentResource(operativeResource);
         entityService.save(resource);
         resource.setCode(resource.generateCode());
         comment.setRole(roleService.getResourceCreatorRole(resource).getAuthority().toString());
     }
-    
+
     private void updateResource(PrismResourceDynamic resource, Action action, Comment comment) {
         String role;
         String delegateRole = null;

@@ -50,7 +50,6 @@
     </bean>
     
     <bean id="encryptionHelper" class="com.zuehlke.pgadmissions.interceptors.EncryptionHelper" />
-    <bean id="permissionsService" class="com.zuehlke.pgadmissions.services.PermissionsService" />
 
     <import resource="mvc-context.xml" />
     <import resource="security-context.xml" />

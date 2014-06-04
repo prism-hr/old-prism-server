@@ -40,7 +40,7 @@ public class NotificationTemplate implements Serializable {
     @JoinColumn(name = "reminder_notification_template_id")
     private NotificationTemplate reminderTemplate;
 
-    @Column(name = "reminder_interval")
+    @Column(name = "day_reminder_interval")
     private Integer reminderInterval;
 
     @OneToMany(mappedBy = "notificationTemplate")

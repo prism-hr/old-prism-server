@@ -69,7 +69,7 @@ public class PersonalDetailsValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "englishFirstLanguage", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "requiresVisa", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
-        if (BooleanUtils.isFalse(personalDetail.getEnglishFirstLanguage())) {
+        if (BooleanUtils.isFalse(personalDetail.getFirstLanguageEnglish())) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "languageQualificationAvailable", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
             if (BooleanUtils.isTrue(personalDetail.getLanguageQualificationAvailable())) {
@@ -83,7 +83,7 @@ public class PersonalDetailsValidator extends AbstractValidator {
             }
         }
 
-        if (BooleanUtils.isTrue(personalDetail.getPassportAvailable()) && BooleanUtils.isTrue(personalDetail.getRequiresVisa())) {
+        if (BooleanUtils.isTrue(personalDetail.getPassportAvailable()) && BooleanUtils.isTrue(personalDetail.getVisaRequired())) {
             try {
                 errors.pushNestedPath("passport");
                 ValidationUtils.invokeValidator(passportInformationValidator, personalDetail.getPassport(), errors);

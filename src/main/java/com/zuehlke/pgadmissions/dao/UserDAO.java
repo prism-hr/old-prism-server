@@ -16,11 +16,12 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.mail.TaskNotificationDescriptor;
+import com.zuehlke.pgadmissions.mail.NotificationDescriptor;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -150,7 +151,12 @@ public class UserDAO {
         return new ArrayList<User>();
     }
 
-    public List<TaskNotificationDescriptor> getUseDueTaskNotification() {
+    public List<NotificationDescriptor> getUseDueTaskNotification() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<NotificationDescriptor> getUserStateTransitionNotifications(StateTransition stateTransition) {
         // TODO Auto-generated method stub
         return null;
     }

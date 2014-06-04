@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Action;
@@ -31,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.StateTransitionEvaluation;
+import com.zuehlke.pgadmissions.mail.NotificationDescriptor;
 import com.zuehlke.pgadmissions.mail.NotificationService;
 
 @Service
@@ -54,6 +54,9 @@ public class StateService {
 
     @Autowired
     private NotificationService notificationService;
+    
+    @Autowired
+    private UserService userService;
 
     private ThreadPoolExecutor threadedStateTransitionPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1000);
 
@@ -71,20 +74,15 @@ public class StateService {
 
     public StateTransition executeStateTransition(PrismResource operativeResource, PrismResourceDynamic resource, Action action, Comment comment) {
         StateTransition stateTransition = getStateTransition(operativeResource, action, comment);
-        transitionResourceState(resource, stateTransition, comment);
+        
+        postResourceStateChange(resource, stateTransition, comment);
+        postResourceUpdate(resource, comment);
+        setResourceDueDate(resource, comment);
 
         if (operativeResource != resource) {
-            resource.setParentResource(operativeResource);
-            entityService.save(resource);
-            resource.setCode(resource.generateCode());
-            comment.setRole(roleService.getResourceCreatorRole(resource).getAuthority().toString());
-        } else if (action.getActionType() != PrismActionType.USER_INVOCATION) {
-            comment.setRole(Authority.SYSTEM_ADMINISTRATOR.toString());
+            createResource(operativeResource, resource, comment);
         } else {
-            comment.setRole(Joiner.on("|").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action)));
-            if (comment.getDelegateUser() != null) {
-                comment.setDelegateRole(Joiner.on("|").join(roleService.getActionOwnerRoles(comment.getDelegateUser(), resource, action.getDelegateAction())));
-            }
+            updateResource(resource, action, comment);
         }
         
         if (stateTransition.isDoPostComment()) {
@@ -92,16 +90,13 @@ public class StateService {
         }
 
         roleService.executeUserRoleTransitions(resource, stateTransition, comment);
-
-        // TODO create list of recipients
-        List<User> recipients = Lists.newArrayList();
-        for (User recipient : recipients) {
-            notificationService.sendEmailNotification(recipient, resource, stateTransition.getStateAction().getNotificationTemplate().getId(), comment);
+        
+        for (NotificationDescriptor notification : userService.getUserStateTransitionNotifications(stateTransition)) {
+            notificationService.sendEmailNotification(notification.getRecipient(), resource, notification.getNotificationTemplate(), comment);
         }
 
         if (stateTransition.getPropagatedActions().size() > 0) {
-            StateTransitionPending pendingStateTransition = new StateTransitionPending().withResource(operativeResource).withStateTransition(stateTransition);
-            entityService.save(pendingStateTransition);
+            entityService.save(new StateTransitionPending().withResource(operativeResource).withStateTransition(stateTransition));
         }
 
         return stateTransition;
@@ -147,6 +142,47 @@ public class StateService {
     public ThreadPoolExecutor getThreadedStateTransitionPool() {
         return threadedStateTransitionPool;
     }
+    
+    private void postResourceStateChange(PrismResourceDynamic resource, StateTransition stateTransition, Comment comment) {
+        State transitionState = stateTransition.getTransitionState();
+        resource.setPreviousState(resource.getState());
+        resource.setState(transitionState);
+        comment.setTransitionState(transitionState);
+    }
+    
+    private void postResourceUpdate(PrismResourceDynamic resource, Comment comment) {
+        DateTime transitionTimestamp = new DateTime();
+        resource.setUpdatedTimestamp(transitionTimestamp);
+        comment.setCreatedTimestamp(transitionTimestamp);
+    }
+    
+    private void setResourceDueDate(PrismResourceDynamic resource, Comment comment) {
+        LocalDate dueDate = comment.getUserSpecifiedDueDate();
+        if (dueDate == null && actionDAO.getValidAction(resource, PrismAction.valueOf(resource.getResourceType().toString() + "_ESCALATE")) != null) {
+            LocalDate dueDateBaseline = resource.getDueDateBaseline();
+            Integer stateDurationSeconds = stateDAO.getStateDuration(resource);
+            dueDate = dueDateBaseline.plusDays(stateDurationSeconds != null ? stateDurationSeconds : 0);
+        }
+        resource.setDueDate(entityService.getResourceDueDate(resource, dueDate));
+    }
+    
+    private void createResource(PrismResource operativeResource, PrismResourceDynamic resource, Comment comment) {
+        resource.setParentResource(operativeResource);
+        entityService.save(resource);
+        resource.setCode(resource.generateCode());
+        comment.setRole(roleService.getResourceCreatorRole(resource).getAuthority().toString());
+    }
+    
+    private void updateResource(PrismResourceDynamic resource, Action action, Comment comment) {
+        if (action.getActionType() != PrismActionType.USER_INVOCATION) {
+            comment.setRole(Authority.SYSTEM_ADMINISTRATOR.toString());
+        } else {
+            comment.setRole(Joiner.on("|").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action)));
+            if (comment.getDelegateUser() != null) {
+                comment.setDelegateRole(Joiner.on("|").join(roleService.getActionOwnerRoles(comment.getDelegateUser(), resource, action.getDelegateAction())));
+            }
+        }
+    }
 
     private StateTransition getStateTransition(PrismResource resource, Action action, Comment comment) {
         StateTransition stateTransition = null;
@@ -164,26 +200,6 @@ public class StateService {
         }
 
         return stateTransition;
-    }
-
-    private void transitionResourceState(PrismResourceDynamic resource, StateTransition stateTransition, Comment comment) {
-        State transitionState = stateTransition.getTransitionState();
-        resource.setPreviousState(resource.getState());
-        resource.setState(transitionState);
-        comment.setTransitionState(transitionState);
-        
-        DateTime transitionTimestamp = new DateTime();
-        resource.setUpdatedTimestamp(transitionTimestamp);
-        comment.setCreatedTimestamp(transitionTimestamp);
-
-        LocalDate dueDate = comment.getUserSpecifiedDueDate();
-        if (dueDate == null && actionDAO.getValidAction(resource, PrismAction.valueOf(resource.getResourceType().toString() + "_ESCALATE")) != null) {
-            LocalDate dueDateBaseline = resource.getDueDateBaseline();
-            Integer stateDurationSeconds = stateDAO.getStateDuration(resource);
-            dueDate = dueDateBaseline.plusDays(stateDurationSeconds != null ? stateDurationSeconds : 0);
-        }
-
-        resource.setDueDate(entityService.getResourceDueDate(resource, dueDate));
     }
 
     @SuppressWarnings("unused")

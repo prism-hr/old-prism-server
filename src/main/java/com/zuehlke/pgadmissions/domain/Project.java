@@ -69,6 +69,10 @@ public class Project extends Advert {
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
+    
+    @Column(name = "created_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime updatedTimestamp;
 
     @Override
     public String getCode() {
@@ -170,14 +174,26 @@ public class Project extends Advert {
         this.dueDate = dueDate;
     }
 
+    @Override
     public DateTime getCreatedTimestamp() {
         return createdTimestamp;
     }
-
+    
+    @Override
     public void setCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
     }
 
+    @Override
+    public DateTime getUpdatedTimestamp() {
+        return updatedTimestamp;
+    }
+
+    @Override
+    public void setUpdatedTimestamp(DateTime updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
+    }
+    
     @Override
     public Application getApplication() {
         return null;

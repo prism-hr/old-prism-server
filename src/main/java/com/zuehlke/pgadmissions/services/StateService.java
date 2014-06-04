@@ -36,8 +36,6 @@ import com.zuehlke.pgadmissions.mail.NotificationService;
 @Transactional
 public class StateService {
 
-    public static final int SECONDS_IN_DAY = 86400;
-
     @Autowired
     private ActionDAO actionDAO;
 
@@ -72,14 +70,14 @@ public class StateService {
 
     public StateTransition executeStateTransition(PrismResource operativeResource, PrismResourceDynamic resource, Action action, Comment comment) {
         StateTransition stateTransition = getStateTransition(operativeResource, action, comment);
-        transitionResourceState(resource, stateTransition, comment.getUserSpecifiedDueDate());
+        transitionResourceState(resource, stateTransition, comment);
         
         if (operativeResource != resource) {
             resource.setParentResource(operativeResource);
             entityService.save(resource);
             resource.setCode(resource.generateCode());
             comment.setRole(roleService.getResourceCreatorRole(resource).getAuthority().toString());
-        } else if (action.getActionType() != PrismActionType.USER) {
+        } else if (action.getActionType() != PrismActionType.USER_INVOCATION) {
             comment.setRole(Authority.SYSTEM_ADMINISTRATOR.toString());
         } else {
             comment.setRole(Joiner.on("|").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action)));
@@ -87,9 +85,8 @@ public class StateService {
                 comment.setDelegateRole(Joiner.on("|").join(roleService.getActionOwnerRoles(comment.getDelegateUser(), resource, action.getDelegateAction())));
             }
         }
-
+        
         if (stateTransition.isDoPostComment()) {
-            comment.setCreatedTimestamp(new DateTime());
             entityService.save(comment);
         }
 
@@ -163,15 +160,21 @@ public class StateService {
         return stateTransition;
     }
 
-    private void transitionResourceState(PrismResourceDynamic resource, StateTransition stateTransition, LocalDate userSpecifiedDueDate) {
+    private void transitionResourceState(PrismResourceDynamic resource, StateTransition stateTransition, Comment comment) {
+        State transitionState = stateTransition.getTransitionState();
         resource.setPreviousState(resource.getState());
-        resource.setState(stateTransition.getTransitionState());
+        resource.setState(transitionState);
+        comment.setTransitionState(transitionState);
+        
+        DateTime transitionTimestamp = new DateTime();
+        resource.setUpdatedTimestamp(transitionTimestamp);
+        comment.setCreatedTimestamp(transitionTimestamp);
 
-        LocalDate dueDate = userSpecifiedDueDate;
+        LocalDate dueDate = comment.getUserSpecifiedDueDate();
         if (dueDate == null && actionDAO.getValidAction(resource, PrismAction.valueOf(resource.getResourceType().toString() + "_ESCALATE")) != null) {
             LocalDate dueDateBaseline = resource.getDueDateBaseline();
             Integer stateDurationSeconds = stateDAO.getStateDuration(resource);
-            dueDate = dueDateBaseline.plusDays(stateDurationSeconds != null ? stateDurationSeconds / SECONDS_IN_DAY : 0);
+            dueDate = dueDateBaseline.plusDays(stateDurationSeconds != null ? stateDurationSeconds : 0);
         }
 
         resource.setDueDate(entityService.getResourceDueDate(resource, dueDate));

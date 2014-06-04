@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import com.zuehlke.pgadmissions.domain.ProgramDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -25,7 +25,7 @@ public class ProgramDetailsValidator extends AbstractValidator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return ProgramDetails.class.isAssignableFrom(clazz);
+        return ApplicationProgramDetails.class.isAssignableFrom(clazz);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class ProgramDetailsValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "sourcesOfInterest", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
-        ProgramDetails programDetail = (ProgramDetails) target;
+        ApplicationProgramDetails programDetail = (ApplicationProgramDetails) target;
 
         if (programDetail.getSourceOfInterest() != null && programDetail.getSourceOfInterest().isFreeText()) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "sourcesOfInterestText", EMPTY_FIELD_ERROR_MESSAGE);

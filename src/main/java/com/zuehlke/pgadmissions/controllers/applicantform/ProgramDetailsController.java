@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ProgramDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
@@ -72,7 +72,7 @@ public class ProgramDetailsController {
     }
 
     @RequestMapping(value = "/editProgrammeDetails", method = RequestMethod.POST)
-    public String editProgrammeDetails(@ModelAttribute Application applicationForm, @Valid ProgramDetails programDetails, BindingResult result,
+    public String editProgrammeDetails(@ModelAttribute Application applicationForm, @Valid ApplicationProgramDetails programDetails, BindingResult result,
             ModelMap modelMap) {
         if (result.hasErrors()) {
             return returnView(modelMap, programDetails);
@@ -113,7 +113,7 @@ public class ProgramDetailsController {
         binder.registerCustomEditor(SourcesOfInterest.class, sourcesOfInterestPropertyEditor);
     }
 
-    private String returnView(ModelMap modelMap, ProgramDetails programDetails) {
+    private String returnView(ModelMap modelMap, ApplicationProgramDetails programDetails) {
         modelMap.put("programDetails", programDetails);
         return TemplateLocation.APPLICATION_APPLICANT_PROGRAM_DETAIL;
     }

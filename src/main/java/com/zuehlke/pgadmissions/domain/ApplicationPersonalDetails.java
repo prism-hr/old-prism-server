@@ -20,12 +20,11 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.Title;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
 @Table(name = "APPLICATION_PERSONAL_DETAIL")
-public class PersonalDetails {
+public class ApplicationPersonalDetails {
 
     @Id
     @GeneratedValue
@@ -48,7 +47,7 @@ public class PersonalDetails {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_language_qualification_id")
     @Valid
-    private LanguageQualification languageQualification;
+    private ApplicationLanguageQualification languageQualification;
 
     @Column(name = "visa_required", nullable = false)
     private Boolean visaRequired;
@@ -69,8 +68,8 @@ public class PersonalDetails {
     @JoinColumn(name = "nationality_id2")
     private Language secondNationality;
 
-    @Column(name = "title_id", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @OneToOne
+    @JoinColumn(name = "title_id", nullable = false)
     private Title title;
 
     @Enumerated(EnumType.STRING)
@@ -247,105 +246,105 @@ public class PersonalDetails {
         this.languageQualificationAvailable = languageQualificationAvailable;
     }
 
-    public LanguageQualification getLanguageQualification() {
+    public ApplicationLanguageQualification getLanguageQualification() {
         return languageQualification;
     }
 
-    public void setLanguageQualification(LanguageQualification languageQualification) {
+    public void setLanguageQualification(ApplicationLanguageQualification languageQualification) {
         this.languageQualification = languageQualification;
     }
 
-    public PersonalDetails withId(Integer id) {
+    public ApplicationPersonalDetails withId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public PersonalDetails withApplication(Application application) {
+    public ApplicationPersonalDetails withApplication(Application application) {
         this.application = application;
         return this;
     }
 
-    public PersonalDetails withTitle(Title title) {
+    public ApplicationPersonalDetails withTitle(Title title) {
         this.title = title;
         return this;
     }
 
-    public PersonalDetails withGender(Gender gender) {
+    public ApplicationPersonalDetails withGender(Gender gender) {
         this.gender = gender;
         return this;
     }
 
-    public PersonalDetails withDateOfBirth(LocalDate dateOfBirth) {
+    public ApplicationPersonalDetails withDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
         return this;
     }
 
-    public PersonalDetails withCountry(Country country) {
+    public ApplicationPersonalDetails withCountry(Country country) {
         this.country = country;
         return this;
     }
 
-    public PersonalDetails withFirstNationality(Language firstNationality) {
+    public ApplicationPersonalDetails withFirstNationality(Language firstNationality) {
         this.firstNationality = firstNationality;
         return this;
     }
 
-    public PersonalDetails withSecondNationality(Language secondNationality) {
+    public ApplicationPersonalDetails withSecondNationality(Language secondNationality) {
         this.secondNationality = secondNationality;
         return this;
     }
 
-    public PersonalDetails withEnglishFirstLanguage(Boolean englishFirstLanguage) {
+    public ApplicationPersonalDetails withEnglishFirstLanguage(Boolean englishFirstLanguage) {
         this.firstLanguageEnglish = englishFirstLanguage;
         return this;
     }
 
-    public PersonalDetails withLanguageQualificationAvailable(Boolean flag) {
+    public ApplicationPersonalDetails withLanguageQualificationAvailable(Boolean flag) {
         this.languageQualificationAvailable = flag;
         return this;
     }
 
-    public PersonalDetails withLanguageQualification(LanguageQualification languageQualification) {
+    public ApplicationPersonalDetails withLanguageQualification(ApplicationLanguageQualification languageQualification) {
         this.languageQualification = languageQualification;
         return this;
     }
 
-    public PersonalDetails withResidenceCountry(Domicile residenceCountry) {
+    public ApplicationPersonalDetails withResidenceCountry(Domicile residenceCountry) {
         this.residenceCountry = residenceCountry;
         return this;
     }
 
-    public PersonalDetails withRequiresVisa(Boolean requiresVisa) {
+    public ApplicationPersonalDetails withRequiresVisa(Boolean requiresVisa) {
         this.visaRequired = requiresVisa;
         return this;
     }
 
-    public PersonalDetails withPassportAvailable(Boolean passportAvailable) {
+    public ApplicationPersonalDetails withPassportAvailable(Boolean passportAvailable) {
         this.passportAvailable = passportAvailable;
         return this;
     }
 
-    public PersonalDetails withPassportInformation(Passport passportInformation) {
+    public ApplicationPersonalDetails withPassportInformation(Passport passportInformation) {
         this.passport = passportInformation;
         return this;
     }
 
-    public PersonalDetails withPhoneNumber(String phoneNumber) {
+    public ApplicationPersonalDetails withPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
         return this;
     }
 
-    public PersonalDetails withMessenger(String messenger) {
+    public ApplicationPersonalDetails withMessenger(String messenger) {
         this.messenger = messenger;
         return this;
     }
 
-    public PersonalDetails withEthnicity(Ethnicity eth) {
+    public ApplicationPersonalDetails withEthnicity(Ethnicity eth) {
         ethnicity = eth;
         return this;
     }
 
-    public PersonalDetails withDisability(Disability dis) {
+    public ApplicationPersonalDetails withDisability(Disability dis) {
         this.disability = dis;
         return this;
     }

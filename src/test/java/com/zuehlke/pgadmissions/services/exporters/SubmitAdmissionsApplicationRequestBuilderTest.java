@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.NameTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.LanguageQualification;
+import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
@@ -150,7 +150,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
     @Test
     public void shouldNotSendDecimalValueForLanguageScores() {
         applicationForm.setState(new State().withId(PrismState.APPLICATION_WITHDRAWN));
-        LanguageQualification qualification = applicationForm.getPersonalDetails().getLanguageQualification();
+        ApplicationLanguageQualification qualification = applicationForm.getPersonalDetails().getLanguageQualification();
         qualification.setListeningScore("4.0");
         qualification.setOverallScore("4.5");
         qualification.setReadingScore("4.0");

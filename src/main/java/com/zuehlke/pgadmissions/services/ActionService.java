@@ -44,9 +44,9 @@ public class ActionService {
         return entityService.getByProperty(Action.class, "id", id);
     }
     
-    public void validateAction(PrismResource resource, PrismAction actionId, User actionOwner, User delegateOwner) {
+    public void validateAction(PrismResource resource, PrismAction actionId, User actionOwner) {
         Action action = getById(actionId);
-        validateAction(resource, action, actionOwner, delegateOwner);
+        validateAction(resource, action, actionOwner, null);
     }
 
     public void validateAction(PrismResource resource, Action action, User actionOwner, User delegateOwner) {
@@ -56,8 +56,7 @@ public class ActionService {
             return;
         } else if (delegateOwner != null && checkDelegateActionAvailable(resource, action, delegateOwner)) {
             return;
-        }
-        
+        } 
         throw new CannotExecuteActionException(resource, action);
     }
 
@@ -94,7 +93,7 @@ public class ActionService {
     }
 
     public ActionOutcome executeAction(PrismResource operativeResource, PrismResourceDynamic resource, Action action, Comment comment) {
-        validateAction(resource, action.getId(), comment.getUser(), comment.getDelegateUser());
+        validateAction(resource, action, comment.getUser(), comment.getDelegateUser());
 
         User actionOwner = comment.getUser();
 

@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ProgramDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
 
 @Service
 @Transactional
@@ -18,18 +18,18 @@ public class ProgramDetailsService {
     @Autowired
     private ApplicationCopyHelper applicationFormCopyHelper;
     
-    public ProgramDetails getOrCreate(Application application) {
-        ProgramDetails programDetails = application.getProgramDetails();
+    public ApplicationProgramDetails getOrCreate(Application application) {
+        ApplicationProgramDetails programDetails = application.getProgramDetails();
         if (programDetails == null) {
-            programDetails = new ProgramDetails();
+            programDetails = new ApplicationProgramDetails();
         }
         return programDetails;
     }
     
-    public void saveOrUpdate(Application application, ProgramDetails programDetails) {
-        ProgramDetails persistentProgramDetails = application.getProgramDetails();
+    public void saveOrUpdate(Application application, ApplicationProgramDetails programDetails) {
+        ApplicationProgramDetails persistentProgramDetails = application.getProgramDetails();
         if (persistentProgramDetails == null) {
-            persistentProgramDetails = new ProgramDetails();
+            persistentProgramDetails = new ApplicationProgramDetails();
             persistentProgramDetails.setApplication(application);
             application.setProgramDetails(persistentProgramDetails);
             applicationFormService.save(application);

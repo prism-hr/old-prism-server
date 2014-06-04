@@ -7,35 +7,36 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.ApplicationFunding;
+import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
-import com.zuehlke.pgadmissions.domain.Funding;
+import com.zuehlke.pgadmissions.domain.FundingSource;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.Passport;
-import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.TestObjectProvider;
-import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.services.AdditionalInformationService;
 import com.zuehlke.pgadmissions.services.ApplicationAddressService;
 import com.zuehlke.pgadmissions.services.ApplicationDocumentService;
 import com.zuehlke.pgadmissions.services.ApplicationQualificationService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
+import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.FundingService;
 import com.zuehlke.pgadmissions.services.PersonalDetailsService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -74,6 +75,9 @@ public class ApplicationTestDataProvider {
 
     @Autowired
     private TestObjectProvider testObjectProvider;
+    
+    @Autowired
+    private EntityService entityService;
 
     public void fillWithData(Application application) throws Exception {
         createPersonalDetails(application);
@@ -87,16 +91,15 @@ public class ApplicationTestDataProvider {
     }
 
     private void createPersonalDetails(Application application) {
-        PersonalDetails personalDetails = new PersonalDetails();
+        ApplicationPersonalDetails personalDetails = new ApplicationPersonalDetails();
         personalDetails.setGender(Gender.FEMALE);
         personalDetails.setDateOfBirth(new LocalDate().minusYears(28));
         personalDetails.setCountry(testObjectProvider.get(Country.class));
         personalDetails.setFirstNationality(testObjectProvider.get(Language.class));
         personalDetails.setSecondNationality(testObjectProvider.get(Language.class));
         personalDetails.setLanguageQualificationAvailable(true);
-        LanguageQualification languageQualification = new LanguageQualification();
-        languageQualification.setQualificationType(LanguageQualificationEnum.OTHER);
-        languageQualification.setQualificationTypeOther("I tak sie chuja nauczylem");
+        ApplicationLanguageQualification languageQualification = new ApplicationLanguageQualification();
+        languageQualification.setLanguageQualificationType(entityService.getByProperty(ImportedLanguageQualificationType.class, "code", "IELTS_ACADEMIC"));
         languageQualification.setExamDate(new LocalDate(1967, 9, 14));
         languageQualification.setOverallScore("6");
         languageQualification.setReadingScore("6");
@@ -171,8 +174,8 @@ public class ApplicationTestDataProvider {
     }
 
     private void createFunding(Application application) {
-        Funding funding = new Funding();
-        funding.setType(FundingType.SCHOLARSHIP);
+        ApplicationFunding funding = new ApplicationFunding();
+        funding.setFundingSource(entityService.getByProperty(FundingSource.class, "code", "SCHOLARSHIP"));
         funding.setDescription("Aa narucham troche kasy, niewazne skont");
         funding.setValue("2000000");
         funding.setAwardDate(new LocalDate().minusYears(1));

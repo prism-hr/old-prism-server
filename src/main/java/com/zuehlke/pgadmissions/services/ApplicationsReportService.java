@@ -19,7 +19,7 @@ import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.TableRow;
 import com.google.visualization.datasource.datatable.value.ValueType;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
+import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 
@@ -37,7 +37,7 @@ public class ApplicationsReportService {
     @Value("${application.host}") 
     private String host;
 
-    public DataTable getApplicationsReport(User user, ApplicationFilterGroup filtering, ReportFormat reportType) {
+    public DataTable getApplicationsReport(User user, Filter filtering, ReportFormat reportType) {
         // TODO implement report functionality (supposedly using query and write new tests)
         DataTable data = new DataTable();
 

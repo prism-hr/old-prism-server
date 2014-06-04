@@ -8,7 +8,6 @@ import org.junit.runner.RunWith;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.Title;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -21,8 +20,6 @@ public class ApplicationSumaryServiceTest {
     private static final String MOST_RECENT_QUALIFICATION_TITLE = "Laurea in cura del cane e del gatto";
 
     private static final String APPLICANT_PHONE_NUMBER = "+393407965218";
-
-    private static final Title APPLICANT_TITLE = Title.LORD;
 
     private static final boolean ATTENTION_IS_REQUIRED = true;
 

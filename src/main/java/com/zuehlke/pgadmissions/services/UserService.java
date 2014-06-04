@@ -15,16 +15,18 @@ import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
+import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
-import com.zuehlke.pgadmissions.mail.NotificationService;
 import com.zuehlke.pgadmissions.mail.NotificationDescriptor;
+import com.zuehlke.pgadmissions.mail.NotificationService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
@@ -51,6 +53,9 @@ public class UserService {
 
     @Autowired
     private EntityService entityService;
+    
+    @Autowired
+    private SystemService systemService;
 
     public void save(User user) {
         userDAO.save(user);
@@ -202,9 +207,11 @@ public class UserService {
         }
     }
 
-    public void setFiltering(final User user, final ApplicationFilterGroup filtering) {
-        ApplicationFilterGroup mergedFilter = filteringDAO.merge(filtering);
-        user.getUserAccount().setFilterGroup(mergedFilter);
+    public void setFiltering(final User user, final Filter filter) {
+        Filter mergedFilter = filteringDAO.merge(filter);
+        // TODO: generalise for program and project scopes
+        Scope filterScope = systemService.getSystemScope(PrismScope.APPLICATION);
+        user.getUserAccount().getFilters().put(filterScope, mergedFilter);
         userDAO.save(user);
     }
 

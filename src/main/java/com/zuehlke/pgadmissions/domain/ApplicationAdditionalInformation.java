@@ -22,7 +22,7 @@ public class ApplicationAdditionalInformation {
     private Integer id;
 
     @Column(name = "has_convictions", nullable = false)
-    private Boolean hasConvictions;
+    private boolean hasConvictions;
 
     @Column(name = "convictions_text")
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 400)
@@ -39,11 +39,11 @@ public class ApplicationAdditionalInformation {
         return id;
     }
 
-    public Boolean getHasConvictions() {
+    public boolean getHasConvictions() {
         return hasConvictions;
     }
 
-    public void setHasConvictions(Boolean hasConvictions) {
+    public void setHasConvictions(boolean hasConvictions) {
         this.hasConvictions = hasConvictions;
     }
 
@@ -68,7 +68,7 @@ public class ApplicationAdditionalInformation {
         return this;
     }
 
-    public ApplicationAdditionalInformation withHasConvictions(Boolean hasConvictions) {
+    public ApplicationAdditionalInformation withHasConvictions(boolean hasConvictions) {
         this.hasConvictions = hasConvictions;
         return this;
     }

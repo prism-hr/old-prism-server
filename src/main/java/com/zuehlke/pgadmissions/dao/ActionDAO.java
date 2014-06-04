@@ -145,7 +145,8 @@ public class ActionDAO {
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.user", "user", JoinType.INNER_JOIN).createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN)
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.isNotNull("precedence")) //
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //

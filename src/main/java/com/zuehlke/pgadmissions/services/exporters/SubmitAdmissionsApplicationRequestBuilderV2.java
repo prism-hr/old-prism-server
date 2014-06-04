@@ -53,10 +53,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.LanguageQualification;
-import com.zuehlke.pgadmissions.domain.PersonalDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
@@ -212,7 +212,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
     private NameTp buildFullName() {
         NameTp nameTp = xmlFactory.createNameTp();
-        PersonalDetails personalDetails = applicationForm.getPersonalDetails();
+        ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
         User applicant = applicationForm.getUser();
         nameTp.setSurname(applicant.getLastName());
         nameTp.setForename1(applicant.getFirstName());
@@ -236,12 +236,12 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private XMLGregorianCalendar buildDateOfBirth() {
-        PersonalDetails personalDetails = applicationForm.getPersonalDetails();
+        ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
         return buildXmlDate(personalDetails.getDateOfBirth());
     }
 
     private NationalityTp buildFirstNationality() {
-        PersonalDetails personalDetails = applicationForm.getPersonalDetails();
+        ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
         Language firstNationality = personalDetails.getFirstNationality();
 
         NationalityTp nationalityTp = xmlFactory.createNationalityTp();
@@ -268,7 +268,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private CountryTp buildCountry() {
-        PersonalDetails personalDetails = applicationForm.getPersonalDetails();
+        ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
         CountryTp countryTp = xmlFactory.createCountryTp();
         countryTp.setCode(personalDetails.getCountry().getCode());
         countryTp.setName(personalDetails.getCountry().getName());
@@ -276,7 +276,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private PassportTp buildPassport() {
-        PersonalDetails personalDetails = applicationForm.getPersonalDetails();
+        ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
         if (personalDetails.getPassportAvailable()) {
             PassportTp passportTp = xmlFactory.createPassportTp();
             passportTp.setName(personalDetails.getPassport().getName());
@@ -295,7 +295,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private DisabilityTp buildDisability() {
-        PersonalDetails personalDetails = applicationForm.getPersonalDetails();
+        ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
         DisabilityTp disabilityTp = xmlFactory.createDisabilityTp();
         disabilityTp.setCode(personalDetails.getDisability().getCode());
         disabilityTp.setName(personalDetails.getDisability().getName());
@@ -303,7 +303,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private EthnicityTp buildEthnicity() {
-        PersonalDetails personalDetails = applicationForm.getPersonalDetails();
+        ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
         EthnicityTp ethnicityTp = xmlFactory.createEthnicityTp();
         ethnicityTp.setCode(personalDetails.getEthnicity().getCode());
         ethnicityTp.setName(personalDetails.getEthnicity().getName());
@@ -311,7 +311,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private ContactDtlsTp buildHomeAddress() {
-        PersonalDetails personalDetails = applicationForm.getPersonalDetails();
+        ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
         ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
 
         AddressTp addressTp = xmlFactory.createAddressTp();
@@ -371,7 +371,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private CourseApplicationTp buildCourseApplication() {
-        ProgramDetails programmeDetails = applicationForm.getProgramDetails();
+        ApplicationProgramDetails programmeDetails = applicationForm.getProgramDetails();
         CourseApplicationTp applicationTp = xmlFactory.createCourseApplicationTp();
         applicationTp.setStartMonth(new DateTime(programmeDetails.getStartDate()));
         if (!programmeDetails.getSuggestedSupervisors().isEmpty()) {
@@ -450,7 +450,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
     private ProgrammeOccurrenceTp buildProgrammeOccurence() {
         Program program = applicationForm.getProgram();
-        ProgramDetails programmeDetails = applicationForm.getProgramDetails();
+        ApplicationProgramDetails programmeDetails = applicationForm.getProgramDetails();
         ProgrammeOccurrenceTp occurrenceTp = xmlFactory.createProgrammeOccurrenceTp();
         occurrenceTp.setCode(program.getCode());
         occurrenceTp.setModeOfAttendance(buildModeofattendance());
@@ -489,7 +489,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private ModeofattendanceTp buildModeofattendance() {
-        ProgramDetails programmeDetails = applicationForm.getProgramDetails();
+        ApplicationProgramDetails programmeDetails = applicationForm.getProgramDetails();
         ModeofattendanceTp modeofattendanceTp = xmlFactory.createModeofattendanceTp();
         modeofattendanceTp.setCode(programmeDetails.getStudyOption().getId());
         modeofattendanceTp.setName(programmeDetails.getStudyOption().getDisplayName());
@@ -497,7 +497,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private NameTp buildProposedSupervisorName(int idx) {
-        ProgramDetails programmeDetails = applicationForm.getProgramDetails();
+        ApplicationProgramDetails programmeDetails = applicationForm.getProgramDetails();
         NameTp nameTp = xmlFactory.createNameTp();
         List<SuggestedSupervisor> suggestedSupervisors = programmeDetails.getSuggestedSupervisors();
 
@@ -522,7 +522,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private SourceOfInterestTp buildSourcesOfInterest(CourseApplicationTp applicationTp) {
-        ProgramDetails programmeDetails = applicationForm.getProgramDetails();
+        ApplicationProgramDetails programmeDetails = applicationForm.getProgramDetails();
         SourceOfInterestTp interestTp = xmlFactory.createSourceOfInterestTp();
         SourcesOfInterest sourcesOfInterest = programmeDetails.getSourceOfInterest();
         if (sourcesOfInterest == null) {
@@ -539,7 +539,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private QualificationDetailsTp buildQualificationDetails() {
         QualificationDetailsTp resultList = xmlFactory.createQualificationDetailsTp();
 
-        List<ApplicationQualification> qualifications = applicationForm.getQualifications();
+        List<ApplicationQualification> qualifications = applicationForm.getApplicationQualifications();
         if (!qualifications.isEmpty()) {
             for (ApplicationQualification qualification : qualifications) {
                 QualificationsTp qualificationsTp = xmlFactory.createQualificationsTp();
@@ -599,7 +599,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
     private EmploymentDetailsTp buildEmployer() {
         EmploymentDetailsTp resultList = xmlFactory.createEmploymentDetailsTp();
-        List<ApplicationEmploymentPosition> employmentPositions = applicationForm.getEmploymentPositions();
+        List<ApplicationEmploymentPosition> employmentPositions = applicationForm.getApplicationEmploymentPositions();
         if (!employmentPositions.isEmpty()) {
             for (ApplicationEmploymentPosition employmentPosition : employmentPositions) {
                 AppointmentTp appointmentTp = xmlFactory.createAppointmentTp();
@@ -674,11 +674,11 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private EnglishLanguageQualificationDetailsTp buildEnglishLanguageQualification() {
-        PersonalDetails personalDetails = applicationForm.getPersonalDetails();
+        ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
         EnglishLanguageQualificationDetailsTp englishLanguageQualificationDetailsTp = xmlFactory.createEnglishLanguageQualificationDetailsTp();
 
         if (personalDetails.getLanguageQualificationAvailable()) {
-            LanguageQualification languageQualification = personalDetails.getLanguageQualification();
+            ApplicationLanguageQualification languageQualification = personalDetails.getLanguageQualification();
             EnglishLanguageTp englishLanguageTp = xmlFactory.createEnglishLanguageTp();
             englishLanguageTp.setDateTaken(buildXmlDate(languageQualification.getExamDate()));
 

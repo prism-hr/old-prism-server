@@ -19,17 +19,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
-import com.zuehlke.pgadmissions.domain.enums.Title;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
@@ -89,7 +88,7 @@ public class PersonalDetailsController {
     }
 
     @RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)
-    public String editPersonalDetails(@Valid PersonalDetails personalDetails, BindingResult personalDetailsResult, @Valid User updatedUser,
+    public String editPersonalDetails(@Valid ApplicationPersonalDetails personalDetails, BindingResult personalDetailsResult, @Valid User updatedUser,
             BindingResult userResult, ModelMap modelMap, @ModelAttribute Application applicationForm) {
         if (personalDetailsResult.hasErrors() || userResult.hasErrors()) {
             returnView(modelMap, personalDetails, updatedUser);
@@ -150,11 +149,6 @@ public class PersonalDetailsController {
         return Gender.values();
     }
 
-    @ModelAttribute("titles")
-    public Title[] getTitles() {
-        return Title.values();
-    }
-
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(String applicationId) {
         // TODO: check actions
@@ -166,7 +160,7 @@ public class PersonalDetailsController {
         return LanguageQualificationEnum.values();
     }
 
-    private String returnView(ModelMap modelMap, PersonalDetails personalDetails, User updatedUser) {
+    private String returnView(ModelMap modelMap, ApplicationPersonalDetails personalDetails, User updatedUser) {
         modelMap.put("personalDetails", personalDetails);
         modelMap.put("updatedUser", updatedUser);
         return TemplateLocation.APPLICATION_APPLICANT_PERSONAL_DETAIL;

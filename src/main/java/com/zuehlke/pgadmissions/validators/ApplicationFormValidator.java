@@ -11,8 +11,8 @@ import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.PersonalDetails;
-import com.zuehlke.pgadmissions.domain.ProgramDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.services.ProgramService;
 
@@ -45,8 +45,8 @@ public class ApplicationFormValidator extends AbstractValidator {
     @Override
     public void addExtraValidation(Object target, Errors errors) {
         Application applicationForm = (Application) target;
-        ProgramDetails programDetails = applicationForm.getProgramDetails();
-        PersonalDetails personalDetails = applicationForm.getPersonalDetails();
+        ApplicationProgramDetails programDetails = applicationForm.getProgramDetails();
+        ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
         ApplicationAddress applicationFormAddress = applicationForm.getApplicationAddress();
         ApplicationAdditionalInformation additionalInformation = applicationForm.getAdditionalInformation();
         ApplicationDocument applicationFormDocument = applicationForm.getApplicationDocument();

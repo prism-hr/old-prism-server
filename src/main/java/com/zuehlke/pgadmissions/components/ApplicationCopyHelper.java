@@ -12,12 +12,12 @@ import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Funding;
+import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.LanguageQualification;
+import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.Passport;
-import com.zuehlke.pgadmissions.domain.PersonalDetails;
-import com.zuehlke.pgadmissions.domain.ProgramDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.services.DocumentService;
 
@@ -30,7 +30,7 @@ public class ApplicationCopyHelper {
     @Transactional
     public void copyApplicationFormData(Application to, Application from) {
         if (from.getPersonalDetails() != null) {
-            PersonalDetails personalDetails = new PersonalDetails();
+            ApplicationPersonalDetails personalDetails = new ApplicationPersonalDetails();
             to.setPersonalDetails(personalDetails);
             personalDetails.setApplication(to);
             copyPersonalDetails(to.getPersonalDetails(), from.getPersonalDetails(), true);
@@ -43,23 +43,23 @@ public class ApplicationCopyHelper {
             copyApplicationFormAddress(to.getApplicationAddress(), from.getApplicationAddress(), true);
         }
 
-        for (ApplicationQualification fromQualification : from.getQualifications()) {
+        for (ApplicationQualification fromQualification : from.getApplicationQualifications()) {
             ApplicationQualification qualification = new ApplicationQualification();
-            to.getQualifications().add(qualification);
+            to.getApplicationQualifications().add(qualification);
             qualification.setApplication(to);
             copyQualification(qualification, fromQualification, false);
         }
 
-        for (ApplicationEmploymentPosition fromEmployment : from.getEmploymentPositions()) {
+        for (ApplicationEmploymentPosition fromEmployment : from.getApplicationEmploymentPositions()) {
             ApplicationEmploymentPosition employment = new ApplicationEmploymentPosition();
-            to.getEmploymentPositions().add(employment);
+            to.getApplicationEmploymentPositions().add(employment);
             employment.setApplication(to);
             copyEmploymentPosition(employment, fromEmployment, true);
         }
 
-        for (Funding fromFunding : from.getFundings()) {
-            Funding funding = new Funding();
-            to.getFundings().add(funding);
+        for (ApplicationFunding fromFunding : from.getApplicationFundings()) {
+            ApplicationFunding funding = new ApplicationFunding();
+            to.getApplicationFundings().add(funding);
             funding.setApplication(to);
             copyFunding(funding, fromFunding, true);
         }
@@ -86,7 +86,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    public void copyProgramDetails(ProgramDetails to, ProgramDetails from) {
+    public void copyProgramDetails(ApplicationProgramDetails to, ApplicationProgramDetails from) {
         to.setStudyOption(from.getStudyOption());
         to.setStartDate(from.getStartDate());
         to.setSourceOfInterest(from.getSourceOfInterest());
@@ -112,8 +112,8 @@ public class ApplicationCopyHelper {
         }
     }
 
-    public void copyFunding(Funding to, Funding from, boolean doPerformDeepCopy) {
-        to.setType(from.getType());
+    public void copyFunding(ApplicationFunding to, ApplicationFunding from, boolean doPerformDeepCopy) {
+        to.setFundingSource(from.getFundingSource());
         to.setDescription(from.getDescription());
         to.setValue(from.getValue());
         to.setAwardDate(from.getAwardDate());
@@ -157,7 +157,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    public void copyPersonalDetails(PersonalDetails to, PersonalDetails from, boolean doPerformDeepCopy) {
+    public void copyPersonalDetails(ApplicationPersonalDetails to, ApplicationPersonalDetails from, boolean doPerformDeepCopy) {
         to.setTitle(from.getTitle());
         to.setGender(from.getGender());
         to.setDateOfBirth(from.getDateOfBirth());
@@ -177,8 +177,8 @@ public class ApplicationCopyHelper {
             to.setLanguageQualification(copyLanguageQualification(from.getLanguageQualification()));
             to.setPassport(copyPassport(from.getPassport()));
         } else {
-            LanguageQualification toQualification = to.getLanguageQualification();
-            LanguageQualification fromQualification = from.getLanguageQualification();
+            ApplicationLanguageQualification toQualification = to.getLanguageQualification();
+            ApplicationLanguageQualification fromQualification = from.getLanguageQualification();
             Document toQualificationDocument = null;
             if (toQualification != null) {
                 toQualificationDocument = toQualification.getProofOfAward();
@@ -242,13 +242,12 @@ public class ApplicationCopyHelper {
         return to;
     }
 
-    private LanguageQualification copyLanguageQualification(LanguageQualification from) {
+    private ApplicationLanguageQualification copyLanguageQualification(ApplicationLanguageQualification from) {
         if (from == null) {
             return null;
         }
-        LanguageQualification to = new LanguageQualification();
-        to.setQualificationType(from.getQualificationType());
-        to.setQualificationTypeOther(from.getQualificationTypeOther());
+        ApplicationLanguageQualification to = new ApplicationLanguageQualification();
+        to.setLanguageQualificationType(from.getLanguageQualificationType());
         to.setExamDate(from.getExamDate());
         to.setOverallScore(from.getOverallScore());
         to.setReadingScore(from.getReadingScore());

@@ -119,7 +119,6 @@ public class PrismWorkflowIT {
         User applicant = registrationService.submitRegistration(
                 new User().withFirstName(firstName).withLastName(lastName).withEmail(email).withAccount(new UserAccount().withPassword("password")), advert);
         mailSenderMock.assertEmailSent(applicant, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
-
         applicant = registrationService.activateAccount(applicant.getActivationCode());
         return applicant;
     }

@@ -1298,13 +1298,13 @@ WHERE user_account_id IS NULL
 ;
 
 UPDATE FILTER
-SET updated_timestamp = NOW()
-WHERE updated_timestamp IS NULL
+SET last_access_timestamp = NOW()
+WHERE last_access_timestamp IS NULL
 ;
 
 ALTER TABLE FILTER
 	MODIFY COLUMN user_account_id INT(10) UNSIGNED NOT NULL,
-	MODIFY COLUMN updated_timestamp DATETIME NOT NULL
+	MODIFY COLUMN last_access_timestamp DATETIME NOT NULL
 ;
 
 ALTER TABLE USER_ACCOUNT
@@ -1319,7 +1319,7 @@ ALTER TABLE FILTER
 	ADD UNIQUE INDEX (user_account_id, scope_id)
 ;
 
-INSERT IGNORE INTO FILTER (user_account_id, scope_id, satisfy_all_conditions, sort_category, sort_order, updated_timestamp)
+INSERT IGNORE INTO FILTER (user_account_id, scope_id, satisfy_all_conditions, sort_category, sort_order, last_access_timestamp)
 	SELECT id, "APPLICATION", 0, "APPLICATION_DATE", "DESCENDING", CURRENT_TIMESTAMP()
 	FROM USER_ACCOUNT
 ;

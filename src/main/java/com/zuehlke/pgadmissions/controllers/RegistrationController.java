@@ -5,7 +5,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -114,9 +112,9 @@ public class RegistrationController {
             HttpServletRequest request, HttpSession session) {
         session.removeAttribute("CLICKED_ON_ALREADY_REGISTERED");
         User pendingUser = getPendingUser(activationCode);
-        if (pendingUser == null && !StringUtils.containsIgnoreCase(getReferrerFromHeader(request), "pgadmissions") && !isAnApplyNewRequest(request)) {
-            return RedirectLocation.LOGIN;
-        }
+//        if (pendingUser == null && !StringUtils.containsIgnoreCase(getReferrerFromHeader(request), "pgadmissions") && !isAnApplyNewRequest(request)) {
+//            return RedirectLocation.LOGIN;
+//        }
 
         // TODO perform redirection based on action column
         // if (pendingUser != null && pendingUser.getDirectToUrl() != null && pendingUser.isEnabled()) {
@@ -165,19 +163,19 @@ public class RegistrationController {
         return StringUtils.trimToEmpty(request.getHeader("referer"));
     }
 
-    private DefaultSavedRequest getDefaultSavedRequest(final HttpServletRequest request) {
-        return (DefaultSavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
-    }
-
-    private boolean isAnApplyNewRequest(final HttpServletRequest request) {
-        StringBuffer requestUrl = request.getRequestURL();
-        String requestQuery = request.getQueryString();
-        DefaultSavedRequest defaultSavedRequest = getDefaultSavedRequest(request);
-        if (defaultSavedRequest != null && StringUtils.contains(defaultSavedRequest.getRequestURL(), "/apply/new")
-                || (StringUtils.contains(requestUrl.toString(), "register")) && StringUtils.contains(requestQuery, "advert")) {
-            return true;
-        }
-        return false;
-    }
+//    private DefaultSavedRequest getDefaultSavedRequest(final HttpServletRequest request) {
+//        return (DefaultSavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
+//    }
+//
+//    private boolean isAnApplyNewRequest(final HttpServletRequest request) {
+//        StringBuffer requestUrl = request.getRequestURL();
+//        String requestQuery = request.getQueryString();
+//        DefaultSavedRequest defaultSavedRequest = getDefaultSavedRequest(request);
+//        if (defaultSavedRequest != null && StringUtils.contains(defaultSavedRequest.getRequestURL(), "/apply/new")
+//                || (StringUtils.contains(requestUrl.toString(), "register")) && StringUtils.contains(requestQuery, "advert")) {
+//            return true;
+//        }
+//        return false;
+//    }
 
 }

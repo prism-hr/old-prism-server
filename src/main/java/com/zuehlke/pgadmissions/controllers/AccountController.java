@@ -10,7 +10,6 @@ import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -129,7 +128,6 @@ public class AccountController {
             request.getSession().removeAttribute("applicationSearchDTO");
             
             UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(currentAccount, desiredAccount);
-            token.setDetails(new WebAuthenticationDetails(request));
             Authentication authentication = switchUserService.authenticate(token);
             logger.info(String.format("User [%s] is switching to [%s]", currentAccount.getEmail(), desiredAccount.getEmail()));
             SecurityContextHolder.getContext().setAuthentication(authentication);

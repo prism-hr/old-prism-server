@@ -364,7 +364,8 @@ INSERT INTO STATE_ACTION(state_id, action_id, raises_urgent_flag)
 		UNION
 	SELECT id, "PROGRAM_EXPORT_APPLICATIONS", 0
 	FROM STATE
-	WHERE parent_state_id != "PROGRAM_APPROVAL"
+	WHERE state_id LIKE "PROGRAM%"
+		AND parent_state_id NOT IN "PROGRAM_APPROVAL"
 ;
 
 INSERT INTO STATE_ACTION_ASSIGNMENT(state_action_id, role_id)

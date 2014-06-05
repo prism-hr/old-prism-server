@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,8 +8,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
 @Entity
 @Table(name = "notification_template_version")
@@ -33,8 +32,8 @@ public class NotificationTemplateVersion {
     private String content;
 
     @Column(name = "created_timestamp", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdTimestamp;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdTimestamp;
 
     public Integer getId() {
         return id;
@@ -68,11 +67,11 @@ public class NotificationTemplateVersion {
         this.content = content;
     }
 
-    public Date getCreatedTimestamp() {
+    public DateTime getCreatedTimestamp() {
         return createdTimestamp;
     }
 
-    public void setCreatedTimestamp(Date createdTimestamp) {
+    public void setCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
     }
     
@@ -96,7 +95,7 @@ public class NotificationTemplateVersion {
         return this;
     }
 
-    public NotificationTemplateVersion withCreatedTimestamp(Date createdTimestamp) {
+    public NotificationTemplateVersion withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
         return this;
     }

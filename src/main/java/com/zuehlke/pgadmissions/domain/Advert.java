@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -38,7 +39,7 @@ public abstract class Advert extends PrismResourceDynamic {
     @Column(name = "funding")
     private String funding;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", unique = true)
     private User user;
 

@@ -9,9 +9,10 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "state_duration", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "state_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "state_id" }), @UniqueConstraint(columnNames = { "program_id", "state_id" }) })
-public class StateDuration {
+@Table(name = "NOTIFICATION_REMINDER_INTERVAL", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "notification_template_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "notification_template_id" }),
+        @UniqueConstraint(columnNames = { "program_id", "notification_template_id" }) })
+public class NotificationReminderInterval {
 
     @Id
     private Integer id;
@@ -29,11 +30,11 @@ public class StateDuration {
     private Program program;
 
     @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
-    private State state;
+    @JoinColumn(name = "notification_template_id")
+    private NotificationTemplate notificationTemplate;
 
-    @Column(name = "day_duration", nullable = false)
-    private Integer duration;
+    @Column(name = "day_interval")
+    private Integer interval;
 
     public Integer getId() {
         return id;
@@ -67,20 +68,20 @@ public class StateDuration {
         this.program = program;
     }
 
-    public State getState() {
-        return state;
+    public NotificationTemplate getNotificationTemplate() {
+        return notificationTemplate;
     }
 
-    public void setState(State state) {
-        this.state = state;
+    public void setNotificationTemplate(NotificationTemplate notificationTemplate) {
+        this.notificationTemplate = notificationTemplate;
     }
 
-    public Integer getDuration() {
-        return duration;
+    public Integer getInterval() {
+        return interval;
     }
 
-    public void setDuration(Integer duration) {
-        this.duration = duration;
+    public void setInterval(Integer interval) {
+        this.interval = interval;
     }
 
 }

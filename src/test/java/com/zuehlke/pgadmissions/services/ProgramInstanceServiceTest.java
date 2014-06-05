@@ -164,7 +164,7 @@ public class ProgramInstanceServiceTest {
         verify();
 
         assertProgramInstance(returned, program, monday2013, "2013", monday2014, fullTimeOption);
-        assertThat(program.getInstances(), contains(returned));
+        assertThat(program.getProgramInstances(), contains(returned));
     }
 
     private void assertProgramInstance(ProgramInstance programInstance, Program program, LocalDate startDate, String academicYear, LocalDate deadline,

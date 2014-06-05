@@ -7,7 +7,7 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.RefereeService;
 
@@ -19,7 +19,7 @@ public class RefereePropertyEditorTest {
 
     @Test
     public void shouldLoadByIdAndSetAsValue() {
-        Referee referee = new Referee();
+        ApplicationReferee referee = new ApplicationReferee();
         EasyMock.expect(encryptionHelper.decrypt("1")).andReturn("1");
         EasyMock.expect(refereeServiceMock.getById(1)).andReturn(referee);
         EasyMock.replay(refereeServiceMock, encryptionHelper);
@@ -47,13 +47,13 @@ public class RefereePropertyEditorTest {
 
     @Test
     public void shouldReturnNullIfValueIdIsNull() {
-        editor.setValue(new Referee());
+        editor.setValue(new ApplicationReferee());
         assertNull(editor.getAsText());
     }
 
     @Test
     public void shouldReturnIsAsString() {
-        editor.setValue(new Referee().withId(5));
+        editor.setValue(new ApplicationReferee().withId(5));
         assertEquals("5", editor.getAsText());
     }
 

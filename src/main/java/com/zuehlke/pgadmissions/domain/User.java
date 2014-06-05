@@ -1,10 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -43,7 +40,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Entity
 @Table(name = "USER")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class User implements UserDetails, Comparable<User>, Serializable {
+public class User implements UserDetails, Comparable<User> {
 
     private static final long serialVersionUID = 7913035836949510857L;
 
@@ -79,15 +76,8 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     @Column(name = "activation_code", nullable = false, unique = true)
     private String activationCode;
 
-    @OneToMany(mappedBy = "user")
-    private List<Comment> comments = new ArrayList<Comment>();
-
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "registered_user_id")
-    private List<Referee> referees = new ArrayList<Referee>();
-
     @OneToMany(mappedBy = "parentUser")
-    private List<User> linkedAccounts = new ArrayList<User>();
+    private Set<User> linkedAccounts = Sets.newHashSet();
 
     @ManyToOne
     @JoinColumn(name = "parent_user_id")
@@ -163,15 +153,7 @@ public class User implements UserDetails, Comparable<User>, Serializable {
         this.activationCode = activationCode;
     }
 
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public List<Referee> getReferees() {
-        return referees;
-    }
-
-    public List<User> getLinkedAccounts() {
+    public Set<User> getLinkedAccounts() {
         return linkedAccounts;
     }
 

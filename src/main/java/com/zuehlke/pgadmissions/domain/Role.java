@@ -9,8 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -32,17 +32,16 @@ public class Role implements GrantedAuthority {
     @Id
     @Enumerated(EnumType.STRING)
     private Authority id;
-    
-    @OneToOne
+
+    @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
 
     @ManyToMany
-    @JoinTable(name = "ROLE_EXCLUSION", joinColumns = { @JoinColumn(name = "role_id", nullable = false) }, //
-            inverseJoinColumns = { @JoinColumn(name = "excluded_role_id", nullable = false) }, //
-            uniqueConstraints = { @UniqueConstraint(columnNames = { "role_id", "excluded_role_id" }) })
+    @JoinTable(name = "ROLE_EXCLUSION", joinColumns = { @JoinColumn(name = "role_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "excluded_role_id", nullable = false) }, uniqueConstraints = { @UniqueConstraint(columnNames = {
+            "role_id", "excluded_role_id" }) })
     private Set<Role> excludedRoles = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "role")
     private Set<UserRole> userRoles;
 
@@ -65,7 +64,7 @@ public class Role implements GrantedAuthority {
     public Set<UserRole> getUserRoles() {
         return userRoles;
     }
-    
+
     public Set<Role> getExcludedRoles() {
         return excludedRoles;
     }

@@ -71,14 +71,14 @@ public class EntityImportIT {
         assertTrue(otherProgram.getRequireProjectDefinition());
 
         assertThat(
-                program1.getInstances(),
+                program1.getProgramInstances(),
                 contains(equalTo(new ProgramInstance().withIdentifier("0009").withAcademicYear("2013")
                         .withStudyOption(new StudyOption().withId("F+++++").withDisplayName("Full-time"))
                         .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15))
                         .withEnabled(true))));
 
         assertThat(
-                otherProgram.getInstances(),
+                otherProgram.getProgramInstances(),
                 contains(equalTo(new ProgramInstance().withIdentifier("0014").withAcademicYear("2013")
                         .withStudyOption(new StudyOption().withId("F+++++").withDisplayName("Full-time"))
                         .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15))
@@ -100,7 +100,7 @@ public class EntityImportIT {
         assertTrue(otherProgram.getRequireProjectDefinition());
         
         assertThat(
-                program1.getInstances(),
+                program1.getProgramInstances(),
                 containsInAnyOrder(
                         equalTo(new ProgramInstance().withIdentifier("0009").withAcademicYear("2013")
                                 .withStudyOption(new StudyOption().withId("F+++++").withDisplayName("Full-time"))
@@ -111,7 +111,7 @@ public class EntityImportIT {
                                 .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15))
                                 .withEnabled(true))));
 
-        assertThat(otherProgram.getInstances(), contains(equalTo(new ProgramInstance().withIdentifier("0014").withAcademicYear("2013")
+        assertThat(otherProgram.getProgramInstances(), contains(equalTo(new ProgramInstance().withIdentifier("0014").withAcademicYear("2013")
                 .withStudyOption(new StudyOption().withId("F+++++").withDisplayName("Full-time"))
                 .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15))
                 .withEnabled(false))));

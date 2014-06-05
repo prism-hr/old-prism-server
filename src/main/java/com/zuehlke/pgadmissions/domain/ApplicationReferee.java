@@ -9,13 +9,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
-@Table(name = "APPLICATION_REFEREE")
-public class Referee {
+@Table(name = "APPLICATION_REFEREE", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "user_id" }) })
+public class ApplicationReferee {
 
     @Id
     @GeneratedValue
@@ -54,8 +55,8 @@ public class Referee {
     @Valid
     private Address address;
 
-    @Column(name = "include_in_export")
-    private Boolean includeInExport;
+    @Column(name = "include_in_export", nullable = false)
+    private Boolean includeInExport = false;
 
     public Application getApplication() {
         return application;
@@ -137,52 +138,52 @@ public class Referee {
         return includeInExport;
     }
 
-    public Referee withId(Integer id) {
+    public ApplicationReferee withId(Integer id) {
         this.id = id;
         return this;
     }
     
-    public Referee withUser(User user) {
+    public ApplicationReferee withUser(User user) {
         this.user = user;
         return this;
     }
     
-    public Referee withApplication(Application application) {
+    public ApplicationReferee withApplication(Application application) {
         this.application = application;
         return this;
     }
     
-    public Referee withComment(Comment comment) {
+    public ApplicationReferee withComment(Comment comment) {
         this.comment = comment;
         return this;
     }
     
-    public Referee withPhoneNumber(String phoneNumber) {
+    public ApplicationReferee withPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
         return this;
     }
     
-    public Referee withSkype(String skype) {
+    public ApplicationReferee withSkype(String skype) {
         this.skype = skype;
         return this;
     }
     
-    public Referee withJobEmployer(String jobEmployer) {
+    public ApplicationReferee withJobEmployer(String jobEmployer) {
         this.jobEmployer = jobEmployer;
         return this;
     }
     
-    public Referee withJobTitle(String jobTitle) {
+    public ApplicationReferee withJobTitle(String jobTitle) {
         this.jobTitle = jobTitle;
         return this;
     }
     
-    public Referee withAddress(Address address) {
+    public ApplicationReferee withAddress(Address address) {
         this.address = address;
         return this;
     }
     
-    public Referee withIncludeInExport(Boolean includeInExport) {
+    public ApplicationReferee withIncludeInExport(Boolean includeInExport) {
         this.includeInExport = includeInExport;
         return this;
     }

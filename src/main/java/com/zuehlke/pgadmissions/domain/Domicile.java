@@ -6,11 +6,6 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("DOMICILE")
 public class Domicile extends ImportedEntity {
-
-    public Domicile withId(Integer id) {
-        setId(id);
-        return this;
-    }
     
     public Domicile withCode(String code) {
         setCode(code);

@@ -92,9 +92,10 @@ public class UserIrisProfileController {
             return result;
         }
         
-        List<User> usersWithUpi = userService.getUsersWithUpi(upi);
-        List<User> linkedAccounts = currentUser.getLinkedAccounts();
-        List<User> intersection = ListUtils.subtract(usersWithUpi, linkedAccounts);
+        // FIXME write a query to do this properly
+//        List<User> usersWithUpi = userService.getUsersWithUpi(upi);
+//        Set<User> linkedAccounts = currentUser.getLinkedAccounts();
+//        List<User> intersection = ListUtils.subtract(usersWithUpi, linkedAccounts);
         
         // FIXME apply UPI
 //        if (intersection.isEmpty()) {
@@ -116,13 +117,13 @@ public class UserIrisProfileController {
     @RequestMapping(value = "/IRIS/", method = RequestMethod.DELETE, produces = "application/json")
     @ResponseBody
     public void unlinkIrisProfileForCurrentUser() {
+//      // FIXME dependent on fix above
         User currentUser = userService.getCurrentUser();
-        List<User> linkedAccounts = currentUser.getLinkedAccounts();
-        for(User account : linkedAccounts){
-            // FIXME clear current's user UPI number
-//            account.setUpi(null);
-            userService.save(account);
-        }
+//        List<User> linkedAccounts = currentUser.getLinkedAccounts();
+//        for(User account : linkedAccounts){
+////            account.setUpi(null);
+//            userService.save(account);
+//        }
         
     }
 }

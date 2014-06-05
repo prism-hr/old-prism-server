@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
-import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 
@@ -35,7 +35,7 @@ public class ApplicationFormBuilder {
     private LocalDate dueDate;
     private Boolean acceptedTerms;
     private List<ApplicationQualification> qualifications = new ArrayList<ApplicationQualification>();
-    private List<Referee> referees = new ArrayList<Referee>();
+    private List<ApplicationReferee> referees = new ArrayList<ApplicationReferee>();
     private List<ApplicationEmploymentPosition> employmentPositions = new ArrayList<ApplicationEmploymentPosition>();
     private List<ApplicationFunding> fundings = new ArrayList<ApplicationFunding>();
     private ApplicationDocument applicationFormDocument;
@@ -101,8 +101,8 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder referees(Referee... referees) {
-        for (Referee referee : referees) {
+    public ApplicationFormBuilder referees(ApplicationReferee... referees) {
+        for (ApplicationReferee referee : referees) {
             this.referees.add(referee);
         }
         return this;

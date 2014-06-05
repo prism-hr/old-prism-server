@@ -25,12 +25,12 @@ public class ActionVisibilityExclusion {
     @GeneratedValue
     private Integer id;
 
-    @JoinColumn(name = "action_id", nullable = false)
     @ManyToOne
+    @JoinColumn(name = "action_id", nullable = false)
     private Action action;
 
-    @JoinColumn(name = "role_id", nullable = false)
     @ManyToOne
+    @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
     @Enumerated(EnumType.STRING)

@@ -39,13 +39,13 @@ public class NotificationTemplate implements Serializable {
     @OneToOne
     @JoinColumn(name = "reminder_notification_template_id")
     private NotificationTemplate reminderTemplate;
-
-    @Column(name = "day_reminder_interval")
-    private Integer reminderInterval;
-
+    
     @OneToMany(mappedBy = "notificationTemplate")
-    @OrderBy("createdTimestamp")
+    @OrderBy("createdTimestamp DESC")
     private Set<NotificationTemplateVersion> versions = Sets.newLinkedHashSet();
+    
+    @OneToMany(mappedBy = "notificationTemplate")
+    private Set<NotificationReminderInterval> reminderIntervals = Sets.newHashSet();
 
     public PrismNotificationTemplate getId() {
         return id;
@@ -79,16 +79,12 @@ public class NotificationTemplate implements Serializable {
         this.reminderTemplate = reminderTemplate;
     }
 
-    public Integer getReminderInterval() {
-        return reminderInterval;
-    }
-
-    public void setReminderInterval(Integer reminderInterval) {
-        this.reminderInterval = reminderInterval;
-    }
-
     public Set<NotificationTemplateVersion> getVersions() {
         return versions;
+    }
+
+    public Set<NotificationReminderInterval> getReminderIntervals() {
+        return reminderIntervals;
     }
 
     public NotificationTemplate withId(PrismNotificationTemplate id) {
@@ -108,11 +104,6 @@ public class NotificationTemplate implements Serializable {
 
     public NotificationTemplate withReminderTemplate(NotificationTemplate reminderTemplate) {
         this.reminderTemplate = reminderTemplate;
-        return this;
-    }
-
-    public NotificationTemplate withReminderInterval(Integer reminderInterval) {
-        this.reminderInterval = reminderInterval;
         return this;
     }
 

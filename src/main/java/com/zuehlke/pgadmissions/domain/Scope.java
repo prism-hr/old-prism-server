@@ -7,11 +7,15 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 
 @Entity
 @Table(name = "SCOPE")
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class Scope {
 
     @Id

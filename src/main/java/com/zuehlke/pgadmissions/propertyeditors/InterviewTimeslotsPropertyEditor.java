@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.zuehlke.pgadmissions.domain.AppointmentTimeslot;
+import com.zuehlke.pgadmissions.domain.CommentAppointmentTimeslot;
 
 @Component
 public class InterviewTimeslotsPropertyEditor extends PropertyEditorSupport {
@@ -23,10 +23,10 @@ public class InterviewTimeslotsPropertyEditor extends PropertyEditorSupport {
             setValue(null);
             return;
         }
-        final Type scoresListType = new TypeToken<List<AppointmentTimeslot>>() {
+        final Type scoresListType = new TypeToken<List<CommentAppointmentTimeslot>>() {
         }.getType();
 
-        final List<AppointmentTimeslot> scores = gson.fromJson(text, scoresListType);
+        final List<CommentAppointmentTimeslot> scores = gson.fromJson(text, scoresListType);
         setValue(scores);
     }
 

@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
 import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
 
@@ -105,12 +104,13 @@ public class RoleDAO {
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public Role getCreatorRole(PrismAction action, PrismResource resource) {
+    public Role getResourceCreatorRole(PrismResource resource, Action createAction) {
         return (Role) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
-                .setProjection(Projections.groupProperty("role")).createAlias("stateTransition", "stateTransition", JoinType.INNER_JOIN) //
+                .setProjection(Projections.groupProperty("role")) //
+                .createAlias("stateTransition", "stateTransition", JoinType.INNER_JOIN) //
                 .createAlias("stateTransition.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", resource.getState())) //
-                .add(Restrictions.eq("stateAction.action.id", action)) //
+                .add(Restrictions.eq("stateAction.action", createAction)) //
                 .add(Restrictions.eq("type", RoleTransitionType.CREATE)) //
                 .add(Restrictions.eq("restrictToInvoker", true)).uniqueResult();
     }

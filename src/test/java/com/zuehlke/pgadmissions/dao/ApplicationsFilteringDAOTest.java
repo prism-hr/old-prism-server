@@ -25,7 +25,7 @@ public class ApplicationsFilteringDAOTest extends AutomaticRollbackTestCase {
 
         FilterConstraint filter2 = new ApplicationsFilterBuilder().searchCategory(SearchCategory.LAST_EDITED_DATE).searchPredicate(SearchPredicate.ON_DATE)
                 .searchTerm("bb").build();
-        group.getFilters().addAll(Lists.newArrayList(filter2));
+        group.getFilterConstraints().addAll(Lists.newArrayList(filter2));
         ApplicationsFilteringDAO dao = new ApplicationsFilteringDAO(sessionFactory);
         dao.merge(group);
 

@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -138,7 +138,7 @@ public class ApplicationSummaryService {
         Integer numberOfResponsed = CollectionUtils.countMatches(form.getApplicationReferees(), new Predicate() {
             @Override
             public boolean evaluate(Object object) {
-                return ((Referee) object).getComment() != null;
+                return ((ApplicationReferee) object).getComment() != null;
             }
         });
         result.put("numberOfReferences", numberOfResponsed.toString());

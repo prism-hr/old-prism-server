@@ -121,8 +121,8 @@ public class ProgramInstance {
         return this;
     }
     
-    public ProgramInstance withStudyOption(String id, String option) {
-        this.studyOption = new StudyOption(id, option);
+    public ProgramInstance withStudyOption(String id, String displayName) {
+        this.studyOption = new StudyOption(id, displayName);
         return this;
     }
 

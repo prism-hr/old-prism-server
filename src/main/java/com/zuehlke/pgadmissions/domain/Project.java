@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -35,15 +34,15 @@ public class Project extends Advert {
     @Column(name = "code", nullable = true, unique = true)
     private String code;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
 
@@ -55,7 +54,7 @@ public class Project extends Advert {
     private State state;
 
     @ManyToOne
-    @JoinColumn(name = "previous_state_id", nullable = true)
+    @JoinColumn(name = "previous_state_id")
     private State previousState;
 
     @Column(name = "due_date")

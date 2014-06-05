@@ -62,7 +62,7 @@ public class Comment {
     private String delegateRole;
 
     @ManyToOne
-    @JoinColumn(name = "action_id")
+    @JoinColumn(name = "action_id", nullable = false)
     private Action action;
 
     @Column(name = "declined_response", nullable = false)
@@ -168,6 +168,10 @@ public class Comment {
     @Column(name = "application_export_reference")
     private String exportReference;
 
+    @ManyToOne
+    @JoinColumn(name = "action_on_parent_resource_id")
+    private Action actionOnParentResource;
+    
     @Column(name = "creator_ip_address")
     private String creatorIpAddress;
 
@@ -184,11 +188,11 @@ public class Comment {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_id", nullable = false, unique = true)
-    private Set<AppointmentTimeslot> appointmentTimeslots = Sets.newHashSet();
+    private Set<CommentAppointmentTimeslot> appointmentTimeslots = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_id", nullable = false, unique = true)
-    private Set<AppointmentPreference> appointmentPreferences = Sets.newHashSet();
+    private Set<CommentAppointmentPreference> appointmentPreferences = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -253,8 +257,6 @@ public class Comment {
     public void setDelegateUser(User delegateUser) {
         this.delegateUser = delegateUser;
     }
-
-
 
     public String getDelegateRole() {
         return delegateRole;
@@ -536,6 +538,14 @@ public class Comment {
         this.creatorIpAddress = creatorIpAddress;
     }
 
+    public Action getActionOnParentResource() {
+        return actionOnParentResource;
+    }
+
+    public void setActionOnParentResource(Action actionOnParentResource) {
+        this.actionOnParentResource = actionOnParentResource;
+    }
+
     public Set<CommentAssignedUser> getCommentAssignedUsers() {
         return commentAssignedUsers;
     }
@@ -552,11 +562,11 @@ public class Comment {
         return documents;
     }
 
-    public Set<AppointmentTimeslot> getAppointmentTimeslots() {
+    public Set<CommentAppointmentTimeslot> getAppointmentTimeslots() {
         return appointmentTimeslots;
     }
 
-    public Set<AppointmentPreference> getAppointmentPreferences() {
+    public Set<CommentAppointmentPreference> getAppointmentPreferences() {
         return appointmentPreferences;
     }
 

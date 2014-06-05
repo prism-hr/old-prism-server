@@ -15,10 +15,10 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.Passport;
+import com.zuehlke.pgadmissions.domain.ApplicationPassport;
 import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
 import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
-import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.services.DocumentService;
 
 @Component
@@ -64,8 +64,8 @@ public class ApplicationCopyHelper {
             copyFunding(funding, fromFunding, true);
         }
 
-        for (Referee fromReferee : from.getApplicationReferees()) {
-            Referee referee = new Referee();
+        for (ApplicationReferee fromReferee : from.getApplicationReferees()) {
+            ApplicationReferee referee = new ApplicationReferee();
             to.getApplicationReferees().add(referee);
             referee.setApplication(to);
             copyReferee(referee, fromReferee, true);
@@ -99,7 +99,7 @@ public class ApplicationCopyHelper {
         to.setConvictionsText(from.getConvictionsText());
     }
 
-    public void copyReferee(Referee to, Referee from, boolean doPerformDeepCopy) {
+    public void copyReferee(ApplicationReferee to, ApplicationReferee from, boolean doPerformDeepCopy) {
         to.setUser(from.getUser());
         to.setJobEmployer(from.getJobEmployer());
         to.setJobTitle(from.getJobTitle());
@@ -258,11 +258,11 @@ public class ApplicationCopyHelper {
         return to;
     }
 
-    private Passport copyPassport(Passport from) {
+    private ApplicationPassport copyPassport(ApplicationPassport from) {
         if (from == null) {
             return null;
         }
-        Passport to = new Passport();
+        ApplicationPassport to = new ApplicationPassport();
         to.setNumber(from.getNumber());
         to.setName(from.getName());
         to.setIssueDate(from.getIssueDate());

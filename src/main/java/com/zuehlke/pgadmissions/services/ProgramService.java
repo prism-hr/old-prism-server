@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.CommentCustomQuestion;
-import com.zuehlke.pgadmissions.domain.CustomQuestionVersion;
+import com.zuehlke.pgadmissions.domain.CommentCustomQuestionVersion;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
@@ -93,7 +93,7 @@ public class ProgramService {
         Program program = getById(programId).getProgram();
         Action action = actionService.getById(actionId);
         CommentCustomQuestion persistentCustomQuestionDefinition = entityService.getOrCreate(new CommentCustomQuestion().withProgram(program).withAction(action));
-        CustomQuestionVersion version = new CustomQuestionVersion().withCustomQuestion(persistentCustomQuestionDefinition).withContent(definition);
+        CommentCustomQuestionVersion version = new CommentCustomQuestionVersion().withCommentCustomQuestion(persistentCustomQuestionDefinition).withContent(definition);
         entityService.save(version);
         persistentCustomQuestionDefinition.setVersion(version);
         persistentCustomQuestionDefinition.setEnabled(true);

@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -64,7 +64,7 @@ public class SwitchUserService {
         return authentication;
     }
 
-    private boolean listContainsId(User user, List<User> users) {
+    private boolean listContainsId(User user, Set<User> users) {
         for (User entry : users) {
             if (entry.getId().equals(user.getId())) {
                 return true;

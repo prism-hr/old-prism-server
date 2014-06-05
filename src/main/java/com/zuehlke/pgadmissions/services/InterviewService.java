@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.AppointmentTimeslot;
+import com.zuehlke.pgadmissions.domain.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.User;
@@ -85,9 +85,9 @@ public class InterviewService {
         InterviewService thisBean = applicationContext.getBean(InterviewService.class);
 
         Integer timeslotId = interviewConfirmDTO.getTimeslotId();
-        AppointmentTimeslot timeslot = null;
+        CommentAppointmentTimeslot timeslot = null;
         Comment assignInterviewersComment = applicationsService.getLatestStateChangeComment(applicationForm, PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
-        for (AppointmentTimeslot t : assignInterviewersComment.getAppointmentTimeslots()) {
+        for (CommentAppointmentTimeslot t : assignInterviewersComment.getAppointmentTimeslots()) {
             if (t.getId().equals(timeslotId)) {
                 timeslot = t;
             }

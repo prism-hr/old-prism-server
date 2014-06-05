@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public class ApplicationsFilteringService {
 
     public Filter getActiveApplicationFiltering() {
         Filter filtering = new Filter();
-        List<FilterConstraint> filters = filtering.getFilters();
+        Set<FilterConstraint> filters = filtering.getFilterConstraints();
         filters.add(getFilterForNonStatus(PrismState.APPLICATION_APPROVED));
         filters.add(getFilterForNonStatus(PrismState.APPLICATION_REJECTED));
         filters.add(getFilterForNonStatus(PrismState.APPLICATION_WITHDRAWN));

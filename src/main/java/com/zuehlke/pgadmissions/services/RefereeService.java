@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -46,20 +46,20 @@ public class RefereeService {
     @Autowired
     private ApplicationCopyHelper applicationFormCopyHelper;
 
-    public Referee getById(Integer id) {
-        return entityDAO.getById(Referee.class, id);
+    public ApplicationReferee getById(Integer id) {
+        return entityDAO.getById(ApplicationReferee.class, id);
     }
 
-    public void saveOrUpdate(int applicationId, Integer refereeId, Referee referee) {
+    public void saveOrUpdate(int applicationId, Integer refereeId, ApplicationReferee referee) {
         Application application = applicationDAO.getById(applicationId);
-        Referee persistentReferee;
+        ApplicationReferee persistentReferee;
         if (refereeId == null) {
-            persistentReferee = new Referee();
+            persistentReferee = new ApplicationReferee();
             persistentReferee.setApplication(application);
             application.getApplicationReferees().add(persistentReferee);
             applicationFormService.save(application);
         } else {
-            persistentReferee = entityDAO.getById(Referee.class, refereeId);
+            persistentReferee = entityDAO.getById(ApplicationReferee.class, refereeId);
         }
         applicationFormCopyHelper.copyReferee(persistentReferee, referee, false);
     }
@@ -92,7 +92,7 @@ public class RefereeService {
     // }
 
     public void delete(int refereeId) {
-        Referee referee = entityDAO.getById(Referee.class, refereeId);
+        ApplicationReferee referee = entityDAO.getById(ApplicationReferee.class, refereeId);
         referee.getApplication().getApplicationReferees().remove(referee);
     }
 
@@ -103,18 +103,18 @@ public class RefereeService {
     }
 
     public void selectForSendingToPortico(final Application applicationForm, final List<Integer> refereesSendToPortico) {
-        for (Referee referee : applicationForm.getApplicationReferees()) {
+        for (ApplicationReferee referee : applicationForm.getApplicationReferees()) {
             referee.setIncludeInExport(false);
         }
 
         for (Integer refereeId : refereesSendToPortico) {
-            Referee referee = entityDAO.getById(Referee.class, refereeId);
+            ApplicationReferee referee = entityDAO.getById(ApplicationReferee.class, refereeId);
             referee.setIncludeInExport(true);
         }
     }
 
     public Comment editReferenceComment(Application applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) {
-        Referee referee = entityDAO.getById(Referee.class, refereesAdminEditDTO.getEditedRefereeId());
+        ApplicationReferee referee = entityDAO.getById(ApplicationReferee.class, refereesAdminEditDTO.getEditedRefereeId());
         Comment reference = referee.getComment();
         reference.setContent(refereesAdminEditDTO.getComment());
         reference.setSuitableForInstitution(refereesAdminEditDTO.getSuitableForUCL());
@@ -130,11 +130,11 @@ public class RefereeService {
     }
 
     public Comment postCommentOnBehalfOfReferee(Application applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) {
-        Referee referee;
+        ApplicationReferee referee;
         if (BooleanUtils.isTrue(refereesAdminEditDTO.getContainsRefereeData())) {
             referee = createReferee(refereesAdminEditDTO, applicationForm);
         } else {
-            referee = entityDAO.getById(Referee.class, refereesAdminEditDTO.getEditedRefereeId());
+            referee = entityDAO.getById(ApplicationReferee.class, refereesAdminEditDTO.getEditedRefereeId());
         }
 
         // TODO make sure uses exists
@@ -157,11 +157,11 @@ public class RefereeService {
         return null;
     }
 
-    private Referee createReferee(RefereesAdminEditDTO refereesAdminEditDTO, Application applicationForm) {
+    private ApplicationReferee createReferee(RefereesAdminEditDTO refereesAdminEditDTO, Application applicationForm) {
         User user = userService.getOrCreateUser(refereesAdminEditDTO.getFirstname(), refereesAdminEditDTO.getLastname(),
                 refereesAdminEditDTO.getEmail());
 
-        Referee referee = new Referee();
+        ApplicationReferee referee = new ApplicationReferee();
         referee.setApplication(applicationForm);
         referee.setUser(user);
         referee.setAddress(refereesAdminEditDTO.getAddressLocation());
@@ -173,7 +173,7 @@ public class RefereeService {
         return referee;
     }
 
-    private Comment createReferenceComment(RefereesAdminEditDTO refereesAdminEditDTO, Referee referee, Application applicationForm) {
+    private Comment createReferenceComment(RefereesAdminEditDTO refereesAdminEditDTO, ApplicationReferee referee, Application applicationForm) {
         Comment referenceComment = new Comment();
         referenceComment.setApplication(applicationForm);
         referenceComment.setUser(referee.getUser());

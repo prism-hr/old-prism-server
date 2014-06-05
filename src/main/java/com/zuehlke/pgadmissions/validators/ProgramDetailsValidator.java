@@ -14,7 +14,7 @@ import org.springframework.validation.ValidationUtils;
 
 import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.services.ProgramService;
 
 @Component
@@ -37,10 +37,6 @@ public class ProgramDetailsValidator extends AbstractValidator {
 
         ApplicationProgramDetails programDetail = (ApplicationProgramDetails) target;
 
-        if (programDetail.getSourceOfInterest() != null && programDetail.getSourceOfInterest().isFreeText()) {
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "sourcesOfInterestText", EMPTY_FIELD_ERROR_MESSAGE);
-        }
-
         List<ProgramInstance> programInstances = programService.getActiveProgramInstancesForStudyOption(programDetail.getApplication().getProgram(),
                 programDetail.getStudyOption());
         if (programInstances.isEmpty()) {
@@ -61,7 +57,7 @@ public class ProgramDetailsValidator extends AbstractValidator {
         }
 
         Set<String> supervisorEmails = new HashSet<String>();
-        for (SuggestedSupervisor supervisor : programDetail.getSuggestedSupervisors()) {
+        for (ApplicationSupervisor supervisor : programDetail.getSuggestedSupervisors()) {
             if (StringUtils.isBlank(supervisor.getUser().getFirstName())) {
                 errors.rejectValue("suggestedSupervisors", EMPTY_FIELD_ERROR_MESSAGE);
             }

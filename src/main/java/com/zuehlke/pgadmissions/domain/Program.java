@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +13,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -31,8 +29,7 @@ import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
-@Table(name = "PROGRAM", uniqueConstraints = { @UniqueConstraint(columnNames = { "code", "institution_id" }),
-        @UniqueConstraint(columnNames = { "title", "institution_id" }) })
+@Table(name = "PROGRAM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Program extends Advert {
 
@@ -63,9 +60,9 @@ public class Program extends Advert {
     @Column(name = "is_imported", nullable = false)
     private boolean imported;
 
-    @OneToMany(mappedBy = "program")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "program")
     @OrderBy("applicationStartDate")
-    private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
+    private Set<ProgramInstance> programInstances = Sets.newHashSet();
 
     @ManyToOne
     @JoinColumn(name = "program_type_id", nullable = false)
@@ -111,8 +108,8 @@ public class Program extends Advert {
         this.title = title;
     }
 
-    public List<ProgramInstance> getInstances() {
-        return instances;
+    public Set<ProgramInstance> getProgramInstances() {
+        return programInstances;
     }
 
     public Boolean getRequireProjectDefinition() {
@@ -184,7 +181,7 @@ public class Program extends Advert {
     }
 
     public Program withInstances(ProgramInstance... instances) {
-        this.instances.addAll(Arrays.asList(instances));
+        this.programInstances.addAll(Arrays.asList(instances));
         return this;
     }
 

@@ -26,9 +26,9 @@ import com.zuehlke.pgadmissions.domain.FundingSource;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.Passport;
+import com.zuehlke.pgadmissions.domain.ApplicationPassport;
 import com.zuehlke.pgadmissions.domain.QualificationType;
-import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.builders.TestObjectProvider;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.services.AdditionalInformationService;
@@ -110,7 +110,7 @@ public class ApplicationTestDataProvider {
         personalDetails.setLanguageQualification(languageQualification);
         personalDetails.setResidenceCountry(testObjectProvider.get(Domicile.class));
         personalDetails.setVisaRequired(true);
-        Passport passport = new Passport();
+        ApplicationPassport passport = new ApplicationPassport();
         passport.setNumber("666");
         passport.setName("Kubus Fibinger");
         passport.setIssueDate(new LocalDate(2003, 9, 14));
@@ -184,7 +184,7 @@ public class ApplicationTestDataProvider {
 
     private void createReferees(Application application) {
         for (int i = 0; i < 3; i++) {
-            Referee referee = new Referee();
+            ApplicationReferee referee = new ApplicationReferee();
             referee.setUser(userService.getOrCreateUser("Jakis", "Polecacz", "polecacz" + UUID.randomUUID().toString() + "@email.com"));
             referee.setJobEmployer("Kozacka firma");
             referee.setJobTitle("Szef wszystkich szefow");

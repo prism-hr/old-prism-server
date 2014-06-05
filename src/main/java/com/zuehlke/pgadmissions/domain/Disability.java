@@ -16,4 +16,5 @@ public class Disability extends ImportedEntity {
         setName(name);
         return this;
     }
+    
 }

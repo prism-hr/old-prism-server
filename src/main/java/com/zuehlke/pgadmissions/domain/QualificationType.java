@@ -7,11 +7,6 @@ import javax.persistence.Entity;
 @DiscriminatorValue("QUALIFICATION_TYPE")
 public class QualificationType extends ImportedEntity {
 
-    public QualificationType withId(Integer id) {
-        setId(id);
-        return this;
-    }
-
     public QualificationType withCode(String code) {
         setCode(code);
         return this;

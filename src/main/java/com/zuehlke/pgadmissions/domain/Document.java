@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,32 +7,26 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.bouncycastle.util.Arrays;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 
 @Entity
 @Table(name = "DOCUMENT")
-public class Document implements Serializable {
-
-    private static final long serialVersionUID = -6396463075916267580L;
+public class Document {
 
     @Id
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "created_timestamp", insertable = false)
-    @Generated(GenerationTime.INSERT)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdTimestamp;
+    @Column(name = "created_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdTimestamp;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "document_type", nullable = false)
@@ -52,7 +43,7 @@ public class Document implements Serializable {
     private byte[] content;
 
     @Column(name = "is_referenced", nullable = false)
-    private boolean isReferenced;
+    private boolean isReferenced = false;
 
     @Transient
     private MultipartFile fileData;
@@ -99,11 +90,11 @@ public class Document implements Serializable {
         this.type = type;
     }
 
-    public Date getCreatedTimestamp() {
+    public DateTime getCreatedTimestamp() {
         return createdTimestamp;
     }
 
-    public void setCreatedTimestamp(Date createdTimestamp) {
+    public void setCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
     }
 
@@ -148,8 +139,8 @@ public class Document implements Serializable {
         return this;
     }
 
-    public Document withCreatedTimestamp(Date date) {
-        this.createdTimestamp = date;
+    public Document withCreatedTimestamp(DateTime dateTime) {
+        this.createdTimestamp = dateTime;
         return this;
     }
     

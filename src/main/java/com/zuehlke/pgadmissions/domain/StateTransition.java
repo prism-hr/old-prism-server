@@ -14,11 +14,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.StateTransitionEvaluation;
 
 @Entity
 @Table(name = "STATE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "transition_state_id" }) })
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class StateTransition {
 
     @Id
@@ -44,12 +48,11 @@ public class StateTransition {
     private Integer displayOrder;
 
     @Column(name = "do_post_comment", nullable = false)
-    private boolean doPostComment;
+    private boolean doPostComment = true;
 
     @ManyToMany
-    @JoinTable(name = "STATE_TRANSITION_PROPAGATION", joinColumns = { @JoinColumn(name = "state_transition_id", nullable = false) }, //
-    inverseJoinColumns = { @JoinColumn(name = "action_id", nullable = false) }, //
-    uniqueConstraints = { @UniqueConstraint(columnNames = { "state_transition_id", "action_id" }) })
+    @JoinTable(name = "STATE_TRANSITION_PROPAGATION", joinColumns = { @JoinColumn(name = "state_transition_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "action_id", nullable = false) }, uniqueConstraints = { @UniqueConstraint(columnNames = {
+            "state_transition_id", "action_id" }) })
     private Set<Action> propagatedActions = Sets.newHashSet();
 
     public Integer getId() {

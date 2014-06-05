@@ -7,7 +7,7 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
@@ -21,9 +21,9 @@ public class SuggestedSupervisorJSONPropertyEditorTest {
         EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
         EasyMock.replay(encryptionHelperMock);
         editor.setAsText("{\"id\": \"bob\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" , \"awareSupervisor\": \"YES\"}");
-        SuggestedSupervisor expected = new SuggestedSupervisor().withUser(
+        ApplicationSupervisor expected = new ApplicationSupervisor().withUser(
                 new User().withId(1).withFirstName("Mark").withLastName("Johnson").withEmail("test@gmail.com")).withAware(true);
-        SuggestedSupervisor suggestedSupervisor = (SuggestedSupervisor) editor.getValue();
+        ApplicationSupervisor suggestedSupervisor = (ApplicationSupervisor) editor.getValue();
         assertEquals(expected.getUser().getFirstName(), suggestedSupervisor.getUser().getFirstName());
         assertEquals(expected.getUser().getLastName(), suggestedSupervisor.getUser().getLastName());
         assertEquals(expected.getUser().getEmail(), suggestedSupervisor.getUser().getEmail());
@@ -57,7 +57,7 @@ public class SuggestedSupervisorJSONPropertyEditorTest {
     public void shouldReturnCorrectjsonString() {
         EasyMock.expect(encryptionHelperMock.encrypt(1)).andReturn("bob");
         EasyMock.replay(encryptionHelperMock);
-        editor.setValue(new SuggestedSupervisor().withUser(new User().withFirstName("Mark").withId(1).withLastName("Johnson").withEmail("test@gmail.com"))
+        editor.setValue(new ApplicationSupervisor().withUser(new User().withFirstName("Mark").withId(1).withLastName("Johnson").withEmail("test@gmail.com"))
                 .withAware(false));
         assertEquals("{\"id\": \"bob\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\", \"awareSupervisor\": \"NO\"}",
                 editor.getAsText());

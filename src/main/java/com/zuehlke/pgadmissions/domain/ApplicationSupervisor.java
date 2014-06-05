@@ -7,25 +7,26 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "APPLICATION_SUPERVISOR")
-public class SuggestedSupervisor {
+@Table(name = "APPLICATION_SUPERVISOR",  uniqueConstraints = { @UniqueConstraint(columnNames = { "application_program_detail_id", "user_id" }) })
+public class ApplicationSupervisor {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "application_program_detail_id", nullable = false, unique = true)
+    @JoinColumn(name = "application_program_detail_id", nullable = false)
     private ApplicationProgramDetails programDetails;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(name = "aware_of_application", nullable = false)
-    private boolean aware;
+    private boolean aware = false;
 
     public Integer getId() {
         return id;
@@ -59,22 +60,22 @@ public class SuggestedSupervisor {
         this.aware = aware;
     }
 
-    public SuggestedSupervisor withId(Integer id) {
+    public ApplicationSupervisor withId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public SuggestedSupervisor withProgramDetails(ApplicationProgramDetails programDetails) {
+    public ApplicationSupervisor withProgramDetails(ApplicationProgramDetails programDetails) {
         this.programDetails = programDetails;
         return this;
     }
 
-    public SuggestedSupervisor withUser(User user) {
+    public ApplicationSupervisor withUser(User user) {
         this.user = user;
         return this;
     }
 
-    public SuggestedSupervisor withAware(boolean aware) {
+    public ApplicationSupervisor withAware(boolean aware) {
         this.aware = aware;
         return this;
     }

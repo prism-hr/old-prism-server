@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -9,11 +10,12 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "state_duration", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "state_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "state_id" }), @UniqueConstraint(columnNames = { "program_id", "state_id" }) })
-public class StateDuration {
+@Table(name = "PROGRAM_TYPE_STUDY_DURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "program_type_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "program_type_id" }) })
+public class ProgramTypeStudyDuration {
 
     @Id
+    @GeneratedValue
     private Integer id;
 
     @ManyToOne
@@ -25,15 +27,11 @@ public class StateDuration {
     private Institution institution;
 
     @ManyToOne
-    @JoinColumn(name = "program_id")
-    private Program program;
+    @JoinColumn(name = "program_type_id", nullable = false)
+    private ProgramType programType;
 
-    @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
-    private State state;
-
-    @Column(name = "day_duration", nullable = false)
-    private Integer duration;
+    @Column(name = "month_duration", nullable = false)
+    private int monthDuration;
 
     public Integer getId() {
         return id;
@@ -59,28 +57,20 @@ public class StateDuration {
         this.institution = institution;
     }
 
-    public Program getProgram() {
-        return program;
+    public ProgramType getProgram() {
+        return programType;
     }
 
-    public void setProgram(Program program) {
-        this.program = program;
+    public void setProgramType(ProgramType programType) {
+        this.programType = programType;
     }
 
-    public State getState() {
-        return state;
+    public int getMonthDuration() {
+        return monthDuration;
     }
 
-    public void setState(State state) {
-        this.state = state;
-    }
-
-    public Integer getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Integer duration) {
-        this.duration = duration;
+    public void setMonthDuration(int monthDuration) {
+        this.monthDuration = monthDuration;
     }
 
 }

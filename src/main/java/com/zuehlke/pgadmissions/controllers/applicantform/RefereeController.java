@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
@@ -61,13 +61,13 @@ public class RefereeController {
     
     @RequestMapping(value = "/getReferee", method = RequestMethod.GET)
     public String getRefereeView(@ModelAttribute Application applicationForm, @RequestParam(required = false) Integer refereeId, ModelMap modelMap) {
-        return returnView(modelMap, refereeId != null ? refereeService.getById(refereeId) : new Referee());
+        return returnView(modelMap, refereeId != null ? refereeService.getById(refereeId) : new ApplicationReferee());
     }
 
     @RequestMapping(value = "/editReferee", method = RequestMethod.POST)
-    public String editReferee(Integer refereeId, @Valid Referee newReferee, BindingResult result, ModelMap modelMap,
+    public String editReferee(Integer refereeId, @Valid ApplicationReferee newReferee, BindingResult result, ModelMap modelMap,
             @ModelAttribute Application applicationForm) {
-        Referee referee = null;
+        ApplicationReferee referee = null;
         if (refereeId != null) {
             referee = refereeService.getById(refereeId);
         }
@@ -87,7 +87,7 @@ public class RefereeController {
 
     @RequestMapping(value = "/deleteReferee", method = RequestMethod.POST)
     public String deleteReferee(@RequestParam("id") Integer refereeId) {
-        Referee referee = refereeService.getById(refereeId);
+        ApplicationReferee referee = refereeService.getById(refereeId);
         refereeService.delete(refereeId);
         return "redirect:/update/getReferee?applicationId=" + referee.getApplication().getCode() + "&message=deleted";
     }
@@ -111,7 +111,7 @@ public class RefereeController {
         binder.registerCustomEditor(Application.class, applicationFormPropertyEditor);
     }
 
-    private String returnView(ModelMap modelMap, Referee referee) {
+    private String returnView(ModelMap modelMap, ApplicationReferee referee) {
         modelMap.put("referee", referee);
         return TemplateLocation.APPLICATION_APPLICANT_REFEREE;
     }

@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.domain;
 
-public class Title extends ImportedEntity {
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
-    public Title withId(Integer id) {
-        setId(id);
-        return this;
-    }
+@Entity
+@DiscriminatorValue("TITLE")
+public class Title extends ImportedEntity {
 
     public Title withCode(String code) {
         setCode(code);

@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.TestData;
@@ -32,7 +32,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldDeleteReferee() {
-        Referee referee = new Referee().withApplication(application).withAddress(TestData.anAddress(testObjectProvider.getDomicile())).withUser(user)
+        ApplicationReferee referee = new ApplicationReferee().withApplication(application).withAddress(TestData.anAddress(testObjectProvider.getDomicile())).withUser(user)
                 .withJobEmployer("sdfsdf").withJobEmployer("fsdsd").withPhoneNumber("hallihallo");
         save(referee);
         flushAndClearSession();
@@ -41,12 +41,12 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
         refereeDAO.delete(referee);
         flushAndClearSession();
-        assertNull(sessionFactory.getCurrentSession().get(Referee.class, id));
+        assertNull(sessionFactory.getCurrentSession().get(ApplicationReferee.class, id));
     }
 
     @Test
     public void shouldSaveReferee() throws ParseException {
-        Referee referee = new Referee().withApplication(application).withAddress(TestData.anAddress(testObjectProvider.getDomicile())).withUser(user)
+        ApplicationReferee referee = new ApplicationReferee().withApplication(application).withAddress(TestData.anAddress(testObjectProvider.getDomicile())).withUser(user)
                 .withPhoneNumber("hallihallo");
         flushAndClearSession();
 
@@ -56,7 +56,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetRefereeById() {
-        Referee referee = new Referee().withApplication(application).withAddress(TestData.anAddress(testObjectProvider.getDomicile())).withUser(user)
+        ApplicationReferee referee = new ApplicationReferee().withApplication(application).withAddress(TestData.anAddress(testObjectProvider.getDomicile())).withUser(user)
                 .withPhoneNumber("hallihallo");
         sessionFactory.getCurrentSession().save(referee);
         flushAndClearSession();

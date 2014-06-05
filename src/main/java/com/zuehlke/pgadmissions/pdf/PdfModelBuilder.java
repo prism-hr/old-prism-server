@@ -43,11 +43,11 @@ import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.Passport;
+import com.zuehlke.pgadmissions.domain.ApplicationPassport;
 import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
@@ -280,11 +280,6 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
         }
 
-        if (form.getProgramDetails().getSourceOfInterest() != null && form.getProgramDetails().getSourceOfInterest().isFreeText()) {
-            table.addCell(newTableCell("Please explain", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(form.getProgramDetails().getSourceOfInterestText(), SMALL_FONT));
-        }
-
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
@@ -297,7 +292,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             pdfDocument.add(addSectionSeparators());
         } else {
             int counter = 1;
-            for (SuggestedSupervisor supervisor : form.getProgramDetails().getSuggestedSupervisors()) {
+            for (ApplicationSupervisor supervisor : form.getProgramDetails().getSuggestedSupervisors()) {
                 table = new PdfPTable(2);
                 table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                 PdfPCell headerCell = newTableCell("Supervisor (" + counter++ + ")", SMALL_BOLD_FONT);
@@ -425,7 +420,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
 
         if (personalDetails != null && BooleanUtils.isTrue(personalDetails.getVisaRequired())) {
-            Passport passportInformation = personalDetails.getPassport();
+            ApplicationPassport passportInformation = personalDetails.getPassport();
             if (passportInformation != null) {
                 table.addCell(newTableCell("Passport Number", SMALL_BOLD_FONT));
 
@@ -808,7 +803,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             pdfDocument.add(table);
         } else {
             int counter = 1;
-            for (Referee referee : form.getApplicationReferees()) {
+            for (ApplicationReferee referee : form.getApplicationReferees()) {
                 table = new PdfPTable(2);
                 table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                 PdfPCell headerCell = newTableCell("Reference (" + counter++ + ")", SMALL_BOLD_FONT);

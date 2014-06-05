@@ -10,7 +10,7 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "COMMENT_APPOINTMENT_PREFERENCE", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "comment_appointment_timeslot_id" }) })
-public class AppointmentPreference {
+public class CommentAppointmentPreference {
 
     @Id
     @GeneratedValue
@@ -18,7 +18,7 @@ public class AppointmentPreference {
 
     @ManyToOne
     @JoinColumn(name = "comment_appointment_timeslot_id", nullable = false)
-    private AppointmentTimeslot appointmentTimeslot;
+    private CommentAppointmentTimeslot appointmentTimeslot;
 
     public Integer getId() {
         return id;
@@ -28,11 +28,11 @@ public class AppointmentPreference {
         this.id = id;
     }
 
-    public AppointmentTimeslot getAppointmentTimeslot() {
+    public CommentAppointmentTimeslot getAppointmentTimeslot() {
         return appointmentTimeslot;
     }
 
-    public void setAppointmentTimeslot(AppointmentTimeslot appointmentTimeslot) {
+    public void setAppointmentTimeslot(CommentAppointmentTimeslot appointmentTimeslot) {
         this.appointmentTimeslot = appointmentTimeslot;
     }
 

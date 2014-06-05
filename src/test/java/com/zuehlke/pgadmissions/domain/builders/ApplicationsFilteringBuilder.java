@@ -56,7 +56,7 @@ public class ApplicationsFilteringBuilder {
     public Filter build() {
         Filter filtering = new Filter();
         filtering.setId(id);
-        filtering.getFilters().addAll(filters);
+        filtering.getFilterConstraints().addAll(filters);
         filtering.setSortCategory(sortCategory);
         filtering.setSortOrder(order);
         filtering.setBlockCount(blockCount);

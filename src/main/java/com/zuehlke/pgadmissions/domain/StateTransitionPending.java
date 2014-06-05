@@ -19,23 +19,23 @@ public class StateTransitionPending {
     private Integer id;
     
     @ManyToOne
-    @JoinColumn(name = "system_id", nullable = false)
+    @JoinColumn(name = "system_id")
     private Institution system;
 
     @ManyToOne
-    @JoinColumn(name = "institution_id", nullable = false)
+    @JoinColumn(name = "institution_id")
     private Institution institution;
 
     @ManyToOne
-    @JoinColumn(name = "program_id", nullable = true)
+    @JoinColumn(name = "program_id")
     private Program program;
 
     @ManyToOne
-    @JoinColumn(name = "project_id", nullable = true)
+    @JoinColumn(name = "project_id")
     private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "application_id", nullable = true)
+    @JoinColumn(name = "application_id")
     private Application application;
 
     @ManyToOne
@@ -99,7 +99,9 @@ public class StateTransitionPending {
     }
 
     public PrismResource getResource() {
-        if (institution != null) {
+        if (system != null) {
+            return system;
+        } else if (institution != null) {
             return institution;
         } else if (program != null) {
             return program;

@@ -7,11 +7,6 @@ import javax.persistence.Entity;
 @DiscriminatorValue("NATIONALITY")
 public class Language extends ImportedEntity {
 
-    public Language withId(Integer id) {
-        setId(id);
-        return this;
-    }
-
     public Language withCode(String code) {
         setCode(code);
         return this;

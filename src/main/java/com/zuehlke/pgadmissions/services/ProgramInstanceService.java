@@ -97,7 +97,7 @@ public class ProgramInstanceService {
         ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
 
         // disable all existing instances
-        for (ProgramInstance existingInstance : program.getInstances()) {
+        for (ProgramInstance existingInstance : program.getProgramInstances()) {
             existingInstance.setEnabled(false);
         }
         // program.setState(ProgramState.PROGRAM_DEACTIVATED);
@@ -127,7 +127,7 @@ public class ProgramInstanceService {
         if (programInstance == null) {
             programInstance = new ProgramInstance();
             programInstance.setProgram(program);
-            program.getInstances().add(programInstance);
+            program.getProgramInstances().add(programInstance);
         }
 
         programInstance.setApplicationStartDate(startDate);

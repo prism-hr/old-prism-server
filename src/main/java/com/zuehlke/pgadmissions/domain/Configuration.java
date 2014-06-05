@@ -9,11 +9,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.enums.ConfigurationParameter;
 
 @Entity
-@Table(name = "CONFIGURATION")
+@Table(name = "CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "configuration_parameter_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "configuration_parameter_id" }),
+        @UniqueConstraint(columnNames = { "program_id", "configuration_parameter_id" }) })
 public class Configuration {
 
     @Id
@@ -27,10 +30,6 @@ public class Configuration {
     @ManyToOne
     @JoinColumn(name = "institution_id")
     private Institution institution;
-
-    @ManyToOne
-    @JoinColumn(name = "program_type_id")
-    private ProgramType programType;
 
     @ManyToOne
     @JoinColumn(name = "program_id")
@@ -65,14 +64,6 @@ public class Configuration {
 
     public void setInstitution(Institution institution) {
         this.institution = institution;
-    }
-
-    public ProgramType getProgramType() {
-        return programType;
-    }
-
-    public void setProgramType(ProgramType programType) {
-        this.programType = programType;
     }
 
     public Program getProgram() {

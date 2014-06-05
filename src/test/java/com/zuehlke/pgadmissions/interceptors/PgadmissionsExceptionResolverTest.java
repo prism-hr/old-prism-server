@@ -7,11 +7,11 @@ import static org.unitils.easymock.EasyMockUnitils.replay;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.httpclient.cookie.MalformedCookieException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.web.authentication.rememberme.CookieTheftException;
 import org.springframework.web.servlet.ModelAndView;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 import org.unitils.easymock.annotation.Mock;
@@ -59,7 +59,7 @@ public class PgadmissionsExceptionResolverTest {
         // GIVEN
         HttpServletRequest request = new MockHttpServletRequest();
         HttpServletResponse response = new MockHttpServletResponse();
-        CookieTheftException exception = new CookieTheftException("Cookie monster!!");
+        MalformedCookieException exception = new MalformedCookieException("Cookie monster!!");
 
         expect(userServiceMock.getCurrentUser()).andReturn(new User());
         

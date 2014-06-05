@@ -31,6 +31,10 @@ public class State {
     @JoinColumn(name = "parent_state_id", nullable = false)
     private State parentState;
     
+    @ManyToOne
+    @JoinColumn(name = "scope_id", nullable = false)
+    private Scope scope;
+    
     @OneToMany(mappedBy = "state")
     private Set<StateAction> stateActions;
     
@@ -48,6 +52,14 @@ public class State {
 
     public void setParentState(State parentState) {
         this.parentState = parentState;
+    }
+
+    public Scope getScope() {
+        return scope;
+    }
+
+    public void setScope(Scope scope) {
+        this.scope = scope;
     }
 
     public Set<StateAction> getStateActions() {

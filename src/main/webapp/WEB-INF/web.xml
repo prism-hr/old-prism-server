@@ -10,11 +10,6 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
-    <context-param>
-        <param-name>webAppRootKey</param-name>
-        <param-value>pgadmissions.root</param-value>
-    </context-param>
-    
     <listener>
         <listener-class>com.zuehlke.pgadmissions.interceptors.PortalSessionListener</listener-class>
     </listener>
@@ -41,29 +36,5 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
-    <error-page>
-        <error-code>403</error-code>
-        <location>/404</location>
-    </error-page>
-
-    <error-page>
-        <error-code>404</error-code>
-        <location>/404</location>
-    </error-page>
-
-    <error-page>
-        <error-code>500</error-code>
-        <location>/error</location>
-    </error-page>
-
-    <error-page>
-        <error-code>400</error-code>
-        <location>/400</location>
-    </error-page>
-
-    <session-config>
-        <session-timeout>120</session-timeout>
-    </session-config>
 
 </web-app>

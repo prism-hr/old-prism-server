@@ -17,12 +17,7 @@
     <bean class="com.zuehlke.pgadmissions.interceptors.Utf8Interceptor" />
     <bean class="com.zuehlke.pgadmissions.interceptors.EncryptionKeyInterceptor" />
     <bean class="com.zuehlke.pgadmissions.interceptors.ErrorLogHandlerInterceptor" />
-    <bean class="org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor">
-      <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
   </mvc:interceptors>
-
-  <mvc:resources mapping="/design/**" location="/WEB-INF/design/" cache-period="300" />
 
   <mvc:annotation-driven>
     <mvc:message-converters>
@@ -36,87 +31,8 @@
     <property name="maxInMemorySize" value="2097152" />
   </bean>
 
-  <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-    <property name="basenames">
-      <list>
-        <value>messages</value>
-        <value>tooltips</value>
-        <value>labels</value>
-        <value>email_subjects</value>
-        <value>timeline_messages</value>
-        <value>actionmessages</value>
-      </list>
-    </property>
-  </bean>
-
-
   <!-- custom exception resolver -->
   <bean class="com.zuehlke.pgadmissions.interceptors.PgadmissionsExceptionResolver">
-  </bean>
-
-  <!-- freemarker config -->
-  <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
-    <property name="templateLoaderPath" value="/WEB-INF/freemarker/" />
-    <property name="freemarkerVariables">
-      <map>
-        <entry key="encrypter" value-ref="encryptionHelper" />
-      </map>
-    </property>
-  </bean>
-
-  <bean id="freemarkerViewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
-    <property name="cache" value="true" />
-    <property name="prefix" value="" />
-    <property name="suffix" value=".ftl" />
-    <property name="contentType" value="text/html;charset=UTF-8" />
-    <property name="exposeSessionAttributes" value="true" />
-    <property name="allowSessionOverride" value="true" />
-    <property name="requestContextAttribute" value="requestContext" />
-  </bean>
-
-  <bean id="themeResolver" class="org.springframework.web.servlet.theme.FixedThemeResolver">
-    <property name="defaultThemeName" value="default" />
-  </bean>
-
-  <mvc:view-controller path="/register/complete" view-name="public/register/registration_complete" />
-  <mvc:view-controller path="/error" view-name="public/error/error" />
-  <mvc:view-controller path="/404" view-name="public/error/404" />
-  <mvc:view-controller path="/400" view-name="public/error/400" />
-
-  <bean id="domicilePropertyEditor" class="com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor">
-    <constructor-arg value="com.zuehlke.pgadmissions.domain.Domicile" />
-  </bean>
-
-  <bean class="com.zuehlke.pgadmissions.propertyeditors.GlobalPropertyEditorRegistrar">
-    <property name="countryPropertyEditor">
-      <bean class="com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor">
-        <constructor-arg value="com.zuehlke.pgadmissions.domain.Country" />
-      </bean>
-    </property>
-    <property name="languagePropertyEditor">
-      <bean class="com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor">
-        <constructor-arg value="com.zuehlke.pgadmissions.domain.Language" />
-      </bean>
-    </property>
-    <property name="disabilityPropertyEditor">
-      <bean class="com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor">
-        <constructor-arg value="com.zuehlke.pgadmissions.domain.Disability" />
-      </bean>
-    </property>
-    <property name="ethnicityPropertyEditor">
-      <bean class="com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor">
-        <constructor-arg value="com.zuehlke.pgadmissions.domain.Ethnicity" />
-      </bean>
-    </property>
-    <property name="domicilePropertyEditor" ref="domicilePropertyEditor" />
-    <property name="stringTrimmerEditor">
-      <bean class="org.springframework.beans.propertyeditors.StringTrimmerEditor">
-        <constructor-arg value="true" />
-      </bean>
-    </property>
-    <property name="localDatePropertyEditor">
-      <bean class="com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor" />
-    </property>
   </bean>
 
   <bean id="jacksonObjectMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">

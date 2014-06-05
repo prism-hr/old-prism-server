@@ -5,7 +5,7 @@ import java.beans.PropertyEditorSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.RefereeService;
 
@@ -37,9 +37,9 @@ public class RefereePropertyEditor extends PropertyEditorSupport {
 
     @Override
     public String getAsText() {
-        if (getValue() == null || ((Referee) getValue()).getId() == null) {
+        if (getValue() == null || ((ApplicationReferee) getValue()).getId() == null) {
             return null;
         }
-        return ((Referee) getValue()).getId().toString();
+        return ((ApplicationReferee) getValue()).getId().toString();
     }
 }

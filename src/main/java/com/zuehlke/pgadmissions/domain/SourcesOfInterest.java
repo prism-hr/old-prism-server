@@ -21,10 +21,5 @@ public class SourcesOfInterest extends ImportedEntity {
         setName(name);
         return this;
     }
-    
-    public boolean isFreeText() {
-        return getCode().equalsIgnoreCase("OTHER") || getCode().equalsIgnoreCase("NEWS_AD") || getCode().equalsIgnoreCase("OTH_ACAD ")
-                || getCode().equalsIgnoreCase("OTH_WEB");
-    }
 
 }

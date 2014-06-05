@@ -158,9 +158,8 @@ public class RoleService {
 
     }
 
-    public Role getResourceCreatorRole(PrismResourceDynamic resource) {
-        // TODO Auto-generated method stub
-        return null;
+    public Role getResourceCreatorRole(PrismResourceDynamic resource, Action createAction) {
+        return (Role) roleDAO.getResourceCreatorRole(resource, createAction);
     }
     
     private HashMap<User, RoleTransition> getUserCreationRoleTransitions(StateTransition stateTransition, PrismResource resource, User actionOwner, Comment comment) {

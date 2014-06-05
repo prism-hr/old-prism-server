@@ -6,6 +6,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -29,7 +30,7 @@ public class Action {
     @Enumerated(EnumType.STRING)
     private PrismActionType actionType;
     
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
     

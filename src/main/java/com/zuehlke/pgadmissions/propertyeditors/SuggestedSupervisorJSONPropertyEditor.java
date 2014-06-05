@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 
 @Component
@@ -25,7 +25,7 @@ public class SuggestedSupervisorJSONPropertyEditor extends PropertyEditorSupport
             ObjectMapper objectMapper = new ObjectMapper();
 
             Map<String, Object> properties = objectMapper.readValue(jsonString, Map.class);
-            SuggestedSupervisor supervisor = new SuggestedSupervisor();
+            ApplicationSupervisor supervisor = new ApplicationSupervisor();
             User user = new User();
             user.setFirstName(StringUtils.trim((String) properties.get("firstname")));
             user.setLastName(StringUtils.trim((String) properties.get("lastname")));
@@ -44,7 +44,7 @@ public class SuggestedSupervisorJSONPropertyEditor extends PropertyEditorSupport
         if (getValue() == null) {
             return null;
         }
-        SuggestedSupervisor supervisor = (SuggestedSupervisor) getValue();
+        ApplicationSupervisor supervisor = (ApplicationSupervisor) getValue();
         String aware = "NO";
         if (supervisor.isAware()) {
             aware = "YES";

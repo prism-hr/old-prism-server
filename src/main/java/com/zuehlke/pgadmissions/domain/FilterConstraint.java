@@ -6,8 +6,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -23,11 +21,7 @@ public class FilterConstraint {
     @GeneratedValue
     private Integer id;
     
-    @ManyToOne
-    @JoinColumn(name = "filter_id", nullable = false, insertable = false, updatable = false)
-    private Filter filter;
-    
-    @Column(name = "filter_position", nullable = false)
+    @Column(name = "filter_position_id", nullable = false)
     private int filterPosition;
 
     @Enumerated(EnumType.STRING)

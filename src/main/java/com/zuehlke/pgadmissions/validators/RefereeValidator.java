@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
@@ -26,12 +26,12 @@ public class RefereeValidator extends AbstractValidator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return Referee.class.equals(clazz);
+        return ApplicationReferee.class.equals(clazz);
     }
 
     @Override
     public void addExtraValidation(Object target, Errors errors) {
-        Referee referee = (Referee) target;
+        ApplicationReferee referee = (ApplicationReferee) target;
         if (userService.getCurrentUser().getEmail().equals(referee.getUser().getEmail())) {
             errors.rejectValue("email", "text.email.notyourself");
         }
@@ -56,7 +56,7 @@ public class RefereeValidator extends AbstractValidator {
             errors.rejectValue("addressLocation.domicile", EMPTY_FIELD_ERROR_MESSAGE);
         }
 
-        for (Referee existingReferee : referee.getApplication().getApplicationReferees()) {
+        for (ApplicationReferee existingReferee : referee.getApplication().getApplicationReferees()) {
             if (referee.getId() == null && StringUtils.equalsIgnoreCase(existingReferee.getUser().getEmail(), referee.getUser().getEmail())) {
                 errors.rejectValue("email", "assignReferee.duplicate.email");
             }

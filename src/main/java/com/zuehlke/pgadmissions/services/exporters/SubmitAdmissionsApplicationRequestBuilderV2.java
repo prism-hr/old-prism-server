@@ -54,13 +54,13 @@ import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
 import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
-import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -455,7 +455,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         occurrenceTp.setModeOfAttendance(buildModeofattendance());
 
         ProgramInstance activeInstance = null;
-        for (ProgramInstance instance : program.getInstances()) {
+        for (ProgramInstance instance : program.getProgramInstances()) {
             if (!instance.getApplicationStartDate().isBefore(new LocalDate())) {
                 if (instance.getStudyOption().getId().equals(programmeDetails.getId())) {
                     activeInstance = instance;
@@ -498,10 +498,10 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private NameTp buildProposedSupervisorName(int idx) {
         ApplicationProgramDetails programmeDetails = applicationForm.getProgramDetails();
         NameTp nameTp = xmlFactory.createNameTp();
-        List<SuggestedSupervisor> suggestedSupervisors = programmeDetails.getSuggestedSupervisors();
+        List<ApplicationSupervisor> suggestedSupervisors = programmeDetails.getSuggestedSupervisors();
 
         if (idx < suggestedSupervisors.size()) {
-            SuggestedSupervisor suggestedSupervisor = suggestedSupervisors.get(idx);
+            ApplicationSupervisor suggestedSupervisor = suggestedSupervisors.get(idx);
             nameTp.setForename1(suggestedSupervisor.getUser().getFirstName());
             nameTp.setSurname(suggestedSupervisor.getUser().getLastName());
             return nameTp;
@@ -529,9 +529,6 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         }
         interestTp.setCode(sourcesOfInterest.getCode());
         interestTp.setName(sourcesOfInterest.getName());
-        if (sourcesOfInterest.isFreeText()) {
-            applicationTp.setOtherSourceofInterest(programmeDetails.getSourceOfInterestText());
-        }
         return interestTp;
     }
 
@@ -622,8 +619,8 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         RefereeListTp resultList = xmlFactory.createRefereeListTp();
 
         // FIXME get referees to send to portico (this class should be Spring component)
-        List<Referee> referees = null; // applicationForm.getRefereesToSendToPortico();
-        for (Referee referee : referees) {
+        List<ApplicationReferee> referees = null; // applicationForm.getRefereesToSendToPortico();
+        for (ApplicationReferee referee : referees) {
             RefereeTp refereeTp = xmlFactory.createRefereeTp();
 
             refereeTp.setPosition(referee.getJobTitle());

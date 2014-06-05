@@ -5,14 +5,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import com.zuehlke.pgadmissions.domain.Passport;
+import com.zuehlke.pgadmissions.domain.ApplicationPassport;
 
 @Component
 public class PassportValidator extends AbstractValidator {
 
     @Override
     public void validate(final Object target, final Errors errors) {
-        Passport passportInformation = (Passport) target;
+        ApplicationPassport passportInformation = (ApplicationPassport) target;
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "number", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", EMPTY_FIELD_ERROR_MESSAGE);

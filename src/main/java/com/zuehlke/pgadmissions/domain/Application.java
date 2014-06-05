@@ -43,7 +43,7 @@ public class Application extends PrismResourceDynamic {
     @Column(name = "code", unique = true)
     private String code;
     
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
     
@@ -99,7 +99,7 @@ public class Application extends PrismResourceDynamic {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     @Valid
-    private List<Referee> applicationReferees = new ArrayList<Referee>();
+    private List<ApplicationReferee> applicationReferees = new ArrayList<ApplicationReferee>();
     
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_document_id", unique = true)
@@ -261,7 +261,7 @@ public class Application extends PrismResourceDynamic {
         return applicationEmploymentPositions;
     }
 
-    public List<Referee> getApplicationReferees() {
+    public List<ApplicationReferee> getApplicationReferees() {
         return applicationReferees;
     }
 
@@ -358,7 +358,7 @@ public class Application extends PrismResourceDynamic {
         return this;
     }
 
-    public Application withReferees(Referee... referees) {
+    public Application withReferees(ApplicationReferee... referees) {
         this.applicationReferees.addAll(Arrays.asList(referees));
         return this;
     }

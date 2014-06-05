@@ -80,13 +80,9 @@ public class StateService {
         setResourceDueDate(resource, comment);
 
         if (operativeResource != resource) {
-            createResource(operativeResource, resource, comment);
+            createResource(operativeResource, resource, action, comment);
         } else {
             updateResource(resource, action, comment);
-        }
-
-        if (stateTransition.isDoPostComment()) {
-            entityService.save(comment);
         }
 
         roleService.executeUserRoleTransitions(resource, stateTransition, comment);
@@ -97,6 +93,10 @@ public class StateService {
 
         if (stateTransition.getPropagatedActions().size() > 0) {
             entityService.save(new StateTransitionPending().withResource(operativeResource).withStateTransition(stateTransition));
+        }
+        
+        if (stateTransition.isDoPostComment()) {
+            entityService.save(comment);
         }
 
         return stateTransition;
@@ -166,11 +166,11 @@ public class StateService {
         resource.setDueDate(entityService.getResourceDueDate(resource, dueDate));
     }
 
-    private void createResource(PrismResource operativeResource, PrismResourceDynamic resource, Comment comment) {
+    private void createResource(PrismResource operativeResource, PrismResourceDynamic resource, Action createAction, Comment comment) {
         resource.setParentResource(operativeResource);
         entityService.save(resource);
         resource.setCode(resource.generateCode());
-        comment.setRole(roleService.getResourceCreatorRole(resource).getAuthority().toString());
+        comment.setRole(roleService.getResourceCreatorRole(resource, createAction).getAuthority().toString());
     }
 
     private void updateResource(PrismResourceDynamic resource, Action action, Comment comment) {

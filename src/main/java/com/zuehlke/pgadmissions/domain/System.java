@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.search.annotations.Indexed;
 
 import com.google.common.collect.Lists;
@@ -19,6 +21,7 @@ import com.google.common.collect.Maps;
 @Entity
 @Table(name = "SYSTEM")
 @Indexed
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class System extends PrismResource {
 
     @Id

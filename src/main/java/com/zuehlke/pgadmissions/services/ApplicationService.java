@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
@@ -106,7 +106,7 @@ public class ApplicationService {
     public List<Application> getApplicationsForList(final User user, final Filter filtering) {
         Filter userFilter = user.getUserAccount().getFilters().get(PrismScope.APPLICATION);
         if (userFilter.getBlockCount() == 1) {
-            userFilter.setUpdatedTimestamp(new DateTime());
+            userFilter.setLastAccessTimestamp(new DateTime());
         }
 
         List<Application> applications = applicationFormListDAO.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE);
@@ -155,7 +155,7 @@ public class ApplicationService {
     private void addSuggestedSupervisorsFromProject(Application application) {
         Project project = application.getProject();
         if (project != null) {
-            List<SuggestedSupervisor> suggestedSupervisors = application.getProgramDetails().getSuggestedSupervisors();
+            List<ApplicationSupervisor> suggestedSupervisors = application.getProgramDetails().getSuggestedSupervisors();
             // FIXME add sugested supervisors
 //            suggestedSupervisors.add(createSuggestedSupervisor(project.getPrimarySupervisor()));
 //            User secondarySupervisor = project.getSecondarySupervisor();
@@ -165,8 +165,8 @@ public class ApplicationService {
         }
     }
 
-    private SuggestedSupervisor createSuggestedSupervisor(User user) {
-        SuggestedSupervisor supervisor = new SuggestedSupervisor();
+    private ApplicationSupervisor createSuggestedSupervisor(User user) {
+        ApplicationSupervisor supervisor = new ApplicationSupervisor();
         supervisor.setUser(user);
         supervisor.setAware(true);
         return supervisor;

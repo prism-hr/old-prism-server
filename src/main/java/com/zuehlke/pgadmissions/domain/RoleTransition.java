@@ -10,11 +10,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
 
 @Entity
 @Table(name = "ROLE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_transition_id", "role_id", "role_transition_type_id",
         "restrict_to_action_owner", "transition_role_id" }) })
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class RoleTransition {
 
     @Id

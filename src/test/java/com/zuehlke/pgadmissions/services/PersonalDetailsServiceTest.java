@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.Passport;
+import com.zuehlke.pgadmissions.domain.ApplicationPassport;
 import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -54,7 +54,7 @@ public class PersonalDetailsServiceTest {
                 .withProofOfAward(oldQualificationDocument));
         ApplicationPersonalDetails newPersonalDetails = new ApplicationPersonalDetails()
                 .withLanguageQualification(new ApplicationLanguageQualification().withProofOfAward(newQualificationDocument)).withPassportAvailable(true)
-                .withPassportInformation(new Passport()).withId(1).withLanguageQualificationAvailable(null).withPassportAvailable(null);
+                .withPassportInformation(new ApplicationPassport()).withId(1).withLanguageQualificationAvailable(null).withPassportAvailable(null);
 
         Application applicationForm = new ApplicationFormBuilder().personalDetails(personalDetails).applicant(applicant).build();
 

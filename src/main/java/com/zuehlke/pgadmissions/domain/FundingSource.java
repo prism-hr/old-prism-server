@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.domain;
 
-public class FundingSource extends ImportedEntity {
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
-    public FundingSource withId(Integer id) {
-        setId(id);
-        return this;
-    }
+@Entity
+@DiscriminatorValue("FUNDING_SOURCE")
+public class FundingSource extends ImportedEntity {
 
     public FundingSource withCode(String code) {
         setCode(code);

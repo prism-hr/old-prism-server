@@ -36,7 +36,7 @@ public class ApplicationProgramDetails {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate startDate;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "referral_source_id", nullable = false)
     private SourcesOfInterest sourceOfInterest;
 
@@ -46,9 +46,9 @@ public class ApplicationProgramDetails {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "programme_detail_id")
     @Valid
-    private List<SuggestedSupervisor> suggestedSupervisors = new ArrayList<SuggestedSupervisor>();
+    private List<ApplicationSupervisor> suggestedSupervisors = new ArrayList<ApplicationSupervisor>();
 
-    @OneToOne(mappedBy = "programDetails")
+    @OneToOne(mappedBy = "applicationProgramDetails")
     private Application application;
 
     public Integer getId() {
@@ -91,11 +91,11 @@ public class ApplicationProgramDetails {
         this.sourceOfInterestText = sourceOfInterest;
     }
 
-    public List<SuggestedSupervisor> getSuggestedSupervisors() {
+    public List<ApplicationSupervisor> getSuggestedSupervisors() {
         return suggestedSupervisors;
     }
 
-    public void setSuggestedSupervisors(List<SuggestedSupervisor> suggestedSupervisors) {
+    public void setSuggestedSupervisors(List<ApplicationSupervisor> suggestedSupervisors) {
         this.suggestedSupervisors = suggestedSupervisors;
     }
 
@@ -132,7 +132,7 @@ public class ApplicationProgramDetails {
         return this;
     }
     
-    public ApplicationProgramDetails withSuggestedSupervisors(SuggestedSupervisor... suggestedSupervisors) {
+    public ApplicationProgramDetails withSuggestedSupervisors(ApplicationSupervisor... suggestedSupervisors) {
         this.suggestedSupervisors.addAll(Arrays.asList(suggestedSupervisors));
         return this;
     }

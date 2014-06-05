@@ -21,11 +21,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @Entity
-@Table(name = "USER_ROLE", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_id", "role_id" }), //
-        @UniqueConstraint(columnNames = { "institution_id", "user_id", "role_id" }), //
-        @UniqueConstraint(columnNames = { "program_id", "user_id", "role_id" }), //
-        @UniqueConstraint(columnNames = { "project_id", "user_id", "role_id" }), //
-        @UniqueConstraint(columnNames = { "application_id", "user_id", "role_id" }) })
+@Table(name = "USER_ROLE", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_id", "role_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "user_id", "role_id" }), @UniqueConstraint(columnNames = { "program_id", "user_id", "role_id" }),
+        @UniqueConstraint(columnNames = { "project_id", "user_id", "role_id" }), @UniqueConstraint(columnNames = { "application_id", "user_id", "role_id" }) })
 public class UserRole implements IUniqueResource {
 
     @Id

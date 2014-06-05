@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.MapKey;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -35,11 +35,11 @@ public class UserAccount {
     private String confirmPassword;
 
     @Column(name = "enabled", nullable = false)
-    private boolean enabled;
+    private boolean enabled = false;
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_account_id", nullable = false)
-    @MapKey(name = "scope")
+    @MapKeyColumn(name = "scope_id", nullable = false)
     private Map<Scope, Filter> filters = Maps.newHashMap();
 
     public String getPassword() {

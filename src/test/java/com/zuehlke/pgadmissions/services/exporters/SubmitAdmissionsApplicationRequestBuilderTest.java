@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -279,8 +279,8 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         final LocalDate dateInThePast = new LocalDate(2013, 1, 1);
 
         // suggested supervisors
-        SuggestedSupervisor suggestedSupervisor1 = new SuggestedSupervisor().withUser(new User().withFirstName("Eugeniusz").withLastName("Kowalski"));
-        SuggestedSupervisor suggestedSupervisor2 = new SuggestedSupervisor().withUser(new User().withFirstName("Genowefa").withLastName("Pigwa"));
+        ApplicationSupervisor suggestedSupervisor1 = new ApplicationSupervisor().withUser(new User().withFirstName("Eugeniusz").withLastName("Kowalski"));
+        ApplicationSupervisor suggestedSupervisor2 = new ApplicationSupervisor().withUser(new User().withFirstName("Genowefa").withLastName("Pigwa"));
         applicationForm.getProgramDetails().setSuggestedSupervisors(Arrays.asList(suggestedSupervisor1, suggestedSupervisor2));
         applicationForm.getProgramDetails().setStartDate(dateInThePast);
 

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -9,14 +10,15 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "COMMENT_CUSTOM_QUESTION_VERSION")
-public class CustomQuestionVersion {
+public class CommentCustomQuestionVersion {
 
     @Id
+    @GeneratedValue
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "comment_custom__id", nullable = false)
-    private CommentCustomQuestion customQuestion;
+    @JoinColumn(name = "comment_custom_question_id", nullable = false)
+    private CommentCustomQuestion commentCustomQuestion;
 
     @Column(name = "content", nullable = false)
     private String content;
@@ -29,12 +31,12 @@ public class CustomQuestionVersion {
         this.id = id;
     }
 
-    public CommentCustomQuestion getCustomQuestion() {
-        return customQuestion;
+    public CommentCustomQuestion getCommentCustomQuestion() {
+        return commentCustomQuestion;
     }
 
-    public void setCustomQuestion(CommentCustomQuestion customQuestion) {
-        this.customQuestion = customQuestion;
+    public void setCommentCustomVersion(CommentCustomQuestion commentCustomQuestion) {
+        this.commentCustomQuestion = commentCustomQuestion;
     }
 
     public String getContent() {
@@ -45,12 +47,12 @@ public class CustomQuestionVersion {
         this.content = content;
     }
     
-    public CustomQuestionVersion withCustomQuestion(CommentCustomQuestion customQuestion) {
-        this.customQuestion = customQuestion;
+    public CommentCustomQuestionVersion withCommentCustomQuestion(CommentCustomQuestion commentCustomQuestion) {
+        this.commentCustomQuestion = commentCustomQuestion;
         return this;
     }
     
-    public CustomQuestionVersion withContent(String content) {
+    public CommentCustomQuestionVersion withContent(String content) {
         this.content = content;
         return this;
     }

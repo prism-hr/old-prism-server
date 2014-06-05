@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicati
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -142,10 +142,10 @@ public class ExportService {
     protected void prepareApplicationForm(final Application application) {
         if (application.getState().getId() == PrismState.APPLICATION_WITHDRAWN || application.getState().getId() == PrismState.APPLICATION_REJECTED) {
             if (porticoService.getReferencesToSendToPortico(application).size() < 2) {
-                final HashMap<Integer, Referee> refereesToSend = new HashMap<Integer, Referee>();
+                final HashMap<Integer, ApplicationReferee> refereesToSend = new HashMap<Integer, ApplicationReferee>();
 
                 // try to find two referees which have provided a reference.
-                for (Referee referee : application.getApplicationReferees()) {
+                for (ApplicationReferee referee : application.getApplicationReferees()) {
                     if (refereesToSend.size() == 2) {
                         break;
                     }
@@ -159,7 +159,7 @@ public class ExportService {
                 }
 
                 // select x more referees until we've got 2
-                for (Referee referee : application.getApplicationReferees()) {
+                for (ApplicationReferee referee : application.getApplicationReferees()) {
                     if (refereesToSend.size() == 2) {
                         break;
                     }

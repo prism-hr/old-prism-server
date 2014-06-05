@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.PrismResource;
-import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -70,7 +70,7 @@ public class DeclineController {
 		}
 	}
 
-	public Referee getReferee(String activationCode, Application applicationForm) {
+	public ApplicationReferee getReferee(String activationCode, Application applicationForm) {
 		User user = userService.getUserByActivationCode(activationCode);
 		if (user == null) {
 			throw new ResourceNotFoundException();
@@ -82,7 +82,7 @@ public class DeclineController {
 	@RequestMapping(value = "/reference", method = RequestMethod.GET)
 	public String declineReference(@RequestParam String activationCode, @RequestParam String applicationId, @RequestParam(required = false) String confirmation, ModelMap modelMap) {
 	    Application applicationForm = getApplicationForm(applicationId);
-	    Referee referee = getReferee(activationCode, applicationForm);
+	    ApplicationReferee referee = getReferee(activationCode, applicationForm);
 	    User user = userService.getUserByActivationCode(activationCode);
 	    
 	    // TOTO: comment posting

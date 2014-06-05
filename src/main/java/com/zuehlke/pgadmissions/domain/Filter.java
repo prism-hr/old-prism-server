@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -21,6 +20,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
@@ -33,11 +33,11 @@ public class Filter {
     private Integer id;
     
     @ManyToOne
-    @JoinColumn(name = "user_account_id", nullable = false, updatable = false, insertable = false)
+    @JoinColumn(name = "user_account_id", updatable = false, insertable = false)
     private UserAccount userAccount;
     
     @ManyToOne
-    @JoinColumn(name = "scope_id", nullable = false, updatable = false, insertable = false)
+    @JoinColumn(name = "scope_id", updatable = false, insertable = false)
     private Scope scope;
 
     @Column(name = "satisfy_all_conditions", nullable = false)
@@ -51,14 +51,14 @@ public class Filter {
     @Enumerated(EnumType.STRING)
     private SortOrder sortOrder = SortOrder.DESCENDING;
     
-    @Column(name = "updated_timestamp", nullable = false)
+    @Column(name = "last_access_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime updatedTimestamp;
+    private DateTime lastAccessTimestamp;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "filter_id", nullable = false)
     @OrderColumn(name = "filter_position")
-    private List<FilterConstraint> filterConstraints = new ArrayList<FilterConstraint>();
+    private Set<FilterConstraint> filterConstraints = Sets.newHashSet();
     
     @Transient
     private Integer blockCount = 1;
@@ -93,10 +93,6 @@ public class Filter {
         this.satisfyAllConditions = satisfyAllConditions;
     }
 
-    public List<FilterConstraint> getFilters() {
-        return filterConstraints;
-    }
-
     public SortCategory getSortCategory() {
         return sortCategory;
     }
@@ -113,15 +109,15 @@ public class Filter {
         this.sortOrder = sortOrder;
     }
 
-    public DateTime getUpdatedTimestamp() {
-        return updatedTimestamp;
+    public DateTime getLastAccessTimestamp() {
+        return lastAccessTimestamp;
     }
 
-    public void setUpdatedTimestamp(DateTime updatedTimestamp) {
-        this.updatedTimestamp = updatedTimestamp;
+    public void setLastAccessTimestamp(DateTime lastAccessTimestamp) {
+        this.lastAccessTimestamp = lastAccessTimestamp;
     }
 
-    public List<FilterConstraint> getFilterConstraints() {
+    public Set<FilterConstraint> getFilterConstraints() {
         return filterConstraints;
     }
 

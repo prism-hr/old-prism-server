@@ -12,7 +12,7 @@ import org.joda.time.DateTime;
 
 @Entity
 @Table(name = "COMMENT_APPOINTMENT_TIMESLOT", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "timeslot_datetime" }) })
-public class AppointmentTimeslot {
+public class CommentAppointmentTimeslot {
 
     @Id
     @GeneratedValue

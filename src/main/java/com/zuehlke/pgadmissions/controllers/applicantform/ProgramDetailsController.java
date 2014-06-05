@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
@@ -109,7 +109,7 @@ public class ProgramDetailsController {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(Application.class, applicationFormPropertyEditor);
-        binder.registerCustomEditor(SuggestedSupervisor.class, supervisorJSONPropertyEditor);
+        binder.registerCustomEditor(ApplicationSupervisor.class, supervisorJSONPropertyEditor);
         binder.registerCustomEditor(SourcesOfInterest.class, sourcesOfInterestPropertyEditor);
     }
 

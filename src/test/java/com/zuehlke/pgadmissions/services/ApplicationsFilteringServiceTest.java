@@ -31,7 +31,7 @@ public class ApplicationsFilteringServiceTest {
     public void shouldReturnActiveApplicationFiltering() {
         User user = new User();
         Filter actualFiltering = service.getDefaultApplicationFiltering(user);
-        Assert.assertEquals(3, actualFiltering.getFilters().size());
+        Assert.assertEquals(3, actualFiltering.getFilterConstraints().size());
     }
 
     @Before

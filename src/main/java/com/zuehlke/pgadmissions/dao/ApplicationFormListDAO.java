@@ -127,7 +127,7 @@ public class ApplicationFormListDAO {
             boolean useDisjunction = filtering.isSatisfyAllConditions();
 
             List<Criterion> criterions = new ArrayList<Criterion>();
-            for (FilterConstraint filter : filtering.getFilters()) {
+            for (FilterConstraint filter : filtering.getFilterConstraints()) {
                 SearchCategory searchCategory = filter.getSearchCategory();
                 String searchTerm = filter.getSearchTerm();
 

@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,9 +13,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
 @Table(name = "APPLICATION_PASSPORT")
-public class Passport implements Serializable {
-
-    private static final long serialVersionUID = 633405865707537799L;
+public class ApplicationPassport {
 
     @Id
     @GeneratedValue
@@ -79,22 +75,22 @@ public class Passport implements Serializable {
         this.expiryDate = expiryDate;
     }
 
-    public Passport withNumber(String number) {
+    public ApplicationPassport withNumber(String number) {
         this.number = number;
         return this;
     }
 
-    public Passport withName(String name) {
+    public ApplicationPassport withName(String name) {
         this.name = name;
         return this;
     }
 
-    public Passport withIssueDate(LocalDate issueDate) {
+    public ApplicationPassport withIssueDate(LocalDate issueDate) {
         this.issueDate = issueDate;
         return this;
     }
 
-    public Passport withExpiryDate(LocalDate expiryDate) {
+    public ApplicationPassport withExpiryDate(LocalDate expiryDate) {
         this.expiryDate = expiryDate;
         return this;
     }

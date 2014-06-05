@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import java.io.IOException;
-import java.util.Date;
 
 import org.apache.commons.io.FileUtils;
 import org.hibernate.SessionFactory;
@@ -32,11 +31,11 @@ import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.Passport;
+import com.zuehlke.pgadmissions.domain.ApplicationPassport;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.QualificationType;
-import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
@@ -61,8 +60,8 @@ public class ValidApplicationFormBuilder {
     protected Address address;
     protected Comment referenceComment1;
     protected Comment referenceComment2;
-    protected Referee refereeOne;
-    protected Referee refereeTwo;
+    protected ApplicationReferee refereeOne;
+    protected ApplicationReferee refereeTwo;
     protected ApplicationEmploymentPosition employmentPosition;
     protected Language language;
     protected Disability disability;
@@ -90,7 +89,7 @@ public class ValidApplicationFormBuilder {
     protected Document getRandomDocument(DocumentType docType, String filename, User user) {
         try {
             Resource testFileAsResurce = new ClassPathResource("/pdf/valid.pdf");
-            Document document = new Document().withCreatedTimestamp(new Date()).withContentType("application/pdf").withFileName(filename)
+            Document document = new Document().withCreatedTimestamp(new DateTime()).withContentType("application/pdf").withFileName(filename)
                     .withContent(FileUtils.readFileToByteArray(testFileAsResurce.getFile())).withType(docType);
             return document;
         } catch (IOException e) {
@@ -130,10 +129,10 @@ public class ValidApplicationFormBuilder {
         // .suitableForUcl(true).user(user).build();
         // referenceComment2 = new ReferenceCommentBuilder().comment("Hello From Jane").document(referenceDocument).providedBy(user).suitableForProgramme(true)
         // .suitableForUcl(true).user(user).build();
-        refereeOne = new Referee().withId(Integer.MAX_VALUE - 1).withUser(approverUser).withAddress(TestData.anAddress(domicile))
+        refereeOne = new ApplicationReferee().withId(Integer.MAX_VALUE - 1).withUser(approverUser).withAddress(TestData.anAddress(domicile))
                 .withJobEmployer("Zuhlke Engineering Ltd.").withJobTitle("Software Engineer").withSkype("skypeAddress").withPhoneNumber("+44 (0) 123 123 1234")
                 .withIncludeInExport(true).withComment(referenceComment1);
-        refereeTwo = new Referee().withId(Integer.MAX_VALUE - 2).withUser(approverUser).withAddress(TestData.anAddress(domicile))
+        refereeTwo = new ApplicationReferee().withId(Integer.MAX_VALUE - 2).withUser(approverUser).withAddress(TestData.anAddress(domicile))
                 .withJobEmployer("Zuhlke Engineering Ltd.").withJobTitle("Software Engineer").withSkype("skypeAddress").withPhoneNumber("+44 (0) 123 123 1234")
                 .withIncludeInExport(true).withComment(referenceComment2);
         refereeOne.setComment(referenceComment1);
@@ -153,7 +152,7 @@ public class ValidApplicationFormBuilder {
                 .withGender(Gender.MALE)
                 .withRequiresVisa(true)
                 .withPassportInformation(
-                        new Passport().withNumber("000").withName("Kevin Francis Denver").withExpiryDate(new LocalDate().plusYears(20))
+                        new ApplicationPassport().withNumber("000").withName("Kevin Francis Denver").withExpiryDate(new LocalDate().plusYears(20))
                                 .withIssueDate(new LocalDate().minusYears(10)))
                 .withLanguageQualificationAvailable(true)
                 .withLanguageQualification(

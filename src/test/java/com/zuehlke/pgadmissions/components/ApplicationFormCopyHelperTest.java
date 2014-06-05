@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
@@ -97,7 +97,7 @@ public class ApplicationFormCopyHelperTest {
         }
 
         i = 0;
-        for (Referee referee : applicationForm.getApplicationReferees()) {
+        for (ApplicationReferee referee : applicationForm.getApplicationReferees()) {
             referee.setId(i); // hack for validator
             bindingResult.pushNestedPath("referees[" + (i++) + "]");
             ValidationUtils.invokeValidator(refereeValidator, referee, bindingResult);

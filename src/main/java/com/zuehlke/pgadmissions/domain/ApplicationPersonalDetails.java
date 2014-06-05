@@ -58,17 +58,17 @@ public class ApplicationPersonalDetails {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_passport_id")
     @Valid
-    private Passport passport;
+    private ApplicationPassport passport;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "nationality_id1", nullable = false)
     private Language firstNationality;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "nationality_id2")
     private Language secondNationality;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "title_id", nullable = false)
     private Title title;
 
@@ -96,7 +96,7 @@ public class ApplicationPersonalDetails {
     @JoinColumn(name = "domicile_id", nullable = false)
     private Domicile residenceCountry;
 
-    @OneToOne(mappedBy = "personalDetails")
+    @OneToOne(mappedBy = "applicationPersonalDetails")
     private Application application = null;
 
     public void setId(Integer id) {
@@ -230,11 +230,11 @@ public class ApplicationPersonalDetails {
         this.passportAvailable = passportAvailable;
     }
 
-    public Passport getPassport() {
+    public ApplicationPassport getPassport() {
         return passport;
     }
 
-    public void setPassport(Passport passport) {
+    public void setPassport(ApplicationPassport passport) {
         this.passport = passport;
     }
 
@@ -324,7 +324,7 @@ public class ApplicationPersonalDetails {
         return this;
     }
 
-    public ApplicationPersonalDetails withPassportInformation(Passport passportInformation) {
+    public ApplicationPersonalDetails withPassportInformation(ApplicationPassport passportInformation) {
         this.passport = passportInformation;
         return this;
     }

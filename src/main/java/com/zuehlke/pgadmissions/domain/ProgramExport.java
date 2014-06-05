@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain;
 
 import static javax.persistence.CascadeType.ALL;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -24,9 +23,7 @@ import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
 
 @Entity
 @Table(name = "program_export", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "title" }) })
-public class ProgramExport implements Serializable {
-
-    private static final long serialVersionUID = 2739581666640036046L;
+public class ProgramExport {
 
     @Id
     @GeneratedValue

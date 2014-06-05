@@ -11,9 +11,30 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
+import org.apache.solr.analysis.LowerCaseFilterFactory;
+import org.apache.solr.analysis.SnowballPorterFilterFactory;
+import org.apache.solr.analysis.StandardTokenizerFactory;
+import org.apache.solr.analysis.StopFilterFactory;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.AnalyzerDef;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Parameter;
+import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.TokenFilterDef;
+import org.hibernate.search.annotations.TokenizerDef;
+
+@AnalyzerDef(name = "importedLanguageQualificationTypeNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
+    @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
+    @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
+    @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class) })
 @Entity
 @Table(name = "IMPORTED_LANGUAGE_QUALIFICATION_TYPE", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "code" }),
         @UniqueConstraint(columnNames = { "institution_id", "name" }) })
+@Indexed
 public class ImportedLanguageQualificationType {
 
     @Id
@@ -28,6 +49,7 @@ public class ImportedLanguageQualificationType {
     private String code;
 
     @Column(name = "name", nullable = false)
+    @Field(analyzer = @Analyzer(definition = "importedLanguageQualificationTypeNameAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String name;
 
     @Column(name = "minimum_overall_score")

@@ -12,10 +12,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Entity
 @Table(name = "STATE")
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class State {
 
     @Id

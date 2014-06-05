@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Date;
-
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +35,7 @@ public class NotificationTemplateService {
 
         templateVersion.setContent(content);
         templateVersion.setSubject(subject);
-        templateVersion.setCreatedTimestamp(new Date());
+        templateVersion.setCreatedTimestamp(new DateTime());
 
         return templateVersion;
     }

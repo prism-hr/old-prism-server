@@ -1278,13 +1278,13 @@ ALTER TABLE FILTER
 	ADD COLUMN user_account_id INT(10) UNSIGNED AFTER id,
 	ADD INDEX (user_account_id),
 	ADD FOREIGN KEY (user_account_id) REFERENCES USER_ACCOUNT (id),
-	ADD COLUMN updated_timestamp DATETIME
+	ADD COLUMN last_access_timestamp DATETIME
 ;
 
 UPDATE FILTER INNER JOIN USER_ACCOUNT
 	ON FILTER.id = USER_ACCOUNT.application_filter_group_id
 SET FILTER.user_account_id = USER_ACCOUNT.id,
-	FILTER.updated_timestamp = USER_ACCOUNT.application_list_last_access_timestamp
+	FILTER.last_access_timestamp = USER_ACCOUNT.application_list_last_access_timestamp
 ;
 
 DELETE APPLICATION_FILTER.* 
@@ -1359,8 +1359,8 @@ CREATE TABLE IMPORTED_LANGUAGE_QUALIFICATION_TYPE (
 	maximum_listening_score DECIMAL(5,2),
 	enabled INT(1) UNSIGNED NOT NULL,
 	PRIMARY KEY (id),
-	UNIQUE INDEX institution_id (institution_id, code),
-	UNIQUE INDEX institution_id_2 (institution_id, name),
+	UNIQUE INDEX (institution_id, code),
+	UNIQUE INDEX (institution_id, name),
 	INDEX (institution_id, enabled),
 	FOREIGN KEY (institution_id) REFERENCES INSTITUTION (id)
 ) ENGINE = INNODB
@@ -1421,4 +1421,80 @@ ALTER TABLE APPLICATION_LANGUAGE_QUALIFICATION
 
 DELETE FROM IMPORTED_ENTITY
 WHERE imported_entity_type_id = "LANGUAGE_QUALIFICATION_TYPE"
+;
+
+/* More tidying up */
+
+ALTER TABLE COMMENT_CUSTOM_QUESTION
+	DROP INDEX program_id,
+	ADD UNIQUE INDEX (program_id, action_id)
+;
+
+ALTER TABLE CONFIGURATION
+	MODIFY COLUMN program_id INT(10) UNSIGNED AFTER institution_id
+;
+
+ALTER TABLE DOCUMENT
+	MODIFY COLUMN created_timestamp DATETIME NOT NULL
+;
+
+ALTER TABLE NOTIFICATION_TEMPLATE_VERSION
+	MODIFY COLUMN created_timestamp DATETIME NOT NULL
+;
+
+ALTER TABLE STATE_DURATION
+	CHANGE COLUMN day_expiry_duration day_duration INT(3) UNSIGNED NOT NULL
+;
+
+/* Configurable reminder duration */
+
+CREATE TABLE NOTIFICATION_REMINDER_INTERVAL (
+	id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	system_id INT(10) UNSIGNED,
+	institution_id INT(10) UNSIGNED,
+	program_id INT(10) UNSIGNED,
+	notification_template_id VARCHAR(100) NOT NULL,
+	day_interval INT(3) UNSIGNED,
+	PRIMARY KEY (id),
+	UNIQUE INDEX (system_id, notification_template_id),
+	UNIQUE INDEX (institution_id, notification_template_id),
+	UNIQUE INDEX (program_id, notification_template_id),
+	INDEX (notification_template_id),
+	FOREIGN KEY (system_id) REFERENCES SYSTEM (id),
+	FOREIGN KEY (institution_id) REFERENCES INSTITUTION (id),
+	FOREIGN KEY (program_id) REFERENCES PROGRAM (id),
+	FOREIGN KEY (notification_template_id) REFERENCES NOTIFICATION_TEMPLATE (id)
+) ENGINE = INNODB
+;
+
+INSERT INTO NOTIFICATION_REMINDER_INTERVAL (system_id, notification_template_id, day_interval)
+	SELECT 1, id, day_reminder_interval
+	FROM NOTIFICATION_TEMPLATE
+	WHERE day_reminder_interval IS NOT NULL
+;
+
+INSERT INTO NOTIFICATION_REMINDER_INTERVAL (institution_id, notification_template_id, day_interval)
+	SELECT 5243, id, day_reminder_interval
+	FROM NOTIFICATION_TEMPLATE
+	WHERE day_reminder_interval IS NOT NULL
+;
+
+INSERT INTO NOTIFICATION_REMINDER_INTERVAL (program_id, notification_template_id, day_interval)
+	SELECT PROGRAM.id, NOTIFICATION_TEMPLATE.id, NOTIFICATION_TEMPLATE.day_reminder_interval
+	FROM NOTIFICATION_TEMPLATE INNER JOIN PROGRAM
+	WHERE NOTIFICATION_TEMPLATE.day_reminder_interval IS NOT NULL
+;
+
+ALTER TABLE NOTIFICATION_TEMPLATE
+	DROP COLUMN day_reminder_interval
+;
+
+/* Fix problems in state transition pending table */
+
+ALTER TABLE STATE_TRANSITION_PENDING
+	MODIFY COLUMN system_id INT(10) UNSIGNED,
+	MODIFY COLUMN institution_id INT(10) UNSIGNED,
+	MODIFY COLUMN program_id INT(10) UNSIGNED,
+	MODIFY COLUMN project_id INT(10) UNSIGNED,
+	MODIFY COLUMN application_id INT(10) UNSIGNED
 ;

@@ -19,8 +19,7 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 @Service
 @Transactional
 public class RegistrationService {
-    // TODO fix tests
-
+    
     @Autowired
     private EncryptionUtils encryptionUtils;
 

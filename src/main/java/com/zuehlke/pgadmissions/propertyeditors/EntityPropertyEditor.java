@@ -5,9 +5,11 @@ import java.beans.PropertyEditorSupport;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.services.EntityService;
 
+@Component
 public class EntityPropertyEditor<E> extends PropertyEditorSupport {
 
     private Class<E> entityClass;
@@ -15,9 +17,9 @@ public class EntityPropertyEditor<E> extends PropertyEditorSupport {
     @Autowired
     private EntityService entityService;
 
-    public EntityPropertyEditor(Class<E> entityClass) {
-        this.entityClass = entityClass;
-    }
+//    public EntityPropertyEditor(Class<E> entityClass) {
+//        this.entityClass = entityClass;
+//    }
 
     @Override
     public void setAsText(String strId) throws IllegalArgumentException {

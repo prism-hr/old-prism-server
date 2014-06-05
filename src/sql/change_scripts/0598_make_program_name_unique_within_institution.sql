@@ -1,0 +1,3 @@
+ALTER TABLE PROGRAM
+ADD CONSTRAINT UNIQUE (institution_id, title)
+;

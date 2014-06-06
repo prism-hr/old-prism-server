@@ -13,25 +13,25 @@ import com.zuehlke.pgadmissions.domain.User;
 @Service
 public class PgAdmissionUserDetailsService implements UserDetailsService {
 
-	private final UserDAO userDAO;
+    private final UserDAO userDAO;
 
-	public PgAdmissionUserDetailsService() {
-	    this(null);
-	}
-	
-	@Autowired
-	public PgAdmissionUserDetailsService(UserDAO userDAO) {
-		this.userDAO = userDAO;
-	}
+    public PgAdmissionUserDetailsService() {
+        this(null);
+    }
 
-	@Override
-	@Transactional
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = userDAO.getUserByEmail(username);
-		if(user == null){
-			throw new UsernameNotFoundException(username);
-		}
-		return user;
-	}
+    @Autowired
+    public PgAdmissionUserDetailsService(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
+
+    @Override
+    @Transactional
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userDAO.getUserByEmail(username);
+        if (user == null) {
+            throw new UsernameNotFoundException(username);
+        }
+        return user;
+    }
 
 }

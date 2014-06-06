@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.enums.StateTransitionEvaluation;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -165,6 +166,14 @@ public class StateDAO {
         }
 
         return escalations;
+    }
+    
+    public StateTransitionEvaluation getStateTransitionEvaluationByStateAction(StateAction stateAction) {
+        return (StateTransitionEvaluation) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
+                .setProjection(Projections.property("stateTransitionEvaluation")) //
+                .add(Restrictions.isNotNull("stateTransitionEvaluation")) //
+                .setMaxResults(1) //
+                .uniqueResult();
     }
 
 }

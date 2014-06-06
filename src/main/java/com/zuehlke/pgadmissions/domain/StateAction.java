@@ -46,6 +46,9 @@ public class StateAction  {
 
     @OneToMany(mappedBy = "stateAction")
     private Set<StateActionAssignment> stateActionAssignments = new HashSet<StateActionAssignment>();
+    
+    @OneToMany(mappedBy = "stateAction")
+    private Set<StateActionNotification> stateActionNotifications = new HashSet<StateActionNotification>();
 
     @OneToMany(mappedBy = "stateAction")
     private Set<StateTransition> stateTransitions = new HashSet<StateTransition>();
@@ -108,6 +111,14 @@ public class StateAction  {
 
     public Set<StateActionAssignment> getStateActionAssignments() {
         return stateActionAssignments;
+    }
+
+    public Set<StateActionNotification> getStateActionNotifications() {
+        return stateActionNotifications;
+    }
+
+    public void setStateActionNotifications(Set<StateActionNotification> stateActionNotifications) {
+        this.stateActionNotifications = stateActionNotifications;
     }
 
     public Set<StateTransition> getStateTransitions() {

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,10 @@ public class SystemService {
     
     public Scope getSystemScope(PrismScope scopeId) {
         return entityService.getByProperty(Scope.class, "id", scopeId);
+    }
+    
+    public List<Scope> getAllScopes() {
+        return entityService.getAll(Scope.class);
     }
     
 }

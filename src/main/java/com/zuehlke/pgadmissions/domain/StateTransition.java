@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -49,6 +50,9 @@ public class StateTransition {
 
     @Column(name = "do_post_comment", nullable = false)
     private boolean doPostComment = true;
+    
+    @OneToMany(mappedBy = "stateTransition")
+    private Set<RoleTransition> roleTransitions = Sets.newHashSet();
 
     @ManyToMany
     @JoinTable(name = "STATE_TRANSITION_PROPAGATION", joinColumns = { @JoinColumn(name = "state_transition_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "action_id", nullable = false) }, uniqueConstraints = { @UniqueConstraint(columnNames = {
@@ -109,6 +113,14 @@ public class StateTransition {
 
     public void setDoPostComment(boolean doPostComment) {
         this.doPostComment = doPostComment;
+    }
+
+    public Set<RoleTransition> getRoleTransitions() {
+        return roleTransitions;
+    }
+
+    public void setRoleTransitions(Set<RoleTransition> roleTransitions) {
+        this.roleTransitions = roleTransitions;
     }
 
     public Set<Action> getPropagatedActions() {

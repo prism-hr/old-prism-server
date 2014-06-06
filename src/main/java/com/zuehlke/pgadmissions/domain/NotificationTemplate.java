@@ -16,6 +16,7 @@ import javax.persistence.Table;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.enums.PrismNotificationType;
 
 @Entity
 @Table(name = "NOTIFICATION_TEMPLATE")
@@ -30,7 +31,7 @@ public class NotificationTemplate implements Serializable {
 
     @Column(name = "notification_type_id", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrismNotificationTemplate notificationTemplateType;
+    private PrismNotificationType notificationType;
 
     @OneToOne
     @JoinColumn(name = "notification_template_version_id")
@@ -55,12 +56,12 @@ public class NotificationTemplate implements Serializable {
         this.id = id;
     }
 
-    public PrismNotificationTemplate getType() {
-        return notificationTemplateType;
+    public PrismNotificationType getNotificationType() {
+        return notificationType;
     }
 
-    public void setType(PrismNotificationTemplate notificationTemplateType) {
-        this.notificationTemplateType = notificationTemplateType;
+    public void setType(PrismNotificationType notificationType) {
+        this.notificationType = notificationType;
     }
 
     public NotificationTemplateVersion getVersion() {
@@ -92,8 +93,8 @@ public class NotificationTemplate implements Serializable {
         return this;
     }
 
-    public NotificationTemplate withType(PrismNotificationTemplate notificationTemplateType) {
-        this.notificationTemplateType = notificationTemplateType;
+    public NotificationTemplate withType(PrismNotificationType notificationType) {
+        this.notificationType = notificationType;
         return this;
     }
 

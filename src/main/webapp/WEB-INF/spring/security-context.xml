@@ -24,10 +24,8 @@
     <constructor-arg ref="userDetailsService" />
   </bean>
 
-  <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PgAdmissionAuthenticationProvider" autowire-candidate="false">
-    <constructor-arg index="0" ref="userDetailsService" />
-    <constructor-arg index="1" ref="authenticationEncryptionUtils" />
-  </bean>
+  <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PgAdmissionAuthenticationProvider" autowire-candidate="false" />
+  
   <bean id="userDetailsService" class="com.zuehlke.pgadmissions.security.PgAdmissionUserDetailsService" />
   <bean id="authenticationEncryptionUtils" class="com.zuehlke.pgadmissions.utils.EncryptionUtils" autowire-candidate="false" />
 

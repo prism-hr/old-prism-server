@@ -195,7 +195,7 @@ public class StateService {
         List<StateTransition> potentialStateTransitions = stateDAO.getStateTransitions(resource, action);
         if (potentialStateTransitions.size() > 1) {
             try {
-                String method = potentialStateTransitions.get(0).getEvaluation().getMethodName();
+                String method = potentialStateTransitions.get(0).getStateTransitionEvaluation().getMethodName();
                 stateTransition = (StateTransition) MethodUtils.invokeExactMethod(this, method, new Object[] { resource, comment, potentialStateTransitions });
             } catch (Exception e) {
                 throw new Error(StateTransitionEvaluation.INCORRECT_PROCESSOR_TYPE, e);

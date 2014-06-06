@@ -43,7 +43,7 @@ public class StateTransition {
 
     @Column(name = "state_transition_evaluation_id")
     @Enumerated(EnumType.STRING)
-    private StateTransitionEvaluation evaluation;
+    private StateTransitionEvaluation stateTransitionEvaluation;
 
     @Column(name = "display_order")
     private Integer displayOrder;
@@ -91,12 +91,12 @@ public class StateTransition {
         this.transitionAction = transitionAction;
     }
 
-    public StateTransitionEvaluation getEvaluation() {
-        return evaluation;
+    public StateTransitionEvaluation getStateTransitionEvaluation() {
+        return stateTransitionEvaluation;
     }
 
-    public void setEvaluation(StateTransitionEvaluation evaluation) {
-        this.evaluation = evaluation;
+    public void setStateTransitionEvaluation(StateTransitionEvaluation stateTransitionEvaluation) {
+        this.stateTransitionEvaluation = stateTransitionEvaluation;
     }
 
     public Integer getDisplayOrder() {

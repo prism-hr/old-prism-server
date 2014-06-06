@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-public enum NotificationMethod {
+public enum PrismNotificationType {
     
     INDIVIDUAL,
     SYNDICATED;

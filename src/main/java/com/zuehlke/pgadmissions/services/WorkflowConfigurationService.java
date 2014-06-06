@@ -154,7 +154,7 @@ public class WorkflowConfigurationService {
     private Element buildStateActionNotificationElement(Document document, StateActionNotification stateActionNotification) {
         Element stateActionNotificationElement = document.createElement("update-notification");
         stateActionNotificationElement.setAttribute("id", stateActionNotification.getNotificationTemplate().getId().toString());
-        stateActionNotificationElement.setAttribute("type", stateActionNotification.getNotificationTemplate().getType().toString());
+        stateActionNotificationElement.setAttribute("type", stateActionNotification.getNotificationTemplate().getNotificationType().toString());
         stateActionNotificationElement.setAttribute("role", stateActionNotification.getRole().getId().toString());
         return stateActionNotificationElement;
     }
@@ -169,13 +169,13 @@ public class WorkflowConfigurationService {
     private Element buildNotificationTemplateElement(Document document, NotificationTemplate notificationTemplate) {
         Element notificationTemplateElement = document.createElement("task-notification");
         notificationTemplateElement.setAttribute("id", notificationTemplate.getId().toString());
-        notificationTemplateElement.setAttribute("type", notificationTemplate.getType().toString());
+        notificationTemplateElement.setAttribute("type", notificationTemplate.getNotificationType().toString());
         
         NotificationTemplate reminderNotificationTemplate = notificationTemplate.getReminderTemplate();
         if(reminderNotificationTemplate != null) {
             Element reminderNotificationTemplateElement = document.createElement("task-reminder");
             reminderNotificationTemplateElement.setAttribute("id", reminderNotificationTemplate.getId().toString());
-            reminderNotificationTemplateElement.setAttribute("type", reminderNotificationTemplate.getType().toString());
+            reminderNotificationTemplateElement.setAttribute("type", reminderNotificationTemplate.getNotificationType().toString());
             notificationTemplateElement.appendChild(reminderNotificationTemplateElement);
         }
         

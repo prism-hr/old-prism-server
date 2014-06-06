@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
+import com.zuehlke.pgadmissions.domain.enums.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
@@ -46,7 +46,7 @@ public class TestObjectProvider {
         return (Action) sessionFactory.getCurrentSession().createCriteria(Action.class).add(Restrictions.eq("id", action)).uniqueResult();
     }
 
-    public Action getAction(NotificationMethod notificationMethod) {
+    public Action getAction(PrismNotificationType notificationMethod) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(Action.class).add(Restrictions.eq("notificationMethod", notificationMethod))
                 .setMaxResults(1).uniqueResult();
     }

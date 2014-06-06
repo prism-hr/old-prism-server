@@ -6,3 +6,6 @@ syntax: glob
 target/*
 testIndexes/*
 bin/*
+.externalToolBuilders/*
+.idea/*
+pgadmissions.iml

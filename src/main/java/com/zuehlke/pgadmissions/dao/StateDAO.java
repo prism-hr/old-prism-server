@@ -171,6 +171,7 @@ public class StateDAO {
     public StateTransitionEvaluation getStateTransitionEvaluationByStateAction(StateAction stateAction) {
         return (StateTransitionEvaluation) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .setProjection(Projections.property("stateTransitionEvaluation")) //
+                .add(Restrictions.eq("stateAction", stateAction)) //
                 .add(Restrictions.isNotNull("stateTransitionEvaluation")) //
                 .setMaxResults(1) //
                 .uniqueResult();

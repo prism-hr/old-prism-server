@@ -1,8 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.io.StringWriter;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +39,7 @@ public class WorkflowConfigurationService {
     @Autowired
     private StateService stateService;
     
-    public String getWorkflowConfiguration() throws ParserConfigurationException {
+    public String getWorkflowConfiguration() throws ParserConfigurationException, TransformerException {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
         
@@ -47,7 +54,19 @@ public class WorkflowConfigurationService {
             scopesElement.appendChild(resourceElement);
         }
         
-        return document.toString();
+        return parseDocumentToString(document);
+    }
+    
+    public void setWorkflowConfiguration(String confixXML) {
+        // TODO: importer
+    }
+    
+    private String parseDocumentToString(Document document) throws TransformerException {
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        StringWriter writer = new StringWriter();
+        transformer.transform(new DOMSource(document), new StreamResult(writer));
+        return writer.getBuffer().toString();
     }
 
     private Element buildScopeElement(Document document, Scope scope) {
@@ -71,7 +90,7 @@ public class WorkflowConfigurationService {
     private Element buildStateElement(Document document, State state) {
         Element stateElement = document.createElement("state");
         stateElement.setAttribute("id", state.getId().toString());
-        stateElement.setAttribute("parent-state", state.getParentState().toString());
+        stateElement.setAttribute("parent-state", state.getParentState().getId().toString());
         
         if (!state.getStateActions().isEmpty()) {
             Element actionsElement = document.createElement("actions");
@@ -129,7 +148,7 @@ public class WorkflowConfigurationService {
         }
         
         if (!stateAction.getStateTransitions().isEmpty()) {
-            Element transitionStatesElement = document.createElement("state-transitions");
+            Element transitionStatesElement = document.createElement("transition-states");
             nextAppend.appendChild(transitionStatesElement);
                 
             for (StateTransition stateTransition : stateAction.getStateTransitions()) {
@@ -234,12 +253,20 @@ public class WorkflowConfigurationService {
         roleTransitionElement.setAttribute("id", roleTransition.getRole().getId().toString());
         roleTransitionElement.setAttribute("type", roleTransition.getRole().getId().toString());
         roleTransitionElement.setAttribute("restrict-to-owner", getXmlBoolean(roleTransition.isRestrictToActionOwner()));
-        roleTransitionElement.setAttribute("minimum", roleTransition.getMinimumPermitted().toString());
-        roleTransitionElement.setAttribute("maximum", roleTransition.getMaximumPermitted().toString());
+        
+        Integer minimumPermittedTransitions = roleTransition.getMinimumPermitted();
+        if (minimumPermittedTransitions != null) {
+            roleTransitionElement.setAttribute("minimum", minimumPermittedTransitions.toString());
+        }
+        
+        Integer maximumPermittedTransitions = roleTransition.getMaximumPermitted();
+        if (maximumPermittedTransitions != null) {
+            roleTransitionElement.setAttribute("maximum", maximumPermittedTransitions.toString());
+        }
         
         Role transitionRole = roleTransition.getTransitionRole();
         Element transitionRoleElement = document.createElement("transition-role");
-        transitionRoleElement.setAttribute("id", transitionRole.toString());
+        transitionRoleElement.setAttribute("id", transitionRole.getId().toString());
         
         if (!transitionRole.getExcludedRoles().isEmpty()) {
             Element roleTransitionExclusionsElement = document.createElement("exclusions");

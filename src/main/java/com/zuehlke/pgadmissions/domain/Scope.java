@@ -1,16 +1,20 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 
 @Entity
@@ -25,6 +29,9 @@ public class Scope {
     
     @Column(name = "precedence", nullable = false, unique = true)
     private Integer precedence;
+    
+    @OneToMany(mappedBy = "scope")
+    private Set<State> states = Sets.newHashSet();
 
     public PrismScope getId() {
         return id;
@@ -42,6 +49,14 @@ public class Scope {
         this.precedence = precedence;
     }
     
+    public Set<State> getStates() {
+        return states;
+    }
+
+    public void setStates(Set<State> states) {
+        this.states = states;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hashCode(id);

@@ -1515,3 +1515,9 @@ SET STATE.scope_id = SCOPE.id
 ALTER TABLE STATE
 	MODIFY COLUMN scope_id VARCHAR(50) NOT NULL
 ;
+
+/* Small tidy up */
+
+ALTER TABLE STATE_TRANSITION
+	MODIFY COLUMN display_order INT(3) UNSIGNED AFTER do_post_comment
+;

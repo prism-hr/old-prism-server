@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
@@ -256,6 +257,10 @@ public class StateService {
             }
         }
         return stateDAO.getStateTransition(stateTransitions, transitionState);
+    }
+    
+    public StateTransitionEvaluation getStateTransitionEvaluationByStateAction(StateAction stateAction) {
+        return stateDAO.getStateTransitionEvaluationByStateAction(stateAction);
     }
 
 }

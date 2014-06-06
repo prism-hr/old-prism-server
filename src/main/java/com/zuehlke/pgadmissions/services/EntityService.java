@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,10 @@ public class EntityService {
     
     public <T> T getByProperties(Class<T> klass, HashMap<String, Object> properties) {
         return entityDAO.getByProperties(klass, properties);
+    }
+    
+    public <T> List<T> getAll(Class<T> klass) {
+        return entityDAO.getAll(klass);
     }
 
     public <T extends IUniqueResource> T getDuplicateEntity(T resource) {

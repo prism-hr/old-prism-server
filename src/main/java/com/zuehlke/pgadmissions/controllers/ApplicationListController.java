@@ -12,13 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -41,9 +35,8 @@ import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
 import com.zuehlke.pgadmissions.services.ApplicationsReportService;
 import com.zuehlke.pgadmissions.services.UserService;
 
-@Controller
-@RequestMapping(value = { "", "applications" })
-@SessionAttributes("filtering")
+@RestController
+@RequestMapping(value = { "api/applications" })
 public class ApplicationListController {
 
     private static final String APPLICATION_LIST_PAGE_VIEW_NAME = "private/my_applications_page";
@@ -83,27 +76,32 @@ public class ApplicationListController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String getApplicationListPage(@RequestParam(required = false) String applyFilters, 
-        ModelMap model, HttpSession session) {
-        Object alertDefinition = session.getAttribute("alertDefinition");
-        if (alertDefinition != null) {
-            model.addAttribute("alertDefinition", alertDefinition);
-            session.removeAttribute("alertDefinition");
-        }
-
-        Filter filtering = (Filter) model.get("filtering");
-        
-        if (("urgent").equals(applyFilters)) {
-            filtering = filteringService.getUrgentApplicationFiltering();
-        } else if (("active").equals(applyFilters)) {
-            filtering = filteringService.getActiveApplicationFiltering();
-        } else if (("default").equals(applyFilters) || filtering == null) {
-            filtering = filteringService.getDefaultApplicationFiltering(getUser());
-        }
-
-        model.addAttribute("filtering", filtering);
-        return APPLICATION_LIST_PAGE_VIEW_NAME;
+    public String getApplications(){
+        return "aplikacje";
     }
+
+//    @RequestMapping(method = RequestMethod.GET)
+//    public String getApplicationListPage(@RequestParam(required = false) String applyFilters,
+//        ModelMap model, HttpSession session) {
+//        Object alertDefinition = session.getAttribute("alertDefinition");
+//        if (alertDefinition != null) {
+//            model.addAttribute("alertDefinition", alertDefinition);
+//            session.removeAttribute("alertDefinition");
+//        }
+//
+//        Filter filtering = (Filter) model.get("filtering");
+//
+//        if (("urgent").equals(applyFilters)) {
+//            filtering = filteringService.getUrgentApplicationFiltering();
+//        } else if (("active").equals(applyFilters)) {
+//            filtering = filteringService.getActiveApplicationFiltering();
+//        } else if (("default").equals(applyFilters) || filtering == null) {
+//            filtering = filteringService.getDefaultApplicationFiltering(getUser());
+//        }
+//
+//        model.addAttribute("filtering", filtering);
+//        return APPLICATION_LIST_PAGE_VIEW_NAME;
+//    }
 
     @RequestMapping(value = "/section", method = RequestMethod.GET)
     public String getApplicationListSection(final @ModelAttribute("filtering") Filter filtering,
@@ -147,63 +145,6 @@ public class ApplicationListController {
     @ModelAttribute("user")
     public User getUser() {
         return userService.getCurrentUser();
-    }
-
-    @ModelAttribute("searchCategories")
-    public SearchCategory[] getSearchCategories() {
-        return SearchCategory.values();
-    }
-
-    @ModelAttribute("searchPredicatesMap")
-    public String getSearchPredicatesMap() {
-        Map<SearchCategory, List<Map<String, String>>> predicatesMap = Maps.newLinkedHashMap();
-        for (SearchCategory searchCategory : SearchCategory.values()) {
-            List<Map<String, String>> availablePredicates = Lists.newLinkedList();
-            for (SearchPredicate predicate : searchCategory.getAvailablePredicates()) {
-                Map<String, String> availablePredicate = Maps.newLinkedHashMap();
-                availablePredicate.put("name", predicate.name());
-                availablePredicate.put("displayName", predicate.displayValue());
-                availablePredicates.add(availablePredicate);
-            }
-            predicatesMap.put(searchCategory, availablePredicates);
-        }
-        return new Gson().toJson(predicatesMap);
-    }
-
-    @ModelAttribute("applicationStatusValues")
-    public List<PrismState> getApplicationStatusValues() {
-        List<PrismState> statuses = Lists.newArrayListWithCapacity(PrismState.values().length);
-        for (PrismState status : PrismState.values()) {
-            if (status != PrismState.APPLICATION_UNSUBMITTED) {
-                statuses.add(status);
-            }
-        }
-        return statuses;
-    }
-
-    @ModelAttribute("applications")
-    public List<Application> getApplications() {
-        return java.util.Collections.emptyList();
-    }
-
-    @ModelAttribute("message")
-    public String getMessage(@RequestParam(required = false) boolean submissionSuccess, @RequestParam(required = false) String decision,
-            @RequestParam(required = false) String message) {
-        if (submissionSuccess) {
-            return "Your application has been successfully submitted.";
-        }
-        if (decision != null) {
-            return "The application was successfully " + decision + ".";
-        }
-        if (message != null) {
-            return message;
-        }
-        return null;
-    }
-
-    @ModelAttribute("messageApplication")
-    public Application getApplicationForm(@RequestParam(required = false) String application) {
-        return applicationsService.getByApplicationNumber(application);
     }
 
 }

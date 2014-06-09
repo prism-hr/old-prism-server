@@ -9,7 +9,7 @@
   <security:http realm="Prism API" use-expressions="true" auto-config="false" create-session="stateless" entry-point-ref="unauthorizedEntryPoint"
     authentication-manager-ref="authenticationManager">
     <security:custom-filter ref="authenticationTokenProcessingFilter" position="FORM_LOGIN_FILTER" />
-    <security:intercept-url pattern="/user/authenticate" access="permitAll" />
+    <security:intercept-url pattern="/api/user/authenticate" access="permitAll" />
     <security:intercept-url pattern="/workflowConfiguration" access="permitAll" />
     <security:intercept-url pattern="/**" access="isAuthenticated()" />
   </security:http>
@@ -24,8 +24,7 @@
     <constructor-arg ref="userDetailsService" />
   </bean>
 
-  <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PgAdmissionAuthenticationProvider" autowire-candidate="false" />
-  
+  <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PgAdmissionAuthenticationProvider" autowire-candidate="false">
   <bean id="userDetailsService" class="com.zuehlke.pgadmissions.security.PgAdmissionUserDetailsService" />
   <bean id="authenticationEncryptionUtils" class="com.zuehlke.pgadmissions.utils.EncryptionUtils" autowire-candidate="false" />
 

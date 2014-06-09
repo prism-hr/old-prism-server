@@ -8,6 +8,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.apache.commons.beanutils.PropertyUtils;
+
 @Entity
 @Table(name = "state_duration", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "state_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "state_id" }), @UniqueConstraint(columnNames = { "program_id", "state_id" }) })
@@ -35,6 +37,15 @@ public class StateDuration {
     @Column(name = "day_duration", nullable = false)
     private Integer duration;
 
+    public StateDuration() {
+    }
+    
+    public StateDuration(PrismResource resource, State state, Integer duration) {
+        setResource(resource);
+        this.state = state;
+        this.duration = duration;
+    }
+    
     public Integer getId() {
         return id;
     }
@@ -65,6 +76,14 @@ public class StateDuration {
 
     public void setProgram(Program program) {
         this.program = program;
+    }
+    
+    private void setResource(PrismResource resource) throws Error {
+        try {
+            PropertyUtils.setSimpleProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
+        } catch (Exception e) {
+            throw new Error("Tried to assign state duration to invalid prism resource", e);
+        }
     }
 
     public State getState() {

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -14,15 +15,15 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationType;
 
 @Entity
 @Table(name = "NOTIFICATION_TEMPLATE")
-public class NotificationTemplate implements Serializable {
-
-    private static final long serialVersionUID = -3640707667534813533L;
+public class NotificationTemplate implements IUniqueResource {
 
     @Id
     @Column(name = "id")
@@ -47,6 +48,13 @@ public class NotificationTemplate implements Serializable {
     
     @OneToMany(mappedBy = "notificationTemplate")
     private Set<NotificationReminderInterval> reminderIntervals = Sets.newHashSet();
+    
+    public NotificationTemplate() {
+    }
+    
+    public NotificationTemplate(PrismNotificationTemplate id) {
+        this.id = id;
+    }
 
     public PrismNotificationTemplate getId() {
         return id;
@@ -108,4 +116,13 @@ public class NotificationTemplate implements Serializable {
         return this;
     }
 
+    @Override
+    public ResourceSignature getResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("id", id);
+        propertiesWrapper.add(properties);
+        return new ResourceSignature(propertiesWrapper);
+    }
+    
 }

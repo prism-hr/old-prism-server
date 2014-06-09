@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -15,12 +17,14 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Entity
 @Table(name = "STATE")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class State {
+public class State implements IUniqueResource {
 
     @Id
     @Column(name = "id")
@@ -28,7 +32,7 @@ public class State {
     private PrismState id;
 
     @ManyToOne
-    @JoinColumn(name = "parent_state_id", nullable = false)
+    @JoinColumn(name = "parent_state_id")
     private State parentState;
     
     @ManyToOne
@@ -38,6 +42,14 @@ public class State {
     @OneToMany(mappedBy = "state")
     private Set<StateAction> stateActions;
     
+    public State() {
+    }
+    
+    public State(PrismState id, Scope scope) {
+        this.id = id;
+        this.scope = scope;
+    }
+
     public PrismState getId() {
         return id;
     }
@@ -69,6 +81,16 @@ public class State {
     public State withId(PrismState id) {
         this.id = id;
         return this;
+    }
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("id", id);
+        properties.put("parentState.id", parentState.getId());
+        propertiesWrapper.add(properties);
+        return new ResourceSignature(propertiesWrapper);
     }
 
 }

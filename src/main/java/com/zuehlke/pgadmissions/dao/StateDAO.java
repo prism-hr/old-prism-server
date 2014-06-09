@@ -72,7 +72,7 @@ public class StateDAO {
 
     public Integer getStateDuration(PrismResourceDynamic resource) {
         return (Integer) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
-                .setProjection(Projections.property("expiryDuration")) //
+                .setProjection(Projections.property("duration")) //
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
@@ -83,6 +83,14 @@ public class StateDAO {
                                 .add(Restrictions.eq("institution", resource.getInstitution())) //
                                 .add(Restrictions.isNull("program"))) //
                         .add(Restrictions.eq("program", resource.getProgram()))) //
+                .uniqueResult();
+    }
+    
+    public Integer getDefaultStateDuration(State state) {
+        return (Integer) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
+                .setProjection(Projections.property("duration")) //
+                .add(Restrictions.eq("state", state)) //
+                .add(Restrictions.isNotNull("system")) //
                 .uniqueResult();
     }
     

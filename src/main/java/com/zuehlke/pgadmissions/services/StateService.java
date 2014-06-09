@@ -72,6 +72,10 @@ public class StateService {
     public List<State> getAllConfigurableStates() {
         return stateDAO.getAllConfigurableStates();
     }
+    
+    public Integer getDefaultStateDuration(State state) {
+        return stateDAO.getDefaultStateDuration(state);
+    }
 
     public StateTransition executeStateTransition(PrismResource operativeResource, PrismResourceDynamic resource, Action action, Comment comment) {
         StateTransition stateTransition = getStateTransition(operativeResource, action, comment);

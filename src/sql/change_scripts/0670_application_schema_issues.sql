@@ -1521,3 +1521,10 @@ ALTER TABLE STATE
 ALTER TABLE STATE_TRANSITION
 	MODIFY COLUMN display_order INT(3) UNSIGNED AFTER do_post_comment
 ;
+
+/* Nullable parent state for insert */
+
+ALTER TABLE STATE
+	MODIFY COLUMN parent_state_id VARCHAR(50)
+;
+

@@ -33,6 +33,14 @@ public class Scope {
     @OneToMany(mappedBy = "scope")
     private Set<State> states = Sets.newHashSet();
 
+    public Scope() {
+    }
+    
+    public Scope(PrismScope id, Integer precedence) {
+        this.id = id;
+        this.precedence = precedence;
+    }
+    
     public PrismScope getId() {
         return id;
     }

@@ -33,7 +33,7 @@ public class UserServiceTest {
 
     @Mock
     @InjectIntoByType
-    private NotificationTemplateService mailServiceMock;
+    private NotificationService mailServiceMock;
 
     @TestedObject
     private UserService userService;

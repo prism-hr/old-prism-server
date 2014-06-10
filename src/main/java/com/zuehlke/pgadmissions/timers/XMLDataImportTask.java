@@ -32,7 +32,7 @@ public class XMLDataImportTask {
     private EntityImportService entityImportService;
 
     @Autowired
-    private NotificationService notificationService;
+    private NotificationService mailService;
     
     @Autowired 
     private SystemService systemService;
@@ -55,7 +55,7 @@ public class XMLDataImportTask {
                 }
 
                 for (User recipient : userService.getUsersForResourceAndRole(systemService.getSystem(), PrismRole.SYSTEM_ADMINISTRATOR)) {
-                     notificationService.sendEmailNotification(recipient, null, SYSTEM_IMPORT_ERROR_NOTIFICATION, null, ImmutableMap.of("errorMessage", message));
+                     mailService.sendEmailNotification(recipient, null, SYSTEM_IMPORT_ERROR_NOTIFICATION, null, ImmutableMap.of("errorMessage", message));
                 }
 
             } finally {

@@ -5,15 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "NOTIFICATION_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "notification_template_id" }),
+@Table(name = "NOTIFICATION_REMINDER_INTERVAL", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "notification_template_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "notification_template_id" }),
         @UniqueConstraint(columnNames = { "program_id", "notification_template_id" }) })
-public class NotificationConfiguration {
+public class NotificationReminderInterval {
 
     @Id
     private Integer id;
@@ -33,13 +32,9 @@ public class NotificationConfiguration {
     @ManyToOne
     @JoinColumn(name = "notification_template_id")
     private NotificationTemplate notificationTemplate;
-    
-    @OneToOne
-    @JoinColumn(name = "notification_template_version_id")
-    private NotificationTemplateVersion notificationTemplateVersion;
 
-    @Column(name = "day_reminder_interval")
-    private Integer reminderInterval;
+    @Column(name = "day_interval")
+    private Integer interval;
 
     public Integer getId() {
         return id;
@@ -81,20 +76,12 @@ public class NotificationConfiguration {
         this.notificationTemplate = notificationTemplate;
     }
 
-    public NotificationTemplateVersion getNotificationTemplateVersion() {
-        return notificationTemplateVersion;
+    public Integer getInterval() {
+        return interval;
     }
 
-    public void setNotificationTemplateVersion(NotificationTemplateVersion notificationTemplateVersion) {
-        this.notificationTemplateVersion = notificationTemplateVersion;
-    }
-
-    public Integer getReminderInterval() {
-        return reminderInterval;
-    }
-
-    public void setReminderInterval(Integer reminderInterval) {
-        this.reminderInterval = reminderInterval;
+    public void setInterval(Integer interval) {
+        this.interval = interval;
     }
 
 }

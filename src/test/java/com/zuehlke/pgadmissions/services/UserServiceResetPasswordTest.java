@@ -44,7 +44,7 @@ public class UserServiceResetPasswordTest {
 
     @Mock
     @InjectIntoByType
-    private NotificationTemplateService mailServiceMock;
+    private NotificationService mailServiceMock;
 
     @TestedObject
     private UserService service;

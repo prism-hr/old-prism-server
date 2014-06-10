@@ -29,7 +29,7 @@ public class InterviewService {
     private ApplicationService applicationsService;
 
     @Autowired
-    private NotificationTemplateService mailService;
+    private NotificationService mailService;
 
     @Autowired
     private StateService stateService;

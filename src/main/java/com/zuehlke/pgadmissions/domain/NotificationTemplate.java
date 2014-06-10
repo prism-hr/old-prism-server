@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.google.common.collect.Lists;
@@ -34,11 +35,19 @@ public class NotificationTemplate implements IUniqueResource {
     private PrismNotificationType notificationType;
 
     @OneToOne
+    @JoinColumn(name = "notification_template_version_id")
+    private NotificationTemplateVersion version;
+
+    @OneToOne
     @JoinColumn(name = "reminder_notification_template_id")
     private NotificationTemplate reminderTemplate;
     
     @OneToMany(mappedBy = "notificationTemplate")
-    private Set<NotificationConfiguration> reminderIntervals = Sets.newHashSet();
+    @OrderBy("createdTimestamp DESC")
+    private Set<NotificationTemplateVersion> versions = Sets.newLinkedHashSet();
+    
+    @OneToMany(mappedBy = "notificationTemplate")
+    private Set<NotificationReminderInterval> reminderIntervals = Sets.newHashSet();
     
     public NotificationTemplate() {
     }
@@ -63,6 +72,14 @@ public class NotificationTemplate implements IUniqueResource {
         this.notificationType = notificationType;
     }
 
+    public NotificationTemplateVersion getVersion() {
+        return version;
+    }
+
+    public void setVersion(NotificationTemplateVersion version) {
+        this.version = version;
+    }
+
     public NotificationTemplate getReminderTemplate() {
         return reminderTemplate;
     }
@@ -71,7 +88,11 @@ public class NotificationTemplate implements IUniqueResource {
         this.reminderTemplate = reminderTemplate;
     }
 
-    public Set<NotificationConfiguration> getReminderIntervals() {
+    public Set<NotificationTemplateVersion> getVersions() {
+        return versions;
+    }
+
+    public Set<NotificationReminderInterval> getReminderIntervals() {
         return reminderIntervals;
     }
 
@@ -82,6 +103,11 @@ public class NotificationTemplate implements IUniqueResource {
 
     public NotificationTemplate withType(PrismNotificationType notificationType) {
         this.notificationType = notificationType;
+        return this;
+    }
+
+    public NotificationTemplate withVersion(NotificationTemplateVersion version) {
+        this.version = version;
         return this;
     }
 

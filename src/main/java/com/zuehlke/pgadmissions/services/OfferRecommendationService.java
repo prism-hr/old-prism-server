@@ -31,7 +31,7 @@ public class OfferRecommendationService {
     private UserService userService;
 
     @Autowired
-    private NotificationTemplateService mailSendingService;
+    private NotificationService mailSendingService;
     
     public boolean moveToApproved(Application form, Comment offerRecommendedComment) {
 //        if (ApplicationFormStatus.APPROVAL != form.getStatus().getId()) {

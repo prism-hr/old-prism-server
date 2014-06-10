@@ -20,7 +20,7 @@ public class ManageUsersService {
     private RoleService roleService;
 
     @Autowired
-    private NotificationTemplateService mailService;
+    private NotificationService mailService;
     
     @Autowired
     private SystemService systemService;

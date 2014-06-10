@@ -31,16 +31,8 @@ public class AdvertDAO {
     
     private static final BigDecimal RECOMMENDED_ADVERT_FEED_THRESHOLD = new BigDecimal(0.15);
     
-    private final SessionFactory sessionFactory;
-
-    public AdvertDAO() {
-        this(null);
-    }
-
     @Autowired
-    public AdvertDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private SessionFactory sessionFactory;
 
     public List<AdvertDTO> getAdvertFeed(OpportunityListType feedKey, String feedKeyValue, Integer selectedAdvertId) {
         if (selectedAdvertId == null) {

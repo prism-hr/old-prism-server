@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.User;
 @SuppressWarnings("unchecked")
 public class FullTextSearchDAO {
 
+    @Autowired
     private SessionFactory sessionFactory;
 
     private static Comparator<User> LASTNAME_COMPARATOR = new Comparator<User>() {
@@ -35,14 +36,6 @@ public class FullTextSearchDAO {
             return o1.getLastName().compareTo(o2.getLastName());
         }
     };
-
-    public FullTextSearchDAO() {
-    }
-
-    @Autowired
-    public FullTextSearchDAO(final SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
 
     public List<User> getMatchingUsersWithFirstnameLike(final String searchTerm) {
         return getMatchingUsers(searchTerm, "firstName", LASTNAME_COMPARATOR);

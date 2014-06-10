@@ -38,21 +38,10 @@ import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 @Repository
 public class ApplicationFormListDAO {
 
-    private final SessionFactory sessionFactory;
-
-    private final UserDAO userDAO;
-
     public static final DateTimeFormatter USER_DATE_FORMAT = DateTimeFormat.forPattern("dd MMM yyyy");
-
-    public ApplicationFormListDAO() {
-        this(null, null);
-    }
-
+    
     @Autowired
-    public ApplicationFormListDAO(SessionFactory sessionFactory, UserDAO userDAO) {
-        this.sessionFactory = sessionFactory;
-        this.userDAO = userDAO;
-    }
+    private SessionFactory sessionFactory;
 
     // TODO: generalise for different list types
     

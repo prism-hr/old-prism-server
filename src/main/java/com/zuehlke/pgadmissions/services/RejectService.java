@@ -7,10 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
-import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.mail.NotificationService;
 
 @Service
@@ -29,11 +27,11 @@ public class RejectService {
 	private ActionService actionService;
 	
 	@Autowired
-	private StateDAO stateDAO;
+	private StateService stateService;
 
 	public void moveApplicationToReject(final Application form, final Comment rejection) {
 
-		form.setState(stateDAO.getById(PrismState.APPLICATION_REJECTED));		
+//		form.setState(stateService.getById(PrismState.APPLICATION_REJECTED));		
 		
 		applicationDao.save(form);
 	}

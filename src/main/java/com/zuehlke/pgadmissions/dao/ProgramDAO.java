@@ -35,15 +35,8 @@ import com.zuehlke.pgadmissions.domain.enums.PrismState;
 public class ProgramDAO {
     // TODO reimplement getProgramsOfWhichPrevious*() methods
 
-    private SessionFactory sessionFactory;
-
-    public ProgramDAO() {
-    }
-
     @Autowired
-    public ProgramDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private SessionFactory sessionFactory;
 
     public Advert getAcceptingApplicationsById(Integer advertId) {
         Advert project = (Advert) sessionFactory.getCurrentSession() //

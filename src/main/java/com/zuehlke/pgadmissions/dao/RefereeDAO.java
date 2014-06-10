@@ -20,16 +20,8 @@ import com.zuehlke.pgadmissions.domain.enums.PrismState;
 @SuppressWarnings("unchecked")
 public class RefereeDAO {
 
-    private final SessionFactory sessionFactory;
-
-    public RefereeDAO() {
-        this(null);
-    }
-
     @Autowired
-    public RefereeDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private SessionFactory sessionFactory;
 
     public void save(ApplicationReferee referee) {
         sessionFactory.getCurrentSession().saveOrUpdate(referee);

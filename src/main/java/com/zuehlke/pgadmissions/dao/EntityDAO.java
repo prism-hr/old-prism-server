@@ -19,15 +19,8 @@ import com.zuehlke.pgadmissions.domain.IUniqueResource;
 @Repository
 public class EntityDAO {
 
-    private SessionFactory sessionFactory;
-
-    public EntityDAO() {
-    }
-
     @Autowired
-    public EntityDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private SessionFactory sessionFactory;
 
     @SuppressWarnings("unchecked")
     public <T> T getById(Class<T> klass, Object id) {

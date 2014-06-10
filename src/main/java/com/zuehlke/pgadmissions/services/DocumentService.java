@@ -14,22 +14,26 @@ import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 @Service
 @Transactional
 public class DocumentService {
+    
+    @Autowired
+    private DocumentDAO documentDAO;
 
     @Autowired
     private UserService userService;
 
     @Autowired
-    private DocumentDAO documentDAO;
+    private EntityService entityService;
 
     @Transactional(readOnly = true)
     public Document getByid(Integer id) {
-        return documentDAO.getDocumentbyId(id);
+        return entityService.getById(Document.class, id);
     }
 
     public Document create(MultipartFile multipartFile, DocumentType documentType) throws IOException {
         if (multipartFile == null) {
             return null;
         }
+        
         Document document = new Document();
         document.setFileName(multipartFile.getOriginalFilename());
         document.setContentType(multipartFile.getContentType());
@@ -41,7 +45,7 @@ public class DocumentService {
     }
 
     public void save(Document document) {
-        documentDAO.save(document);
+        entityService.save(document);
     }
 
     public void deleteOrphanDocuments() {

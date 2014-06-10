@@ -13,16 +13,8 @@ import com.zuehlke.pgadmissions.domain.ProgramType;
 @Repository
 public class ConfigurationDAO {
 
-    private final SessionFactory sessionFactory;
-
-    public ConfigurationDAO() {
-        this(null);
-    }
-
     @Autowired
-    public ConfigurationDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private SessionFactory sessionFactory;
 
     public int getStudyDuration(Institution institution, ProgramType programType) {
         return (int) (Integer) sessionFactory.getCurrentSession().createCriteria(Configuration.class) //

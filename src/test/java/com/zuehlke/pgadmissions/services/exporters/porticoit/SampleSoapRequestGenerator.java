@@ -129,7 +129,7 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
 
     @Before
     public void initialise() {
-        applicationFormDAO = new ApplicationDAO(sessionFactory);
+        applicationFormDAO = new ApplicationDAO();
         requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
     }
 }

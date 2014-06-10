@@ -115,7 +115,7 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.GET, value = "/editEmailTemplate/{id:\\d+}")
     @ResponseBody
     public Map<String, Object> getTemplateVersion(@PathVariable Integer id) {
-        NotificationTemplateVersion template = templateService.getTemplateVersion(id);
+        NotificationTemplateVersion template = templateService.getTemplateVersionById(id);
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("content", template.getContent());
         result.put("createdTimestamp", template.getCreatedTimestamp());

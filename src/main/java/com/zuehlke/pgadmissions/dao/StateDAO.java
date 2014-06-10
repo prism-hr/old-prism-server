@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.StateTransitionEvaluation;
 
 @Repository
@@ -31,23 +30,6 @@ public class StateDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
-
-    public StateDAO() {
-    }
-
-    public StateDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
-    public void save(State state) {
-        sessionFactory.getCurrentSession().saveOrUpdate(state);
-    }
-
-    public State getById(PrismState id) {
-        return (State) sessionFactory.getCurrentSession().createCriteria(State.class) //
-                .add(Restrictions.eq("id", id)) //
-                .uniqueResult();
-    }
 
     public List<State> getAllConfigurableStates() {
         return (List<State>) sessionFactory.getCurrentSession().createCriteria(State.class) //

@@ -62,11 +62,11 @@ public class StateService {
     private ThreadPoolExecutor threadedStateTransitionPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1000);
 
     public State getById(PrismState id) {
-        return stateDAO.getById(id);
+        return entityService.getByProperty(State.class, "id", id);
     }
 
     public void save(State state) {
-        stateDAO.save(state);
+        entityService.save(state);
     }
 
     public List<State> getAllConfigurableStates() {
@@ -216,7 +216,7 @@ public class StateService {
         State transitionState = resource.getState();
         Application application = (Application) resource;
         if (application.getSubmittedTimestamp() != null) {
-            transitionState = stateDAO.getById(PrismState.APPLICATION_VALIDATION_PENDING_FEEDBACK);
+            transitionState = getById(PrismState.APPLICATION_VALIDATION_PENDING_FEEDBACK);
         }
         return stateDAO.getStateTransition(stateTransitions, transitionState);
     }
@@ -227,7 +227,7 @@ public class StateService {
         if (comment.isAtLeastOneAnswerUnsure()) {
             transitionState = PrismState.APPLICATION_VALIDATION_PENDING_FEEDBACK;
         }
-        return stateDAO.getStateTransition(stateTransitions, stateDAO.getById(transitionState));
+        return stateDAO.getStateTransition(stateTransitions, getById(transitionState));
     }
 
     @SuppressWarnings("unused")
@@ -235,9 +235,9 @@ public class StateService {
         State transitionState = resource.getState();
         State parentState = transitionState.getParentState();
         if (comment.getExportError() != null) {
-            transitionState = stateDAO.getById(PrismState.valueOf(parentState.toString() + "_PENDING_CORRECTION"));
+            transitionState = getById(PrismState.valueOf(parentState.toString() + "_PENDING_CORRECTION"));
         } else if (comment.getExportResponse() != null && comment.getExportError() == null) {
-            transitionState = stateDAO.getById(PrismState.valueOf(parentState.toString() + "_COMPLETED"));
+            transitionState = getById(PrismState.valueOf(parentState.toString() + "_COMPLETED"));
         }
         return stateDAO.getStateTransition(stateTransitions, transitionState);
     }
@@ -249,15 +249,15 @@ public class StateService {
         DateTime interviewDateTime = comment.getInterviewDateTime();
         if (interviewDateTime != null) {
             if (interviewDateTime.isEqual(baselineDateTime) || interviewDateTime.isBefore(baselineDateTime)) {
-                transitionState = stateDAO.getById(PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK);
+                transitionState = getById(PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK);
             } else {
-                transitionState = stateDAO.getById(PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW);
+                transitionState = getById(PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW);
             }
         } else {
             if (resource.getState().getId() == PrismState.APPLICATION_INTERVIEW) {
-                transitionState = stateDAO.getById(PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY);
+                transitionState = getById(PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY);
             } else {
-                transitionState = stateDAO.getById(PrismState.APPLICATION_INTERVIEW);
+                transitionState = getById(PrismState.APPLICATION_INTERVIEW);
             }
         }
         return stateDAO.getStateTransition(stateTransitions, transitionState);

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
-import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
@@ -23,7 +22,7 @@ public class InstitutionService {
     private InstitutionDAO institutionDAO;
     
     @Autowired
-    private StateDAO stateDAO;
+    private StateService stateService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -43,7 +42,7 @@ public class InstitutionService {
             if (persistentInstitution == null) {
                 persistentInstitution = new Institution();
                 persistentInstitution.setDomicile(domicile);
-                persistentInstitution.setState(stateDAO.getById(PrismState.INSTITUTION_APPROVED));
+                persistentInstitution.setState(stateService.getById(PrismState.INSTITUTION_APPROVED));
                 persistentInstitution.setName(institutionName);
                 institutionDAO.save(persistentInstitution);
             }

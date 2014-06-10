@@ -22,15 +22,8 @@ import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
 @Repository
 public class ActionDAO {
     
-    private SessionFactory sessionFactory;
-
-    public ActionDAO() {
-    }
-
     @Autowired
-    public ActionDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private SessionFactory sessionFactory;
     
     public PrismAction getValidAction(PrismResource resource, PrismAction action) {
         return (PrismAction) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //

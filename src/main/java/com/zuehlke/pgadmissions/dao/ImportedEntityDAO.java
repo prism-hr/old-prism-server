@@ -16,16 +16,8 @@ import com.zuehlke.pgadmissions.domain.Institution;
 @SuppressWarnings("unchecked")
 public class ImportedEntityDAO {
 
-    private final SessionFactory sessionFactory;
-
-    public ImportedEntityDAO() {
-        this(null);
-    }
-
     @Autowired
-    public ImportedEntityDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private SessionFactory sessionFactory;
 
     public <T extends ImportedEntity> List<T> getImportedEntities(Class<T> clazz) {
         return sessionFactory.getCurrentSession().createCriteria(clazz)//

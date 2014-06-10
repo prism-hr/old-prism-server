@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.dto.WorkflowConfigurationDTO;
-import com.zuehlke.pgadmissions.services.WorkflowConfigurationService;
+import com.zuehlke.pgadmissions.services.WorkflowConfigurationExportService;
+import com.zuehlke.pgadmissions.services.WorkflowConfigurationImportService;
 import com.zuehlke.pgadmissions.validators.WorkflowConfigurationValidator;
 
 @Controller
@@ -26,7 +27,10 @@ public class WorkflowConfigurationController {
     private static final String IMPORT_SUCCESS_MESSAGE = "Your workflow configuration was successfully uploaded.";
 
     @Autowired
-    private WorkflowConfigurationService workflowConfigurationService;
+    private WorkflowConfigurationExportService workflowConfigurationExportService;
+    
+    @Autowired
+    private WorkflowConfigurationImportService workflowConfigurationImportService;
 
     @Autowired
     private WorkflowConfigurationValidator workflowConfigurationValidator;
@@ -34,7 +38,7 @@ public class WorkflowConfigurationController {
     @ResponseBody
     @RequestMapping(value = "/export", method = RequestMethod.GET, produces = "application/xml")
     public String exportWorkflowConfiguration() throws Exception {
-        return workflowConfigurationService.exportWorkflowConfiguration();
+        return workflowConfigurationExportService.exportWorkflowConfiguration();
     }
 
     @RequestMapping(value = "/import", method = RequestMethod.GET)
@@ -47,7 +51,7 @@ public class WorkflowConfigurationController {
     public String importWorkflowConfiguration(@Valid WorkflowConfigurationDTO workflowConfigurationDTO, BindingResult binding, ModelMap modelMap)
             throws Exception {
         if (!binding.hasErrors()) {
-            workflowConfigurationService.importWorkflowConfiguration(workflowConfigurationDTO.getConfiguration());
+            workflowConfigurationImportService.importWorkflowConfiguration(workflowConfigurationDTO.getConfiguration());
             modelMap.put("importSuccess", IMPORT_SUCCESS_MESSAGE);
         } else {
             modelMap.put("workflowConfigurationDTO", workflowConfigurationDTO);

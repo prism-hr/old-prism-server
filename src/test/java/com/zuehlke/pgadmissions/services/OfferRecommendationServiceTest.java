@@ -31,7 +31,7 @@ public class OfferRecommendationServiceTest {
 
     @Mock
     @InjectIntoByType
-    private NotificationTemplateService mailSendingServiceMock;
+    private NotificationService mailSendingServiceMock;
 
     @TestedObject
     private OfferRecommendationService service;

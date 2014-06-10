@@ -9,7 +9,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
@@ -20,18 +19,6 @@ public class NotificationTemplateVersion {
     @Id
     @GeneratedValue
     private Integer id;
-    
-    @ManyToOne
-    @JoinColumn(name = "system_id")
-    private System system;
-
-    @ManyToOne
-    @JoinColumn(name = "institution_id")
-    private Institution institution;
-
-    @ManyToOne
-    @JoinColumn(name = "program_id")
-    private Program program;
 
     @ManyToOne
     @JoinColumn(name = "notification_template_id", nullable = false)
@@ -56,38 +43,6 @@ public class NotificationTemplateVersion {
         this.id = id;
     }
 
-    public System getSystem() {
-        return system;
-    }
-
-    public void setSystem(System system) {
-        this.system = system;
-    }
-
-    public Institution getInstitution() {
-        return institution;
-    }
-
-    public void setInstitution(Institution institution) {
-        this.institution = institution;
-    }
-
-    public Program getProgram() {
-        return program;
-    }
-
-    public void setProgram(Program program) {
-        this.program = program;
-    }
-
-    public void setResource(PrismResource resource) {
-        try {
-            PropertyUtils.setSimpleProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
-        } catch (Exception e) {
-            throw new Error("Tried to create notification template version for invalid prism resource", e);
-        }
-    }
-    
     public NotificationTemplate getNotificationTemplate() {
         return notificationTemplate;
     }

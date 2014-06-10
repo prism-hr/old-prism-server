@@ -49,7 +49,7 @@ public class UserService {
     private EncryptionUtils encryptionUtils;
 
     @Autowired
-    private NotificationService notifiationService;
+    private NotificationService mailService;
 
     @Autowired
     private EntityService entityService;
@@ -138,7 +138,7 @@ public class UserService {
         try {
             String newPassword = encryptionUtils.generateUserPassword();
 
-            notifiationService.sendEmailNotification(storedUser, null, PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION, null,
+            mailService.sendEmailNotification(storedUser, null, PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION, null,
                     ImmutableMap.of("newPassword", newPassword));
 
             String hashPassword = encryptionUtils.getMD5Hash(newPassword);

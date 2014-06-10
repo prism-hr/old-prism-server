@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -30,23 +31,21 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentCustomQuestion;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
-import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import com.zuehlke.pgadmissions.dto.ApplicationExportConfigurationDTO;
 import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
+import com.zuehlke.pgadmissions.exceptions.NotificationTemplateException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.services.ApplicationExportConfigurationService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
-import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.NotificationTemplateService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -77,9 +76,6 @@ public class ConfigurationController {
     private ProgramService programsService;
 
     @Autowired
-    private NotificationTemplateService notificationService;
-
-    @Autowired
     private ScoringDefinitionParser scoringDefinitionParser;
 
     @Autowired
@@ -87,9 +83,6 @@ public class ConfigurationController {
 
     @Autowired
     private RoleService roleService;
-
-    @Autowired
-    private EntityService entityService;
 
     @RequestMapping(method = RequestMethod.GET)
     public String getConfigurationPage() {
@@ -160,7 +153,8 @@ public class ConfigurationController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/editScoringDefinition")
     @ResponseBody
-    public Map<String, String> editScoringDefinition(@RequestParam Integer programId, @RequestParam PrismAction actionId, @RequestParam String definition) {
+    public Map<String, String> editScoringDefinition(@RequestParam Integer programId, @RequestParam PrismAction actionId,
+            @RequestParam String definition) {
         Map<String, String> errors = validateScoringDefinition(programId, definition);
         if (errors.isEmpty()) {
             if (definition.equals("")) {
@@ -183,35 +177,51 @@ public class ConfigurationController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/editEmailTemplate/{resourceScope:[A-Z_]+}/{resourceId:[0-9]+}/{templateId:[a-zA-Z_]+}")
+    @RequestMapping(method = RequestMethod.GET, value = "/editEmailTemplate/{templateName:[a-zA-Z_]+}")
     @ResponseBody
-    public Map<Object, Object> getVersionsForTemplate(@PathVariable PrismScope resourceScope, @PathVariable Integer resourceId, @PathVariable String templateId) {
-        try {
-            PrismResource resource = (PrismResource) entityService.getById(Class.forName(resourceScope.getSimpleName()), resourceId);
-            NotificationTemplate template = templateService.getById(valueOf(templateId));
-            List<NotificationTemplateVersion> versions = notificationService.getVersionsForTemplate(resource, template);
-            Map<Object, Object> result = new HashMap<Object, Object>();
-            result.put("activeVersion", notificationService.getActiveVersionForTemplate(resource, template));
-            result.put("versions", versions);
-            return result;
-        } catch (ClassNotFoundException e) {
-            throw new Error("Tried to fetch notication template versions for invalid prism resource", e);
-        }
+    public Map<Object, Object> getVersionsForTemplate(@PathVariable String templateName) {
+        NotificationTemplate template = templateService.getById(valueOf(templateName));
+        Set<NotificationTemplateVersion> versions = template.getVersions();
+        Map<Object, Object> result = new HashMap<Object, Object>();
+        result.put("activeVersion", template.getVersion().getId());
+        result.put("versions", versions);
+        return result;
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = { "saveEmailTemplate/{resourceScope:[A-Z_]+}/{resourceId:[0-9]+}/{templateId:[a-zA-Z_]+}" })
+    @RequestMapping(method = RequestMethod.POST, value = { "saveEmailTemplate/{templateName:[a-zA-Z_]+}" })
     @ResponseBody
-    public Map<String, Object> saveTemplate(@PathVariable PrismScope resourceScope, @PathVariable Integer resourceId,
-            @PathVariable PrismNotificationTemplate templateId, @RequestParam String content, @RequestParam String subject) {
-        try {
-            PrismResource resource = (PrismResource) entityService.getById(Class.forName(resourceScope.getSimpleName()), resourceId);
-            NotificationTemplateVersion newVersion = templateService.saveTemplateVersion(resource, templateId, content, subject);
-            Map<String, Object> result = new HashMap<String, Object>();
-            result.put("id", newVersion.getId());
-            result.put("createdTimestamp", new SimpleDateFormat("yyyy/M/d - HH:mm:ss").format(newVersion.getCreatedTimestamp()));
+    public Map<String, Object> saveTemplate(@PathVariable PrismNotificationTemplate templateName, @RequestParam String content, @RequestParam String subject) {
+        return saveNewTemplateVersion(templateName, content, subject);
+    }
+
+    private Map<String, Object> saveNewTemplateVersion(PrismNotificationTemplate templateId, String content, String subject) {
+        NotificationTemplateVersion newVersion = templateService.saveTemplateVersion(templateId, content, subject);
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("id", newVersion.getId());
+        result.put("createdTimestamp", new SimpleDateFormat("yyyy/M/d - HH:mm:ss").format(newVersion.getCreatedTimestamp()));
+        return result;
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = { "activateEmailTemplate/{templateName:[a-zA-Z_]+}/{id:\\d+}" })
+    @ResponseBody
+    public Map<String, Object> activateTemplate(@PathVariable String templateName, @PathVariable Integer id, @RequestParam Boolean saveCopy,
+            @RequestParam(required = false) String newContent, @RequestParam(required = false) String newSubject) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        if (saveCopy != null && saveCopy) {
+            result = saveNewTemplateVersion(valueOf(templateName), newContent, newSubject);
+            id = (Integer) result.get("id");
+        }
+        if (result.containsKey("error")) {
             return result;
-        } catch (ClassNotFoundException e) {
-            throw new Error("Tried to create notication template version for invalid prism resource", e);
+        }
+        Integer previousId = templateService.getById(valueOf(templateName)).getVersion().getId();
+
+        try {
+            templateService.activateTemplateVersion(valueOf(templateName), id);
+            result.put("previousTemplateId", (Object) previousId);
+            return result;
+        } catch (NotificationTemplateException ete) {
+            return Collections.singletonMap("error", (Object) ete.getMessage());
         }
     }
 

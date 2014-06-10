@@ -34,7 +34,7 @@ public class ApprovalService {
     private UserService userService;
 
     @Autowired
-    private NotificationTemplateService mailSendingService;
+    private NotificationService mailSendingService;
 
     @Autowired
     private ProgramInstanceService programInstanceService;

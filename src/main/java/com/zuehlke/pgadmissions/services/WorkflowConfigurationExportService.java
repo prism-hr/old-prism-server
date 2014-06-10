@@ -364,6 +364,12 @@ public class WorkflowConfigurationExportService {
         Element visibilityExclusionElement = document.createElement("visibility-exclusion");
         visibilityExclusionElement.setAttribute("role", actionVisibilityExclusion.getRole().getId().toString());
         visibilityExclusionElement.setAttribute("rule", actionVisibilityExclusion.getRule().toString());
+        
+        Integer precedence = actionVisibilityExclusion.getPrecedence();
+        if (precedence != null) {
+            visibilityExclusionElement.setAttribute("precedence", actionVisibilityExclusion.getPrecedence().toString());
+        }
+        
         visibilityExclusionsElement.appendChild(visibilityExclusionElement);
     }
 

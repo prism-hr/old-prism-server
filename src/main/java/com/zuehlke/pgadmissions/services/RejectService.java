@@ -21,7 +21,7 @@ public class RejectService {
 	private ApplicationDAO applicationDao;
 	
 	@Autowired
-	private NotificationService mailService;
+	private NotificationTemplateService mailService;
 	
 	@Autowired
 	private ActionService actionService;

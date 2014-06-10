@@ -27,7 +27,7 @@ public class ApprovalServiceTest {
 
     @Mock
     @InjectIntoByType
-    private NotificationService mailSendingService;
+    private NotificationTemplateService mailSendingService;
 
     @Mock
     @InjectIntoByType

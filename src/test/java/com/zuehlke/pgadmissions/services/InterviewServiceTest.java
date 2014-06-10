@@ -17,7 +17,7 @@ public class InterviewServiceTest {
 
     @Mock
     @InjectIntoByType
-    private NotificationService mailService;
+    private NotificationTemplateService mailService;
 
     @Mock
     @InjectIntoByType

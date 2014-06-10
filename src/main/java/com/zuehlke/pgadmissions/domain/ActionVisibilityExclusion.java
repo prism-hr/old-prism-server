@@ -37,9 +37,6 @@ public class ActionVisibilityExclusion {
     @Column(name = "action_visibility_exclusion_rule_id", nullable = false)
     private ActionVisibilityExclusionRule rule;
 
-    @Column(name = "precedence")
-    private Integer precedence;
-
     public Integer getId() {
         return id;
     }
@@ -70,14 +67,6 @@ public class ActionVisibilityExclusion {
 
     public void setRule(ActionVisibilityExclusionRule rule) {
         this.rule = rule;
-    }
-
-    public Integer getPrecedence() {
-        return precedence;
-    }
-
-    public void setPrecedence(Integer precedence) {
-        this.precedence = precedence;
     }
 
 }

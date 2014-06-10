@@ -17,7 +17,7 @@ public class ReviewServiceTest {
 
     @Mock
     @InjectIntoByType
-    private NotificationService mailService;
+    private NotificationTemplateService mailService;
 
     @TestedObject
     private ReviewService reviewService;

@@ -47,9 +47,9 @@ public class NotificationService {
         sendEmailNotification(recipient, resource, templateName, comment, Collections.<String, String> emptyMap());
     }
 
-    public void sendEmailNotification(User recipient, PrismResourceDynamic resource, PrismNotificationTemplate templateName, Comment comment,
+    public void sendEmailNotification(User recipient, PrismResourceDynamic resource, PrismNotificationTemplate templateId, Comment comment,
             Map<String, String> extraModelParams) {
-        NotificationTemplateVersion notificationTemplate = notificationTemplateService.getById(templateName).getVersion();
+        NotificationTemplateVersion notificationTemplate = notificationTemplateService.getActiveVersionForTemplate(resource, templateId);
         PrismEmailMessage message = new PrismEmailMessage();
 
         message.setTo(Collections.singletonList(recipient));

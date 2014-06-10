@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import com.google.common.base.Objects;
 
 @Entity
-@Table(name = "STUDY_OPTION")
+@Table(name = "PROGRAM_STUDY_OPTION")
 public class StudyOption implements Serializable {
 
     private static final long serialVersionUID = 2838801786303182881L;

@@ -105,7 +105,7 @@ public class ApplicationService {
 
     public List<Application> getApplicationsForList(final User user, final Filter filtering) {
         Filter userFilter = user.getUserAccount().getFilters().get(PrismScope.APPLICATION);
-        if (userFilter.getBlockCount() == 1) {
+        if (userFilter.getPage() == 1) {
             userFilter.setLastAccessTimestamp(new DateTime());
         }
 
@@ -171,5 +171,4 @@ public class ApplicationService {
         supervisor.setAware(true);
         return supervisor;
     }
-
 }

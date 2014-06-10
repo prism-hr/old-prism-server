@@ -33,7 +33,7 @@ public class RegistrationService {
     private RefereeDAO refereeDAO;
 
     @Autowired
-    private NotificationService mailService;
+    private NotificationService notificationService;
 
     @Autowired
     private EntityService entityService;
@@ -57,7 +57,7 @@ public class RegistrationService {
     }
 
     public void sendConfirmationEmail(User newUser) {
-        mailService.sendEmailNotification(newUser, null, SYSTEM_COMPLETE_REGISTRATION_REQUEST, null);
+        notificationService.sendEmailNotification(newUser, null, SYSTEM_COMPLETE_REGISTRATION_REQUEST, null);
     }
 
     public User findUserForActivationCode(String activationCode) {

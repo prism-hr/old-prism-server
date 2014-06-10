@@ -22,7 +22,7 @@ public class ReviewService {
     private ApplicationService applicationsService;
 
     @Autowired
-    private NotificationService mailService;
+    private NotificationTemplateService mailService;
 
     @Autowired
     private StateService stateService;

@@ -2,7 +2,9 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -18,6 +21,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
 
@@ -42,6 +46,9 @@ public class Action implements IUniqueResource {
     @OneToOne
     @JoinColumn(name = "delegate_action_id")
     private Action delegateAction;
+    
+    @OneToMany(mappedBy = "action", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ActionVisibilityExclusion> actionVisibilityExclusions = Sets.newHashSet();
     
     public Action() {
     }
@@ -82,6 +89,10 @@ public class Action implements IUniqueResource {
 
     public void setDelegateAction(Action delegateAction) {
         this.delegateAction = delegateAction;
+    }
+
+    public Set<ActionVisibilityExclusion> getActionVisibilityExclusions() {
+        return actionVisibilityExclusions;
     }
 
     public Action withId(PrismAction id) {

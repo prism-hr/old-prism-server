@@ -39,4 +39,9 @@ public class ResourceDAO {
                 .list();
     }
     
+    // TODO: implement
+    public List<PrismResourceDynamic> getReportList(Class<? extends PrismResourceDynamic> clazz, User user) {
+        return null;
+    }
+    
 }

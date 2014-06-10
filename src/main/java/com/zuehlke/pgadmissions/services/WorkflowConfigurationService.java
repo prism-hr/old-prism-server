@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.domain.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
@@ -291,7 +291,7 @@ public class WorkflowConfigurationService {
     private Element buildRoleTransitionElement(Document document, RoleTransition roleTransition) {
         Element roleTransitionElement = document.createElement("role-transition");
         roleTransitionElement.setAttribute("id", roleTransition.getRole().getId().toString());
-        roleTransitionElement.setAttribute("type", roleTransition.getRole().getId().toString());
+        roleTransitionElement.setAttribute("type", roleTransition.getRoleTransitionType().toString());
         roleTransitionElement.setAttribute("restrict-to-owner", getXmlBoolean(roleTransition.isRestrictToActionOwner()));
 
         Integer minimumPermittedTransitions = roleTransition.getMinimumPermitted();
@@ -380,7 +380,7 @@ public class WorkflowConfigurationService {
         NodeList roleElements = actionElement.getElementsByTagName("role");
         for (int i = 0; i < roleElements.getLength(); i++) {
             Element roleElement = (Element) roleElements.item(i);
-            entityService.getOrCreate(new Role(Authority.valueOf(roleElement.getAttribute("id")), scope));
+            entityService.getOrCreate(new Role(PrismRole.valueOf(roleElement.getAttribute("id")), scope));
         }
 
         NodeList taskNotificationElements = actionElement.getElementsByTagName("task-notification");

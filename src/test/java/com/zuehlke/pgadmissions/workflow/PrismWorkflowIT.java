@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
@@ -90,7 +90,7 @@ public class PrismWorkflowIT {
     public void runWorkflowTest() throws Exception {
         Program program = programService.getAllEnabledPrograms().get(0);
 
-        User programAdministrator = manageUsersService.setUserRoles("Jerzy", "Urban", "jerzy@urban.pl", true, program, Authority.PROGRAM_ADMINISTRATOR);
+        User programAdministrator = manageUsersService.setUserRoles("Jerzy", "Urban", "jerzy@urban.pl", true, program, PrismRole.PROGRAM_ADMINISTRATOR);
 
         User applicant = registerAndActivateApplicant(program, "Kuba", "Fibinger", "kuba@fibinger.pl");
 
@@ -125,7 +125,7 @@ public class PrismWorkflowIT {
 
     @Before
     public void initializeData() {
-        manageUsersService.setUserRoles("Jozef", "Oleksy", "jozek@oleksy.pl", true, systemService.getSystem(), Authority.SYSTEM_ADMINISTRATOR);
+        manageUsersService.setUserRoles("Jozef", "Oleksy", "jozek@oleksy.pl", true, systemService.getSystem(), PrismRole.SYSTEM_ADMINISTRATOR);
 
         for (ImportedEntityFeed feed : entityImportService.getImportedEntityFeeds()) {
             String entityName = WordUtils.uncapitalize(feed.getImportedEntityType().getEntityClass().getSimpleName());

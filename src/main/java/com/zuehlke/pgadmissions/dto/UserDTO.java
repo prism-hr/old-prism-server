@@ -4,7 +4,7 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 
 public class UserDTO {
 
@@ -22,7 +22,7 @@ public class UserDTO {
 
     private Program selectedProgram;
     
-    private Authority[] selectedAuthorities;
+    private PrismRole[] selectedAuthorities;
 
     public String getFirstName() {
         return firstName;
@@ -56,19 +56,19 @@ public class UserDTO {
         this.selectedProgram = selectedprogram;
     }
 
-    public Authority[] getSelectedAuthorities() {
+    public PrismRole[] getSelectedAuthorities() {
         if (selectedAuthorities == null) {
-            return new Authority[] {};
+            return new PrismRole[] {};
         }
         return selectedAuthorities;
     }
 
-    public void setSelectedAuthorities(Authority... authorities) {
+    public void setSelectedAuthorities(PrismRole... authorities) {
         this.selectedAuthorities = authorities;
     }
 
-    public boolean isInAuthority(Authority authority) {
-        for (Authority selectedAuthority : getSelectedAuthorities()) {
+    public boolean isInAuthority(PrismRole authority) {
+        for (PrismRole selectedAuthority : getSelectedAuthorities()) {
             if (selectedAuthority == authority) {
                 return true;
             }

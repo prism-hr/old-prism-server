@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -54,10 +54,10 @@ public class ProspectusController {
     @ModelAttribute("programmes")
     public List<Program> getProgrammes() {
         User currentUser = userService.getCurrentUser();
-        if (roleService.hasRole(currentUser, Authority.SYSTEM_ADMINISTRATOR)) {
+        if (roleService.hasRole(currentUser, PrismRole.SYSTEM_ADMINISTRATOR)) {
             return programsService.getAllEnabledPrograms();
         }
-        return roleService.getProgramsByUserAndRole(currentUser, Authority.PROGRAM_ADMINISTRATOR);
+        return roleService.getProgramsByUserAndRole(currentUser, PrismRole.PROGRAM_ADMINISTRATOR);
     }
 
     @ModelAttribute("projectProgrammes")

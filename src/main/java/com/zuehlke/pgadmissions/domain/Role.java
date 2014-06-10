@@ -24,7 +24,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 
 @Entity
 @Table(name = "ROLE")
@@ -35,7 +35,7 @@ public class Role implements GrantedAuthority, IUniqueResource {
 
     @Id
     @Enumerated(EnumType.STRING)
-    private Authority id;
+    private PrismRole id;
 
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
@@ -52,16 +52,16 @@ public class Role implements GrantedAuthority, IUniqueResource {
     public Role() {
     }
 
-    public Role(Authority id, Scope scope) {
+    public Role(PrismRole id, Scope scope) {
         this.id = id;
         this.scope = scope;
     }
 
-    public Authority getId() {
+    public PrismRole getId() {
         return id;
     }
 
-    public void setId(Authority id) {
+    public void setId(PrismRole id) {
         this.id = id;
     }
 
@@ -112,7 +112,7 @@ public class Role implements GrantedAuthority, IUniqueResource {
         return Objects.equal(id, other.getId());
     }
 
-    public Role withId(Authority id) {
+    public Role withId(PrismRole id) {
         this.id = id;
         return this;
     }

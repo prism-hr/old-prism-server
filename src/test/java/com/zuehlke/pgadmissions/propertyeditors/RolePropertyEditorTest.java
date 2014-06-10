@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.services.RoleService;
 
 public class RolePropertyEditorTest {
@@ -19,8 +19,8 @@ public class RolePropertyEditorTest {
 	
 	@Test	
 	public void shouldLoadByAuthorityAndSetAsValue(){
-		Role role = new Role().withId(Authority.PROGRAM_ADMINISTRATOR);
-		EasyMock.expect(roleServiceMock.getById(Authority.PROGRAM_ADMINISTRATOR)).andReturn(role);
+		Role role = new Role().withId(PrismRole.PROGRAM_ADMINISTRATOR);
+		EasyMock.expect(roleServiceMock.getById(PrismRole.PROGRAM_ADMINISTRATOR)).andReturn(role);
 		EasyMock.replay(roleServiceMock);
 		
 		editor.setAsText("ADMINISTRATOR");
@@ -41,7 +41,7 @@ public class RolePropertyEditorTest {
 	
 	@Test	
 	public void shouldReturnAuthorityAsEnum(){			
-		editor.setValue(new Role().withId(Authority.PROGRAM_ADMINISTRATOR));
+		editor.setValue(new Role().withId(PrismRole.PROGRAM_ADMINISTRATOR));
 		assertEquals("ADMINISTRATOR", editor.getAsText());
 	}
 	

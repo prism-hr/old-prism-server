@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.services.RoleService;
 
 @Component
@@ -25,7 +25,7 @@ public class RolePropertyEditor extends PropertyEditorSupport {
 
     @Override
     public void setAsText(String authority) throws IllegalArgumentException {
-        Authority authorityEnum = Authority.valueOf(authority);
+        PrismRole authorityEnum = PrismRole.valueOf(authority);
         if (authorityEnum == null) {
             setValue(null);
             return;

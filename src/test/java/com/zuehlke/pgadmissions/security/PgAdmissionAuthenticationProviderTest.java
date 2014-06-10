@@ -24,7 +24,7 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -48,8 +48,8 @@ public class PgAdmissionAuthenticationProviderTest {
 
     @Test
     public void shouldReturnPopulatedAuthenticationForValidCredentials() throws NoSuchAlgorithmException {
-        Role roleOne = new Role().withId(Authority.APPLICATION_CREATOR);
-        Role roleTwo = new Role().withId(Authority.PROGRAM_ADMINISTRATOR);
+        Role roleOne = new Role().withId(PrismRole.APPLICATION_CREATOR);
+        Role roleTwo = new Role().withId(PrismRole.PROGRAM_ADMINISTRATOR);
         User user = new User().withAccount(new UserAccount().withEnabled(true)).withId(1);
         EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");

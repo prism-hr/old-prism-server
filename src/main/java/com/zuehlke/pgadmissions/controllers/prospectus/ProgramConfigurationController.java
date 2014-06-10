@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
@@ -114,10 +114,10 @@ public class ProgramConfigurationController {
     @ModelAttribute("programmes")
     public List<Program> getProgrammes() {
         User user = userService.getCurrentUser();
-        if (roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR)) {
+        if (roleService.hasRole(user, PrismRole.SYSTEM_ADMINISTRATOR)) {
             return programsService.getAllEnabledPrograms();
         }
-        return roleService.getProgramsByUserAndRole(user, Authority.PROGRAM_ADMINISTRATOR);
+        return roleService.getProgramsByUserAndRole(user, PrismRole.PROGRAM_ADMINISTRATOR);
     }
 
     @RequestMapping(value = "/getAdvertData", method = RequestMethod.GET)

@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 
 @Service
 @Transactional
@@ -36,7 +36,7 @@ public class RoleService {
     @Autowired
     private EntityService entityService;
 
-    public Role getById(Authority authority) {
+    public Role getById(PrismRole authority) {
         return roleDAO.getById(authority);
     }
 
@@ -54,7 +54,7 @@ public class RoleService {
         return entityService.getOrCreate(transientUserRole);
     }
 
-    public void removeUserRoles(User user, PrismResource resource, Authority... authorities) {
+    public void removeUserRoles(User user, PrismResource resource, PrismRole... authorities) {
         for (UserRole roleToRemove : roleDAO.getUserRoles(resource, user, authorities)) {
             entityService.delete(roleToRemove);
         }
@@ -96,8 +96,8 @@ public class RoleService {
         }
     }
 
-    public boolean hasAnyRole(User user, Authority... authorities) {
-        for (Authority authority : authorities) {
+    public boolean hasAnyRole(User user, PrismRole... authorities) {
+        for (PrismRole authority : authorities) {
             if (hasRole(user, authority, null)) {
                 return true;
             }
@@ -105,24 +105,24 @@ public class RoleService {
         return false;
     }
 
-    public boolean hasRole(User user, Authority authority) {
+    public boolean hasRole(User user, PrismRole authority) {
         return hasRole(user, authority, null);
     }
 
-    public boolean hasRole(User user, Authority authority, PrismResource scope) {
+    public boolean hasRole(User user, PrismRole authority, PrismResource scope) {
         return roleDAO.getUserRole(user, scope, authority) != null;
     }
 
-    public List<User> getUsersInRole(PrismResource scope, Authority... authorities) {
+    public List<User> getUsersInRole(PrismResource scope, PrismRole... authorities) {
         return roleDAO.getUsersByRole(scope, authorities);
     }
 
-    public User getUserInRole(PrismResource scope, Authority... authorities) {
+    public User getUserInRole(PrismResource scope, PrismRole... authorities) {
         List<User> users = roleDAO.getUsersByRole(scope, authorities);
         return users.get(0);
     }
 
-    public List<Program> getProgramsByUserAndRole(User currentUser, Authority administrator) {
+    public List<Program> getProgramsByUserAndRole(User currentUser, PrismRole administrator) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -132,7 +132,7 @@ public class RoleService {
         return null;
     }
 
-    public UserRole getUserRole(User user, Authority authority) {
+    public UserRole getUserRole(User user, PrismRole authority) {
         return roleDAO.getUserRole(user, authority);
     }
 

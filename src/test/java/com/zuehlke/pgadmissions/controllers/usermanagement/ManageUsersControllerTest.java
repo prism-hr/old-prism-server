@@ -23,7 +23,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.dto.UserDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -151,9 +151,9 @@ public class ManageUsersControllerTest {
         newUserDTO.setEmail("jane.doe@test.com");
         Program program = new Program().withId(5).withCode("ABC");
         newUserDTO.setSelectedProgram(program);
-        newUserDTO.setSelectedAuthorities(Authority.APPLICATION_REVIEWER, Authority.PROGRAM_ADMINISTRATOR);
+        newUserDTO.setSelectedAuthorities(PrismRole.APPLICATION_REVIEWER, PrismRole.PROGRAM_ADMINISTRATOR);
         EasyMock.expect(userService.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(null);
-        EasyMock.expect(manageUsersService.setUserRoles("Jane", "Doe", "jane.doe@test.com", true, program, Authority.APPLICATION_REVIEWER, Authority.PROGRAM_ADMINISTRATOR))
+        EasyMock.expect(manageUsersService.setUserRoles("Jane", "Doe", "jane.doe@test.com", true, program, PrismRole.APPLICATION_REVIEWER, PrismRole.PROGRAM_ADMINISTRATOR))
                 .andReturn(new User().withId(4));
 
         replay();
@@ -177,7 +177,7 @@ public class ManageUsersControllerTest {
         newUserDTO.setEmail("jane.doe@test.com");
         Program program = new Program().withId(5).withCode("ABC");
         newUserDTO.setSelectedProgram(program);
-        newUserDTO.setSelectedAuthorities(Authority.APPLICATION_REVIEWER, Authority.PROGRAM_ADMINISTRATOR);
+        newUserDTO.setSelectedAuthorities(PrismRole.APPLICATION_REVIEWER, PrismRole.PROGRAM_ADMINISTRATOR);
 
         replay();
 
@@ -199,7 +199,7 @@ public class ManageUsersControllerTest {
         newUserDTO.setLastName("Doe");
         newUserDTO.setEmail("jane.doe@test.com");
 
-        newUserDTO.setSelectedAuthorities(Authority.APPLICATION_REVIEWER, Authority.PROGRAM_ADMINISTRATOR);
+        newUserDTO.setSelectedAuthorities(PrismRole.APPLICATION_REVIEWER, PrismRole.PROGRAM_ADMINISTRATOR);
 
         User existingUser = new User().withId(7);
 
@@ -249,7 +249,7 @@ public class ManageUsersControllerTest {
         List<User> admitters = Lists.newArrayList();
         System prismSystem = new System();
 
-        EasyMock.expect(roleService.getUsersInRole(prismSystem, Authority.INSTITUTION_ADMITTER)).andReturn(admitters);
+        EasyMock.expect(roleService.getUsersInRole(prismSystem, PrismRole.INSTITUTION_ADMITTER)).andReturn(admitters);
         replay();
         List<User> returned = controller.getAdmitters();
 
@@ -263,7 +263,7 @@ public class ManageUsersControllerTest {
         User userThree = new User().withId(5).withLastName("AA").withFirstName("GGG");
         System prismSystem = new System();
         
-        EasyMock.expect(roleService.getUsersInRole(prismSystem, Authority.SYSTEM_ADMINISTRATOR)).andReturn(Arrays.asList(userOne, userTwo, userThree));
+        EasyMock.expect(roleService.getUsersInRole(prismSystem, PrismRole.SYSTEM_ADMINISTRATOR)).andReturn(Arrays.asList(userOne, userTwo, userThree));
         replay();
         List<User> superadmins = controller.getSuperadministrators();
 
@@ -286,7 +286,7 @@ public class ManageUsersControllerTest {
         userDTO.setLastName("Doe");
         userDTO.setEmail("jane.doe@test.com");
 
-        EasyMock.expect(manageUsersService.setUserRoles("Jane", "Doe", "jane.doe@test.com", true, prismSystem, Authority.SYSTEM_ADMINISTRATOR)).andReturn(
+        EasyMock.expect(manageUsersService.setUserRoles("Jane", "Doe", "jane.doe@test.com", true, prismSystem, PrismRole.SYSTEM_ADMINISTRATOR)).andReturn(
                 new User().withId(4));
 
         replay();

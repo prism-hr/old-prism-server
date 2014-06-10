@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.mail.NotificationDescriptor;
 
@@ -95,7 +95,7 @@ public class UserDAO {
                 .list();
     }
 
-    public List<User> getUsersForResourceAndRole(PrismResource resource, Authority authority) {
+    public List<User> getUsersForResourceAndRole(PrismResource resource, PrismRole authority) {
         return sessionFactory.getCurrentSession().createCriteria(UserRole.class)
                 .setProjection(Projections.groupProperty("user.parentUser")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
@@ -127,12 +127,12 @@ public class UserDAO {
 
     public List<User> getSuperadministrators() {
         return sessionFactory.getCurrentSession().createCriteria(User.class).createAlias("roles", "role")
-                .add(Restrictions.eq("role.id", Authority.SYSTEM_ADMINISTRATOR)).list();
+                .add(Restrictions.eq("role.id", PrismRole.SYSTEM_ADMINISTRATOR)).list();
     }
 
     public List<User> getAdmitters() {
         return sessionFactory.getCurrentSession().createCriteria(User.class).createAlias("roles", "role")
-                .add(Restrictions.eq("role.id", Authority.INSTITUTION_ADMITTER)).list();
+                .add(Restrictions.eq("role.id", PrismRole.INSTITUTION_ADMITTER)).list();
     }
 
     //TODO rewrite the query - HQL

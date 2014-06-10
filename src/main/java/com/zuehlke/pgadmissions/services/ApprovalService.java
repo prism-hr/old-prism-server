@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.mail.NotificationService;
@@ -71,8 +71,8 @@ public class ApprovalService {
             approvalComment.setPositionDescription(latestApprovalComment.getPositionDescription());
             approvalComment.setAppointmentConditions(latestApprovalComment.getAppointmentConditions());
         } else if (project != null) {
-            User primarySupervisor = roleService.getUserInRole(project, Authority.PROJECT_PRIMARY_SUPERVISOR);
-            User secondarySupervisor = roleService.getUserInRole(project, Authority.PROJECT_SECONDARY_SUPERVISOR);
+            User primarySupervisor = roleService.getUserInRole(project, PrismRole.PROJECT_PRIMARY_SUPERVISOR);
+            User secondarySupervisor = roleService.getUserInRole(project, PrismRole.PROJECT_SECONDARY_SUPERVISOR);
             commentService.assignUser(approvalComment, primarySupervisor, true);
             if (secondarySupervisor != null) {
                 commentService.assignUser(approvalComment, secondarySupervisor, false);

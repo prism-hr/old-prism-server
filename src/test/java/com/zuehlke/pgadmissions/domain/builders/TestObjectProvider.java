@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -52,54 +52,54 @@ public class TestObjectProvider {
     }
 
     public User getUser() {
-        return getUser(Authority.APPLICATION_CREATOR, true, true);
+        return getUser(PrismRole.APPLICATION_CREATOR, true, true);
     }
 
-    public User getEnabledUserInRole(Authority authority) {
+    public User getEnabledUserInRole(PrismRole authority) {
         return getUser(authority, true, true);
     }
 
-    public User getDisabledUserInRole(Authority authority) {
+    public User getDisabledUserInRole(PrismRole authority) {
         return getUser(authority, true, false);
     }
 
-    public User getEnabledUserNotInRole(Authority authority) {
+    public User getEnabledUserNotInRole(PrismRole authority) {
         return getUser(authority, false, true);
     }
 
-    public User getDisabledUserNotInRole(Authority authority) {
+    public User getDisabledUserNotInRole(PrismRole authority) {
         return getUser(authority, false, false);
     }
 
-    public User getEnabledUserInRoleInEnabledProgram(Program program, Authority authority) {
+    public User getEnabledUserInRoleInEnabledProgram(Program program, PrismRole authority) {
         return getProgramUser(program, true, authority, true, true);
     }
 
-    public User getDisabledUserInRoleInEnabledProgram(Program program, Authority authority) {
+    public User getDisabledUserInRoleInEnabledProgram(Program program, PrismRole authority) {
         return getProgramUser(program, true, authority, true, false);
     }
 
-    public User getEnabledUserNotInRoleInEnabledProgram(Program program, Authority authority) {
+    public User getEnabledUserNotInRoleInEnabledProgram(Program program, PrismRole authority) {
         return getProgramUser(program, true, authority, false, true);
     }
 
-    public User getDisabledUserNotInRoleInEnabledProgram(Program program, Authority authority) {
+    public User getDisabledUserNotInRoleInEnabledProgram(Program program, PrismRole authority) {
         return getProgramUser(program, true, authority, false, false);
     }
 
-    public User getEnabledUserInRoleInDisabledProgram(Program program, Authority authority) {
+    public User getEnabledUserInRoleInDisabledProgram(Program program, PrismRole authority) {
         return getProgramUser(program, false, authority, true, true);
     }
 
-    public User getDisabledUserInRoleInDisabledProgram(Program program, Authority authority) {
+    public User getDisabledUserInRoleInDisabledProgram(Program program, PrismRole authority) {
         return getProgramUser(program, false, authority, true, false);
     }
 
-    public User getEnabledUserNotInRoleInDisabledProgram(Program program, Authority authority) {
+    public User getEnabledUserNotInRoleInDisabledProgram(Program program, PrismRole authority) {
         return getProgramUser(program, false, authority, false, true);
     }
 
-    public User getDisabledUserNotInRoleInDisabledProgram(Program program, Authority authority) {
+    public User getDisabledUserNotInRoleInDisabledProgram(Program program, PrismRole authority) {
         return getProgramUser(program, false, authority, false, false);
     }
 
@@ -127,7 +127,7 @@ public class TestObjectProvider {
         return getProgram(PrismState.PROGRAM_DISABLED, program);
     }
 
-    public Role getRole(Authority authority) {
+    public Role getRole(PrismRole authority) {
         return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("id", authority)).uniqueResult();
     }
 
@@ -158,7 +158,7 @@ public class TestObjectProvider {
                 .add(Restrictions.eq("state.id", status)).setMaxResults(1).uniqueResult();
     }
 
-    private User getUser(Authority authority, Boolean isInRole, Boolean userEnabled) {
+    private User getUser(PrismRole authority, Boolean isInRole, Boolean userEnabled) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class).createAlias("userAccount", "userAccount", JoinType.INNER_JOIN)
                 .createAlias("userRoles", "userRole", JoinType.INNER_JOIN).createAlias("userRole.role", "role", JoinType.INNER_JOIN);
 
@@ -186,7 +186,7 @@ public class TestObjectProvider {
         return (User) criteria.setMaxResults(1).uniqueResult();
     }
 
-    private User getProgramUser(Program program, Boolean programEnabled, Authority authority, Boolean isInRole, Boolean userEnabled) {
+    private User getProgramUser(Program program, Boolean programEnabled, PrismRole authority, Boolean isInRole, Boolean userEnabled) {
         String authorityString = authority.toString();
         String capitalisedAuthorityString = authorityString.substring(0, 1).toUpperCase() + authorityString.substring(1);
 

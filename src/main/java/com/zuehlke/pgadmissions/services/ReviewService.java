@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.State;
@@ -26,7 +25,7 @@ public class ReviewService {
     private NotificationService mailService;
 
     @Autowired
-    private StateDAO stateDAO;
+    private StateService stateService;
 
     @Autowired
     private UserService userService;
@@ -46,7 +45,7 @@ public class ReviewService {
             baseDate = application.getClosingDate();
         }
 
-        State state = stateDAO.getById(PrismState.APPLICATION_REVIEW);
+        State state = stateService.getById(PrismState.APPLICATION_REVIEW);
         // TODO write query to get duration in minutes
         Integer durationInMinutes = 0; // state.getDurationInMinutes();
         

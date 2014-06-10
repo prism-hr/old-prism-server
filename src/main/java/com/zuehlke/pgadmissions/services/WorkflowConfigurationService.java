@@ -54,6 +54,9 @@ public class WorkflowConfigurationService {
     @Autowired
     private StateService stateService;
 
+    @Autowired
+    private NotificationTemplateService notificationTemplateService;
+
     public String exportWorkflowConfiguration() throws Exception {
         DocumentBuilder documentBuilder = prepareDocumentBuilder();
         Document document = documentBuilder.newDocument();
@@ -121,7 +124,7 @@ public class WorkflowConfigurationService {
         Element stateElement = document.createElement("state");
         stateElement.setAttribute("id", state.getId().toString());
         stateElement.setAttribute("parent-state", state.getParentState().getId().toString());
-        
+
         Integer defaultStateDuration = stateService.getDefaultStateDuration(state);
         if (defaultStateDuration != null) {
             stateElement.setAttribute("default-duration", stateService.getDefaultStateDuration(state).toString());
@@ -230,6 +233,8 @@ public class WorkflowConfigurationService {
             Element reminderNotificationTemplateElement = document.createElement("task-reminder");
             reminderNotificationTemplateElement.setAttribute("id", reminderNotificationTemplate.getId().toString());
             reminderNotificationTemplateElement.setAttribute("type", reminderNotificationTemplate.getNotificationType().toString());
+            reminderNotificationTemplateElement.setAttribute("default-interval", notificationTemplateService.getDefaultReminderDuration(notificationTemplate)
+                    .toString());
             notificationTemplateElement.appendChild(reminderNotificationTemplateElement);
         }
 
@@ -324,7 +329,7 @@ public class WorkflowConfigurationService {
         roleTransitionExclusionElement.setAttribute("id", excludedRole.getId().toString());
         return roleTransitionExclusionElement;
     }
-    
+
     private void importScopeDefinition(Element scopeElement) {
         Scope scope = new Scope(PrismScope.valueOf(scopeElement.getAttribute("id")), Integer.parseInt(scopeElement.getAttribute("precedence")));
         entityService.save(scope);
@@ -342,7 +347,7 @@ public class WorkflowConfigurationService {
 
         State state = (State) entityService.getOrCreate(new State(PrismState.valueOf(stateElement.getAttribute("id")), scope));
         state.setParentState(parentState);
-        
+
         String defaultStateDurationDefinition = stateElement.getAttribute("default-duration");
         if (defaultStateDurationDefinition != null) {
             importStateDuration(state, defaultStateDurationDefinition);
@@ -371,30 +376,35 @@ public class WorkflowConfigurationService {
         if (actionElement.hasAttribute("delegate-action")) {
             actionInserts.put(actionElement, action);
         }
-        
+
         NodeList roleElements = actionElement.getElementsByTagName("role");
         for (int i = 0; i < roleElements.getLength(); i++) {
             Element roleElement = (Element) roleElements.item(i);
             entityService.getOrCreate(new Role(Authority.valueOf(roleElement.getAttribute("id")), scope));
         }
-        
+
         NodeList taskNotificationElements = actionElement.getElementsByTagName("task-notification");
         if (taskNotificationElements.getLength() == 1) {
             Element taskNotificationElement = (Element) taskNotificationElements.item(0);
-            NotificationTemplate taskNotification = (NotificationTemplate) entityService.getOrCreate(new NotificationTemplate(PrismNotificationTemplate.valueOf(taskNotificationElement.getAttribute("id"))));
-            
-            NodeList taskReminderElements = taskNotificationElement.getElementsByTagName("task-reminder");
-            if (taskReminderElements.getLength() == 1) {
-                Element taskReminderElement = (Element) taskReminderElements.item(0);
-                NotificationTemplate taskReminder = (NotificationTemplate) entityService.getOrCreate(new NotificationTemplate(PrismNotificationTemplate.valueOf(taskReminderElement.getAttribute("id"))));
-                taskNotification.setReminderTemplate(taskReminder);
-            }
+            importTaskNotificationDefinition(taskNotificationElement);
         }
     }
-    
+
+    private void importTaskNotificationDefinition(Element taskNotificationElement) {
+        NotificationTemplate taskNotification = (NotificationTemplate) entityService.getOrCreate(new NotificationTemplate(PrismNotificationTemplate
+                .valueOf(taskNotificationElement.getAttribute("id"))));
+
+        NodeList taskReminderElements = taskNotificationElement.getElementsByTagName("task-reminder");
+        if (taskReminderElements.getLength() == 1) {
+            Element taskReminderElement = (Element) taskReminderElements.item(0);
+            NotificationTemplate taskReminder = (NotificationTemplate) entityService.getOrCreate(new NotificationTemplate(PrismNotificationTemplate
+                    .valueOf(taskReminderElement.getAttribute("id"))));
+            taskNotification.setReminderTemplate(taskReminder);
+        }
+    }
+
     private void importDelegateActionDefinition(Element actionElement, Action action) {
-        Action delegateAction = entityService.getByProperty(Action.class, "id",
-                PrismAction.valueOf(actionElement.getAttribute("delegate-action")));
+        Action delegateAction = entityService.getByProperty(Action.class, "id", PrismAction.valueOf(actionElement.getAttribute("delegate-action")));
         action.setDelegateAction(delegateAction);
     }
 

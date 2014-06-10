@@ -25,15 +25,8 @@ import com.zuehlke.pgadmissions.domain.enums.PrismState;
 @SuppressWarnings("unchecked")
 public class ApplicationDAO {
 
-    private SessionFactory sessionFactory;
-
-    public ApplicationDAO() {
-    }
-
     @Autowired
-    public ApplicationDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private SessionFactory sessionFactory;
 
     public void save(Application application) {
         sessionFactory.getCurrentSession().saveOrUpdate(application);

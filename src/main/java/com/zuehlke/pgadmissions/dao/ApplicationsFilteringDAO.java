@@ -9,17 +9,9 @@ import com.zuehlke.pgadmissions.domain.Filter;
 @Repository
 public class ApplicationsFilteringDAO {
 
-    private final SessionFactory sessionFactory;
-
-    public ApplicationsFilteringDAO() {
-        this(null);
-    }
-
     @Autowired
-    public ApplicationsFilteringDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
+    private SessionFactory sessionFactory;
+    
     public Filter merge(Filter filtering) {
         sessionFactory.getCurrentSession().saveOrUpdate(filtering);
         return filtering;

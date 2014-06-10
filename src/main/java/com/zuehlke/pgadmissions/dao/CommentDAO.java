@@ -21,16 +21,8 @@ import com.zuehlke.pgadmissions.domain.User;
 @SuppressWarnings("unchecked")
 public class CommentDAO {
 
-    private final SessionFactory sessionFactory;
-
-    public CommentDAO() {
-        this(null);
-    }
-
     @Autowired
-    public CommentDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private SessionFactory sessionFactory;
     
     public Comment getLastComment(PrismResourceDynamic resource) {
         return getLastCommentOfType(resource, Comment.class, null);

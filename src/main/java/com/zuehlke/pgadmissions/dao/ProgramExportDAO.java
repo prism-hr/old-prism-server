@@ -16,16 +16,8 @@ import com.zuehlke.pgadmissions.domain.User;
 @Repository
 public class ProgramExportDAO {
 
-    private final SessionFactory sessionFactory;
-
-    public ProgramExportDAO() {
-        this(null);
-    }
-
     @Autowired
-    public ProgramExportDAO(final SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private SessionFactory sessionFactory;
     
     public ProgramExport getById(Integer id) {
         return (ProgramExport) sessionFactory.getCurrentSession().get(ProgramExport.class, id);

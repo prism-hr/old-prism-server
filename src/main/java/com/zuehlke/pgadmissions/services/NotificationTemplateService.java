@@ -17,17 +17,20 @@ public class NotificationTemplateService {
 
     @Autowired
     private NotificationTemplateDAO notificationTemplateDAO;
+    
+    @Autowired
+    private EntityService entityService;
 
-    public NotificationTemplate getById(PrismNotificationTemplate name) {
-        return notificationTemplateDAO.getById(name);
+    public NotificationTemplate getById(PrismNotificationTemplate id) {
+        return entityService.getByProperty(NotificationTemplate.class, "id", id);
     }
 
-    public NotificationTemplateVersion getTemplateVersion(Integer id) {
-        return notificationTemplateDAO.getVersionById(id);
+    public NotificationTemplateVersion getTemplateVersionById(Integer id) {
+        return entityService.getById(NotificationTemplateVersion.class, id);
     }
 
     public NotificationTemplateVersion saveTemplateVersion(PrismNotificationTemplate templateId, String content, String subject) {
-        NotificationTemplate notificationTemplate = notificationTemplateDAO.getById(templateId);
+        NotificationTemplate notificationTemplate = getById(templateId);
         NotificationTemplateVersion templateVersion = new NotificationTemplateVersion();
 
         templateVersion.setNotificationTemplate(notificationTemplate);
@@ -41,12 +44,16 @@ public class NotificationTemplateService {
     }
     
     public void activateTemplateVersion(PrismNotificationTemplate name, Integer idToActivate) throws NotificationTemplateException {
-        NotificationTemplateVersion toActivate = notificationTemplateDAO.getVersionById(idToActivate);
+        NotificationTemplateVersion toActivate = getTemplateVersionById(idToActivate);
         if (toActivate == null) {
             throw new NotificationTemplateException("Could not find template version with ID: \"" + idToActivate + "\"");
         }
 
         NotificationTemplate notificationTemplate = toActivate.getNotificationTemplate();
         notificationTemplate.setVersion(toActivate);
+    }
+    
+    public Integer getDefaultReminderDuration(NotificationTemplate notificationTemplate) {
+        return notificationTemplateDAO.getDefaultReminderDuration(notificationTemplate);
     }
 }

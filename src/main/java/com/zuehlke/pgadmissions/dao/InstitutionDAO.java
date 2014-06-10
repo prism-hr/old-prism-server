@@ -21,15 +21,8 @@ import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 @SuppressWarnings("unchecked")
 public class InstitutionDAO {
 
-    private SessionFactory sessionFactory;
-
-    public InstitutionDAO() {
-    }
-
     @Autowired
-    public InstitutionDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private SessionFactory sessionFactory;
 
     public List<Institution> getEnabledByDomicile(InstitutionDomicile domicile) {
         return (List<Institution>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //

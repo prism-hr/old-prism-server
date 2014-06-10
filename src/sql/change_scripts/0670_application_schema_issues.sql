@@ -1528,3 +1528,12 @@ ALTER TABLE STATE
 	MODIFY COLUMN parent_state_id VARCHAR(50)
 ;
 
+/* Typos in imported language qualification type table */
+
+ALTER TABLE IMPORTED_LANGUAGE_QUALIFICATION_TYPE
+	CHANGE COLUMN minumum_overall_score minimum_overall_score DECIMAL(5,2),
+	CHANGE COLUMN minumum_reading_score minimum_reading_score DECIMAL(5,2),
+	CHANGE COLUMN minumum_writing_score minimum_writing_score DECIMAL(5,2),
+	CHANGE COLUMN minumum_speaking_score minimum_speaking_score DECIMAL(5,2),
+	CHANGE COLUMN minumum_listening_score minimum_listening_score DECIMAL(5,2)
+;

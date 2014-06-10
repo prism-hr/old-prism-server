@@ -22,12 +22,9 @@ public class ConcatenableIlikeCriterion implements Criterion {
 
     /**
      * 
-     * @param value
-     *            The search query to use in the ilike operation
-     * @param match
-     *            The type of matching needed. @see Hibernate MatchMode
-     * @param columns
-     *            All the columns that you wish to concatenate
+     * @param value - the search query to use in the ilike operation
+     * @param match - the type of matching needed. @see Hibernate MatchMode
+     * @param columns - all the columns that you wish to concatenate
      */
     public ConcatenableIlikeCriterion(String value, MatchMode match, String... columns) {
         if (columns == null || columns.length == 0) {

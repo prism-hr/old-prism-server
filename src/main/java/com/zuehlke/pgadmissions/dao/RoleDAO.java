@@ -29,15 +29,8 @@ import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
 @Repository
 public class RoleDAO {
 
-    private SessionFactory sessionFactory;
-
-    public RoleDAO() {
-    }
-
     @Autowired
-    public RoleDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private SessionFactory sessionFactory;
 
     public Role getById(final Authority id) {
         return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("id", id)).uniqueResult();

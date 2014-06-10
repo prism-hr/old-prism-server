@@ -1153,6 +1153,14 @@ INSERT INTO STATE_TRANSITION (state_action_id, state_transition_type_id, transit
 		AND action_id = "APPLICATION_CORRECT"
 ;
 
+/* Create institution */
+
+INSERT INTO STATE_TRANSITION (state_action_id, state_transition_type_id, transition_state_id, transition_action_id, do_post_comment)
+	SELECT id, "ONE_COMPLETED", "SYSTEM_APPROVED", "SYSTEM_CREATE_INSTITUTION", 0
+	FROM STATE_ACTION
+	WHERE action_id = "SYSTEM_CREATE_INSTITUTION"
+;
+
 /* Import program */
 
 INSERT INTO STATE_TRANSITION (state_action_id, state_transition_type_id, transition_state_id, transition_action_id, do_post_comment)

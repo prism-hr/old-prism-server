@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
@@ -223,7 +223,7 @@ public class UserService {
         return userDAO.getUseDueTaskNotification();
     }
 
-    public List<User> getUsersForResourceAndRole(PrismResource resource, Authority authority) {
+    public List<User> getUsersForResourceAndRole(PrismResource resource, PrismRole authority) {
         return userDAO.getUsersForResourceAndRole(resource, authority);
     }
 

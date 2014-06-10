@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -182,7 +182,7 @@ public class StateService {
         String role;
         String delegateRole = null;
         if (action.getActionType() != PrismActionType.USER_INVOCATION) {
-            role = Authority.SYSTEM_ADMINISTRATOR.toString();
+            role = PrismRole.SYSTEM_ADMINISTRATOR.toString();
         } else {
             role = Joiner.on("|").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action));
             if (comment.getDelegateUser() != null) {

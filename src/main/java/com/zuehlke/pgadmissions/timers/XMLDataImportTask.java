@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.mail.NotificationService;
 import com.zuehlke.pgadmissions.services.SystemService;
@@ -54,7 +54,7 @@ public class XMLDataImportTask {
                     message += "\n" + cause.toString();
                 }
 
-                for (User recipient : userService.getUsersForResourceAndRole(systemService.getSystem(), Authority.SYSTEM_ADMINISTRATOR)) {
+                for (User recipient : userService.getUsersForResourceAndRole(systemService.getSystem(), PrismRole.SYSTEM_ADMINISTRATOR)) {
                      mailService.sendEmailNotification(recipient, null, SYSTEM_IMPORT_ERROR_NOTIFICATION, null, ImmutableMap.of("errorMessage", message));
                 }
 

@@ -15,7 +15,7 @@ import org.springframework.security.core.Authentication;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 
 public class SwitchUserServiceTest {
     
@@ -33,9 +33,9 @@ public class SwitchUserServiceTest {
     public void setup() {
         authenticationProvider = new SwitchUserService();
         
-        role1 = new Role().withId(Authority.APPLICATION_CREATOR);
+        role1 = new Role().withId(PrismRole.APPLICATION_CREATOR);
         
-        role2 = new Role().withId(Authority.PROGRAM_ADMINISTRATOR);
+        role2 = new Role().withId(PrismRole.PROGRAM_ADMINISTRATOR);
         
         user1 = new User().withId(5).withFirstName("Jane").withLastName("Doe").withEmail("jane@doe.com")
                 .withAccount(new UserAccount().withEnabled(true))

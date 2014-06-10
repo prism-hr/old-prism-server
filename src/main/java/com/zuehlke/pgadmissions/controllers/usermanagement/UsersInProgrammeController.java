@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -41,7 +41,7 @@ public class UsersInProgrammeController {
     @RequestMapping(method = RequestMethod.GET, value = "/program")
     public String getUsersInProgramView() {
         User user = userService.getCurrentUser();
-        if (!roleService.hasAnyRole(user, Authority.SYSTEM_ADMINISTRATOR, Authority.PROGRAM_ADMINISTRATOR)) {
+        if (!roleService.hasAnyRole(user, PrismRole.SYSTEM_ADMINISTRATOR, PrismRole.PROGRAM_ADMINISTRATOR)) {
             throw new ResourceNotFoundException();
         }
         return USERS_ROLES_VIEW;

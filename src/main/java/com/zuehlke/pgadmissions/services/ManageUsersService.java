@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.mail.NotificationService;
 
 @Service
@@ -26,12 +26,12 @@ public class ManageUsersService {
     private SystemService systemService;
 
     public User setUserRoles(String firstname, String lastname, String email, boolean overwriteRoles, PrismResource resource,
-            Authority... authorities) {
+            PrismRole... authorities) {
         User user = userService.getOrCreateUser(firstname, lastname, email);
         if (overwriteRoles) {
             roleService.removeUserRoles(user, resource);
         }
-        for (Authority authority : authorities) {
+        for (PrismRole authority : authorities) {
             roleService.getOrCreateUserRole(systemService.getSystem(), user, roleService.getById(authority));
         }
         return user;

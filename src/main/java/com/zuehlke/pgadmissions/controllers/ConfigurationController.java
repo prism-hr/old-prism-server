@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
@@ -87,7 +87,7 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.GET)
     public String getConfigurationPage() {
         User user = userService.getCurrentUser();
-        if (!roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR) && !roleService.hasRole(user, Authority.PROGRAM_ADMINISTRATOR)) {
+        if (!roleService.hasRole(user, PrismRole.SYSTEM_ADMINISTRATOR) && !roleService.hasRole(user, PrismRole.PROGRAM_ADMINISTRATOR)) {
             throw new ResourceNotFoundException();
         }
         return CONFIGURATION_VIEW_NAME;
@@ -96,7 +96,7 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.GET, value = "config_section")
     public String getConfigurationSection() {
         // FIXME rewrite using AJAX
-        if (!roleService.hasRole(getUser(), Authority.SYSTEM_ADMINISTRATOR)) {
+        if (!roleService.hasRole(getUser(), PrismRole.SYSTEM_ADMINISTRATOR)) {
             return "/private/common/simpleMessage";
         }
         return CONFIGURATION_SECTION_NAME;
@@ -105,7 +105,7 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.POST)
     public String submit(@ModelAttribute ServiceLevelsDTO serviceLevelsDTO) {
         User user = userService.getCurrentUser();
-        if (!roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR)) {
+        if (!roleService.hasRole(user, PrismRole.SYSTEM_ADMINISTRATOR)) {
             throw new ResourceNotFoundException();
         }
         configurationService.saveServiceLevels(serviceLevelsDTO);
@@ -256,10 +256,10 @@ public class ConfigurationController {
     public List<Program> getPrograms() {
         // TODO: We can write this as a single query now
         User user = userService.getCurrentUser();
-        if (roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR)) {
+        if (roleService.hasRole(user, PrismRole.SYSTEM_ADMINISTRATOR)) {
             return programsService.getAllEnabledPrograms();
         }
-        return roleService.getProgramsByUserAndRole(user, Authority.PROGRAM_ADMINISTRATOR);
+        return roleService.getProgramsByUserAndRole(user, PrismRole.PROGRAM_ADMINISTRATOR);
     }
 
     private Map<String, String> validateScoringDefinition(Integer programId, String scoringContent) {

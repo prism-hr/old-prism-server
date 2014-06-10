@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-public enum Authority {
+public enum PrismRole {
 
     APPLICATION_ADMINISTRATOR, //
     APPLICATION_CREATOR, //

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.dto.UserDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -83,10 +83,10 @@ public class ManageUsersController {
     @ModelAttribute("programs")
     public List<Program> getPrograms() {
         User currentUser = userService.getCurrentUser();
-        if (roleService.hasRole(currentUser, Authority.SYSTEM_ADMINISTRATOR)) {
+        if (roleService.hasRole(currentUser, PrismRole.SYSTEM_ADMINISTRATOR)) {
             return programService.getAllEnabledPrograms();
         }
-        return roleService.getProgramsByUserAndRole(currentUser, Authority.PROGRAM_ADMINISTRATOR);
+        return roleService.getProgramsByUserAndRole(currentUser, PrismRole.PROGRAM_ADMINISTRATOR);
     }
 
     @ModelAttribute("user")
@@ -96,19 +96,19 @@ public class ManageUsersController {
 
     @ModelAttribute("superadministrators")
     public List<User> getSuperadministrators() {
-        List<User> superadmins = roleService.getUsersInRole(systemService.getSystem(), Authority.SYSTEM_ADMINISTRATOR);
+        List<User> superadmins = roleService.getUsersInRole(systemService.getSystem(), PrismRole.SYSTEM_ADMINISTRATOR);
         return superadmins;
     }
 
     @ModelAttribute("admitters")
     public List<User> getAdmitters() {
-        return roleService.getUsersInRole(systemService.getSystem(), Authority.INSTITUTION_ADMITTER);
+        return roleService.getUsersInRole(systemService.getSystem(), PrismRole.INSTITUTION_ADMITTER);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/edit")
     public String getAddUsersView() {
         User user = userService.getCurrentUser();
-        if (!roleService.hasAnyRole(user, Authority.SYSTEM_ADMINISTRATOR, Authority.PROGRAM_ADMINISTRATOR, Authority.INSTITUTION_ADMITTER)) {
+        if (!roleService.hasAnyRole(user, PrismRole.SYSTEM_ADMINISTRATOR, PrismRole.PROGRAM_ADMINISTRATOR, PrismRole.INSTITUTION_ADMITTER)) {
             throw new ResourceNotFoundException();
         }
         return NEW_USER_VIEW_NAME;
@@ -117,11 +117,11 @@ public class ManageUsersController {
     @RequestMapping(method = RequestMethod.POST, value = "/edit/saveSuperadmin")
     public String handleAddSuperadmin(@Valid @ModelAttribute("adminDTO") UserDTO userDTO, BindingResult result) {
         User user = userService.getCurrentUser();
-        if (Arrays.asList(userDTO.getSelectedAuthorities()).contains(Authority.SYSTEM_ADMINISTRATOR) && !roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR)) {
+        if (Arrays.asList(userDTO.getSelectedAuthorities()).contains(PrismRole.SYSTEM_ADMINISTRATOR) && !roleService.hasRole(user, PrismRole.SYSTEM_ADMINISTRATOR)) {
             throw new ResourceNotFoundException();
         }
 
-        if (roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR)) {
+        if (roleService.hasRole(user, PrismRole.SYSTEM_ADMINISTRATOR)) {
             throw new ResourceNotFoundException();
         }
         if (result.hasErrors()) {
@@ -144,7 +144,7 @@ public class ManageUsersController {
     @RequestMapping(method = RequestMethod.POST, value = "/edit/saveUser")
     public String handleEditUserRoles(@Valid @ModelAttribute("userDTO") UserDTO userDTO, BindingResult result) {
         User user = userService.getCurrentUser();
-        if (!roleService.hasAnyRole(user, Authority.SYSTEM_ADMINISTRATOR, Authority.PROGRAM_ADMINISTRATOR)) {
+        if (!roleService.hasAnyRole(user, PrismRole.SYSTEM_ADMINISTRATOR, PrismRole.PROGRAM_ADMINISTRATOR)) {
             throw new ResourceNotFoundException();
         }
 

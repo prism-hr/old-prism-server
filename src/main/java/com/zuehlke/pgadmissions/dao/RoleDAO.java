@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
 import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
 
@@ -32,7 +32,7 @@ public class RoleDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public Role getById(final Authority id) {
+    public Role getById(final PrismRole id) {
         return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("id", id)).uniqueResult();
     }
 
@@ -41,14 +41,14 @@ public class RoleDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<User> getUsersByRole(PrismResource resource, Authority[] authorities) {
+    public List<User> getUsersByRole(PrismResource resource, PrismRole[] authorities) {
         return sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .createAlias("userRoles", "userRole") //
                 .add(Restrictions.in("userRole.role.id", authorities)) //
                 .list();
     }
 
-    public UserRole getUserRole(User user, PrismResource resource, Authority authority) {
+    public UserRole getUserRole(User user, PrismResource resource, PrismRole authority) {
         return (UserRole) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("role.id", authority)) //
@@ -71,7 +71,7 @@ public class RoleDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<UserRole> getUserRoles(PrismResource resource, User user, Authority... authorities) {
+    public List<UserRole> getUserRoles(PrismResource resource, User user, PrismRole... authorities) {
         return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.in("role.id", authorities)) //
@@ -189,7 +189,7 @@ public class RoleDAO {
         return instructions;
     }
 
-    public UserRole getUserRole(User user, Authority authority) {
+    public UserRole getUserRole(User user, PrismRole authority) {
         return (UserRole) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .add(Restrictions.eq("role.id", authority)) //
                 .add(Restrictions.eq("user", user)) //

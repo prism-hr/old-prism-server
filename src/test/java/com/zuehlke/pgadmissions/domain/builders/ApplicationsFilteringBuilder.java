@@ -59,7 +59,7 @@ public class ApplicationsFilteringBuilder {
         filtering.getFilterConstraints().addAll(filters);
         filtering.setSortCategory(sortCategory);
         filtering.setSortOrder(order);
-        filtering.setBlockCount(blockCount);
+        filtering.setPage(blockCount);
         filtering.setSatisfyAllConditions(useDisjunction);
         return filtering;
     }

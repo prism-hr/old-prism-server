@@ -61,7 +61,7 @@ public class Filter {
     private Set<FilterConstraint> filterConstraints = Sets.newHashSet();
     
     @Transient
-    private Integer blockCount = 1;
+    private Integer page = 1;
 
     @Transient
     private Integer latestConsideredFlagIndex = 0;
@@ -121,12 +121,12 @@ public class Filter {
         return filterConstraints;
     }
 
-    public Integer getBlockCount() {
-        return blockCount;
+    public Integer getPage() {
+        return page;
     }
 
-    public void setBlockCount(Integer blockCount) {
-        this.blockCount = blockCount;
+    public void setPage(Integer page) {
+        this.page = page;
     }
 
 }

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 
@@ -46,7 +47,8 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
             log.error("Couldn't read current user because of " + e.getClass() + ": " + e.getMessage());
         }
         log.error(DiagnosticInfoPrintUtils.getRequestErrorLogMessage(request, currentUser), ex);
-        return new ModelAndView("redirect:error");
+        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        return null;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

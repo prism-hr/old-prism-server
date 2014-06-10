@@ -47,7 +47,7 @@ public class ApplicationFormListDAO {
     
     @SuppressWarnings("unchecked")
     public List<Application> getVisibleApplicationsForList(final User user, final Filter filter, final int itemsPerPage) {
-        Integer blockCount = filter.getBlockCount();
+        Integer blockCount = filter.getPage();
 
         Criteria criteria = sessionFactory
                 .getCurrentSession()

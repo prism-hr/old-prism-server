@@ -23,6 +23,7 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
+import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.services.NotificationTemplateService;
@@ -49,7 +50,7 @@ public class MailSender {
     private String emailAddressTo;
 
     @Autowired
-    private NotificationTemplateService emailTemplateService;
+    private NotificationTemplateService NotificationTemplateService;
 
     @Autowired
     private FreeMarkerConfig freemarkerConfig;
@@ -75,8 +76,8 @@ public class MailSender {
         }
     }
 
-    protected String resolveSubject(final PrismNotificationTemplate templateName, final Object... args) {
-        String subjectFormat = emailTemplateService.getById(templateName).getVersion().getSubject();
+    protected String resolveSubject(final PrismResource resource, final PrismNotificationTemplate templateId, final Object... args) {
+        String subjectFormat = NotificationTemplateService.getActiveVersionForTemplate(resource, templateId).getSubject();
         return args == null ? subjectFormat : String.format(subjectFormat, args);
     }
 
@@ -197,7 +198,7 @@ public class MailSender {
     }
 
     public NotificationTemplateService getEmailTemplateService() {
-        return emailTemplateService;
+        return NotificationTemplateService;
     }
 
     public FreeMarkerConfig getFreemarkerConfig() {

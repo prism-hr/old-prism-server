@@ -140,7 +140,7 @@ public class StateDAO {
             
             try {
                 escalateResources = sessionFactory.getCurrentSession() //
-                        .createCriteria(escalateAction.getScope().getClass()) //
+                        .createCriteria(escalateAction.getScope().getId().getClass()) //
                         .createAlias("state", "state", JoinType.INNER_JOIN) //
                         .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                         .createAlias("stateAction.action", "action") //

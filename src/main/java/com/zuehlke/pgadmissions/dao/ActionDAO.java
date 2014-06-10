@@ -52,6 +52,10 @@ public class ActionDAO {
                 .setProjection(Projections.property("action")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignments", "stateActionAssignments", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
@@ -62,14 +66,14 @@ public class ActionDAO {
                                 .add(Restrictions.isNull("precedence")) //
                                 .add(Restrictions.eq("defaultAction", true)))) //
                 .add(Restrictions.eq("stateActionAssignments.defaultAction", true))
-                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
+                .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
-                        .add(Restrictions.eq("userRole.system", resource.getSystem())) //
-                        .add(Restrictions.eq("user.parentUser", user))) //
+                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
+                .add(Restrictions.eq("user.parentUser", user)) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .uniqueResult();
     }
@@ -96,8 +100,8 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
-                        .add(Restrictions.eq("userRole.system", resource.getSystem())) //
-                        .add(Restrictions.eq("user.parentUser", user))) //
+                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
+                .add(Restrictions.eq("user.parentUser", user)) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .uniqueResult();
     }
@@ -123,8 +127,8 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
-                        .add(Restrictions.eq("userRole.system", resource.getSystem())) //
-                        .add(Restrictions.eq("user.parentUser", user))) //
+                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
+                .add(Restrictions.eq("user.parentUser", user)) //
                 .add(Restrictions.eq("userAccount.enabled", true))
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.asc("action.id")) //
@@ -148,8 +152,8 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
-                        .add(Restrictions.eq("userRole.system", resource.getSystem())) //
-                        .add(Restrictions.eq("user.parentUser", user))) //
+                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
+                .add(Restrictions.eq("user.parentUser", user)) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .addOrder(Order.asc("action.id"));
     }

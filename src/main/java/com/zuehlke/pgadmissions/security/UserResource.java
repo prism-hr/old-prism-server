@@ -1,6 +1,9 @@
 package com.zuehlke.pgadmissions.security;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.ImmutableMap;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.serializer.Views;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -8,10 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -35,15 +35,15 @@ public class UserResource {
      * @return A transfer containing the username and the roles.
      */
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
-    public String getUser() {
+    public User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         if (principal instanceof String && ((String) principal).equals("anonymousUser")) {
             throw new WebApplicationException(401);
         }
-        UserDetails userDetails = (UserDetails) principal;
+        User user = (User) principal;
 
-        return userDetails.getUsername();
+        return user;
     }
 
     /**

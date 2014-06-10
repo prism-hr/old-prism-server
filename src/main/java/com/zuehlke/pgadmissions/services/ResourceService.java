@@ -17,7 +17,7 @@ public class ResourceService {
     @Autowired
     private ResourceDAO resourceDAO;
     
-    public List<PrismResourceDynamic> getConsoleList(Class<? extends PrismResourceDynamic> clazz, User user, int pageIndex, int rowsPerPage) {
+    public <T extends  PrismResourceDynamic> List<T> getConsoleList(Class<T> clazz, User user, int pageIndex, int rowsPerPage) {
         return resourceDAO.getConsoleList(clazz, user, pageIndex, rowsPerPage);
     }
     

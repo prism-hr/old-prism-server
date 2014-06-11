@@ -55,8 +55,7 @@ public class StateTransition {
     private Set<RoleTransition> roleTransitions = Sets.newHashSet();
 
     @ManyToMany
-    @JoinTable(name = "STATE_TRANSITION_PROPAGATION", joinColumns = { @JoinColumn(name = "state_transition_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "action_id", nullable = false) }, uniqueConstraints = { @UniqueConstraint(columnNames = {
-            "state_transition_id", "action_id" }) })
+    @JoinTable(name = "STATE_TRANSITION_PROPAGATION", joinColumns = { @JoinColumn(name = "state_transition_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "action_id", nullable = false) })
     private Set<Action> propagatedActions = Sets.newHashSet();
 
     public Integer getId() {

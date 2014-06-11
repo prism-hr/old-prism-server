@@ -7,6 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -29,6 +32,10 @@ public class Scope {
     
     @Column(name = "precedence", nullable = false, unique = true)
     private Integer precedence;
+    
+    @ManyToMany
+    @JoinTable(name = "SCOPE_CREATION", joinColumns = { @JoinColumn(name = "scope_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "created_scope_id", nullable = false) })
+    private Set<Scope> scopeCreations = Sets.newHashSet();
     
     @OneToMany(mappedBy = "scope")
     private Set<State> states = Sets.newHashSet();
@@ -61,8 +68,8 @@ public class Scope {
         return states;
     }
 
-    public void setStates(Set<State> states) {
-        this.states = states;
+    public Set<Scope> getScopeCreations() {
+        return scopeCreations;
     }
 
     @Override

@@ -1,9 +1,11 @@
-package com.zuehlke.pgadmissions.security;
+ package com.zuehlke.pgadmissions.security;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.google.common.collect.ImmutableMap;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.serializer.Views;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
+import javax.ws.rs.WebApplicationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,12 +13,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
-import javax.inject.Named;
-import javax.ws.rs.WebApplicationException;
-import java.util.Map;
+import com.google.common.collect.ImmutableMap;
+import com.zuehlke.pgadmissions.domain.User;
 
 @RestController
 @RequestMapping("/api/user")

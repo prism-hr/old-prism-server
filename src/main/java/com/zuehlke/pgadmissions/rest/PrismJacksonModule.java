@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.serializer;
+package com.zuehlke.pgadmissions.rest;
 
 import javax.annotation.PostConstruct;
 

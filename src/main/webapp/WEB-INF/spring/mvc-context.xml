@@ -31,7 +31,7 @@
         <property name="modules">
             <array>
                 <bean class="com.fasterxml.jackson.datatype.joda.JodaModule"/>
-                <bean class="com.zuehlke.pgadmissions.serializer.PrismJacksonModule" />
+                <bean class="com.zuehlke.pgadmissions.rest.PrismJacksonModule" />
             </array>
         </property>
     </bean>
@@ -39,6 +39,14 @@
     <bean id="jacksonMessageConverter"
           class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
         <property name="objectMapper" ref="jacksonObjectMapper"/>
+    </bean>
+
+    <bean class="org.dozer.DozerBeanMapper">
+        <property name="mappingFiles">
+            <list>
+                <value>dozerMappings.xml</value>
+            </list>
+        </property>
     </bean>
 
 </beans>

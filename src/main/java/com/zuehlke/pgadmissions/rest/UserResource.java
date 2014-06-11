@@ -1,9 +1,10 @@
-package com.zuehlke.pgadmissions.security;
+package com.zuehlke.pgadmissions.rest;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.serializer.Views;
+import com.zuehlke.pgadmissions.rest.domain.UserRepresentation;
+import com.zuehlke.pgadmissions.security.TokenUtils;
+import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,7 +12,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -29,13 +33,16 @@ public class UserResource {
     @Named("authenticationManager")
     private AuthenticationManager authManager;
 
+    @Autowired
+    private DozerBeanMapper dozerBeanMapper;
+
     /**
      * Retrieves the currently logged in user.
      *
      * @return A transfer containing the username and the roles.
      */
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
-    public User getUser() {
+    public UserRepresentation getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         if (principal instanceof String && ((String) principal).equals("anonymousUser")) {
@@ -43,7 +50,7 @@ public class UserResource {
         }
         User user = (User) principal;
 
-        return user;
+        return dozerBeanMapper.map(user, UserRepresentation.class);
     }
 
     /**

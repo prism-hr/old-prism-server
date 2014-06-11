@@ -24,7 +24,6 @@ import com.zuehlke.pgadmissions.services.UserService;
 @Service
 public class NotificationService {
 
-    @Autowired
     @Value("${application.host}")
     private String host;
 

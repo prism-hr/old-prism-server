@@ -14,7 +14,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -42,13 +41,12 @@ public class Role implements GrantedAuthority, IUniqueResource {
     private Scope scope;
 
     @ManyToMany
-    @JoinTable(name = "ROLE_EXCLUSION", joinColumns = { @JoinColumn(name = "role_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "excluded_role_id", nullable = false) }, uniqueConstraints = { @UniqueConstraint(columnNames = {
-            "role_id", "excluded_role_id" }) })
+    @JoinTable(name = "ROLE_EXCLUSION", joinColumns = { @JoinColumn(name = "role_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "excluded_role_id", nullable = false) })
     private Set<Role> excludedRoles = Sets.newHashSet();
 
     @OneToMany(mappedBy = "role")
     private Set<UserRole> userRoles;
-    
+
     public Role() {
     }
 
@@ -94,7 +92,7 @@ public class Role implements GrantedAuthority, IUniqueResource {
         propertiesWrapper.add(properties);
         return new ResourceSignature(propertiesWrapper);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hashCode(id);

@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.enums.StateTransitionEvaluation;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class WorkflowConfigurationExportService {
 
     @Autowired
@@ -85,12 +85,33 @@ public class WorkflowConfigurationExportService {
         Element scopeElement = document.createElement("scope");
         scopeElement.setAttribute("id", scope.getId().toString());
         scopeElement.setAttribute("precedence", scope.getPrecedence().toString());
+        
+        if (!scope.getScopeCreations().isEmpty()) {
+            buildScopeCreationsElement(document, scope, scopeElement);
+        }
 
         if (!scope.getStates().isEmpty()) {
             buildStatesElement(document, scope, scopeElement);
         }
 
         return scopeElement;
+    }
+
+    private void buildScopeCreationsElement(Document document, Scope scope, Element scopeElement) {
+        Element scopeCreationsElement = document.createElement("scope-creations");
+        scopeElement.appendChild(scopeCreationsElement);
+        
+        for (Scope scopeCreation : scope.getScopeCreations()) {
+            Element scopeCreationElement = buildScopeCreationElement(document, scope, scopeCreation);
+            scopeCreationsElement.appendChild(scopeCreationElement);
+        }
+    }
+
+    private Element buildScopeCreationElement(Document document, Scope scope, Scope scopeCreation) {
+        Element scopeCreationElement = document.createElement("scope-creation");
+        scopeCreationElement.setAttribute("id", scopeCreation.getId().toString());
+        scopeCreationElement.setAttribute("action", scope.getId().toString() + "_CREATE_" + scopeCreation.getId().toString());
+        return scopeCreationElement;
     }
 
     private void buildStatesElement(Document document, Scope scope, Element scopeElement) {

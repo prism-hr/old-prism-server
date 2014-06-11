@@ -1,5 +1,22 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.google.visualization.datasource.DataSourceHelper;
 import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.base.DataSourceException;
@@ -9,17 +26,11 @@ import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
-import com.zuehlke.pgadmissions.services.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
+import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
+import com.zuehlke.pgadmissions.services.ApplicationsReportService;
+import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
 @RequestMapping(value = {"api/applications"})
@@ -53,7 +64,7 @@ public class ApplicationListController {
 
     @RequestMapping(method = RequestMethod.GET)
     public List<Application> getApplications(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
-        return resourceService.getConsoleList(Application.class, null, page, perPage);
+        return resourceService.getConsoleList(Application.class, userService.getCurrentUser(), page, perPage);
     }
 
 //    @RequestMapping(method = RequestMethod.GET)

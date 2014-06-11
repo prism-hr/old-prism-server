@@ -32,7 +32,7 @@ public class ResourceDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user.parentUser", user)) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
-                .addOrder(Order.desc("raisesUrgentFlag")) //
+                .addOrder(Order.desc("stateAction.raisesUrgentFlag")) //
                 .addOrder(Order.desc("updatedTimestamp")) //
                 .setFirstResult(pageIndex) //
                 .setMaxResults((pageIndex + 1) * rowsPerPage) //

@@ -1,8 +1,10 @@
 package com.zuehlke.pgadmissions.rest.domain;
 
-import com.zuehlke.pgadmissions.domain.User;
+import com.google.common.collect.Lists;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+
+import java.util.List;
 
 public class ApplicationListRepresentation {
 
@@ -27,6 +29,8 @@ public class ApplicationListRepresentation {
     private DateTime createdTimestamp;
 
     private DateTime updatedTimestamp;
+
+    private List<StateActionRepresentation> permittedActions = Lists.newArrayList();
 
     public ProgramRepresentation getProgram() {
         return program;
@@ -114,6 +118,10 @@ public class ApplicationListRepresentation {
 
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
+    }
+
+    public List<StateActionRepresentation> getPermittedActions() {
+        return permittedActions;
     }
 
     public static class ProjectRepresentation {

@@ -110,9 +110,6 @@ public class ApplicationService {
         }
 
         List<Application> applications = applicationFormListDAO.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE);
-        for (Application application : applications) {
-            application.getPermittedActions().addAll(actionService.getPermittedActions(user, application));
-        }
         return applications;
     }
 

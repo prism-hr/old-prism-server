@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest;
+package com.zuehlke.pgadmissions.rest.resource;
 
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.User;

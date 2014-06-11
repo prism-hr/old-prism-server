@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 @Entity
@@ -26,6 +27,7 @@ public class ApplicationLanguageQualification {
     private ImportedLanguageQualificationType languageQualificationType;
 
     @Column(name = "exam_date", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate examDate;
 
     @Column(name = "overall_score", nullable = false)

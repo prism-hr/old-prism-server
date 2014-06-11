@@ -7,6 +7,10 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.rest.domain.ApplicationListRepresentation;
+import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -57,14 +61,24 @@ public class ApplicationListController {
     @Autowired
     private ApplicationsFilteringService filteringService;
 
+    @Autowired
+    private DozerBeanMapper dozerBeanMapper;
+
     @InitBinder(value = "filtering")
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.registerCustomEditor(List.class, "filters", filtersPropertyEditor);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<Application> getApplications(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
-        return resourceService.getConsoleList(Application.class, userService.getCurrentUser(), page, perPage);
+    public List<ApplicationListRepresentation> getApplications(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
+        List<Application> applications = resourceService.getConsoleList(Application.class, userService.getCurrentUser(), page, perPage);
+
+        return Lists.transform(applications, new Function<Application, ApplicationListRepresentation>() {
+            @Override
+            public ApplicationListRepresentation apply(Application input) {
+                return dozerBeanMapper.map(input, ApplicationListRepresentation.class);
+            }
+        });
     }
 
 //    @RequestMapping(method = RequestMethod.GET)

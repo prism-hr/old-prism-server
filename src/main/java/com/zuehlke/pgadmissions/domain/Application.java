@@ -138,9 +138,6 @@ public class Application extends PrismResourceDynamic {
     @Transient
     private Boolean acceptedTerms;
 
-    @Transient
-    private List<StateAction> permittedActions;
-
     @Override
     public Integer getId() {
         return id;
@@ -263,19 +260,6 @@ public class Application extends PrismResourceDynamic {
 
     public List<ApplicationReferee> getApplicationReferees() {
         return applicationReferees;
-    }
-
-    public List<StateAction> getPermittedActions() {
-        return permittedActions;
-    }
-
-    public boolean isUrgent() {
-        for (StateAction permittedAction : permittedActions) {
-            if (permittedAction.isRaisesUrgentFlag()) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public Application withId(Integer id) {

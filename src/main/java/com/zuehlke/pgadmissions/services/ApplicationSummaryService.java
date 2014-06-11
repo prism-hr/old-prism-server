@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.base.Strings;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.BooleanUtils;
@@ -13,21 +15,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Strings;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import java.util.*;
 
 @Service
 public class ApplicationSummaryService {
@@ -54,7 +42,7 @@ public class ApplicationSummaryService {
 
         result.put("applicationSubmissionDate", dateFormat.format(application.getSubmittedTimestamp()));
         result.put("applicationUpdateDate", dateFormat.format(updatedTimeStamp));
-        result.put("requiresAttention", BooleanUtils.toStringTrueFalse(application.isUrgent()));
+//        result.put("requiresAttention", BooleanUtils.toStringTrueFalse(application.isUrgent()));
         result.put("applicationNumber", application.getCode());
     }
 

@@ -1,47 +1,33 @@
-package com.zuehlke.pgadmissions.controllers;
+package com.zuehlke.pgadmissions.rest.resource;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.rest.domain.ApplicationListRepresentation;
-import org.dozer.DozerBeanMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.google.visualization.datasource.DataSourceHelper;
 import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.base.DataSourceException;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Filter;
+import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
-import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
-import com.zuehlke.pgadmissions.services.ApplicationsReportService;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.rest.domain.ApplicationListRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.StateActionRepresentation;
+import com.zuehlke.pgadmissions.services.*;
+import org.dozer.DozerBeanMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = {"api/applications"})
-public class ApplicationListController {
-
-    private static final String APPLICATION_LIST_PAGE_VIEW_NAME = "private/my_applications_page";
-    private static final String APPLICATION_LIST_SECTION_VIEW_NAME = "private/my_applications_section";
+public class ApplicationResource {
 
     @Autowired
     private ResourceService resourceService;
@@ -62,6 +48,9 @@ public class ApplicationListController {
     private ApplicationsFilteringService filteringService;
 
     @Autowired
+    private ActionService actionService;
+
+    @Autowired
     private DozerBeanMapper dozerBeanMapper;
 
     @InitBinder(value = "filtering")
@@ -71,14 +60,19 @@ public class ApplicationListController {
 
     @RequestMapping(method = RequestMethod.GET)
     public List<ApplicationListRepresentation> getApplications(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
-        List<Application> applications = resourceService.getConsoleList(Application.class, userService.getCurrentUser(), page, perPage);
+        User currentUser = userService.getCurrentUser();
+        List<Application> applications = resourceService.getConsoleList(Application.class, currentUser, page, perPage);
+        List<ApplicationListRepresentation> representations = Lists.newArrayListWithExpectedSize(applications.size());
 
-        return Lists.transform(applications, new Function<Application, ApplicationListRepresentation>() {
-            @Override
-            public ApplicationListRepresentation apply(Application input) {
-                return dozerBeanMapper.map(input, ApplicationListRepresentation.class);
+        for (Application application : applications) {
+            ApplicationListRepresentation representation = dozerBeanMapper.map(application, ApplicationListRepresentation.class);
+            List<StateAction> permittedActions = actionService.getPermittedActions(currentUser, application);
+            for (StateAction permittedAction : permittedActions) {
+                representation.getPermittedActions().add(dozerBeanMapper.map(permittedAction, StateActionRepresentation.class));
             }
-        });
+            representations.add(representation);
+        }
+        return representations;
     }
 
 //    @RequestMapping(method = RequestMethod.GET)

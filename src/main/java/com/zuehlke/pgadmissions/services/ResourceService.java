@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,7 @@ public class ResourceService {
     private ResourceDAO resourceDAO;
     
     @SuppressWarnings("unchecked")
-    public <T extends  PrismResourceDynamic> List<T> getConsoleList(Class<T> clazz, User user, int pageIndex, int rowsPerPage) {
+    public <T extends  PrismResourceDynamic> List<T> getConsoleList(PrismScope clazz, User user, int pageIndex, int rowsPerPage) {
         return (List<T>) resourceDAO.getConsoleList(clazz, user, pageIndex, rowsPerPage);
     }
     

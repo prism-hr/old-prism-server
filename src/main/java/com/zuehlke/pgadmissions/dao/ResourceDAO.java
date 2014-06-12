@@ -31,12 +31,12 @@ public class ResourceDAO {
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state." + scopeName + "s", scopeName, JoinType.INNER_JOIN)
-                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user.parentUser", user)) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .addOrder(Order.desc("stateAction.raisesUrgentFlag")) //
-                .addOrder(Order.desc("updatedTimestamp")) //
+                .addOrder(Order.desc(scopeName + ".updatedTimestamp")) //
                 .setFirstResult(pageIndex) //
                 .setMaxResults((pageIndex + 1) * rowsPerPage) //
                 .list();

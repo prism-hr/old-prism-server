@@ -1,22 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-
+import com.zuehlke.pgadmissions.dao.ActionDAO;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.ActionDAO;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.PrismResource;
-import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
-import com.zuehlke.pgadmissions.domain.StateAction;
-import com.zuehlke.pgadmissions.domain.StateTransition;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
-import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
+import java.util.List;
 
 @Service
 @Transactional
@@ -43,7 +36,7 @@ public class ActionService {
     public Action getById(PrismAction id) {
         return entityService.getByProperty(Action.class, "id", id);
     }
-    
+
     public void validateAction(PrismResource resource, PrismAction actionId, User actionOwner) {
         Action action = getById(actionId);
         validateAction(resource, action, actionOwner, null);
@@ -56,7 +49,7 @@ public class ActionService {
             return;
         } else if (delegateOwner != null && checkDelegateActionAvailable(resource, action, delegateOwner)) {
             return;
-        } 
+        }
         throw new CannotExecuteActionException(resource, action);
     }
 
@@ -69,7 +62,7 @@ public class ActionService {
         return checkActionAvailable(resource, delegateAction, invoker);
     }
 
-    public List<StateAction> getPermittedActions(User user, PrismResource resource) {
+    public List<PrismAction> getPermittedActions(PrismResource resource, User user) {
         return actionDAO.getPermittedActions(resource, user);
     }
 
@@ -78,7 +71,7 @@ public class ActionService {
         Action action = getById(actionId);
         return executeAction(resource, action, comment);
     }
-    
+
     public ActionOutcome executeAction(PrismResourceDynamic resource, PrismAction actionId, Comment comment) {
         Action action = getById(actionId);
         return executeAction(resource, action, comment);
@@ -109,7 +102,7 @@ public class ActionService {
         StateTransition stateTransition = stateService.executeStateTransition(operativeResource, resource, action, comment);
         PrismAction transitionAction = stateTransition.getTransitionAction().getId();
         PrismResource nextActionResource = resource.getEnclosingResource(transitionAction.getResourceType());
-        
+
         return new ActionOutcome(actionOwner, nextActionResource, transitionAction);
     }
 

@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.rest.domain.StateActionRepresentation;
 import com.zuehlke.pgadmissions.services.*;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,18 +65,19 @@ public class ApplicationResource {
     }
 
     @RequestMapping(method = RequestMethod.GET)
+    @Transactional
     public List<ApplicationListRowRepresentation> getApplications(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
         User currentUser = userService.getCurrentUser();
-        List<ApplicationListRowRepresentation> applications = applicationService.getApplicationList(currentUser, page, perPage);
-//        List<ApplicationListRowRepresentation> representations = Lists.newArrayListWithExpectedSize(applications.size());
+        List<Application> applications = applicationService.getApplications(currentUser, page, perPage);
+        List<ApplicationListRowRepresentation> representations = Lists.newArrayListWithExpectedSize(applications.size());
 
-//        for (Application application : applications) {
-//            ApplicationListRowRepresentation representation = dozerBeanMapper.map(application, ApplicationListRowRepresentation.class);
-//            List<PrismAction> permittedActions = actionService.getPermittedActions(application, currentUser);
-//            representation.getPermittedActions().addAll(permittedActions);
-//            representations.add(representation);
-//        }
-        return applications;
+        for (Application application : applications) {
+            ApplicationListRowRepresentation representation = dozerBeanMapper.map(application, ApplicationListRowRepresentation.class);
+            List<PrismAction> permittedActions = actionService.getPermittedActions(application, currentUser);
+            representation.getPermittedActions().addAll(permittedActions);
+            representations.add(representation);
+        }
+        return representations;
     }
 
 //    @RequestMapping(method = RequestMethod.GET)

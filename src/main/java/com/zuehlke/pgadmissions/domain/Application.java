@@ -5,17 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.Valid;
 
 import org.hibernate.annotations.Cache;
@@ -47,19 +37,19 @@ public class Application extends PrismResourceDynamic {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
     
@@ -67,16 +57,16 @@ public class Application extends PrismResourceDynamic {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate closingDate;
     
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "application_personal_detail_id", unique = true)
     private ApplicationPersonalDetails applicationPersonalDetails;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "application_program_detail_id", unique = true)
     @Valid
     private ApplicationProgramDetails applicationProgramDetails;
     
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "application_address_id", unique = true)
     @Valid
     private ApplicationAddress applicationAddress;
@@ -101,12 +91,12 @@ public class Application extends PrismResourceDynamic {
     @Valid
     private List<ApplicationReferee> applicationReferees = new ArrayList<ApplicationReferee>();
     
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "application_document_id", unique = true)
     @Valid
     private ApplicationDocument applicationDocument;
     
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "application_additional_information_id", unique = true)
     @Valid
     private ApplicationAdditionalInformation additionalInformation;
@@ -119,7 +109,7 @@ public class Application extends PrismResourceDynamic {
     @JoinColumn(name = "state_id", nullable = false)
     private State state;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "previous_state_id")
     private State previousState;
 

@@ -107,8 +107,9 @@ public class ActionDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<StateAction> getPermittedActions(PrismResource resource, User user) {
-        return (List<StateAction>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+    public List<PrismAction> getPermittedActions(PrismResource resource, User user) {
+        return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.property("action.id"))
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //

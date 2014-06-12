@@ -1,12 +1,16 @@
 package com.zuehlke.pgadmissions.rest.domain;
 
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.util.List;
 
-public class ApplicationListRepresentation {
+public class ApplicationListRowRepresentation {
+
+    private Integer id;
 
     private String code;
 
@@ -20,9 +24,7 @@ public class ApplicationListRepresentation {
 
     private DateTime submittedTimestamp;
 
-    private String state;
-
-    private String previousState;
+    private PrismState state;
 
     private LocalDate dueDate;
 
@@ -30,7 +32,20 @@ public class ApplicationListRepresentation {
 
     private DateTime updatedTimestamp;
 
-    private List<StateActionRepresentation> permittedActions = Lists.newArrayList();
+    private List<PrismAction> permittedActions = Lists.newArrayList();
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setPermittedActions(List<PrismAction> permittedActions) {
+        this.permittedActions = permittedActions;
+    }
 
     public ProgramRepresentation getProgram() {
         return program;
@@ -80,20 +95,12 @@ public class ApplicationListRepresentation {
         this.submittedTimestamp = submittedTimestamp;
     }
 
-    public String getState() {
+    public PrismState getState() {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(PrismState state) {
         this.state = state;
-    }
-
-    public String getPreviousState() {
-        return previousState;
-    }
-
-    public void setPreviousState(String previousState) {
-        this.previousState = previousState;
     }
 
     public LocalDate getDueDate() {
@@ -120,7 +127,7 @@ public class ApplicationListRepresentation {
         this.updatedTimestamp = updatedTimestamp;
     }
 
-    public List<StateActionRepresentation> getPermittedActions() {
+    public List<PrismAction> getPermittedActions() {
         return permittedActions;
     }
 

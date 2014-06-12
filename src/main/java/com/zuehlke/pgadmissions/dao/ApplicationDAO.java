@@ -1,23 +1,20 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.Date;
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.rest.domain.ApplicationListRowRepresentation;
 import com.zuehlke.pgadmissions.utils.AliasToBeanNestedResultTransformer;
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import java.util.Date;
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -135,8 +132,28 @@ public class ApplicationDAO {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class).uniqueResult();
     }
 
+    public List<Application> getApplications(User user, Integer page, Integer perPage) {
+        DetachedCriteria roleCriteria = DetachedCriteria.forClass(UserRole.class)
+                .setProjection(Projections.groupProperty("role"))
+                .createAlias("user", "user", JoinType.INNER_JOIN)
+                .createAlias("user.userAccount", "account", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("user.parentUser", user))
+                .add(Restrictions.eq("account.enabled", true));
+
+        return sessionFactory.getCurrentSession().createCriteria(Application.class)
+                .createAlias("state", "state", JoinType.INNER_JOIN)
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .add(Property.forName("stateActionAssignment.role").in(roleCriteria))
+                .addOrder(Order.desc("stateAction.raisesUrgentFlag")) //
+                .addOrder(Order.desc("updatedTimestamp")) //
+                .setFirstResult(page) //
+                .setMaxResults((page + 1) * perPage) //
+                .list();
+    }
+
     public List<ApplicationListRowRepresentation> getApplicationList(User user, Integer page, Integer perPage) {
-        return sessionFactory.getCurrentSession().createCriteria(Application.class) //
+        return sessionFactory.getCurrentSession().createCriteria(Application.class)
                 .setProjection(Projections.projectionList().add(Projections.groupProperty("id"), "id")
                         .add(Projections.property("applicant.firstName"), "user.firstName")
                         .add(Projections.property("applicant.firstName2"), "user.firstName2")

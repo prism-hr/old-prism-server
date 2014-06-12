@@ -173,4 +173,8 @@ public class ApplicationService {
     public List<ApplicationListRowRepresentation> getApplicationList(User user, Integer page, Integer perPage) {
         return applicationDAO.getApplicationList(user, page, perPage);
     }
+
+    public List<Application> getApplications(User user, Integer page, Integer perPage) {
+        return applicationDAO.getApplications(user, page, perPage);
+    }
 }

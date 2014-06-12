@@ -42,6 +42,9 @@ public class State implements IUniqueResource {
     @OneToMany(mappedBy = "state")
     private Set<StateAction> stateActions;
     
+    @OneToMany(mappedBy = "state")
+    private Set<Application> applications;
+    
     public State() {
     }
     

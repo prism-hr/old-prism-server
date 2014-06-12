@@ -9,9 +9,10 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
-import com.zuehlke.pgadmissions.rest.domain.ApplicationListRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.ApplicationListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.StateActionRepresentation;
 import com.zuehlke.pgadmissions.services.*;
 import org.dozer.DozerBeanMapper;
@@ -59,17 +60,15 @@ public class ApplicationResource {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<ApplicationListRepresentation> getApplications(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
+    public List<ApplicationListRowRepresentation> getApplications(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
         User currentUser = userService.getCurrentUser();
         List<Application> applications = resourceService.getConsoleList(Application.class, currentUser, page, perPage);
-        List<ApplicationListRepresentation> representations = Lists.newArrayListWithExpectedSize(applications.size());
+        List<ApplicationListRowRepresentation> representations = Lists.newArrayListWithExpectedSize(applications.size());
 
         for (Application application : applications) {
-            ApplicationListRepresentation representation = dozerBeanMapper.map(application, ApplicationListRepresentation.class);
-            List<StateAction> permittedActions = actionService.getPermittedActions(currentUser, application);
-            for (StateAction permittedAction : permittedActions) {
-                representation.getPermittedActions().add(dozerBeanMapper.map(permittedAction, StateActionRepresentation.class));
-            }
+            ApplicationListRowRepresentation representation = dozerBeanMapper.map(application, ApplicationListRowRepresentation.class);
+            List<PrismAction> permittedActions = actionService.getPermittedActions(application, currentUser);
+            representation.getPermittedActions().addAll(permittedActions);
             representations.add(representation);
         }
         return representations;

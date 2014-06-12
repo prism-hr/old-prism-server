@@ -6,7 +6,7 @@
 
     <mapping>
         <class-a>com.zuehlke.pgadmissions.domain.Application</class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.domain.ApplicationListRepresentation</class-b>
+        <class-b>com.zuehlke.pgadmissions.rest.domain.ApplicationListRowRepresentation</class-b>
         <field>
             <a>state.id</a>
             <b>state</b>

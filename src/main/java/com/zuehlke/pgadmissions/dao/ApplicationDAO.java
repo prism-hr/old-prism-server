@@ -135,8 +135,7 @@ public class ApplicationDAO {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class).uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
-    public List<ApplicationListRowRepresentation> getApplicationListRowRepresentations(User user, int pageIndex, int rowsPerPage) {
+    public List<ApplicationListRowRepresentation> getApplicationList(User user, Integer page, Integer perPage) {
         return sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.projectionList().add(Projections.groupProperty("id"), "id")
                         .add(Projections.property("applicant.firstName"), "user.firstName")
@@ -147,7 +146,9 @@ public class ApplicationDAO {
                         .add(Projections.property("code"), "code")
                         .add(Projections.property("program.title"), "program.title")
                         .add(Projections.property("project.title"), "project.title")
-                        .add(Projections.property("application.state.id"), "state"))
+                        .add(Projections.property("state.id"), "state"))
+                .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN)
+                .createAlias("project", "project", JoinType.LEFT_OUTER_JOIN)
                 .createAlias("user", "applicant", JoinType.INNER_JOIN)
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
@@ -160,10 +161,9 @@ public class ApplicationDAO {
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .addOrder(Order.desc("stateAction.raisesUrgentFlag")) //
                 .addOrder(Order.desc("updatedTimestamp")) //
-                .setFirstResult(pageIndex) //
-                .setMaxResults((pageIndex + 1) * rowsPerPage) //
+                .setFirstResult(page) //
+                .setMaxResults((page + 1) * perPage) //
                 .setResultTransformer(new AliasToBeanNestedResultTransformer(ApplicationListRowRepresentation.class))
                 .list();
     }
-
 }

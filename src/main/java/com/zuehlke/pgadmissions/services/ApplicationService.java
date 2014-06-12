@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.util.Date;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.rest.domain.ApplicationListRowRepresentation;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -167,5 +168,9 @@ public class ApplicationService {
         supervisor.setUser(user);
         supervisor.setAware(true);
         return supervisor;
+    }
+
+    public List<ApplicationListRowRepresentation> getApplicationList(User user, Integer page, Integer perPage) {
+        return applicationDAO.getApplicationList(user, page, perPage);
     }
 }

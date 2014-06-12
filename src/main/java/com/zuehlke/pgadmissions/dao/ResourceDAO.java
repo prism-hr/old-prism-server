@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 
 @Repository
 public class ResourceDAO {
@@ -20,14 +22,15 @@ public class ResourceDAO {
     private SessionFactory sessionFactory;
     
     @SuppressWarnings("unchecked")
-    public List<PrismResourceDynamic> getConsoleList(Class<? extends PrismResourceDynamic> clazz, User user, int pageIndex, int rowsPerPage) {
-        return (List<PrismResourceDynamic>) sessionFactory.getCurrentSession().createCriteria(clazz) //
-                .setProjection(Projections.groupProperty("userRole." + clazz.getSimpleName().toLowerCase())) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+    public List<PrismResourceDynamic> getConsoleList(PrismScope scope, User user, int pageIndex, int rowsPerPage) {
+        String scopeName = scope.getLowerCaseName();
+        return (List<PrismResourceDynamic>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("state." + scopeName + "s")) //
+                .createAlias("role", "role", JoinType.INNER_JOIN)
+                .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state." + scopeName + "s", scopeName, JoinType.INNER_JOIN)
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user.parentUser", user)) //

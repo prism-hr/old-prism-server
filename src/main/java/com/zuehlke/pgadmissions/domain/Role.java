@@ -45,7 +45,10 @@ public class Role implements GrantedAuthority, IUniqueResource {
     private Set<Role> excludedRoles = Sets.newHashSet();
 
     @OneToMany(mappedBy = "role")
-    private Set<UserRole> userRoles;
+    private Set<UserRole> userRoles = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "role")
+    private Set<StateActionAssignment> stateActionAssignments = Sets.newHashSet();
 
     public Role() {
     }
@@ -77,6 +80,10 @@ public class Role implements GrantedAuthority, IUniqueResource {
 
     public Set<Role> getExcludedRoles() {
         return excludedRoles;
+    }
+
+    public Set<StateActionAssignment> getStateActionAssignments() {
+        return stateActionAssignments;
     }
 
     @Override

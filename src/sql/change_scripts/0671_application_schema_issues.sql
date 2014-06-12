@@ -155,3 +155,17 @@ VALUES ("SYSTEM", "INSTITUTION"),
 	("PROGRAM", "APPLICATION"),
 	("PROJECT", "APPLICATION")
 ;
+
+/* Indexing update timestamps */
+
+ALTER TABLE PROGRAM
+	ADD INDEX (updated_timestamp)
+;
+
+ALTER TABLE PROJECT
+	ADD INDEX (updated_timestamp)
+;
+
+ALTER TABLE APPLICATION
+	ADD INDEX (updated_timestamp)
+;

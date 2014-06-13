@@ -314,7 +314,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
 
         AddressTp addressTp = xmlFactory.createAddressTp();
-        Address currentAddress = applicationForm.getApplicationAddress().getCurrentAddress();
+        Address currentAddress = applicationForm.getAddress().getCurrentAddress();
         addressTp.setAddressLine1(currentAddress.getAddressLine1());
         addressTp.setAddressLine2(currentAddress.getAddressLine2());
         addressTp.setAddressLine3(currentAddress.getAddressTown());
@@ -341,7 +341,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private ContactDtlsTp buildCorrespondenceAddress() {
-        Address contactAddress = applicationForm.getApplicationAddress().getContactAddress();
+        Address contactAddress = applicationForm.getAddress().getContactAddress();
         ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
         AddressTp addressTp = xmlFactory.createAddressTp();
         addressTp.setAddressLine1(contactAddress.getAddressLine1());
@@ -535,7 +535,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private QualificationDetailsTp buildQualificationDetails() {
         QualificationDetailsTp resultList = xmlFactory.createQualificationDetailsTp();
 
-        List<ApplicationQualification> qualifications = applicationForm.getApplicationQualifications();
+        List<ApplicationQualification> qualifications = applicationForm.getQualifications();
         if (!qualifications.isEmpty()) {
             for (ApplicationQualification qualification : qualifications) {
                 QualificationsTp qualificationsTp = xmlFactory.createQualificationsTp();
@@ -595,7 +595,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
     private EmploymentDetailsTp buildEmployer() {
         EmploymentDetailsTp resultList = xmlFactory.createEmploymentDetailsTp();
-        List<ApplicationEmploymentPosition> employmentPositions = applicationForm.getApplicationEmploymentPositions();
+        List<ApplicationEmploymentPosition> employmentPositions = applicationForm.getEmploymentPositions();
         if (!employmentPositions.isEmpty()) {
             for (ApplicationEmploymentPosition employmentPosition : employmentPositions) {
                 AppointmentTp appointmentTp = xmlFactory.createAppointmentTp();

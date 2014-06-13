@@ -1,14 +1,22 @@
-package com.zuehlke.pgadmissions.rest.domain;
+package com.zuehlke.pgadmissions.rest.domain.application;
 
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.rest.domain.UserRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import javax.persistence.CascadeType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
-public class ApplicationListRowRepresentation {
+public class ApplicationRepresentation {
 
     private Integer id;
 
@@ -34,6 +42,23 @@ public class ApplicationListRowRepresentation {
 
     private List<PrismAction> permittedActions = Lists.newArrayList();
 
+    private PersonalDetailsRepresentation personalDetails;
+
+    private ProgramDetailsRepresentation programDetails;
+
+    private ApplicationAddressRepresentation address;
+
+    private List<QualificationRepresentation> qualifications;
+
+    private List<EmploymentPositionRepresentation> employmentPositions;
+
+    private List<FundingRepresentation> fundings;
+
+    private List<RefereeRepresentation> referees;
+
+    private ApplicationDocumentRepresentation document;
+
+    private AdditionalInformationRepresentation additionalInformation;
 
     public Integer getId() {
         return id;

@@ -19,7 +19,7 @@ public class ApplicationAddressService {
     private ApplicationCopyHelper applicationCopyHelper;
 
     public ApplicationAddress getOrCreate(Application application) {
-        ApplicationAddress applicationFormAddress = application.getApplicationAddress();
+        ApplicationAddress applicationFormAddress = application.getAddress();
         if (applicationFormAddress == null) {
             applicationFormAddress = new ApplicationAddress();
         }
@@ -28,11 +28,11 @@ public class ApplicationAddressService {
     
 	public void saveOrUpdate(int applicationId, ApplicationAddress applicationFormAddress) {
 	    Application application = applicationService.getById(applicationId);
-	    ApplicationAddress persistentApplicationFormAddress = application.getApplicationAddress();
+	    ApplicationAddress persistentApplicationFormAddress = application.getAddress();
         if (persistentApplicationFormAddress == null) {
             persistentApplicationFormAddress = new ApplicationAddress();         
             persistentApplicationFormAddress.setApplication(application);
-            application.setApplicationAddress(persistentApplicationFormAddress);
+            application.setAddress(persistentApplicationFormAddress);
         }
         applicationCopyHelper.copyApplicationFormAddress(persistentApplicationFormAddress, applicationFormAddress, false);
 	}

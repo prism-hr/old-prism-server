@@ -543,7 +543,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
 
-        ApplicationAddress address = form.getApplicationAddress();
+        ApplicationAddress address = form.getAddress();
         table.addCell(newTableCell("Current Address", SMALL_BOLD_FONT));
         if (address.getCurrentAddress() == null) {
             table.addCell(newTableCell(null, SMALL_FONT));
@@ -582,7 +582,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        if (form.getApplicationQualifications().isEmpty()) {
+        if (form.getQualifications().isEmpty()) {
             table = new PdfPTable(2);
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             table.addCell(newTableCell("Qualification", SMALL_BOLD_FONT));
@@ -590,7 +590,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             pdfDocument.add(table);
         } else {
             int counter = 1;
-            for (ApplicationQualification qualification : form.getApplicationQualifications()) {
+            for (ApplicationQualification qualification : form.getQualifications()) {
                 table = new PdfPTable(2);
                 table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                 PdfPCell headerCell = newTableCell("Qualification (" + counter++ + ")", SMALL_BOLD_FONT);
@@ -678,7 +678,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        if (form.getApplicationEmploymentPositions().isEmpty()) {
+        if (form.getEmploymentPositions().isEmpty()) {
             table = new PdfPTable(2);
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             table.addCell(newTableCell("Position", SMALL_BOLD_FONT));
@@ -686,7 +686,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             pdfDocument.add(table);
         } else {
             int counter = 1;
-            for (ApplicationEmploymentPosition position : form.getApplicationEmploymentPositions()) {
+            for (ApplicationEmploymentPosition position : form.getEmploymentPositions()) {
                 table = new PdfPTable(2);
                 table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                 PdfPCell headerCell = newTableCell("Position (" + counter++ + ")", SMALL_BOLD_FONT);
@@ -739,7 +739,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        if (form.getApplicationFundings().isEmpty()) {
+        if (form.getFundings().isEmpty()) {
             table = new PdfPTable(2);
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             table.addCell(newTableCell("Funding", SMALL_BOLD_FONT));
@@ -747,7 +747,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             pdfDocument.add(table);
         } else {
             int counter = 1;
-            for (ApplicationFunding funding : form.getApplicationFundings()) {
+            for (ApplicationFunding funding : form.getFundings()) {
                 table = new PdfPTable(2);
                 table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                 PdfPCell headerCell = newTableCell("Funding (" + counter++ + ")", SMALL_BOLD_FONT);
@@ -795,7 +795,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        if (form.getApplicationReferees().isEmpty()) {
+        if (form.getReferees().isEmpty()) {
             table = new PdfPTable(2);
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             table.addCell(newTableCell("Reference", SMALL_BOLD_FONT));
@@ -803,7 +803,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             pdfDocument.add(table);
         } else {
             int counter = 1;
-            for (ApplicationReferee referee : form.getApplicationReferees()) {
+            for (ApplicationReferee referee : form.getReferees()) {
                 table = new PdfPTable(2);
                 table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                 PdfPCell headerCell = newTableCell("Reference (" + counter++ + ")", SMALL_BOLD_FONT);
@@ -862,7 +862,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
 
-        ApplicationDocument documents = form.getApplicationDocument();
+        ApplicationDocument documents = form.getDocument();
 
         table.addCell(newTableCell("Personal Statement", SMALL_BOLD_FONT));
         if (includeAttachments) {

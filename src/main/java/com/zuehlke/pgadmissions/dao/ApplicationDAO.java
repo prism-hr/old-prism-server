@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.rest.domain.ApplicationListRowRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.application.ApplicationListRowRepresentation;
 import com.zuehlke.pgadmissions.utils.AliasToBeanNestedResultTransformer;
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.Criteria;

@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.util.Date;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.rest.domain.ApplicationListRowRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.application.ApplicationListRowRepresentation;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

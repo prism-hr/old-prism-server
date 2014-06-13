@@ -56,7 +56,7 @@ public class RefereeService {
         if (refereeId == null) {
             persistentReferee = new ApplicationReferee();
             persistentReferee.setApplication(application);
-            application.getApplicationReferees().add(persistentReferee);
+            application.getReferees().add(persistentReferee);
             applicationFormService.save(application);
         } else {
             persistentReferee = entityDAO.getById(ApplicationReferee.class, refereeId);
@@ -93,7 +93,7 @@ public class RefereeService {
 
     public void delete(int refereeId) {
         ApplicationReferee referee = entityDAO.getById(ApplicationReferee.class, refereeId);
-        referee.getApplication().getApplicationReferees().remove(referee);
+        referee.getApplication().getReferees().remove(referee);
     }
 
     public void declineToActAsRefereeAndSendNotification(int refereeId) {
@@ -103,7 +103,7 @@ public class RefereeService {
     }
 
     public void selectForSendingToPortico(final Application applicationForm, final List<Integer> refereesSendToPortico) {
-        for (ApplicationReferee referee : applicationForm.getApplicationReferees()) {
+        for (ApplicationReferee referee : applicationForm.getReferees()) {
             referee.setIncludeInExport(false);
         }
 

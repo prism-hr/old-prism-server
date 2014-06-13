@@ -36,46 +36,46 @@ public class ApplicationCopyHelper {
             copyPersonalDetails(to.getPersonalDetails(), from.getPersonalDetails(), true);
         }
 
-        if (from.getApplicationAddress() != null) {
+        if (from.getAddress() != null) {
             ApplicationAddress applicationFormAddress = new ApplicationAddress();
-            to.setApplicationAddress(applicationFormAddress);
+            to.setAddress(applicationFormAddress);
             applicationFormAddress.setApplication(to);
-            copyApplicationFormAddress(to.getApplicationAddress(), from.getApplicationAddress(), true);
+            copyApplicationFormAddress(to.getAddress(), from.getAddress(), true);
         }
 
-        for (ApplicationQualification fromQualification : from.getApplicationQualifications()) {
+        for (ApplicationQualification fromQualification : from.getQualifications()) {
             ApplicationQualification qualification = new ApplicationQualification();
-            to.getApplicationQualifications().add(qualification);
+            to.getQualifications().add(qualification);
             qualification.setApplication(to);
             copyQualification(qualification, fromQualification, false);
         }
 
-        for (ApplicationEmploymentPosition fromEmployment : from.getApplicationEmploymentPositions()) {
+        for (ApplicationEmploymentPosition fromEmployment : from.getEmploymentPositions()) {
             ApplicationEmploymentPosition employment = new ApplicationEmploymentPosition();
-            to.getApplicationEmploymentPositions().add(employment);
+            to.getEmploymentPositions().add(employment);
             employment.setApplication(to);
             copyEmploymentPosition(employment, fromEmployment, true);
         }
 
-        for (ApplicationFunding fromFunding : from.getApplicationFundings()) {
+        for (ApplicationFunding fromFunding : from.getFundings()) {
             ApplicationFunding funding = new ApplicationFunding();
-            to.getApplicationFundings().add(funding);
+            to.getFundings().add(funding);
             funding.setApplication(to);
             copyFunding(funding, fromFunding, true);
         }
 
-        for (ApplicationReferee fromReferee : from.getApplicationReferees()) {
+        for (ApplicationReferee fromReferee : from.getReferees()) {
             ApplicationReferee referee = new ApplicationReferee();
-            to.getApplicationReferees().add(referee);
+            to.getReferees().add(referee);
             referee.setApplication(to);
             copyReferee(referee, fromReferee, true);
         }
 
-        if (from.getApplicationDocument() != null) {
+        if (from.getDocument() != null) {
             ApplicationDocument applicationFormDocument = new ApplicationDocument();
-            to.setApplicationDocument(applicationFormDocument);
+            to.setDocument(applicationFormDocument);
             applicationFormDocument.setApplication(to);
-            copyApplicationFormDocument(to.getApplicationDocument(), from.getApplicationDocument(), true);
+            copyApplicationFormDocument(to.getDocument(), from.getDocument(), true);
         }
 
         if (from.getAdditionalInformation() != null) {

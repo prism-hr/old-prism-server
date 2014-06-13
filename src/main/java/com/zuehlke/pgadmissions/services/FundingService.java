@@ -32,7 +32,7 @@ public class FundingService {
         if (fundingId == null) {
             persistentFunding = new ApplicationFunding();
             persistentFunding.setApplication(application);
-            application.getApplicationFundings().add(persistentFunding);
+            application.getFundings().add(persistentFunding);
         } else {
             persistentFunding = entityDAO.getById(ApplicationFunding.class, fundingId);
         }
@@ -41,7 +41,7 @@ public class FundingService {
     
     public void delete(Integer fundingId) {
         ApplicationFunding funding = entityDAO.getById(ApplicationFunding.class, fundingId);
-        funding.getApplication().getApplicationFundings().remove(funding);
+        funding.getApplication().getFundings().remove(funding);
     }
     
 }

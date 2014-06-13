@@ -19,7 +19,7 @@ public class ApplicationDocumentService {
     private ApplicationCopyHelper applicationCopyHelper;
 
     public ApplicationDocument getOrCreate(Application application) {
-        ApplicationDocument applicationFormDocument = application.getApplicationDocument();
+        ApplicationDocument applicationFormDocument = application.getDocument();
         if (applicationFormDocument  == null) {
             applicationFormDocument = new ApplicationDocument();
         }
@@ -28,11 +28,11 @@ public class ApplicationDocumentService {
     
 	public void saveOrUpdate(int applicationId, ApplicationDocument applicationFormDocument) {
 	    Application application = applicationService.getById(applicationId);
-	    ApplicationDocument persistentApplicationFormDocument = application.getApplicationDocument();
+	    ApplicationDocument persistentApplicationFormDocument = application.getDocument();
         if (persistentApplicationFormDocument == null) {
             persistentApplicationFormDocument = new ApplicationDocument();
             persistentApplicationFormDocument.setApplication(application);
-            application.setApplicationDocument(persistentApplicationFormDocument);
+            application.setDocument(persistentApplicationFormDocument);
         }
         applicationCopyHelper.copyApplicationFormDocument(persistentApplicationFormDocument, applicationFormDocument, false);
 	}

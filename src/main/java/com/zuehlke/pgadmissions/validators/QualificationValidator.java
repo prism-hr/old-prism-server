@@ -51,7 +51,7 @@ public class QualificationValidator extends AbstractValidator {
             }
         }
 
-        if (qualification.getApplication().getApplicationEmploymentPositions().size() >= MAX_NUMBER_OF_POSITIONS + 1) {
+        if (qualification.getApplication().getEmploymentPositions().size() >= MAX_NUMBER_OF_POSITIONS + 1) {
             errors.reject("");
         }
 

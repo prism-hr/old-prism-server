@@ -76,28 +76,28 @@ public class ApplicationFormCopyHelperTest {
         bindingResult.popNestedPath();
 
         int i = 0;
-        for (ApplicationQualification qualification : applicationForm.getApplicationQualifications()) {
+        for (ApplicationQualification qualification : applicationForm.getQualifications()) {
             bindingResult.pushNestedPath("qualifications[" + (i++) + "]");
             ValidationUtils.invokeValidator(qualificationValidator, qualification, bindingResult);
             bindingResult.popNestedPath();
         }
 
         i = 0;
-        for (ApplicationEmploymentPosition employmentPosition : applicationForm.getApplicationEmploymentPositions()) {
+        for (ApplicationEmploymentPosition employmentPosition : applicationForm.getEmploymentPositions()) {
             bindingResult.pushNestedPath("employmentPositions[" + (i++) + "]");
             ValidationUtils.invokeValidator(employmentPositionValidator, employmentPosition, bindingResult);
             bindingResult.popNestedPath();
         }
 
         i = 0;
-        for (ApplicationFunding funding : applicationForm.getApplicationFundings()) {
+        for (ApplicationFunding funding : applicationForm.getFundings()) {
             bindingResult.pushNestedPath("fundings[" + (i++) + "]");
             ValidationUtils.invokeValidator(fundingValidator, funding, bindingResult);
             bindingResult.popNestedPath();
         }
 
         i = 0;
-        for (ApplicationReferee referee : applicationForm.getApplicationReferees()) {
+        for (ApplicationReferee referee : applicationForm.getReferees()) {
             referee.setId(i); // hack for validator
             bindingResult.pushNestedPath("referees[" + (i++) + "]");
             ValidationUtils.invokeValidator(refereeValidator, referee, bindingResult);

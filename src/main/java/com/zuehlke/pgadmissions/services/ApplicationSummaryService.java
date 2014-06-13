@@ -10,7 +10,6 @@ import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,7 +58,7 @@ public class ApplicationSummaryService {
     }
 
     private void addQualifications(final Application form, final Map<String, String> result) {
-        List<ApplicationQualification> qualifications = form.getApplicationQualifications();
+        List<ApplicationQualification> qualifications = form.getQualifications();
         if (qualifications.isEmpty()) {
             result.put("mostRecentQualification", NONE_PROVIDED);
             return;
@@ -106,7 +105,7 @@ public class ApplicationSummaryService {
 
     private void addFundings(final Application form, Map<String, String> result, final Gson gson) {
         Integer fundingSum = 0;
-        for (ApplicationFunding funding : form.getApplicationFundings()) {
+        for (ApplicationFunding funding : form.getFundings()) {
             fundingSum = fundingSum + funding.getValueAsInteger();
         }
         result.put("fundingRequirements", fundingSum.toString());
@@ -123,7 +122,7 @@ public class ApplicationSummaryService {
     }
 
     private void addReferences(Application form, Map<String, String> result) {
-        Integer numberOfResponsed = CollectionUtils.countMatches(form.getApplicationReferees(), new Predicate() {
+        Integer numberOfResponsed = CollectionUtils.countMatches(form.getReferees(), new Predicate() {
             @Override
             public boolean evaluate(Object object) {
                 return ((ApplicationReferee) object).getComment() != null;
@@ -133,7 +132,7 @@ public class ApplicationSummaryService {
     }
 
     private void addPersonalStatement(Application form, Map<String, String> result) {
-        ApplicationDocument applicationFormDocument = form.getApplicationDocument();
+        ApplicationDocument applicationFormDocument = form.getDocument();
         if (applicationFormDocument == null) {
             result.put("personalStatementProvided", "false");
             result.put("cvProvided", "false");

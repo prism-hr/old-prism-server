@@ -163,13 +163,13 @@ public class ApplicationFormBuilder {
         application.setUser(applicant);
         application.setProgram(program);
         application.setSubmittedTimestamp(submittedDate);
-        application.getApplicationReferees().addAll(referees);
+        application.getReferees().addAll(referees);
         application.setCreatedTimestamp(createdTimestamp);
-        application.getApplicationQualifications().addAll(qualifications);
+        application.getQualifications().addAll(qualifications);
         application.setProgramDetails(programmeDetails);
-        application.getApplicationFundings().addAll(fundings);
-        application.setApplicationAddress(applicationFormAddress);
-        application.setApplicationDocument(applicationFormDocument);
+        application.getFundings().addAll(fundings);
+        application.setAddress(applicationFormAddress);
+        application.setDocument(applicationFormDocument);
         application.setPersonalDetails(personalDetails);
         application.setDueDate(dueDate);
         application.setState(status);
@@ -177,7 +177,7 @@ public class ApplicationFormBuilder {
         application.setAcceptedTerms(acceptedTerms);
         application.setCode(applicationNumber);
         application.setClosingDate(closingDate);
-        application.getApplicationEmploymentPositions().addAll(employmentPositions);
+        application.getEmploymentPositions().addAll(employmentPositions);
         return application;
     }
 }

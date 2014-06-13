@@ -35,7 +35,7 @@ public final class DiagnosticInfoPrintUtils {
         });
         String params = Joiner.on("\n").withKeyValueSeparator(" -> ").join(parameterMap);
 
-        return "Request handling error for: " + request.getMethod() + " " + request.getRequestURI() + ", user: " + Objects.firstNonNull(currentUser.getEmail(), "<none>")
+        return "Request handling error for: " + request.getMethod() + " " + request.getRequestURI() + ", user: " + Objects.firstNonNull(currentUser, "<none>")
                 + ", params:\n" + params;
     }
 

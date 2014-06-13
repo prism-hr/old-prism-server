@@ -47,9 +47,9 @@ public class ApplicationFormValidator extends AbstractValidator {
         Application applicationForm = (Application) target;
         ApplicationProgramDetails programDetails = applicationForm.getProgramDetails();
         ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        ApplicationAddress applicationFormAddress = applicationForm.getApplicationAddress();
+        ApplicationAddress applicationFormAddress = applicationForm.getAddress();
         ApplicationAdditionalInformation additionalInformation = applicationForm.getAdditionalInformation();
-        ApplicationDocument applicationFormDocument = applicationForm.getApplicationDocument();
+        ApplicationDocument applicationFormDocument = applicationForm.getDocument();
 
         if (!programDetailsValidator.isValid(programDetails)) {
             errors.rejectValue("programDetails", "user.programDetails.incomplete");
@@ -71,7 +71,7 @@ public class ApplicationFormValidator extends AbstractValidator {
             errors.rejectValue("applicationDocument", "documents.section.invalid");
         }
 
-        if (applicationForm.getApplicationReferees().size() < 3) {
+        if (applicationForm.getReferees().size() < 3) {
             errors.rejectValue("referees", "user.referees.notvalid");
         }
 

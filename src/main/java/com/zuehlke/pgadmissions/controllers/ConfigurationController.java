@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
+import com.zuehlke.pgadmissions.domain.enums.DurationUnit;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.enums.PrismRole;
@@ -238,8 +238,8 @@ public class ConfigurationController {
     }
 
     @ModelAttribute("units")
-    public DurationUnitEnum[] getUnits() {
-        return DurationUnitEnum.values();
+    public DurationUnit[] getUnits() {
+        return DurationUnit.values();
     }
 
     @ModelAttribute("programs")

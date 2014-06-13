@@ -21,8 +21,8 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.SortCategory;
-import com.zuehlke.pgadmissions.domain.enums.SortOrder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationListSortCategory;
+import com.zuehlke.pgadmissions.domain.enums.ResourceListSortOrder;
 
 @Entity
 @Table(name = "FILTER", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_account_id", "scope_id" }) })
@@ -45,11 +45,11 @@ public class Filter {
 
     @Column(name = "sort_category", nullable = false)
     @Enumerated(EnumType.STRING)
-    private SortCategory sortCategory = SortCategory.APPLICATION_DATE;
+    private ApplicationListSortCategory sortCategory = ApplicationListSortCategory.APPLICATION_DATE;
 
     @Column(name = "sort_order", nullable = false)
     @Enumerated(EnumType.STRING)
-    private SortOrder sortOrder = SortOrder.DESCENDING;
+    private ResourceListSortOrder sortOrder = ResourceListSortOrder.DESCENDING;
     
     @Column(name = "last_access_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -93,19 +93,19 @@ public class Filter {
         this.satisfyAllConditions = satisfyAllConditions;
     }
 
-    public SortCategory getSortCategory() {
+    public ApplicationListSortCategory getSortCategory() {
         return sortCategory;
     }
 
-    public void setSortCategory(SortCategory sortCategory) {
+    public void setSortCategory(ApplicationListSortCategory sortCategory) {
         this.sortCategory = sortCategory;
     }
 
-    public SortOrder getSortOrder() {
+    public ResourceListSortOrder getSortOrder() {
         return sortOrder;
     }
     
-    public void setSortOrder(SortOrder sortOrder) {
+    public void setSortOrder(ResourceListSortOrder sortOrder) {
         this.sortOrder = sortOrder;
     }
 

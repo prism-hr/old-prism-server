@@ -13,7 +13,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
+import com.zuehlke.pgadmissions.domain.enums.PrismRoleTransitionType;
 
 @Entity
 @Table(name = "ROLE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_transition_id", "role_id", "role_transition_type_id",
@@ -34,7 +34,7 @@ public class RoleTransition {
 
     @Column(name = "role_transition_type_id", nullable = false)
     @Enumerated(EnumType.STRING)
-    private RoleTransitionType roleTransitionType;
+    private PrismRoleTransitionType roleTransitionType;
 
     @Column(name = "restrict_to_action_owner", nullable = false)
     private boolean restrictToActionOwner;
@@ -73,11 +73,11 @@ public class RoleTransition {
         this.role = role;
     }
 
-    public RoleTransitionType getRoleTransitionType() {
+    public PrismRoleTransitionType getRoleTransitionType() {
         return roleTransitionType;
     }
 
-    public void setRoleTransitionType(RoleTransitionType roleTransitionType) {
+    public void setRoleTransitionType(PrismRoleTransitionType roleTransitionType) {
         this.roleTransitionType = roleTransitionType;
     }
 

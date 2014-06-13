@@ -28,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
@@ -153,11 +152,6 @@ public class PersonalDetailsController {
     public Application getApplicationForm(String applicationId) {
         // TODO: check actions
         return applicationService.getByApplicationNumber(applicationId);
-    }
-
-    @ModelAttribute("languageQualificationTypes")
-    public LanguageQualificationEnum[] getLanguageQualificationTypes() {
-        return LanguageQualificationEnum.values();
     }
 
     private String returnView(ModelMap modelMap, ApplicationPersonalDetails personalDetails, User updatedUser) {

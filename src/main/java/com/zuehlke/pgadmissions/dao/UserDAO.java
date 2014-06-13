@@ -26,18 +26,9 @@ import com.zuehlke.pgadmissions.mail.NotificationDescriptor;
 @SuppressWarnings("unchecked")
 public class UserDAO {
 
-    private final SessionFactory sessionFactory;
-
-    public UserDAO() {
-        this(null);
-    }
-
     @Autowired
-    public UserDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private SessionFactory sessionFactory;
 
-    
     public User getParentUserByUserId(Integer userId) {
        return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
         .setProjection(Property.forName("parentUser")) //

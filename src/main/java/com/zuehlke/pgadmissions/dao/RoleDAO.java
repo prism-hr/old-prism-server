@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
-import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
+import com.zuehlke.pgadmissions.domain.enums.PrismRoleTransitionType;
 
 @Repository
 public class RoleDAO {
@@ -82,7 +82,7 @@ public class RoleDAO {
     @SuppressWarnings("unchecked")
     public List<RoleTransition> getRoleTransitions(StateTransition stateTransition, List<Role> invokerRoles) {
         Criterion restrictToInvokerCriterion = invokerRoles.isEmpty() ? //
-        Restrictions.eq("roleTransitionType", RoleTransitionType.CREATE)
+        Restrictions.eq("roleTransitionType", PrismRoleTransitionType.CREATE)
                 : Restrictions.in("role", invokerRoles);
 
         return (List<RoleTransition>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
@@ -104,7 +104,7 @@ public class RoleDAO {
                 .createAlias("stateTransition.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", resource.getState())) //
                 .add(Restrictions.eq("stateAction.action", createAction)) //
-                .add(Restrictions.eq("type", RoleTransitionType.CREATE)) //
+                .add(Restrictions.eq("type", PrismRoleTransitionType.CREATE)) //
                 .add(Restrictions.eq("restrictToInvoker", true)).uniqueResult();
     }
 
@@ -147,7 +147,7 @@ public class RoleDAO {
     public HashMultimap<RoleTransition, User> getRoleTransitionUsers(StateTransition stateTransition, PrismResource resource, User invoker) {
         List<RoleTransition> roleTransitions = (List<RoleTransition>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
                 .add(Restrictions.eq("stateTransition", stateTransition)) //
-                .add(Restrictions.ne("roleTransitionType", RoleTransitionType.CREATE)) //
+                .add(Restrictions.ne("roleTransitionType", PrismRoleTransitionType.CREATE)) //
                 .list();
         
         HashMultimap<RoleTransition, User> userRoleTransitions = HashMultimap.create();
@@ -178,7 +178,7 @@ public class RoleDAO {
     public HashMultimap<Role, RoleTransition> getRoleCreationTransitions(StateTransition stateTransition) {
         List<RoleTransition> roleTransitions = (List<RoleTransition>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
                 .add(Restrictions.eq("stateTransition", stateTransition)) //
-                .add(Restrictions.eq("roleTransitionType", RoleTransitionType.CREATE)) //
+                .add(Restrictions.eq("roleTransitionType", PrismRoleTransitionType.CREATE)) //
                 .list();
 
         HashMultimap<Role, RoleTransition> instructions = HashMultimap.create();

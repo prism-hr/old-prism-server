@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramExport;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
+import com.zuehlke.pgadmissions.domain.enums.PrismProgramExportFormat;
 import com.zuehlke.pgadmissions.services.ProgramExportService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -94,7 +94,7 @@ public class ProgramExportController {
         
         Map<String, Object> responseMap = validate(selectedProgramIds, feedFormat, title, currentUser, true);
         if ((Boolean) responseMap.get(SUCCESS)) {
-            ProgramExport feed = feedService.updateFeed(feedId, selectedProgramIds, currentUser, ProgramExportFormat.valueOf(feedFormat), title);
+            ProgramExport feed = feedService.updateFeed(feedId, selectedProgramIds, currentUser, PrismProgramExportFormat.valueOf(feedFormat), title);
             responseMap.put("iframeCode", feedService.getIframeHtmlCode(feed));
         }
         return responseMap;
@@ -120,7 +120,7 @@ public class ProgramExportController {
         String title = (String) json.get("feedTitle");
         responseMap = validate(selectedProgramIds, feedFormat, title, currentUser);
         if ((Boolean) responseMap.get(SUCCESS)) {
-            ProgramExport feed = feedService.saveNewFeed(selectedProgramIds, currentUser, ProgramExportFormat.valueOf(feedFormat), title);
+            ProgramExport feed = feedService.saveNewFeed(selectedProgramIds, currentUser, PrismProgramExportFormat.valueOf(feedFormat), title);
             responseMap.put("iframeCode", feedService.getIframeHtmlCode(feed));
             responseMap.put("id", feed.getId());
         } 
@@ -161,7 +161,7 @@ public class ProgramExportController {
         }
         
         try {
-            ProgramExportFormat.valueOf(StringUtils.upperCase(feedFormat));
+            PrismProgramExportFormat.valueOf(StringUtils.upperCase(feedFormat));
         } catch (Exception e) {
             responseMap.put(SUCCESS, false);
             responseMap.put("feedSize", FieldErrorUtils.resolveMessage("dropdown.radio.select.none", messageSource));

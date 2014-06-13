@@ -29,11 +29,11 @@ import com.zuehlke.pgadmissions.domain.FilterConstraint;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
-import com.zuehlke.pgadmissions.domain.enums.SearchCategory.CategoryType;
-import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
-import com.zuehlke.pgadmissions.domain.enums.SortCategory;
-import com.zuehlke.pgadmissions.domain.enums.SortOrder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationListFilterCategory;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationListFilterCategory.CategoryType;
+import com.zuehlke.pgadmissions.domain.enums.ResourceListSearchPredicate;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationListSortCategory;
+import com.zuehlke.pgadmissions.domain.enums.ResourceListSortOrder;
 
 @Repository
 public class ApplicationFormListDAO {
@@ -117,12 +117,12 @@ public class ApplicationFormListDAO {
 
             List<Criterion> criterions = new ArrayList<Criterion>();
             for (FilterConstraint filter : filtering.getFilterConstraints()) {
-                SearchCategory searchCategory = filter.getSearchCategory();
+                ApplicationListFilterCategory searchCategory = filter.getSearchCategory();
                 String searchTerm = filter.getSearchTerm();
 
                 if (searchCategory != null && StringUtils.isNotBlank(searchTerm)) {
                     Criterion criterion = null;
-                    SearchPredicate searchPredicate = filter.getSearchPredicate();
+                    ResourceListSearchPredicate searchPredicate = filter.getSearchPredicate();
 
                     if (searchCategory.getType() == CategoryType.TEXT) {
                         switch (searchCategory) {
@@ -170,18 +170,18 @@ public class ApplicationFormListDAO {
                         }
 
                     } else if (searchCategory.getType() == CategoryType.DATE) {
-                        if (searchCategory == SearchCategory.SUBMISSION_DATE) {
+                        if (searchCategory == ApplicationListFilterCategory.SUBMISSION_DATE) {
                             criterion = getCriteriaForDate(searchPredicate, searchTerm, "application.submittedTimestamp");
-                        } else if (searchCategory == SearchCategory.LAST_EDITED_DATE) {
+                        } else if (searchCategory == ApplicationListFilterCategory.LAST_EDITED_DATE) {
                             // FIXME use comments
                             // criterion = getCriteriaForDate(searchPredicate, searchTerm, "application.lastUpdated");
-                        } else if (searchCategory == SearchCategory.CLOSING_DATE) {
+                        } else if (searchCategory == ApplicationListFilterCategory.CLOSING_DATE) {
                             criterion = getCriteriaForDate(searchPredicate, searchTerm, "application.dueDate");
                         }
 
                     }
 
-                    if (searchPredicate == SearchPredicate.NOT_CONTAINING) {
+                    if (searchPredicate == ResourceListSearchPredicate.TEXT_NOT_CONTAINING) {
                         criterions.add(Restrictions.not(criterion));
                     } else {
                         criterions.add(criterion);
@@ -204,7 +204,7 @@ public class ApplicationFormListDAO {
         }
     }
 
-    private Criterion getCriteriaForDate(final SearchPredicate searchPredicate, final String term, final String field) {
+    private Criterion getCriteriaForDate(final ResourceListSearchPredicate searchPredicate, final String term, final String field) {
         Criterion criterion = null;
         Date submissionDate;
         try {
@@ -217,16 +217,16 @@ public class ApplicationFormListDAO {
             return null;
         }
         switch (searchPredicate) {
-        case FROM_DATE:
+        case DATE_FROM:
             criterion = Restrictions.ge(field, submissionDate);
             break;
-        case ON_DATE:
+        case DATE_ON:
             Conjunction conjunction = Restrictions.conjunction();
             conjunction.add(Restrictions.ge(field, submissionDate));
             conjunction.add(Restrictions.lt(field, new DateTime(submissionDate).plusDays(1).toDate()));
             criterion = conjunction;
             break;
-        case TO_DATE:
+        case DATE_TO:
             criterion = Restrictions.lt(field, new DateTime(submissionDate).plusDays(1).toDate());
             break;
         default:
@@ -236,10 +236,10 @@ public class ApplicationFormListDAO {
     }
 
     private void appendOrderStatement(Criteria criteria, final Filter filtering) {
-        SortCategory sortCategory = filtering.getSortCategory();
+        ApplicationListSortCategory sortCategory = filtering.getSortCategory();
 
         boolean doSortAscending = true;
-        if (filtering.getSortOrder() == SortOrder.DESCENDING) {
+        if (filtering.getSortOrder() == ResourceListSortOrder.DESCENDING) {
             doSortAscending = false;
         }
 

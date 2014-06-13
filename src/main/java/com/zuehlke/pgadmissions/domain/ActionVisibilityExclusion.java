@@ -14,7 +14,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.zuehlke.pgadmissions.domain.enums.ActionVisibilityExclusionRule;
+import com.zuehlke.pgadmissions.domain.enums.PrismActionVisibilityExclusionRule;
 
 @Entity
 @Table(name = "ACTION_VISIBILITY_EXCLUSION", uniqueConstraints = { @UniqueConstraint(columnNames = { "action_id", "role_id" }) })
@@ -35,7 +35,7 @@ public class ActionVisibilityExclusion {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "action_visibility_exclusion_rule_id", nullable = false)
-    private ActionVisibilityExclusionRule rule;
+    private PrismActionVisibilityExclusionRule rule;
 
     public Integer getId() {
         return id;
@@ -61,11 +61,11 @@ public class ActionVisibilityExclusion {
         this.role = role;
     }
 
-    public ActionVisibilityExclusionRule getRule() {
+    public PrismActionVisibilityExclusionRule getRule() {
         return rule;
     }
 
-    public void setRule(ActionVisibilityExclusionRule rule) {
+    public void setRule(PrismActionVisibilityExclusionRule rule) {
         this.rule = rule;
     }
 

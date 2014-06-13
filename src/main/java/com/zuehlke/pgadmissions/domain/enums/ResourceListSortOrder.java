@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-public enum SortOrder {
+public enum ResourceListSortOrder {
 
 	ASCENDING, DESCENDING;
 }

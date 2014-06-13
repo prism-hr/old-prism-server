@@ -9,14 +9,14 @@ import com.zuehlke.pgadmissions.domain.Action;
 
 public enum PrismReservedActionKeyword {
 
-    CREATE(new ActionTypeMatch(PrismActionType.USER_INVOCATION, MatchMode.CONTAINS, MatchResponse.RESTRICT)), //
-    CONCLUDE(new ActionTypeMatch(PrismActionType.SYSTEM_PROPAGATION, MatchMode.ENDS_WITH, MatchResponse.RESTRICT)), //
-    ESCALATE(new ActionTypeMatch(PrismActionType.SYSTEM_ESCALATION, MatchMode.ENDS_WITH, MatchResponse.RESTRICT)), //
-    EXPORT(new ActionTypeMatch(PrismActionType.SYSTEM_ESCALATION, MatchMode.ENDS_WITH, MatchResponse.RESTRICT)), //
-    IMPORT(new ActionTypeMatch(PrismActionType.SYSTEM_PROPAGATION, MatchMode.CONTAINS, MatchResponse.RESTRICT)), //
-    RESTORE(new ActionTypeMatch(PrismActionType.SYSTEM_PROPAGATION, MatchMode.ENDS_WITH, MatchResponse.RESTRICT)), //
-    SUSPEND(new ActionTypeMatch(PrismActionType.SYSTEM_PROPAGATION, MatchMode.ENDS_WITH, MatchResponse.RESTRICT)), //
-    TERMINATE(new ActionTypeMatch(PrismActionType.SYSTEM_PROPAGATION, MatchMode.ENDS_WITH, MatchResponse.RESTRICT));
+    CREATE(new ActionTypeMatch(PrismActionType.USER_INVOCATION, MatchMode.CONTAINS)), //
+    CONCLUDE(new ActionTypeMatch(PrismActionType.SYSTEM_PROPAGATION, MatchMode.ENDS_WITH)), //
+    ESCALATE(new ActionTypeMatch(PrismActionType.SYSTEM_ESCALATION, MatchMode.ENDS_WITH)), //
+    EXPORT(new ActionTypeMatch(PrismActionType.SYSTEM_ESCALATION, MatchMode.ENDS_WITH)), //
+    IMPORT(new ActionTypeMatch(PrismActionType.SYSTEM_PROPAGATION, MatchMode.CONTAINS)), //
+    RESTORE(new ActionTypeMatch(PrismActionType.SYSTEM_PROPAGATION, MatchMode.ENDS_WITH)), //
+    SUSPEND(new ActionTypeMatch(PrismActionType.SYSTEM_PROPAGATION, MatchMode.ENDS_WITH)), //
+    TERMINATE(new ActionTypeMatch(PrismActionType.SYSTEM_PROPAGATION, MatchMode.ENDS_WITH));
 
     private ActionTypeMatch actionTypeMatch;
 
@@ -42,7 +42,7 @@ public enum PrismReservedActionKeyword {
             PrismReservedActionKeyword keywordMatch = keywordIndex.get(actionStringPart);
             if (keywordMatch != null) {
                 ActionTypeMatch actionTypeMatch = keywordMatch.getActionTypeMatch();
-                if (actionTypeMatch.getMatchResponse() == MatchResponse.PREVENT || (action.getActionType() != actionTypeMatch.getActionType() && //
+                if ((action.getActionType() != actionTypeMatch.getActionType() && //
                         (actionTypeMatch.getMatchMode() == MatchMode.CONTAINS || actionStringPart == actionStringParts.get(actionStringParts.size() - 1)))) {
                     return false;
                 }
@@ -56,13 +56,10 @@ public enum PrismReservedActionKeyword {
         private PrismActionType actionType;
 
         private MatchMode matchMode;
-
-        private MatchResponse matchResponse;
-
-        public ActionTypeMatch(PrismActionType actionType, MatchMode matchMode, MatchResponse matchResponse) {
+        
+        public ActionTypeMatch(PrismActionType actionType, MatchMode matchMode) {
             this.actionType = actionType;
             this.matchMode = matchMode;
-            this.matchResponse = matchResponse;
         }
 
         public PrismActionType getActionType() {
@@ -73,18 +70,10 @@ public enum PrismReservedActionKeyword {
             return matchMode;
         }
 
-        public MatchResponse getMatchResponse() {
-            return matchResponse;
-        }
-
     }
 
     private enum MatchMode {
         CONTAINS, ENDS_WITH;
-    }
-
-    private enum MatchResponse {
-        PREVENT, RESTRICT;
     }
 
 }

@@ -141,7 +141,7 @@ public class ApplicationDAO {
                 .add(Restrictions.eq("account.enabled", true));
 
         return sessionFactory.getCurrentSession().createCriteria(Application.class)
-                .createAlias("state", "state", JoinType.INNER_JOIN)
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .add(Property.forName("stateActionAssignment.role").in(roleCriteria))
@@ -154,19 +154,19 @@ public class ApplicationDAO {
 
     public List<ApplicationListRowRepresentation> getApplicationList(User user, Integer page, Integer perPage) {
         return sessionFactory.getCurrentSession().createCriteria(Application.class)
-                .setProjection(Projections.projectionList().add(Projections.groupProperty("id"), "id")
-                        .add(Projections.property("applicant.firstName"), "user.firstName")
-                        .add(Projections.property("applicant.firstName2"), "user.firstName2")
-                        .add(Projections.property("applicant.firstName3"), "user.firstName3")
-                        .add(Projections.property("applicant.lastName"), "user.lastName")
-                        .add(Projections.property("applicant.email"), "user.email")
-                        .add(Projections.property("code"), "code")
-                        .add(Projections.property("program.title"), "program.title")
-                        .add(Projections.property("project.title"), "project.title")
-                        .add(Projections.property("state.id"), "state"))
-                .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN)
-                .createAlias("project", "project", JoinType.LEFT_OUTER_JOIN)
-                .createAlias("user", "applicant", JoinType.INNER_JOIN)
+                .setProjection(Projections.projectionList().add(Projections.groupProperty("id"), "id") //
+                        .add(Projections.property("applicant.firstName"), "user.firstName") //
+                        .add(Projections.property("applicant.firstName2"), "user.firstName2") //
+                        .add(Projections.property("applicant.firstName3"), "user.firstName3") //
+                        .add(Projections.property("applicant.lastName"), "user.lastName") //
+                        .add(Projections.property("applicant.email"), "user.email") //
+                        .add(Projections.property("code"), "code") //
+                        .add(Projections.property("program.title"), "program.title") //
+                        .add(Projections.property("project.title"), "project.title") //
+                        .add(Projections.property("state.id"), "state")) //
+                .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("project", "project", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("user", "applicant", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
@@ -180,7 +180,8 @@ public class ApplicationDAO {
                 .addOrder(Order.desc("updatedTimestamp")) //
                 .setFirstResult(page) //
                 .setMaxResults((page + 1) * perPage) //
-                .setResultTransformer(new AliasToBeanNestedResultTransformer(ApplicationListRowRepresentation.class))
+                .setResultTransformer(new AliasToBeanNestedResultTransformer(ApplicationListRowRepresentation.class)) //
                 .list();
     }
+    
 }

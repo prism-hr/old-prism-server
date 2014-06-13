@@ -169,3 +169,10 @@ ALTER TABLE PROJECT
 ALTER TABLE APPLICATION
 	ADD INDEX (updated_timestamp)
 ;
+
+/* Mistake in workflow definition */
+
+UPDATE STATE_ACTION
+SET precedence = NULL
+WHERE action_id = "APPLICATION_COMMENT"
+;

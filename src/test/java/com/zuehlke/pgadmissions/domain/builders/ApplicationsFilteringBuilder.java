@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.FilterConstraint;
 import com.zuehlke.pgadmissions.domain.Filter;
-import com.zuehlke.pgadmissions.domain.enums.SortCategory;
-import com.zuehlke.pgadmissions.domain.enums.SortOrder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationListSortCategory;
+import com.zuehlke.pgadmissions.domain.enums.ResourceListSortOrder;
 
 public class ApplicationsFilteringBuilder {
 
@@ -15,9 +15,9 @@ public class ApplicationsFilteringBuilder {
 
     private List<FilterConstraint> filters = new ArrayList<FilterConstraint>();
 
-    private SortCategory sortCategory = SortCategory.APPLICATION_DATE;
+    private ApplicationListSortCategory sortCategory = ApplicationListSortCategory.APPLICATION_DATE;
 
-    private SortOrder order = SortOrder.DESCENDING;
+    private ResourceListSortOrder order = ResourceListSortOrder.DESCENDING;
 
     private Integer blockCount;
 
@@ -33,12 +33,12 @@ public class ApplicationsFilteringBuilder {
         return this;
     }
 
-    public ApplicationsFilteringBuilder sortCategory(SortCategory sortCategory) {
+    public ApplicationsFilteringBuilder sortCategory(ApplicationListSortCategory sortCategory) {
         this.sortCategory = sortCategory;
         return this;
     }
 
-    public ApplicationsFilteringBuilder order(SortOrder order) {
+    public ApplicationsFilteringBuilder order(ResourceListSortOrder order) {
         this.order = order;
         return this;
     }

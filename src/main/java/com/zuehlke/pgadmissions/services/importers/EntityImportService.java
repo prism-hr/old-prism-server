@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
+import com.zuehlke.pgadmissions.domain.enums.PrismProgramType;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.mail.NotificationService;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
@@ -223,7 +223,7 @@ public class EntityImportService {
         String prefixedProgramCode = institution.getCode() + "-" + programme.getCode();
         Program program = programService.getProgramByCode(prefixedProgramCode);
         if (program == null) {
-            ProgramTypeId programTypeId = ProgramTypeId.findValueFromString(programme.getName());
+            PrismProgramType programTypeId = PrismProgramType.findValueFromString(programme.getName());
             ProgramType programType = entityDAO.getById(ProgramType.class, programTypeId);
             program = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withCode(prefixedProgramCode)
                     .withTitle(programme.getName()).withState(new State().withId(PrismState.PROGRAM_APPROVED)).withImported(true).withProgramType(programType)

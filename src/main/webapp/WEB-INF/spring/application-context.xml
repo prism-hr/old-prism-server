@@ -64,7 +64,12 @@
 
   <!-- freemarker config -->
   <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
-    <property name="templateLoaderPath" value="/WEB-INF/freemarker/" />
+    <property name="templateLoaderPaths">
+    	<list>
+    		<value>/WEB-INF/freemarker/</value>
+    		<value>/WEB-INF/classes/queries/</value>
+    	</list>
+    </property>
     <property name="freemarkerVariables">
       <map>
         <entry key="encrypter" value-ref="encryptionHelper" />

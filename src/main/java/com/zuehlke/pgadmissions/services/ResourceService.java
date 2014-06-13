@@ -2,14 +2,13 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
-import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.dto.PrismResourceDynamicDTO;
 
 @Service
 @Transactional
@@ -18,9 +17,11 @@ public class ResourceService {
     @Autowired
     private ResourceDAO resourceDAO;
     
-    @SuppressWarnings("unchecked")
-    public <T extends  PrismResourceDynamic> List<T> getConsoleList(PrismScope clazz, User user, int pageIndex, int rowsPerPage) {
-        return (List<T>) resourceDAO.getConsoleList(clazz, user, pageIndex, rowsPerPage);
+    @Autowired
+    private UserService userService;
+    
+    public <T extends PrismResourceDynamic> List<PrismResourceDynamicDTO> getConsoleListBlock(Class<T> resourceType, int page, int perPage) {
+        return resourceDAO.getConsoleListBlock(userService.getCurrentUser(), resourceType, page, perPage);
     }
     
 }

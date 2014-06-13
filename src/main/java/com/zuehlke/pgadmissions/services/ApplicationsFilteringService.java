@@ -11,9 +11,9 @@ import com.zuehlke.pgadmissions.domain.FilterConstraint;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
-import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
-import com.zuehlke.pgadmissions.domain.enums.SortCategory;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationListFilterCategory;
+import com.zuehlke.pgadmissions.domain.enums.ResourceListSearchPredicate;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationListSortCategory;
 
 @Service
 @Transactional
@@ -44,14 +44,14 @@ public class ApplicationsFilteringService {
     
     public Filter getUrgentApplicationFiltering() {
         Filter filtering = new Filter();
-        filtering.setSortCategory(SortCategory.URGENT);
+        filtering.setSortCategory(ApplicationListSortCategory.URGENT);
         return filtering;
     }
 
     private FilterConstraint getFilterForNonStatus(PrismState status) {
         FilterConstraint filter = new FilterConstraint();
-        filter.setSearchCategory(SearchCategory.APPLICATION_STATUS);
-        filter.setSearchPredicate(SearchPredicate.NOT_CONTAINING);
+        filter.setSearchCategory(ApplicationListFilterCategory.APPLICATION_STATUS);
+        filter.setSearchPredicate(ResourceListSearchPredicate.TEXT_NOT_CONTAINING);
         filter.setSearchTerm(status.name());
         return filter;
     }

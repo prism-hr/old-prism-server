@@ -24,8 +24,8 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
-import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationResidenceStatus;
+import com.zuehlke.pgadmissions.domain.enums.YesNoUnsureResponse;
 
 @Entity
 @Table(name = "COMMENT")
@@ -81,15 +81,15 @@ public class Comment {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "application_qualified")
-    private ValidationQuestionOptions qualified;
+    private YesNoUnsureResponse qualified;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "application_competent_in_work_language")
-    private ValidationQuestionOptions competentInWorkLanguage;
+    private YesNoUnsureResponse competentInWorkLanguage;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "application_residence_status")
-    private ResidenceStatus residenceStatus;
+    private ApplicationResidenceStatus residenceStatus;
 
     @Column(name = "application_suitable_for_institution")
     private Boolean suitableForInstitution;
@@ -306,27 +306,27 @@ public class Comment {
         this.userSpecifiedDueDate = userSpecifiedDueDate;
     }
 
-    public ValidationQuestionOptions getQualified() {
+    public YesNoUnsureResponse getQualified() {
         return qualified;
     }
 
-    public void setQualified(ValidationQuestionOptions qualified) {
+    public void setQualified(YesNoUnsureResponse qualified) {
         this.qualified = qualified;
     }
 
-    public ValidationQuestionOptions getCompetentInWorkLanguage() {
+    public YesNoUnsureResponse getCompetentInWorkLanguage() {
         return competentInWorkLanguage;
     }
 
-    public void setCompetentInWorkLanguage(ValidationQuestionOptions competentInWorkLanguage) {
+    public void setCompetentInWorkLanguage(YesNoUnsureResponse competentInWorkLanguage) {
         this.competentInWorkLanguage = competentInWorkLanguage;
     }
 
-    public ResidenceStatus getResidenceStatus() {
+    public ApplicationResidenceStatus getResidenceStatus() {
         return residenceStatus;
     }
 
-    public void setResidenceStatus(ResidenceStatus residenceStatus) {
+    public void setResidenceStatus(ApplicationResidenceStatus residenceStatus) {
         this.residenceStatus = residenceStatus;
     }
 
@@ -648,8 +648,8 @@ public class Comment {
     }
 
     public boolean isAtLeastOneAnswerUnsure() {
-        return getResidenceStatus() == ResidenceStatus.UNSURE || getQualified() == ValidationQuestionOptions.UNSURE
-                || getCompetentInWorkLanguage() == ValidationQuestionOptions.UNSURE;
+        return getResidenceStatus() == ApplicationResidenceStatus.UNSURE || getQualified() == YesNoUnsureResponse.UNSURE
+                || getCompetentInWorkLanguage() == YesNoUnsureResponse.UNSURE;
     }
 
     public String getTooltipMessage(final String role) {

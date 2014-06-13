@@ -19,7 +19,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.StateTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.enums.PrismStateTransitionEvaluation;
 
 @Entity
 @Table(name = "STATE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "transition_state_id" }) })
@@ -43,7 +43,7 @@ public class StateTransition {
 
     @Column(name = "state_transition_evaluation_id")
     @Enumerated(EnumType.STRING)
-    private StateTransitionEvaluation stateTransitionEvaluation;
+    private PrismStateTransitionEvaluation stateTransitionEvaluation;
 
     @Column(name = "display_order")
     private Integer displayOrder;
@@ -90,11 +90,11 @@ public class StateTransition {
         this.transitionAction = transitionAction;
     }
 
-    public StateTransitionEvaluation getStateTransitionEvaluation() {
+    public PrismStateTransitionEvaluation getStateTransitionEvaluation() {
         return stateTransitionEvaluation;
     }
 
-    public void setStateTransitionEvaluation(StateTransitionEvaluation stateTransitionEvaluation) {
+    public void setStateTransitionEvaluation(PrismStateTransitionEvaluation stateTransitionEvaluation) {
         this.stateTransitionEvaluation = stateTransitionEvaluation;
     }
 

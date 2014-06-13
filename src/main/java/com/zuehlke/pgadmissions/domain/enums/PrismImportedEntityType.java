@@ -9,7 +9,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 
-public enum ImportedEntityType {
+public enum PrismImportedEntityType {
 
     COUNTRY(com.zuehlke.pgadmissions.referencedata.jaxb.Countries.class, "country", Country.class), //
     DISABILITY(com.zuehlke.pgadmissions.referencedata.jaxb.Disabilities.class, "disability", Disability.class), //
@@ -26,7 +26,7 @@ public enum ImportedEntityType {
 
     private Class<?> entityClass;
 
-    private ImportedEntityType(Class<?> jaxbClass, String jaxbPropertyName, Class<?> entityClass) {
+    private PrismImportedEntityType(Class<?> jaxbClass, String jaxbPropertyName, Class<?> entityClass) {
         this.jaxbClass = jaxbClass;
         this.jaxbPropertyName = jaxbPropertyName;
         this.entityClass = entityClass;

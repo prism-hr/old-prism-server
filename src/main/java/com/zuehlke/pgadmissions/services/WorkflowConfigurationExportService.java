@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.StateTransition;
-import com.zuehlke.pgadmissions.domain.enums.StateTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.enums.PrismStateTransitionEvaluation;
 
 @Service
 @Transactional(readOnly = true)
@@ -180,7 +180,7 @@ public class WorkflowConfigurationExportService {
         }
 
         Element nextAppend = actionElement;
-        StateTransitionEvaluation stateTransitionEvaluation = stateService.getStateTransitionEvaluationByStateAction(stateAction);
+        PrismStateTransitionEvaluation stateTransitionEvaluation = stateService.getStateTransitionEvaluationByStateAction(stateAction);
         if (stateTransitionEvaluation != null) {
             Element stateTransitionEvaluationElement = buildStateTransitionEvaluationElement(document, actionElement, stateTransitionEvaluation);
             actionElement.appendChild(stateTransitionEvaluationElement);
@@ -243,7 +243,7 @@ public class WorkflowConfigurationExportService {
         return roleElement;
     }
     
-    private Element buildStateTransitionEvaluationElement(Document document, Element actionElement, StateTransitionEvaluation stateTransitionEvaluation) {
+    private Element buildStateTransitionEvaluationElement(Document document, Element actionElement, PrismStateTransitionEvaluation stateTransitionEvaluation) {
         Element stateTransitionEvaluationElement = document.createElement("state-transition-evaluation");
         stateTransitionEvaluationElement.setAttribute("id", stateTransitionEvaluation.toString());
         actionElement.appendChild(stateTransitionEvaluationElement);

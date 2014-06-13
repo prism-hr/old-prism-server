@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.StateTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.enums.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.mail.NotificationDescriptor;
 import com.zuehlke.pgadmissions.mail.NotificationService;
 
@@ -202,7 +202,7 @@ public class StateService {
                 String method = potentialStateTransitions.get(0).getStateTransitionEvaluation().getMethodName();
                 stateTransition = (StateTransition) MethodUtils.invokeExactMethod(this, method, new Object[] { resource, comment, potentialStateTransitions });
             } catch (Exception e) {
-                throw new Error(StateTransitionEvaluation.INCORRECT_PROCESSOR_TYPE, e);
+                throw new Error(PrismStateTransitionEvaluation.INCORRECT_PROCESSOR_TYPE, e);
             }
         } else {
             stateTransition = potentialStateTransitions.get(0);
@@ -263,7 +263,7 @@ public class StateService {
         return stateDAO.getStateTransition(stateTransitions, transitionState);
     }
     
-    public StateTransitionEvaluation getStateTransitionEvaluationByStateAction(StateAction stateAction) {
+    public PrismStateTransitionEvaluation getStateTransitionEvaluationByStateAction(StateAction stateAction) {
         return stateDAO.getStateTransitionEvaluationByStateAction(stateAction);
     }
 

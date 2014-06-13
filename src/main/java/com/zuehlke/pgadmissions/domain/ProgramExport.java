@@ -19,7 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
+import com.zuehlke.pgadmissions.domain.enums.PrismProgramExportFormat;
 
 @Entity
 @Table(name = "program_export", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "title" }) })
@@ -39,7 +39,7 @@ public class ProgramExport {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "program_export_format_id", nullable = false)
-    private ProgramExportFormat format;
+    private PrismProgramExportFormat format;
 
     @ManyToMany(cascade = ALL)
     @JoinTable(name = "program_export_program", joinColumns = { @JoinColumn(name = "program_export_id", nullable = false) })
@@ -61,11 +61,11 @@ public class ProgramExport {
         this.user = user;
     }
 
-    public ProgramExportFormat getFormat() {
+    public PrismProgramExportFormat getFormat() {
         return format;
     }
 
-    public void setFormat(ProgramExportFormat format) {
+    public void setFormat(PrismProgramExportFormat format) {
         this.format = format;
     }
 
@@ -96,7 +96,7 @@ public class ProgramExport {
         return this;
     }
 
-    public ProgramExport withFormat(ProgramExportFormat format) {
+    public ProgramExport withFormat(PrismProgramExportFormat format) {
         this.format = format;
         return this;
     }

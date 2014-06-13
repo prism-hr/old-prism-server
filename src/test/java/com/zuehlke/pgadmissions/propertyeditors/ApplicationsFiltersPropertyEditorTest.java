@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.FilterConstraint;
-import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationListFilterCategory;
 
 public class ApplicationsFiltersPropertyEditorTest {
 
@@ -29,10 +29,10 @@ public class ApplicationsFiltersPropertyEditorTest {
         FilterConstraint numberFilter = list.get(0);
         FilterConstraint applicantFilter = list.get(1);
         
-        assertEquals(SearchCategory.APPLICATION_NUMBER, numberFilter.getSearchCategory());
+        assertEquals(ApplicationListFilterCategory.APPLICATION_NUMBER, numberFilter.getSearchCategory());
         assertEquals("app_number", numberFilter.getSearchTerm());
         
-        assertEquals(SearchCategory.APPLICANT_NAME, applicantFilter.getSearchCategory());
+        assertEquals(ApplicationListFilterCategory.APPLICANT_NAME, applicantFilter.getSearchCategory());
         assertEquals("Francishek Pieczka", applicantFilter.getSearchTerm());
         
     }

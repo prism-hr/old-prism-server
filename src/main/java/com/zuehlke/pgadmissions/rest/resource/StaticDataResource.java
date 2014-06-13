@@ -2,8 +2,10 @@ package com.zuehlke.pgadmissions.rest.resource;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.rest.domain.StateActionRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.StateRepresentation;
 import com.zuehlke.pgadmissions.services.EntityService;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,15 @@ public class StaticDataResource {
             stateActionRepresentations.add(actionRepresentation);
         }
         staticData.put("stateActions", stateActionRepresentations);
+
+        List<State> states = entityService.getAll(State.class);
+        List<StateRepresentation> stateRepresentations = Lists.newArrayListWithExpectedSize(states.size());
+        for (State state : states) {
+            StateRepresentation stateRepresentation = dozerBeanMapper.map(state, StateRepresentation.class);
+            stateRepresentation.setDisplayValue(applicationContext.getMessage("state." + state.getParentState().getId().toString(), null, LocaleContextHolder.getLocale()));
+            stateRepresentations.add(stateRepresentation);
+        }
+        staticData.put("states", stateRepresentations);
 
         return staticData;
     }

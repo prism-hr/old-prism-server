@@ -8,6 +8,8 @@ public class StateActionRepresentation {
 
     private boolean raisesUrgentFlag;
 
+    private String displayValue;
+
     public String getState() {
         return state;
     }
@@ -30,5 +32,13 @@ public class StateActionRepresentation {
 
     public void setRaisesUrgentFlag(boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
+    }
+
+    public String getDisplayValue() {
+        return displayValue;
+    }
+
+    public void setDisplayValue(String displayValue) {
+        this.displayValue = displayValue;
     }
 }

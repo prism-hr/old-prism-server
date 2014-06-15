@@ -1,6 +1,7 @@
 <#assign queryScopeLower = queryScope?lower_case>
 <#assign queryScopeUpper = queryScope?upper_case>
 <@compress single_line=true>
+<#include "session_group_concat.ftl"> 
 SELECT ${queryScopeUpper}_LIST_BLOCK.*, (
 	<#include "permitted_actions.ftl">) 
 	AS actionList
@@ -51,5 +52,5 @@ FROM (
 	GROUP BY ${queryScopeUpper}.id
 	ORDER BY ${queryScopeUpper}_LIST_PERMISSION.raises_urgent_flag DESC, ${queryScopeUpper}.updated_timestamp DESC
 	LIMIT ${rowIndex}, ${rowCount}) 
-AS ${queryScopeUpper}_LIST_BLOCK
+AS ${queryScopeUpper}_LIST_BLOCK;
 </@compress>

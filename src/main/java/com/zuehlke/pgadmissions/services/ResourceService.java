@@ -25,8 +25,4 @@ public class ResourceService {
         return resourceDAO.getConsoleListBlock(userService.getCurrentUser(), resourceType, page, perPage);
     }
     
-    public <T extends PrismResourceDynamic> String getResourceListBlockSelect(User user, Class<T> resourceType, int page, int perPage) {
-        return resourceDAO.getResourceListBlockSelect(user, resourceType, page, perPage);
-    }
-    
 }

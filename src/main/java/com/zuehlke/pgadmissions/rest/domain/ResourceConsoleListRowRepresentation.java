@@ -31,6 +31,8 @@ public class ResourceConsoleListRowRepresentation {
     private String displayTimestamp;
     
     private String actionList;
+    
+    private String averageRating;
 
     public String getId() {
         return id;
@@ -157,6 +159,14 @@ public class ResourceConsoleListRowRepresentation {
 
     public void setActionList(String actionList) {
         this.actionList = actionList;
+    }
+
+    public String getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(String averageRating) {
+        this.averageRating = averageRating;
     }
     
 }

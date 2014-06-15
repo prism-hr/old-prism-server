@@ -41,7 +41,7 @@ public class ResourceDAO {
                 .list();
     }
 
-    public <T extends PrismResourceDynamic> String getResourceListBlockSelect(User user, Class<T> resourceType, int page, int perPage) {
+    private <T extends PrismResourceDynamic> String getResourceListBlockSelect(User user, Class<T> resourceType, int page, int perPage) {
         String resourceTypeString = resourceType.getSimpleName();
 
         HashMap<String, Object> queryParameters = Maps.newHashMap();

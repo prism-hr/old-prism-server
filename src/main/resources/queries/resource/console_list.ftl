@@ -1,10 +1,12 @@
 <#assign queryScopeLower = queryScope?lower_case>
 <#assign queryScopeUpper = queryScope?upper_case>
-<@compress single_line=true>
-<#include "session_group_concat.ftl"> 
+<#include "session_group_concat.ftl">
+<@compress single_line = true>
 SELECT ${queryScopeUpper}_LIST_BLOCK.*, (
 	<#include "permitted_actions.ftl">) 
-	AS actionList
+	AS actionList, (
+	<#include "${queryScopeLower}_average_rating.ftl">)
+	AS averageRating
 FROM (
 	SELECT ${queryScopeUpper}.id AS id, ${queryScopeUpper}.code AS code,
 		${queryScopeUpper}_LIST_PERMISSION.raises_urgent_flag AS raisesUrgentFlag, STATE.parent_state_id AS state,
@@ -43,9 +45,7 @@ FROM (
 		<#list parentScopes as parentScope>
 			OR ${queryScopeUpper}.${parentScope.id?lower_case}_id = ${queryScopeUpper}_LIST_PERMISSION.${parentScope.id?lower_case}_id<#if !parentScope_has_next>)</#if>
 		</#list>
-  	<#if queryScopeUpper == "APPLICATION">
-  		<#include "${queryScopeLower}_custom_joins.ftl">
-  	</#if>
+  	<#include "${queryScopeLower}_custom_joins.ftl">
 	INNER JOIN STATE
 		ON ${queryScopeUpper}.state_id = STATE.id
 	WHERE ${queryScopeUpper}.updated_timestamp >= CURRENT_TIMESTAMP - INTERVAL ${queryRangeValue} ${queryRangeUnit}

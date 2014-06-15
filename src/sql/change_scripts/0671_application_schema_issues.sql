@@ -1,6 +1,4 @@
-/* Action visibility exclusion precedence not needed
- * Just implement all exclusions user has
- */
+/* Redundant information in action visibility exclusion */
 
 ALTER TABLE ACTION_VISIBILITY_EXCLUSION
 	DROP COLUMN precedence

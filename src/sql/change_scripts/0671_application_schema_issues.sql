@@ -154,3 +154,18 @@ UPDATE STATE_ACTION
 SET precedence = NULL
 WHERE action_id = "APPLICATION_COMMENT"
 ;
+
+/* Application rating - denormalise */
+
+ALTER TABLE APPLICATION
+	ADD COLUMN average_rating DECIMAL(3,2) AFTER submitted_timestamp
+;
+
+UPDATE APPLICATION INNER JOIN (
+	SELECT application_id AS application_id,
+		ROUND(AVG(COMMENT.application_rating), 2) AS average_rating
+	FROM COMMENT
+	GROUP BY COMMENT.application_id) AS APPLICATION_RATING
+	ON APPLICATION.id = APPLICATION_RATING.application_id
+SET APPLICATION.average_rating = APPLICATION_RATING.average_rating
+;

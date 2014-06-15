@@ -1,28 +1,20 @@
-package com.zuehlke.pgadmissions.dto;
+package com.zuehlke.pgadmissions.rest.domain;
 
 import java.util.HashMap;
-
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
 
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
-public class PrismResourceDynamicDTO {
+public class ResourceConsoleListRowRepresentation {
 
-    private Integer id;
+    private String id;
     
     private String code;
     
-    private boolean raisesUrgentFlag;
+    private String raisesUrgentFlag;
     
-    @Enumerated(EnumType.STRING)
-    private PrismState state;
+    private String state;
     
     private String creatorFirstName;
     
@@ -36,16 +28,15 @@ public class PrismResourceDynamicDTO {
     
     private String projectTitle;
     
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime displayTimestamp;
+    private String displayTimestamp;
     
     private String actionList;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -57,19 +48,19 @@ public class PrismResourceDynamicDTO {
         this.code = code;
     }
 
-    public boolean isRaisesUrgentFlag() {
+    public String getRaisesUrgentFlag() {
         return raisesUrgentFlag;
     }
 
-    public void setRaisesUrgentFlag(boolean raisesUrgentFlag) {
+    public void setRaisesUrgentFlag(String raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
     }
 
-    public PrismState getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(PrismState state) {
+    public void setState(String state) {
         this.state = state;
     }
 
@@ -106,19 +97,20 @@ public class PrismResourceDynamicDTO {
     }
     
     public String getCreatorDisplayName() {
-        String creatorMiddleNames = "";
+        String creatorMiddleNames = " ";
         if (!(creatorFirstName2 == null && creatorFirstName3 == null)) {
-            creatorMiddleNames = creatorMiddleNames + "( ";
+            creatorMiddleNames = creatorMiddleNames + "(";
             boolean requireSpace = false;
             if (creatorFirstName2 != null) {
                 creatorMiddleNames = creatorMiddleNames + creatorFirstName2;
                 requireSpace = true;
             }
             if (creatorFirstName3 != null) {
-                creatorMiddleNames = (requireSpace ? " " : "") + creatorFirstName3 + ")";
+                creatorMiddleNames = (requireSpace ? " " : "") + creatorFirstName3;
             }
+            creatorMiddleNames = creatorMiddleNames + ") ";
         }
-        return creatorFirstName + creatorMiddleNames + " " + creatorLastName;
+        return creatorFirstName + creatorMiddleNames + creatorLastName;
     }
 
     public String getProgramTitle() {
@@ -137,11 +129,11 @@ public class PrismResourceDynamicDTO {
         this.projectTitle = projectTitle;
     }
 
-    public DateTime getDisplayTimestamp() {
+    public String getDisplayTimestamp() {
         return displayTimestamp;
     }
 
-    public void setDisplayTimestamp(DateTime displayTimestamp) {
+    public void setDisplayTimestamp(String displayTimestamp) {
         this.displayTimestamp = displayTimestamp;
     }
 
@@ -157,7 +149,7 @@ public class PrismResourceDynamicDTO {
                 overriddenActions.put(Integer.parseInt(actionDefinitionParts[2]), unpackedAction);
             }
         }
-        for (Integer i = 0; i < overriddenActions.size() - 1; i ++) {
+        for (int i = 0; i < overriddenActions.size() - 1; i++) {
             unpackedActions.remove(overriddenActions.get(i));
         }
         return (HashBiMap<Boolean, PrismAction>) unpackedActions.inverse();

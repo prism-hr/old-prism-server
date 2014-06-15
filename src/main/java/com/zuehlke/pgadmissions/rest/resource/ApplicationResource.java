@@ -1,32 +1,40 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
-import com.google.common.collect.Lists;
-import com.google.visualization.datasource.DataSourceHelper;
-import com.google.visualization.datasource.DataSourceRequest;
-import com.google.visualization.datasource.base.DataSourceException;
-import com.google.visualization.datasource.datatable.DataTable;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Filter;
-import com.zuehlke.pgadmissions.domain.StateAction;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
-import com.zuehlke.pgadmissions.domain.enums.PrismScope;
-import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
-import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
-import com.zuehlke.pgadmissions.rest.domain.ApplicationListRowRepresentation;
-import com.zuehlke.pgadmissions.rest.domain.StateActionRepresentation;
-import com.zuehlke.pgadmissions.services.*;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import com.google.visualization.datasource.DataSourceHelper;
+import com.google.visualization.datasource.DataSourceRequest;
+import com.google.visualization.datasource.base.DataSourceException;
+import com.google.visualization.datasource.datatable.DataTable;
+import com.zuehlke.pgadmissions.domain.Filter;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
+import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
+import com.zuehlke.pgadmissions.rest.domain.ResourceConsoleListRowRepresentation;
+import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
+import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
+import com.zuehlke.pgadmissions.services.ApplicationsReportService;
+import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
 @RequestMapping(value = {"api/applications"})
@@ -66,42 +74,9 @@ public class ApplicationResource {
 
     @RequestMapping(method = RequestMethod.GET)
     @Transactional
-    public List<ApplicationListRowRepresentation> getApplications(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
-        User currentUser = userService.getCurrentUser();
-        List<Application> applications = applicationService.getApplications(currentUser, page, perPage);
-        List<ApplicationListRowRepresentation> representations = Lists.newArrayListWithExpectedSize(applications.size());
-
-        for (Application application : applications) {
-            ApplicationListRowRepresentation representation = dozerBeanMapper.map(application, ApplicationListRowRepresentation.class);
-            List<PrismAction> permittedActions = actionService.getPermittedActions(application, currentUser);
-            representation.getPermittedActions().addAll(permittedActions);
-            representations.add(representation);
-        }
-        return representations;
+    public List<ResourceConsoleListRowRepresentation> getApplications(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
+        return applicationService.getConsoleListBlock(page, perPage);
     }
-
-//    @RequestMapping(method = RequestMethod.GET)
-//    public String getApplicationListPage(@RequestParam(required = false) String applyFilters,
-//        ModelMap model, HttpSession session) {
-//        Object alertDefinition = session.getAttribute("alertDefinition");
-//        if (alertDefinition != null) {
-//            model.addAttribute("alertDefinition", alertDefinition);
-//            session.removeAttribute("alertDefinition");
-//        }
-//
-//        Filter filtering = (Filter) model.get("filtering");
-//
-//        if (("urgent").equals(applyFilters)) {
-//            filtering = filteringService.getUrgentApplicationFiltering();
-//        } else if (("active").equals(applyFilters)) {
-//            filtering = filteringService.getActiveApplicationFiltering();
-//        } else if (("default").equals(applyFilters) || filtering == null) {
-//            filtering = filteringService.getDefaultApplicationFiltering(getUser());
-//        }
-//
-//        model.addAttribute("filtering", filtering);
-//        return APPLICATION_LIST_PAGE_VIEW_NAME;
-//    }
 
     @RequestMapping(value = "/report", method = RequestMethod.GET)
     public void getApplicationsReport(@ModelAttribute("filtering") Filter filtering, @RequestParam(required = false) ReportFormat reportType, HttpServletRequest req, HttpServletResponse resp)

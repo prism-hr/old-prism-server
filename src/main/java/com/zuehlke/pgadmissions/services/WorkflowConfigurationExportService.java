@@ -60,7 +60,7 @@ public class WorkflowConfigurationExportService {
             scopesElement.appendChild(resourceElement);
         }
 
-        return parseDocumentToString(document);
+        return parseDocumentToString(document).trim();
     }
 
     private DocumentBuilder prepareDocumentBuilder() throws ParserConfigurationException {
@@ -84,10 +84,9 @@ public class WorkflowConfigurationExportService {
     private Element buildScopeElement(Document document, Scope scope) {
         Element scopeElement = document.createElement("scope");
         scopeElement.setAttribute("id", scope.getId().toString());
-        scopeElement.setAttribute("precedence", scope.getPrecedence().toString());
         
         if (!scope.getScopeCreations().isEmpty()) {
-            buildScopeCreationsElement(document, scope, scopeElement);
+            buildDescendentScopesElement(document, scope, scopeElement);
         }
 
         if (!scope.getStates().isEmpty()) {
@@ -97,21 +96,20 @@ public class WorkflowConfigurationExportService {
         return scopeElement;
     }
 
-    private void buildScopeCreationsElement(Document document, Scope scope, Element scopeElement) {
-        Element scopeCreationsElement = document.createElement("scope-creations");
-        scopeElement.appendChild(scopeCreationsElement);
+    private void buildDescendentScopesElement(Document document, Scope scope, Element scopeElement) {
+        Element descendentScopesElement = document.createElement("descendent-scopes");
+        scopeElement.appendChild(descendentScopesElement);
         
         for (Scope scopeCreation : scope.getScopeCreations()) {
-            Element scopeCreationElement = buildScopeCreationElement(document, scope, scopeCreation);
-            scopeCreationsElement.appendChild(scopeCreationElement);
+            Element scopeCreationElement = buildDescendentScopeElement(document, scope, scopeCreation);
+            descendentScopesElement.appendChild(scopeCreationElement);
         }
     }
 
-    private Element buildScopeCreationElement(Document document, Scope scope, Scope scopeCreation) {
-        Element scopeCreationElement = document.createElement("scope-creation");
-        scopeCreationElement.setAttribute("id", scopeCreation.getId().toString());
-        scopeCreationElement.setAttribute("action", scope.getId().toString() + "_CREATE_" + scopeCreation.getId().toString());
-        return scopeCreationElement;
+    private Element buildDescendentScopeElement(Document document, Scope scope, Scope scopeCreation) {
+        Element descendentScopeElement = document.createElement("descendent-scope");
+        descendentScopeElement.setAttribute("id", scopeCreation.getId().toString());
+        return descendentScopeElement;
     }
 
     private void buildStatesElement(Document document, Scope scope, Element scopeElement) {

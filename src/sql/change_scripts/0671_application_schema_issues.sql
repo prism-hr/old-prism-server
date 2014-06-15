@@ -136,26 +136,6 @@ ALTER TABLE NOTIFICATION_CONFIGURATION
 	CHANGE COLUMN day_interval day_reminder_interval INT(3) UNSIGNED
 ;
 
-/* Updateable workflow configuration */
-
-CREATE TABLE SCOPE_CREATION (
-	scope_id VARCHAR(50) NOT NULL,
-	created_scope_id VARCHAR(50) NOT NULL,
-	PRIMARY KEY (scope_id, created_scope_id),
-	INDEX (created_scope_id),
-	FOREIGN KEY (scope_id) REFERENCES SCOPE (id),
-	FOREIGN KEY (created_scope_id) REFERENCES SCOPE (id)
-) ENGINE = INNODB
-;
-
-INSERT INTO SCOPE_CREATION(scope_id, created_scope_id)
-VALUES ("SYSTEM", "INSTITUTION"),
-	("INSTITUTION", "PROGRAM"),
-	("PROGRAM", "PROJECT"),
-	("PROGRAM", "APPLICATION"),
-	("PROJECT", "APPLICATION")
-;
-
 /* Indexing update timestamps */
 
 ALTER TABLE PROGRAM

@@ -14,7 +14,7 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnit;
-import com.zuehlke.pgadmissions.dto.PrismResourceDynamicDTO;
+import com.zuehlke.pgadmissions.rest.domain.ResourceConsoleListRowRepresentation;
 
 import freemarker.template.Template;
 
@@ -35,13 +35,13 @@ public class ResourceDAO {
     private SessionFactory sessionFactory;
 
     @SuppressWarnings("unchecked")
-    public <T extends PrismResourceDynamic> List<PrismResourceDynamicDTO> getConsoleListBlock(User user, Class<T> resourceType, int page, int perPage) {
-        return (List<PrismResourceDynamicDTO>) sessionFactory.getCurrentSession().createSQLQuery(getResourceListBlockSelect(user, resourceType, page, perPage))
-                .setResultTransformer(Transformers.aliasToBean(PrismResourceDynamicDTO.class)) //
+    public <T extends PrismResourceDynamic> List<ResourceConsoleListRowRepresentation> getConsoleListBlock(User user, Class<T> resourceType, int page, int perPage) {
+        return (List<ResourceConsoleListRowRepresentation>) sessionFactory.getCurrentSession().createSQLQuery(getResourceListBlockSelect(user, resourceType, page, perPage))
+                .setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowRepresentation.class)) //
                 .list();
     }
 
-    private <T extends PrismResourceDynamic> String getResourceListBlockSelect(User user, Class<T> resourceType, int page, int perPage) {
+    public <T extends PrismResourceDynamic> String getResourceListBlockSelect(User user, Class<T> resourceType, int page, int perPage) {
         String resourceTypeString = resourceType.getSimpleName();
 
         HashMap<String, Object> queryParameters = Maps.newHashMap();

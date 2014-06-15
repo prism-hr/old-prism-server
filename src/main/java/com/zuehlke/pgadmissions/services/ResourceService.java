@@ -8,7 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
-import com.zuehlke.pgadmissions.dto.PrismResourceDynamicDTO;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.rest.domain.ResourceConsoleListRowRepresentation;
 
 @Service
 @Transactional
@@ -20,8 +21,12 @@ public class ResourceService {
     @Autowired
     private UserService userService;
     
-    public <T extends PrismResourceDynamic> List<PrismResourceDynamicDTO> getConsoleListBlock(Class<T> resourceType, int page, int perPage) {
+    public <T extends PrismResourceDynamic> List<ResourceConsoleListRowRepresentation> getConsoleListBlock(Class<T> resourceType, int page, int perPage) {
         return resourceDAO.getConsoleListBlock(userService.getCurrentUser(), resourceType, page, perPage);
+    }
+    
+    public <T extends PrismResourceDynamic> String getResourceListBlockSelect(User user, Class<T> resourceType, int page, int perPage) {
+        return resourceDAO.getResourceListBlockSelect(user, resourceType, page, perPage);
     }
     
 }

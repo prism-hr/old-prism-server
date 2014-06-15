@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
+import com.zuehlke.pgadmissions.rest.domain.ResourceConsoleListRowRepresentation;
 
 @Service
 @Transactional
@@ -52,6 +53,13 @@ public class ProgramService {
     
     @Autowired
     private ActionService actionService;
+
+    @Autowired
+    private ResourceService resourceService;
+    
+    public List<ResourceConsoleListRowRepresentation> getProgramListBlock(Integer page, Integer perPage) {
+        return resourceService.getConsoleListBlock(Program.class, page, perPage);
+    }
     
     // TODO: Rewrite below
     

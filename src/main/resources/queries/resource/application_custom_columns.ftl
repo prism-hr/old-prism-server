@@ -1,7 +1,6 @@
 USER.first_name AS creatorFirstName, USER.first_name_2 AS creatorFirstName2, 
 USER.first_name_3 AS creatorFirstName3, USER.last_name AS creatorLastName,
 PROGRAM.title AS programTitle, PROJECT.title AS projectTitle,
-DATE_FORMAT(
-	IF(APPLICATION.submitted_timestamp IS NOT NULL,
-		APPLICATION.submitted_timestamp,
-		APPLICATION.created_timestamp), "%d %b %Y") AS displayTimestamp
+IF(APPLICATION.submitted_timestamp IS NOT NULL,
+	APPLICATION.submitted_timestamp,
+	APPLICATION.created_timestamp) AS displayTimestamp

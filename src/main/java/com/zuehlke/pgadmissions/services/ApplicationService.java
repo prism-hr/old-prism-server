@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services;
 import java.util.Date;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.rest.domain.application.ApplicationListRowRepresentation;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,17 +13,18 @@ import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
+import com.zuehlke.pgadmissions.rest.domain.ResourceConsoleListRowRepresentation;
 
 @Service
 @Transactional
@@ -64,6 +64,9 @@ public class ApplicationService {
     
     @Autowired
     private SystemService systemService;
+    
+    @Autowired
+    private ResourceService resourceService;
 
     public Application create(User user, Advert advert) {
         Application application = new Application();
@@ -170,11 +173,8 @@ public class ApplicationService {
         return supervisor;
     }
 
-    public List<ApplicationListRowRepresentation> getApplicationList(User user, Integer page, Integer perPage) {
-        return applicationDAO.getApplicationList(user, page, perPage);
+    public List<ResourceConsoleListRowRepresentation> getConsoleListBlock(Integer page, Integer perPage) {
+        return resourceService.getConsoleListBlock(Application.class, page, perPage);
     }
 
-    public List<Application> getApplications(User user, Integer page, Integer perPage) {
-        return applicationDAO.getApplications(user, page, perPage);
-    }
 }

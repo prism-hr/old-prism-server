@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.dao.ProgramExportDAO;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramExport;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
+import com.zuehlke.pgadmissions.domain.enums.PrismProgramExportFormat;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -53,7 +53,7 @@ public class ProgramExportServiceTest {
     public void shouldReturnSmallIframeCodeByFeedId() throws IOException, TemplateException {
         User user = new User().withEmail("fooBarZ@fooBarZ.com");
         Program program = new Program().withCode("XXXXXXXXXXX").withTitle("Program1");
-        ProgramExport feed = new ProgramExport().withId(1).withFormat(ProgramExportFormat.SMALL).withPrograms(program).withTitle("Hello Feed")
+        ProgramExport feed = new ProgramExport().withId(1).withFormat(PrismProgramExportFormat.SMALL).withPrograms(program).withTitle("Hello Feed")
                 .withUser(user);
         Map<String, Object> dataMap = new HashMap<String, Object>();
         dataMap.put("host", HOST);
@@ -76,7 +76,7 @@ public class ProgramExportServiceTest {
     public void shouldReturnLargeDefaultIframeCodeForCurrentUser() throws IOException, TemplateException {
         User user = new User().withEmail("fooBarZ@fooBarZ.com");
         Program program = new Program().withCode("XXXXXXXXXXX").withTitle("Program1");
-        ProgramExport feed = new ProgramExport().withId(-2).withFormat(ProgramExportFormat.LARGE).withPrograms(program).withTitle("Hello Feed")
+        ProgramExport feed = new ProgramExport().withId(-2).withFormat(PrismProgramExportFormat.LARGE).withPrograms(program).withTitle("Hello Feed")
                 .withUser(user);
         Map<String, Object> dataMap = new HashMap<String, Object>();
         dataMap.put("host", HOST);
@@ -106,13 +106,13 @@ public class ProgramExportServiceTest {
 
         EasyMock.replay(programServiceMock, daoMock);
 
-        ProgramExport saveNewFeed = service.saveNewFeed(Arrays.asList(1), user, ProgramExportFormat.LARGE, "hello");
+        ProgramExport saveNewFeed = service.saveNewFeed(Arrays.asList(1), user, PrismProgramExportFormat.LARGE, "hello");
 
         EasyMock.verify(programServiceMock, daoMock);
 
         Assert.assertEquals(saveNewFeed.getPrograms().iterator().next(), program);
         Assert.assertEquals(saveNewFeed.getTitle(), "hello");
-        Assert.assertEquals(saveNewFeed.getFormat(), ProgramExportFormat.LARGE);
+        Assert.assertEquals(saveNewFeed.getFormat(), PrismProgramExportFormat.LARGE);
     }
 
     @Test
@@ -139,7 +139,7 @@ public class ProgramExportServiceTest {
     public void shouldDeleteFeedById() {
         User user = new User().withId(1).withEmail("fooBarZ@fooBarZ.com");
         Program program = new Program().withCode("XXXXXXXXXXX").withTitle("Program1");
-        ProgramExport feed = new ProgramExport().withId(1).withFormat(ProgramExportFormat.SMALL).withPrograms(program).withTitle("Hello Feed")
+        ProgramExport feed = new ProgramExport().withId(1).withFormat(PrismProgramExportFormat.SMALL).withPrograms(program).withTitle("Hello Feed")
                 .withUser(user);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 
@@ -154,7 +154,7 @@ public class ProgramExportServiceTest {
     public void shouldGetFeedById() {
         User user = new User().withId(1).withEmail("fooBarZ@fooBarZ.com");
         Program program = new Program().withCode("XXXXXXXXXXX").withTitle("Program1");
-        ProgramExport feed = new ProgramExport().withId(1).withFormat(ProgramExportFormat.SMALL).withPrograms(program).withTitle("Hello Feed")
+        ProgramExport feed = new ProgramExport().withId(1).withFormat(PrismProgramExportFormat.SMALL).withPrograms(program).withTitle("Hello Feed")
                 .withUser(user);
 
         EasyMock.expect(daoMock.getById(1)).andReturn(feed).times(1);
@@ -167,7 +167,7 @@ public class ProgramExportServiceTest {
     public void shouldUpdateFeed() {
         User user = new User().withEmail("fooBarZ@fooBarZ.com").withId(1);
         Program program = new Program().withCode("XXXXXXXXXXX").withTitle("Program1");
-        ProgramExport feed = new ProgramExport().withId(1).withFormat(ProgramExportFormat.LARGE).withPrograms(program).withTitle("Hello Feed")
+        ProgramExport feed = new ProgramExport().withId(1).withFormat(PrismProgramExportFormat.LARGE).withPrograms(program).withTitle("Hello Feed")
                 .withUser(user);
 
         EasyMock.expect(programServiceMock.getById(1)).andReturn(program);
@@ -176,13 +176,13 @@ public class ProgramExportServiceTest {
 
         EasyMock.replay(programServiceMock, daoMock, userServiceMock);
 
-        ProgramExport saveNewFeed = service.updateFeed(1, Arrays.asList(1), user, ProgramExportFormat.SMALL, "hello1");
+        ProgramExport saveNewFeed = service.updateFeed(1, Arrays.asList(1), user, PrismProgramExportFormat.SMALL, "hello1");
 
         EasyMock.verify(programServiceMock, daoMock, userServiceMock);
 
         assertEquals(saveNewFeed.getPrograms().iterator().next(), program);
         assertEquals(saveNewFeed.getTitle(), "hello1");
-        assertEquals(saveNewFeed.getFormat(), ProgramExportFormat.SMALL);
+        assertEquals(saveNewFeed.getFormat(), PrismProgramExportFormat.SMALL);
     }
 
 }

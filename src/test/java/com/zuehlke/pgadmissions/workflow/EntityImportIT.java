@@ -22,8 +22,8 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.enums.ImportedEntityType;
-import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
+import com.zuehlke.pgadmissions.domain.enums.PrismImportedEntityType;
+import com.zuehlke.pgadmissions.domain.enums.PrismProgramType;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
@@ -54,7 +54,7 @@ public class EntityImportIT {
     public void testConflictsInProgramImport() throws Exception {
         Institution ucl = entityService.getByCode(Institution.class, "0UCL");
         ImportedEntityFeed importedEntityFeed = new ImportedEntityFeed();
-        importedEntityFeed.setImportedEntityType(ImportedEntityType.PROGRAM);
+        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.PROGRAM);
         importedEntityFeed.setLocation("reference_data/conflicts/programs/initialPrograms.xml");
         importedEntityFeed.setInstitution(ucl);
 
@@ -64,9 +64,9 @@ public class EntityImportIT {
         Program program1 = programService.getProgramByCode("0UCL-1");
         Program otherProgram = programService.getProgramByCode("0UCL-99");
         assertEquals("MRes program1", program1.getTitle());
-        assertSame(ProgramTypeId.MRES, program1.getProgramType().getId());
+        assertSame(PrismProgramType.MRES, program1.getProgramType().getId());
         assertEquals("Internship otherProgram", otherProgram.getTitle());
-        assertSame(ProgramTypeId.INTERNSHIP, otherProgram.getProgramType().getId());
+        assertSame(PrismProgramType.INTERNSHIP, otherProgram.getProgramType().getId());
         assertTrue(program1.getRequireProjectDefinition());
         assertTrue(otherProgram.getRequireProjectDefinition());
 
@@ -91,9 +91,9 @@ public class EntityImportIT {
         program1 = programService.getProgramByCode("0UCL-1");
         otherProgram = programService.getProgramByCode("0UCL-99");
         assertEquals("MRes new_program1", program1.getTitle());
-        assertSame(ProgramTypeId.MRES, program1.getProgramType().getId());
+        assertSame(PrismProgramType.MRES, program1.getProgramType().getId());
         assertEquals("Internship otherProgram", otherProgram.getTitle());
-        assertSame(ProgramTypeId.INTERNSHIP, otherProgram.getProgramType().getId());
+        assertSame(PrismProgramType.INTERNSHIP, otherProgram.getProgramType().getId());
 //        assertTrue(program1.isEnabled());
 //        assertFalse(otherProgram.isEnabled());
         assertFalse(program1.getRequireProjectDefinition());
@@ -121,7 +121,7 @@ public class EntityImportIT {
     public void testConflictsInImport() throws Exception {
         Institution ucl = entityService.getByCode(Institution.class, "0UCL");
         ImportedEntityFeed importedEntityFeed = new ImportedEntityFeed();
-        importedEntityFeed.setImportedEntityType(ImportedEntityType.DISABILITY);
+        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.DISABILITY);
         importedEntityFeed.setLocation("reference_data/conflicts/disabilities/initialDisabilities.xml");
         importedEntityFeed.setInstitution(ucl);
 

@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.dao.ProgramExportDAO;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramExport;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
+import com.zuehlke.pgadmissions.domain.enums.PrismProgramExportFormat;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -61,7 +61,7 @@ public class ProgramExportService {
 
     public String getIframeHtmlCode(final ProgramExport feed) {
         try {
-            String templateName = feed.getFormat() == ProgramExportFormat.SMALL ? SMALL_IFRAME : LARGE_IFRAME;
+            String templateName = feed.getFormat() == PrismProgramExportFormat.SMALL ? SMALL_IFRAME : LARGE_IFRAME;
             Template template = freeMarkerConfigurer.getConfiguration().getTemplate(templateName);
             Map<String, Object> dataMap = new HashMap<String, Object>();
             dataMap.put("host", host);
@@ -83,7 +83,7 @@ public class ProgramExportService {
     }
 
     @Transactional
-    public ProgramExport saveNewFeed(final List<Integer> selectedProgramIds, final User user, final ProgramExportFormat format, final String title) {
+    public ProgramExport saveNewFeed(final List<Integer> selectedProgramIds, final User user, final PrismProgramExportFormat format, final String title) {
         ProgramExport feed = new ProgramExport();
         for (Integer programId : selectedProgramIds) {
             feed.getPrograms().add((Program) programService.getById(programId));
@@ -97,8 +97,8 @@ public class ProgramExportService {
 
     @Transactional(readOnly = true)
     public List<ProgramExport> getAllFeedsForUser(final User user) {
-        ProgramExport defaultFeedSmall = getDefaultOpportunitiesFeed(user, ProgramExportFormat.SMALL);
-        ProgramExport defaultFeedLarge = getDefaultOpportunitiesFeed(user, ProgramExportFormat.LARGE);
+        ProgramExport defaultFeedSmall = getDefaultOpportunitiesFeed(user, PrismProgramExportFormat.SMALL);
+        ProgramExport defaultFeedLarge = getDefaultOpportunitiesFeed(user, PrismProgramExportFormat.LARGE);
         List<ProgramExport> savedFeeds = dao.getAllFeedsForUser(user);
 
         List<ProgramExport> allFeeds = Lists.newArrayListWithCapacity(savedFeeds.size() + 2);
@@ -109,12 +109,12 @@ public class ProgramExportService {
         return allFeeds;
     }
 
-    private ProgramExport getDefaultOpportunitiesFeed(final User user, ProgramExportFormat format) {
+    private ProgramExport getDefaultOpportunitiesFeed(final User user, PrismProgramExportFormat format) {
         List<Program> defaultPrograms = programService.getProgramsForWhichCanManageProjects(user);
 
         ProgramExport defaultFeedSmall = new ProgramExport();
-        defaultFeedSmall.setId(format == ProgramExportFormat.SMALL ? DEFAULT_SMALL_FEED_ID : DEFAULT_LARGE_FEED_ID);
-        String title = format == ProgramExportFormat.SMALL ? "My Opportunities Feed - Small" : "My Opportunities Feed - Large";
+        defaultFeedSmall.setId(format == PrismProgramExportFormat.SMALL ? DEFAULT_SMALL_FEED_ID : DEFAULT_LARGE_FEED_ID);
+        String title = format == PrismProgramExportFormat.SMALL ? "My Opportunities Feed - Small" : "My Opportunities Feed - Large";
         defaultFeedSmall.setTitle(title);
         defaultFeedSmall.getPrograms().addAll(defaultPrograms);
         defaultFeedSmall.setUser(user);
@@ -122,7 +122,7 @@ public class ProgramExportService {
         return defaultFeedSmall;
     }
 
-    private List<ProgramExport> getDefaultOpportunitiesFeeds(List<User> users, ProgramExportFormat format) {
+    private List<ProgramExport> getDefaultOpportunitiesFeeds(List<User> users, PrismProgramExportFormat format) {
         LinkedList<ProgramExport> feeds = Lists.newLinkedList();
         for (User linkedUser : users) {
             feeds.add(getDefaultOpportunitiesFeed(linkedUser, format));
@@ -130,7 +130,7 @@ public class ProgramExportService {
         return feeds;
     }
 
-    public List<ProgramExport> getDefaultOpportunitiesFeedsByUpi(String upi, ProgramExportFormat format) {
+    public List<ProgramExport> getDefaultOpportunitiesFeedsByUpi(String upi, PrismProgramExportFormat format) {
         return getDefaultOpportunitiesFeeds(userService.getUsersWithUpi(upi), format);
     }
 
@@ -153,16 +153,16 @@ public class ProgramExportService {
     @Transactional(readOnly = true)
     public ProgramExport getById(final Integer feedId) {
         if (feedId == DEFAULT_SMALL_FEED_ID) {
-            return getDefaultOpportunitiesFeed(userService.getCurrentUser(), ProgramExportFormat.SMALL);
+            return getDefaultOpportunitiesFeed(userService.getCurrentUser(), PrismProgramExportFormat.SMALL);
         } else if (feedId == DEFAULT_LARGE_FEED_ID) {
-            return getDefaultOpportunitiesFeed(userService.getCurrentUser(), ProgramExportFormat.LARGE);
+            return getDefaultOpportunitiesFeed(userService.getCurrentUser(), PrismProgramExportFormat.LARGE);
         }
         return dao.getById(feedId);
     }
 
     @Transactional
     public ProgramExport updateFeed(final Integer feedId, final List<Integer> selectedProgramIds, final User currentUser,
-            final ProgramExportFormat format, final String title) {
+            final PrismProgramExportFormat format, final String title) {
         ProgramExport feed = dao.getById(feedId);
         Assert.isTrue(isOwner(feed));
         feed.setFormat(format);

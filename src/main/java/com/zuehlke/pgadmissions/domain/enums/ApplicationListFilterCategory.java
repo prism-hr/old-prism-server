@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-public enum SearchCategory {
+public enum ApplicationListFilterCategory {
 
     APPLICATION_NUMBER("Application number", CategoryType.TEXT), 
     APPLICANT_NAME("Applicant", CategoryType.TEXT), 
@@ -20,7 +20,7 @@ public enum SearchCategory {
 
     private final CategoryType type;
 
-    private SearchCategory(String displayValue, CategoryType type) {
+    private ApplicationListFilterCategory(String displayValue, CategoryType type) {
         this.displayValue = displayValue;
         this.type = type;
     }
@@ -33,11 +33,11 @@ public enum SearchCategory {
         return type;
     }
 
-    public List<SearchPredicate> getAvailablePredicates() {
+    public List<ResourceListSearchPredicate> getAvailablePredicates() {
         if (type == CategoryType.TEXT) {
-            return Lists.newArrayList(SearchPredicate.CONTAINING, SearchPredicate.NOT_CONTAINING);
+            return Lists.newArrayList(ResourceListSearchPredicate.TEXT_CONTAINING, ResourceListSearchPredicate.TEXT_NOT_CONTAINING);
         } else if (type == CategoryType.DATE) {
-            return Lists.newArrayList(SearchPredicate.FROM_DATE, SearchPredicate.ON_DATE, SearchPredicate.TO_DATE);
+            return Lists.newArrayList(ResourceListSearchPredicate.DATE_FROM, ResourceListSearchPredicate.DATE_ON, ResourceListSearchPredicate.DATE_TO);
         }
         throw new RuntimeException("Unknown predicate for following category: " + displayValue);
     }

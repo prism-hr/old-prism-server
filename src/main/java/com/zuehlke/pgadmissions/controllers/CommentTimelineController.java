@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
-import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationResidenceStatus;
+import com.zuehlke.pgadmissions.domain.enums.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -57,13 +57,13 @@ public class CommentTimelineController {
 	}
 
 	@ModelAttribute("validationQuestionOptions")
-	public ValidationQuestionOptions[] getValidationQuestionOptions() {
-		return ValidationQuestionOptions.values();
+	public YesNoUnsureResponse[] getValidationQuestionOptions() {
+		return YesNoUnsureResponse.values();
 	}
 	
 	@ModelAttribute("homeOrOverseasOptions")
-	public ResidenceStatus[] getHomeOrOverseasOptions() {
-		return ResidenceStatus.values();
+	public ApplicationResidenceStatus[] getHomeOrOverseasOptions() {
+		return ApplicationResidenceStatus.values();
 	}
 
 	@ModelAttribute("user")

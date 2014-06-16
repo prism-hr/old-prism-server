@@ -72,7 +72,7 @@ public enum PrismAction {
     SYSTEM_VIEW_PROGRAM_LIST, //
     SYSTEM_VIEW_PROJECT_LIST;
     
-    public Class<PrismResource> getResourceClass() {
+    public Class<? extends PrismResource> getResourceClass() {
         return getResourceScope().getResourceClass();
     }
     

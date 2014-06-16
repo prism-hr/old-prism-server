@@ -2,9 +2,7 @@ package com.zuehlke.pgadmissions.rest.domain;
 
 import java.util.HashMap;
 
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 
 public class ResourceConsoleListRowRepresentation {
 
@@ -139,22 +137,14 @@ public class ResourceConsoleListRowRepresentation {
         this.displayTimestamp = displayTimestamp;
     }
 
-    public HashBiMap<Boolean, PrismAction> getActionList() {
+    public HashMap<String, String> getActionList() {
         String[] actionDefinitions = actionList.split(",");
-        HashBiMap<PrismAction, Boolean> unpackedActions = HashBiMap.create();
-        HashMap<Integer, PrismAction> overriddenActions = Maps.newHashMap();
+        HashMap<String, String> unpackedActions = Maps.newHashMap();
         for (String actionDefinition : actionDefinitions) {
             String[] actionDefinitionParts = actionDefinition.split("|");
-            PrismAction unpackedAction = PrismAction.valueOf(actionDefinitionParts[1]);
-            unpackedActions.put(unpackedAction, (actionDefinitionParts[0] == "1" ? true : false));
-            if (actionDefinitionParts.length == 3) {
-                overriddenActions.put(Integer.parseInt(actionDefinitionParts[2]), unpackedAction);
-            }
+            unpackedActions.put(actionDefinitionParts[0], actionDefinitionParts[1]);
         }
-        for (int i = 0; i < overriddenActions.size() - 1; i++) {
-            unpackedActions.remove(overriddenActions.get(i));
-        }
-        return (HashBiMap<Boolean, PrismAction>) unpackedActions.inverse();
+        return unpackedActions;
     }
 
     public void setActionList(String actionList) {

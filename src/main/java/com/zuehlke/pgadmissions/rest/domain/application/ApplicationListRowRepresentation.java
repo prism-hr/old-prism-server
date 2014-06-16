@@ -33,8 +33,7 @@ public class ApplicationListRowRepresentation {
 
     private DateTime updatedTimestamp;
 
-    private List<PrismAction> permittedActions = Lists.newArrayList();
-
+    private List<ActionRepresentation> actions;
 
     public Integer getId() {
         return id;
@@ -42,10 +41,6 @@ public class ApplicationListRowRepresentation {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public void setPermittedActions(List<PrismAction> permittedActions) {
-        this.permittedActions = permittedActions;
     }
 
     public ProgramRepresentation getProgram() {
@@ -128,8 +123,12 @@ public class ApplicationListRowRepresentation {
         this.updatedTimestamp = updatedTimestamp;
     }
 
-    public List<PrismAction> getPermittedActions() {
-        return permittedActions;
+    public List<ActionRepresentation> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<ActionRepresentation> actions) {
+        this.actions = actions;
     }
 
     public static class ProjectRepresentation {

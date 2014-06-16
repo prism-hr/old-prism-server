@@ -3,24 +3,17 @@ package com.zuehlke.pgadmissions.rest.resource;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.rest.domain.application.ApplicationListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.application.ApplicationRepresentation;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
-import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
-import com.zuehlke.pgadmissions.rest.domain.ResourceConsoleListRowRepresentation;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
-import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
-import com.zuehlke.pgadmissions.services.ApplicationsReportService;
-import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 import java.util.List;
@@ -41,7 +34,7 @@ public class ApplicationResource {
     @Autowired
     private DozerBeanMapper dozerBeanMapper;
 
-    @RequestMapping(value = "/{id}", params = "action=APPLICATION_VIEW_AS_CREATOR", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @Transactional
     public ApplicationRepresentation getApplication(@PathVariable Integer id) {
         User currentUser = userService.getCurrentUser();
@@ -53,7 +46,13 @@ public class ApplicationResource {
         return representation;
     }
 
-    public List<ResourceConsoleListRowRepresentation> getApplications(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
-        return applicationService.getConsoleListBlock(page, perPage);
+    @RequestMapping(method = RequestMethod.GET)
+    public List<ApplicationListRowRepresentation> getApplications(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
+        List<ResourceConsoleListRowDTO> consoleListBlock = applicationService.getConsoleListBlock(page, perPage);
+        List<ApplicationListRowRepresentation> representations = Lists.newArrayList();
+        for (ResourceConsoleListRowDTO appDTO: consoleListBlock) {
+            representations.add(dozerBeanMapper.map(appDTO, ApplicationListRowRepresentation.class));
+        }
+        return representations;
     }
 }

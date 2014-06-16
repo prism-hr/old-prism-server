@@ -24,7 +24,7 @@ public class ApplicationAddress {
     @JoinColumn(name = "contact_address_id", nullable = false)
     private Address contactAddress;
 
-    @OneToOne(mappedBy = "applicationAddress")
+    @OneToOne(mappedBy = "address")
     private Application application;
 
     public Integer getId() {

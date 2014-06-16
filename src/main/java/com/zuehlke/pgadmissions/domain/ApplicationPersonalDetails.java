@@ -96,7 +96,7 @@ public class ApplicationPersonalDetails {
     @JoinColumn(name = "domicile_id", nullable = false)
     private Domicile residenceCountry;
 
-    @OneToOne(mappedBy = "applicationPersonalDetails")
+    @OneToOne(mappedBy = "personalDetails")
     private Application application = null;
 
     public void setId(Integer id) {

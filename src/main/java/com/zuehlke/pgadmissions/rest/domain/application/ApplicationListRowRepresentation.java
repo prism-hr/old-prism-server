@@ -1,12 +1,11 @@
 package com.zuehlke.pgadmissions.rest.domain.application;
 
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.rest.domain.UserRepresentation;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 public class ApplicationListRowRepresentation {
@@ -23,18 +22,15 @@ public class ApplicationListRowRepresentation {
 
     private LocalDate closingDate;
 
-    private DateTime submittedTimestamp;
-
     private PrismState state;
 
     private LocalDate dueDate;
 
-    private DateTime createdTimestamp;
+    private Date displayTimestamp;
 
-    private DateTime updatedTimestamp;
+    private List<ActionRepresentation> actions;
 
-    private List<PrismAction> permittedActions = Lists.newArrayList();
-
+    private BigDecimal averageRating;
 
     public Integer getId() {
         return id;
@@ -42,10 +38,6 @@ public class ApplicationListRowRepresentation {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public void setPermittedActions(List<PrismAction> permittedActions) {
-        this.permittedActions = permittedActions;
     }
 
     public ProgramRepresentation getProgram() {
@@ -88,14 +80,6 @@ public class ApplicationListRowRepresentation {
         this.closingDate = closingDate;
     }
 
-    public DateTime getSubmittedTimestamp() {
-        return submittedTimestamp;
-    }
-
-    public void setSubmittedTimestamp(DateTime submittedTimestamp) {
-        this.submittedTimestamp = submittedTimestamp;
-    }
-
     public PrismState getState() {
         return state;
     }
@@ -112,24 +96,28 @@ public class ApplicationListRowRepresentation {
         this.dueDate = dueDate;
     }
 
-    public DateTime getCreatedTimestamp() {
-        return createdTimestamp;
+    public Date getDisplayTimestamp() {
+        return displayTimestamp;
     }
 
-    public void setCreatedTimestamp(DateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
+    public void setDisplayTimestamp(Date displayTimestamp) {
+        this.displayTimestamp = displayTimestamp;
     }
 
-    public DateTime getUpdatedTimestamp() {
-        return updatedTimestamp;
+    public List<ActionRepresentation> getActions() {
+        return actions;
     }
 
-    public void setUpdatedTimestamp(DateTime updatedTimestamp) {
-        this.updatedTimestamp = updatedTimestamp;
+    public void setActions(List<ActionRepresentation> actions) {
+        this.actions = actions;
     }
 
-    public List<PrismAction> getPermittedActions() {
-        return permittedActions;
+    public BigDecimal getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(BigDecimal averageRating) {
+        this.averageRating = averageRating;
     }
 
     public static class ProjectRepresentation {

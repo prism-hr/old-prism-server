@@ -3,7 +3,7 @@
 <@compress single_line = true>
 SELECT ${queryScopeUpper}_LIST_BLOCK.*, (
 	<#include "permitted_actions.ftl">) 
-	AS actionList, (
+	AS actions, (
 	<#include "${queryScopeLower}_average_rating.ftl">)
 	AS averageRating
 FROM (

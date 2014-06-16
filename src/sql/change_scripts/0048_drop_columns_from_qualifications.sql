@@ -1,0 +1,4 @@
+ALTER TABLE APPLICATION_FORM_QUALIFICATION 
+DROP COLUMN country,
+DROP COLUMN termination_reason,
+DROP COLUMN termination_date;

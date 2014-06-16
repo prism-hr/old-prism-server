@@ -4,12 +4,13 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
-import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.*;
-import org.jadira.usertype.dateandtime.joda.PersistentDateTime;
+import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.BooleanType;
+import org.hibernate.type.DateType;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
@@ -18,6 +19,7 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnit;
+import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 
 import freemarker.template.Template;
 

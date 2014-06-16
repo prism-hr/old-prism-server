@@ -19,7 +19,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.ActionVisibilityExclusion;
+import com.zuehlke.pgadmissions.domain.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
@@ -157,20 +157,10 @@ public class WorkflowConfigurationExportService {
         actionElement.setAttribute("urgent", getXmlBoolean(stateAction.isRaisesUrgentFlag()));
         actionElement.setAttribute("default", getXmlBoolean(stateAction.isDefaultAction()));
 
-        Integer precedence = stateAction.getPrecedence();
-        if (precedence != null) {
-            actionElement.setAttribute("precedence", precedence.toString());
-        }
-
         NotificationTemplate notificationTemplate = stateAction.getNotificationTemplate();
         if (notificationTemplate != null) {
             Element notificationTemplateElement = buildNotificationTemplateElement(document, notificationTemplate);
             actionElement.appendChild(notificationTemplateElement);
-        }
-
-        Action delegateAction = action.getDelegateAction();
-        if (delegateAction != null) {
-            actionElement.setAttribute("delegate-action", action.getDelegateAction().getId().toString());
         }
 
         if (!stateAction.getStateActionAssignments().isEmpty()) {
@@ -193,8 +183,8 @@ public class WorkflowConfigurationExportService {
             buildStateActionNotificationsElement(document, stateAction, actionElement);
         }
         
-        if (!action.getActionVisibilityExclusions().isEmpty()) {
-            buildActionVisibilityExclusionsElement(document, action, actionElement);
+        if (!action.getRedactions().isEmpty()) {
+            buildActionRedactionsElement(document, action, actionElement);
         }
 
         return actionElement;
@@ -330,7 +320,7 @@ public class WorkflowConfigurationExportService {
     }
     
     private Element buildRoleTransitionExclusionElement(Document document, Role excludedRole) {
-        Element roleTransitionExclusionElement = document.createElement("exclusion");
+        Element roleTransitionExclusionElement = document.createElement("");
         roleTransitionExclusionElement.setAttribute("id", excludedRole.getId().toString());
         return roleTransitionExclusionElement;
     }
@@ -369,21 +359,21 @@ public class WorkflowConfigurationExportService {
         return stateActionNotificationElement;
     }
     
-    private void buildActionVisibilityExclusionsElement(Document document, Action action, Element actionElement) {
-        Element visibilityExclusionsElement = document.createElement("visibility-exclusions");
-        actionElement.appendChild(visibilityExclusionsElement);
+    private void buildActionRedactionsElement(Document document, Action action, Element actionElement) {
+        Element actionRedactionsElement = document.createElement("redactions");
+        actionElement.appendChild(actionRedactionsElement);
         
-        for (ActionVisibilityExclusion actionVisibilityExclusion : action.getActionVisibilityExclusions()) {
-            buildActionVisibilityExclusionElement(document, visibilityExclusionsElement, actionVisibilityExclusion);
+        for (ActionRedaction actionRedaction : action.getRedactions()) {
+            buildActionRedactionElement(document, actionRedactionsElement, actionRedaction);
         }
     }
 
-    private void buildActionVisibilityExclusionElement(Document document, Element visibilityExclusionsElement,
-            ActionVisibilityExclusion actionVisibilityExclusion) {
-        Element visibilityExclusionElement = document.createElement("visibility-exclusion");
-        visibilityExclusionElement.setAttribute("role", actionVisibilityExclusion.getRole().getId().toString());
-        visibilityExclusionElement.setAttribute("rule", actionVisibilityExclusion.getRule().toString());
-        visibilityExclusionsElement.appendChild(visibilityExclusionElement);
+    private void buildActionRedactionElement(Document document, Element visibilityExclusionsElement,
+            ActionRedaction actionRedaction) {
+        Element actionRedactionElement = document.createElement("redaction");
+        actionRedactionElement.setAttribute("role", actionRedaction.getRole().getId().toString());
+        actionRedactionElement.setAttribute("rule", actionRedaction.getRedactionType().toString());
+        visibilityExclusionsElement.appendChild(actionRedactionElement);
     }
 
     private String getXmlBoolean(boolean javaBoolean) {

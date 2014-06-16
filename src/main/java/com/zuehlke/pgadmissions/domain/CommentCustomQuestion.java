@@ -43,7 +43,7 @@ public class CommentCustomQuestion implements IUniqueResource {
     
     @OneToMany(mappedBy = "commentCustomQuestion")
     @OrderBy("createdTimestamp DESC")
-    private Set<CommentCustomQuestionVersion> versions = Sets.newLinkedHashSet();
+    private Set<CommentCustomQuestionVersion> versions = Sets.newHashSet();
 
     public Integer getId() {
         return id;

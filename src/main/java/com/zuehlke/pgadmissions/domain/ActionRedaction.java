@@ -14,12 +14,12 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.zuehlke.pgadmissions.domain.enums.PrismActionVisibilityExclusionRule;
+import com.zuehlke.pgadmissions.domain.enums.PrismActionRedactionType;
 
 @Entity
-@Table(name = "ACTION_VISIBILITY_EXCLUSION", uniqueConstraints = { @UniqueConstraint(columnNames = { "action_id", "role_id" }) })
+@Table(name = "ACTION_REDACTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "action_id", "role_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class ActionVisibilityExclusion {
+public class ActionRedaction {
 
     @Id
     @GeneratedValue
@@ -34,8 +34,8 @@ public class ActionVisibilityExclusion {
     private Role role;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "action_visibility_exclusion_rule_id", nullable = false)
-    private PrismActionVisibilityExclusionRule rule;
+    @Column(name = "action_redaction_type_id", nullable = false)
+    private PrismActionRedactionType redactionType;
 
     public Integer getId() {
         return id;
@@ -61,12 +61,12 @@ public class ActionVisibilityExclusion {
         this.role = role;
     }
 
-    public PrismActionVisibilityExclusionRule getRule() {
-        return rule;
+    public PrismActionRedactionType getRedactionType() {
+        return redactionType;
     }
 
-    public void setRule(PrismActionVisibilityExclusionRule rule) {
-        this.rule = rule;
+    public void setRule(PrismActionRedactionType redactionType) {
+        this.redactionType = redactionType;
     }
 
 }

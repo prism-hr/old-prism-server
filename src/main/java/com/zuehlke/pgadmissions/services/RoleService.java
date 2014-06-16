@@ -143,6 +143,10 @@ public class RoleService {
     public List<Role> getActionOwnerRoles(User user, PrismResource resource, Action action) {
         return roleDAO.getActionOwnerRoles(user, resource, action);
     }
+    
+    public List<Role> getDelegateActionOwnerRoles(User user, PrismResource resource, Action action) {
+        return roleDAO.getActionOwnerRoles(user, resource, action);
+    }
 
     private HashMap<User, RoleTransition> getUserRoleUpdateTransitions(StateTransition stateTransition, PrismResource resource, User actionOwner) {
         HashMap<User, RoleTransition> userRoleTransitions = Maps.newHashMap();

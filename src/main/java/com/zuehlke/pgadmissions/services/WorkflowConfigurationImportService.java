@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -85,9 +84,6 @@ public class WorkflowConfigurationImportService {
             importActionDefinition(actionElement, scope, actionInserts);
         }
 
-        for (Entry<Element, Action> actionInsert : actionInserts.entrySet()) {
-            importDelegateActionDefinition(actionInsert.getKey(), actionInsert.getValue());
-        }
     }
     
     private void importStateDuration(State state, String defaultStateDurationDefinition) {
@@ -128,9 +124,4 @@ public class WorkflowConfigurationImportService {
         }
     }
 
-    private void importDelegateActionDefinition(Element actionElement, Action action) {
-        Action delegateAction = entityService.getByProperty(Action.class, "id", PrismAction.valueOf(actionElement.getAttribute("delegate-action")));
-        action.setDelegateAction(delegateAction);
-    }
-    
 }

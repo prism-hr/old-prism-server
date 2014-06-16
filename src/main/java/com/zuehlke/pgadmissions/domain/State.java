@@ -11,6 +11,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Entity
@@ -32,10 +33,10 @@ public class State implements IUniqueResource {
     private Scope scope;
     
     @OneToMany(mappedBy = "state")
-    private Set<StateAction> stateActions;
+    private Set<StateAction> stateActions = Sets.newHashSet();
     
     @OneToMany(mappedBy = "state")
-    private Set<Application> applications;
+    private Set<Application> applications = Sets.newHashSet();
     
     public State() {
     }

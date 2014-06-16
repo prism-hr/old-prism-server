@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -43,12 +42,8 @@ public class Action implements IUniqueResource {
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
     
-    @OneToOne
-    @JoinColumn(name = "delegate_action_id")
-    private Action delegateAction;
-    
     @OneToMany(mappedBy = "action", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ActionVisibilityExclusion> actionVisibilityExclusions = Sets.newHashSet();
+    private Set<ActionRedaction> redactions = Sets.newHashSet();
     
     public Action() {
     }
@@ -83,16 +78,8 @@ public class Action implements IUniqueResource {
         this.scope = scope;
     }
 
-    public Action getDelegateAction() {
-        return delegateAction;
-    }
-
-    public void setDelegateAction(Action delegateAction) {
-        this.delegateAction = delegateAction;
-    }
-
-    public Set<ActionVisibilityExclusion> getActionVisibilityExclusions() {
-        return actionVisibilityExclusions;
+    public Set<ActionRedaction> getRedactions() {
+        return redactions;
     }
 
     public Action withId(PrismAction id) {

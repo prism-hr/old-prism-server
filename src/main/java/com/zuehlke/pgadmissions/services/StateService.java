@@ -10,11 +10,11 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
@@ -26,9 +26,8 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.mail.NotificationDescriptor;
@@ -37,9 +36,6 @@ import com.zuehlke.pgadmissions.mail.NotificationService;
 @Service
 @Transactional
 public class StateService {
-
-    @Autowired
-    private ActionDAO actionDAO;
 
     @Autowired
     private StateDAO stateDAO;
@@ -77,6 +73,7 @@ public class StateService {
         return stateDAO.getDefaultStateDuration(state);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public StateTransition executeStateTransition(PrismResource operativeResource, PrismResourceDynamic resource, Action action, Comment comment) {
         StateTransition stateTransition = getStateTransition(operativeResource, action, comment);
 
@@ -163,7 +160,7 @@ public class StateService {
 
     private void setResourceDueDate(PrismResourceDynamic resource, Comment comment) {
         LocalDate dueDate = comment.getUserSpecifiedDueDate();
-        if (dueDate == null && actionDAO.getValidAction(resource, PrismAction.valueOf(resource.getResourceType().toString() + "_ESCALATE")) != null) {
+        if (dueDate == null && comment.getAction().getActionType() == PrismActionType.SYSTEM_ESCALATION) {
             LocalDate dueDateBaseline = resource.getDueDateBaseline();
             Integer stateDurationSeconds = stateDAO.getStateDuration(resource);
             dueDate = dueDateBaseline.plusDays(stateDurationSeconds != null ? stateDurationSeconds : 0);
@@ -186,7 +183,7 @@ public class StateService {
         } else {
             role = Joiner.on("|").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action));
             if (comment.getDelegateUser() != null) {
-                delegateRole = Joiner.on("|").join(roleService.getActionOwnerRoles(comment.getDelegateUser(), resource, action.getDelegateAction()));
+                delegateRole = Joiner.on("|").join(roleService.getDelegateActionOwnerRoles(comment.getDelegateUser(), resource, action));
             }
         }
         comment.setRole(role);

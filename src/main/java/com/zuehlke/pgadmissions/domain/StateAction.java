@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -21,6 +22,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 public class StateAction  {
 
     @Id
+    @GeneratedValue
     private Integer id;
 
     @ManyToOne
@@ -40,9 +42,6 @@ public class StateAction  {
     @ManyToOne
     @JoinColumn(name = "notification_template_id")
     private NotificationTemplate notificationTemplate;
-
-    @Column(name = "precedence")
-    private Integer precedence;
 
     @OneToMany(mappedBy = "stateAction")
     private Set<StateActionAssignment> stateActionAssignments = new HashSet<StateActionAssignment>();
@@ -99,14 +98,6 @@ public class StateAction  {
 
     public void setNotificationTemplate(NotificationTemplate notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
-    }
-
-    public Integer getPrecedence() {
-        return precedence;
-    }
-
-    public void setPrecedence(Integer precedence) {
-        this.precedence = precedence;
     }
 
     public Set<StateActionAssignment> getStateActionAssignments() {

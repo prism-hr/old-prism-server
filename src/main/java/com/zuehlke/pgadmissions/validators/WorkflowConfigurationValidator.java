@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.dto.WorkflowConfigurationDTO;
 @Component
 public class WorkflowConfigurationValidator extends AbstractValidator {
 
-    private final String CONFIGURATION_SCHEMA = "/xml/workflow_configuration_schema";
+    private final String CONFIGURATION_SCHEMA = "/xml/workflow_configuration_schema.xsd";
     
     @Override
     public boolean supports(Class<?> clazz) {

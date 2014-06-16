@@ -80,7 +80,7 @@ public class ActionService {
     public ActionOutcome executeAction(PrismResourceDynamic resource, Action action, Comment comment) {
         PrismResource operativeResource = resource;
         if (!resource.getClass().equals(action.getId().getResourceClass())) {
-            operativeResource = resource.getParentResource(action.getId().getResourceType());
+            operativeResource = resource.getParentResource(action.getId().getResourceScope());
         }
         return executeAction(operativeResource, resource, action, comment);
     }
@@ -101,7 +101,7 @@ public class ActionService {
 
         StateTransition stateTransition = stateService.executeStateTransition(operativeResource, resource, action, comment);
         PrismAction transitionAction = stateTransition.getTransitionAction().getId();
-        PrismResource nextActionResource = resource.getEnclosingResource(transitionAction.getResourceType());
+        PrismResource nextActionResource = resource.getEnclosingResource(transitionAction.getResourceScope());
 
         return new ActionOutcome(actionOwner, nextActionResource, transitionAction);
     }

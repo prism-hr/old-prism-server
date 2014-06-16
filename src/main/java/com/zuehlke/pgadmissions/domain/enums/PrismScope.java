@@ -3,16 +3,22 @@ package com.zuehlke.pgadmissions.domain.enums;
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.System;
 
 public enum PrismScope {
     
-    SYSTEM("System"),
-    INSTITUTION("Institution"),
-    PROGRAM("Program"),
-    PROJECT("Project"),
-    APPLICATION("Application");
+    SYSTEM(System.class),
+    INSTITUTION(Institution.class),
+    PROGRAM(Program.class),
+    PROJECT(Project.class),
+    APPLICATION(Application.class);
     
-    private String simpleName;
+    private Class<? extends PrismResource> resourceClass;
     
     private static HashMultimap<PrismScope, PrismScope> descendentScopes = HashMultimap.create();
     
@@ -24,24 +30,20 @@ public enum PrismScope {
         descendentScopes.put(PROJECT, APPLICATION);
     }
     
-    private PrismScope(String simpleName) {
-        this.simpleName = simpleName;
+    private PrismScope(Class<? extends PrismResource> resourceClass) {
+        this.resourceClass = resourceClass;
     }
     
-    public String getSimpleName() {
-        return simpleName;
+    public  Class<? extends PrismResource> getResourceClass() {
+        return resourceClass;
     }
     
-    public Set<PrismScope> getDescendentScopes(PrismScope parent) {
-        return descendentScopes.get(parent);
-    }
-    
-    public String getCanonicalName() {
-        return "com.zuehlke.pgadmissions.domain." + simpleName;
+    public Set<PrismScope> getDescendentScopes(PrismScope parentScope) {
+        return descendentScopes.get(parentScope);
     }
     
     public String getLowerCaseName() {
-        return simpleName.toLowerCase();
+        return resourceClass.getSimpleName().toLowerCase();
     }
     
 }

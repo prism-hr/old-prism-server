@@ -186,33 +186,25 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.GET, value = "/editEmailTemplate/{resourceScope:[A-Z_]+}/{resourceId:[0-9]+}/{templateId:[a-zA-Z_]+}")
     @ResponseBody
     public Map<Object, Object> getVersionsForTemplate(@PathVariable PrismScope resourceScope, @PathVariable Integer resourceId, @PathVariable String templateId) {
-        try {
-            PrismResource resource = (PrismResource) entityService.getById(Class.forName(resourceScope.getSimpleName()), resourceId);
-            NotificationTemplate template = templateService.getById(valueOf(templateId));
-            List<NotificationTemplateVersion> versions = notificationService.getVersionsForTemplate(resource, template);
-            Map<Object, Object> result = new HashMap<Object, Object>();
-            result.put("activeVersion", notificationService.getActiveVersionForTemplate(resource, template));
-            result.put("versions", versions);
-            return result;
-        } catch (ClassNotFoundException e) {
-            throw new Error("Tried to fetch notication template versions for invalid prism resource", e);
-        }
+        PrismResource resource = (PrismResource) entityService.getById(resourceScope.getResourceClass(), resourceId);
+        NotificationTemplate template = templateService.getById(valueOf(templateId));
+        List<NotificationTemplateVersion> versions = notificationService.getVersionsForTemplate(resource, template);
+        Map<Object, Object> result = new HashMap<Object, Object>();
+        result.put("activeVersion", notificationService.getActiveVersionForTemplate(resource, template));
+        result.put("versions", versions);
+        return result;
     }
 
     @RequestMapping(method = RequestMethod.POST, value = { "saveEmailTemplate/{resourceScope:[A-Z_]+}/{resourceId:[0-9]+}/{templateId:[a-zA-Z_]+}" })
     @ResponseBody
     public Map<String, Object> saveTemplate(@PathVariable PrismScope resourceScope, @PathVariable Integer resourceId,
             @PathVariable PrismNotificationTemplate templateId, @RequestParam String content, @RequestParam String subject) {
-        try {
-            PrismResource resource = (PrismResource) entityService.getById(Class.forName(resourceScope.getSimpleName()), resourceId);
-            NotificationTemplateVersion newVersion = templateService.saveTemplateVersion(resource, templateId, content, subject);
-            Map<String, Object> result = new HashMap<String, Object>();
-            result.put("id", newVersion.getId());
-            result.put("createdTimestamp", new SimpleDateFormat("yyyy/M/d - HH:mm:ss").format(newVersion.getCreatedTimestamp()));
-            return result;
-        } catch (ClassNotFoundException e) {
-            throw new Error("Tried to create notication template version for invalid prism resource", e);
-        }
+        PrismResource resource = (PrismResource) entityService.getById(resourceScope.getResourceClass(), resourceId);
+        NotificationTemplateVersion newVersion = templateService.saveTemplateVersion(resource, templateId, content, subject);
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("id", newVersion.getId());
+        result.put("createdTimestamp", new SimpleDateFormat("yyyy/M/d - HH:mm:ss").format(newVersion.getCreatedTimestamp()));
+        return result;
     }
 
     @ModelAttribute("templateTypes")

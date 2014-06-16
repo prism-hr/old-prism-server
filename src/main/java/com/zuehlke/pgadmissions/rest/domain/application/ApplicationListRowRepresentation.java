@@ -1,12 +1,11 @@
 package com.zuehlke.pgadmissions.rest.domain.application;
 
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.rest.domain.UserRepresentation;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 public class ApplicationListRowRepresentation {
@@ -23,17 +22,15 @@ public class ApplicationListRowRepresentation {
 
     private LocalDate closingDate;
 
-    private DateTime submittedTimestamp;
-
     private PrismState state;
 
     private LocalDate dueDate;
 
-    private DateTime createdTimestamp;
-
-    private DateTime updatedTimestamp;
+    private Date displayTimestamp;
 
     private List<ActionRepresentation> actions;
+
+    private BigDecimal averageRating;
 
     public Integer getId() {
         return id;
@@ -83,14 +80,6 @@ public class ApplicationListRowRepresentation {
         this.closingDate = closingDate;
     }
 
-    public DateTime getSubmittedTimestamp() {
-        return submittedTimestamp;
-    }
-
-    public void setSubmittedTimestamp(DateTime submittedTimestamp) {
-        this.submittedTimestamp = submittedTimestamp;
-    }
-
     public PrismState getState() {
         return state;
     }
@@ -107,20 +96,12 @@ public class ApplicationListRowRepresentation {
         this.dueDate = dueDate;
     }
 
-    public DateTime getCreatedTimestamp() {
-        return createdTimestamp;
+    public Date getDisplayTimestamp() {
+        return displayTimestamp;
     }
 
-    public void setCreatedTimestamp(DateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
-    }
-
-    public DateTime getUpdatedTimestamp() {
-        return updatedTimestamp;
-    }
-
-    public void setUpdatedTimestamp(DateTime updatedTimestamp) {
-        this.updatedTimestamp = updatedTimestamp;
+    public void setDisplayTimestamp(Date displayTimestamp) {
+        this.displayTimestamp = displayTimestamp;
     }
 
     public List<ActionRepresentation> getActions() {
@@ -129,6 +110,14 @@ public class ApplicationListRowRepresentation {
 
     public void setActions(List<ActionRepresentation> actions) {
         this.actions = actions;
+    }
+
+    public BigDecimal getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(BigDecimal averageRating) {
+        this.averageRating = averageRating;
     }
 
     public static class ProjectRepresentation {

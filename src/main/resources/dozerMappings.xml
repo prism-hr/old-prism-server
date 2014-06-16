@@ -59,4 +59,13 @@
         </field>
     </mapping>
 
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.Application</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.domain.application.ApplicationRepresentation</class-b>
+        <field>
+            <a>state.id</a>
+            <b>state</b>
+        </field>
+    </mapping>
+
 </mappings>

@@ -215,12 +215,12 @@ public class WorkflowConfigurationExportService {
 
     
     private void buildStateActionAssignmentsElement(Document document, StateAction stateAction, Element actionElement) {
-        Element rolesElement = document.createElement("roles");
-        actionElement.appendChild(rolesElement);
+        Element stateActionAssignmentsElement = document.createElement("roles");
+        actionElement.appendChild(stateActionAssignmentsElement);
 
         for (StateActionAssignment stateActionAssignment : stateAction.getStateActionAssignments()) {
             Element roleElement = buildRoleElement(document, stateActionAssignment);
-            rolesElement.appendChild(roleElement);
+            stateActionAssignmentsElement.appendChild(roleElement);
         }
     }
     

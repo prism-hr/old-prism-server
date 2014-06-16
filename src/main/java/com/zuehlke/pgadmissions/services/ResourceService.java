@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 
 @Service

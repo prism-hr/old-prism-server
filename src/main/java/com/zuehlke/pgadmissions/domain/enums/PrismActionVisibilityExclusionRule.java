@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-public enum ActionVisibilityExclusionRule {
+public enum PrismActionVisibilityExclusionRule {
 
     ALL_ASSESSMENT_CONTENT, ALL_CONTENT, EVERYTHING
 

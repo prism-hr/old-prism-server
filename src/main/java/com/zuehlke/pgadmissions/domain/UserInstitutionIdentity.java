@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.enums.UserIdentityType;
+import com.zuehlke.pgadmissions.domain.enums.PrismUserIdentityType;
 
 @Entity
 @Table(name = "user_institution_identity", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "institution_id", "user_identity_type_id" }) })
@@ -29,7 +29,7 @@ public class UserInstitutionIdentity {
 
     @Column(name = "user_identity_type_id", nullable = false)
     @Enumerated(EnumType.STRING)
-    private UserIdentityType type;
+    private PrismUserIdentityType type;
 
     @Column(name = "identifier", nullable = false)
     private String identifier;
@@ -58,11 +58,11 @@ public class UserInstitutionIdentity {
         this.institution = institution;
     }
 
-    public UserIdentityType getType() {
+    public PrismUserIdentityType getType() {
         return type;
     }
 
-    public void setType(UserIdentityType type) {
+    public void setType(PrismUserIdentityType type) {
         this.type = type;
     }
 

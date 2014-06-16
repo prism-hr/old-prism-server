@@ -10,8 +10,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
-import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationListFilterCategory;
+import com.zuehlke.pgadmissions.domain.enums.ResourceListSearchPredicate;
 
 @Entity
 @Table(name = "FILTER_CONSTRAINT", uniqueConstraints = { @UniqueConstraint(columnNames = { "filter_id", "filter_position_id" }) })
@@ -26,11 +26,11 @@ public class FilterConstraint {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "search_predicate", nullable = false)
-    private SearchPredicate searchPredicate;
+    private ResourceListSearchPredicate searchPredicate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "search_category", nullable = false)
-    private SearchCategory searchCategory;
+    private ApplicationListFilterCategory searchCategory;
 
     @Column(name = "search_term", nullable = false)
     private String searchTerm;
@@ -54,19 +54,19 @@ public class FilterConstraint {
         this.filterPosition = filterPosition;
     }
 
-    public SearchPredicate getSearchPredicate() {
+    public ResourceListSearchPredicate getSearchPredicate() {
         return searchPredicate;
     }
 
-    public void setSearchPredicate(SearchPredicate searchPredicate) {
+    public void setSearchPredicate(ResourceListSearchPredicate searchPredicate) {
         this.searchPredicate = searchPredicate;
     }
 
-    public SearchCategory getSearchCategory() {
+    public ApplicationListFilterCategory getSearchCategory() {
         return searchCategory;
     }
 
-    public void setSearchCategory(SearchCategory searchCategory) {
+    public void setSearchCategory(ApplicationListFilterCategory searchCategory) {
         this.searchCategory = searchCategory;
     }
 

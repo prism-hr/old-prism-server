@@ -1,6 +1,4 @@
-/* Action visibility exclusion precedence not needed
- * Just implement all exclusions user has
- */
+/* Redundant information in action visibility exclusion */
 
 ALTER TABLE ACTION_VISIBILITY_EXCLUSION
 	DROP COLUMN precedence
@@ -136,26 +134,6 @@ ALTER TABLE NOTIFICATION_CONFIGURATION
 	CHANGE COLUMN day_interval day_reminder_interval INT(3) UNSIGNED
 ;
 
-/* Updateable workflow configuration */
-
-CREATE TABLE SCOPE_CREATION (
-	scope_id VARCHAR(50) NOT NULL,
-	created_scope_id VARCHAR(50) NOT NULL,
-	PRIMARY KEY (scope_id, created_scope_id),
-	INDEX (created_scope_id),
-	FOREIGN KEY (scope_id) REFERENCES SCOPE (id),
-	FOREIGN KEY (created_scope_id) REFERENCES SCOPE (id)
-) ENGINE = INNODB
-;
-
-INSERT INTO SCOPE_CREATION(scope_id, created_scope_id)
-VALUES ("SYSTEM", "INSTITUTION"),
-	("INSTITUTION", "PROGRAM"),
-	("PROGRAM", "PROJECT"),
-	("PROGRAM", "APPLICATION"),
-	("PROJECT", "APPLICATION")
-;
-
 /* Indexing update timestamps */
 
 ALTER TABLE PROGRAM
@@ -168,4 +146,26 @@ ALTER TABLE PROJECT
 
 ALTER TABLE APPLICATION
 	ADD INDEX (updated_timestamp)
+;
+
+/* Mistake in workflow definition */
+
+UPDATE STATE_ACTION
+SET precedence = NULL
+WHERE action_id = "APPLICATION_COMMENT"
+;
+
+/* Application rating - denormalise */
+
+ALTER TABLE APPLICATION
+	ADD COLUMN average_rating DECIMAL(3,2) AFTER submitted_timestamp
+;
+
+UPDATE APPLICATION INNER JOIN (
+	SELECT application_id AS application_id,
+		ROUND(AVG(COMMENT.application_rating), 2) AS average_rating
+	FROM COMMENT
+	GROUP BY COMMENT.application_id) AS APPLICATION_RATING
+	ON APPLICATION.id = APPLICATION_RATING.application_id
+SET APPLICATION.average_rating = APPLICATION_RATING.average_rating
 ;

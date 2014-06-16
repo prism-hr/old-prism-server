@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.enums;
 
 import org.springframework.util.StringUtils;
 
-public enum StateTransitionEvaluation {
+public enum PrismStateTransitionEvaluation {
     
     APPLICATION_COMPLETED_OUTCOME, //
     APPLICATION_CONFIRM_SUPERVISION_OUTCOME, //

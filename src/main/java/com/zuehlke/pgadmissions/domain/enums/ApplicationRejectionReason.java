@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-public enum RejectionReason {
+public enum ApplicationRejectionReason {
     
     APPLICATION_INCOMPLETE("We were unable to form a judgement on your suitability based upon the information supplied in your application."),
     
@@ -22,7 +22,7 @@ public enum RejectionReason {
     
     private String reason;
     
-    private RejectionReason(String reason) {
+    private ApplicationRejectionReason(String reason) {
         this.setReason(reason);
     }
 

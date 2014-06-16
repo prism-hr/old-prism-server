@@ -11,7 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.enums.ImportedEntityType;
+import com.zuehlke.pgadmissions.domain.enums.PrismImportedEntityType;
 
 @Entity
 @Table(name = "imported_entity_feed", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_entity_type_id" }) })
@@ -27,7 +27,7 @@ public class ImportedEntityFeed {
 
     @Column(name = "imported_entity_type_id", nullable = false)
     @Enumerated(EnumType.STRING)
-    private ImportedEntityType importedEntityType;
+    private PrismImportedEntityType importedEntityType;
 
     @Column(name = "username")
     private String username;
@@ -54,11 +54,11 @@ public class ImportedEntityFeed {
         this.institution = institution;
     }
 
-    public ImportedEntityType getImportedEntityType() {
+    public PrismImportedEntityType getImportedEntityType() {
         return importedEntityType;
     }
 
-    public void setImportedEntityType(ImportedEntityType importedEntityType) {
+    public void setImportedEntityType(PrismImportedEntityType importedEntityType) {
         this.importedEntityType = importedEntityType;
     }
 

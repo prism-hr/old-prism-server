@@ -29,20 +29,4 @@ public class SystemResource {
     @Autowired
     private DozerBeanMapper dozerBeanMapper;
 
-    @RequestMapping(value = "/{id}", params = "action=SYSTEM_VIEW_APPLICATION_LIST", method = RequestMethod.GET)
-    @Transactional
-    public List<ApplicationListRowRepresentation> getApplications(@PathVariable Integer id, @RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
-        User currentUser = userService.getCurrentUser();
-        List<Application> applications = applicationService.getApplications(currentUser, page, perPage);
-        List<ApplicationListRowRepresentation> representations = Lists.newArrayListWithExpectedSize(applications.size());
-
-        for (Application application : applications) {
-            ApplicationListRowRepresentation representation = dozerBeanMapper.map(application, ApplicationListRowRepresentation.class);
-            List<PrismAction> permittedActions = actionService.getPermittedActions(application, currentUser);
-            representation.getPermittedActions().addAll(permittedActions);
-            representations.add(representation);
-        }
-        return representations;
-    }
-
 }

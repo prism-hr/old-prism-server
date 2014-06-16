@@ -1,23 +1,25 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-public enum DurationUnitEnum {
+public enum DurationUnit {
 	DAYS("Days", "DAY"), 
-	WEEKS("Weeks", "WEEK");
+	WEEKS("Weeks", "WEEK"),
+	MONTHS("Months", "MONTH"),
+	YEARS("Years", "YEAR");
 	
 	private final String displayValue;
 	
 	private final String sqlValue;
 
-	private DurationUnitEnum(String displayValue, String sqlValue) {
+	private DurationUnit(String displayValue, String sqlValue) {
 		this.displayValue = displayValue;
 		this.sqlValue = sqlValue;
 	}
 
-	public String displayValue() {
+	public String getDisplayValue() {
 		return displayValue;
 	}
 	
-	public String sqlValue() {
+	public String getSqlValue() {
         return sqlValue;
     }
 

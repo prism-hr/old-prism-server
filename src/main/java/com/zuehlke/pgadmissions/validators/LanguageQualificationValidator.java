@@ -1,13 +1,11 @@
 package com.zuehlke.pgadmissions.validators;
 
-import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
 import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 
 @Component
 public class LanguageQualificationValidator extends AbstractValidator {

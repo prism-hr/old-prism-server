@@ -2,20 +2,26 @@ package com.zuehlke.pgadmissions.rest.resource;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.rest.domain.application.ApplicationListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.application.ApplicationRepresentation;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.UserService;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
+
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
+import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
+import com.zuehlke.pgadmissions.rest.domain.ResourceConsoleListRowRepresentation;
+import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
+import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
+import com.zuehlke.pgadmissions.services.ApplicationsReportService;
+import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 import java.util.List;
 
@@ -47,4 +53,7 @@ public class ApplicationResource {
         return representation;
     }
 
+    public List<ResourceConsoleListRowRepresentation> getApplications(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
+        return applicationService.getConsoleListBlock(page, perPage);
+    }
 }

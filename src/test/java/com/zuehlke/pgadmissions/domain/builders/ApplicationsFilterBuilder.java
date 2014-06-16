@@ -1,16 +1,16 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import com.zuehlke.pgadmissions.domain.FilterConstraint;
-import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
-import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationListFilterCategory;
+import com.zuehlke.pgadmissions.domain.enums.ResourceListSearchPredicate;
 
 public class ApplicationsFilterBuilder {
 
     private Integer id;
 
-    private SearchCategory searchCategory;
+    private ApplicationListFilterCategory searchCategory;
 
-    private SearchPredicate searchPredicate;
+    private ResourceListSearchPredicate searchPredicate;
 
     private String searchTerm;
 
@@ -19,12 +19,12 @@ public class ApplicationsFilterBuilder {
         return this;
     }
 
-    public ApplicationsFilterBuilder searchCategory(SearchCategory searchCategory) {
+    public ApplicationsFilterBuilder searchCategory(ApplicationListFilterCategory searchCategory) {
         this.searchCategory = searchCategory;
         return this;
     }
 
-    public ApplicationsFilterBuilder searchPredicate(SearchPredicate searchPredicate) {
+    public ApplicationsFilterBuilder searchPredicate(ResourceListSearchPredicate searchPredicate) {
         this.searchPredicate = searchPredicate;
         return this;
     }

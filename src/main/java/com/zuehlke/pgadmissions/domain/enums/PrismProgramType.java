@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-public enum ProgramTypeId {
+public enum PrismProgramType {
     
     MRES("MRes"),
     MSC("MSc"),
@@ -11,7 +11,7 @@ public enum ProgramTypeId {
     
     private String displayValue;
     
-    ProgramTypeId(String displayValue) {
+    PrismProgramType(String displayValue) {
         this.setDisplayValue(displayValue);
     }
     
@@ -19,8 +19,8 @@ public enum ProgramTypeId {
         return displayValue;
     }
     
-    public static ProgramTypeId findValueFromString(String toSearchIn) {
-        for (ProgramTypeId value : ProgramTypeId.values()) {
+    public static PrismProgramType findValueFromString(String toSearchIn) {
+        for (PrismProgramType value : PrismProgramType.values()) {
             if (toSearchIn.contains(value.displayValue)) {
                 return value;
             }

@@ -8,7 +8,6 @@ public class UserRepresentation {
 
     private String firstName3;
 
-
     private String lastName;
 
     private String email;

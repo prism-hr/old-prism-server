@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.util.Date;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
-import com.zuehlke.pgadmissions.rest.domain.ResourceConsoleListRowRepresentation;
 
 @Service
 @Transactional
@@ -173,7 +173,7 @@ public class ApplicationService {
         return supervisor;
     }
 
-    public List<ResourceConsoleListRowRepresentation> getConsoleListBlock(Integer page, Integer perPage) {
+    public List<ResourceConsoleListRowDTO> getConsoleListBlock(Integer page, Integer perPage) {
         return resourceService.getConsoleListBlock(Application.class, page, perPage);
     }
 

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -27,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
-import com.zuehlke.pgadmissions.rest.domain.ResourceConsoleListRowRepresentation;
 
 @Service
 @Transactional
@@ -57,7 +57,7 @@ public class ProgramService {
     @Autowired
     private ResourceService resourceService;
     
-    public List<ResourceConsoleListRowRepresentation> getProgramListBlock(Integer page, Integer perPage) {
+    public List<ResourceConsoleListRowDTO> getProgramListBlock(Integer page, Integer perPage) {
         return resourceService.getConsoleListBlock(Program.class, page, perPage);
     }
     

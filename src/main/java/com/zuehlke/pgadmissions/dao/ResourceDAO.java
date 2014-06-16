@@ -4,8 +4,12 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
+import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.*;
+import org.jadira.usertype.dateandtime.joda.PersistentDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
@@ -14,7 +18,6 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnit;
-import com.zuehlke.pgadmissions.rest.domain.ResourceConsoleListRowRepresentation;
 
 import freemarker.template.Template;
 
@@ -35,9 +38,22 @@ public class ResourceDAO {
     private SessionFactory sessionFactory;
 
     @SuppressWarnings("unchecked")
-    public <T extends PrismResourceDynamic> List<ResourceConsoleListRowRepresentation> getConsoleListBlock(User user, Class<T> resourceType, int page, int perPage) {
-        return (List<ResourceConsoleListRowRepresentation>) sessionFactory.getCurrentSession().createSQLQuery(getResourceListBlockSelect(user, resourceType, page, perPage))
-                .setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowRepresentation.class)) //
+    public <T extends PrismResourceDynamic> List<ResourceConsoleListRowDTO> getConsoleListBlock(User user, Class<T> resourceType, int page, int perPage) {
+        return (List<ResourceConsoleListRowDTO>) sessionFactory.getCurrentSession().createSQLQuery(getResourceListBlockSelect(user, resourceType, page, perPage))
+                .addScalar("id", IntegerType.INSTANCE)
+                .addScalar("code", StringType.INSTANCE)
+                .addScalar("raisesUrgentFlag", BooleanType.INSTANCE)
+                .addScalar("state", StringType.INSTANCE)
+                .addScalar("creatorFirstName", StringType.INSTANCE)
+                .addScalar("creatorFirstName2", StringType.INSTANCE)
+                .addScalar("creatorFirstName3", StringType.INSTANCE)
+                .addScalar("creatorLastName", StringType.INSTANCE)
+                .addScalar("programTitle", StringType.INSTANCE)
+                .addScalar("projectTitle", StringType.INSTANCE)
+                .addScalar("displayTimestamp", DateType.INSTANCE)
+                .addScalar("actions", StringType.INSTANCE)
+                .addScalar("averageRating", BigDecimalType.INSTANCE)
+                .setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowDTO.class)) //
                 .list();
     }
 

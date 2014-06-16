@@ -1,42 +1,43 @@
-package com.zuehlke.pgadmissions.rest.domain;
+package com.zuehlke.pgadmissions.dto;
 
-import java.util.HashMap;
+import java.math.BigDecimal;
+import java.util.Date;
 
-import com.google.common.collect.Maps;
+public class ResourceConsoleListRowDTO {
 
-public class ResourceConsoleListRowRepresentation {
+    private Integer id;
 
-    private String id;
-    
     private String code;
-    
-    private String raisesUrgentFlag;
-    
-    private String state;
-    
-    private String creatorFirstName;
-    
-    private String creatorFirstName2;
-    
-    private String creatorFirstName3;
-    
-    private String creatorLastName;
-    
-    private String programTitle;
-    
-    private String projectTitle;
-    
-    private String displayTimestamp;
-    
-    private String actionList;
-    
-    private String averageRating;
 
-    public String getId() {
+    private Boolean raisesUrgentFlag;
+
+    private String state;
+
+    private String creatorFirstName;
+
+    private String creatorFirstName2;
+
+    private String creatorFirstName3;
+
+    private String creatorLastName;
+
+    private String creatorEmail;
+
+    private String programTitle;
+
+    private String projectTitle;
+
+    private Date displayTimestamp;
+
+    private String actions;
+
+    private BigDecimal averageRating;
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -48,11 +49,11 @@ public class ResourceConsoleListRowRepresentation {
         this.code = code;
     }
 
-    public String getRaisesUrgentFlag() {
+    public Boolean getRaisesUrgentFlag() {
         return raisesUrgentFlag;
     }
 
-    public void setRaisesUrgentFlag(String raisesUrgentFlag) {
+    public void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
     }
 
@@ -95,22 +96,13 @@ public class ResourceConsoleListRowRepresentation {
     public void setCreatorLastName(String creatorLastName) {
         this.creatorLastName = creatorLastName;
     }
-    
-    public String getCreatorDisplayName() {
-        String creatorMiddleNames = " ";
-        if (!(creatorFirstName2 == null && creatorFirstName3 == null)) {
-            creatorMiddleNames = creatorMiddleNames + "(";
-            boolean requireSpace = false;
-            if (creatorFirstName2 != null) {
-                creatorMiddleNames = creatorMiddleNames + creatorFirstName2;
-                requireSpace = true;
-            }
-            if (creatorFirstName3 != null) {
-                creatorMiddleNames = (requireSpace ? " " : "") + creatorFirstName3;
-            }
-            creatorMiddleNames = creatorMiddleNames + ") ";
-        }
-        return creatorFirstName + creatorMiddleNames + creatorLastName;
+
+    public String getCreatorEmail() {
+        return creatorEmail;
+    }
+
+    public void setCreatorEmail(String creatorEmail) {
+        this.creatorEmail = creatorEmail;
     }
 
     public String getProgramTitle() {
@@ -129,34 +121,27 @@ public class ResourceConsoleListRowRepresentation {
         this.projectTitle = projectTitle;
     }
 
-    public String getDisplayTimestamp() {
+    public Date getDisplayTimestamp() {
         return displayTimestamp;
     }
 
-    public void setDisplayTimestamp(String displayTimestamp) {
+    public void setDisplayTimestamp(Date displayTimestamp) {
         this.displayTimestamp = displayTimestamp;
     }
 
-    public HashMap<String, String> getActionList() {
-        String[] actionDefinitions = actionList.split(",");
-        HashMap<String, String> unpackedActions = Maps.newHashMap();
-        for (String actionDefinition : actionDefinitions) {
-            String[] actionDefinitionParts = actionDefinition.split("|");
-            unpackedActions.put(actionDefinitionParts[0], actionDefinitionParts[1]);
-        }
-        return unpackedActions;
+    public String getActions() {
+        return actions;
     }
 
-    public void setActionList(String actionList) {
-        this.actionList = actionList;
+    public void setActions(String actions) {
+        this.actions = actions;
     }
 
-    public String getAverageRating() {
+    public BigDecimal getAverageRating() {
         return averageRating;
     }
 
-    public void setAverageRating(String averageRating) {
+    public void setAverageRating(BigDecimal averageRating) {
         this.averageRating = averageRating;
     }
-    
 }

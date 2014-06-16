@@ -1,6 +1,5 @@
 <#assign queryScopeLower = queryScope?lower_case>
 <#assign queryScopeUpper = queryScope?upper_case>
-<#include "session_group_concat.ftl">
 <@compress single_line = true>
 SELECT ${queryScopeUpper}_LIST_BLOCK.*, (
 	<#include "permitted_actions.ftl">) 

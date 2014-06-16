@@ -48,7 +48,7 @@ public class ApplicationProgramDetails {
     @Valid
     private List<ApplicationSupervisor> suggestedSupervisors = new ArrayList<ApplicationSupervisor>();
 
-    @OneToOne(mappedBy = "applicationProgramDetails")
+    @OneToOne(mappedBy = "programDetails")
     private Application application;
 
     public Integer getId() {

@@ -25,7 +25,7 @@ public class ApplicationDocument {
     @JoinColumn(name = "cv_id", nullable = false)
     private Document cv;
 
-    @OneToOne(mappedBy = "applicationDocument")
+    @OneToOne(mappedBy = "document")
     private Application application;
 
     @Transient

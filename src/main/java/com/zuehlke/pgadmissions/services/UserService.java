@@ -1,7 +1,18 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-
+import com.google.common.collect.ImmutableMap;
+import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
+import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
+import com.zuehlke.pgadmissions.domain.enums.PrismScope;
+import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
+import com.zuehlke.pgadmissions.mail.NotificationDescriptor;
+import com.zuehlke.pgadmissions.mail.NotificationService;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import com.zuehlke.pgadmissions.utils.HibernateUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,24 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.ImmutableMap;
-import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
-import com.zuehlke.pgadmissions.dao.RoleDAO;
-import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.Filter;
-import com.zuehlke.pgadmissions.domain.PrismResource;
-import com.zuehlke.pgadmissions.domain.Scope;
-import com.zuehlke.pgadmissions.domain.StateTransition;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
-import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.enums.PrismScope;
-import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
-import com.zuehlke.pgadmissions.mail.NotificationDescriptor;
-import com.zuehlke.pgadmissions.mail.NotificationService;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.utils.HibernateUtils;
+import java.util.List;
 
 @Service("userService")
 @Transactional
@@ -53,7 +47,7 @@ public class UserService {
 
     @Autowired
     private EntityService entityService;
-    
+
     @Autowired
     private SystemService systemService;
 
@@ -69,7 +63,7 @@ public class UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof User) {
             User currentUser = (User) authentication.getPrincipal();
-            return userDAO.getParentUserByUserId(currentUser.getId());
+            return currentUser.getParentUser();
         }
         return null;
     }

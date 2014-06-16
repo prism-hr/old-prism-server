@@ -72,16 +72,11 @@ public enum PrismAction {
     SYSTEM_VIEW_PROGRAM_LIST, //
     SYSTEM_VIEW_PROJECT_LIST;
     
-    @SuppressWarnings("unchecked")
-    public Class<? extends PrismResource> getResourceClass() {
-        try {
-            return (Class<? extends PrismResource>) Class.forName(getResourceType().getCanonicalName());
-        } catch (ClassNotFoundException e) {
-            throw new Error("Tried to create a prism resource of invalid type", e);
-        }
+    public Class<PrismResource> getResourceClass() {
+        return getResourceScope().getResourceClass();
     }
-
-    public PrismScope getResourceType() {
+    
+    public PrismScope getResourceScope() {
         String actionName = name();
         String resourceName = actionName.substring(0, actionName.indexOf('_'));
         return PrismScope.valueOf(resourceName);

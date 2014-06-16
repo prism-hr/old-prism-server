@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
+import com.zuehlke.pgadmissions.domain.StateActionEnhancement;
 import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.enums.PrismStateTransitionEvaluation;
@@ -84,32 +85,12 @@ public class WorkflowConfigurationExportService {
     private Element buildScopeElement(Document document, Scope scope) {
         Element scopeElement = document.createElement("scope");
         scopeElement.setAttribute("id", scope.getId().toString());
-        
-        if (!scope.getScopeCreations().isEmpty()) {
-            buildDescendentScopesElement(document, scope, scopeElement);
-        }
 
         if (!scope.getStates().isEmpty()) {
             buildStatesElement(document, scope, scopeElement);
         }
 
         return scopeElement;
-    }
-
-    private void buildDescendentScopesElement(Document document, Scope scope, Element scopeElement) {
-        Element descendentScopesElement = document.createElement("descendent-scopes");
-        scopeElement.appendChild(descendentScopesElement);
-        
-        for (Scope scopeCreation : scope.getScopeCreations()) {
-            Element scopeCreationElement = buildDescendentScopeElement(document, scope, scopeCreation);
-            descendentScopesElement.appendChild(scopeCreationElement);
-        }
-    }
-
-    private Element buildDescendentScopeElement(Document document, Scope scope, Scope scopeCreation) {
-        Element descendentScopeElement = document.createElement("descendent-scope");
-        descendentScopeElement.setAttribute("id", scopeCreation.getId().toString());
-        return descendentScopeElement;
     }
 
     private void buildStatesElement(Document document, Scope scope, Element scopeElement) {
@@ -170,7 +151,7 @@ public class WorkflowConfigurationExportService {
         Element nextAppend = actionElement;
         PrismStateTransitionEvaluation stateTransitionEvaluation = stateService.getStateTransitionEvaluationByStateAction(stateAction);
         if (stateTransitionEvaluation != null) {
-            Element stateTransitionEvaluationElement = buildStateTransitionEvaluationElement(document, actionElement, stateTransitionEvaluation);
+            Element stateTransitionEvaluationElement = buildStateTransitionEvaluationElement(document, stateTransitionEvaluation);
             actionElement.appendChild(stateTransitionEvaluationElement);
             nextAppend = stateTransitionEvaluationElement;
         }
@@ -197,20 +178,20 @@ public class WorkflowConfigurationExportService {
 
         NotificationTemplate reminderNotificationTemplate = notificationTemplate.getReminderTemplate();
         if (reminderNotificationTemplate != null) {
-            buildReminderNotificationTemplateElement(document, notificationTemplate, notificationTemplateElement, reminderNotificationTemplate);
+            Element reminderNotificationTemplateElement = buildReminderNotificationTemplateElement(document, notificationTemplate, reminderNotificationTemplate);
+            notificationTemplateElement.appendChild(reminderNotificationTemplateElement);
         }
 
         return notificationTemplateElement;
     }
     
-    private void buildReminderNotificationTemplateElement(Document document, NotificationTemplate notificationTemplate, Element notificationTemplateElement,
-            NotificationTemplate reminderNotificationTemplate) {
+    private Element buildReminderNotificationTemplateElement(Document document, NotificationTemplate notificationTemplate, NotificationTemplate reminderNotificationTemplate) {
         Element reminderNotificationTemplateElement = document.createElement("task-reminder");
         reminderNotificationTemplateElement.setAttribute("id", reminderNotificationTemplate.getId().toString());
         reminderNotificationTemplateElement.setAttribute("type", reminderNotificationTemplate.getNotificationType().toString());
         reminderNotificationTemplateElement.setAttribute("default-interval", notificationTemplateService.getDefaultReminderDuration(notificationTemplate)
-                .toString());
-        notificationTemplateElement.appendChild(reminderNotificationTemplateElement);
+                .toString());   
+        return reminderNotificationTemplateElement;
     }
 
     
@@ -219,22 +200,47 @@ public class WorkflowConfigurationExportService {
         actionElement.appendChild(stateActionAssignmentsElement);
 
         for (StateActionAssignment stateActionAssignment : stateAction.getStateActionAssignments()) {
-            Element roleElement = buildRoleElement(document, stateActionAssignment);
-            stateActionAssignmentsElement.appendChild(roleElement);
+            Element stateActionAssignmentElement = buildStateActionAssignmentElement(document, stateActionAssignment);
+            stateActionAssignmentsElement.appendChild(stateActionAssignmentElement);
         }
     }
     
-    private Element buildRoleElement(Document document, StateActionAssignment stateActionAssignment) {
-        Role role = stateActionAssignment.getRole();
-        Element roleElement = document.createElement("role");
-        roleElement.setAttribute("id", role.getId().toString());
-        return roleElement;
+    private Element buildStateActionAssignmentElement(Document document, StateActionAssignment stateActionAssignment) {
+        Element stateActionAssignmentElement = document.createElement("role");
+        stateActionAssignmentElement.setAttribute("id", stateActionAssignment.getRole().getId().toString());
+        
+        if (!stateActionAssignment.getEnhancements().isEmpty()) {
+            buildStateActionEnhancementsElement(document, stateActionAssignment, stateActionAssignmentElement);
+        }
+        
+        return stateActionAssignmentElement;
+    }
+
+    private void buildStateActionEnhancementsElement(Document document, StateActionAssignment stateActionAssignment, Element stateActionAssignmentElement) {
+        Element stateActionEnhancementsElement = document.createElement("enhancements");
+        stateActionAssignmentElement.appendChild(stateActionEnhancementsElement);
+        
+        for (StateActionEnhancement stateActionEnhancement : stateActionAssignment.getEnhancements()) {
+            Element stateActionEnhancementElement = buildStateActionEnhancementElement(document, stateActionEnhancement);
+            stateActionEnhancementsElement.appendChild(stateActionEnhancementElement);
+        }
+    }
+
+    private Element buildStateActionEnhancementElement(Document document, StateActionEnhancement stateActionEnhancement) {
+        Element stateActionEnhancementElement = document.createElement("enhancement");
+        stateActionEnhancementElement.setAttribute("type", stateActionEnhancement.getEnhancementType().toString());
+        
+        Action delegatedAction = stateActionEnhancement.getDelegatedAction();
+        if (delegatedAction != null) {
+            stateActionEnhancementElement.setAttribute("delegated-action", delegatedAction.getId().toString());
+        }
+        
+        return stateActionEnhancementElement;
     }
     
-    private Element buildStateTransitionEvaluationElement(Document document, Element actionElement, PrismStateTransitionEvaluation stateTransitionEvaluation) {
+    private Element buildStateTransitionEvaluationElement(Document document, PrismStateTransitionEvaluation stateTransitionEvaluation) {
         Element stateTransitionEvaluationElement = document.createElement("state-transition-evaluation");
         stateTransitionEvaluationElement.setAttribute("id", stateTransitionEvaluation.toString());
-        actionElement.appendChild(stateTransitionEvaluationElement);
         return stateTransitionEvaluationElement;
     }
 
@@ -320,7 +326,7 @@ public class WorkflowConfigurationExportService {
     }
     
     private Element buildRoleTransitionExclusionElement(Document document, Role excludedRole) {
-        Element roleTransitionExclusionElement = document.createElement("");
+        Element roleTransitionExclusionElement = document.createElement("exclusion");
         roleTransitionExclusionElement.setAttribute("id", excludedRole.getId().toString());
         return roleTransitionExclusionElement;
     }
@@ -364,16 +370,16 @@ public class WorkflowConfigurationExportService {
         actionElement.appendChild(actionRedactionsElement);
         
         for (ActionRedaction actionRedaction : action.getRedactions()) {
-            buildActionRedactionElement(document, actionRedactionsElement, actionRedaction);
+            Element actionRedactionElement = buildActionRedactionElement(document, actionRedaction);
+            actionRedactionsElement.appendChild(actionRedactionElement);
         }
     }
 
-    private void buildActionRedactionElement(Document document, Element visibilityExclusionsElement,
-            ActionRedaction actionRedaction) {
+    private Element buildActionRedactionElement(Document document, ActionRedaction actionRedaction) {
         Element actionRedactionElement = document.createElement("redaction");
         actionRedactionElement.setAttribute("role", actionRedaction.getRole().getId().toString());
-        actionRedactionElement.setAttribute("rule", actionRedaction.getRedactionType().toString());
-        visibilityExclusionsElement.appendChild(actionRedactionElement);
+        actionRedactionElement.setAttribute("type", actionRedaction.getRedactionType().toString());
+        return actionRedactionElement;
     }
 
     private String getXmlBoolean(boolean javaBoolean) {

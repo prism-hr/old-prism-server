@@ -1,19 +1,12 @@
 package com.zuehlke.pgadmissions.rest.domain.application;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.rest.domain.UserRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import javax.persistence.CascadeType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ApplicationRepresentation {
@@ -40,7 +33,7 @@ public class ApplicationRepresentation {
 
     private DateTime updatedTimestamp;
 
-    private List<PrismAction> permittedActions = Lists.newArrayList();
+    private List<PrismAction> actions = Lists.newArrayList();
 
     private PersonalDetailsRepresentation personalDetails;
 
@@ -68,8 +61,8 @@ public class ApplicationRepresentation {
         this.id = id;
     }
 
-    public void setPermittedActions(List<PrismAction> permittedActions) {
-        this.permittedActions = permittedActions;
+    public void setActions(List<PrismAction> actions) {
+        this.actions = actions;
     }
 
     public ProgramRepresentation getProgram() {
@@ -152,8 +145,80 @@ public class ApplicationRepresentation {
         this.updatedTimestamp = updatedTimestamp;
     }
 
-    public List<PrismAction> getPermittedActions() {
-        return permittedActions;
+    public List<PrismAction> getActions() {
+        return actions;
+    }
+
+    public PersonalDetailsRepresentation getPersonalDetails() {
+        return personalDetails;
+    }
+
+    public void setPersonalDetails(PersonalDetailsRepresentation personalDetails) {
+        this.personalDetails = personalDetails;
+    }
+
+    public ProgramDetailsRepresentation getProgramDetails() {
+        return programDetails;
+    }
+
+    public void setProgramDetails(ProgramDetailsRepresentation programDetails) {
+        this.programDetails = programDetails;
+    }
+
+    public ApplicationAddressRepresentation getAddress() {
+        return address;
+    }
+
+    public void setAddress(ApplicationAddressRepresentation address) {
+        this.address = address;
+    }
+
+    public List<QualificationRepresentation> getQualifications() {
+        return qualifications;
+    }
+
+    public void setQualifications(List<QualificationRepresentation> qualifications) {
+        this.qualifications = qualifications;
+    }
+
+    public List<EmploymentPositionRepresentation> getEmploymentPositions() {
+        return employmentPositions;
+    }
+
+    public void setEmploymentPositions(List<EmploymentPositionRepresentation> employmentPositions) {
+        this.employmentPositions = employmentPositions;
+    }
+
+    public List<FundingRepresentation> getFundings() {
+        return fundings;
+    }
+
+    public void setFundings(List<FundingRepresentation> fundings) {
+        this.fundings = fundings;
+    }
+
+    public List<RefereeRepresentation> getReferees() {
+        return referees;
+    }
+
+    public void setReferees(List<RefereeRepresentation> referees) {
+        this.referees = referees;
+    }
+
+    public ApplicationDocumentRepresentation getDocument() {
+        return document;
+    }
+
+    public void setDocument(ApplicationDocumentRepresentation document) {
+        this.document = document;
+    }
+
+    public AdditionalInformationRepresentation getAdditionalInformation() {
+        return additionalInformation;
+    }
+
+    public void setAdditionalInformation(AdditionalInformationRepresentation additionalInformation) {
+        this.additionalInformation = additionalInformation;
     }
 
     public static class ProjectRepresentation {

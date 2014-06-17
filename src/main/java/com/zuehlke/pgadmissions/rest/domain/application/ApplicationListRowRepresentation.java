@@ -120,6 +120,10 @@ public class ApplicationListRowRepresentation {
         this.averageRating = averageRating;
     }
 
+    public String getResourceType() {
+        return "APPLICATION";
+    }
+
     public static class ProjectRepresentation {
 
         private String title;

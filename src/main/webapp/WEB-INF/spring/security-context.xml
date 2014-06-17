@@ -13,7 +13,6 @@
     <security:intercept-url pattern="/api/static" access="permitAll" />
     <security:intercept-url pattern="/workflowConfiguration/*" access="permitAll" />
     <security:intercept-url pattern="/resource" access="permitAll" />
-    <security:intercept-url pattern="/api/applications/**" access="permitAll" />
     <security:intercept-url pattern="/**" access="isAuthenticated()" />
   </security:http>
 

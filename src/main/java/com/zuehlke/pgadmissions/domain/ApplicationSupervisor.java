@@ -1,16 +1,9 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "APPLICATION_SUPERVISOR",  uniqueConstraints = { @UniqueConstraint(columnNames = { "application_program_detail_id", "user_id" }) })
+@Table(name = "APPLICATION_SUPERVISOR", uniqueConstraints = {@UniqueConstraint(columnNames = {"application_program_detail_id", "user_id"})})
 public class ApplicationSupervisor {
 
     @Id
@@ -18,7 +11,7 @@ public class ApplicationSupervisor {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "application_program_detail_id", nullable = false)
+    @JoinColumn(name = "application_program_detail_id", insertable = false, updatable = false)
     private ApplicationProgramDetails programDetails;
 
     @ManyToOne

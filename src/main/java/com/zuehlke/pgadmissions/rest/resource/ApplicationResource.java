@@ -44,7 +44,7 @@ public class ApplicationResource {
 
         ApplicationRepresentation representation = dozerBeanMapper.map(application, ApplicationRepresentation.class);
         List<PrismAction> permittedActions = actionService.getPermittedActions(application, currentUser);
-        representation.getPermittedActions().addAll(permittedActions);
+        representation.getActions().addAll(permittedActions);
         return representation;
     }
 

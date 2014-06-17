@@ -17,7 +17,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import com.zuehlke.pgadmissions.domain.enums.PrismActionEnhancementType;
 
 @Entity
-@Table(name = "STATE_ACTION_ENHANCEMENT", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_assignment_id", "action_enhancement_type_id" }) })
+@Table(name = "STATE_ACTION_ENHANCEMENT", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_assignment_id", "action_enhancement_type" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class StateActionEnhancement {
     
@@ -30,7 +30,7 @@ public class StateActionEnhancement {
     private StateActionAssignment stateActionAssignment;
     
     @Enumerated(EnumType.STRING)
-    @Column(name = "action_enhancement_type_id", nullable = false)
+    @Column(name = "action_enhancement_type", nullable = false)
     private PrismActionEnhancementType enhancementType;
     
     @ManyToOne

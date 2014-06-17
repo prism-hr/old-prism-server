@@ -34,7 +34,7 @@ public class Action implements IUniqueResource {
     @Enumerated(EnumType.STRING)
     private PrismAction id;
     
-    @Column(name = "action_type_id", nullable = false)
+    @Column(name = "action_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismActionType actionType;
     
@@ -44,15 +44,6 @@ public class Action implements IUniqueResource {
     
     @OneToMany(mappedBy = "action", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ActionRedaction> redactions = Sets.newHashSet();
-    
-    public Action() {
-    }
-
-    public Action(PrismAction id, PrismActionType actionType, Scope scope) {
-        this.id = id;
-        this.actionType = actionType;
-        this.scope = scope;
-    }
 
     public PrismAction getId() {
         return id;
@@ -84,6 +75,16 @@ public class Action implements IUniqueResource {
 
     public Action withId(PrismAction id) {
         this.id = id;
+        return this;
+    }
+    
+    public Action withActionType(PrismActionType actionType) {
+        this.actionType = actionType;
+        return this;
+    }
+    
+    public Action withScope(Scope scope) {
+        this.scope = scope;
         return this;
     }
 

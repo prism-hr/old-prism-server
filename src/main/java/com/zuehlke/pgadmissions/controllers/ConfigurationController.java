@@ -1,12 +1,10 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.valueOf;
-import static java.util.Arrays.sort;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -205,18 +203,6 @@ public class ConfigurationController {
         result.put("id", newVersion.getId());
         result.put("createdTimestamp", new SimpleDateFormat("yyyy/M/d - HH:mm:ss").format(newVersion.getCreatedTimestamp()));
         return result;
-    }
-
-    @ModelAttribute("templateTypes")
-    public PrismNotificationTemplate[] getTemplateTypes() {
-        PrismNotificationTemplate[] names = PrismNotificationTemplate.values();
-        sort(names, new Comparator<PrismNotificationTemplate>() {
-            @Override
-            public int compare(PrismNotificationTemplate o1, PrismNotificationTemplate o2) {
-                return o1.displayValue().compareTo(o2.displayValue());
-            }
-        });
-        return names;
     }
 
     @ModelAttribute("states")

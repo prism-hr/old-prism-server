@@ -8,7 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 
 import com.zuehlke.pgadmissions.domain.builders.TestObjectProvider;
-import com.zuehlke.pgadmissions.utils.ApplicationContext;
+import com.zuehlke.pgadmissions.utils.ApplicationTestContext;
 
 public abstract class AutomaticRollbackTestCase {
 
@@ -19,7 +19,7 @@ public abstract class AutomaticRollbackTestCase {
 	protected TestObjectProvider testObjectProvider;
 
 	public AutomaticRollbackTestCase() {
-		sessionFactory = (SessionFactory) ApplicationContext.getInstance().getClassPathXmlApplicationContext().getBean("sessionFactory");
+		sessionFactory = (SessionFactory) ApplicationTestContext.getInstance().getClassPathXmlApplicationContext().getBean("sessionFactory");
 		testObjectProvider = new TestObjectProvider(sessionFactory);
 	}
 

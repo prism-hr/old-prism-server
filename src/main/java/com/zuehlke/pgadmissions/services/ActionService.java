@@ -67,7 +67,7 @@ public class ActionService {
     }
 
     public ActionOutcome executeAction(Integer resourceId, PrismAction actionId, Comment comment) {
-        PrismResourceDynamic resource = (PrismResourceDynamic) entityService.getById(actionId.getResourceClass(), resourceId);
+        PrismResourceDynamic resource = (PrismResourceDynamic) entityService.getById(actionId.getScope().getResourceClass(), resourceId);
         Action action = getById(actionId);
         return executeAction(resource, action, comment);
     }
@@ -79,8 +79,8 @@ public class ActionService {
 
     public ActionOutcome executeAction(PrismResourceDynamic resource, Action action, Comment comment) {
         PrismResource operativeResource = resource;
-        if (!resource.getClass().equals(action.getId().getResourceClass())) {
-            operativeResource = resource.getParentResource(action.getId().getResourceScope());
+        if (!resource.getClass().equals(action.getId().getScope().getResourceClass())) {
+            operativeResource = resource.getParentResource(action.getId().getScope());
         }
         return executeAction(operativeResource, resource, action, comment);
     }
@@ -101,7 +101,7 @@ public class ActionService {
 
         StateTransition stateTransition = stateService.executeStateTransition(operativeResource, resource, action, comment);
         PrismAction transitionAction = stateTransition.getTransitionAction().getId();
-        PrismResource nextActionResource = resource.getEnclosingResource(transitionAction.getResourceScope());
+        PrismResource nextActionResource = resource.getEnclosingResource(transitionAction.getScope());
 
         return new ActionOutcome(actionOwner, nextActionResource, transitionAction);
     }

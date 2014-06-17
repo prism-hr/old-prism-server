@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
-import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
@@ -92,8 +91,7 @@ public class WorkflowConfigurationImportService {
     }
 
     private void importActionDefinition(Element actionElement, Scope scope, HashMap<Element, Action> actionInserts) {
-        Action action = (Action) entityService.getOrCreate(new Action(PrismAction.valueOf(actionElement.getAttribute("id")), PrismActionType
-                .valueOf(actionElement.getAttribute("type")), scope));
+        Action action = (Action) entityService.getByProperty(Action.class, "id", PrismAction.valueOf(actionElement.getAttribute("id")));
         if (actionElement.hasAttribute("delegate-action")) {
             actionInserts.put(actionElement, action);
         }

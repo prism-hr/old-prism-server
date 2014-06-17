@@ -29,7 +29,7 @@ public class NotificationTemplate implements IUniqueResource {
     @Enumerated(EnumType.STRING)
     private PrismNotificationTemplate id;
 
-    @Column(name = "notification_type_id", nullable = false)
+    @Column(name = "notification_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismNotificationType notificationType;
 

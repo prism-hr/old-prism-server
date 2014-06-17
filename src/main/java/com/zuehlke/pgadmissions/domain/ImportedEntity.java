@@ -36,10 +36,10 @@ import com.google.common.base.Objects;
     @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
     @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class) })
 @Entity
-@Table(name = "imported_entity", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_entity_type_id", "code" }),
-        @UniqueConstraint(columnNames = { "institution_id", "imported_entity_type_id", "name" }) })
+@Table(name = "imported_entity", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_entity_type", "code" }),
+        @UniqueConstraint(columnNames = { "institution_id", "imported_entity_type", "name" }) })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "imported_entity_type_id", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "imported_entity_type", discriminatorType = DiscriminatorType.STRING)
 @Indexed
 public abstract class ImportedEntity {
 

@@ -14,7 +14,7 @@ import javax.persistence.UniqueConstraint;
 import com.zuehlke.pgadmissions.domain.enums.PrismImportedEntityType;
 
 @Entity
-@Table(name = "imported_entity_feed", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_entity_type_id" }) })
+@Table(name = "imported_entity_feed", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_entity_type" }) })
 public class ImportedEntityFeed {
 
     @Id
@@ -25,7 +25,7 @@ public class ImportedEntityFeed {
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
-    @Column(name = "imported_entity_type_id", nullable = false)
+    @Column(name = "imported_entity_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismImportedEntityType importedEntityType;
 

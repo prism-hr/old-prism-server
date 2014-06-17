@@ -96,5 +96,15 @@ public class NotificationConfiguration {
     public void setReminderInterval(Integer reminderInterval) {
         this.reminderInterval = reminderInterval;
     }
+    
+    public NotificationConfiguration withSystem(System system) {
+        this.system = system;
+        return this;
+    }
+    
+    public NotificationConfiguration withReminderInterval(Integer reminderInterval) {
+        this.reminderInterval = reminderInterval;
+        return this;
+    }
 
 }

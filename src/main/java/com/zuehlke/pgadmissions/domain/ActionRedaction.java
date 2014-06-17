@@ -34,7 +34,7 @@ public class ActionRedaction {
     private Role role;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "action_redaction_type_id", nullable = false)
+    @Column(name = "action_redaction_type", nullable = false)
     private PrismActionRedactionType redactionType;
 
     public Integer getId() {

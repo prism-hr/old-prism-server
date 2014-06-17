@@ -60,6 +60,16 @@ public class Scope {
     public Set<State> getStates() {
         return states;
     }
+    
+    public Scope withId(PrismScope id) {
+        this.id = id;
+        return this;
+    }
+    
+    public Scope withPrecedence(Integer precedence) {
+        this.precedence = precedence;
+        return this;
+    }
 
     @Override
     public int hashCode() {

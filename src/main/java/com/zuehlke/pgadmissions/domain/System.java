@@ -38,7 +38,7 @@ public class System extends PrismResource {
     @ManyToOne
     @JoinColumn(name = "state_id", nullable = false)
     private State state;
-
+    
     @Override
     public Integer getId() {
         return id;
@@ -57,6 +57,16 @@ public class System extends PrismResource {
         this.name = name;
     }
 
+    public System withName(String name) {
+        this.name = name;
+        return this;
+    }
+    
+    public System withUser(User user) {
+        this.user = user;
+        return this;
+    }
+    
     @Override
     public State getState() {
         return state;

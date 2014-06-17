@@ -2,18 +2,18 @@ package com.zuehlke.pgadmissions.utils;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class ApplicationContext {
+public class ApplicationTestContext {
 
-	private static ApplicationContext instance;
+	private static ApplicationTestContext instance;
 	private ClassPathXmlApplicationContext classPathXmlApplicationContext;
 	
-	private ApplicationContext() {
+	private ApplicationTestContext() {
 		 classPathXmlApplicationContext = new ClassPathXmlApplicationContext("testHibernateContext.xml");
 	}
 
-	public static synchronized ApplicationContext getInstance() {
+	public static synchronized ApplicationTestContext getInstance() {
 		if (instance == null) {
-			instance = new ApplicationContext();
+			instance = new ApplicationTestContext();
 		}
 		return instance;
 	}

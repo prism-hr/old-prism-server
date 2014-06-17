@@ -11,7 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.enums.ConfigurationParameter;
+import com.zuehlke.pgadmissions.domain.enums.PrismConfiguration;
 
 @Entity
 @Table(name = "CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "configuration_parameter_id" }),
@@ -37,7 +37,7 @@ public class Configuration {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "configuration_parameter_id", nullable = false)
-    private ConfigurationParameter parameter;
+    private PrismConfiguration parameter;
 
     @Column(name = "parameter_value", nullable = false)
     private Integer value;
@@ -74,11 +74,11 @@ public class Configuration {
         this.program = program;
     }
 
-    public ConfigurationParameter getParameter() {
+    public PrismConfiguration getParameter() {
         return parameter;
     }
 
-    public void setParameter(ConfigurationParameter parameter) {
+    public void setParameter(PrismConfiguration parameter) {
         this.parameter = parameter;
     }
 
@@ -88,6 +88,16 @@ public class Configuration {
 
     public void setValue(Integer value) {
         this.value = value;
+    }
+    
+    public Configuration withSystem(System system) {
+        this.system = system;
+        return this;
+    }
+    
+    public Configuration withValue(Integer value) {
+        this.value = value;
+        return this;
     }
 
 }

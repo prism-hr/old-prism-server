@@ -134,7 +134,6 @@ public class WorkflowConfigurationExportService {
         Action action = stateAction.getAction();
         Element actionElement = document.createElement("action");
         actionElement.setAttribute("id", action.getId().toString());
-        actionElement.setAttribute("type", action.getActionType().toString());
         actionElement.setAttribute("urgent", getXmlBoolean(stateAction.isRaisesUrgentFlag()));
         actionElement.setAttribute("default", getXmlBoolean(stateAction.isDefaultAction()));
 
@@ -172,28 +171,16 @@ public class WorkflowConfigurationExportService {
     }
     
     private Element buildNotificationTemplateElement(Document document, NotificationTemplate notificationTemplate) {
-        Element notificationTemplateElement = document.createElement("task-notification");
+        Element notificationTemplateElement = document.createElement("task-request");
         notificationTemplateElement.setAttribute("id", notificationTemplate.getId().toString());
-        notificationTemplateElement.setAttribute("type", notificationTemplate.getNotificationType().toString());
 
         NotificationTemplate reminderNotificationTemplate = notificationTemplate.getReminderTemplate();
         if (reminderNotificationTemplate != null) {
-            Element reminderNotificationTemplateElement = buildReminderNotificationTemplateElement(document, notificationTemplate, reminderNotificationTemplate);
-            notificationTemplateElement.appendChild(reminderNotificationTemplateElement);
+            notificationTemplateElement.setAttribute("default-reminder-interval", notificationTemplateService.getDefaultReminderDuration(notificationTemplate).toString());
         }
 
         return notificationTemplateElement;
     }
-    
-    private Element buildReminderNotificationTemplateElement(Document document, NotificationTemplate notificationTemplate, NotificationTemplate reminderNotificationTemplate) {
-        Element reminderNotificationTemplateElement = document.createElement("task-reminder");
-        reminderNotificationTemplateElement.setAttribute("id", reminderNotificationTemplate.getId().toString());
-        reminderNotificationTemplateElement.setAttribute("type", reminderNotificationTemplate.getNotificationType().toString());
-        reminderNotificationTemplateElement.setAttribute("default-interval", notificationTemplateService.getDefaultReminderDuration(notificationTemplate)
-                .toString());   
-        return reminderNotificationTemplateElement;
-    }
-
     
     private void buildStateActionAssignmentsElement(Document document, StateAction stateAction, Element actionElement) {
         Element stateActionAssignmentsElement = document.createElement("roles");
@@ -360,7 +347,6 @@ public class WorkflowConfigurationExportService {
     private Element buildStateActionNotificationElement(Document document, StateActionNotification stateActionNotification) {
         Element stateActionNotificationElement = document.createElement("update-notification");
         stateActionNotificationElement.setAttribute("id", stateActionNotification.getNotificationTemplate().getId().toString());
-        stateActionNotificationElement.setAttribute("type", stateActionNotification.getNotificationTemplate().getNotificationType().toString());
         stateActionNotificationElement.setAttribute("role", stateActionNotification.getRole().getId().toString());
         return stateActionNotificationElement;
     }

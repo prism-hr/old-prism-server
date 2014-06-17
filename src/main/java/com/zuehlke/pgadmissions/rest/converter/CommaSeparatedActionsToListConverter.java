@@ -8,25 +8,25 @@ import org.dozer.DozerConverter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommaSeparatedActionsToListConverter extends DozerConverter<String, List<ActionRepresentation>> {
+public class CommaSeparatedActionsToListConverter extends DozerConverter<String, List<PrismAction>> {
 
     public CommaSeparatedActionsToListConverter() {
         super(String.class, (Class) List.class);
     }
 
     @Override
-    public List<ActionRepresentation> convertTo(String source, List<ActionRepresentation> destination) {
+    public List<PrismAction> convertTo(String source, List<PrismAction> destination) {
         ArrayList<String> actionStrings = Lists.newArrayList(source.split(","));
-        List<ActionRepresentation> actions = Lists.newArrayListWithExpectedSize(actionStrings.size());
+        List<PrismAction> actions = Lists.newArrayListWithExpectedSize(actionStrings.size());
         for (String actionString : actionStrings) {
             String[] actionSplit = actionString.split("\\|");
-            actions.add(new ActionRepresentation(PrismAction.valueOf(actionSplit[1]), Boolean.parseBoolean(actionSplit[0])));
+            actions.add(PrismAction.valueOf(actionSplit[1]));
         }
         return actions;
     }
 
     @Override
-    public String convertFrom(List<ActionRepresentation> source, String destination) {
+    public String convertFrom(List<PrismAction> source, String destination) {
         throw new UnsupportedOperationException();
     }
 }

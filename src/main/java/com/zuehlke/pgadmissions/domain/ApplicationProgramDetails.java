@@ -44,7 +44,7 @@ public class ApplicationProgramDetails {
     private String sourceOfInterestText;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "programme_detail_id")
+    @JoinColumn(name = "application_program_detail_id", nullable = false)
     @Valid
     private List<ApplicationSupervisor> suggestedSupervisors = new ArrayList<ApplicationSupervisor>();
 

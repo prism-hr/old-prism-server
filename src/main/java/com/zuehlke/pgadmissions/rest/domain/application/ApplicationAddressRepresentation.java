@@ -1,7 +1,24 @@
 package com.zuehlke.pgadmissions.rest.domain.application;
 
-/**
- * Created by jfi on 13/06/2014.
- */
 public class ApplicationAddressRepresentation {
+
+    private AddressRepresentation currentAddress;
+
+    private AddressRepresentation contactAddress;
+
+    public AddressRepresentation getCurrentAddress() {
+        return currentAddress;
+    }
+
+    public void setCurrentAddress(AddressRepresentation currentAddress) {
+        this.currentAddress = currentAddress;
+    }
+
+    public AddressRepresentation getContactAddress() {
+        return contactAddress;
+    }
+
+    public void setContactAddress(AddressRepresentation contactAddress) {
+        this.contactAddress = contactAddress;
+    }
 }

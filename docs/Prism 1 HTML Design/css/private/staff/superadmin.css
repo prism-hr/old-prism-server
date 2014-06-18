@@ -1,0 +1,18 @@
+
+h1 { font-size: 14pt; margin-bottom: 1em; }
+
+div.row { margin-bottom: 10px; overflow: hidden; }
+div.row label { font-weight: bold; }
+
+form { overflow: hidden; }
+form label { display: block; margin-bottom: 0.5em; }
+form input[type=text], form select, form textarea { width: 300px; }
+form select[multiple] { padding: 3px; width: 100% }
+
+div.programme label { float: left; width: 150px; }
+div.programme select { width: 300px; }
+
+table.data tbody td { background: #EEE; padding: 4px; }
+
+div.left-column { float: left; margin-right: 20px; width: 400px; }
+div.right-column { float: left; text-align: left; width: 400px; }

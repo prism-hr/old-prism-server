@@ -10,6 +10,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -17,6 +18,7 @@ import javax.persistence.Table;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.enums.PrismNotificationPurpose;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationType;
 
@@ -32,6 +34,14 @@ public class NotificationTemplate implements IUniqueResource {
     @Column(name = "notification_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismNotificationType notificationType;
+    
+    @Column(name = "notification_purpose", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismNotificationPurpose notificationPurpose;
+    
+    @ManyToOne
+    @JoinColumn(name = "scope_id", nullable = false)
+    private Scope scope;
 
     @OneToOne
     @JoinColumn(name = "reminder_notification_template_id")
@@ -58,11 +68,27 @@ public class NotificationTemplate implements IUniqueResource {
     public PrismNotificationType getNotificationType() {
         return notificationType;
     }
-
-    public void setType(PrismNotificationType notificationType) {
+    
+    public void setNotificationType(PrismNotificationType notificationType) {
         this.notificationType = notificationType;
     }
 
+    public PrismNotificationPurpose getNotificationPurpose() {
+        return notificationPurpose;
+    }
+
+    public void setNotificationPurpose(PrismNotificationPurpose notificationPurpose) {
+        this.notificationPurpose = notificationPurpose;
+    }
+
+    public Scope getScope() {
+        return scope;
+    }
+
+    public void setScope(Scope scope) {
+        this.scope = scope;
+    }
+    
     public NotificationTemplate getReminderTemplate() {
         return reminderTemplate;
     }
@@ -80,8 +106,18 @@ public class NotificationTemplate implements IUniqueResource {
         return this;
     }
 
-    public NotificationTemplate withType(PrismNotificationType notificationType) {
+    public NotificationTemplate withNotificationType(PrismNotificationType notificationType) {
         this.notificationType = notificationType;
+        return this;
+    }
+    
+    public NotificationTemplate withNotificationPurpose(PrismNotificationPurpose notificationPurpose) {
+        this.notificationPurpose = notificationPurpose;
+        return this;
+    }
+    
+    public NotificationTemplate withScope(Scope scope) {
+        this.scope = scope;
         return this;
     }
 

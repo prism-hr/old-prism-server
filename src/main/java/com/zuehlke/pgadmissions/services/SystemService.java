@@ -33,9 +33,9 @@ import com.zuehlke.pgadmissions.mail.NotificationService;
 public class SystemService {
 
     private final String EMAIL_DEFAULT_SUBJECT_DIRECTORY = "/email/subject";
-    
+
     private final String EMAIL_DEFAULT_CONTENT_DIRECTORY = "/email/content/";
-    
+
     @Autowired
     private Environment environment;
 
@@ -123,12 +123,14 @@ public class SystemService {
     private void initialiseNotificationTemplates(System system) {
         List<NotificationTemplate> templatesWithReminders = Lists.newArrayList();
         for (PrismNotificationTemplate prismTemplate : PrismNotificationTemplate.values()) {
-            NotificationTemplate template = new NotificationTemplate().withId(prismTemplate).withType(prismTemplate.getNotificationType());
+            Scope scope = entityService.getByProperty(Scope.class, "id", prismTemplate.getScope());
+            NotificationTemplate template = new NotificationTemplate().withId(prismTemplate).withNotificationType(prismTemplate.getNotificationType())
+                    .withNotificationPurpose(prismTemplate.getNotificationPurpose()).withScope(scope);
             entityService.save(template);
             String defaultSubject = getFileContent(EMAIL_DEFAULT_SUBJECT_DIRECTORY + prismTemplate.getInitialTemplateSubject());
             String defaultContent = getFileContent(EMAIL_DEFAULT_CONTENT_DIRECTORY + prismTemplate.getInitialTemplateContent());
-            NotificationTemplateVersion version = new NotificationTemplateVersion().withNotificationTemplate(template).withSubject(defaultSubject).withContent(defaultContent)
-                    .withCreatedTimestamp(new DateTime());
+            NotificationTemplateVersion version = new NotificationTemplateVersion().withNotificationTemplate(template).withSubject(defaultSubject)
+                    .withContent(defaultContent).withCreatedTimestamp(new DateTime());
             entityService.save(version);
         }
         for (NotificationTemplate template : templatesWithReminders) {
@@ -140,14 +142,14 @@ public class SystemService {
             entityService.save(configuration);
         }
     }
-    
+
     private String getFileContent(String filePath) {
         String line;
         StringBuilder output = new StringBuilder();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filePath));
             String lineBreak = java.lang.System.getProperty(java.lang.System.lineSeparator());
-            while((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 output.append(line);
                 output.append(lineBreak);
             }

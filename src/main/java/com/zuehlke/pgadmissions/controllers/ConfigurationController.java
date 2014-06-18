@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.valueOf;
-
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -185,7 +183,7 @@ public class ConfigurationController {
     @ResponseBody
     public Map<Object, Object> getVersionsForTemplate(@PathVariable PrismScope resourceScope, @PathVariable Integer resourceId, @PathVariable String templateId) {
         PrismResource resource = (PrismResource) entityService.getById(resourceScope.getResourceClass(), resourceId);
-        NotificationTemplate template = templateService.getById(valueOf(templateId));
+        NotificationTemplate template = templateService.getById(PrismNotificationTemplate.valueOf(templateId));
         List<NotificationTemplateVersion> versions = notificationService.getVersionsForTemplate(resource, template);
         Map<Object, Object> result = new HashMap<Object, Object>();
         result.put("activeVersion", notificationService.getActiveVersionForTemplate(resource, template));

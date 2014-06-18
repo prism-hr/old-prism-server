@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.dao.StateDAO;
@@ -23,6 +24,9 @@ public class CommentService {
     @Autowired
     private CommentDAO commentDAO;
 
+    @Autowired
+    private ActionService actionService;
+    
     @Autowired
     private ApplicationService applicationsService;
 
@@ -65,8 +69,12 @@ public class CommentService {
         return commentDAO.getAssignedUsers(comment, role, invoker);
     }
 
-    public List<Comment> getVisibleComments(User user, Application applicationForm) {
-        return commentDAO.getVisibleComments(user, applicationForm);
+    public List<Comment> getVisibleComments(PrismResourceDynamic resource, User user) {
+        List<Comment> comments = Lists.newArrayList();
+        if (!actionService.getPermittedActions(resource, user).isEmpty()) {
+            comments = commentDAO.getComments(resource);
+        }
+        return comments;
     }
 
     public CommentAssignedUser assignUser(Comment approvalComment, User user, boolean isPrimary) {

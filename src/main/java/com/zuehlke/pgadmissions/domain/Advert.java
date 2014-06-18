@@ -3,8 +3,19 @@ package com.zuehlke.pgadmissions.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.*;
-import javax.validation.constraints.Size;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import com.google.common.base.Objects;
 
@@ -17,17 +28,12 @@ public abstract class Advert extends PrismResourceDynamic {
     @GeneratedValue
     private Integer id;
 
-    @Size(max = 3000, message = "A maximum of 2000 characters are allowed.")
-    @Column(name = "description", nullable = false)
-    private String description = "Advert coming soon!";
+    @Column(name = "description")
+    private String description;
 
-    @Column(name = "study_duration", nullable = false)
+    @Column(name = "month_study_duration")
     private Integer studyDuration;
-
-    @Size(max = 2000, message = "A maximum of 1000 characters are allowed.")
-    @Column(name = "funding")
-    private String funding;
-
+    
     @ManyToOne
     @JoinColumn(name = "user_id", unique = true)
     private User user;
@@ -64,14 +70,6 @@ public abstract class Advert extends PrismResourceDynamic {
 
     public void setStudyDuration(Integer studyDuration) {
         this.studyDuration = studyDuration;
-    }
-
-    public String getFunding() {
-        return funding;
-    }
-
-    public void setFunding(String funding) {
-        this.funding = funding;
     }
 
     public User getUser() {

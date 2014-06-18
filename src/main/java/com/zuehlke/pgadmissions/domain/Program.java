@@ -5,7 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -18,6 +28,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.enums.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -57,9 +68,9 @@ public class Program extends Advert {
     @OrderBy("applicationStartDate")
     private Set<ProgramInstance> programInstances = Sets.newHashSet();
 
-    @ManyToOne
-    @JoinColumn(name = "program_type_id", nullable = false)
-    private ProgramType programType;
+    @Column(name = "program_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismProgramType programType;
 
     @Column(name = "due_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -128,11 +139,11 @@ public class Program extends Advert {
         return projects;
     }
 
-    public ProgramType getProgramType() {
+    public PrismProgramType getProgramType() {
         return programType;
     }
 
-    public void setProgramType(ProgramType programType) {
+    public void setProgramType(PrismProgramType programType) {
         this.programType = programType;
     }
 
@@ -152,16 +163,6 @@ public class Program extends Advert {
 
     public Program withDescription(String description) {
         setDescription(description);
-        return this;
-    }
-
-    public Program withStudyDuration(Integer studyDuration) {
-        setStudyDuration(studyDuration);
-        return this;
-    }
-
-    public Program withFunding(String funding) {
-        setFunding(funding);
         return this;
     }
 
@@ -215,8 +216,13 @@ public class Program extends Advert {
         return this;
     }
 
-    public Program withProgramType(ProgramType programType) {
+    public Program withProgramType(PrismProgramType programType) {
         this.programType = programType;
+        return this;
+    }
+    
+    public Program withStudyDuration(Integer studyDuration) {
+        setStudyDuration(studyDuration);
         return this;
     }
     

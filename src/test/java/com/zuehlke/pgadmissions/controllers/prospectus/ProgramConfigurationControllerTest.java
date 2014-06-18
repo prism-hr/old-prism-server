@@ -78,7 +78,7 @@ public class ProgramConfigurationControllerTest {
     public void shouldGetOpportunityData() {
         InstitutionDomicile domicile = new InstitutionDomicile();
         Program program = new Program().withCode("07").withInstitution(new Institution().withDomicile(domicile)).withId(999)
-                .withTitle("Dlaczego w pizdzie nie ma krzesel?").withDescription("Zeby chuj stal").withStudyDuration(8).withFunding("Ni ma kasy")
+                .withTitle("Dlaczego w pizdzie nie ma krzesel?").withDescription("Zeby chuj stal")
                 .withState(new State().withId(PrismState.PROGRAM_APPROVED)).withRequireProjectDefinition(false);
 
         Map<String, Object> dataMap = Maps.newHashMap();

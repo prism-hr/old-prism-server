@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -21,12 +20,12 @@ import com.zuehlke.pgadmissions.domain.CommentCustomQuestionVersion;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
+import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 
 @Service
@@ -227,14 +226,6 @@ public class ProgramService {
         }
 
         return advert;
-    }
-
-    public List<ProgramType> getProgramTypes() {
-        return programDAO.getProgamTypes();
-    }
-
-    public ProgramType getProgramTypeById(ProgramType programTypeId) {
-        return programDAO.getProgramTypeById(programTypeId);
     }
 
     public void deleteInactiveAdverts() {

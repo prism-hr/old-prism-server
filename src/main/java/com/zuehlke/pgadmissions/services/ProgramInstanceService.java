@@ -92,31 +92,6 @@ public class ProgramInstanceService {
         return false;
     }
 
-    @Transactional
-    public List<ProgramInstance> createRemoveProgramInstances(Program program, String studyOptionCodes, int advertisingDeadlineYear) {
-        ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
-
-        // disable all existing instances
-        for (ProgramInstance existingInstance : program.getProgramInstances()) {
-            existingInstance.setEnabled(false);
-        }
-        // program.setState(ProgramState.PROGRAM_DEACTIVATED);
-
-        List<ProgramInstance> instances = Lists.newLinkedList();
-
-        List<StudyOption> studyOptions = thisBean.getStudyOptions(studyOptionCodes);
-        int startYear = thisBean.getFirstProgramInstanceStartYear(new LocalDate());
-
-        for (; startYear < advertisingDeadlineYear; startYear++) {
-            for (StudyOption studyOption : studyOptions) {
-                ProgramInstance programInstance = thisBean.createOrUpdateProgramInstance(program, startYear, studyOption);
-                instances.add(programInstance);
-                // program.setState(ProgramState.PROGRAM_APPROVED);
-            }
-        }
-        return instances;
-    }
-
     @Transactional(propagation = Propagation.REQUIRED)
     protected ProgramInstance createOrUpdateProgramInstance(Program program, int startYear, StudyOption studyOption) {
         ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
@@ -143,19 +118,6 @@ public class ProgramInstanceService {
 
     public List<StudyOption> getAvailableStudyOptions() {
         return programDAO.getAvailableStudyOptions();
-    }
-
-    protected List<StudyOption> getStudyOptions(String studyOptionCodesSplit) {
-        List<String> studyOptionCodes = Arrays.asList(studyOptionCodesSplit.split(","));
-        List<StudyOption> distinctStudyOptions = programDAO.getAvailableStudyOptions();
-
-        List<StudyOption> studyOptions = Lists.newArrayListWithCapacity(studyOptionCodes.size());
-        for (StudyOption o : distinctStudyOptions) {
-            if (studyOptionCodes.contains(o.getId())) {
-                studyOptions.add(o);
-            }
-        }
-        return studyOptions;
     }
 
     public int getFirstProgramInstanceStartYear(LocalDate startDate) {
@@ -205,4 +167,42 @@ public class ProgramInstanceService {
         return programDAO.getByProgramAndAcademicYearAndStudyOption(program, academicYear, studyOption);
     }
 
+    protected List<StudyOption> getStudyOptions(String studyOptionCodesSplit) {
+        List<String> studyOptionCodes = Arrays.asList(studyOptionCodesSplit.split(","));
+        List<StudyOption> distinctStudyOptions = programDAO.getAvailableStudyOptions();
+
+        List<StudyOption> studyOptions = Lists.newArrayListWithCapacity(studyOptionCodes.size());
+        for (StudyOption o : distinctStudyOptions) {
+            if (studyOptionCodes.contains(o.getId())) {
+                studyOptions.add(o);
+            }
+        }
+        return studyOptions;
+    }
+    
+    @Transactional
+    public List<ProgramInstance> createRemoveProgramInstances(Program program, String studyOptionCodes, int advertisingDeadlineYear) {
+        ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
+
+        // disable all existing instances
+        for (ProgramInstance existingInstance : program.getProgramInstances()) {
+            existingInstance.setEnabled(false);
+        }
+        // program.setState(ProgramState.PROGRAM_DEACTIVATED);
+
+        List<ProgramInstance> instances = Lists.newLinkedList();
+
+        List<StudyOption> studyOptions = thisBean.getStudyOptions(studyOptionCodes);
+        int startYear = thisBean.getFirstProgramInstanceStartYear(new LocalDate());
+
+        for (; startYear < advertisingDeadlineYear; startYear++) {
+            for (StudyOption studyOption : studyOptions) {
+                ProgramInstance programInstance = thisBean.createOrUpdateProgramInstance(program, startYear, studyOption);
+                instances.add(programInstance);
+                // program.setState(ProgramState.PROGRAM_APPROVED);
+            }
+        }
+        return instances;
+    }
+    
 }

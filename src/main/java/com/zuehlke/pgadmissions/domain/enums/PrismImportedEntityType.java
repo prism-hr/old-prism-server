@@ -7,10 +7,12 @@ import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.QualificationType;
-import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
+import com.zuehlke.pgadmissions.domain.ReferralSource;
 
 public enum PrismImportedEntityType {
 
+    //TODO: behaviours for TITLE, FUNDING_SOURCE, LANGUAGE_QUALIFICATION_TYPE, PROGRAM_STUDY_OPTION
+    
     COUNTRY(com.zuehlke.pgadmissions.referencedata.jaxb.Countries.class, "country", Country.class), //
     DISABILITY(com.zuehlke.pgadmissions.referencedata.jaxb.Disabilities.class, "disability", Disability.class), //
     DOMICILE(com.zuehlke.pgadmissions.referencedata.jaxb.Domiciles.class, "domicile", Domicile.class), //
@@ -18,7 +20,7 @@ public enum PrismImportedEntityType {
     NATIONALITY(com.zuehlke.pgadmissions.referencedata.jaxb.Nationalities.class, "nationality", Language.class), //
     PROGRAM(com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.class, "programmeOccurrence", Program.class), //
     QUALIFICATION_TYPE(com.zuehlke.pgadmissions.referencedata.jaxb.Qualifications.class, "qualification", QualificationType.class), //
-    REFERRAL_SOURCE(com.zuehlke.pgadmissions.referencedata.jaxb.SourcesOfInterest.class, "sourceOfInterest", SourcesOfInterest.class);
+    REFERRAL_SOURCE(com.zuehlke.pgadmissions.referencedata.jaxb.SourcesOfInterest.class, "sourceOfInterest", ReferralSource.class);
 
     private Class<?> jaxbClass;
 

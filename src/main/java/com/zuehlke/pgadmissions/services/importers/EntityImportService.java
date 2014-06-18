@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Iterables;
-import com.zuehlke.pgadmissions.dao.ConfigurationDAO;
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
@@ -30,11 +29,10 @@ import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.mail.NotificationService;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
@@ -75,9 +73,6 @@ public class EntityImportService {
 
     @Autowired
     private RoleService roleService;
-
-    @Autowired
-    private ConfigurationDAO configurationDAO;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void importEntities(ImportedEntityFeed importedEntityFeed) throws XMLDataImportException {
@@ -155,8 +150,7 @@ public class EntityImportService {
             ModeOfAttendance modeOfAttendance = occurrence.getModeOfAttendance();
 
             Program program = thisBean.getOrCreateProgram(occurrenceProgram, institution);
-
-            StudyOption studyOption = thisBean.getOrCreateStudyOption(modeOfAttendance);
+            StudyOption studyOption = thisBean.getOrCreateStudyOption(institution, modeOfAttendance);
 
             LocalDate startDate = dtFormatter.parseLocalDate(occurrence.getStartDate());
             LocalDate endDate = dtFormatter.parseLocalDate(occurrence.getEndDate());
@@ -175,6 +169,7 @@ public class EntityImportService {
                     throw new XMLDataImportException("Could not merge: " + programInstance + " due to a data integrity problem in the import feed.");
                 }
             }
+            
         }
     }
 
@@ -223,11 +218,9 @@ public class EntityImportService {
         String prefixedProgramCode = institution.getCode() + "-" + programme.getCode();
         Program program = programService.getProgramByCode(prefixedProgramCode);
         if (program == null) {
-            PrismProgramType programTypeId = PrismProgramType.findValueFromString(programme.getName());
-            ProgramType programType = entityDAO.getById(ProgramType.class, programTypeId);
+            PrismProgramType programType = PrismProgramType.findValueFromString(programme.getName());
             program = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withCode(prefixedProgramCode)
-                    .withTitle(programme.getName()).withState(new State().withId(PrismState.PROGRAM_APPROVED)).withImported(true).withProgramType(programType)
-                    .withStudyDuration(configurationDAO.getStudyDuration(institution, programType));
+                    .withTitle(programme.getName()).withState(new State().withId(PrismState.PROGRAM_APPROVED)).withImported(true).withProgramType(programType);
             entityDAO.save(program);
         }
 
@@ -237,10 +230,10 @@ public class EntityImportService {
     }
 
     @Transactional
-    public StudyOption getOrCreateStudyOption(ModeOfAttendance modeOfAttendance) {
+    public StudyOption getOrCreateStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) {
         StudyOption studyOption = entityDAO.getByProperty(StudyOption.class, "id", modeOfAttendance.getCode());
         if (studyOption == null) {
-            studyOption = new StudyOption().withId(modeOfAttendance.getCode()).withDisplayName(modeOfAttendance.getName());
+            studyOption = new StudyOption().withInstitution(institution).withCode(modeOfAttendance.getCode()).withName(modeOfAttendance.getName()).withEnabled(true);
             entityDAO.save(studyOption);
         }
         return studyOption;

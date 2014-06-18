@@ -38,7 +38,7 @@ public class ProgramExport {
     private User user;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "program_export_format_id", nullable = false)
+    @Column(name = "program_export_format", nullable = false)
     private PrismProgramExportFormat format;
 
     @ManyToMany(cascade = ALL)

@@ -60,7 +60,7 @@ public class CommentDAO {
     
     public List<Comment> getComments(PrismResourceDynamic resource) {
         String resourceName = resource.getClass().getSimpleName().toLowerCase();
-        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq(resourceName, resource)) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .list();

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.rest.domain.StateActionRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.StateRepresentation;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -53,7 +54,36 @@ public class StaticDataResource {
         }
         staticData.put("states", stateRepresentations);
 
+        for (Class enumClass : new Class[]{Gender.class}) {
+            List<EnumDefinition> definitions = Lists.newArrayListWithExpectedSize(enumClass.getEnumConstants().length);
+            for (java.lang.Object key : enumClass.getEnumConstants()) {
+                String message = applicationContext.getMessage(enumClass.getSimpleName().toLowerCase() + "." + key, null, LocaleContextHolder.getLocale());
+                definitions.add(new EnumDefinition(key.toString(), message));
+            }
+            staticData.put(enumClass.getSimpleName().toLowerCase() + "s", definitions);
+        }
+
         return staticData;
     }
 
+    private class EnumDefinition {
+
+        private String key;
+
+        private String displayName;
+
+        private EnumDefinition(String key, String displayName) {
+            this.key = key;
+            this.displayName = displayName;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+
+    }
 }

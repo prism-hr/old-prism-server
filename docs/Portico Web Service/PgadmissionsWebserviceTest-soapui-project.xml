@@ -1,0 +1,1452 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project activeEnvironment="Default" name="PgadmissionsWebserviceTest" resourceRoot="" soapui-version="4.5.2" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="admissionsApplicationsServiceSoap11_v1_0" type="wsdl" bindingName="{http://ucl.ac.uk/isd/registry/studentrecordsdata_V1}admissionsApplicationsServiceSoap11_v1_0" soapVersion="1_1" anonymous="optional" definition="file:/C:/Users/cls/Desktop/New%20folder/New%20folder/admissionsapplicationsservice.wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="file:\C:\Users\cls\Desktop\New%20folder\New%20folder\admissionsapplicationsservice.wsdl"><con:part><con:url>file:\C:\Users\cls\Desktop\New%20folder\New%20folder\admissionsapplicationsservice.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="admissionsApplicationService_V1" targetNamespace="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1" xmlns:v1_0="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1.0" xmlns:uclBasic_v1_0="http://ucl.ac.uk/isd/uclbasic_v1_0/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:documentation>The following web service contract should be used to submit Admissions applications and applicants to UCL.</wsdl:documentation>
+  <wsdl:types>
+    <schema targetNamespace="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1.0" xmlns="http://www.w3.org/2001/XMLSchema">
+      <include schemaLocation="../registryws/xsd/admissionsApplicationsService_v1.xsd"/>
+    </schema>
+  </wsdl:types>
+  <wsdl:message name="SubmitAdmissionsApplicationRequest_v1_0">
+    <wsdl:part element="v1_0:SubmitAdmissionsApplicationRequest" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="AdmissionsApplicationResponse_v1_0">
+    <wsdl:part element="v1_0:AdmissionsApplicationResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="SubmitAdmissionsApplicantRequest_v1_0">
+    <wsdl:part element="v1_0:SubmitAdmissionsApplicantRequest" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="FaultDtlMsg_v1_0">
+    <wsdl:part element="v1_0:ExtendedFaultDtl" name="parameters"/>
+  </wsdl:message>
+  <wsdl:portType name="admissionsApplicationsService_v1_0">
+    <wsdl:operation name="SubmitAdmissionsApplication_v1_0">
+      <wsdl:input message="tns:SubmitAdmissionsApplicationRequest_v1_0"/>
+      <wsdl:output message="tns:AdmissionsApplicationResponse_v1_0"/>
+      <wsdl:fault name="FaultDtlMsg_v1_0" message="tns:FaultDtlMsg_v1_0"/>
+    </wsdl:operation>
+    <wsdl:operation name="SubmitAdmissionsApplicant_v1_0">
+      <wsdl:input message="tns:SubmitAdmissionsApplicantRequest_v1_0"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="admissionsApplicationsServiceSoap11_v1_0" type="tns:admissionsApplicationsService_v1_0">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="SubmitAdmissionsApplication_v1_0">
+      <soap:operation soapAction=""/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="FaultDtlMsg_v1_0">
+        <soap:fault name="FaultDtlMsg_v1_0" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="SubmitAdmissionsApplicant_v1_0">
+      <soap:operation soapAction=""/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="FaultDtlMsg_v1_0">
+        <soap:fault name="FaultDtlMsg_v1_0" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="admissionsApplicationsService_v1_0">
+    <wsdl:port binding="tns:admissionsApplicationsServiceSoap11_v1_0" name="admissionsApplicationsServiceSoap11_v1_0">
+      <!--Note: Spring WS is configured to override the location attribute of the soap:address element during
+                       application deployment; that will reflect the name of the machine where the services run-->
+      <soap:address location="http://localhost:8080/registryws/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>file:\C:\Users\cls\Desktop\New%20folder\registryws\xsd\admissionsApplicationsService_v1.xsd</con:url><con:content><![CDATA[<!--This schema definition describes types to be used for UCL applications-->
+<xs:schema elementFormDefault="qualified" targetNamespace="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:v1_0="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1.0" xmlns:uclBasic_v1_0="http://ucl.ac.uk/isd/uclbasic_v1_0/">
+  <!--SCHEMA INCLUDE SECTION-->
+  <xs:include schemaLocation="registryData_v1_0.xsd"/>
+  <xs:import namespace="http://ucl.ac.uk/isd/uclbasic_v1_0/" schemaLocation="uclbasic_v1_0.xsd"/>
+  <!--*****************************************************************
+						Request types	  
+		*****************************************************************-->
+  <element name="SubmitAdmissionsApplicationRequest">
+    <complexType>
+      <sequence>
+        <element name="application" type="v1_0:applicationTp"></element>
+      </sequence>
+    </complexType>
+  </element>
+  <element name="SubmitAdmissionsApplicantRequest">
+    <complexType>
+      <sequence>
+        <element name="applicant" type="v1_0:applicantTp"></element>
+      </sequence>
+    </complexType>
+  </element>
+  <!--*****************************************************************
+						Response types	  
+		*****************************************************************-->
+  <element name="AdmissionsApplicationResponse">
+    <complexType>
+      <sequence>
+        <element name="reference" type="v1_0:referenceTp"></element>
+      </sequence>
+    </complexType>
+  </element>
+  <element name="ExtendedFaultDtl">
+    <complexType>
+      <sequence>
+        <element name="faultDtl" type="uclBasic_v1_0:errorInfoTp"/>
+      </sequence>
+    </complexType>
+  </element>
+  <!--*********************************************************************************
+		Response reference type that includes an identifier for applicant and application 
+		**********************************************************************************-->
+  <xs:complexType name="referenceTp">
+    <xs:sequence>
+      <!--Identifier that identifies the application created-->
+      <xs:element name="applicationID" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <!--Identifier that identifies the applicant created-->
+      <xs:element name="applicantID" type="xs:string" minOccurs="1" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>file:\C:\Users\cls\Desktop\New%20folder\registryws\xsd\uclbasic_v1_0.xsd</con:url><con:content><![CDATA[<!--This schema definition describes generic types that can be used in UCL
+		web services-->
+<xs:schema targetNamespace="http://ucl.ac.uk/isd/uclbasic_v1_0/" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:uclBasic_v1_0="http://ucl.ac.uk/isd/uclbasic_v1_0/">
+  <xs:annotation>
+    <xs:appinfo>v1.0: Common types to be used across services.
+            v1.1: Added error info type. This type may be included to add detail to
+            any SOAP Fault.
+            v1.2: Added person type.
+            v1.3: Renamed person type, made elements optional.
+            v1.4: Added passportTp, employerTp, appointmentTp, languageTp, countryTp, domicileTp, nationalityTp, disabilityTp, ethnicityTp, professionalAssociationTp</xs:appinfo>
+  </xs:annotation>
+  <!--Name type-->
+  <xs:complexType name="nameTp">
+    <xs:sequence>
+      <xs:element name="title" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="surname" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="forename1" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="forename2" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="forename3" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="knownAs" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--Gender Type-->
+  <xs:simpleType name="genderTp">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="M"/>
+      <xs:enumeration value="F"/>
+      <xs:enumeration value="N"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--Email Type-->
+  <xs:simpleType name="emailTp">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="[A-Za-z0-9!#-'\*\+\-/=\?\^_`\{-~]+(\.[A-Za-z0-9!#-'\*\+\-/=\?\^_`\{-~]+)*@[A-Za-z0-9!#-'\*\+\-/=\?\^_`\{-~]+(\.[A-Za-z0-9!#-'\*\+\-/=\?\^_`\{-~]+)*"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value=""/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <!--UPI type-->
+  <xs:simpleType name="upiTp">
+    <xs:restriction base="xs:string">
+      <xs:length value="7"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--Address type-->
+  <xs:complexType name="addressTp">
+    <xs:sequence>
+      <xs:element name="addressLine1" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="addressLine2" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="addressLine3" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="addressLine4" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="addressLine5" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="postCode" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="country" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--Error information type
+		code:- Generic error code for the user to interpret (e.g: 001, 002..)
+		message:- 			Error message (e.g: Business validation failure message)
+		referenceCode:- 	Application specific error messages that could be matched against
+							errors thrown on the server side code(e.g:ERR123456)
+		additionalInfo :- 	Stacktrace-->
+  <xs:complexType name="errorInfoTp">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="code" type="xs:string"/>
+      <xs:element minOccurs="1" maxOccurs="1" name="message" type="xs:string"/>
+      <xs:element minOccurs="0" maxOccurs="1" name="referenceCode" type="xs:string"/>
+      <xs:element minOccurs="0" maxOccurs="1" name="additionalInfo" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--Basic Person type-->
+  <xs:complexType name="personTp">
+    <xs:sequence>
+      <xs:element name="upi" type="uclBasic_v1_0:upiTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="mainUserID" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="fullName" type="uclBasic_v1_0:nameTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="mainEmail" type="uclBasic_v1_0:emailTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="sex" type="uclBasic_v1_0:genderTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="exDirectory" type="xs:boolean" default="false" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--Passport-->
+  <xs:complexType name="passportTp">
+    <xs:sequence>
+      <xs:element name="number" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="issueDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="expiryDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="placeOfIssue" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--Employer-->
+  <xs:complexType name="employerTp">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--Appointment-->
+  <xs:complexType name="appointmentTp">
+    <xs:sequence>
+      <xs:element name="employer" type="uclBasic_v1_0:employerTp" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="jobTitle" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="startDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="endDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="responsibilities" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--Language: ISO codes for languages-->
+  <xs:complexType name="languageTp">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--Country: Only ISO codes allowed-->
+  <xs:complexType name="countryTp">
+    <xs:sequence>
+      <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--All types below may or may not have international or country specific codes,
+        as a standard we allow only names. 
+        The service will be responsible to derive the codes are appropriate.-->
+  <!--Domicile-->
+  <xs:complexType name="domicileTp">
+    <xs:sequence>
+      <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--Nationality-->
+  <xs:complexType name="nationalityTp">
+    <xs:sequence>
+      <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--Disability-->
+  <xs:complexType name="disabilityTp">
+    <xs:sequence>
+      <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--Ethnicity-->
+  <xs:complexType name="ethnicityTp">
+    <xs:sequence>
+      <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--Professional associations a person/entity could be associated with-->
+  <xs:complexType name="professionalAssociationTp">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="referenceNo" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="validFrom" type="xs:date" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="validUntil" type="xs:date" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="additionalDetails" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>file:\C:\Users\cls\Desktop\New%20folder\registryws\xsd\registryData_v1_0.xsd</con:url><con:content><![CDATA[<xs:schema elementFormDefault="qualified" targetNamespace="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1.0" xmlns:v1_0="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1.0" xmlns:uclBasic_v1_0="http://ucl.ac.uk/isd/uclbasic_v1_0/" xmlns:regBasic_v1="http://ucl.ac.uk/isd/registry/basictypes_v1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:annotation>
+    <xs:appinfo>v1.0: First version released with types associated with student personal data, course information and related applications
+            v1.1: Added types associated with information associated with a student's academic application when submitted to UCL</xs:appinfo>
+  </xs:annotation>
+  <xs:import namespace="http://ucl.ac.uk/isd/uclbasic_v1_0/" schemaLocation="uclbasic_v1_0.xsd"/>
+  <xs:import namespace="http://ucl.ac.uk/isd/registry/basictypes_v1" schemaLocation="registryBasicTypes_v1.xsd"/>
+  <!--*********************************************
+	              COMPLEX TYPES SECTION START
+	       *********************************************-->
+  <!--*****************************************************************
+						Types defined in v1.0 start
+		Types modelled for student and applicant person and course details. These types are used to publish information about a student and applicant
+	  
+		*****************************************************************-->
+  <!--Decision Response Type-->
+  <xs:complexType name="decisionResponseTp">
+    <xs:sequence>
+      <xs:element name="decision" type="regBasic_v1:decisionCodesTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="decisionDt" type="xs:date" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="studResponse" type="regBasic_v1:responseCodesTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="studResponseDt" type="xs:date" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--Admissions Decision and response type-->
+  <xs:complexType name="admissionsdecRespTp">
+    <xs:sequence>
+      <!--These elements correspond to the UCL decision and student response code against each of the 2 stages-->
+      <xs:element name="stage1" type="v1_0:decisionResponseTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="stage2" type="v1_0:decisionResponseTp" minOccurs="0" maxOccurs="1"/>
+      <!--Final decision and response, the concatenation of decision and response codes-->
+      <xs:element name="decResp" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--Course Related Information-->
+  <xs:complexType name="courseInfoTp">
+    <xs:sequence>
+      <xs:element name="courseCode" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="graduateFlag" type="regBasic_v1:graduateFlagTp" minOccurs="1" maxOccurs="1"/>
+      <!--MS: Changed to affiliateFlag from affliateFlag-->
+      <xs:element name="affiliateFlag" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+      <!--Student on an intercalated course
+	            Changed from intercalaterFlag to intercalater and changed datatype to regBasic_v1:intercalatedTp from Boolean-->
+      <xs:element name="intercalater" type="regBasic_v1:intercalatedTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="courseBlockBeginDt" type="xs:date" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="courseBlockEndDt" type="xs:date" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="routeCode" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <!--e.g: BA European Social and Political Studies-->
+      <xs:element name="routeName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <!--e.g: Bachelor of Arts-->
+      <xs:element name="awardName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <!--Returners: A returning student would be a student who is on a continuation of their course at UCL-->
+      <xs:element name="returner" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+      <!--Finalist: Students is on their final year of the course-->
+      <xs:element name="finalist" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--Course Enrolment Information-->
+  <xs:complexType name="courseEnrolmentTp">
+    <xs:sequence>
+      <xs:element name="courseBlock" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="expectedNxtBlock" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="dateEnroled" type="xs:date" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="yearEnroled" type="xs:gYear" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="enrolmentstatus" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--Student Course Details-->
+  <xs:complexType name="studentCourseTp">
+    <xs:sequence>
+      <xs:element name="ucasNo" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="applicantID" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="courseInfo" type="v1_0:courseInfoTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="modeofAttendance" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="hesacourseStartDt" type="xs:date" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="courseExpectedEndDt" type="xs:date" minOccurs="0" maxOccurs="1"/>
+      <!--This is the date student left college. Changed name from courseEndDt to studentTerminationDt-->
+      <xs:element name="studentTerminationDt" type="xs:date" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="courseEnrolmentDetails" type="v1_0:courseEnrolmentTp" minOccurs="1" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="studentPersonalDetailsTp">
+    <xs:complexContent>
+      <xs:extension base="uclBasic_v1_0:personTp">
+        <xs:sequence>
+          <xs:element name="studentCode" type="xs:string" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="dob" type="xs:date" minOccurs="0" maxOccurs="1"/>
+          <!--Changed name from emails to studentEmailAccts 
+	            studentPersonalDetailsTp will not hold a value for mainEmail for the base type-->
+          <xs:element name="studentEmailAccts" type="regBasic_v1:studentEmailTp" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="nationality" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="domicile" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="homeAddress" type="regBasic_v1:contactDtlsTp" minOccurs="0" maxOccurs="1"/>
+          <!--Changed name from contactAddress to emergency contact address-->
+          <xs:element name="emergencyContactAddress" type="regBasic_v1:contactDtlsTp" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="nextofKin" type="regBasic_v1:nextofKinTp" minOccurs="0" maxOccurs="1"/>
+          <!--Debtor flag against the student-->
+          <xs:element name="debtFlag" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <!--Fee status-->
+          <xs:element name="feeStatus" type="regBasic_v1:feeStatusTp" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="applicantDetailsTp">
+    <xs:sequence>
+      <xs:element name="entryMethod" type="regBasic_v1:entryMethodTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="ucasNo" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="applicantID" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="applicationFormNo" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="sequenceNo" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="entryYear" type="xs:gYear" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="courseInfo" type="v1_0:courseInfoTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="modeofAttendance" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <!--MS:
+	            Change type from string to decisionResponseTp-->
+      <xs:element name="institutionResponse" type="v1_0:admissionsdecRespTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="courseAppCreateDt" type="xs:date" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="courseAppBeginDt" type="xs:date" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="clearingFlag" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="applicationStatus" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="studentInfoTp">
+    <xs:sequence>
+      <xs:element name="personalDtls" type="v1_0:studentPersonalDetailsTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="currYearAcademicDtls" type="v1_0:studentCourseTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="applicantDtls" type="v1_0:applicantDetailsTp" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--*****************************************************************
+					Types defined in v1.0 end			 
+		*****************************************************************-->
+  <!--*****************************************************************
+					Types defined in v1.1 start			 
+		*****************************************************************-->
+  <!--*****************************************************************
+			Source of Interest: Sources of interest in Registry captures where an applicant has heard about UCL	 
+		*****************************************************************-->
+  <xs:complexType name="sourceOfInterestTp">
+    <xs:sequence>
+      <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--*****************************************************************
+			Qualification examples: BA, BSc, MA, B.Eng etc	 
+		*****************************************************************-->
+  <xs:complexType name="qualificationTp">
+    <xs:sequence>
+      <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--*****************************************************************
+					English language types	 
+		*****************************************************************-->
+  <!--Qualifications in English language-->
+  <xs:simpleType name="qualificationsinEnglishTp">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="IELTS"/>
+      <xs:enumeration value="TOEFL"/>
+      <xs:enumeration value="OTHER"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--Language band score-->
+  <xs:simpleType name="languageBandScoreTp">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="OVERALL"/>
+      <xs:enumeration value="READING"/>
+      <xs:enumeration value="WRITING"/>
+      <xs:enumeration value="SPEAKING"/>
+      <xs:enumeration value="LISTENING"/>
+      <xs:enumeration value="ESSAY"/>
+      <xs:enumeration value="OTHER"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--English language score-->
+  <xs:complexType name="englishLanguageScoreTp">
+    <xs:sequence>
+      <!--Values allowed: READING, WRITING, SPEAKING, LISTENING, ESSAY, OVERALL, OTHER-->
+      <xs:element name="name" type="v1_0:languageBandScoreTp" minOccurs="1" maxOccurs="1"/>
+      <!--Score label when name is OTHER-->
+      <xs:element name="otherLanguageBand" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <!--Actual score against the name-->
+      <xs:element name="score" type="xs:string" minOccurs="1" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--English Language exam details-->
+  <xs:complexType name="englishLanguageTp">
+    <xs:sequence>
+      <!--Values expected are : TOEFL, IELTS or OTHER-->
+      <xs:element name="languageExam" type="v1_0:qualificationsinEnglishTp" minOccurs="1" maxOccurs="1"/>
+      <!--If the value in languageExam is OTHER then specify the name of the other English exam-->
+      <xs:element name="otherLanguageExam" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <!--Internet or paper based etc. Required for TOEFL.-->
+      <xs:element name="method" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="dateTaken" type="xs:date" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="languageScore" type="v1_0:englishLanguageScoreTp" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="additionalDetails" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--English Language qualification list-->
+  <xs:complexType name="englishLanguageQualificationDetailsTp">
+    <xs:sequence>
+      <xs:element name="englishLanguageQualification" type="v1_0:englishLanguageTp" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--*****************************************************************
+					Mode of attendance
+		   modeofattendanceTp.code is UCL's student record data system defined  mode of attendance code. 
+           HESA defined codes are not sufficient. UCL allows additional modes than HESA.->
+		*****************************************************************-->
+  <xs:complexType name="modeofattendanceTp">
+    <xs:sequence>
+      <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--*****************************************************************
+			Programme and its occurrence
+		*****************************************************************-->
+  <xs:complexType name="programmeTp">
+    <xs:sequence>
+      <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="modeOfAttendance" type="v1_0:modeofattendanceTp" minOccurs="1" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--A programme occurrence is essential to identify a programme uniquely in Registry-->
+  <xs:complexType name="programmeOccurrenceTp">
+    <xs:complexContent>
+      <xs:extension base="v1_0:programmeTp">
+        <xs:sequence>
+          <!--This is the identifier in SITS, which is essential to identify a programme in Student records system.-->
+          <xs:element name="identifier" type="xs:string" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="academicYear" type="xs:gYear" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="startDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="endDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <!--*****************************************************************
+					Institutions
+		*****************************************************************-->
+  <xs:complexType name="institutionTp">
+    <xs:sequence>
+      <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="country" type="uclBasic_v1_0:countryTp" minOccurs="1" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--*****************************************************************
+					Referee
+		*****************************************************************-->
+  <xs:complexType name="refereeTp">
+    <xs:sequence>
+      <xs:element name="name" type="uclBasic_v1_0:nameTp" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="position" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="contactDetails" type="regBasic_v1:contactDtlsTp" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="refereeListTp">
+    <xs:sequence>
+      <xs:element name="referee" type="v1_0:refereeTp" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--*****************************************************************
+					Qualifications associated with an application
+		*****************************************************************-->
+  <xs:complexType name="qualificationsTp">
+    <xs:sequence>
+      <xs:element name="institution" type="v1_0:institutionTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="startDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="endDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="qualification" type="v1_0:qualificationTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="grade" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="mainSubject" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="languageOfInstruction" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="qualificationDetailsTp">
+    <xs:sequence>
+      <xs:element name="qualificationDetail" type="v1_0:qualificationsTp" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--*****************************************************************
+					Appointments/Employment details
+		*****************************************************************-->
+  <xs:complexType name="employmentDetailsTp">
+    <xs:sequence>
+      <xs:element name="employer" type="uclBasic_v1_0:appointmentTp" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--*****************************************************************
+					Funding available for application
+					Scholarship available for application
+		*****************************************************************-->
+  <xs:simpleType name="fundingTp">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Self"/>
+      <xs:enumeration value="Loan"/>
+      <xs:enumeration value="Employer"/>
+      <xs:enumeration value="Sponsorship"/>
+      <xs:enumeration value="Other"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="fundingsTp">
+    <xs:sequence>
+      <xs:element name="funding" type="v1_0:fundingTp" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--Scholarship or Studentship-->
+  <xs:complexType name="scholarshipTp">
+    <xs:sequence>
+      <xs:element name="awardName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="awardValue" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="awardDuration" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="awardStatus" type="xs:string" minOccurs="1" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="scholarshipsTp">
+    <xs:sequence>
+      <xs:element name="scholarship" type="v1_0:scholarshipTp" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--*****************************************************************
+						Course application
+		*****************************************************************-->
+  <xs:complexType name="courseApplicationTp">
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="1">
+        <!--UCL's application identifier. This identifier will is expected to identify an applicant uniquely. 
+                    	Note: Registry's TRAN process is where de-duplication of applicants takes place, after which an applicant identifier is assigned.
+                    		  TRAN happens much later in the process from when applicants submit their application. This identifier will either hold Registry defined applicant id
+                    		  or a unique identifier that can be used to identify applications submitted by the same person. This in SITS system can also be the user code.-->
+        <xs:element name="uclApplicationID" type="xs:string"/>
+        <!--Application id if the application is submitted by an external system-->
+        <xs:element name="externalApplicationID" type="xs:string"/>
+      </xs:choice>
+      <!--Programme includes the programme and its occurrence. Both together identify the programme in SITS-->
+      <xs:element name="programme" type="v1_0:programmeOccurrenceTp" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="startMonth" type="xs:gMonth" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="supervisorName" type="uclBasic_v1_0:nameTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="personalStatement" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="interviewAvailability" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="fundings" type="v1_0:fundingsTp" minOccurs="0" maxOccurs="1"/>
+      <!--If funding takes a value of Other then details about which other funding set against otherFunding-->
+      <xs:element name="otherFunding" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="scholarships" type="v1_0:scholarshipsTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="sourcesOfInterest" type="v1_0:sourceOfInterestTp" minOccurs="0" maxOccurs="1"/>
+      <!--If sources of interest takes a value of Other then details about which other source of interest-->
+      <xs:element name="otherSourceofInterest" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <!--ATAS statement-->
+      <xs:element name="atasStatement" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <!--IP address  for the person who submitted the application-->
+      <xs:element name="ipAddress" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <!--Application creation date-->
+      <xs:element name="creationDate" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+      <!--Application status-->
+      <xs:element name="applicationStatus" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <!--Recommended decision: R=> Rejected C=> Conditional or any other-->
+      <xs:element name="departmentalDecision" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <!--Recommended offer conditions, this can hold details if the application is Accepted conditionally-->
+      <xs:element name="departmentalOfferConditions" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <!--Details about the referees' associated with the application-->
+      <xs:element name="refereeList" type="v1_0:refereeListTp" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--*****************************************************************
+						Registry person type.
+		*****************************************************************-->
+  <xs:complexType name="registryPersonTp">
+    <xs:complexContent>
+      <xs:extension base="uclBasic_v1_0:personTp">
+        <xs:sequence>
+          <xs:element name="dateOfBirth" type="xs:date" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="nationality" type="uclBasic_v1_0:nationalityTp" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="secondaryNationality" type="uclBasic_v1_0:nationalityTp" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="countryOfDomicile" type="uclBasic_v1_0:domicileTp" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="countryOfBirth" type="uclBasic_v1_0:countryTp" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="passport" type="uclBasic_v1_0:passportTp" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="visaRequired" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false"/>
+          <xs:element name="disability" type="uclBasic_v1_0:disabilityTp" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="ethnicity" type="uclBasic_v1_0:ethnicityTp" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="professionalAssoc" type="uclBasic_v1_0:professionalAssociationTp" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="homeAddress" type="regBasic_v1:contactDtlsTp" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="correspondenceAddress" type="regBasic_v1:contactDtlsTp" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="criminalConvictions" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false"/>
+          <xs:element name="criminalConvictionDetails" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="qualificationList" type="v1_0:qualificationDetailsTp" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="englishIsFirstLanguage" type="xs:boolean" minOccurs="0" maxOccurs="1" default="true"/>
+          <xs:element name="englishLanguageQualificationList" type="v1_0:englishLanguageQualificationDetailsTp" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="employerList" type="v1_0:employmentDetailsTp" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <!--*****************************************************************
+						Registry applicant type.
+		*****************************************************************-->
+  <xs:complexType name="applicantTp">
+    <xs:complexContent>
+      <xs:extension base="v1_0:registryPersonTp">
+        <xs:sequence>
+          <!--Applicant identifier. If present it will be used to find the applicant in Student records system-->
+          <xs:element name="applicantID" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <!--*****************************************************************
+		A application type, which is a collection of the applicant and the course application
+		Source indicates the system where the application is created first.
+		Applicant identifier is UCL student record system identifier for an applicant
+		*****************************************************************-->
+  <xs:complexType name="applicationTp">
+    <xs:sequence>
+      <!--Name for source system which calls the service to send the application  
+                 Example: PRISM, UCL-->
+      <xs:element name="source" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <!--Details about the applicant-->
+      <xs:element name="applicant" type="v1_0:applicantTp" minOccurs="1" maxOccurs="1"/>
+      <!--Details about the application-->
+      <xs:element name="courseApplication" type="v1_0:courseApplicationTp" minOccurs="1" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--*****************************************************************
+					Types defined in v1.1 end			 
+		*****************************************************************-->
+  <!--*********************************************
+              COMPLEX TYPES SECTION END
+       *********************************************-->
+</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>file:\C:\Users\cls\Desktop\New%20folder\registryws\xsd\registryBasicTypes_v1.xsd</con:url><con:content><![CDATA[<xs:schema elementFormDefault="qualified" targetNamespace="http://ucl.ac.uk/isd/registry/basictypes_v1" xmlns:regBasic_v1="http://ucl.ac.uk/isd/registry/basictypes_v1" xmlns:uclBasic_v1_0="http://ucl.ac.uk/isd/uclbasic_v1_0/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <!--v1.0: Common types moved from registryData_v1_0 to a separate XSD-->
+  <xs:import namespace="http://ucl.ac.uk/isd/uclbasic_v1_0/" schemaLocation="uclbasic_v1_0.xsd"/>
+  <!--*********************************************
+              SIMPLE TYPES SECTION START
+       *********************************************-->
+  <!--Graduate Level flag that indicates the level associated with the course.
+  	U = Under graduate course
+  	P = Post graduate course-->
+  <xs:simpleType name="graduateFlagTp">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="U"/>
+      <xs:enumeration value="P"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--Entry method type
+   U = UCAS applicants
+   D = Direct applicants-->
+  <xs:simpleType name="entryMethodTp">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="U"/>
+      <xs:enumeration value="D"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--Intercalater
+   E = External intercalaters. 
+   Note:-  These are students who come to UCL only for the intercalated course
+   U = UCL intercalaters
+   Note:-  These are students who are study in UCL for the main degree as well the intercalated course-->
+  <xs:simpleType name="intercalatedTp">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="E"/>
+      <xs:enumeration value="U"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--Fee Status   
+    H = Home
+    O = Overseas-->
+  <xs:simpleType name="feeStatusTp">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="H"/>
+      <xs:enumeration value="O"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--UCL decision codes against a course application 
+    U => Unconditional
+    R => Rejected
+    C => Conditional-->
+  <xs:simpleType name="decisionCodesTp">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="U"/>
+      <xs:enumeration value="R"/>
+      <xs:enumeration value="C"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--Student response codes against a course application 
+    I => Insurance 
+    D => Declined
+    F => Firmly accepted-->
+  <xs:simpleType name="responseCodesTp">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="I"/>
+      <xs:enumeration value="D"/>
+      <xs:enumeration value="F"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--*********************************************
+              SIMPLE TYPES SECTION END
+       *********************************************-->
+  <!--*********************************************
+              COMPLEX TYPES SECTION START
+       *********************************************-->
+  <!--Student Email ids-->
+  <xs:complexType name="studentEmailTp">
+    <xs:sequence>
+      <!--MS:Changed type name from homeEmailID to personalEmailID-->
+      <xs:element name="personalEmailID" type="uclBasic_v1_0:emailTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="institutionEmailID" type="uclBasic_v1_0:emailTp" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--Contact Details that encapsulates Address and telephone numbers.-->
+  <xs:complexType name="contactDtlsTp">
+    <xs:sequence>
+      <xs:element name="addressDtls" type="uclBasic_v1_0:addressTp" minOccurs="0" maxOccurs="1"/>
+      <!--Can be used if a system does not distinguish between different types of telephone numbers. They are stored just as contact numbers-->
+      <xs:element name="telephoneNo" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="email" type="uclBasic_v1_0:emailTp" minOccurs="0" maxOccurs="1"/>
+      <!--Systems most time need to store the telephone details in exact fields and having a list of values of type string does not help in determining accurately where they need to be stored
+       		If we implement an order logic as 1st element is Home, 2nd is Work that may always work.
+       		Given that we cannot conclusively enumerate all the telephone types having individual elements is better-->
+      <xs:element name="landline" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="work" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="mobile" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="fax" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--Next of Kin Information-->
+  <xs:complexType name="nextofKinTp">
+    <xs:sequence>
+      <xs:element name="relationship" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="name" type="uclBasic_v1_0:nameTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="address" type="regBasic_v1:contactDtlsTp" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="email" type="uclBasic_v1_0:emailTp" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/registryws/</con:endpoint><con:endpoint>http://LONN0176:8088/mockService</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="SubmitAdmissionsApplicant_v1_0" bindingOperationName="SubmitAdmissionsApplicant_v1_0" type="One-Way" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/registryws/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stud="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1.0" xmlns:ucl="http://ucl.ac.uk/isd/uclbasic_v1_0/" xmlns:bas="http://ucl.ac.uk/isd/registry/basictypes_v1">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <stud:SubmitAdmissionsApplicantRequest>
+         <stud:applicant>
+            <!--Optional:-->
+            <ucl:upi>?</ucl:upi>
+            <!--Optional:-->
+            <ucl:mainUserID>?</ucl:mainUserID>
+            <!--Optional:-->
+            <ucl:fullName>
+               <!--Optional:-->
+               <ucl:title>?</ucl:title>
+               <!--Optional:-->
+               <ucl:surname>?</ucl:surname>
+               <!--Optional:-->
+               <ucl:forename1>?</ucl:forename1>
+               <!--Optional:-->
+               <ucl:forename2>?</ucl:forename2>
+               <!--Optional:-->
+               <ucl:forename3>?</ucl:forename3>
+               <!--Optional:-->
+               <ucl:knownAs>?</ucl:knownAs>
+            </ucl:fullName>
+            <!--Optional:-->
+            <ucl:mainEmail>?</ucl:mainEmail>
+            <!--Optional:-->
+            <ucl:sex>?</ucl:sex>
+            <!--Optional:-->
+            <ucl:exDirectory>false</ucl:exDirectory>
+            <stud:dateOfBirth>?</stud:dateOfBirth>
+            <!--Optional:-->
+            <stud:nationality>
+               <ucl:code>?</ucl:code>
+               <!--Optional:-->
+               <ucl:name>?</ucl:name>
+            </stud:nationality>
+            <!--Optional:-->
+            <stud:secondaryNationality>
+               <ucl:code>?</ucl:code>
+               <!--Optional:-->
+               <ucl:name>?</ucl:name>
+            </stud:secondaryNationality>
+            <!--Optional:-->
+            <stud:countryOfDomicile>
+               <ucl:code>?</ucl:code>
+               <!--Optional:-->
+               <ucl:name>?</ucl:name>
+            </stud:countryOfDomicile>
+            <!--Optional:-->
+            <stud:countryOfBirth>
+               <ucl:code>?</ucl:code>
+               <!--Optional:-->
+               <ucl:name>?</ucl:name>
+            </stud:countryOfBirth>
+            <!--Optional:-->
+            <stud:passport>
+               <!--Optional:-->
+               <ucl:number>?</ucl:number>
+               <!--Optional:-->
+               <ucl:name>?</ucl:name>
+               <!--Optional:-->
+               <ucl:issueDate>?</ucl:issueDate>
+               <!--Optional:-->
+               <ucl:expiryDate>?</ucl:expiryDate>
+               <!--Optional:-->
+               <ucl:placeOfIssue>?</ucl:placeOfIssue>
+            </stud:passport>
+            <!--Optional:-->
+            <stud:visaRequired>false</stud:visaRequired>
+            <!--Optional:-->
+            <stud:disability>
+               <ucl:code>?</ucl:code>
+               <!--Optional:-->
+               <ucl:name>?</ucl:name>
+            </stud:disability>
+            <!--Optional:-->
+            <stud:ethnicity>
+               <ucl:code>?</ucl:code>
+               <!--Optional:-->
+               <ucl:name>?</ucl:name>
+            </stud:ethnicity>
+            <!--Optional:-->
+            <stud:professionalAssoc>
+               <!--Optional:-->
+               <ucl:name>?</ucl:name>
+               <!--Optional:-->
+               <ucl:referenceNo>?</ucl:referenceNo>
+               <!--Optional:-->
+               <ucl:validFrom>?</ucl:validFrom>
+               <!--Optional:-->
+               <ucl:validUntil>?</ucl:validUntil>
+               <!--Optional:-->
+               <ucl:additionalDetails>?</ucl:additionalDetails>
+            </stud:professionalAssoc>
+            <stud:homeAddress>
+               <!--Optional:-->
+               <bas:addressDtls>
+                  <!--Optional:-->
+                  <ucl:addressLine1>?</ucl:addressLine1>
+                  <!--Optional:-->
+                  <ucl:addressLine2>?</ucl:addressLine2>
+                  <!--Optional:-->
+                  <ucl:addressLine3>?</ucl:addressLine3>
+                  <!--Optional:-->
+                  <ucl:addressLine4>?</ucl:addressLine4>
+                  <!--Optional:-->
+                  <ucl:addressLine5>?</ucl:addressLine5>
+                  <!--Optional:-->
+                  <ucl:postCode>?</ucl:postCode>
+                  <!--Optional:-->
+                  <ucl:country>?</ucl:country>
+               </bas:addressDtls>
+               <!--Zero or more repetitions:-->
+               <bas:telephoneNo>?</bas:telephoneNo>
+               <!--Optional:-->
+               <bas:email>?</bas:email>
+               <!--Optional:-->
+               <bas:landline>?</bas:landline>
+               <!--Optional:-->
+               <bas:work>?</bas:work>
+               <!--Optional:-->
+               <bas:mobile>?</bas:mobile>
+               <!--Optional:-->
+               <bas:fax>?</bas:fax>
+            </stud:homeAddress>
+            <!--Optional:-->
+            <stud:correspondenceAddress>
+               <!--Optional:-->
+               <bas:addressDtls>
+                  <!--Optional:-->
+                  <ucl:addressLine1>?</ucl:addressLine1>
+                  <!--Optional:-->
+                  <ucl:addressLine2>?</ucl:addressLine2>
+                  <!--Optional:-->
+                  <ucl:addressLine3>?</ucl:addressLine3>
+                  <!--Optional:-->
+                  <ucl:addressLine4>?</ucl:addressLine4>
+                  <!--Optional:-->
+                  <ucl:addressLine5>?</ucl:addressLine5>
+                  <!--Optional:-->
+                  <ucl:postCode>?</ucl:postCode>
+                  <!--Optional:-->
+                  <ucl:country>?</ucl:country>
+               </bas:addressDtls>
+               <!--Zero or more repetitions:-->
+               <bas:telephoneNo>?</bas:telephoneNo>
+               <!--Optional:-->
+               <bas:email>?</bas:email>
+               <!--Optional:-->
+               <bas:landline>?</bas:landline>
+               <!--Optional:-->
+               <bas:work>?</bas:work>
+               <!--Optional:-->
+               <bas:mobile>?</bas:mobile>
+               <!--Optional:-->
+               <bas:fax>?</bas:fax>
+            </stud:correspondenceAddress>
+            <!--Optional:-->
+            <stud:criminalConvictions>false</stud:criminalConvictions>
+            <!--Optional:-->
+            <stud:criminalConvictionDetails>?</stud:criminalConvictionDetails>
+            <!--Optional:-->
+            <stud:qualificationList>
+               <!--Zero or more repetitions:-->
+               <stud:qualificationDetail>
+                  <!--Optional:-->
+                  <stud:institution>
+                     <stud:code>?</stud:code>
+                     <!--Optional:-->
+                     <stud:name>?</stud:name>
+                     <stud:country>
+                        <ucl:code>?</ucl:code>
+                        <!--Optional:-->
+                        <ucl:name>?</ucl:name>
+                     </stud:country>
+                  </stud:institution>
+                  <!--Optional:-->
+                  <stud:startDate>?</stud:startDate>
+                  <!--Optional:-->
+                  <stud:endDate>?</stud:endDate>
+                  <!--Optional:-->
+                  <stud:qualification>
+                     <stud:code>?</stud:code>
+                     <!--Optional:-->
+                     <stud:name>?</stud:name>
+                  </stud:qualification>
+                  <!--Optional:-->
+                  <stud:grade>?</stud:grade>
+                  <!--Optional:-->
+                  <stud:mainSubject>?</stud:mainSubject>
+                  <!--Optional:-->
+                  <stud:languageOfInstruction>?</stud:languageOfInstruction>
+               </stud:qualificationDetail>
+            </stud:qualificationList>
+            <!--Optional:-->
+            <stud:englishIsFirstLanguage>true</stud:englishIsFirstLanguage>
+            <!--Optional:-->
+            <stud:englishLanguageQualificationList>
+               <!--Zero or more repetitions:-->
+               <stud:englishLanguageQualification>
+                  <stud:languageExam>?</stud:languageExam>
+                  <!--Optional:-->
+                  <stud:otherLanguageExam>?</stud:otherLanguageExam>
+                  <!--Optional:-->
+                  <stud:method>?</stud:method>
+                  <stud:dateTaken>?</stud:dateTaken>
+                  <!--Zero or more repetitions:-->
+                  <stud:languageScore>
+                     <stud:name>?</stud:name>
+                     <!--Optional:-->
+                     <stud:otherLanguageBand>?</stud:otherLanguageBand>
+                     <stud:score>?</stud:score>
+                  </stud:languageScore>
+                  <!--Optional:-->
+                  <stud:additionalDetails>?</stud:additionalDetails>
+               </stud:englishLanguageQualification>
+            </stud:englishLanguageQualificationList>
+            <!--Optional:-->
+            <stud:employerList>
+               <!--Zero or more repetitions:-->
+               <stud:employer>
+                  <ucl:employer>
+                     <!--Optional:-->
+                     <ucl:name>?</ucl:name>
+                  </ucl:employer>
+                  <!--Optional:-->
+                  <ucl:jobTitle>?</ucl:jobTitle>
+                  <!--Optional:-->
+                  <ucl:startDate>?</ucl:startDate>
+                  <!--Optional:-->
+                  <ucl:endDate>?</ucl:endDate>
+                  <!--Optional:-->
+                  <ucl:responsibilities>?</ucl:responsibilities>
+               </stud:employer>
+            </stud:employerList>
+            <!--Optional:-->
+            <stud:applicantID>?</stud:applicantID>
+         </stud:applicant>
+      </stud:SubmitAdmissionsApplicantRequest>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1/admissionsApplicationsService_v1_0/SubmitAdmissionsApplicant_v1_0Request"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="SubmitAdmissionsApplication_v1_0" bindingOperationName="SubmitAdmissionsApplication_v1_0" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/registryws/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stud="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1.0" xmlns:ucl="http://ucl.ac.uk/isd/uclbasic_v1_0/" xmlns:bas="http://ucl.ac.uk/isd/registry/basictypes_v1">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <stud:SubmitAdmissionsApplicationRequest>
+         <stud:application>
+            <stud:source>?</stud:source>
+            <stud:applicant>
+               <!--Optional:-->
+               <ucl:upi>?</ucl:upi>
+               <!--Optional:-->
+               <ucl:mainUserID>?</ucl:mainUserID>
+               <!--Optional:-->
+               <ucl:fullName>
+                  <!--Optional:-->
+                  <ucl:title>?</ucl:title>
+                  <!--Optional:-->
+                  <ucl:surname>?</ucl:surname>
+                  <!--Optional:-->
+                  <ucl:forename1>?</ucl:forename1>
+                  <!--Optional:-->
+                  <ucl:forename2>?</ucl:forename2>
+                  <!--Optional:-->
+                  <ucl:forename3>?</ucl:forename3>
+                  <!--Optional:-->
+                  <ucl:knownAs>?</ucl:knownAs>
+               </ucl:fullName>
+               <!--Optional:-->
+               <ucl:mainEmail>?</ucl:mainEmail>
+               <!--Optional:-->
+               <ucl:sex>?</ucl:sex>
+               <!--Optional:-->
+               <ucl:exDirectory>false</ucl:exDirectory>
+               <stud:dateOfBirth>?</stud:dateOfBirth>
+               <!--Optional:-->
+               <stud:nationality>
+                  <ucl:code>?</ucl:code>
+                  <!--Optional:-->
+                  <ucl:name>?</ucl:name>
+               </stud:nationality>
+               <!--Optional:-->
+               <stud:secondaryNationality>
+                  <ucl:code>?</ucl:code>
+                  <!--Optional:-->
+                  <ucl:name>?</ucl:name>
+               </stud:secondaryNationality>
+               <!--Optional:-->
+               <stud:countryOfDomicile>
+                  <ucl:code>?</ucl:code>
+                  <!--Optional:-->
+                  <ucl:name>?</ucl:name>
+               </stud:countryOfDomicile>
+               <!--Optional:-->
+               <stud:countryOfBirth>
+                  <ucl:code>?</ucl:code>
+                  <!--Optional:-->
+                  <ucl:name>?</ucl:name>
+               </stud:countryOfBirth>
+               <!--Optional:-->
+               <stud:passport>
+                  <!--Optional:-->
+                  <ucl:number>?</ucl:number>
+                  <!--Optional:-->
+                  <ucl:name>?</ucl:name>
+                  <!--Optional:-->
+                  <ucl:issueDate>?</ucl:issueDate>
+                  <!--Optional:-->
+                  <ucl:expiryDate>?</ucl:expiryDate>
+                  <!--Optional:-->
+                  <ucl:placeOfIssue>?</ucl:placeOfIssue>
+               </stud:passport>
+               <!--Optional:-->
+               <stud:visaRequired>false</stud:visaRequired>
+               <!--Optional:-->
+               <stud:disability>
+                  <ucl:code>?</ucl:code>
+                  <!--Optional:-->
+                  <ucl:name>?</ucl:name>
+               </stud:disability>
+               <!--Optional:-->
+               <stud:ethnicity>
+                  <ucl:code>?</ucl:code>
+                  <!--Optional:-->
+                  <ucl:name>?</ucl:name>
+               </stud:ethnicity>
+               <!--Optional:-->
+               <stud:professionalAssoc>
+                  <!--Optional:-->
+                  <ucl:name>?</ucl:name>
+                  <!--Optional:-->
+                  <ucl:referenceNo>?</ucl:referenceNo>
+                  <!--Optional:-->
+                  <ucl:validFrom>?</ucl:validFrom>
+                  <!--Optional:-->
+                  <ucl:validUntil>?</ucl:validUntil>
+                  <!--Optional:-->
+                  <ucl:additionalDetails>?</ucl:additionalDetails>
+               </stud:professionalAssoc>
+               <stud:homeAddress>
+                  <!--Optional:-->
+                  <bas:addressDtls>
+                     <!--Optional:-->
+                     <ucl:addressLine1>?</ucl:addressLine1>
+                     <!--Optional:-->
+                     <ucl:addressLine2>?</ucl:addressLine2>
+                     <!--Optional:-->
+                     <ucl:addressLine3>?</ucl:addressLine3>
+                     <!--Optional:-->
+                     <ucl:addressLine4>?</ucl:addressLine4>
+                     <!--Optional:-->
+                     <ucl:addressLine5>?</ucl:addressLine5>
+                     <!--Optional:-->
+                     <ucl:postCode>?</ucl:postCode>
+                     <!--Optional:-->
+                     <ucl:country>?</ucl:country>
+                  </bas:addressDtls>
+                  <!--Zero or more repetitions:-->
+                  <bas:telephoneNo>?</bas:telephoneNo>
+                  <!--Optional:-->
+                  <bas:email>?</bas:email>
+                  <!--Optional:-->
+                  <bas:landline>?</bas:landline>
+                  <!--Optional:-->
+                  <bas:work>?</bas:work>
+                  <!--Optional:-->
+                  <bas:mobile>?</bas:mobile>
+                  <!--Optional:-->
+                  <bas:fax>?</bas:fax>
+               </stud:homeAddress>
+               <!--Optional:-->
+               <stud:correspondenceAddress>
+                  <!--Optional:-->
+                  <bas:addressDtls>
+                     <!--Optional:-->
+                     <ucl:addressLine1>?</ucl:addressLine1>
+                     <!--Optional:-->
+                     <ucl:addressLine2>?</ucl:addressLine2>
+                     <!--Optional:-->
+                     <ucl:addressLine3>?</ucl:addressLine3>
+                     <!--Optional:-->
+                     <ucl:addressLine4>?</ucl:addressLine4>
+                     <!--Optional:-->
+                     <ucl:addressLine5>?</ucl:addressLine5>
+                     <!--Optional:-->
+                     <ucl:postCode>?</ucl:postCode>
+                     <!--Optional:-->
+                     <ucl:country>?</ucl:country>
+                  </bas:addressDtls>
+                  <!--Zero or more repetitions:-->
+                  <bas:telephoneNo>?</bas:telephoneNo>
+                  <!--Optional:-->
+                  <bas:email>?</bas:email>
+                  <!--Optional:-->
+                  <bas:landline>?</bas:landline>
+                  <!--Optional:-->
+                  <bas:work>?</bas:work>
+                  <!--Optional:-->
+                  <bas:mobile>?</bas:mobile>
+                  <!--Optional:-->
+                  <bas:fax>?</bas:fax>
+               </stud:correspondenceAddress>
+               <!--Optional:-->
+               <stud:criminalConvictions>false</stud:criminalConvictions>
+               <!--Optional:-->
+               <stud:criminalConvictionDetails>?</stud:criminalConvictionDetails>
+               <!--Optional:-->
+               <stud:qualificationList>
+                  <!--Zero or more repetitions:-->
+                  <stud:qualificationDetail>
+                     <!--Optional:-->
+                     <stud:institution>
+                        <stud:code>?</stud:code>
+                        <!--Optional:-->
+                        <stud:name>?</stud:name>
+                        <stud:country>
+                           <ucl:code>?</ucl:code>
+                           <!--Optional:-->
+                           <ucl:name>?</ucl:name>
+                        </stud:country>
+                     </stud:institution>
+                     <!--Optional:-->
+                     <stud:startDate>?</stud:startDate>
+                     <!--Optional:-->
+                     <stud:endDate>?</stud:endDate>
+                     <!--Optional:-->
+                     <stud:qualification>
+                        <stud:code>?</stud:code>
+                        <!--Optional:-->
+                        <stud:name>?</stud:name>
+                     </stud:qualification>
+                     <!--Optional:-->
+                     <stud:grade>?</stud:grade>
+                     <!--Optional:-->
+                     <stud:mainSubject>?</stud:mainSubject>
+                     <!--Optional:-->
+                     <stud:languageOfInstruction>?</stud:languageOfInstruction>
+                  </stud:qualificationDetail>
+               </stud:qualificationList>
+               <!--Optional:-->
+               <stud:englishIsFirstLanguage>true</stud:englishIsFirstLanguage>
+               <!--Optional:-->
+               <stud:englishLanguageQualificationList>
+                  <!--Zero or more repetitions:-->
+                  <stud:englishLanguageQualification>
+                     <stud:languageExam>?</stud:languageExam>
+                     <!--Optional:-->
+                     <stud:otherLanguageExam>?</stud:otherLanguageExam>
+                     <!--Optional:-->
+                     <stud:method>?</stud:method>
+                     <stud:dateTaken>?</stud:dateTaken>
+                     <!--Zero or more repetitions:-->
+                     <stud:languageScore>
+                        <stud:name>?</stud:name>
+                        <!--Optional:-->
+                        <stud:otherLanguageBand>?</stud:otherLanguageBand>
+                        <stud:score>?</stud:score>
+                     </stud:languageScore>
+                     <!--Optional:-->
+                     <stud:additionalDetails>?</stud:additionalDetails>
+                  </stud:englishLanguageQualification>
+               </stud:englishLanguageQualificationList>
+               <!--Optional:-->
+               <stud:employerList>
+                  <!--Zero or more repetitions:-->
+                  <stud:employer>
+                     <ucl:employer>
+                        <!--Optional:-->
+                        <ucl:name>?</ucl:name>
+                     </ucl:employer>
+                     <!--Optional:-->
+                     <ucl:jobTitle>?</ucl:jobTitle>
+                     <!--Optional:-->
+                     <ucl:startDate>?</ucl:startDate>
+                     <!--Optional:-->
+                     <ucl:endDate>?</ucl:endDate>
+                     <!--Optional:-->
+                     <ucl:responsibilities>?</ucl:responsibilities>
+                  </stud:employer>
+               </stud:employerList>
+               <!--Optional:-->
+               <stud:applicantID>?</stud:applicantID>
+            </stud:applicant>
+            <stud:courseApplication>
+               <!--You have a CHOICE of the next 2 items at this level-->
+               <stud:uclApplicationID>?</stud:uclApplicationID>
+               <stud:externalApplicationID>?</stud:externalApplicationID>
+               <stud:programme>
+                  <stud:code>?</stud:code>
+                  <!--Optional:-->
+                  <stud:name>?</stud:name>
+                  <stud:modeOfAttendance>
+                     <stud:code>?</stud:code>
+                     <!--Optional:-->
+                     <stud:name>?</stud:name>
+                  </stud:modeOfAttendance>
+                  <stud:identifier>?</stud:identifier>
+                  <stud:academicYear>?</stud:academicYear>
+                  <!--Optional:-->
+                  <stud:startDate>?</stud:startDate>
+                  <!--Optional:-->
+                  <stud:endDate>?</stud:endDate>
+               </stud:programme>
+               <!--Optional:-->
+               <stud:startMonth>?</stud:startMonth>
+               <!--Optional:-->
+               <stud:supervisorName>
+                  <!--Optional:-->
+                  <ucl:title>?</ucl:title>
+                  <!--Optional:-->
+                  <ucl:surname>?</ucl:surname>
+                  <!--Optional:-->
+                  <ucl:forename1>?</ucl:forename1>
+                  <!--Optional:-->
+                  <ucl:forename2>?</ucl:forename2>
+                  <!--Optional:-->
+                  <ucl:forename3>?</ucl:forename3>
+                  <!--Optional:-->
+                  <ucl:knownAs>?</ucl:knownAs>
+               </stud:supervisorName>
+               <!--Optional:-->
+               <stud:personalStatement>?</stud:personalStatement>
+               <!--Optional:-->
+               <stud:interviewAvailability>?</stud:interviewAvailability>
+               <!--Optional:-->
+               <stud:fundings>
+                  <!--Zero or more repetitions:-->
+                  <stud:funding>?</stud:funding>
+               </stud:fundings>
+               <!--Optional:-->
+               <stud:otherFunding>?</stud:otherFunding>
+               <!--Optional:-->
+               <stud:scholarships>
+                  <!--Zero or more repetitions:-->
+                  <stud:scholarship>
+                     <stud:awardName>?</stud:awardName>
+                     <!--Optional:-->
+                     <stud:awardValue>?</stud:awardValue>
+                     <!--Optional:-->
+                     <stud:awardDuration>?</stud:awardDuration>
+                     <stud:awardStatus>?</stud:awardStatus>
+                  </stud:scholarship>
+               </stud:scholarships>
+               <!--Optional:-->
+               <stud:sourcesOfInterest>
+                  <stud:code>?</stud:code>
+                  <!--Optional:-->
+                  <stud:name>?</stud:name>
+               </stud:sourcesOfInterest>
+               <!--Optional:-->
+               <stud:otherSourceofInterest>?</stud:otherSourceofInterest>
+               <!--Optional:-->
+               <stud:atasStatement>?</stud:atasStatement>
+               <!--Optional:-->
+               <stud:ipAddress>?</stud:ipAddress>
+               <!--Optional:-->
+               <stud:creationDate>?</stud:creationDate>
+               <!--Optional:-->
+               <stud:applicationStatus>?</stud:applicationStatus>
+               <!--Optional:-->
+               <stud:departmentalDecision>?</stud:departmentalDecision>
+               <!--Optional:-->
+               <stud:departmentalOfferConditions>?</stud:departmentalOfferConditions>
+               <!--Optional:-->
+               <stud:refereeList>
+                  <!--Zero or more repetitions:-->
+                  <stud:referee>
+                     <stud:name>
+                        <!--Optional:-->
+                        <ucl:title>?</ucl:title>
+                        <!--Optional:-->
+                        <ucl:surname>?</ucl:surname>
+                        <!--Optional:-->
+                        <ucl:forename1>?</ucl:forename1>
+                        <!--Optional:-->
+                        <ucl:forename2>?</ucl:forename2>
+                        <!--Optional:-->
+                        <ucl:forename3>?</ucl:forename3>
+                        <!--Optional:-->
+                        <ucl:knownAs>?</ucl:knownAs>
+                     </stud:name>
+                     <!--Optional:-->
+                     <stud:position>?</stud:position>
+                     <!--Optional:-->
+                     <stud:contactDetails>
+                        <!--Optional:-->
+                        <bas:addressDtls>
+                           <!--Optional:-->
+                           <ucl:addressLine1>?</ucl:addressLine1>
+                           <!--Optional:-->
+                           <ucl:addressLine2>?</ucl:addressLine2>
+                           <!--Optional:-->
+                           <ucl:addressLine3>?</ucl:addressLine3>
+                           <!--Optional:-->
+                           <ucl:addressLine4>?</ucl:addressLine4>
+                           <!--Optional:-->
+                           <ucl:addressLine5>?</ucl:addressLine5>
+                           <!--Optional:-->
+                           <ucl:postCode>?</ucl:postCode>
+                           <!--Optional:-->
+                           <ucl:country>?</ucl:country>
+                        </bas:addressDtls>
+                        <!--Zero or more repetitions:-->
+                        <bas:telephoneNo>?</bas:telephoneNo>
+                        <!--Optional:-->
+                        <bas:email>?</bas:email>
+                        <!--Optional:-->
+                        <bas:landline>?</bas:landline>
+                        <!--Optional:-->
+                        <bas:work>?</bas:work>
+                        <!--Optional:-->
+                        <bas:mobile>?</bas:mobile>
+                        <!--Optional:-->
+                        <bas:fax>?</bas:fax>
+                     </stud:contactDetails>
+                  </stud:referee>
+               </stud:refereeList>
+            </stud:courseApplication>
+         </stud:application>
+      </stud:SubmitAdmissionsApplicationRequest>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1/admissionsApplicationsService_v1_0/SubmitAdmissionsApplication_v1_0Request"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:mockService port="8088" path="/mockService" host="LONN0176" name="porticoMockService"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.mock.WsdlMockService@require-soap-action">false</con:setting></con:settings><con:mockOperation name="SubmitAdmissionsApplicant_v1_0" interface="admissionsApplicationsServiceSoap11_v1_0" operation="SubmitAdmissionsApplicant_v1_0"><con:settings/><con:dispatchStyle>SEQUENCE</con:dispatchStyle><con:defaultResponse>Response 1</con:defaultResponse><con:response name="Response 1" encoding="UTF-8"><con:settings/><con:responseContent/><con:wsaConfig mustUnderstand="NONE" version="200508"/></con:response><con:dispatchConfig/></con:mockOperation><con:mockOperation name="SubmitAdmissionsApplication_v1_0" interface="admissionsApplicationsServiceSoap11_v1_0" operation="SubmitAdmissionsApplication_v1_0"><con:settings/><con:dispatchStyle>SEQUENCE</con:dispatchStyle><con:defaultResponse>Response 1</con:defaultResponse><con:response name="Response 1" encoding="UTF-8"><con:settings/><con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stud="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1.0">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <stud:AdmissionsApplicationResponse>
+         <stud:reference>
+            <stud:applicationID>1111</stud:applicationID>
+            <stud:applicantID>2222</stud:applicantID>
+         </stud:reference>
+      </stud:AdmissionsApplicationResponse>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1/admissionsApplicationsService_v1_0/SubmitAdmissionsApplication_v1_0Response"/></con:response><con:dispatchConfig/></con:mockOperation><con:properties/></con:mockService><con:properties/><con:wssContainer/></con:soapui-project>

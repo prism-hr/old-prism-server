@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.rest.domain.application;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.rest.domain.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.UserRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -52,6 +53,8 @@ public class ApplicationRepresentation {
     private ApplicationDocumentRepresentation document;
 
     private AdditionalInformationRepresentation additionalInformation;
+
+    private List<CommentRepresentation> comments;
 
     public Integer getId() {
         return id;
@@ -221,29 +224,17 @@ public class ApplicationRepresentation {
         this.additionalInformation = additionalInformation;
     }
 
-    public static class ProjectRepresentation {
-
-        private String title;
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
+    public List<CommentRepresentation> getComments() {
+        return comments;
     }
 
-    public static class ProgramRepresentation {
-
-        private String title;
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
+    public void setComments(List<CommentRepresentation> comments) {
+        this.comments = comments;
     }
+
+    public String getResourceType() {
+        return "APPLICATION";
+    }
+
+
 }

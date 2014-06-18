@@ -7,9 +7,7 @@ import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.rest.domain.application.ApplicationListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.application.ApplicationRepresentation;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.*;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +20,13 @@ import java.util.List;
 public class ApplicationResource {
 
     @Autowired
-    private ApplicationService applicationService;
+    private EntityService entityService;
+
+    @Autowired
+    private ResourceService resourceService;
+
+    @Autowired
+    private CommentService commentService;
 
     @Autowired
     private UserService userService;
@@ -37,12 +41,13 @@ public class ApplicationResource {
     @Transactional
     public ApplicationRepresentation getApplication(@PathVariable Integer id) {
         User currentUser = userService.getCurrentUser();
-        Application application = applicationService.getById(id);
+        Application application = entityService.getById(Application.class, id);
         if (application == null) {
             return null;
         }
 
         ApplicationRepresentation representation = dozerBeanMapper.map(application, ApplicationRepresentation.class);
+        commentService.getVisibleComments(currentUser, application);
         List<PrismAction> permittedActions = actionService.getPermittedActions(application, currentUser);
         representation.getActions().addAll(permittedActions);
         return representation;
@@ -50,11 +55,12 @@ public class ApplicationResource {
 
     @RequestMapping(method = RequestMethod.GET)
     public List<ApplicationListRowRepresentation> getApplications(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
-        List<ResourceConsoleListRowDTO> consoleListBlock = applicationService.getConsoleListBlock(page, perPage);
+        List<ResourceConsoleListRowDTO> consoleListBlock = resourceService.getConsoleListBlock(Application.class, page, perPage);
         List<ApplicationListRowRepresentation> representations = Lists.newArrayList();
         for (ResourceConsoleListRowDTO appDTO : consoleListBlock) {
             representations.add(dozerBeanMapper.map(appDTO, ApplicationListRowRepresentation.class));
         }
         return representations;
     }
+
 }

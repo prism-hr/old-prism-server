@@ -22,4 +22,4 @@ WHERE USER.parent_user_id = ${user.id?c}
 	AND ${queryScopeUpper}.id = ${queryScopeUpper}_LIST_BLOCK.id
 	AND ${queryScopeUpper}.state_id = STATE_ACTION.state_id
 	AND STATE.scope_id = "${queryScopeUpper}"
-	AND ACTION.action_type_id = "USER_INVOCATION"
+	AND ACTION.action_type = "USER_INVOCATION"

@@ -50,6 +50,6 @@ FROM (
 	WHERE ${queryScopeUpper}.updated_timestamp >= CURRENT_TIMESTAMP - INTERVAL ${queryRangeValue} ${queryRangeUnit}
 	GROUP BY ${queryScopeUpper}.id
 	ORDER BY ${queryScopeUpper}_LIST_PERMISSION.raises_urgent_flag DESC, ${queryScopeUpper}.updated_timestamp DESC
-	LIMIT ${rowIndex}, ${rowCount}) 
+	LIMIT ${rowIndex?c}, ${rowCount?c}) 
 AS ${queryScopeUpper}_LIST_BLOCK;
 </@compress>

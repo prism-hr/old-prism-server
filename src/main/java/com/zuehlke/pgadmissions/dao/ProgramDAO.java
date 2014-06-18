@@ -14,6 +14,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
@@ -132,20 +132,6 @@ public class ProgramDAO {
         }
     }
 
-    public List<ProgramType> getProgamTypes() {
-        return (List<ProgramType>) sessionFactory.getCurrentSession().createCriteria(ProgramType.class).list();
-    }
-
-    public ProgramType getProgramTypeById(ProgramType programTypeId) {
-        return (ProgramType) sessionFactory.getCurrentSession().createCriteria(ProgramType.class).add(Restrictions.eq("id", programTypeId)).uniqueResult();
-    }
-
-    public Integer getDefaultStudyDurationForProgramType(ProgramType programTypeId) {
-        return (Integer) sessionFactory.getCurrentSession().createCriteria(ProgramType.class).setProjection(Projections.property("defaultStudyDuration"))
-                .add(Restrictions.eq("id", programTypeId)).uniqueResult();
-    }
-
-
     public List<Program> getEnabledProgramsForWhichUserHasProjectAuthority(User user) {
         return sessionFactory
                 .getCurrentSession()
@@ -193,11 +179,12 @@ public class ProgramDAO {
     }
 
     public List<StudyOption> getAvailableStudyOptions(Program program) {
-        Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
         return (List<StudyOption>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
-                .setProjection(Projections.groupProperty("studyOption")).createAlias("studyOption", "studyOption", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("program", program)).add(Restrictions.eq("enabled", true)).add(Restrictions.ge("applicationDeadline", today))
-                .addOrder(Order.asc("studyOption.displayName")).list();
+                .setProjection(Projections.groupProperty("studyOption")) //
+                .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("program", program)).add(Restrictions.eq("enabled", true)) //
+                .add(Restrictions.ge("applicationDeadline", new DateTime())) //
+                .addOrder(Order.asc("studyOption.name")).list();
     }
 
     public List<ProgramInstance> getActiveProgramInstancesForStudyOption(Program program, StudyOption studyOption) {
@@ -208,8 +195,8 @@ public class ProgramDAO {
     }
 
     public List<StudyOption> getAvailableStudyOptions() {
-        // TODO Auto-generated method stub
-        return null;
+        return (List<StudyOption>) sessionFactory.getCurrentSession().createCriteria(StudyOption.class) //
+                .addOrder(Order.asc("name")).list();
     }
 
     public ProgramInstance getProgramInstance(Program program, StudyOption studyOption, Date date) {

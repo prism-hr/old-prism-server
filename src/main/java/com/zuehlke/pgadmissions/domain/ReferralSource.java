@@ -4,27 +4,27 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
-@DiscriminatorValue("DISABILITY")
-public class Disability extends ImportedEntity {
+@DiscriminatorValue("REFERRAL_SOURCE")
+public class ReferralSource extends ImportedEntity {
 
-    public Disability withInstitution(Institution institution) {
+    public ReferralSource withInstitution(Institution institution) {
         setInstitution(institution);
         return this;
     }
     
-    public Disability withCode(String code) {
+    public ReferralSource withCode(String code) {
         setCode(code);
         return this;
     }
     
-    public Disability withName(String name) {
+    public ReferralSource withName(String name) {
         setName(name);
         return this;
     }
     
-    public Disability withEnabled(boolean enabled) {
+    public ReferralSource withEnabled(boolean enabled) {
         setEnabled(enabled);
         return this;
     }
-    
+
 }

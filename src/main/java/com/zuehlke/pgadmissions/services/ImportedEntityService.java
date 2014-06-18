@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.QualificationType;
-import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
+import com.zuehlke.pgadmissions.domain.ReferralSource;
 
 @Service
 @Transactional
@@ -43,11 +43,11 @@ public class ImportedEntityService {
         return importedEntityDAO.getById(id);
     }
 
-    public List<SourcesOfInterest> getAllSourcesOfInterest() {
-        return importedEntityDAO.getImportedEntities(SourcesOfInterest.class);
+    public List<ReferralSource> getAllSourcesOfInterest() {
+        return importedEntityDAO.getImportedEntities(ReferralSource.class);
     }
 
-    public SourcesOfInterest getSourceOfInterestById(Integer id) {
+    public ReferralSource getSourceOfInterestById(Integer id) {
         return importedEntityDAO.getById(id);
     }
 

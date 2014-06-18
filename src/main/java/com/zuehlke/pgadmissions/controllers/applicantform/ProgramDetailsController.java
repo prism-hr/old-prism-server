@@ -22,9 +22,9 @@ import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
-import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
-import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
+import com.zuehlke.pgadmissions.domain.ReferralSource;
+import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LocalDatePropertyEditor;
@@ -64,7 +64,7 @@ public class ProgramDetailsController {
     private SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor;
 
     @Autowired
-    private EntityPropertyEditor<SourcesOfInterest> sourcesOfInterestPropertyEditor;
+    private EntityPropertyEditor<ReferralSource> sourcesOfInterestPropertyEditor;
 
     @RequestMapping(value = "/getProgrammeDetails", method = RequestMethod.GET)
     public String getProgrammeDetailsView(@ModelAttribute Application applicationForm, ModelMap modelMap) {
@@ -93,7 +93,7 @@ public class ProgramDetailsController {
     }
 
     @ModelAttribute("sourcesOfInterests")
-    public List<SourcesOfInterest> getSourcesOfInterests() {
+    public List<ReferralSource> getSourcesOfInterests() {
         return importedEntityService.getAllSourcesOfInterest();
     }
 
@@ -110,7 +110,7 @@ public class ProgramDetailsController {
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(Application.class, applicationFormPropertyEditor);
         binder.registerCustomEditor(ApplicationSupervisor.class, supervisorJSONPropertyEditor);
-        binder.registerCustomEditor(SourcesOfInterest.class, sourcesOfInterestPropertyEditor);
+        binder.registerCustomEditor(ReferralSource.class, sourcesOfInterestPropertyEditor);
     }
 
     private String returnView(ModelMap modelMap, ApplicationProgramDetails programDetails) {

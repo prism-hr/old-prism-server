@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismRole;
@@ -78,11 +77,6 @@ public class ProspectusController {
     @ModelAttribute("advertisingDeadlines")
     public List<Integer> getAdvertisingDeadlines() {
         return programInstanceService.getPossibleAdvertisingDeadlineYears();
-    }
-
-    @ModelAttribute("programTypes")
-    public List<ProgramType> getProgramTypes() {
-        return programsService.getProgramTypes();
     }
 
 }

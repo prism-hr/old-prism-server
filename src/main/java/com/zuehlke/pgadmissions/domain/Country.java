@@ -7,6 +7,11 @@ import javax.persistence.Entity;
 @DiscriminatorValue("COUNTRY")
 public class Country extends ImportedEntity {
 
+    public Country withInstitution(Institution institution) {
+        setInstitution(institution);
+        return this;
+    }
+    
     public Country withCode(String code) {
         setCode(code);
         return this;
@@ -14,6 +19,11 @@ public class Country extends ImportedEntity {
     
     public Country withName(String name) {
         setName(name);
+        return this;
+    }
+    
+    public Country withEnabled(boolean enabled) {
+        setEnabled(enabled);
         return this;
     }
     

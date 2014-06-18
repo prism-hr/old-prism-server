@@ -2,34 +2,21 @@ package com.zuehlke.pgadmissions.domain.enums;
 
 public enum PrismProgramType {
     
-    MRES("MRes"),
-    MSC("MSc"),
-    RESEARCH_DEGREE("Research Degree"),
-    ENGINEERING_DOCTORATE("Engineering Doctorate"),
-    INTERNSHIP("Internship"),
-    VISITING_RESEARCH("Visiting Research");
-    
-    private String displayValue;
-    
-    PrismProgramType(String displayValue) {
-        this.setDisplayValue(displayValue);
-    }
-    
-    public String getDisplayValue() {
-        return displayValue;
-    }
+    MRES,
+    MSC,
+    RESEARCH_DEGREE,
+    ENGINEERING_DOCTORATE,
+    INTERNSHIP,
+    VISITING_RESEARCH,
+    UNCLASSIFIED;
     
     public static PrismProgramType findValueFromString(String toSearchIn) {
         for (PrismProgramType value : PrismProgramType.values()) {
-            if (toSearchIn.contains(value.displayValue)) {
+            if (toSearchIn.toLowerCase().startsWith(value.toString().toLowerCase().replace("_", " "))) {
                 return value;
             }
         }
-        return null;
-    }
-
-    public void setDisplayValue(String displayValue) {
-        this.displayValue = displayValue;
+        return UNCLASSIFIED;
     }
     
 }

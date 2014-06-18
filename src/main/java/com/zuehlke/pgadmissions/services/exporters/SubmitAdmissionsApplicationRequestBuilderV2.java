@@ -55,12 +55,12 @@ import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
 import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
-import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
+import com.zuehlke.pgadmissions.domain.ReferralSource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -490,8 +490,8 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private ModeofattendanceTp buildModeofattendance() {
         ApplicationProgramDetails programmeDetails = applicationForm.getProgramDetails();
         ModeofattendanceTp modeofattendanceTp = xmlFactory.createModeofattendanceTp();
-        modeofattendanceTp.setCode(programmeDetails.getStudyOption().getId());
-        modeofattendanceTp.setName(programmeDetails.getStudyOption().getDisplayName());
+        modeofattendanceTp.setCode(programmeDetails.getStudyOption().getCode());
+        modeofattendanceTp.setName(programmeDetails.getStudyOption().getName());
         return modeofattendanceTp;
     }
 
@@ -523,7 +523,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private SourceOfInterestTp buildSourcesOfInterest(CourseApplicationTp applicationTp) {
         ApplicationProgramDetails programmeDetails = applicationForm.getProgramDetails();
         SourceOfInterestTp interestTp = xmlFactory.createSourceOfInterestTp();
-        SourcesOfInterest sourcesOfInterest = programmeDetails.getSourceOfInterest();
+        ReferralSource sourcesOfInterest = programmeDetails.getSourceOfInterest();
         if (sourcesOfInterest == null) {
             return null;
         }

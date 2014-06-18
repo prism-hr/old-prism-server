@@ -20,16 +20,15 @@ import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
-import com.zuehlke.pgadmissions.domain.enums.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismNotificationType;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Component
@@ -274,10 +273,6 @@ public class TestObjectProvider {
         return (State) sessionFactory.getCurrentSession().createCriteria(State.class) //
                 .add(Restrictions.eq("id", state)) //
                 .uniqueResult();
-    }
-
-    public ProgramType getProgramType() {
-        return (ProgramType) sessionFactory.getCurrentSession().createCriteria(ProgramType.class).setMaxResults(1).uniqueResult();
     }
 
     public QualificationType getQualificationType() {

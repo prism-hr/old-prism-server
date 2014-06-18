@@ -29,11 +29,12 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
+import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -106,7 +107,8 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldThrowExceptionIfNoActiveProgramFound() {
-        StudyOption studyOption = new StudyOption("AAA", "aaa");
+        StudyOption studyOption = new StudyOption().withInstitution(new Institution().withDomicile(new InstitutionDomicile().withCode("test")))
+                .withCode("F+++++").withName("Full-time").withEnabled(true);
         applicationForm.getProgramDetails().setStudyOption(studyOption);
         exception.expect(IllegalArgumentException.class);
         requestBuilder.applicationForm(applicationForm).build();
@@ -193,8 +195,11 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
         SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
 
-        applicationForm.getPersonalDetails().getLanguageQualification()
-                .setLanguageQualificationType(new ImportedLanguageQualificationType().withInitialData(new Institution().withInitialData("test"), "test", "test"));
+        applicationForm
+                .getPersonalDetails()
+                .getLanguageQualification()
+                .setLanguageQualificationType(
+                        new ImportedLanguageQualificationType().withInitialData(new Institution().withInitialData("test"), "test", "test"));
 
         SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(applicationForm).build();
 
@@ -228,9 +233,10 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
     public void shouldBuildValidWebServiceRequestContainingAtasStatement() throws JAXBException, DatatypeConfigurationException {
         final LocalDate dateInThePast = new LocalDate(2013, 1, 1);
         applicationForm.getProgramDetails().setStartDate(dateInThePast);
-//        OfferRecommendedComment offerComment = new OfferRecommendedCommentBuilder().id(15).application(applicationForm).comment("").projectAbstract("abstract")
-//                .recommendedConditionsAvailable(true).recommendedConditions("conditions").recommendedStartDate(recommendedStartDate).build();
-//        applicationForm.getApplicationComments().add(offerComment);
+        // OfferRecommendedComment offerComment = new
+        // OfferRecommendedCommentBuilder().id(15).application(applicationForm).comment("").projectAbstract("abstract")
+        // .recommendedConditionsAvailable(true).recommendedConditions("conditions").recommendedStartDate(recommendedStartDate).build();
+        // applicationForm.getApplicationComments().add(offerComment);
         applicationForm.getProgram().setRequireProjectDefinition(true);
 
         SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
@@ -252,9 +258,10 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
     public void shouldBuildValidWebServiceRequestNotContainingAtasStatement() throws JAXBException, DatatypeConfigurationException {
         final LocalDate dateInThePast = new LocalDate(2013, 1, 1);
         applicationForm.getProgramDetails().setStartDate(dateInThePast);
-//        OfferRecommendedComment offerComment = new OfferRecommendedCommentBuilder().id(15).application(applicationForm).comment("").projectAbstract("abstract")
-//                .recommendedConditionsAvailable(false).recommendedStartDate(recommendedStartDate).build();
-//        applicationForm.getApplicationComments().add(offerComment);
+        // OfferRecommendedComment offerComment = new
+        // OfferRecommendedCommentBuilder().id(15).application(applicationForm).comment("").projectAbstract("abstract")
+        // .recommendedConditionsAvailable(false).recommendedStartDate(recommendedStartDate).build();
+        // applicationForm.getApplicationComments().add(offerComment);
         applicationForm.getProgram().setRequireProjectDefinition(false);
 
         SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());

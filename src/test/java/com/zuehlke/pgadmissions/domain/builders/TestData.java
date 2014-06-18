@@ -12,7 +12,6 @@ import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
@@ -21,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
+import com.zuehlke.pgadmissions.domain.enums.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 public class TestData {
@@ -51,7 +51,7 @@ public class TestData {
         return new Address().withDomicile(domicile).withLine1("ul. Leszczynska 29").withTown("Bielsko-Biala").withRegion("woj. Slaskie");
     }
 
-    public static Program aProgram(ProgramType programType, Institution institution, User user, State state) {
+    public static Program aProgram(PrismProgramType programType, Institution institution, User user, State state) {
         return new Program().withCode("AAA").withTitle("Amazing program!").withState(state).withRequireProjectDefinition(false).withStudyDuration(20)
                 .withProgramType(programType).withUser(user).withInstitution(institution);
     }

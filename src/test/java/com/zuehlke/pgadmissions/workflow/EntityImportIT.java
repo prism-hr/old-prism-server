@@ -64,23 +64,23 @@ public class EntityImportIT {
         Program program1 = programService.getProgramByCode("0UCL-1");
         Program otherProgram = programService.getProgramByCode("0UCL-99");
         assertEquals("MRes program1", program1.getTitle());
-        assertSame(PrismProgramType.MRES, program1.getProgramType().getId());
+        assertSame(PrismProgramType.MRES, program1.getProgramType());
         assertEquals("Internship otherProgram", otherProgram.getTitle());
-        assertSame(PrismProgramType.INTERNSHIP, otherProgram.getProgramType().getId());
+        assertSame(PrismProgramType.INTERNSHIP, otherProgram.getProgramType());
         assertTrue(program1.getRequireProjectDefinition());
         assertTrue(otherProgram.getRequireProjectDefinition());
 
         assertThat(
                 program1.getProgramInstances(),
                 contains(equalTo(new ProgramInstance().withIdentifier("0009").withAcademicYear("2013")
-                        .withStudyOption(new StudyOption().withId("F+++++").withDisplayName("Full-time"))
+                        .withStudyOption(new StudyOption().withInstitution(ucl).withCode("F+++++").withName("Full-time").withEnabled(true))
                         .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15))
                         .withEnabled(true))));
 
         assertThat(
                 otherProgram.getProgramInstances(),
                 contains(equalTo(new ProgramInstance().withIdentifier("0014").withAcademicYear("2013")
-                        .withStudyOption(new StudyOption().withId("F+++++").withDisplayName("Full-time"))
+                        .withStudyOption(new StudyOption().withInstitution(ucl).withCode("F+++++").withName("Full-time").withEnabled(true))
                         .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15))
                         .withEnabled(true))));
 
@@ -91,9 +91,9 @@ public class EntityImportIT {
         program1 = programService.getProgramByCode("0UCL-1");
         otherProgram = programService.getProgramByCode("0UCL-99");
         assertEquals("MRes new_program1", program1.getTitle());
-        assertSame(PrismProgramType.MRES, program1.getProgramType().getId());
+        assertSame(PrismProgramType.MRES, program1.getProgramType());
         assertEquals("Internship otherProgram", otherProgram.getTitle());
-        assertSame(PrismProgramType.INTERNSHIP, otherProgram.getProgramType().getId());
+        assertSame(PrismProgramType.INTERNSHIP, otherProgram.getProgramType());
 //        assertTrue(program1.isEnabled());
 //        assertFalse(otherProgram.isEnabled());
         assertFalse(program1.getRequireProjectDefinition());
@@ -103,16 +103,16 @@ public class EntityImportIT {
                 program1.getProgramInstances(),
                 containsInAnyOrder(
                         equalTo(new ProgramInstance().withIdentifier("0009").withAcademicYear("2013")
-                                .withStudyOption(new StudyOption().withId("F+++++").withDisplayName("Full-time"))
+                                .withStudyOption(new StudyOption().withInstitution(ucl).withCode("F+++++").withName("Full-time").withEnabled(true))
                                 .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15))
                                 .withEnabled(true)),
                         equalTo(new ProgramInstance().withIdentifier("0008").withAcademicYear("2014")
-                                .withStudyOption(new StudyOption().withId("P+++++").withDisplayName("Fart-time"))
+                                .withStudyOption(new StudyOption().withInstitution(ucl).withCode("F+++++").withName("Full-time").withEnabled(true))
                                 .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15))
                                 .withEnabled(true))));
 
         assertThat(otherProgram.getProgramInstances(), contains(equalTo(new ProgramInstance().withIdentifier("0014").withAcademicYear("2013")
-                .withStudyOption(new StudyOption().withId("F+++++").withDisplayName("Full-time"))
+                .withStudyOption(new StudyOption().withInstitution(ucl).withCode("F+++++").withName("Full-time").withEnabled(true))
                 .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15))
                 .withEnabled(false))));
     }

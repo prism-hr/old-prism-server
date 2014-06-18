@@ -29,7 +29,7 @@ public class ApplicationProgramDetails {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "program_study_option_id", nullable = false)
+    @JoinColumn(name = "study_option_id", nullable = false)
     private StudyOption studyOption;
 
     @Column(name = "start_date")
@@ -38,7 +38,7 @@ public class ApplicationProgramDetails {
 
     @ManyToOne
     @JoinColumn(name = "referral_source_id", nullable = false)
-    private SourcesOfInterest sourceOfInterest;
+    private ReferralSource sourceOfInterest;
 
     @Transient
     private String sourceOfInterestText;
@@ -75,11 +75,11 @@ public class ApplicationProgramDetails {
         this.startDate = startDate;
     }
 
-    public SourcesOfInterest getSourceOfInterest() {
+    public ReferralSource getSourceOfInterest() {
         return sourceOfInterest;
     }
 
-    public void setSourceOfInterest(SourcesOfInterest sourceOfInterest) {
+    public void setSourceOfInterest(ReferralSource sourceOfInterest) {
         this.sourceOfInterest = sourceOfInterest;
     }
 
@@ -122,7 +122,7 @@ public class ApplicationProgramDetails {
         return this;
     }
     
-    public ApplicationProgramDetails withSourceOfInterest(SourcesOfInterest sourceOfInterest) {
+    public ApplicationProgramDetails withSourceOfInterest(ReferralSource sourceOfInterest) {
         this.sourceOfInterest = sourceOfInterest;
         return this;
     }

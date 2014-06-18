@@ -136,7 +136,6 @@ public class ProgramConfigurationController {
         result.put("programTitle", program.getTitle());
         result.put("programDescription", program.getDescription());
         result.put("programStudyDuration", program.getStudyDuration());
-        result.put("programFunding", program.getFunding());
         result.put("programState", program.getState());
         result.put("isCustomProgram", !program.isImported());
         result.put("atasRequired", program.getRequireProjectDefinition());

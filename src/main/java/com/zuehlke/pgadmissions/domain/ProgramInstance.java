@@ -15,12 +15,20 @@ import org.joda.time.LocalDate;
 import com.google.common.base.Objects;
 
 @Entity
-@Table(name = "PROGRAM_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "program_id", "academic_year", "program_study_option_id" }))
+@Table(name = "PROGRAM_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "program_id", "academic_year", "study_option_id" }))
 public class ProgramInstance {
 
     @Id
     @GeneratedValue
     private Integer id;
+    
+    @ManyToOne
+    @JoinColumn(name = "program_id", nullable = false)
+    private Program program;
+    
+    @ManyToOne
+    @JoinColumn(name = "study_option_id", nullable = false)
+    private StudyOption studyOption;
 
     @Column(name = "deadline", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -36,16 +44,8 @@ public class ProgramInstance {
     @Column(name = "sequence_identifier", nullable = false)
     private String identifier;
 
-    @ManyToOne
-    @JoinColumn(name = "program_study_option_id", nullable = false)
-    private StudyOption studyOption;
-
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
-
-    @ManyToOne
-    @JoinColumn(name = "program_id", nullable = false)
-    private Program program;
 
     public void setId(Integer id) {
         this.id = id;
@@ -121,11 +121,6 @@ public class ProgramInstance {
         return this;
     }
     
-    public ProgramInstance withStudyOption(String id, String displayName) {
-        this.studyOption = new StudyOption(id, displayName);
-        return this;
-    }
-
     public ProgramInstance withStudyOption(StudyOption studyOption) {
         this.studyOption = studyOption;
         return this;

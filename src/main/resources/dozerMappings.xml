@@ -68,4 +68,22 @@
         </field>
     </mapping>
 
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.Comment</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.domain.CommentRepresentation</class-b>
+        <field>
+            <a>transitionState.id</a>
+            <b>transitionState</b>
+        </field>
+    </mapping>
+
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.CommentAssignedUser</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.domain.CommentAssignedUserRepresentation</class-b>
+        <field>
+            <a>role.id</a>
+            <b>role</b>
+        </field>
+    </mapping>
+
 </mappings>

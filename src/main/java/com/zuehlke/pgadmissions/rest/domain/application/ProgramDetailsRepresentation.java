@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.rest.domain.application;
 
 import com.zuehlke.pgadmissions.domain.StudyOption;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.util.List;
@@ -9,7 +10,7 @@ public class ProgramDetailsRepresentation {
 
     private StudyOption studyOption;
 
-    private LocalDate startDate;
+    private DateTime startDate;
 
     private ImportedEntityRepresentation sourceOfInterest;
 
@@ -23,11 +24,11 @@ public class ProgramDetailsRepresentation {
         this.studyOption = studyOption;
     }
 
-    public LocalDate getStartDate() {
+    public DateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(DateTime startDate) {
         this.startDate = startDate;
     }
 

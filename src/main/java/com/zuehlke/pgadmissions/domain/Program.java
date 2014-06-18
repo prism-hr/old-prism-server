@@ -81,6 +81,9 @@ public class Program extends Advert {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
     
+    @OneToMany(mappedBy = "program")
+    private Set<Comment> comments = Sets.newHashSet();
+    
     @Override
     public void setCode(final String code) {
         this.code = code;
@@ -131,6 +134,10 @@ public class Program extends Advert {
 
     public void setProgramType(ProgramType programType) {
         this.programType = programType;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
     }
 
     public Program withId(Integer id) {

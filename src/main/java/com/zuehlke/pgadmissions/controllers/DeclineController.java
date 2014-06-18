@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -40,35 +40,6 @@ public class DeclineController {
     
     @Autowired
 	private ActionService actionService;
-
-	@RequestMapping(value = "/review", method = RequestMethod.GET)
-	public String declineReview(@RequestParam String activationCode, @RequestParam String applicationId, @RequestParam(required = false) String confirmation, ModelMap modelMap) {
-	    User reviewer = getReviewer(activationCode);
-	    Application application = getApplicationForm(applicationId);
-	    
-	    Action action = actionService.getById(PrismAction.APPLICATION_PROVIDE_REVIEW);
-	    actionService.validateAction(application, action, reviewer, null);
-	    
-		if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
-		    commentService.declineReview(reviewer, application);
-		    modelMap.put("message", "Thank you for letting us know you are unable to act as a reviewer on this occasion.");
-		    
-		    userService.save(reviewer);
-		    return TemplateLocation.DECLINE_SUCCESS_VIEW_NAME;
-		} else if (StringUtils.equalsIgnoreCase(confirmation, "Cancel")) {
-            // the user clicked on "Provide Review"
-		    if (!reviewer.isEnabled()) {
-                return "redirect:/register?activationCode=" + reviewer.getActivationCode() + "&directToUrl=/reviewFeedback?applicationId=" + application.getCode();
-		    } else {
-		        return "redirect:/reviewFeedback?applicationId=" + application.getCode() + "&activationCode=" + reviewer.getActivationCode();
-		    }
-		} else {
-		    modelMap.put("message", "Please confirm that you wish to decline to provide a review. <b>You will not be able to reverse this decision.</b>");
-		    modelMap.put("okButton", "Confirm");
-		    modelMap.put("cancelButton", "Provide Review");
-            return TemplateLocation.DECLINE_CONFIRMATION_VIEW_NAME;
-		}
-	}
 
 	public ApplicationReferee getReferee(String activationCode, Application applicationForm) {
 		User user = userService.getUserByActivationCode(activationCode);

@@ -11,11 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionEnhancement;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
 
 @Repository
@@ -117,6 +120,24 @@ public class ActionDAO {
                 .add(Restrictions.eq("userAccount.enabled", true))
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.asc("action.id")) //
+                .list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<PrismActionRedactionType> getRedactions(User user, PrismResourceDynamic resource, Action action) {
+        return (List<PrismActionRedactionType>) sessionFactory.getCurrentSession().createCriteria(ActionRedaction.class)
+                .setProjection(Projections.groupProperty("redactionType")) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("action", action)) //
+                .add(Restrictions.eq("user.parentUser", user)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
+                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
+                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
+                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
+                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
                 .list();
     }
 

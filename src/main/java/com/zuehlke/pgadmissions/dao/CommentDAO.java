@@ -15,7 +15,6 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.User;
 
 @Repository
@@ -59,9 +58,8 @@ public class CommentDAO {
     }
     
     public List<Comment> getComments(PrismResourceDynamic resource) {
-        String resourceName = resource.getClass().getSimpleName().toLowerCase();
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .add(Restrictions.eq(resourceName, resource)) //
+                .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .list();
     }

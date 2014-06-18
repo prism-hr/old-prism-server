@@ -1,15 +1,22 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.zuehlke.pgadmissions.dao.ActionDAO;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
-import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.zuehlke.pgadmissions.dao.ActionDAO;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
+import com.zuehlke.pgadmissions.domain.StateTransition;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismActionRedactionType;
+import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
 
 @Service
 @Transactional
@@ -104,6 +111,10 @@ public class ActionService {
         PrismResource nextActionResource = resource.getEnclosingResource(transitionAction.getScope());
 
         return new ActionOutcome(actionOwner, nextActionResource, transitionAction);
+    }
+    
+    public List<PrismActionRedactionType> getRedactions(User user, PrismResourceDynamic resource, Action action) {
+        return actionDAO.getRedactions(user, resource, action);
     }
 
 }

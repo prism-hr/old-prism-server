@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,30 +64,9 @@ public class CommentService {
     public List<User> getAssignedUsers(Comment comment, Role role, User invoker) {
         return commentDAO.getAssignedUsers(comment, role, invoker);
     }
-    
-    // TODO: rewrite below
 
     public List<Comment> getVisibleComments(User user, Application applicationForm) {
         return commentDAO.getVisibleComments(user, applicationForm);
-    }
-
-    public void declineReview(User user, Application application) {
-        // check if user has already responded
-        // if (!commentDAO.getReviewCommentsForReviewerAndApplication(user, application).isEmpty()) {
-        // return;
-        // }
-
-        Comment reviewComment = new Comment();
-        reviewComment.setApplication(application);
-        reviewComment.setUser(user);
-        reviewComment.setDeclinedResponse(true);
-        reviewComment.setContent(StringUtils.EMPTY);
-
-        save(reviewComment);
-    }
-
-    public List<CommentAssignedUser> getNotDecliningSupervisorsFromLatestApprovalStage(Application application) {
-        return commentDAO.getNotDecliningSupervisorsFromLatestApprovalStage(application);
     }
 
     public CommentAssignedUser assignUser(Comment approvalComment, User user, boolean isPrimary) {
@@ -96,6 +74,11 @@ public class CommentService {
         assignedUser.setUser(user);
         approvalComment.getCommentAssignedUsers().add(assignedUser);
         return assignedUser;
+    }
+    
+    public List<CommentAssignedUser> getNotDecliningSupervisorsFromLatestApprovalStage(Application application) {
+        // TODO implement
+        return null;
     }
 
 }

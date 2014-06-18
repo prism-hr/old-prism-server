@@ -66,6 +66,9 @@ public class Project extends Advert {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
+    
+    @OneToMany(mappedBy = "project")
+    private Set<Comment> comments = Sets.newHashSet();
 
     @Override
     public String getCode() {
@@ -93,6 +96,14 @@ public class Project extends Advert {
     @Override
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Set<Application> getApplications() {
+        return applications;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
     }
 
     public Project withId(Integer id) {

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.Set;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -28,5 +30,7 @@ public abstract class PrismResourceDynamic extends PrismResource {
     public abstract DateTime getUpdatedTimestamp();
 
     public abstract void setUpdatedTimestamp(DateTime updatedTimestamp);
+    
+    public abstract Set<Comment> getComments();
     
 }

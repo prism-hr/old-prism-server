@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -30,7 +29,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Entity
@@ -136,9 +134,6 @@ public class Application extends PrismResourceDynamic {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
-    
-    @OneToMany(mappedBy = "application")
-    private Set<Comment> comments = Sets.newHashSet();
 
     @Transient
     private Boolean acceptedTerms;
@@ -265,10 +260,6 @@ public class Application extends PrismResourceDynamic {
 
     public List<ApplicationReferee> getReferees() {
         return referees;
-    }
-    
-    public Set<Comment> getComments() {
-        return comments;
     }
 
     public Application withId(Integer id) {
@@ -437,10 +428,6 @@ public class Application extends PrismResourceDynamic {
     @Override
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
-    }
-
-    public void setApplicationComments(Set<Comment> applicationComments) {
-        this.comments = applicationComments;
     }
 
     @Override

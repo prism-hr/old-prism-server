@@ -47,7 +47,7 @@ public class ApplicationResource {
         }
 
         ApplicationRepresentation representation = dozerBeanMapper.map(application, ApplicationRepresentation.class);
-        commentService.getVisibleComments(currentUser, application);
+        commentService.getVisibleComments(application, currentUser);
         List<PrismAction> permittedActions = actionService.getPermittedActions(application, currentUser);
         representation.getActions().addAll(permittedActions);
         return representation;

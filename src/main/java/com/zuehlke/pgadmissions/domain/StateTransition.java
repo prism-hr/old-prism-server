@@ -4,8 +4,6 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -19,7 +17,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.PrismStateTransitionEvaluation;
 
 @Entity
 @Table(name = "STATE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "transition_state_id" }) })
@@ -41,9 +38,9 @@ public class StateTransition {
     @JoinColumn(name = "transition_action_id", nullable = false)
     private Action transitionAction;
 
-    @Column(name = "state_transition_evaluation_id")
-    @Enumerated(EnumType.STRING)
-    private PrismStateTransitionEvaluation stateTransitionEvaluation;
+    @ManyToOne
+    @JoinColumn(name = "state_transition_evaluation_id")
+    private StateTransitionEvaluation stateTransitionEvaluation;
 
     @Column(name = "display_order")
     private Integer displayOrder;
@@ -90,11 +87,11 @@ public class StateTransition {
         this.transitionAction = transitionAction;
     }
 
-    public PrismStateTransitionEvaluation getStateTransitionEvaluation() {
+    public StateTransitionEvaluation getStateTransitionEvaluation() {
         return stateTransitionEvaluation;
     }
 
-    public void setStateTransitionEvaluation(PrismStateTransitionEvaluation stateTransitionEvaluation) {
+    public void setStateTransitionEvaluation(StateTransitionEvaluation stateTransitionEvaluation) {
         this.stateTransitionEvaluation = stateTransitionEvaluation;
     }
 

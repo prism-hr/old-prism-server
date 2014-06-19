@@ -28,11 +28,10 @@ import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.FilterConstraint;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationListFilterCategory;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationListFilterCategory.CategoryType;
-import com.zuehlke.pgadmissions.domain.enums.ResourceListSearchPredicate;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationListSortCategory;
+import com.zuehlke.pgadmissions.domain.enums.ResourceListSearchPredicate;
 import com.zuehlke.pgadmissions.domain.enums.ResourceListSortOrder;
 
 @Repository
@@ -140,7 +139,8 @@ public class ApplicationFormListDAO {
                                     .add(Restrictions.like("program.code", StringUtils.lowerCase(searchTerm), MatchMode.ANYWHERE));
                             break;
                         case APPLICATION_STATUS:
-                            criterion = Restrictions.eq("application.state.id", PrismState.convert(searchTerm));
+                            // TODO: Implement this in a more sensible way, e.g. pass the actual enumeration value
+                            // criterion = Restrictions.eq("application.state.id", PrismState.convert(searchTerm));
                             break;
                         case PROJECT_TITLE:
                             criterion = Restrictions.disjunction() //

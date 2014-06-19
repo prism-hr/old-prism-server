@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.timers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -12,8 +10,6 @@ import com.zuehlke.pgadmissions.services.StateService;
 
 @Service
 public class DataMaintenanceTask {
-
-    private final Logger log = LoggerFactory.getLogger(DataMaintenanceTask.class);
     
     @Autowired
     private DocumentService documentService;
@@ -26,12 +22,15 @@ public class DataMaintenanceTask {
 
     // TODO: unify the timer tasks
     @Scheduled(cron = "${data.maintenance.cron}")
-    public void maintainData() {
-        log.info("Running data maintenance tasks");
+    public void performDataMaintenance() {
         documentService.deleteOrphanDocuments();
         programService.deleteInactiveAdverts();
         stateService.executeEscalatedStateTransitions();
-        log.info("Completed data maintenance tasks");
+    }
+    
+    @Scheduled(cron = "${workflow.maintenance.cron}")
+    public void performWorkflowMaintenance() {
+        stateService.executePropagatedStateTransitions();
     }
 
 }

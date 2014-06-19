@@ -72,7 +72,7 @@
                       <#else>
                		  <div class="alert alert-info"> <i class="icon-info-sign"></i> 
                       </#if>
-                      Reject the applicant. They will be prevented from reapplying for their chosen study programme in the current academic year. </div>
+                      Reject the applicant.</div>
                 <div class="row-group">
                   <div class="row">
                     <label class="plain-label">Reasons for Rejection<em>*</em></label>

@@ -8,7 +8,6 @@ import org.apache.commons.beanutils.MethodUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -104,7 +103,6 @@ public class StateService {
         return stateTransition;
     }
 
-    @Scheduled(fixedRate = 60000)
     public void executePropagatedStateTransitions() {
         PrismResource lastResource = null;
         for (StateTransitionPending pendingStateTransition : stateDAO.getPendingStateTransitions()) {

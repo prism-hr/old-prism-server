@@ -78,6 +78,11 @@ public class State implements IUniqueResource {
         this.id = id;
         return this;
     }
+    
+    public State withScope(Scope scope) {
+        this.scope = scope;
+        return this;
+    }
 
     @Override
     public ResourceSignature getResourceSignature() {

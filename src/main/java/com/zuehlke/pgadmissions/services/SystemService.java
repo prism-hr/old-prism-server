@@ -19,6 +19,8 @@ import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.Scope;
+import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
@@ -26,6 +28,8 @@ import com.zuehlke.pgadmissions.domain.enums.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.enums.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.mail.NotificationService;
 
 @Service
@@ -51,6 +55,9 @@ public class SystemService {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private StateService stateService;
+    
     @Autowired
     private UserService userService;
 
@@ -80,7 +87,16 @@ public class SystemService {
         User systemUser = userService.getOrCreateUser(userFirstName, userLastName, userEmail);
         System system = getOrCreateSystem(systemUser);
 
-        initialiseDefinitions(system);
+        initialiseScopes();
+        initialiseActions();
+        initialiseConfigurations(system);
+        initialiseNotificationTemplates(system);
+        initialiseRoles();
+        initialiseStates();
+        initialiseStateTransitionEvaluations();
+        
+        State systemRunning = stateService.getById(PrismState.SYSTEM_APPROVED);
+        system.setState(systemRunning);
 
         Role systemRole = roleService.getById(PrismRole.SYSTEM_ADMINISTRATOR);
         roleService.getOrCreateUserRole(system, systemUser, systemRole);
@@ -89,13 +105,6 @@ public class SystemService {
             notificationService.sendEmailNotification(systemUser, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
         }
 
-    }
-
-    private void initialiseDefinitions(System system) {
-        initialiseScopes();
-        initialiseActions();
-        initialiseConfigurations(system);
-        initialiseNotificationTemplates(system);
     }
 
     private void initialiseScopes() {
@@ -132,6 +141,9 @@ public class SystemService {
             NotificationTemplateVersion version = new NotificationTemplateVersion().withNotificationTemplate(template).withSubject(defaultSubject)
                     .withContent(defaultContent).withCreatedTimestamp(new DateTime());
             entityService.save(version);
+            if (PrismNotificationTemplate.getReminderTemplate(prismTemplate) != null) {
+                templatesWithReminders.add(template);
+            }
         }
         for (NotificationTemplate template : templatesWithReminders) {
             PrismNotificationTemplate reminder = PrismNotificationTemplate.getReminderTemplate(template.getId());
@@ -140,6 +152,36 @@ public class SystemService {
             template.setReminderTemplate(reminderTemplate);
             NotificationConfiguration configuration = new NotificationConfiguration().withSystem(system).withReminderInterval(reminderInterval);
             entityService.save(configuration);
+        }
+    }
+    
+    private void initialiseRoles() {
+        for (PrismRole prismRole : PrismRole.values()) {
+            Scope scope = entityService.getByProperty(Scope.class, "id", prismRole.getScope());
+            Role role = new Role().withId(prismRole).withScope(scope);
+            entityService.save(role);
+        }
+    }
+    
+    private void initialiseStates() {
+        for (PrismState prismState : PrismState.values()) {
+            Scope scope = entityService.getByProperty(Scope.class, "id", prismState.getScope());
+            State state = new State().withId(prismState).withScope(scope);
+            entityService.save(state);
+        }
+        for (PrismState prismState : PrismState.values()) {
+            State childState = stateService.getById(prismState);
+            State parentState = stateService.getById(PrismState.getParentState(prismState));
+            childState.setParentState(parentState);
+        }
+    }
+    
+    private void initialiseStateTransitionEvaluations() {
+        for (PrismStateTransitionEvaluation prismEvaluation : PrismStateTransitionEvaluation.values()) {
+            Scope scope = entityService.getByProperty(Scope.class, "id", prismEvaluation.getScope());
+            StateTransitionEvaluation evaluation = new StateTransitionEvaluation().withId(prismEvaluation).withMethodName(prismEvaluation.getMethodName())
+                    .withScope(scope);
+            entityService.save(evaluation);
         }
     }
 

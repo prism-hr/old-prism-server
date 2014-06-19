@@ -16,13 +16,11 @@ import org.w3c.dom.NodeList;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
@@ -95,13 +93,7 @@ public class WorkflowConfigurationImportService {
         if (actionElement.hasAttribute("delegate-action")) {
             actionInserts.put(actionElement, action);
         }
-
-        NodeList roleElements = actionElement.getElementsByTagName("role");
-        for (int i = 0; i < roleElements.getLength(); i++) {
-            Element roleElement = (Element) roleElements.item(i);
-            entityService.getOrCreate(new Role(PrismRole.valueOf(roleElement.getAttribute("id")), scope));
-        }
-
+        
         NodeList taskNotificationElements = actionElement.getElementsByTagName("task-notification");
         if (taskNotificationElements.getLength() == 1) {
             Element taskNotificationElement = (Element) taskNotificationElements.item(0);

@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -20,15 +18,13 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 
 @Entity
 @Table(name = "ROLE")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class Role implements GrantedAuthority, IUniqueResource {
+public class Role implements GrantedAuthority {
 
     private static final long serialVersionUID = 4265990408553249748L;
 
@@ -86,18 +82,20 @@ public class Role implements GrantedAuthority, IUniqueResource {
         return stateActionAssignments;
     }
 
+
+    public Role withId(PrismRole id) {
+        this.id = id;
+        return this;
+    }
+    
+    public Role withScope(Scope scope) {
+        this.scope = scope;
+        return this;
+    }
+    
     @Override
     public String getAuthority() {
         return id.toString();
-    }
-
-    @Override
-    public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("id", id);
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
     }
 
     @Override
@@ -115,11 +113,6 @@ public class Role implements GrantedAuthority, IUniqueResource {
         }
         final Role other = (Role) obj;
         return Objects.equal(id, other.getId());
-    }
-
-    public Role withId(PrismRole id) {
-        this.id = id;
-        return this;
     }
 
 }

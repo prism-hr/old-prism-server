@@ -9,11 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.FilterConstraint;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationListFilterCategory;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationListSortCategory;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationListFilterCategory;
 import com.zuehlke.pgadmissions.domain.enums.ResourceListSearchPredicate;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationListSortCategory;
 
 @Service
 @Transactional

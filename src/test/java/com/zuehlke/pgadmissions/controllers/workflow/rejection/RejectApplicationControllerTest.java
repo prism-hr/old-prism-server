@@ -96,15 +96,6 @@ public class RejectApplicationControllerTest {
     }
 
     @Test
-    public void getRejectionPage() {
-        ModelMap modelMap = new ModelMap();
-        modelMap.put("applicationForm", application);
-        modelMap.put("user", admin);
-
-        Assert.assertEquals(VIEW_RESULT, controllerUT.getRejectPage(modelMap));
-    }
-
-    @Test
     public void shouldGetNewRejection() {
         Rejection rejection = controllerUT.getRejection();
         Assert.assertNull(rejection.getId());

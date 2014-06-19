@@ -1,21 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.workflow.rejection;
 
-import java.util.List;
-
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.StringTrimmerEditor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
+import com.google.common.primitives.Booleans;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -31,9 +16,20 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RejectService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.RejectionValidator;
+import org.apache.commons.lang.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @Controller
-@RequestMapping(value = { "/rejectApplication" })
+@RequestMapping(value = {"/rejectApplication"})
 public class RejectApplicationController {
 
     private static final String REJECT_VIEW_NAME = "private/staff/approver/reject_page";
@@ -59,8 +55,8 @@ public class RejectApplicationController {
 
     @Autowired
     public RejectApplicationController(ApplicationsService applicationsService, RejectService rejectService, UserService userService,
-            RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator, ApplicationFormUserRoleService applicationFormUserRoleService,
-            ActionsProvider actionsProvider) {
+                                       RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator, ApplicationFormUserRoleService applicationFormUserRoleService,
+                                       ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.rejectService = rejectService;
         this.userService = userService;
@@ -71,10 +67,12 @@ public class RejectApplicationController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String getRejectPage(ModelMap modelMap) {
+    public String getRejectPage(@RequestParam(required = false, value = "rejectionIdForced") Boolean rejectionForced, ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(application, user, ApplicationFormAction.CONFIRM_REJECTION);
+        if(BooleanUtils.isNotTrue(rejectionForced)) {
+            actionsProvider.validateAction(application, user, ApplicationFormAction.CONFIRM_REJECTION);
+        }
         applicationFormUserRoleService.deleteApplicationUpdate(application, user);
         return REJECT_VIEW_NAME;
     }
@@ -84,7 +82,7 @@ public class RejectApplicationController {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(application, user, ApplicationFormAction.CONFIRM_REJECTION);
-        
+
         if (errors.hasErrors()) {
             return REJECT_VIEW_NAME;
         }

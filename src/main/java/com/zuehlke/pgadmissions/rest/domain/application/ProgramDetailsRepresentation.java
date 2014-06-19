@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ProgramDetailsRepresentation {
 
-    private StudyOption studyOption;
+    private ImportedEntityRepresentation studyOption;
 
     private LocalDate startDate;
 
@@ -15,11 +15,11 @@ public class ProgramDetailsRepresentation {
 
     private List<SupervisorRepresentation> suggestedSupervisors;
 
-    public StudyOption getStudyOption() {
+    public ImportedEntityRepresentation getStudyOption() {
         return studyOption;
     }
 
-    public void setStudyOption(StudyOption studyOption) {
+    public void setStudyOption(ImportedEntityRepresentation studyOption) {
         this.studyOption = studyOption;
     }
 

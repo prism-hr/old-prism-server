@@ -8,7 +8,7 @@ public class StateActionRepresentation {
 
     private boolean raisesUrgentFlag;
 
-    private String displayValue;
+    private String displayName;
 
     public String getState() {
         return state;
@@ -34,11 +34,11 @@ public class StateActionRepresentation {
         this.raisesUrgentFlag = raisesUrgentFlag;
     }
 
-    public String getDisplayValue() {
-        return displayValue;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setDisplayValue(String displayValue) {
-        this.displayValue = displayValue;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }

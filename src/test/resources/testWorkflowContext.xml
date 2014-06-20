@@ -53,7 +53,7 @@
     <context:exclude-filter type="assignable" expression="com.zuehlke.pgadmissions.controllers.prospectus.ApplyTemplateRenderer" />
   </context:component-scan>
 
-  <bean id="javaMailSender" class="com.zuehlke.pgadmissions.mail.FakeLoggingMailSender" />
+  <bean id="javaMailSender" class="com.zuehlke.pgadmissions.mail.MailMockServer" />
 
   <!-- bean definitions -->
 
@@ -65,11 +65,7 @@
       </map>
     </property>
   </bean>
-
-  <bean id="domicilePropertyEditor" class="com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor">
-    <constructor-arg value="com.zuehlke.pgadmissions.domain.Domicile" />
-  </bean>
-
+  
   <bean id="webServiceTemplate" class="com.zuehlke.pgadmissions.utils.EasyMockFactoryBean" primary="true">
     <constructor-arg value="org.springframework.ws.client.core.WebServiceTemplate" />
   </bean>
@@ -131,6 +127,14 @@
 
   <bean id="jacksonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
     <property name="objectMapper" ref="jacksonObjectMapper" />
+  </bean>
+
+  <bean class="org.dozer.DozerBeanMapper">
+    <property name="mappingFiles">
+      <list>
+        <value>dozerMappings.xml</value>
+      </list>
+    </property>
   </bean>
 
 </beans>

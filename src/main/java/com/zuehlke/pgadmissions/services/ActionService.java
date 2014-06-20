@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.PrismResource;
-import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
@@ -44,12 +44,12 @@ public class ActionService {
         return entityService.getByProperty(Action.class, "id", id);
     }
 
-    public void validateAction(PrismResource resource, PrismAction actionId, User actionOwner) {
+    public void validateAction(Resource resource, PrismAction actionId, User actionOwner) {
         Action action = getById(actionId);
         validateAction(resource, action, actionOwner, null);
     }
 
-    public void validateAction(PrismResource resource, Action action, User actionOwner, User delegateOwner) {
+    public void validateAction(Resource resource, Action action, User actionOwner, User delegateOwner) {
         if (delegateOwner == null && checkActionAvailable(resource, action, actionOwner)) {
             return;
         } else if (delegateOwner != null && checkActionAvailable(resource, action, delegateOwner)) {
@@ -60,45 +60,45 @@ public class ActionService {
         throw new CannotExecuteActionException(resource, action);
     }
 
-    public boolean checkActionAvailable(PrismResource resource, Action action, User invoker) {
+    public boolean checkActionAvailable(Resource resource, Action action, User invoker) {
         return roleService.getActionRoles(resource, action).size() == 0 || actionDAO.getPermittedAction(resource, action, invoker) != null;
     }
 
-    public boolean checkDelegateActionAvailable(PrismResource resource, Action action, User invoker) {
+    public boolean checkDelegateActionAvailable(Resource resource, Action action, User invoker) {
         Action delegateAction = actionDAO.getDelegateAction(resource, action);
         return checkActionAvailable(resource, delegateAction, invoker);
     }
 
-    public List<PrismAction> getPermittedActions(PrismResource resource, User user) {
+    public List<PrismAction> getPermittedActions(Resource resource, User user) {
         return actionDAO.getPermittedActions(resource, user);
     }
 
     public ActionOutcome executeAction(Integer resourceId, PrismAction actionId, Comment comment) {
-        PrismResourceDynamic resource = (PrismResourceDynamic) entityService.getById(actionId.getScope().getResourceClass(), resourceId);
+        ResourceDynamic resource = (ResourceDynamic) entityService.getById(actionId.getScope().getResourceClass(), resourceId);
         Action action = getById(actionId);
         return executeAction(resource, action, comment);
     }
 
-    public ActionOutcome executeAction(PrismResourceDynamic resource, PrismAction actionId, Comment comment) {
+    public ActionOutcome executeAction(ResourceDynamic resource, PrismAction actionId, Comment comment) {
         Action action = getById(actionId);
         return executeAction(resource, action, comment);
     }
 
-    public ActionOutcome executeAction(PrismResourceDynamic resource, Action action, Comment comment) {
-        PrismResource operativeResource = resource;
+    public ActionOutcome executeAction(ResourceDynamic resource, Action action, Comment comment) {
+        Resource operativeResource = resource;
         if (!resource.getClass().equals(action.getId().getScope().getResourceClass())) {
             operativeResource = resource.getParentResource(action.getId().getScope());
         }
         return executeAction(operativeResource, resource, action, comment);
     }
 
-    public ActionOutcome executeAction(PrismResource operativeResource, PrismResourceDynamic resource, Action action, Comment comment) {
+    public ActionOutcome executeAction(Resource operativeResource, ResourceDynamic resource, Action action, Comment comment) {
         validateAction(resource, action, comment.getUser(), comment.getDelegateUser());
 
         User actionOwner = comment.getUser();
 
         if (operativeResource != resource) {
-            PrismResourceDynamic duplicateResource = entityService.getDuplicateEntity(resource);
+            ResourceDynamic duplicateResource = entityService.getDuplicateEntity(resource);
             if (duplicateResource != null) {
                 Action redirectAction = actionDAO.getRedirectAction(duplicateResource, actionOwner);
                 comment = new Comment().withResource(duplicateResource).withUser(actionOwner).withAction(redirectAction);
@@ -108,13 +108,17 @@ public class ActionService {
 
         StateTransition stateTransition = stateService.executeStateTransition(operativeResource, resource, action, comment);
         PrismAction transitionAction = stateTransition.getTransitionAction().getId();
-        PrismResource nextActionResource = resource.getEnclosingResource(transitionAction.getScope());
+        Resource nextActionResource = resource.getEnclosingResource(transitionAction.getScope());
 
         return new ActionOutcome(actionOwner, nextActionResource, transitionAction);
     }
     
-    public List<PrismActionRedactionType> getRedactions(User user, PrismResourceDynamic resource, Action action) {
+    public List<PrismActionRedactionType> getRedactions(User user, ResourceDynamic resource, Action action) {
         return actionDAO.getRedactions(user, resource, action);
+    }
+
+    public List<Action> getActions() {
+        return entityService.getAll(Action.class);
     }
 
 }

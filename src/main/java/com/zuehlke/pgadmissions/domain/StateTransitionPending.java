@@ -98,7 +98,7 @@ public class StateTransitionPending {
         this.stateTransition = stateTransition;
     }
 
-    public PrismResource getResource() {
+    public Resource getResource() {
         if (system != null) {
             return system;
         } else if (institution != null) {
@@ -111,7 +111,7 @@ public class StateTransitionPending {
         return application;
     }
     
-    public void setResource(PrismResource resource) {
+    public void setResource(Resource resource) {
         try {
             PropertyUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
         } catch (Exception e) {
@@ -119,7 +119,7 @@ public class StateTransitionPending {
         }
     }
 
-    public StateTransitionPending withResource(PrismResource resource) {
+    public StateTransitionPending withResource(Resource resource) {
         setResource(resource);
         return this;
     }

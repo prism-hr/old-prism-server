@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.mail.NotificationService;
+import com.zuehlke.pgadmissions.mail.MailService;
 
 @Service
 @Transactional
@@ -31,7 +31,7 @@ public class OfferRecommendationService {
     private UserService userService;
 
     @Autowired
-    private NotificationTemplateService mailSendingService;
+    private NotificationService mailSendingService;
     
     public boolean moveToApproved(Application form, Comment offerRecommendedComment) {
 //        if (ApplicationFormStatus.APPROVAL != form.getStatus().getId()) {

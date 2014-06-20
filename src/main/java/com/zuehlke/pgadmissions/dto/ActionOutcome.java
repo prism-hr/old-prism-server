@@ -6,7 +6,7 @@ import org.hibernate.Hibernate;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 
@@ -14,11 +14,11 @@ public class ActionOutcome {
 
     private User user;
 
-    private PrismResource resource;
+    private Resource resource;
 
     private PrismAction nextAction;
 
-    public ActionOutcome(User user, PrismResource resource, PrismAction nextAction) {
+    public ActionOutcome(User user, Resource resource, PrismAction nextAction) {
         this.user = user;
         this.resource = resource;
         this.nextAction = nextAction;
@@ -28,7 +28,7 @@ public class ActionOutcome {
         return user;
     }
 
-    public PrismResource getResource() {
+    public Resource getResource() {
         Hibernate.initialize(resource);
         return resource;
     }

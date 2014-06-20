@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -58,7 +58,7 @@ public class DeclineController {
 	    
 	    // TOTO: comment posting
 	    Action action = actionService.getById(PrismAction.APPLICATION_PROVIDE_REFERENCE);
-	    actionService.validateAction((PrismResource) applicationForm, action, referee.getUser(), null);
+	    actionService.validateAction((Resource) applicationForm, action, referee.getUser(), null);
 	    
 	    if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
 	        // the user clicked on "Confirm"

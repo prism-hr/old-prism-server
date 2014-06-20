@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.mail.NotificationService;
+import com.zuehlke.pgadmissions.mail.MailService;
 
 @Service
 @Transactional
@@ -21,7 +21,7 @@ public class RejectService {
 	private ApplicationDAO applicationDao;
 	
 	@Autowired
-	private NotificationTemplateService mailService;
+	private NotificationService mailService;
 	
 	@Autowired
 	private ActionService actionService;

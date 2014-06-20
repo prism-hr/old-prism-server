@@ -13,8 +13,8 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.PrismResource;
-import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
@@ -39,8 +39,12 @@ public class RoleService {
     public Role getById(PrismRole authority) {
         return roleDAO.getById(authority);
     }
+    
+    public List<Role> getRoles() {
+        return entityService.getAll(Role.class);
+    }
 
-    public UserRole createUserRole(PrismResource resource, User user, Role role) {
+    public UserRole createUserRole(Resource resource, User user, Role role) {
         UserRole userRole = new UserRole();
         userRole.setResource(resource);
         userRole.setUser(user);
@@ -49,12 +53,12 @@ public class RoleService {
         return userRole;
     }
 
-    public UserRole getOrCreateUserRole(PrismResource resource, User user, Role role) {
+    public UserRole getOrCreateUserRole(Resource resource, User user, Role role) {
         UserRole transientUserRole = createUserRole(resource, user, role);
         return entityService.getOrCreate(transientUserRole);
     }
 
-    public void removeUserRoles(User user, PrismResource resource, PrismRole... authorities) {
+    public void removeUserRoles(User user, Resource resource, PrismRole... authorities) {
         for (UserRole roleToRemove : roleDAO.getUserRoles(resource, user, authorities)) {
             entityService.delete(roleToRemove);
         }
@@ -68,7 +72,7 @@ public class RoleService {
         entityService.delete(userRole);
     }
     
-    public void executeUserRoleTransitions(PrismResource resource, StateTransition stateTransition, Comment comment) {
+    public void executeUserRoleTransitions(Resource resource, StateTransition stateTransition, Comment comment) {
         HashMap<User, RoleTransition> userRoleTransitions = Maps.newHashMap();
         userRoleTransitions.putAll(getUserRoleUpdateTransitions(stateTransition, resource, comment.getUser()));
         userRoleTransitions.putAll(getUserCreationRoleTransitions(stateTransition, resource, comment.getUser(), comment));
@@ -78,7 +82,7 @@ public class RoleService {
         }
     }
 
-    public void executeRoleTransition(PrismResource resource, User user, RoleTransition roleTransition) {
+    public void executeRoleTransition(Resource resource, User user, RoleTransition roleTransition) {
         switch (roleTransition.getRoleTransitionType()) {
         case BRANCH:
         case CREATE:
@@ -109,15 +113,15 @@ public class RoleService {
         return hasRole(user, authority, null);
     }
 
-    public boolean hasRole(User user, PrismRole authority, PrismResource scope) {
+    public boolean hasRole(User user, PrismRole authority, Resource scope) {
         return roleDAO.getUserRole(user, scope, authority) != null;
     }
 
-    public List<User> getUsersInRole(PrismResource scope, PrismRole... authorities) {
+    public List<User> getUsersInRole(Resource scope, PrismRole... authorities) {
         return roleDAO.getUsersByRole(scope, authorities);
     }
 
-    public User getUserInRole(PrismResource scope, PrismRole... authorities) {
+    public User getUserInRole(Resource scope, PrismRole... authorities) {
         List<User> users = roleDAO.getUsersByRole(scope, authorities);
         return users.get(0);
     }
@@ -136,19 +140,19 @@ public class RoleService {
         return roleDAO.getUserRole(user, authority);
     }
 
-    public List<Role> getActionRoles(PrismResource resource, Action action) {
+    public List<Role> getActionRoles(Resource resource, Action action) {
         return roleDAO.getActionRoles(resource, action);
     }
 
-    public List<Role> getActionOwnerRoles(User user, PrismResource resource, Action action) {
+    public List<Role> getActionOwnerRoles(User user, Resource resource, Action action) {
         return roleDAO.getActionOwnerRoles(user, resource, action);
     }
     
-    public List<Role> getDelegateActionOwnerRoles(User user, PrismResource resource, Action action) {
+    public List<Role> getDelegateActionOwnerRoles(User user, Resource resource, Action action) {
         return roleDAO.getActionOwnerRoles(user, resource, action);
     }
 
-    private HashMap<User, RoleTransition> getUserRoleUpdateTransitions(StateTransition stateTransition, PrismResource resource, User actionOwner) {
+    private HashMap<User, RoleTransition> getUserRoleUpdateTransitions(StateTransition stateTransition, Resource resource, User actionOwner) {
         HashMap<User, RoleTransition> userRoleTransitions = Maps.newHashMap();
         
         HashMultimap<RoleTransition, User> roleTransitionUsers = roleDAO.getRoleTransitionUsers(stateTransition, resource, actionOwner);
@@ -162,11 +166,11 @@ public class RoleService {
 
     }
 
-    public Role getResourceCreatorRole(PrismResourceDynamic resource, Action createAction) {
+    public Role getResourceCreatorRole(ResourceDynamic resource, Action createAction) {
         return (Role) roleDAO.getResourceCreatorRole(resource, createAction);
     }
     
-    private HashMap<User, RoleTransition> getUserCreationRoleTransitions(StateTransition stateTransition, PrismResource resource, User actionOwner, Comment comment) {
+    private HashMap<User, RoleTransition> getUserCreationRoleTransitions(StateTransition stateTransition, Resource resource, User actionOwner, Comment comment) {
         HashMap<User, RoleTransition> userRoleTransitions = Maps.newHashMap();
 
         HashMultimap<Role, RoleTransition> roleCreationTransitions = roleDAO.getRoleCreationTransitions(stateTransition);
@@ -195,7 +199,7 @@ public class RoleService {
         return userRoleTransitions;
     }
 
-    private void validateUserRoleTransition(PrismResource resource, HashMap<User, RoleTransition> userRoleTransitions, RoleTransition roleTransition, User user) {
+    private void validateUserRoleTransition(Resource resource, HashMap<User, RoleTransition> userRoleTransitions, RoleTransition roleTransition, User user) {
         if (roleDAO.getExcludingUserRole(user, resource, roleTransition.getRole().getExcludedRoles()).isEmpty()) {
             userRoleTransitions.put(user, roleTransition);
         } else {

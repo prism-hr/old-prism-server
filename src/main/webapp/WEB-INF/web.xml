@@ -22,6 +22,9 @@
             <param-value></param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
+        <multipart-config>
+            <max-file-size>2097152</max-file-size>
+        </multipart-config>
     </servlet>
     <servlet-mapping>
         <servlet-name>Spring</servlet-name>

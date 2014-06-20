@@ -10,6 +10,7 @@ import java.util.List;
 
 public class CommaSeparatedActionsToListConverter extends DozerConverter<String, List<PrismAction>> {
 
+    @SuppressWarnings("unchecked")
     public CommaSeparatedActionsToListConverter() {
         super(String.class, (Class) List.class);
     }

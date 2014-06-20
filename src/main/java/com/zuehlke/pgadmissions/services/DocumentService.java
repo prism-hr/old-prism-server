@@ -44,10 +44,6 @@ public class DocumentService {
         return document;
     }
 
-    public void save(Document document) {
-        entityService.save(document);
-    }
-
     public void deleteOrphanDocuments() {
         documentDAO.deleteOrphanDocuments();
     }

@@ -22,7 +22,7 @@ import com.google.common.collect.Maps;
 @Table(name = "SYSTEM")
 @Indexed
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class System extends PrismResource {
+public class System extends Resource {
 
     @Id
     @GeneratedValue

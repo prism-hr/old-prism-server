@@ -39,7 +39,7 @@ import com.google.common.collect.Maps;
 @Entity
 @Table(name = "INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_domicile_id", "name" }) })
 @Indexed
-public class Institution extends PrismResource {
+public class Institution extends Resource {
 
     @Id
     @GeneratedValue

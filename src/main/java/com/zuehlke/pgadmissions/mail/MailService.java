@@ -12,18 +12,18 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.services.NotificationTemplateService;
+import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
-public class NotificationService {
+public class MailService {
 
     @Value("${application.host}")
     private String host;
@@ -38,23 +38,23 @@ public class NotificationService {
     private SystemService systemService;
 
     @Autowired
-    private NotificationTemplateService notificationTemplateService;
+    private NotificationService notificationTemplateService;
 
     @Autowired
     private MailSender mailSender;
     
-    public void sendEmailNotification(User recipient, PrismResource resource, PrismNotificationTemplate templateName) {
+    public void sendEmailNotification(User recipient, Resource resource, PrismNotificationTemplate templateName) {
         sendEmailNotification(recipient, resource, templateName, null);
     }
     
-    public void sendEmailNotification(User recipient, PrismResource resource, PrismNotificationTemplate templateName, Comment comment) {
+    public void sendEmailNotification(User recipient, Resource resource, PrismNotificationTemplate templateName, Comment comment) {
         sendEmailNotification(recipient, resource, templateName, comment, Collections.<String, String> emptyMap());
     }
 
-    public void sendEmailNotification(User recipient, PrismResource resource, PrismNotificationTemplate templateId, Comment comment,
+    public void sendEmailNotification(User recipient, Resource resource, PrismNotificationTemplate templateId, Comment comment,
             Map<String, String> extraModelParams) {
-        NotificationTemplateVersion notificationTemplate = notificationTemplateService.getActiveVersionForTemplate(resource, templateId);
-        PrismEmailMessage message = new PrismEmailMessage();
+        NotificationTemplateVersion notificationTemplate = notificationTemplateService.getActiveVersion(resource, templateId);
+        MailMessageDTO message = new MailMessageDTO();
 
         message.setTo(Collections.singletonList(recipient));
         message.setModel(createModel(recipient, resource, notificationTemplate, comment));
@@ -63,7 +63,7 @@ public class NotificationService {
         mailSender.sendEmail(message);
     }
     
-    private Map<String, Object> createModel(User recipient, PrismResource resource, NotificationTemplateVersion notificationTemplate, Comment comment) {
+    private Map<String, Object> createModel(User recipient, Resource resource, NotificationTemplateVersion notificationTemplate, Comment comment) {
         Map<String, Object> model = Maps.newHashMap();
         model.put("recipient", recipient.getDisplayName());
 

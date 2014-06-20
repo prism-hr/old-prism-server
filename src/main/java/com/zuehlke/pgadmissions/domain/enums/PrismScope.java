@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
+import java.util.HashMap;
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.System;
@@ -18,11 +20,13 @@ public enum PrismScope {
     PROJECT(Project.class, 4),
     APPLICATION(Application.class, 5);
     
-    private Class<? extends PrismResource> resourceClass;
+    private Class<? extends Resource> resourceClass;
     
     private Integer precedence;
     
     private static HashMultimap<PrismScope, PrismScope> descendentScopes = HashMultimap.create();
+    
+    private static HashMap<Class<? extends Resource>, PrismScope> resourceScopes = Maps.newHashMap();
     
     static {
         descendentScopes.put(SYSTEM, INSTITUTION);
@@ -32,11 +36,19 @@ public enum PrismScope {
         descendentScopes.put(PROJECT, APPLICATION);
     }
     
-    private PrismScope(Class<? extends PrismResource> resourceClass, int precedence) {
+    static {
+        resourceScopes.put(System.class, SYSTEM);
+        resourceScopes.put(Institution.class, INSTITUTION);
+        resourceScopes.put(Program.class, PROGRAM);
+        resourceScopes.put(Project.class, PROJECT);
+        resourceScopes.put(Application.class, APPLICATION);
+    }
+    
+    private PrismScope(Class<? extends Resource> resourceClass, int precedence) {
         this.resourceClass = resourceClass;
     }
     
-    public  Class<? extends PrismResource> getResourceClass() {
+    public  Class<? extends Resource> getResourceClass() {
         return resourceClass;
     }
     
@@ -46,6 +58,10 @@ public enum PrismScope {
     
     public Set<PrismScope> getDescendentScopes(PrismScope parentScope) {
         return descendentScopes.get(parentScope);
+    }
+    
+    public static PrismScope getResourceScope(Class<? extends Resource> resourceClass) {
+        return resourceScopes.get(resourceClass);
     }
     
     public String getLowerCaseName() {

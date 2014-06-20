@@ -9,15 +9,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
+import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.mail.MailSender;
 
 @Service
 @Transactional
-public class NotificationTemplateService {
+public class NotificationService {
     
     @Autowired
     @Value("${application.host}")
@@ -45,23 +46,23 @@ public class NotificationTemplateService {
         return entityService.getByProperty(NotificationTemplate.class, "id", id);
     }
 
-    public NotificationTemplateVersion getTemplateVersionById(Integer id) {
+    public NotificationTemplateVersion getVersionById(Integer id) {
         return entityService.getById(NotificationTemplateVersion.class, id);
     }
     
-    public NotificationTemplateVersion getActiveVersionForTemplate(PrismResource resource, NotificationTemplate template) {
-        return notificationDAO.getActiveVersionForTemplate(resource, template);
+    public NotificationTemplateVersion getActiveVersion(Resource resource, NotificationTemplate template) {
+        return notificationDAO.getActiveVersion(resource, template);
     }
     
-    public NotificationTemplateVersion getActiveVersionForTemplate(PrismResource resource, PrismNotificationTemplate templateId) {
-        return notificationDAO.getActiveVersionForTemplate(resource, templateId);
+    public NotificationTemplateVersion getActiveVersion(Resource resource, PrismNotificationTemplate templateId) {
+        return notificationDAO.getActiveVersion(resource, templateId);
     }
     
-    public List<NotificationTemplateVersion> getVersionsForTemplate(PrismResource resource, NotificationTemplate template) {
-        return notificationDAO.getVersionsForTemplate(resource, template);
+    public List<NotificationTemplateVersion> getVersions(Resource resource, NotificationTemplate template) {
+        return notificationDAO.getVersions(resource, template);
     }
     
-    public NotificationTemplateVersion saveTemplateVersion(PrismResource resource, PrismNotificationTemplate templateId, String content, String subject) {
+    public NotificationTemplateVersion saveVersion(Resource resource, PrismNotificationTemplate templateId, String content, String subject) {
         NotificationTemplate notificationTemplate = getById(templateId);
         NotificationTemplateVersion templateVersion = new NotificationTemplateVersion();
         templateVersion.setResource(resource);
@@ -74,8 +75,16 @@ public class NotificationTemplateService {
         return templateVersion;
     }
     
-    public Integer getDefaultReminderDuration(NotificationTemplate notificationTemplate) {
-        return notificationDAO.getDefaultReminderDuration(notificationTemplate);
+    public Integer getReminderDuration(Resource resource, NotificationTemplate template) {
+        return notificationDAO.getReminderDuration(resource, template);
+    }
+
+    public List<NotificationTemplate> getTemplates() {
+        return entityService.getAll(NotificationTemplate.class);
+    }
+    
+    public NotificationConfiguration getConfiguration(Resource resource, NotificationTemplate template) {
+        return notificationDAO.getConfiguration(resource, template);
     }
     
 }

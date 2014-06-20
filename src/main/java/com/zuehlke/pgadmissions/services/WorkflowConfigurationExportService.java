@@ -46,7 +46,7 @@ public class WorkflowConfigurationExportService {
     private StateService stateService;
 
     @Autowired
-    private NotificationTemplateService notificationTemplateService;
+    private NotificationService notificationTemplateService;
 
     public String exportWorkflowConfiguration() throws Exception {
         DocumentBuilder documentBuilder = prepareDocumentBuilder();
@@ -56,7 +56,7 @@ public class WorkflowConfigurationExportService {
         Element scopesElement = document.createElement("scopes");
         document.appendChild(scopesElement);
 
-        for (Scope scopes : systemService.getAllScopes()) {
+        for (Scope scopes : systemService.getScopes()) {
             Element resourceElement = buildScopeElement(document, scopes);
             scopesElement.appendChild(resourceElement);
         }
@@ -108,9 +108,9 @@ public class WorkflowConfigurationExportService {
         stateElement.setAttribute("id", state.getId().toString());
         stateElement.setAttribute("parent-state", state.getParentState().getId().toString());
 
-        Integer defaultStateDuration = stateService.getDefaultStateDuration(state);
+        Integer defaultStateDuration = systemService.getStateDuration(state);
         if (defaultStateDuration != null) {
-            stateElement.setAttribute("default-duration", stateService.getDefaultStateDuration(state).toString());
+            stateElement.setAttribute("default-duration", defaultStateDuration.toString());
         }
 
         if (!state.getStateActions().isEmpty()) {
@@ -148,7 +148,7 @@ public class WorkflowConfigurationExportService {
         }
 
         Element nextAppend = actionElement;
-        PrismStateTransitionEvaluation stateTransitionEvaluation = stateService.getStateTransitionEvaluationByStateAction(stateAction);
+        PrismStateTransitionEvaluation stateTransitionEvaluation = stateService.getTransitionEvaluation(stateAction);
         if (stateTransitionEvaluation != null) {
             Element stateTransitionEvaluationElement = buildStateTransitionEvaluationElement(document, stateTransitionEvaluation);
             actionElement.appendChild(stateTransitionEvaluationElement);
@@ -176,7 +176,7 @@ public class WorkflowConfigurationExportService {
 
         NotificationTemplate reminderNotificationTemplate = notificationTemplate.getReminderTemplate();
         if (reminderNotificationTemplate != null) {
-            notificationTemplateElement.setAttribute("default-reminder-interval", notificationTemplateService.getDefaultReminderDuration(notificationTemplate).toString());
+            notificationTemplateElement.setAttribute("default-reminder-interval", systemService.getReminderDuration(notificationTemplate).toString());
         }
 
         return notificationTemplateElement;

@@ -1,15 +1,15 @@
 package com.zuehlke.pgadmissions.mail;
 
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
+import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 
-public class NotificationDescriptor {
+public class MailDescriptor {
 
     private User recipient;
 
-    private PrismResourceDynamic resource;
+    private ResourceDynamic resource;
 
     private PrismNotificationTemplate notificationTemplate;
     
@@ -23,11 +23,11 @@ public class NotificationDescriptor {
         this.recipient = recipient;
     }
 
-    public PrismResourceDynamic getResource() {
+    public ResourceDynamic getResource() {
         return resource;
     }
 
-    public void setResource(PrismResourceDynamic resource) {
+    public void setResource(ResourceDynamic resource) {
         this.resource = resource;
     }
 

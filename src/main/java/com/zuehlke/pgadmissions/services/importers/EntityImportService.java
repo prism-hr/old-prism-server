@@ -95,7 +95,7 @@ public class EntityImportService {
                 thisBean.mergeImportedEntities(entityClass, newEntities);
             }
         } catch (Exception e) {
-            throw new XMLDataImportException("Error during the import of file: " + fileLocation);
+            throw new XMLDataImportException("Error during the import of file: " + fileLocation, e);
         }
     }
 

@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.domain.enums.PrismState;
 @Entity
 @Table(name = "APPLICATION")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Application extends PrismResourceDynamic {
+public class Application extends ResourceDynamic {
 
     @Id
     @GeneratedValue

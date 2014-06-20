@@ -4,7 +4,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 
-public abstract class PrismResource implements IUniqueResource {
+public abstract class Resource implements IUniqueResource {
 
     public abstract Integer getId();
 
@@ -40,19 +40,19 @@ public abstract class PrismResource implements IUniqueResource {
         return PrismScope.valueOf(this.getClass().getSimpleName().toUpperCase());
     }
 
-    public PrismResource getEnclosingResource(PrismScope resourceType) {
+    public Resource getEnclosingResource(PrismScope resourceType) {
         return getResourceType().equals(resourceType) ? this : getParentResource(resourceType);
     }
 
-    public PrismResource getParentResource(PrismScope resourceType) {
+    public Resource getParentResource(PrismScope resourceType) {
         try {
-            return (PrismResource) PropertyUtils.getSimpleProperty(this, resourceType.getLowerCaseName());
+            return (Resource) PropertyUtils.getSimpleProperty(this, resourceType.getLowerCaseName());
         } catch (Exception e) {
             throw new Error(e);
         }
     }
 
-    public void setParentResource(PrismResource parentResource) {
+    public void setParentResource(Resource parentResource) {
         if (parentResource.getId() != null) {
             setProject(parentResource.getProject());
             setProgram(parentResource.getProgram());

@@ -14,13 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.mail.NotificationDescriptor;
+import com.zuehlke.pgadmissions.mail.MailDescriptor;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -66,7 +66,7 @@ public class UserDAO {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(User.class).add(Restrictions.eq("upi", upi)).list();
     }
     
-    public List<User> getUsersForResource(PrismResource resource) {
+    public List<User> getUsersForResource(Resource resource) {
         return sessionFactory.getCurrentSession().createCriteria(UserRole.class)
                 .setProjection(Projections.groupProperty("user.parentUser")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
@@ -79,7 +79,7 @@ public class UserDAO {
                 .list();
     }
 
-    public List<User> getUsersForResourceAndRole(PrismResource resource, PrismRole authority) {
+    public List<User> getUsersForResourceAndRole(Resource resource, PrismRole authority) {
         return sessionFactory.getCurrentSession().createCriteria(UserRole.class)
                 .setProjection(Projections.groupProperty("user.parentUser")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
@@ -129,12 +129,12 @@ public class UserDAO {
         return new ArrayList<User>();
     }
 
-    public List<NotificationDescriptor> getUseDueTaskNotification() {
+    public List<MailDescriptor> getUseDueTaskNotification() {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public List<NotificationDescriptor> getUserStateTransitionNotifications(StateTransition stateTransition) {
+    public List<MailDescriptor> getUserStateTransitionNotifications(StateTransition stateTransition) {
         // TODO Auto-generated method stub
         return null;
     }

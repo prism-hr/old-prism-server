@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
-import com.zuehlke.pgadmissions.mail.NotificationService;
+import com.zuehlke.pgadmissions.mail.MailService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.importers.EntityImportService;
@@ -32,7 +32,7 @@ public class XMLDataImportTask {
     private EntityImportService entityImportService;
 
     @Autowired
-    private NotificationService notificationService;
+    private MailService notificationService;
     
     @Autowired 
     private SystemService systemService;

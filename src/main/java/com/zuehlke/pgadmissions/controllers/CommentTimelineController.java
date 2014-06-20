@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
+import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -51,7 +51,7 @@ public class CommentTimelineController {
 	}
 	
 	@ModelAttribute("comments")
-	public List<Comment> getComments(@ModelAttribute PrismResourceDynamic resource) {		
+	public List<Comment> getComments(@ModelAttribute ResourceDynamic resource) {		
 		return commentService.getVisibleComments(resource, userService.getCurrentUser());		
 		
 	}

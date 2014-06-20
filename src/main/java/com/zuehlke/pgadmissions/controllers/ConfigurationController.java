@@ -26,8 +26,8 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentCustomQuestion;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.domain.PrismResource;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnit;
@@ -43,9 +43,10 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.services.ApplicationExportConfigurationService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.NotificationTemplateService;
+import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
 
@@ -67,13 +68,16 @@ public class ConfigurationController {
     private ApplicationExportConfigurationService applicationExportConfigurationService;
 
     @Autowired
-    private NotificationTemplateService templateService;
+    private StateService stateService;
+    
+    @Autowired
+    private NotificationService templateService;
 
     @Autowired
     private ProgramService programsService;
 
     @Autowired
-    private NotificationTemplateService notificationService;
+    private NotificationService notificationService;
 
     @Autowired
     private ScoringDefinitionParser scoringDefinitionParser;
@@ -118,7 +122,7 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.GET, value = "/editEmailTemplate/{id:\\d+}")
     @ResponseBody
     public Map<String, Object> getTemplateVersion(@PathVariable Integer id) {
-        NotificationTemplateVersion template = templateService.getTemplateVersionById(id);
+        NotificationTemplateVersion template = templateService.getVersionById(id);
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("content", template.getContent());
         result.put("createdTimestamp", template.getCreatedTimestamp());
@@ -182,11 +186,11 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.GET, value = "/editEmailTemplate/{resourceScope:[A-Z_]+}/{resourceId:[0-9]+}/{templateId:[a-zA-Z_]+}")
     @ResponseBody
     public Map<Object, Object> getVersionsForTemplate(@PathVariable PrismScope resourceScope, @PathVariable Integer resourceId, @PathVariable String templateId) {
-        PrismResource resource = (PrismResource) entityService.getById(resourceScope.getResourceClass(), resourceId);
+        Resource resource = (Resource) entityService.getById(resourceScope.getResourceClass(), resourceId);
         NotificationTemplate template = templateService.getById(PrismNotificationTemplate.valueOf(templateId));
-        List<NotificationTemplateVersion> versions = notificationService.getVersionsForTemplate(resource, template);
+        List<NotificationTemplateVersion> versions = notificationService.getVersions(resource, template);
         Map<Object, Object> result = new HashMap<Object, Object>();
-        result.put("activeVersion", notificationService.getActiveVersionForTemplate(resource, template));
+        result.put("activeVersion", notificationService.getActiveVersion(resource, template));
         result.put("versions", versions);
         return result;
     }
@@ -195,8 +199,8 @@ public class ConfigurationController {
     @ResponseBody
     public Map<String, Object> saveTemplate(@PathVariable PrismScope resourceScope, @PathVariable Integer resourceId,
             @PathVariable PrismNotificationTemplate templateId, @RequestParam String content, @RequestParam String subject) {
-        PrismResource resource = (PrismResource) entityService.getById(resourceScope.getResourceClass(), resourceId);
-        NotificationTemplateVersion newVersion = templateService.saveTemplateVersion(resource, templateId, content, subject);
+        Resource resource = (Resource) entityService.getById(resourceScope.getResourceClass(), resourceId);
+        NotificationTemplateVersion newVersion = templateService.saveVersion(resource, templateId, content, subject);
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("id", newVersion.getId());
         result.put("createdTimestamp", new SimpleDateFormat("yyyy/M/d - HH:mm:ss").format(newVersion.getCreatedTimestamp()));
@@ -205,7 +209,8 @@ public class ConfigurationController {
 
     @ModelAttribute("states")
     public List<State> getConfigurableStates() {
-        return configurationService.getConfigurableStates();
+        // TODO : generalise to program and project too
+        return stateService.getConfigurableStates(PrismScope.APPLICATION);
     }
 
     @ModelAttribute("user")

@@ -40,7 +40,7 @@ public class StateDuration {
     public StateDuration() {
     }
     
-    public StateDuration(PrismResource resource, State state, Integer duration) {
+    public StateDuration(Resource resource, State state, Integer duration) {
         setResource(resource);
         this.state = state;
         this.duration = duration;
@@ -78,7 +78,7 @@ public class StateDuration {
         this.program = program;
     }
     
-    private void setResource(PrismResource resource) throws Error {
+    private void setResource(Resource resource) throws Error {
         try {
             PropertyUtils.setSimpleProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
         } catch (Exception e) {
@@ -100,6 +100,21 @@ public class StateDuration {
 
     public void setDuration(Integer duration) {
         this.duration = duration;
+    }
+    
+    public StateDuration withSystem(System system) {
+        this.system = system;
+        return this;
+    }
+    
+    public StateDuration withState(State state) {
+        this.state = state;
+        return this;
+    }
+    
+    public StateDuration withDuration(Integer duration) {
+        this.duration = duration;
+        return this;
     }
 
 }

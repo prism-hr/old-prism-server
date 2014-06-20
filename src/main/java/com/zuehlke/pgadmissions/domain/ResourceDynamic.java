@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.domain;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-public abstract class PrismResourceDynamic extends PrismResource {
+public abstract class ResourceDynamic extends Resource {
 
     public abstract State getPreviousState();
 

@@ -8,7 +8,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 
@@ -18,7 +18,7 @@ public class ScopeDAO {
     @Autowired
     private SessionFactory sessionFactory;
  
-    public <T extends PrismResource> Scope getByType(Class<T> resourceType) {
+    public <T extends Resource> Scope getByType(Class<T> resourceType) {
         return (Scope) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
                 .add(Restrictions.eq("id", PrismScope.valueOf(resourceType.getSimpleName().toUpperCase()))) //
                 .uniqueResult();
@@ -32,7 +32,7 @@ public class ScopeDAO {
                 .list();
     }
     
-    public <T extends PrismResource> List<Scope> getParentScopesByType(Class<T> resourceType) {
+    public <T extends Resource> List<Scope> getParentScopesByType(Class<T> resourceType) {
         Scope scope = getByType(resourceType);
         return getParentScopes(scope);
     }

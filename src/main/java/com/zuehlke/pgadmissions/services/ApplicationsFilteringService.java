@@ -26,7 +26,7 @@ public class ApplicationsFilteringService {
     public Filter getDefaultApplicationFiltering(User user) {
         Filter filtering;
         if (user.getUserAccount().getFilters().get(PrismScope.APPLICATION) != null) {
-            filtering = user.getUserAccount().getFilters().get(systemService.getSystemScope(PrismScope.APPLICATION));
+            filtering = user.getUserAccount().getFilters().get(systemService.getScope(PrismScope.APPLICATION));
         } else {
             filtering = getActiveApplicationFiltering();
         }

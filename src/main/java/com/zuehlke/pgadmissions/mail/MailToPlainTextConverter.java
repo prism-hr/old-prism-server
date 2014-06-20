@@ -10,9 +10,9 @@ import org.jsoup.nodes.TextNode;
 import org.jsoup.select.NodeTraversor;
 import org.jsoup.select.NodeVisitor;
 
-public class HtmlToPlainText {
+public class MailToPlainTextConverter {
 
-    public HtmlToPlainText() {
+    public MailToPlainTextConverter() {
     }
     
     public String getPlainText(String html){

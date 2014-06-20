@@ -80,7 +80,7 @@ public class NotificationTemplateVersion {
         this.program = program;
     }
 
-    public void setResource(PrismResource resource) {
+    public void setResource(Resource resource) {
         try {
             PropertyUtils.setSimpleProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
         } catch (Exception e) {

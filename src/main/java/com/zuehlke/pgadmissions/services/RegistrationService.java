@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
-import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.mail.NotificationService;
+import com.zuehlke.pgadmissions.mail.MailService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
@@ -33,12 +33,12 @@ public class RegistrationService {
     private RefereeDAO refereeDAO;
 
     @Autowired
-    private NotificationService notificationService;
+    private MailService notificationService;
 
     @Autowired
     private EntityService entityService;
 
-    public User submitRegistration(User pendingUser, PrismResource prismScope) {
+    public User submitRegistration(User pendingUser, Resource prismScope) {
         User user = userService.getOrCreateUser(pendingUser.getFirstName(), pendingUser.getLastName(), pendingUser.getEmail());
 
         if (pendingUser.getActivationCode() != null && !user.getActivationCode().equals(pendingUser.getActivationCode())) {

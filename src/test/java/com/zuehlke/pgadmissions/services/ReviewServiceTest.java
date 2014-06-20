@@ -6,7 +6,7 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.mail.NotificationService;
+import com.zuehlke.pgadmissions.mail.MailService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class ReviewServiceTest {
@@ -17,7 +17,7 @@ public class ReviewServiceTest {
 
     @Mock
     @InjectIntoByType
-    private NotificationTemplateService mailService;
+    private NotificationService mailService;
 
     @TestedObject
     private ReviewService reviewService;

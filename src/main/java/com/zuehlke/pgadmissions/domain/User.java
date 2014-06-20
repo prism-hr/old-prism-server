@@ -156,6 +156,10 @@ public class User implements UserDetails, Comparable<User> {
         this.parentUser = parentUser;
     }
 
+    public Set<UserRole> getUserRoles() {
+        return userRoles;
+    }
+
     public Set<ProgramExport> getProgramExports() {
         return programExports;
     }

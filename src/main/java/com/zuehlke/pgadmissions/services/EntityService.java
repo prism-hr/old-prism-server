@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.IUniqueResource;
-import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
+import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 
 @Service
 @Transactional
@@ -68,7 +68,7 @@ public class EntityService {
         entityDAO.delete(entity);
     }
 
-    public LocalDate getResourceDueDate(PrismResourceDynamic resource, LocalDate customDueDateBaseline) {
+    public LocalDate getResourceDueDate(ResourceDynamic resource, LocalDate customDueDateBaseline) {
         LocalDate dueDateBaseline = customDueDateBaseline;
         if (dueDateBaseline == null) {
             dueDateBaseline = resource.getDueDateBaseline();

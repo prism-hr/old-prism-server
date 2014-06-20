@@ -202,7 +202,7 @@ public class Comment {
         this.id = id;
     }
 
-    public void setResource(PrismResourceDynamic resource) {
+    public void setResource(ResourceDynamic resource) {
         try {
             PropertyUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
         } catch (Exception e) {
@@ -587,7 +587,7 @@ public class Comment {
         return this;
     }
 
-    public Comment withResource(PrismResourceDynamic resource) {
+    public Comment withResource(ResourceDynamic resource) {
         setResource(resource);
         return this;
     }

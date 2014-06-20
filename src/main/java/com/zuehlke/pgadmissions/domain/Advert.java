@@ -22,7 +22,7 @@ import com.google.common.base.Objects;
 @Entity
 @Table(name = "ADVERT")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Advert extends PrismResourceDynamic {
+public abstract class Advert extends ResourceDynamic {
 
     @Id
     @GeneratedValue

@@ -9,8 +9,8 @@ import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
-import com.zuehlke.pgadmissions.mail.NotificationDescriptor;
-import com.zuehlke.pgadmissions.mail.NotificationService;
+import com.zuehlke.pgadmissions.mail.MailDescriptor;
+import com.zuehlke.pgadmissions.mail.MailService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
 import org.apache.commons.lang.StringUtils;
@@ -43,7 +43,7 @@ public class UserService {
     private EncryptionUtils encryptionUtils;
 
     @Autowired
-    private NotificationService notifiationService;
+    private MailService notifiationService;
 
     @Autowired
     private EntityService entityService;
@@ -204,7 +204,7 @@ public class UserService {
     public void setFiltering(final User user, final Filter filter) {
         Filter mergedFilter = filteringDAO.merge(filter);
         // TODO: generalise for program and project scopes
-        Scope filterScope = systemService.getSystemScope(PrismScope.APPLICATION);
+        Scope filterScope = systemService.getScope(PrismScope.APPLICATION);
         user.getUserAccount().getFilters().put(filterScope, mergedFilter);
         userDAO.save(user);
     }
@@ -213,15 +213,15 @@ public class UserService {
         return userDAO.getNumberOfActiveApplicationsForApplicant(applicant);
     }
 
-    public List<NotificationDescriptor> getUsersDueTaskNotification() {
+    public List<MailDescriptor> getUsersDueTaskNotification() {
         return userDAO.getUseDueTaskNotification();
     }
 
-    public List<User> getUsersForResourceAndRole(PrismResource resource, PrismRole authority) {
+    public List<User> getUsersForResourceAndRole(Resource resource, PrismRole authority) {
         return userDAO.getUsersForResourceAndRole(resource, authority);
     }
 
-    public List<NotificationDescriptor> getUserStateTransitionNotifications(StateTransition stateTransition) {
+    public List<MailDescriptor> getUserStateTransitionNotifications(StateTransition stateTransition) {
         return userDAO.getUserStateTransitionNotifications(stateTransition);
     }
 

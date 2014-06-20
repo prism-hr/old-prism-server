@@ -174,19 +174,19 @@ public class UserRole implements IUniqueResource {
         return this;
     }
 
-    public UserRole withScope(PrismResource resource) {
+    public UserRole withScope(Resource resource) {
         this.setResource(resource);
         return this;
     }
 
-    public UserRole withInitialData(PrismResource prismResource, User user, Role role) {
+    public UserRole withInitialData(Resource prismResource, User user, Role role) {
         setResource(prismResource);
         this.user = Preconditions.checkNotNull(user);
         this.role = Preconditions.checkNotNull(role);
         return this;
     }
 
-    public PrismResource getResource() {
+    public Resource getResource() {
         if (system != null) {
             return system;
         } else if (institution != null) {
@@ -199,7 +199,7 @@ public class UserRole implements IUniqueResource {
         return application;
     }
 
-    public void setResource(PrismResource resource) {
+    public void setResource(Resource resource) {
         try {
             PropertyUtils.setSimpleProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
         } catch (Exception e) {

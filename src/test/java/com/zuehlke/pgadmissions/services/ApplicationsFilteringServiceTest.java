@@ -20,7 +20,7 @@ public class ApplicationsFilteringServiceTest {
     public void shouldReturnStoredFiltering() {
         Filter filter = new Filter();
         User user = new User().withAccount(new UserAccount());
-        user.getUserAccount().getFilters().put(systemService.getSystemScope(PrismScope.APPLICATION), filter);
+        user.getUserAccount().getFilters().put(systemService.getScope(PrismScope.APPLICATION), filter);
 
         Filter actualFiltering = service.getDefaultApplicationFiltering(user);
 

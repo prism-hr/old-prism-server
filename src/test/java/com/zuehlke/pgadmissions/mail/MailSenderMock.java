@@ -10,15 +10,15 @@ import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
 public class MailSenderMock extends MailSender {
 
-    private List<PrismEmailMessage> sentMessages = Lists.newLinkedList();
+    private List<MailMessageDTO> sentMessages = Lists.newLinkedList();
 
     @Override
-    public void sendEmail(Collection<PrismEmailMessage> emailMessages) {
+    public void sendEmail(Collection<MailMessageDTO> emailMessages) {
         sentMessages.addAll(emailMessages);
     }
 
-    public PrismEmailMessage assertEmailSent(User recipient, PrismNotificationTemplate templateId) {
-        for (PrismEmailMessage message : sentMessages) {
+    public MailMessageDTO assertEmailSent(User recipient, PrismNotificationTemplate templateId) {
+        for (MailMessageDTO message : sentMessages) {
             if (HibernateUtils.sameEntities(recipient, message.getTo().get(0)) && templateId == message.getTemplate().getNotificationTemplate().getId()) {
                 sentMessages.remove(message);
                 return message;
@@ -30,7 +30,7 @@ public class MailSenderMock extends MailSender {
     public void verify() {
         if (!sentMessages.isEmpty()) {
             StringBuilder sb = new StringBuilder("Unexpected messages sent: ");
-            for (PrismEmailMessage message : sentMessages) {
+            for (MailMessageDTO message : sentMessages) {
                 sb.append("Template: " + message.getTemplate() + ", recipient:" + message.getTo() + "; ");
             }
             throw new AssertionError(sb);

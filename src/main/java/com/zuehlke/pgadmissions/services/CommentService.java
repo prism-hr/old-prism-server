@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
+import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
 
@@ -53,15 +53,15 @@ public class CommentService {
         entityDAO.save(comment);
     }
     
-    public Comment getLastComment(PrismResourceDynamic resource) {
+    public Comment getLastComment(ResourceDynamic resource) {
         return commentDAO.getLastComment(resource);
     }
     
-    public <T extends Comment> T getLastCommentOfType(PrismResourceDynamic resource, Class<T> clazz) {
+    public <T extends Comment> T getLastCommentOfType(ResourceDynamic resource, Class<T> clazz) {
         return getLastCommentOfType(resource, clazz);
     }
     
-    public <T extends Comment> T getLastCommentOfType(PrismResourceDynamic resource, Class<T> clazz, User author) {
+    public <T extends Comment> T getLastCommentOfType(ResourceDynamic resource, Class<T> clazz, User author) {
         return commentDAO.getLastCommentOfType(resource, clazz, author);
     }
     
@@ -69,7 +69,7 @@ public class CommentService {
         return commentDAO.getAssignedUsers(comment, role, invoker);
     }
 
-    public List<Comment> getVisibleComments(PrismResourceDynamic resource, User user) {
+    public List<Comment> getVisibleComments(ResourceDynamic resource, User user) {
         List<Comment> comments = Lists.newArrayList();
         if (!actionService.getPermittedActions(resource, user).isEmpty()) {
             comments = commentDAO.getComments(resource);

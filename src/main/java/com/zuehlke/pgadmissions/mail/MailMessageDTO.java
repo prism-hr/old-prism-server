@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 
-public final class PrismEmailMessage {
+public final class MailMessageDTO {
 
     private Application form;
 
@@ -62,7 +62,7 @@ public final class PrismEmailMessage {
         }
     };
 
-    public PrismEmailMessage() {
+    public MailMessageDTO() {
     }
 
     @SuppressWarnings("unchecked")

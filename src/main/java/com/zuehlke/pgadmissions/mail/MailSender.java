@@ -23,10 +23,10 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.domain.PrismResource;
+import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
-import com.zuehlke.pgadmissions.services.NotificationTemplateService;
+import com.zuehlke.pgadmissions.services.NotificationService;
 
 import freemarker.template.Template;
 
@@ -50,7 +50,7 @@ public class MailSender {
     private String emailAddressTo;
 
     @Autowired
-    private NotificationTemplateService NotificationTemplateService;
+    private NotificationService NotificationTemplateService;
 
     @Autowired
     private FreeMarkerConfig freemarkerConfig;
@@ -76,17 +76,17 @@ public class MailSender {
         }
     }
 
-    protected String resolveSubject(final PrismResource resource, final PrismNotificationTemplate templateId, final Object... args) {
-        String subjectFormat = NotificationTemplateService.getActiveVersionForTemplate(resource, templateId).getSubject();
+    protected String resolveSubject(final Resource resource, final PrismNotificationTemplate templateId, final Object... args) {
+        String subjectFormat = NotificationTemplateService.getActiveVersion(resource, templateId).getSubject();
         return args == null ? subjectFormat : String.format(subjectFormat, args);
     }
 
-    public void sendEmail(final PrismEmailMessage... emailMessage) {
+    public void sendEmail(final MailMessageDTO... emailMessage) {
         sendEmail(Arrays.asList(emailMessage));
     }
 
-    public void sendEmail(final Collection<PrismEmailMessage> emailMessages) {
-        for (PrismEmailMessage message : emailMessages) {
+    public void sendEmail(final Collection<MailMessageDTO> emailMessages) {
+        for (MailMessageDTO message : emailMessages) {
             if (productionEmail) {
                 sendEmailAsProductionMessage(message);
             } else {
@@ -95,7 +95,7 @@ public class MailSender {
         }
     }
 
-    protected void sendEmailAsProductionMessage(final PrismEmailMessage message) {
+    protected void sendEmailAsProductionMessage(final MailMessageDTO message) {
         log.info(String.format("Sending PRODUCTION Email: %s", message.toString()));
         try {
             javaMailSender.send(new MimeMessagePreparator() {
@@ -133,7 +133,7 @@ public class MailSender {
                     messageHelper.setSubject(subject);
 
                     Template contentTemplate = new Template(null, new StringReader(notificationTemplate.getContent()), freemarkerConfig.getConfiguration());
-                    HtmlToPlainText htmlFormatter = new HtmlToPlainText();
+                    MailToPlainTextConverter htmlFormatter = new MailToPlainTextConverter();
                     String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(contentTemplate, message.getModel());
                     String plainText = htmlFormatter.getPlainText(htmlText);
                     plainText = plainText + PLAIN_TEXT_NOTE;
@@ -143,11 +143,11 @@ public class MailSender {
             });
         } catch (Exception e) {
             log.error(String.format("Failed to send email message %s", message.toString()), e);
-            throw new PrismMailMessageException(message);
+            throw new MailException(message);
         }
     }
 
-    protected void sendEmailAsDevelopmentMessage(final PrismEmailMessage message) {
+    protected void sendEmailAsDevelopmentMessage(final MailMessageDTO message) {
         log.info(String.format("Sending DEVELOPMENT Email: %s", message.toString()));
         try {
             javaMailSender.send(new MimeMessagePreparator() {
@@ -183,7 +183,7 @@ public class MailSender {
                     messageHelper.setSubject(subject);
 
                     Template contentTemplate = new Template(null, new StringReader(notificationTemplate.getContent()), freemarkerConfig.getConfiguration());
-                    HtmlToPlainText htmlFormatter = new HtmlToPlainText();
+                    MailToPlainTextConverter htmlFormatter = new MailToPlainTextConverter();
                     String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(contentTemplate, message.getModel());
                     String plainText = htmlFormatter.getPlainText(htmlText);
                     plainText = plainText + PLAIN_TEXT_NOTE;
@@ -193,11 +193,11 @@ public class MailSender {
             });
         } catch (Exception e) {
             log.error(String.format("Failed to send email message %s", message.toString()), e);
-            throw new PrismMailMessageException(message);
+            throw new MailException(message);
         }
     }
 
-    public NotificationTemplateService getEmailTemplateService() {
+    public NotificationService getEmailTemplateService() {
         return NotificationTemplateService;
     }
 

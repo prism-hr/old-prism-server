@@ -13,8 +13,8 @@ import org.springframework.stereotype.Repository;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.PrismResource;
-import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
+import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import com.zuehlke.pgadmissions.domain.enums.PrismStateTransitionEvaluation;
 
 @Repository
@@ -31,13 +32,14 @@ public class StateDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public List<State> getAllConfigurableStates() {
-        return (List<State>) sessionFactory.getCurrentSession().createCriteria(State.class) //
-                .add(Restrictions.isNotNull("duration")) //
+    public List<State> getAllConfigurableStates(PrismScope scopeId) {
+        return (List<State>) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
+                .setProjection(Projections.property("state")) //
+                .add(Restrictions.isNotNull("system")) //
                 .list();
     }
 
-    public List<StateTransition> getStateTransitions(PrismResource resource, Action action) {
+    public List<StateTransition> getStateTransitions(Resource resource, Action action) {
         return (List<StateTransition>) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", resource.getState())) //
@@ -52,7 +54,7 @@ public class StateDAO {
                 .uniqueResult();
     }
 
-    public Integer getStateDuration(PrismResourceDynamic resource) {
+    public Integer getCurrentStateDuration(ResourceDynamic resource) {
         return (Integer) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
                 .setProjection(Projections.property("duration")) //
                 .add(Restrictions.eq("state", resource.getState())) //
@@ -68,11 +70,11 @@ public class StateDAO {
                 .uniqueResult();
     }
     
-    public Integer getDefaultStateDuration(State state) {
+    public Integer getStateDuration(Resource resource, State state) {
         return (Integer) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
                 .setProjection(Projections.property("duration")) //
+                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
                 .add(Restrictions.eq("state", state)) //
-                .add(Restrictions.isNotNull("system")) //
                 .uniqueResult();
     }
     
@@ -95,8 +97,8 @@ public class StateDAO {
         return pendingStateTransitions;
     }
     
-    public HashMultimap<Action, PrismResourceDynamic> getPropagatedStateTransitions(StateTransitionPending pendingStateTransition) {
-        HashMultimap<Action, PrismResourceDynamic> propagations = HashMultimap.create();
+    public HashMultimap<Action, ResourceDynamic> getPropagatedStateTransitions(StateTransitionPending pendingStateTransition) {
+        HashMultimap<Action, ResourceDynamic> propagations = HashMultimap.create();
         for (Action propagateAction : pendingStateTransition.getStateTransition().getPropagatedActions()) {
             String propagateResourceName = propagateAction.getScope().getId().getLowerCaseName();
             String propagateResourceReference = propagateResourceName;
@@ -105,7 +107,7 @@ public class StateDAO {
                 propagateResourceReference = propagateResourceName + "s";
             }
             
-            List<PrismResourceDynamic> propagateResources;
+            List<ResourceDynamic> propagateResources;
             
             try {
                 propagateResources = sessionFactory.getCurrentSession() //
@@ -125,7 +127,7 @@ public class StateDAO {
         return propagations;
     }
 
-    public HashMultimap<Action, PrismResourceDynamic> getEscalatedStateTransitions() {
+    public HashMultimap<Action, ResourceDynamic> getEscalatedStateTransitions() {
         List<Action> escalateActions = sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
@@ -134,9 +136,9 @@ public class StateDAO {
                 .addOrder(Order.desc("scope.precedence")) //
                 .list();
 
-        HashMultimap<Action, PrismResourceDynamic> escalations = HashMultimap.create();
+        HashMultimap<Action, ResourceDynamic> escalations = HashMultimap.create();
         for (Action escalateAction : escalateActions) {
-            List<PrismResourceDynamic> escalateResources;
+            List<ResourceDynamic> escalateResources;
             
             try {
                 escalateResources = sessionFactory.getCurrentSession() //

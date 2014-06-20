@@ -12,8 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ActionRedaction;
-import com.zuehlke.pgadmissions.domain.PrismResource;
-import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionEnhancement;
 import com.zuehlke.pgadmissions.domain.User;
@@ -27,7 +27,7 @@ public class ActionDAO {
     @Autowired
     private SessionFactory sessionFactory;
     
-    public PrismAction getValidAction(PrismResource resource, PrismAction action) {
+    public PrismAction getValidAction(Resource resource, PrismAction action) {
         return (PrismAction) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action.id")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
@@ -37,7 +37,7 @@ public class ActionDAO {
                 .uniqueResult();
     }
     
-    public Action getDelegateAction(PrismResource resource, Action action) {
+    public Action getDelegateAction(Resource resource, Action action) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(StateActionEnhancement.class) //
                 .setProjection(Projections.property("stateAction.action")) //
                 .createAlias("delegatedAction", "action", JoinType.INNER_JOIN)
@@ -51,7 +51,7 @@ public class ActionDAO {
                 .uniqueResult();
     }
 
-    public Action getRedirectAction(PrismResource resource, User user) {
+    public Action getRedirectAction(Resource resource, User user) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
@@ -75,7 +75,7 @@ public class ActionDAO {
                 .uniqueResult();
     }
     
-    public PrismAction getPermittedAction(PrismResource resource, Action action, User user) {
+    public PrismAction getPermittedAction(Resource resource, Action action, User user) {
         return (PrismAction) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action.id")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
@@ -99,7 +99,7 @@ public class ActionDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<PrismAction> getPermittedActions(PrismResource resource, User user) {
+    public List<PrismAction> getPermittedActions(Resource resource, User user) {
         return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("action.id"))
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
@@ -124,7 +124,7 @@ public class ActionDAO {
     }
     
     @SuppressWarnings("unchecked")
-    public List<PrismActionRedactionType> getRedactions(User user, PrismResourceDynamic resource, Action action) {
+    public List<PrismActionRedactionType> getRedactions(User user, ResourceDynamic resource, Action action) {
         return (List<PrismActionRedactionType>) sessionFactory.getCurrentSession().createCriteria(ActionRedaction.class)
                 .setProjection(Projections.groupProperty("redactionType")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //

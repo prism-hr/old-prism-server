@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.PrismResourceDynamic;
+import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
 
@@ -24,15 +24,15 @@ public class CommentDAO {
     @Autowired
     private SessionFactory sessionFactory;
     
-    public Comment getLastComment(PrismResourceDynamic resource) {
+    public Comment getLastComment(ResourceDynamic resource) {
         return getLastCommentOfType(resource, Comment.class, null);
     }
     
-    public <T extends Comment> T getLastCommentOfType(PrismResourceDynamic resource, Class<T> clazz) {
+    public <T extends Comment> T getLastCommentOfType(ResourceDynamic resource, Class<T> clazz) {
         return getLastCommentOfType(resource, clazz, null);
     }
     
-    public <T extends Comment> T getLastCommentOfType(PrismResourceDynamic resource, Class<T> clazz, User author) {
+    public <T extends Comment> T getLastCommentOfType(ResourceDynamic resource, Class<T> clazz, User author) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(clazz) //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
                 .addOrder(Order.desc("createdTimestamp")) //
@@ -57,7 +57,7 @@ public class CommentDAO {
         return (List<User>) criteria.add(Restrictions.eq("role", role)).list();
     }
     
-    public List<Comment> getComments(PrismResourceDynamic resource) {
+    public List<Comment> getComments(ResourceDynamic resource) {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
                 .addOrder(Order.desc("createdTimestamp")) //

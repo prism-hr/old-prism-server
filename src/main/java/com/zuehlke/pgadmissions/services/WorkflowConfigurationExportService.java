@@ -48,7 +48,7 @@ public class WorkflowConfigurationExportService {
     @Autowired
     private NotificationService notificationTemplateService;
 
-    public String exportWorkflowConfiguration() throws Exception {
+    public String exportWorkflowConfiguration() {
         DocumentBuilder documentBuilder = prepareDocumentBuilder();
         Document document = documentBuilder.newDocument();
         document.setXmlVersion("1.0");
@@ -64,22 +64,30 @@ public class WorkflowConfigurationExportService {
         return parseDocumentToString(document).trim();
     }
 
-    private DocumentBuilder prepareDocumentBuilder() throws ParserConfigurationException {
-        DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-        return documentBuilder;
+    private DocumentBuilder prepareDocumentBuilder() {
+        try {
+            DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+            return documentBuilder;
+        } catch (ParserConfigurationException e) {
+            throw new Error(e);
+        }
     }
+    
+    private String parseDocumentToString(Document document) {
+        try {
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
 
-    private String parseDocumentToString(Document document) throws TransformerException {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-
-        StringWriter writer = new StringWriter();
-        transformer.transform(new DOMSource(document), new StreamResult(writer));
-        return writer.getBuffer().toString();
+            StringWriter writer = new StringWriter();
+            transformer.transform(new DOMSource(document), new StreamResult(writer));
+            return writer.getBuffer().toString();
+        } catch (TransformerException e) {
+            throw new Error (e);
+        }
     }
 
     private Element buildScopeElement(Document document, Scope scope) {

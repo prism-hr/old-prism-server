@@ -10,6 +10,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.exception.ConstraintViolationException;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -220,7 +221,7 @@ public class EntityImportService {
         if (program == null) {
             PrismProgramType programType = PrismProgramType.findValueFromString(programme.getName());
             program = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withCode(prefixedProgramCode)
-                    .withTitle(programme.getName()).withState(new State().withId(PrismState.PROGRAM_APPROVED)).withImported(true).withProgramType(programType);
+                    .withTitle(programme.getName()).withState(new State().withId(PrismState.PROGRAM_APPROVED)).withImported(true).withProgramType(programType).withCreatedTimestamp(new DateTime());
             entityDAO.save(program);
         }
 

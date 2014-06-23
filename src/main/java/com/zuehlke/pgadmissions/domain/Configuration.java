@@ -14,9 +14,9 @@ import javax.persistence.UniqueConstraint;
 import com.zuehlke.pgadmissions.domain.enums.PrismConfiguration;
 
 @Entity
-@Table(name = "CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "configuration_parameter_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "configuration_parameter_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "configuration_parameter_id" }) })
+@Table(name = "CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "configuration_parameter" }),
+        @UniqueConstraint(columnNames = { "institution_id", "configuration_parameter" }),
+        @UniqueConstraint(columnNames = { "program_id", "configuration_parameter" }) })
 public class Configuration {
 
     @Id
@@ -36,7 +36,7 @@ public class Configuration {
     private Program program;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "configuration_parameter_id", nullable = false)
+    @Column(name = "configuration_parameter", nullable = false)
     private PrismConfiguration parameter;
 
     @Column(name = "parameter_value", nullable = false)

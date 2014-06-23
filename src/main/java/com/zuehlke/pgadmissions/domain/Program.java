@@ -1,28 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -31,6 +8,17 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "PROGRAM")
@@ -54,10 +42,10 @@ public class Program extends Advert {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "program")
     private Set<Project> projects = Sets.newHashSet();
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     private Set<Application> applications = Sets.newHashSet();
 
@@ -83,18 +71,18 @@ public class Program extends Advert {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "previous_state_id", nullable = true)
     private State previousState;
-    
+
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
-    
+
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
-    
+
     @OneToMany(mappedBy = "program")
     private Set<Comment> comments = Sets.newHashSet();
-    
+
     @Override
     public void setCode(final String code) {
         this.code = code;
@@ -200,7 +188,7 @@ public class Program extends Advert {
         this.projects.addAll(Arrays.asList(projects));
         return this;
     }
-    
+
     public Program withSystem(System system) {
         this.system = system;
         return this;
@@ -220,12 +208,17 @@ public class Program extends Advert {
         this.programType = programType;
         return this;
     }
-    
+
     public Program withStudyDuration(Integer studyDuration) {
         setStudyDuration(studyDuration);
         return this;
     }
-    
+
+    public Program withCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+        return this;
+    }
+
     public Program withInitialData(Institution institution, String code, String title) {
         this.institution = Preconditions.checkNotNull(institution);
         this.code = code;
@@ -325,7 +318,7 @@ public class Program extends Advert {
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
-    
+
     @Override
     public Application getApplication() {
         return null;
@@ -334,12 +327,12 @@ public class Program extends Advert {
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties1 = Maps.newHashMap();    
+        HashMap<String, Object> properties1 = Maps.newHashMap();
         properties1.put("institution", institution);
         properties1.put("code", code);
         HashMap<String, Object> properties2 = Maps.newHashMap();
         properties2.put("institution", institution);
-        properties2.put("title", title);  
+        properties2.put("title", title);
         propertiesWrapper.add(properties1);
         propertiesWrapper.add(properties2);
         HashMultimap<String, Object> exclusions = HashMultimap.create();

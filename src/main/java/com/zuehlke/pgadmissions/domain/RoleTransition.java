@@ -16,7 +16,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import com.zuehlke.pgadmissions.domain.enums.PrismRoleTransitionType;
 
 @Entity
-@Table(name = "ROLE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_transition_id", "role_id", "role_transition_type_id",
+@Table(name = "ROLE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_transition_id", "role_id", "role_transition_type",
         "restrict_to_action_owner", "transition_role_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class RoleTransition {
@@ -32,7 +32,7 @@ public class RoleTransition {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @Column(name = "role_transition_type_id", nullable = false)
+    @Column(name = "role_transition_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismRoleTransitionType roleTransitionType;
 

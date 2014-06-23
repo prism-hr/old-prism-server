@@ -84,41 +84,17 @@ public class SystemInitialisationIT {
     @Transactional
     public void testSystemInitialisation() {
         for (int i = 0; i < 2; i ++) {
-            System system = systemService.getSystem();
-            if (system != null) {
-                User systemUser = system.getUser();
-                if (systemUser != null) {
-                    systemUser.setUserAccount(new UserAccount().withPassword("password").withEnabled(true));
-                    entityService.save(systemUser);
-                }
-            }
+            activateSystemUserIfExists();
             
             systemService.initialiseSystem();
             
-            for (Scope scope : systemService.getScopes()) {
-                assertEquals(scope.getId().getPrecedence(), scope.getPrecedence());
-            }
+            verifyScopeCreation();
+            verifyActionCreation();
+            verifyRoleCreation();       
+            verifyStateCreation();
+            verifyStateTransitionEvaluation();
             
-            for (Action action : actionService.getActions()) {
-                assertEquals(action.getId().getActionType(), action.getActionType());
-                assertEquals(action.getId().getScope(), action.getScope().getId());
-            }
-            
-            for (Role role : roleService.getRoles()) {
-                assertEquals(role.getId().getScope(), role.getScope().getId());
-            }
-            
-            for (State state : stateService.getStates()) {
-                assertEquals(PrismState.getParentState(state.getId()), state.getParentState().getId());
-                assertEquals(state.getId().getScope(), state.getScope().getId());    
-            }
-            
-            for (StateTransitionEvaluation evaluation : stateService.getTransitionEvaluations()) {
-                assertEquals(evaluation.getId().getMethodName(), evaluation.getMethodName());
-                assertEquals(evaluation.getId().getScope(), evaluation.getScope().getId());
-            }
-            
-            system = systemService.getSystem();
+            System system = systemService.getSystem();
             assertEquals(system.getName(), systemName);
             assertEquals(system.getState().getId(), PrismState.SYSTEM_APPROVED);
             
@@ -131,35 +107,89 @@ public class SystemInitialisationIT {
                 assertEquals(userRole.getRole().getId(), PrismRole.SYSTEM_ADMINISTRATOR);
             }
             
-            for (Configuration configuration : systemService.getConfigurations()) {
-                assertEquals(configuration.getParameter().getDefaultValue(), configuration.getValue());
-            }
-            
-            for (NotificationTemplate template : notificationTemplateService.getTemplates()) {
-                assertEquals(template.getId().getNotificationType(), template.getNotificationType());
-                assertEquals(template.getId().getNotificationPurpose(), template.getNotificationPurpose());
-                assertEquals(template.getId().getScope(), template.getScope().getId());
-                assertEquals(PrismNotificationTemplate.getReminderTemplate(template.getId()), (template.getReminderTemplate()) == null ? null : template.getReminderTemplate().getId());
-                
-                NotificationConfiguration configuration = notificationTemplateService.getConfiguration(system, template);
-                assertEquals(configuration.getNotificationTemplate(), template);
-                assertEquals(configuration.getNotificationTemplateVersion().getNotificationTemplate(), template);
-                assertEquals(PrismNotificationTemplate.getReminderInterval(template.getId()), configuration.getReminderInterval());
-                
-                NotificationTemplateVersion version = configuration.getNotificationTemplateVersion();
-                assertEquals(getFileContent(EMAIL_DEFAULT_SUBJECT_DIRECTORY + template.getId().getInitialTemplateSubject()), version.getSubject());
-                assertEquals(getFileContent(EMAIL_DEFAULT_CONTENT_DIRECTORY + template.getId().getInitialTemplateContent()), version.getContent());
-            }
-            
-            for (State state : stateService.getConfigurableStates()) {
-                assertEquals(state.getId().getDuration(), systemService.getStateDuration(state));
-            }
+            verifyConfigurationCreation();      
+            verifyNotificationTemplateCreation(system);
+            verifyStateDurationCreation();
             
             if (systemUser.getUserAccount() == null) {
                 mailSenderMock.assertEmailSent(systemUser, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
             }
             
             mailSenderMock.verify();
+        }
+    }
+
+    private void verifyStateDurationCreation() {
+        for (State state : stateService.getConfigurableStates()) {
+            assertEquals(state.getId().getDuration(), systemService.getStateDuration(state));
+        }
+    }
+
+    private void verifyNotificationTemplateCreation(System system) {
+        for (NotificationTemplate template : notificationTemplateService.getTemplates()) {
+            assertEquals(template.getId().getNotificationType(), template.getNotificationType());
+            assertEquals(template.getId().getNotificationPurpose(), template.getNotificationPurpose());
+            assertEquals(template.getId().getScope(), template.getScope().getId());
+            assertEquals(PrismNotificationTemplate.getReminderTemplate(template.getId()), (template.getReminderTemplate()) == null ? null : template.getReminderTemplate().getId());
+            
+            NotificationConfiguration configuration = notificationTemplateService.getConfiguration(system, template);
+            assertEquals(configuration.getNotificationTemplate(), template);
+            assertEquals(configuration.getNotificationTemplateVersion().getNotificationTemplate(), template);
+            assertEquals(PrismNotificationTemplate.getReminderInterval(template.getId()), configuration.getReminderInterval());
+            
+            NotificationTemplateVersion version = configuration.getNotificationTemplateVersion();
+            assertEquals(getFileContent(EMAIL_DEFAULT_SUBJECT_DIRECTORY + template.getId().getInitialTemplateSubject()), version.getSubject());
+            assertEquals(getFileContent(EMAIL_DEFAULT_CONTENT_DIRECTORY + template.getId().getInitialTemplateContent()), version.getContent());
+        }
+    }
+
+    private void verifyConfigurationCreation() {
+        for (Configuration configuration : systemService.getConfigurations()) {
+            assertEquals(configuration.getParameter().getDefaultValue(), configuration.getValue());
+        }
+    }
+
+    private void verifyStateTransitionEvaluation() {
+        for (StateTransitionEvaluation evaluation : stateService.getTransitionEvaluations()) {
+            assertEquals(evaluation.getId().getMethodName(), evaluation.getMethodName());
+            assertEquals(evaluation.getId().getScope(), evaluation.getScope().getId());
+        }
+    }
+
+    private void verifyStateCreation() {
+        for (State state : stateService.getStates()) {
+            assertEquals(PrismState.getParentState(state.getId()), state.getParentState().getId());
+            assertEquals(state.getId().getScope(), state.getScope().getId());    
+        }
+    }
+
+    private void verifyRoleCreation() {
+        for (Role role : roleService.getRoles()) {
+            assertEquals(role.getId().getScope(), role.getScope().getId());
+        }
+    }
+
+    private void verifyActionCreation() {
+        for (Action action : actionService.getActions()) {
+            assertEquals(action.getId().getActionType(), action.getActionType());
+            assertEquals(action.getId().getScope(), action.getScope().getId());
+        }
+    }
+
+    private void verifyScopeCreation() {
+        for (Scope scope : systemService.getScopes()) {
+            assertEquals(scope.getId().getPrecedence(), scope.getPrecedence());
+        }
+    }
+
+    private void activateSystemUserIfExists() {
+        System system = systemService.getSystem();
+        if (system != null) {
+            User systemUser = system.getUser();
+            if (systemUser != null) {
+                systemUser.setUserAccount(new UserAccount().withPassword("password").withEnabled(true));
+                entityService.save(systemUser);
+            }
         }
     }
     

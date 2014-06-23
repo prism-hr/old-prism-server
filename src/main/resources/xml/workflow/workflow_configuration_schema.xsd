@@ -52,8 +52,8 @@
                                           <xs:sequence>
                                             <xs:element name="transition-state">
                                               <xs:complexType mixed="true">
-                                                <xs:choice maxOccurs="unbounded" minOccurs="0">
-                                                  <xs:element name="propagated-actions">
+                                                <xs:sequence>
+                                                  <xs:element name="propagated-actions" minOccurs="0">
                                                     <xs:complexType>
                                                       <xs:sequence>
                                                         <xs:element name="propagated-action" maxOccurs="unbounded" minOccurs="0">
@@ -68,7 +68,7 @@
                                                       </xs:sequence>
                                                     </xs:complexType>
                                                   </xs:element>
-                                                  <xs:element name="role-transitions">
+                                                  <xs:element name="role-transitions" minOccurs="0">
                                                     <xs:complexType>
                                                       <xs:sequence>
                                                         <xs:element name="role-transition" maxOccurs="unbounded" minOccurs="0">
@@ -107,7 +107,7 @@
                                                       </xs:sequence>
                                                     </xs:complexType>
                                                   </xs:element>
-                                                </xs:choice>
+                                                </xs:sequence>
                                                 <xs:attribute type="xs:string" name="id" use="optional"/>
                                                 <xs:attribute type="xs:string" name="post-comment" use="optional"/>
                                                 <xs:attribute type="xs:string" name="transition-action" use="optional"/>
@@ -193,6 +193,16 @@
                                           <xs:attribute type="xs:string" name="id" use="optional"/>
                                         </xs:complexType>
                                       </xs:element>
+                                      <xs:element name="task-request">
+                                        <xs:complexType>
+                                          <xs:simpleContent>
+                                            <xs:extension base="xs:string">
+                                              <xs:attribute type="xs:byte" name="default-reminder-interval" use="optional"/>
+                                              <xs:attribute type="xs:string" name="id" use="optional"/>
+                                            </xs:extension>
+                                          </xs:simpleContent>
+                                        </xs:complexType>
+                                      </xs:element>
                                       <xs:element name="update-notifications">
                                         <xs:complexType>
                                           <xs:sequence>
@@ -207,16 +217,6 @@
                                               </xs:complexType>
                                             </xs:element>
                                           </xs:sequence>
-                                        </xs:complexType>
-                                      </xs:element>
-                                      <xs:element name="task-request">
-                                        <xs:complexType>
-                                          <xs:simpleContent>
-                                            <xs:extension base="xs:string">
-                                              <xs:attribute type="xs:byte" name="default-reminder-interval" use="optional"/>
-                                              <xs:attribute type="xs:string" name="id" use="optional"/>
-                                            </xs:extension>
-                                          </xs:simpleContent>
                                         </xs:complexType>
                                       </xs:element>
                                       <xs:element name="redactions">
@@ -246,7 +246,6 @@
                           </xs:element>
                         </xs:sequence>
                         <xs:attribute type="xs:string" name="id" use="optional"/>
-                        <xs:attribute type="xs:string" name="parent-state" use="optional"/>
                         <xs:attribute type="xs:byte" name="default-duration" use="optional"/>
                       </xs:complexType>
                     </xs:element>

@@ -53,6 +53,15 @@ public class NotificationDAO {
                 .uniqueResult();
     }
 
+    public NotificationTemplateVersion getLatestVersion(Resource resource, NotificationTemplate template) {
+        return (NotificationTemplateVersion) sessionFactory.getCurrentSession().createCriteria(NotificationTemplateVersion.class) //
+                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
+                .add(Restrictions.eq("notificationTemplate", template)) //
+                .addOrder(Order.desc("createdTimestamp")) //
+                .addOrder(Order.desc("id")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
     
     @SuppressWarnings("unchecked")
     public List<NotificationTemplateVersion> getVersions(Resource resource, NotificationTemplate template) {

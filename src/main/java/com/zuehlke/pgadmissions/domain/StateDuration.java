@@ -1,21 +1,27 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.apache.commons.beanutils.PropertyUtils;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @Entity
 @Table(name = "state_duration", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "state_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "state_id" }), @UniqueConstraint(columnNames = { "program_id", "state_id" }) })
-public class StateDuration {
+public class StateDuration implements IUniqueResource {
 
     @Id
+    @GeneratedValue
     private Integer id;
 
     @ManyToOne
@@ -36,15 +42,6 @@ public class StateDuration {
 
     @Column(name = "day_duration", nullable = false)
     private Integer duration;
-
-    public StateDuration() {
-    }
-    
-    public StateDuration(Resource resource, State state, Integer duration) {
-        setResource(resource);
-        this.state = state;
-        this.duration = duration;
-    }
     
     public Integer getId() {
         return id;
@@ -77,14 +74,6 @@ public class StateDuration {
     public void setProgram(Program program) {
         this.program = program;
     }
-    
-    private void setResource(Resource resource) throws Error {
-        try {
-            PropertyUtils.setSimpleProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
-        } catch (Exception e) {
-            throw new Error("Tried to assign state duration to invalid prism resource", e);
-        }
-    }
 
     public State getState() {
         return state;
@@ -115,6 +104,24 @@ public class StateDuration {
     public StateDuration withDuration(Integer duration) {
         this.duration = duration;
         return this;
+    }
+    
+    @Override
+    public ResourceSignature getResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties1 = Maps.newHashMap();
+        properties1.put("system", system);
+        properties1.put("state", state);
+        propertiesWrapper.add(properties1);
+        HashMap<String, Object> properties2 = Maps.newHashMap();
+        properties2.put("institution", institution);
+        properties2.put("state", state);
+        propertiesWrapper.add(properties2);
+        HashMap<String, Object> properties3 = Maps.newHashMap();
+        properties3.put("program", program);
+        properties3.put("state", state);
+        propertiesWrapper.add(properties3);
+        return new ResourceSignature(propertiesWrapper);
     }
 
 }

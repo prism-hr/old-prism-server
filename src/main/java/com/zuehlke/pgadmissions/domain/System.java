@@ -67,6 +67,11 @@ public class System extends Resource {
         return this;
     }
     
+    public System withState(State state) {
+        this.state = state;
+        return this;
+    }
+    
     @Override
     public State getState() {
         return state;

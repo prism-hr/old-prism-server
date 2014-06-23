@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -14,13 +16,15 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 
 @Entity
 @Table(name = "SCOPE")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class Scope {
+public class Scope implements IUniqueResource {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -86,6 +90,15 @@ public class Scope {
         }
         final Scope otherScope = (Scope) object;
         return Objects.equal(id, otherScope.getId());
+    }
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("id", id);
+        propertiesWrapper.add(properties);
+        return new ResourceSignature(propertiesWrapper);
     }
     
 }

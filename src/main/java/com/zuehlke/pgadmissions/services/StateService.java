@@ -28,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
 import com.zuehlke.pgadmissions.domain.enums.PrismRole;
-import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.mail.MailDescriptor;
@@ -43,6 +42,9 @@ public class StateService {
 
     @Autowired
     private EntityService entityService;
+    
+    @Autowired
+    private ResourceService resourceService;
 
     @Autowired
     private RoleService roleService;
@@ -66,8 +68,8 @@ public class StateService {
         entityService.save(state);
     }
 
-    public List<State> getConfigurableStates(PrismScope scopeId) {
-        return stateDAO.getAllConfigurableStates(scopeId);
+    public List<State> getConfigurableStates() {
+        return stateDAO.getConfigurableStates();
     }
     
     public List<State> getStates() {
@@ -173,7 +175,7 @@ public class StateService {
             Integer stateDurationSeconds = stateDAO.getCurrentStateDuration(resource);
             dueDate = dueDateBaseline.plusDays(stateDurationSeconds != null ? stateDurationSeconds : 0);
         }
-        resource.setDueDate(entityService.getResourceDueDate(resource, dueDate));
+        resource.setDueDate(dueDate);
     }
 
     private void createResource(Resource operativeResource, ResourceDynamic resource, Action createAction, Comment comment) {

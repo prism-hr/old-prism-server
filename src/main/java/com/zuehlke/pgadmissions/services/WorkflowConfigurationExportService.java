@@ -106,7 +106,6 @@ public class WorkflowConfigurationExportService {
     private Element buildStateElement(Document document, State state) {
         Element stateElement = document.createElement("state");
         stateElement.setAttribute("id", state.getId().toString());
-        stateElement.setAttribute("parent-state", state.getParentState().getId().toString());
 
         Integer defaultStateDuration = systemService.getStateDuration(state);
         if (defaultStateDuration != null) {

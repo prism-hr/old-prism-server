@@ -162,7 +162,8 @@ public class StateDAO {
     
     public PrismStateTransitionEvaluation getStateTransitionEvaluationByStateAction(StateAction stateAction) {
         return (PrismStateTransitionEvaluation) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
-                .setProjection(Projections.property("stateTransitionEvaluation")) //
+                .setProjection(Projections.property("stateTransitionEvaluation.id")) //
+                .createAlias("stateTransitionEvaluation", "stateTransitionEvaluation", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction", stateAction)) //
                 .add(Restrictions.isNotNull("stateTransitionEvaluation")) //
                 .setMaxResults(1) //

@@ -77,7 +77,7 @@ public class SystemService {
     private UserService userService;
 
     public System getSystem() {
-        return (System) entityService.getByProperty(com.zuehlke.pgadmissions.domain.System.class, "name", systemName);
+        return (System) entityService.getByProperty(System.class, "name", systemName);
     }
 
     public System getOrCreateSystem(User systemUser) {

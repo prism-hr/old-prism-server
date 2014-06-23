@@ -24,17 +24,23 @@ public class EntityDAO {
 
     @SuppressWarnings("unchecked")
     public <T> T getById(Class<T> klass, Object id) {
-        return (T) sessionFactory.getCurrentSession().createCriteria(klass).add(Restrictions.eq("id", id)).uniqueResult();
+        return (T) sessionFactory.getCurrentSession().createCriteria(klass) //
+                .add(Restrictions.eq("id", id)) //
+                .uniqueResult();
     }
 
     @SuppressWarnings("unchecked")
     public <T> T getByProperty(Class<T> klass, String propertyName, Object propertyValue) {
-        return (T) sessionFactory.getCurrentSession().createCriteria(klass).add(Restrictions.eq(propertyName, propertyValue)).uniqueResult();
+        return (T) sessionFactory.getCurrentSession().createCriteria(klass) //
+                .add(Restrictions.eq(propertyName, propertyValue)) //
+                .uniqueResult();
     }
     
     @SuppressWarnings("unchecked")
     public <T> T getByPropertyNotNull(Class<T> klass, String propertyName) {
-        return (T) sessionFactory.getCurrentSession().createCriteria(klass).add(Restrictions.isNotNull(propertyName)).uniqueResult();
+        return (T) sessionFactory.getCurrentSession().createCriteria(klass) //
+                .add(Restrictions.isNotNull(propertyName)) //
+                .uniqueResult();
     }
     
     @SuppressWarnings("unchecked")

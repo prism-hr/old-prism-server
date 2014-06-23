@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Service
@@ -51,13 +50,10 @@ public class WorkflowConfigurationImportService {
     }
     
     private void importScopeDefinition(Element scopeElement) {
-        Scope scope = new Scope(PrismScope.valueOf(scopeElement.getAttribute("id")), Integer.parseInt(scopeElement.getAttribute("precedence")));
-        entityService.save(scope);
-
         NodeList stateElements = scopeElement.getElementsByTagName("state");
         for (int i = 0; i < stateElements.getLength(); i++) {
             Element stateElement = (Element) stateElements.item(i);
-            importStateDefinition(scope, stateElement);
+            importStateDefinition(null, stateElement);
         }
     }
 

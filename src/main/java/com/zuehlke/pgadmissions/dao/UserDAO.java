@@ -113,12 +113,12 @@ public class UserDAO {
                 .add(Restrictions.eq("role.id", PrismRole.INSTITUTION_ADMITTER)).list();
     }
 
-    //TODO rewrite the query - HQL
+    //TODO rewrite the query - HQL?
     public List<User> getUsersInterestedInApplication(Application application) {
         return new ArrayList<User>();
     }
 
-    //TODO rewrite the query - HQL
+    //TODO rewrite the query - HQL?
     public List<User> getUsersPotentiallyInterestedInApplication(Application application) {
         return new ArrayList<User>();
     }

@@ -37,6 +37,8 @@ import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 import com.zuehlke.pgadmissions.timers.XMLDataImportTask;
 
+import java.beans.Introspector;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
 public class PrismWorkflowIT {
@@ -128,7 +130,7 @@ public class PrismWorkflowIT {
         manageUsersService.setUserRoles("Jozef", "Oleksy", "jozek@oleksy.pl", true, systemService.getSystem(), PrismRole.SYSTEM_ADMINISTRATOR);
 
         for (ImportedEntityFeed feed : entityImportService.getImportedEntityFeeds()) {
-            String entityName = WordUtils.uncapitalize(feed.getImportedEntityType().getEntityClass().getSimpleName());
+            String entityName = Introspector.decapitalize(feed.getImportedEntityType().getEntityClass().getSimpleName());
             String url = "reference_data/2014-05-08/" + entityName + ".xml";
             feed.setLocation(url);
             entityService.update(feed);

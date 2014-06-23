@@ -1,16 +1,15 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.List;
-
+import com.zuehlke.pgadmissions.domain.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
+import com.zuehlke.pgadmissions.domain.Institution;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
-import com.zuehlke.pgadmissions.domain.Institution;
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -29,7 +28,7 @@ public class ImportedEntityDAO {
     }
 
     public List<ImportedEntityFeed> getImportedEntityFeeds() {
-        return sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class).list();
+        return sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class).addOrder(Order.asc("id")).list();
     }
 
     public <T extends ImportedEntity> T getByCode(Class<? extends ImportedEntity> clazz, String code) {

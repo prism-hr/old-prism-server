@@ -46,6 +46,7 @@ public enum PrismScope {
     
     private PrismScope(Class<? extends Resource> resourceClass, int precedence) {
         this.resourceClass = resourceClass;
+        this.precedence = precedence;
     }
     
     public  Class<? extends Resource> getResourceClass() {

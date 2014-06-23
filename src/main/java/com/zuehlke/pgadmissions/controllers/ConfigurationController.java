@@ -209,8 +209,7 @@ public class ConfigurationController {
 
     @ModelAttribute("states")
     public List<State> getConfigurableStates() {
-        // TODO : generalise to program and project too
-        return stateService.getConfigurableStates(PrismScope.APPLICATION);
+        return stateService.getConfigurableStates();
     }
 
     @ModelAttribute("user")

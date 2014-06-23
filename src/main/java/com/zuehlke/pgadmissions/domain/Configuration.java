@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,13 +14,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.enums.PrismConfiguration;
 
 @Entity
-@Table(name = "CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "configuration_parameter_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "configuration_parameter_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "configuration_parameter_id" }) })
-public class Configuration {
+@Table(name = "CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "configuration_parameter" }),
+        @UniqueConstraint(columnNames = { "institution_id", "configuration_parameter" }),
+        @UniqueConstraint(columnNames = { "program_id", "configuration_parameter" }) })
+public class Configuration implements IUniqueResource {
 
     @Id
     @GeneratedValue
@@ -36,7 +41,7 @@ public class Configuration {
     private Program program;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "configuration_parameter_id", nullable = false)
+    @Column(name = "configuration_parameter", nullable = false)
     private PrismConfiguration parameter;
 
     @Column(name = "parameter_value", nullable = false)
@@ -95,9 +100,32 @@ public class Configuration {
         return this;
     }
     
+    public Configuration withParameter(PrismConfiguration parameter) {
+        this.parameter = parameter;
+        return this;
+    }
+    
     public Configuration withValue(Integer value) {
         this.value = value;
         return this;
+    }
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties1 = Maps.newHashMap();
+        properties1.put("system", system);
+        properties1.put("parameter", parameter);
+        propertiesWrapper.add(properties1);
+        HashMap<String, Object> properties2 = Maps.newHashMap();
+        properties2.put("institution", institution);
+        properties2.put("parameter", parameter);
+        propertiesWrapper.add(properties2);
+        HashMap<String, Object> properties3 = Maps.newHashMap();
+        properties3.put("program", program);
+        properties3.put("parameter", parameter);
+        propertiesWrapper.add(properties3);
+        return new ResourceSignature(propertiesWrapper);
     }
 
 }

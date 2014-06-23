@@ -3,14 +3,12 @@ package com.zuehlke.pgadmissions.services;
 import java.util.HashMap;
 import java.util.List;
 
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.IUniqueResource;
-import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 
 @Service
 @Transactional
@@ -43,8 +41,8 @@ public class EntityService {
         return entityDAO.getAll(klass);
     }
 
-    public <T extends IUniqueResource> T getDuplicateEntity(T resource) {
-        return (T) entityDAO.getDuplicateEntity(resource);
+    public <T extends IUniqueResource> T getDuplicateEntity(T uniqueResource) {
+        return (T) entityDAO.getDuplicateEntity(uniqueResource);
     }
 
     public <T extends IUniqueResource> T getOrCreate(T transientResource) {
@@ -67,14 +65,9 @@ public class EntityService {
     public void delete(Object entity) {
         entityDAO.delete(entity);
     }
-
-    public LocalDate getResourceDueDate(ResourceDynamic resource, LocalDate customDueDateBaseline) {
-        LocalDate dueDateBaseline = customDueDateBaseline;
-        if (dueDateBaseline == null) {
-            dueDateBaseline = resource.getDueDateBaseline();
-        }
-        // TODO: State duration service ... add the service level
-        return dueDateBaseline;
+    
+    public void flush() {
+        entityDAO.flush();
     }
 
 }

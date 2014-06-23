@@ -35,7 +35,7 @@ import org.hibernate.search.annotations.TokenizerDef;
 @Table(name = "IMPORTED_LANGUAGE_QUALIFICATION_TYPE", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "code" }),
         @UniqueConstraint(columnNames = { "institution_id", "name" }) })
 @Indexed
-public class ImportedLanguageQualificationType {
+public class LanguageQualificationType {
 
     @Id
     @GeneratedValue
@@ -205,24 +205,24 @@ public class ImportedLanguageQualificationType {
         this.enabled = enabled;
     }
     
-    public ImportedLanguageQualificationType withInitialData(Institution institution, String code, String name) {
+    public LanguageQualificationType withInitialData(Institution institution, String code, String name) {
         this.institution = institution;
         this.code = code;
         this.name = name;
         return this;
     }
     
-    public ImportedLanguageQualificationType withInstitution(Institution institution) {
+    public LanguageQualificationType withInstitution(Institution institution) {
         this.institution = institution;
         return this;
     }
     
-    public ImportedLanguageQualificationType withCode(String code) {
+    public LanguageQualificationType withCode(String code) {
         this.code = code;
         return this;
     }
     
-    public ImportedLanguageQualificationType withName(String name) {
+    public LanguageQualificationType withName(String name) {
         this.name = name;
         return this;
     }

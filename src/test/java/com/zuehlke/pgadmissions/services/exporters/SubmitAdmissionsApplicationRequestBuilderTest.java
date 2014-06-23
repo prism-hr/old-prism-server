@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.io.StringWriter;
+import java.lang.System;
 import java.text.ParseException;
 import java.util.Arrays;
 
@@ -13,6 +14,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import com.zuehlke.pgadmissions.domain.*;
 import junit.framework.Assert;
 
 import org.hamcrest.CoreMatchers;
@@ -27,15 +29,7 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.EnglishLanguageTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.NameTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
-import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
@@ -199,7 +193,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
                 .getPersonalDetails()
                 .getLanguageQualification()
                 .setLanguageQualificationType(
-                        new ImportedLanguageQualificationType().withInitialData(new Institution().withInitialData("test"), "test", "test"));
+                        new LanguageQualificationType().withInitialData(new Institution().withInitialData("test"), "test", "test"));
 
         SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(applicationForm).build();
 
@@ -250,7 +244,6 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         StringWriter stringWriter = new StringWriter();
         marshaller.marshal(request, stringWriter);
 
-        System.out.println(stringWriter.toString());
         Assert.assertEquals(requestXmlWithAtasAndConditionalOffer, stringWriter.toString());
     }
 
@@ -275,7 +268,6 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         StringWriter stringWriter = new StringWriter();
         marshaller.marshal(request, stringWriter);
 
-        System.out.println(stringWriter.toString());
         Assert.assertEquals(requestXmlWithoutAtasAndUnconditionalOffer, stringWriter.toString());
     }
 

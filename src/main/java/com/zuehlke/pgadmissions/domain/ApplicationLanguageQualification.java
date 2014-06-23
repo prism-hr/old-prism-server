@@ -24,7 +24,7 @@ public class ApplicationLanguageQualification {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "imported_language_qualification_type_id", nullable = false)
-    private ImportedLanguageQualificationType languageQualificationType;
+    private LanguageQualificationType languageQualificationType;
 
     @Column(name = "exam_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -57,11 +57,11 @@ public class ApplicationLanguageQualification {
         this.id = id;
     }
 
-    public ImportedLanguageQualificationType getLanguageQualificationType() {
+    public LanguageQualificationType getLanguageQualificationType() {
         return languageQualificationType;
     }
 
-    public void setLanguageQualificationType(ImportedLanguageQualificationType languageQualificationType) {
+    public void setLanguageQualificationType(LanguageQualificationType languageQualificationType) {
         this.languageQualificationType = languageQualificationType;
     }
 
@@ -121,7 +121,7 @@ public class ApplicationLanguageQualification {
         this.proofOfAward = proofOfAward;
     }
 
-    public ApplicationLanguageQualification withLanguageQualificationType(ImportedLanguageQualificationType langaugeQualificationType) {
+    public ApplicationLanguageQualification withLanguageQualificationType(LanguageQualificationType langaugeQualificationType) {
         this.languageQualificationType = langaugeQualificationType;
         return this;
     }

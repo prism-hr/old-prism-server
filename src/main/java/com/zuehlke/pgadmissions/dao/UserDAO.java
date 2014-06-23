@@ -92,11 +92,6 @@ public class UserDAO {
                 .list();
     }
     
-    public User getUserByEmail(String email) {
-        return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
-                .add(Restrictions.eq("email", email)).uniqueResult();
-    }
-
     public User getDisabledUserByEmail(String email) {
         return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .createAlias("account", "account", JoinType.LEFT_OUTER_JOIN).add(Restrictions.disjunction() //

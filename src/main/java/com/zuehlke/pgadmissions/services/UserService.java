@@ -77,28 +77,25 @@ public class UserService {
     }
 
     public User getUserByEmail(String email) {
-        return userDAO.getUserByEmail(email);
+        return entityService.getByProperty(User.class, "email", email);
     }
 
     public User getUserByEmailIncludingDisabledAccounts(String email) {
         return userDAO.getUserByEmailIncludingDisabledAccounts(email);
     }
 
-    public User getOrCreateUser(final String firstname, final String lastname, final String email) {
-        User existingUser = userDAO.getUserByEmail(email);
-        if (existingUser != null) {
-            return existingUser;
+    public User getOrCreateUser(final String firstName, final String lastName, final String email) {
+        User user;
+        User transientUser = new User().withFirstName(firstName).withLastName(lastName).withEmail(email);
+        User duplicateUser = entityService.getDuplicateEntity(transientUser);
+        if (duplicateUser == null) {
+            user = transientUser;
+            user.setActivationCode(encryptionUtils.generateUUID());
+            entityService.save(user);
+            user.setParentUser(user);
+        } else {
+            user = duplicateUser;
         }
-
-        User user = new User();
-        user.setFirstName(firstname);
-        user.setLastName(lastname);
-        user.setEmail(email);
-        user.setActivationCode(encryptionUtils.generateUUID());
-
-        userDAO.save(user);
-        user.setParentUser(user);
-
         return user;
     }
 

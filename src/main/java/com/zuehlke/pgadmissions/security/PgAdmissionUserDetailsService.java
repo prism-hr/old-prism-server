@@ -7,29 +7,21 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
 public class PgAdmissionUserDetailsService implements UserDetailsService {
 
-    private final UserDAO userDAO;
-
-    public PgAdmissionUserDetailsService() {
-        this(null);
-    }
-
     @Autowired
-    public PgAdmissionUserDetailsService(UserDAO userDAO) {
-        this.userDAO = userDAO;
-    }
-
+    private UserService userService;
+    
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userDAO.getUserByEmail(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userService.getUserByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException(username);
+            throw new UsernameNotFoundException(email);
         }
         return user;
     }

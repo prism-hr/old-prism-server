@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -33,6 +35,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -41,7 +45,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Entity
 @Table(name = "USER")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class User implements UserDetails, Comparable<User> {
+public class User implements UserDetails, Comparable<User>, IUniqueResource {
 
     private static final long serialVersionUID = 7913035836949510857L;
 
@@ -268,5 +272,14 @@ public class User implements UserDetails, Comparable<User> {
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("firstName", firstName).add("lastName", lastName).add("email", email).toString();
+    }
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("email", email);
+        propertiesWrapper.add(properties);
+        return new ResourceSignature(propertiesWrapper);
     }
 }

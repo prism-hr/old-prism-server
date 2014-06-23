@@ -1,0 +1,12 @@
+@charset "utf-8";
+
+/* ENQUIRY page ------------------------------------------------------------------------------------------------- */
+#form-box { background: #FFF; border-radius: 8px; box-shadow: 0 0 4px #999; bottom: 30px; left: 35px; padding: 20px; position: absolute; }
+#form-box h1 { color: #F30; font-size: 16pt; margin-bottom: 1em; }
+
+#form-box div.row label { float: left; font-weight: bold; width: 150px; }
+#form-box div.row div.field { margin-left: 160px; width: 350px; }
+#form-box div.row textarea { height: 200px; margin-bottom: 4px; width: 340px; }
+
+#form-box .programme { margin: 10px 0; }
+#form-box .programme select { margin-right: 10px; width: 350px; }

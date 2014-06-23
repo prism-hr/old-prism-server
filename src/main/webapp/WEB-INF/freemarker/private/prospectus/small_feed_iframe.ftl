@@ -1,0 +1,1 @@
+<iframe src="${host}/pgadmissions/opportunities/standaloneOpportunities<#if feedKey??>?feedKey=${feedKey}</#if><#if feedKeyValue??>&feedKeyValue=${feedKeyValue}</#if>" width="210" height="514" style="border:none;"></iframe>

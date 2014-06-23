@@ -58,6 +58,10 @@ public class NotificationService {
         return notificationDAO.getActiveVersion(resource, templateId);
     }
     
+    public NotificationTemplateVersion getLatestVersion(Resource resource, NotificationTemplate template) {
+        return notificationDAO.getLatestVersion(resource, template);
+    }
+    
     public List<NotificationTemplateVersion> getVersions(Resource resource, NotificationTemplate template) {
         return notificationDAO.getVersions(resource, template);
     }

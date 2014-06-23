@@ -1,28 +1,17 @@
 package com.zuehlke.pgadmissions.validators;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
-import javax.xml.XMLConstants;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
-
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.xml.sax.SAXException;
 
 import com.google.common.io.CharStreams;
 import com.zuehlke.pgadmissions.dto.WorkflowConfigurationDTO;
 
 @Component
 public class WorkflowConfigurationValidator extends AbstractValidator {
-
-    private final String CONFIGURATION_SCHEMA = "/xml/workflow/workflow_configuration_schema.xsd";
     
     @Override
     public boolean supports(Class<?> clazz) {
@@ -49,18 +38,6 @@ public class WorkflowConfigurationValidator extends AbstractValidator {
                 errors.rejectValue(rejectValue, "workflow.configuration.location.unreachable");
             }
         }
-           
-        try {
-            SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
-            Schema schema = schemaFactory.newSchema(new File(CONFIGURATION_SCHEMA));
-            Validator validator = schema.newValidator();
-            validator.validate(new StreamSource(new File(workflowConfigurationDTO.getConfiguration())));
-        } catch (SAXException e) { 
-            errors.rejectValue(rejectValue, "workflow.configuration.invalid");
-        } catch (IOException e) {
-            throw new Error("Failed to read schema definition", e);
-        }
-        
     }
 
 }

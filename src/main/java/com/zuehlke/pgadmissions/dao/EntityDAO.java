@@ -66,9 +66,9 @@ public class EntityDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends IUniqueResource> T getDuplicateEntity(T resource) {
-        IUniqueResource.ResourceSignature signature = resource.getResourceSignature(); 
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resource.getClass());
+    public <T extends IUniqueResource> T getDuplicateEntity(T uniqueResource) {
+        IUniqueResource.ResourceSignature signature = uniqueResource.getResourceSignature(); 
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(uniqueResource.getClass());
         Disjunction indices = Restrictions.disjunction();
         
         List<HashMap<String, Object>> propertyWrapper = signature.getProperties();

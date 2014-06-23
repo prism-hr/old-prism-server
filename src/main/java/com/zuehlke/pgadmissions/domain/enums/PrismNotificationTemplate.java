@@ -12,8 +12,8 @@ public enum PrismNotificationTemplate {
             "application_complete_request_subject.ftl", "application_complete_request_content.ftl"), //
     APPLICATION_COMPLETE_REQUEST_REMINDER(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REMINDER, PrismScope.APPLICATION,
             "application_complete_request_reminder_subject.ftl", "application_complete_request_reminder_content.ftl"), //
-    APPLICATION_CONFIRM_INTERVIEW_ARRANGMENTS_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
-            "application_confirm_interview_arrangments_notification_subject.ftl", "application_confirm_interview_arrangments_notification_content.ftl"), //
+    APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
+            "application_confirm_interview_arrangements_notification_subject.ftl", "application_confirm_interview_arrangements_notification_content.ftl"), //
     APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
             "application_confirm_offer_recommendation_notification_subject.ftl", "application_confirm_offer_recommendation_notification_content.ftl"), //
     APPLICATION_CONFIRM_REJECTION_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
@@ -73,7 +73,7 @@ public enum PrismNotificationTemplate {
     private static final HashMap<PrismNotificationTemplate, ReminderDefinition> reminderDefinitions = Maps.newHashMap();
 
     static {
-        PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.APPLICATION_COMPLETE_NOTIFICATION,
+        PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.APPLICATION_COMPLETE_REQUEST,
                 PrismNotificationTemplate.APPLICATION_COMPLETE_REQUEST_REMINDER, 7);
         PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST,
                 PrismNotificationTemplate.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER, 1);
@@ -131,8 +131,7 @@ public enum PrismNotificationTemplate {
     }
 
     private static void buildReminderDefinition(PrismNotificationTemplate template, PrismNotificationTemplate reminder, int interval) {
-        ReminderDefinition definition = new PrismNotificationTemplate.ReminderDefinition(template, interval);
-        reminderDefinitions.put(template, definition);
+        reminderDefinitions.put(template, new PrismNotificationTemplate.ReminderDefinition(reminder, interval));
     }
 
     private static class ReminderDefinition {

@@ -32,7 +32,7 @@ public class StateDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public List<State> getAllConfigurableStates(PrismScope scopeId) {
+    public List<State> getConfigurableStates() {
         return (List<State>) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
                 .setProjection(Projections.property("state")) //
                 .add(Restrictions.isNotNull("system")) //

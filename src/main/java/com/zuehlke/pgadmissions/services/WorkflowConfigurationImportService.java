@@ -18,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
@@ -69,11 +68,6 @@ public class WorkflowConfigurationImportService {
         State state = (State) entityService.getOrCreate(new State(PrismState.valueOf(stateElement.getAttribute("id")), scope));
         state.setParentState(parentState);
 
-        String defaultStateDurationDefinition = stateElement.getAttribute("default-duration");
-        if (defaultStateDurationDefinition != null) {
-            importStateDuration(state, defaultStateDurationDefinition);
-        }
-
         NodeList actionElements = stateElement.getElementsByTagName("action");
         HashMap<Element, Action> actionInserts = Maps.newHashMap();
         for (int i = 0; i < actionElements.getLength(); i++) {
@@ -81,11 +75,6 @@ public class WorkflowConfigurationImportService {
             importActionDefinition(actionElement, scope, actionInserts);
         }
 
-    }
-    
-    private void importStateDuration(State state, String defaultStateDurationDefinition) {
-        StateDuration stateDuration = new StateDuration(systemService.getSystem(), state, Integer.parseInt(defaultStateDurationDefinition));
-        entityService.save(stateDuration);
     }
 
     private void importActionDefinition(Element actionElement, Scope scope, HashMap<Element, Action> actionInserts) {

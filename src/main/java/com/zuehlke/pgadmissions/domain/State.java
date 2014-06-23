@@ -89,7 +89,6 @@ public class State implements IUniqueResource {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
         HashMap<String, Object> properties = Maps.newHashMap();
         properties.put("id", id);
-        properties.put("parentState.id", parentState.getId());
         propertiesWrapper.add(properties);
         return new ResourceSignature(propertiesWrapper);
     }

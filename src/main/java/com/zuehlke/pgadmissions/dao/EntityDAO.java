@@ -60,7 +60,8 @@ public class EntityDAO {
     
     @SuppressWarnings("unchecked")
     public <T> List<T> getAll(Class<T> klass) {
-        return (List<T>) sessionFactory.getCurrentSession().createCriteria(klass).list();
+        return (List<T>) sessionFactory.getCurrentSession().createCriteria(klass) //
+                .list();
     }
 
     public Serializable save(Object entity) {

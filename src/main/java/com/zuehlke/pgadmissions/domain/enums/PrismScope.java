@@ -3,8 +3,6 @@ package com.zuehlke.pgadmissions.domain.enums;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.apache.commons.lang.WordUtils;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.Application;
@@ -22,23 +20,13 @@ public enum PrismScope {
     PROJECT(Project.class, 4),
     APPLICATION(Application.class, 5);
     
-    public static final String INVALID_SCOPE_ERROR = "is not a not a valid system scope";
-    
     private Class<? extends Resource> resourceClass;
     
     private Integer precedence;
     
-    private static HashMap<String, PrismScope> index = Maps.newHashMap();
-    
     private static HashMultimap<PrismScope, PrismScope> descendentScopes = HashMultimap.create();
     
     private static HashMap<Class<? extends Resource>, PrismScope> resourceScopes = Maps.newHashMap();
-    
-    static {
-        for (PrismScope scope : values()) {
-            index.put(scope.name(), scope);
-        }
-    }
     
     static {
         descendentScopes.put(SYSTEM, INSTITUTION);
@@ -79,14 +67,6 @@ public enum PrismScope {
     
     public String getLowerCaseName() {
         return resourceClass.getSimpleName().toLowerCase();
-    }
-    
-    public static String contains(String scopeName) {
-        String errorMessage = "";
-        if (index.containsKey(scopeName)) {
-            errorMessage = WordUtils.capitalizeFully(scopeName) + " " + INVALID_SCOPE_ERROR;
-        }
-        return errorMessage;
     }
     
 }

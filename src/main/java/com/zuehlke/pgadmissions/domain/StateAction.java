@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -16,10 +18,13 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 @Entity
 @Table(name = "STATE_ACTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_id", "action_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class StateAction  {
+public class StateAction implements IUniqueResource  {
 
     @Id
     @GeneratedValue
@@ -42,6 +47,9 @@ public class StateAction  {
     @ManyToOne
     @JoinColumn(name = "notification_template_id")
     private NotificationTemplate notificationTemplate;
+    
+    @Column(name = "enabled", nullable = false)
+    private boolean enabled;
 
     @OneToMany(mappedBy = "stateAction")
     private Set<StateActionAssignment> stateActionAssignments = new HashSet<StateActionAssignment>();
@@ -100,6 +108,14 @@ public class StateAction  {
         this.notificationTemplate = notificationTemplate;
     }
 
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public Set<StateActionAssignment> getStateActionAssignments() {
         return stateActionAssignments;
     }
@@ -114,6 +130,41 @@ public class StateAction  {
 
     public Set<StateTransition> getStateTransitions() {
         return stateTransitions;
+    }
+    
+    public StateAction withState(State state) {
+        this.state = state;
+        return this;
+    }
+    
+    public StateAction withAction(Action action) {
+        this.action = action;
+        return this;
+    }
+    
+    public StateAction withRaisesUrgentFlag(boolean raisesUrgentFlag) {
+        this.raisesUrgentFlag = raisesUrgentFlag;
+        return this;
+    }
+    
+    public StateAction withDefaultAction(boolean defaultAction) {
+        this.defaultAction = defaultAction;
+        return this;
+    }
+    
+    public StateAction withNotificationTemplate(NotificationTemplate notificationTemplate) {
+        this.notificationTemplate = notificationTemplate;
+        return this;
+    }
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("state", state);
+        properties.put("action", action);
+        propertiesWrapper.add(properties);
+        return new ResourceSignature(propertiesWrapper);
     }
 
 }

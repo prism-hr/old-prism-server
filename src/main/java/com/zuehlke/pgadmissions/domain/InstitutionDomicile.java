@@ -16,11 +16,7 @@ import javax.persistence.*;
 public class InstitutionDomicile {
 
     @Id
-    @GeneratedValue
-    private Integer id;
-
-    @Column(name = "code", nullable = false, unique = true)
-    private String code;
+    private String id;
 
     @Column(name = "name", nullable = false, unique = true)
     @Field(analyzer = @Analyzer(definition = "institutionDomicileNameAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
@@ -29,20 +25,12 @@ public class InstitutionDomicile {
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public String getName() {
@@ -61,13 +49,8 @@ public class InstitutionDomicile {
         this.enabled = enabled;
     }
 
-    public InstitutionDomicile withId(Integer id) {
+    public InstitutionDomicile withId(String id) {
         this.id = id;
-        return this;
-    }
-
-    public InstitutionDomicile withCode(String code) {
-        this.code = code;
         return this;
     }
 
@@ -80,4 +63,5 @@ public class InstitutionDomicile {
         this.enabled = enabled;
         return this;
     }
+    
 }

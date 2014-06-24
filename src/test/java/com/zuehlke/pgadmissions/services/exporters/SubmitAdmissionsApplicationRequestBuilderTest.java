@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.io.StringWriter;
-import java.lang.System;
 import java.text.ParseException;
 import java.util.Arrays;
 
@@ -14,7 +13,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 
-import com.zuehlke.pgadmissions.domain.*;
 import junit.framework.Assert;
 
 import org.hamcrest.CoreMatchers;
@@ -29,7 +27,15 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.EnglishLanguageTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.NameTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
+import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
+import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.StudyOption;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
@@ -101,7 +107,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldThrowExceptionIfNoActiveProgramFound() {
-        StudyOption studyOption = new StudyOption().withInstitution(new Institution().withDomicile(new InstitutionDomicile().withCode("test")))
+        StudyOption studyOption = new StudyOption().withInstitution(new Institution().withDomicile(new InstitutionDomicile().withId("test")))
                 .withCode("F+++++").withName("Full-time").withEnabled(true);
         applicationForm.getProgramDetails().setStudyOption(studyOption);
         exception.expect(IllegalArgumentException.class);

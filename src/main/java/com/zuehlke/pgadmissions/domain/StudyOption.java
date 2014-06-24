@@ -11,20 +11,20 @@ public class StudyOption extends ImportedEntity {
         setInstitution(institution);
         return this;
     }
-    
+
     public StudyOption withCode(String code) {
         setCode(code);
         return this;
     }
-    
+
     public StudyOption withName(String name) {
         setName(name);
         return this;
     }
-    
+
     public StudyOption withEnabled(boolean enabled) {
         setEnabled(enabled);
         return this;
     }
-    
+
 }

@@ -1,7 +1,10 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -13,12 +16,14 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "STATE_ACTION_ASSIGNMENT", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "role_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class StateActionAssignment {
+public class StateActionAssignment implements IUniqueResource {
 
     @Id
     private Integer id;
@@ -30,6 +35,9 @@ public class StateActionAssignment {
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
+    
+    @Column(name = "enabled", nullable = false)
+    private boolean enabled;
     
     @OneToMany(mappedBy = "stateActionAssignment")
     private Set<StateActionEnhancement> enhancements = Sets.newHashSet();
@@ -58,8 +66,41 @@ public class StateActionAssignment {
         this.role = role;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public Set<StateActionEnhancement> getEnhancements() {
         return enhancements;
+    }
+    
+    public StateActionAssignment withStateAction(StateAction stateAction) {
+        this.stateAction = stateAction;
+        return this;
+    }
+    
+    public StateActionAssignment withRole(Role role) {
+        this.role = role;
+        return this;
+    }
+    
+    public StateActionAssignment withEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("stateAction", stateAction);
+        properties.put("role", role);
+        propertiesWrapper.add(properties);
+        return new ResourceSignature(propertiesWrapper);
     }
 
 }

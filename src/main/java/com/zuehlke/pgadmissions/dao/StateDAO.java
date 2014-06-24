@@ -178,5 +178,21 @@ public class StateDAO {
         query.setParameter("enabled", false);
         query.executeUpdate();
     }
+    
+    public void disableStateActionAssignments() {
+        Query query = sessionFactory.getCurrentSession().createQuery( //
+                "update StateActionAssignment"
+                + "set enabled = :enabled");
+        query.setParameter("enabled", false);
+        query.executeUpdate();
+    }
+    
+    public void disableStateActionEnhancements() {
+        Query query = sessionFactory.getCurrentSession().createQuery( //
+                "update StateActionEnhancement"
+                + "set enabled = :enabled");
+        query.setParameter("enabled", false);
+        query.executeUpdate();
+    }
 
 }

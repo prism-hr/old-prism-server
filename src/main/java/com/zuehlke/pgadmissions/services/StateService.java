@@ -162,6 +162,14 @@ public class StateService {
     public void disableStateActions() {
         stateDAO.disableStateActions();
     }
+    
+    public void disableStateActionAssignments() {
+        stateDAO.disableStateActionAssignments();
+    }
+    
+    public void disableStateActionEnhancements() {
+        stateDAO.disableStateActionEnhancements();
+    }
 
     private void postResourceStateChange(ResourceDynamic resource, StateTransition stateTransition, Comment comment) {
         State transitionState = stateTransition.getTransitionState();

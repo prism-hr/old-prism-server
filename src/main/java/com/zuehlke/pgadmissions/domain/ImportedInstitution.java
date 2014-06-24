@@ -33,7 +33,7 @@ import org.hibernate.search.annotations.TokenizerDef;
 @Table(name = "IMPORTED_INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "domicile_id", "code" }),
         @UniqueConstraint(columnNames = { "institution_id", "domicile_id", "name" }) })
 @Indexed
-public class ImportedInstitution {
+public class ImportedInstitution implements ImportedEntity{
 
     @Id
     @GeneratedValue

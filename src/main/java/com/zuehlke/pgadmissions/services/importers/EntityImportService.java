@@ -1,14 +1,21 @@
 package com.zuehlke.pgadmissions.services.importers;
 
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
-import java.net.URL;
-import java.util.List;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.zuehlke.pgadmissions.dao.EntityDAO;
+import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.enums.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
+import com.zuehlke.pgadmissions.mail.MailService;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
+import com.zuehlke.pgadmissions.services.*;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.time.StopWatch;
 import org.hibernate.exception.ConstraintViolationException;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -22,27 +29,14 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Iterables;
-import com.zuehlke.pgadmissions.dao.EntityDAO;
-import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
-import com.zuehlke.pgadmissions.domain.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.enums.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
-import com.zuehlke.pgadmissions.mail.MailService;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
-import com.zuehlke.pgadmissions.services.ProgramInstanceService;
-import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.SystemService;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import java.lang.System;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
+import java.net.URL;
+import java.util.List;
+import java.util.Timer;
 
 @Service
 public class EntityImportService {
@@ -55,7 +49,7 @@ public class EntityImportService {
     private ImportedEntityDAO importedEntityDAO;
 
     @Autowired
-    private EntityDAO entityDAO;
+    private EntityService entityService;
 
     @Autowired
     private ProgramService programService;
@@ -75,7 +69,7 @@ public class EntityImportService {
     @Autowired
     private RoleService roleService;
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void importEntities(ImportedEntityFeed importedEntityFeed) throws XMLDataImportException {
         EntityImportService thisBean = applicationContext.getBean(EntityImportService.class);
         String fileLocation = importedEntityFeed.getLocation();
@@ -86,10 +80,18 @@ public class EntityImportService {
 
             Class<ImportedEntity> entityClass = (Class<ImportedEntity>) importedEntityFeed.getImportedEntityType().getEntityClass();
 
+            Institution institution = importedEntityFeed.getInstitution();
             if (entityClass.equals(Program.class)) {
-                thisBean.mergePrograms((List<ProgrammeOccurrence>) unmarshalled, importedEntityFeed.getInstitution());
+                thisBean.mergePrograms((List<ProgrammeOccurrence>) unmarshalled, institution);
             } else {
-                ImportEntityConverter<ImportedEntity> entityConverter = ImportEntityConverter.create(entityClass, importedEntityFeed.getInstitution());
+                Function<Object, ? extends ImportedEntity> entityConverter;
+                if (entityClass.equals(LanguageQualificationType.class)) {
+                    entityConverter = new LanguageQualificationTypeImportConverter(institution);
+                } else if (entityClass.equals(ImportedInstitution.class)) {
+                    entityConverter = new InstitutionImportConverter(institution, entityService);
+                } else {
+                    entityConverter = GenericEntityImportConverter.create(entityClass, institution);
+                }
 
                 Iterable<ImportedEntity> newEntities = Iterables.transform(unmarshalled, entityConverter);
 
@@ -170,7 +172,7 @@ public class EntityImportService {
                     throw new XMLDataImportException("Could not merge: " + programInstance + " due to a data integrity problem in the import feed.");
                 }
             }
-            
+
         }
     }
 
@@ -186,7 +188,7 @@ public class EntityImportService {
 
     @Transactional
     public void attemptInsert(Object entity) {
-        entityDAO.save(entity);
+        entityService.save(entity);
     }
 
     @Transactional
@@ -222,7 +224,7 @@ public class EntityImportService {
             PrismProgramType programType = PrismProgramType.findValueFromString(programme.getName());
             program = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withCode(prefixedProgramCode)
                     .withTitle(programme.getName()).withState(new State().withId(PrismState.PROGRAM_APPROVED)).withImported(true).withProgramType(programType).withCreatedTimestamp(new DateTime()).withUpdatedTimestamp(new DateTime());
-            entityDAO.save(program);
+            entityService.save(program);
         }
 
         program.setTitle(programme.getName());
@@ -232,10 +234,10 @@ public class EntityImportService {
 
     @Transactional
     public StudyOption getOrCreateStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) {
-        StudyOption studyOption = entityDAO.getByProperty(StudyOption.class, "code", modeOfAttendance.getCode());
+        StudyOption studyOption = entityService.getByProperty(StudyOption.class, "code", modeOfAttendance.getCode());
         if (studyOption == null) {
             studyOption = new StudyOption().withInstitution(institution).withCode(modeOfAttendance.getCode()).withName(modeOfAttendance.getName()).withEnabled(true);
-            entityDAO.save(studyOption);
+            entityService.save(studyOption);
         }
         return studyOption;
     }

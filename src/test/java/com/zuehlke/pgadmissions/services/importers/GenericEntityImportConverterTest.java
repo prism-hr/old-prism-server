@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Disabilities.Disability;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
-public class ImportEntityConverterTest {
+public class GenericEntityImportConverterTest {
 
     @Test
     public void shouldConvertImportEntity() {
@@ -22,7 +22,7 @@ public class ImportEntityConverterTest {
 
         Institution institution = new Institution();
         
-        ImportEntityConverter<com.zuehlke.pgadmissions.domain.Disability> converter = ImportEntityConverter
+        GenericEntityImportConverter<com.zuehlke.pgadmissions.domain.Disability> converter = GenericEntityImportConverter
                 .create(com.zuehlke.pgadmissions.domain.Disability.class, institution);
         com.zuehlke.pgadmissions.domain.Disability converted = converter.apply(disability);
         

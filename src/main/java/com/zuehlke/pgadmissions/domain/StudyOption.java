@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("STUDY_OPTION")
-public class StudyOption extends ImportedEntity {
+public class StudyOption extends AbstractImportedEntity {
 
     public StudyOption withInstitution(Institution institution) {
         setInstitution(institution);

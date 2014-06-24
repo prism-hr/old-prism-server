@@ -219,6 +219,11 @@ public class Program extends Advert {
         return this;
     }
 
+    public Program withUpdatedTimestamp(DateTime updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
+        return this;
+    }
+
     public Program withInitialData(Institution institution, String code, String title) {
         this.institution = Preconditions.checkNotNull(institution);
         this.code = code;

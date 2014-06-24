@@ -221,7 +221,7 @@ public class EntityImportService {
         if (program == null) {
             PrismProgramType programType = PrismProgramType.findValueFromString(programme.getName());
             program = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withCode(prefixedProgramCode)
-                    .withTitle(programme.getName()).withState(new State().withId(PrismState.PROGRAM_APPROVED)).withImported(true).withProgramType(programType).withCreatedTimestamp(new DateTime());
+                    .withTitle(programme.getName()).withState(new State().withId(PrismState.PROGRAM_APPROVED)).withImported(true).withProgramType(programType).withCreatedTimestamp(new DateTime()).withUpdatedTimestamp(new DateTime());
             entityDAO.save(program);
         }
 
@@ -232,7 +232,7 @@ public class EntityImportService {
 
     @Transactional
     public StudyOption getOrCreateStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) {
-        StudyOption studyOption = entityDAO.getByProperty(StudyOption.class, "id", modeOfAttendance.getCode());
+        StudyOption studyOption = entityDAO.getByProperty(StudyOption.class, "code", modeOfAttendance.getCode());
         if (studyOption == null) {
             studyOption = new StudyOption().withInstitution(institution).withCode(modeOfAttendance.getCode()).withName(modeOfAttendance.getName()).withEnabled(true);
             entityDAO.save(studyOption);

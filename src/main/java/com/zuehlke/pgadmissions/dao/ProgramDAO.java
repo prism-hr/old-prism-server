@@ -56,7 +56,7 @@ public class ProgramDAO {
 
     public Program getProgramByCode(String code) {
         return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .setFetchMode("instances", FetchMode.JOIN).add(Restrictions.eq("code", code)) //
+                .setFetchMode("programInstances", FetchMode.JOIN).add(Restrictions.eq("code", code)) //
                 .uniqueResult();
     }
 

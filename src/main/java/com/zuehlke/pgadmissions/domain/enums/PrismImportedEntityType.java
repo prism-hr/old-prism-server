@@ -16,10 +16,10 @@ public enum PrismImportedEntityType {
     QUALIFICATION_TYPE(Qualifications.class, "qualification", QualificationType.class), //
     REFERRAL_SOURCE(SourcesOfInterest.class, "sourceOfInterest", ReferralSource.class),
 
-    INSTITUTION(Institutions.class, "institution", Institution.class),
     FUNDING_SOURCE(FundingSources.class, "fundingSource", FundingSource.class),
     LANGUAGE_QUALIFICATION_TYPE(LanguageQualificationTypes.class, "languageQualificationType", LanguageQualificationType.class),
-    TITLE(Titles.class, "title", Title.class);
+    TITLE(Titles.class, "title", Title.class),
+    INSTITUTION(Institutions.class, "institution", ImportedInstitution.class);
 
     private Class<?> jaxbClass;
 

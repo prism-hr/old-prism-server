@@ -49,10 +49,6 @@ public class ImportedEntityDAO {
         sessionFactory.getCurrentSession().update(entity);
     }
 
-    public void flushSession() {
-        sessionFactory.getCurrentSession().flush();
-    }
-
     public void disableAllEntities(Class<? extends ImportedEntity> entityClass) {
         sessionFactory.getCurrentSession().createQuery("update " + entityClass.getSimpleName() + " set enabled = false") //
                 .executeUpdate();

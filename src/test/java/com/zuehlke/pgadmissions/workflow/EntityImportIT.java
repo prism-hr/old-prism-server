@@ -5,8 +5,10 @@ import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.enums.PrismImportedEntityType;
 import com.zuehlke.pgadmissions.domain.enums.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
-import com.zuehlke.pgadmissions.services.*;
+import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import com.zuehlke.pgadmissions.services.ProgramService;
+import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 import org.joda.time.LocalDate;
 import org.junit.Test;
@@ -46,22 +48,23 @@ public class EntityImportIT {
         Institution institution = createInstitution();
         testImportDisabilities(institution);
         testConflictsInProgramImport(institution);
+        testImportInstitutionDomiciles();
 
         importRemainingEntities(institution);
     }
-
 
     public Institution createInstitution() {
         System system = systemService.getSystem();
         State institutionState = entityService.getByProperty(State.class, "id", PrismState.INSTITUTION_APPROVED);
 
-        InstitutionDomicile institutionDomicile = new InstitutionDomicile().withCode("PL").withName("Poland").withEnabled(true);
+        InstitutionDomicile institutionDomicile = new InstitutionDomicile().withName("Poland").withEnabled(true);
         User user = new User().withEmail("jerzy@urban.pl").withFirstName("Jerzy").withLastName("Urban").withActivationCode("jurekjurektrzymajsie");
         Institution institution = new Institution().withDomicile(institutionDomicile).withName("Akademia Gorniczo-Hutnicza").withState(institutionState).withCode("AGH").withHomepage("www.agh.edu.pl").withSystem(system).withUser(user);
         entityService.save(institutionDomicile, user, institution);
 
         return institution;
     }
+
     public void testImportDisabilities(Institution institution) throws Exception {
         ImportedEntityFeed importedEntityFeed = new ImportedEntityFeed();
         importedEntityFeed.setImportedEntityType(PrismImportedEntityType.DISABILITY);
@@ -103,6 +106,7 @@ public class EntityImportIT {
         assertTrue(importedEntityService.getByCode(Disability.class, "1").isEnabled());
         assertFalse(importedEntityService.getByCode(Disability.class, "99").isEnabled());
     }
+
 
     public void testConflictsInProgramImport(Institution institution) throws Exception {
         ImportedEntityFeed importedEntityFeed = new ImportedEntityFeed();
@@ -169,6 +173,9 @@ public class EntityImportIT {
                 .withEnabled(false))));
     }
 
+    private void testImportInstitutionDomiciles() {
+    }
+
     private void importRemainingEntities(Institution institution) throws Exception {
         ImportedEntityFeed importedEntityFeed = new ImportedEntityFeed();
         importedEntityFeed.setInstitution(institution);
@@ -205,15 +212,17 @@ public class EntityImportIT {
         importedEntityFeed.setLocation("xml/defaultEntities/fundingSource.xml");
         entityImportService.importEntities(importedEntityFeed);
 
-//        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.LANGUAGE_QUALIFICATION_TYPE);
-//        importedEntityFeed.setLocation("xml/defaultEntities/languageQualificationType.xml");
-//        entityImportService.importEntities(importedEntityFeed);
+        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.LANGUAGE_QUALIFICATION_TYPE);
+        importedEntityFeed.setLocation("xml/defaultEntities/languageQualificationType.xml");
+        entityImportService.importEntities(importedEntityFeed);
 
         importedEntityFeed.setImportedEntityType(PrismImportedEntityType.TITLE);
         importedEntityFeed.setLocation("xml/defaultEntities/title.xml");
         entityImportService.importEntities(importedEntityFeed);
 
-
+        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.INSTITUTION);
+        importedEntityFeed.setLocation("reference_data/conflicts/institutions/institution.xml");
+        entityImportService.importEntities(importedEntityFeed);
     }
 
 }

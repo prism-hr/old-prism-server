@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ethnicitys>
+<ethnicities>
   <ethnicity>
     <code>10</code>
     <name>White</name>
@@ -68,4 +68,4 @@
     <code>98</code>
     <name>Information refused</name>
   </ethnicity>
-</ethnicitys>
+</ethnicities>

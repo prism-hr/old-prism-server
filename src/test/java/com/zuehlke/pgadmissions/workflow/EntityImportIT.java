@@ -5,6 +5,7 @@ import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.enums.PrismImportedEntityType;
 import com.zuehlke.pgadmissions.domain.enums.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.services.*;
 import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 import org.joda.time.LocalDate;
@@ -45,7 +46,10 @@ public class EntityImportIT {
         Institution institution = createInstitution();
         testImportDisabilities(institution);
         testConflictsInProgramImport(institution);
+
+        importRemainingEntities(institution);
     }
+
 
     public Institution createInstitution() {
         System system = systemService.getSystem();
@@ -58,7 +62,6 @@ public class EntityImportIT {
 
         return institution;
     }
-
     public void testImportDisabilities(Institution institution) throws Exception {
         ImportedEntityFeed importedEntityFeed = new ImportedEntityFeed();
         importedEntityFeed.setImportedEntityType(PrismImportedEntityType.DISABILITY);
@@ -166,14 +169,51 @@ public class EntityImportIT {
                 .withEnabled(false))));
     }
 
-    public void testConflictsInInstitutionImport() throws Exception {
-        Institution ucl = entityService.getByCode(Institution.class, "AGH");
+    private void importRemainingEntities(Institution institution) throws Exception {
         ImportedEntityFeed importedEntityFeed = new ImportedEntityFeed();
+        importedEntityFeed.setInstitution(institution);
+
+        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.COUNTRY);
+        importedEntityFeed.setLocation("xml/defaultEntities/country.xml");
+        entityImportService.importEntities(importedEntityFeed);
+
+        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.DISABILITY);
+        importedEntityFeed.setLocation("xml/defaultEntities/disability.xml");
+        entityImportService.importEntities(importedEntityFeed);
+
         importedEntityFeed.setImportedEntityType(PrismImportedEntityType.DOMICILE);
         importedEntityFeed.setLocation("xml/defaultEntities/domicile.xml");
-        importedEntityFeed.setInstitution(ucl);
-
         entityImportService.importEntities(importedEntityFeed);
+
+        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.ETHNICITY);
+        importedEntityFeed.setLocation("xml/defaultEntities/ethnicity.xml");
+        entityImportService.importEntities(importedEntityFeed);
+
+        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.NATIONALITY);
+        importedEntityFeed.setLocation("xml/defaultEntities/nationality.xml");
+        entityImportService.importEntities(importedEntityFeed);
+
+        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.QUALIFICATION_TYPE);
+        importedEntityFeed.setLocation("xml/defaultEntities/qualificationType.xml");
+        entityImportService.importEntities(importedEntityFeed);
+
+        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.REFERRAL_SOURCE);
+        importedEntityFeed.setLocation("xml/defaultEntities/sourceOfInterest.xml");
+        entityImportService.importEntities(importedEntityFeed);
+
+        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.FUNDING_SOURCE);
+        importedEntityFeed.setLocation("xml/defaultEntities/fundingSource.xml");
+        entityImportService.importEntities(importedEntityFeed);
+
+//        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.LANGUAGE_QUALIFICATION_TYPE);
+//        importedEntityFeed.setLocation("xml/defaultEntities/languageQualificationType.xml");
+//        entityImportService.importEntities(importedEntityFeed);
+
+        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.TITLE);
+        importedEntityFeed.setLocation("xml/defaultEntities/title.xml");
+        entityImportService.importEntities(importedEntityFeed);
+
+
     }
 
 }

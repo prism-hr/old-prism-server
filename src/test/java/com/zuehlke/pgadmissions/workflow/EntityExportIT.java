@@ -24,7 +24,7 @@ public class EntityExportIT {
     @Test
     public void exportEntities() throws Exception {
         Class[] exportClasses = new Class[]{Country.class, Domicile.class, Disability.class, Ethnicity.class, Language.class, QualificationType.class, ReferralSource.class, Title.class, FundingSource.class, ImportedInstitution.class, LanguageQualificationType.class};
-        String[] entityNames = new String[]{"country", "domicile", "disability", "ethnicity", "nationality", "qualificationType", "sourceOfInterest", "title", "fundingSource", "institution", "languageQualificationType"};
+        String[] entityNames = new String[]{"country", "domicile", "disability", "ethnicity", "nationality", "qualification", "sourceOfInterest", "title", "fundingSource", "institution", "languageQualificationType"};
 
         for (int i = 0; i < exportClasses.length; i++) {
             Class<?> exportClass = exportClasses[i];

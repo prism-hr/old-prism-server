@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sourceOfInterests>
+<sourcesOfInterest>
   <sourceOfInterest>
     <code>BRIT_COUN</code>
     <name>British Council</name>
@@ -48,4 +48,4 @@
     <code>UCL_WEB</code>
     <name>UCL Website</name>
   </sourceOfInterest>
-</sourceOfInterests>
+</sourcesOfInterest>

@@ -136,6 +136,10 @@ public class StateService {
     public void executeEscalatedStateTransitions() {
         executeThreadedStateTransitions(stateDAO.getEscalatedStateTransitions(), systemService.getSystem().getUser());
     }
+    
+    public PrismStateTransitionEvaluation getTransitionEvaluation(StateAction stateAction) {
+        return stateDAO.getStateTransitionEvaluationByStateAction(stateAction);
+    }
 
     private void executeThreadedStateTransitions(final HashMultimap<Action, ResourceDynamic> threadedStateTransitions, final User invoker) {
         for (final Action action : threadedStateTransitions.keySet()) {
@@ -153,6 +157,10 @@ public class StateService {
 
     public ThreadPoolExecutor getThreadedStateTransitionPool() {
         return threadedStateTransitionPool;
+    }
+    
+    public void disableStateActions() {
+        stateDAO.disableStateActions();
     }
 
     private void postResourceStateChange(ResourceDynamic resource, StateTransition stateTransition, Comment comment) {
@@ -268,10 +276,6 @@ public class StateService {
             }
         }
         return stateDAO.getStateTransition(stateTransitions, transitionState);
-    }
-    
-    public PrismStateTransitionEvaluation getTransitionEvaluation(StateAction stateAction) {
-        return stateDAO.getStateTransitionEvaluationByStateAction(stateAction);
     }
 
 }

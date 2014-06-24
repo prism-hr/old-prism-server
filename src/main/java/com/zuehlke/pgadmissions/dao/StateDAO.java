@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -168,6 +169,14 @@ public class StateDAO {
                 .add(Restrictions.isNotNull("stateTransitionEvaluation")) //
                 .setMaxResults(1) //
                 .uniqueResult();
+    }
+    
+    public void disableStateActions() {
+        Query query = sessionFactory.getCurrentSession().createQuery( //
+                "update StateAction " //
+                + "set enabled = :enabled");
+        query.setParameter("enabled", false);
+        query.executeUpdate();
     }
 
 }

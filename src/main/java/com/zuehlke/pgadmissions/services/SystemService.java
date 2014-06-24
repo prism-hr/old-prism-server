@@ -101,7 +101,7 @@ public class SystemService {
     public List<Scope> getScopes() {
         return entityService.getAll(Scope.class);
     }
-
+    
     public List<Configuration> getConfigurations() {
         return configurationService.getConfigurations(getSystem());
     }

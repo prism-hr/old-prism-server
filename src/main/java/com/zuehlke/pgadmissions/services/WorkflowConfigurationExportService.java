@@ -46,7 +46,7 @@ public class WorkflowConfigurationExportService {
     private StateService stateService;
 
     @Autowired
-    private NotificationService notificationTemplateService;
+    private NotificationService notificationService;
 
     public String exportWorkflowConfiguration() {
         DocumentBuilder documentBuilder = prepareDocumentBuilder();
@@ -73,7 +73,7 @@ public class WorkflowConfigurationExportService {
             throw new Error(e);
         }
     }
-    
+
     private String parseDocumentToString(Document document) {
         try {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -86,7 +86,7 @@ public class WorkflowConfigurationExportService {
             transformer.transform(new DOMSource(document), new StreamResult(writer));
             return writer.getBuffer().toString();
         } catch (TransformerException e) {
-            throw new Error (e);
+            throw new Error(e);
         }
     }
 
@@ -146,8 +146,8 @@ public class WorkflowConfigurationExportService {
 
         NotificationTemplate notificationTemplate = stateAction.getNotificationTemplate();
         if (notificationTemplate != null) {
-            Element notificationTemplateElement = buildNotificationTemplateElement(document, notificationTemplate);
-            actionElement.appendChild(notificationTemplateElement);
+            actionElement.setAttribute("notification", notificationTemplate.getId().toString());
+            actionElement.setAttribute("reminder-interval", notificationService.getReminderDuration(systemService.getSystem(), notificationTemplate).toString());
         }
 
         if (!stateAction.getStateActionAssignments().isEmpty()) {
@@ -176,19 +176,7 @@ public class WorkflowConfigurationExportService {
 
         return actionElement;
     }
-    
-    private Element buildNotificationTemplateElement(Document document, NotificationTemplate notificationTemplate) {
-        Element notificationTemplateElement = document.createElement("task-request");
-        notificationTemplateElement.setAttribute("id", notificationTemplate.getId().toString());
 
-        NotificationTemplate reminderNotificationTemplate = notificationTemplate.getReminderTemplate();
-        if (reminderNotificationTemplate != null) {
-            notificationTemplateElement.setAttribute("default-reminder-interval", systemService.getReminderDuration(notificationTemplate).toString());
-        }
-
-        return notificationTemplateElement;
-    }
-    
     private void buildStateActionAssignmentsElement(Document document, StateAction stateAction, Element actionElement) {
         Element stateActionAssignmentsElement = document.createElement("roles");
         actionElement.appendChild(stateActionAssignmentsElement);
@@ -198,22 +186,22 @@ public class WorkflowConfigurationExportService {
             stateActionAssignmentsElement.appendChild(stateActionAssignmentElement);
         }
     }
-    
+
     private Element buildStateActionAssignmentElement(Document document, StateActionAssignment stateActionAssignment) {
         Element stateActionAssignmentElement = document.createElement("role");
         stateActionAssignmentElement.setAttribute("id", stateActionAssignment.getRole().getId().toString());
-        
+
         if (!stateActionAssignment.getEnhancements().isEmpty()) {
             buildStateActionEnhancementsElement(document, stateActionAssignment, stateActionAssignmentElement);
         }
-        
+
         return stateActionAssignmentElement;
     }
 
     private void buildStateActionEnhancementsElement(Document document, StateActionAssignment stateActionAssignment, Element stateActionAssignmentElement) {
         Element stateActionEnhancementsElement = document.createElement("enhancements");
         stateActionAssignmentElement.appendChild(stateActionEnhancementsElement);
-        
+
         for (StateActionEnhancement stateActionEnhancement : stateActionAssignment.getEnhancements()) {
             Element stateActionEnhancementElement = buildStateActionEnhancementElement(document, stateActionEnhancement);
             stateActionEnhancementsElement.appendChild(stateActionEnhancementElement);
@@ -223,15 +211,15 @@ public class WorkflowConfigurationExportService {
     private Element buildStateActionEnhancementElement(Document document, StateActionEnhancement stateActionEnhancement) {
         Element stateActionEnhancementElement = document.createElement("enhancement");
         stateActionEnhancementElement.setAttribute("type", stateActionEnhancement.getEnhancementType().toString());
-        
+
         Action delegatedAction = stateActionEnhancement.getDelegatedAction();
         if (delegatedAction != null) {
             stateActionEnhancementElement.setAttribute("delegated-action", delegatedAction.getId().toString());
         }
-        
+
         return stateActionEnhancementElement;
     }
-    
+
     private Element buildStateTransitionEvaluationElement(Document document, PrismStateTransitionEvaluation stateTransitionEvaluation) {
         Element stateTransitionEvaluationElement = document.createElement("state-transition-evaluation");
         stateTransitionEvaluationElement.setAttribute("id", stateTransitionEvaluation.toString());
@@ -247,7 +235,7 @@ public class WorkflowConfigurationExportService {
             transitionStatesElement.appendChild(stateTransitionElement);
         }
     }
-    
+
     private Element buildStateTransitionElement(Document document, StateTransition stateTransition) {
         Element stateTransitionElement = document.createElement("transition-state");
         stateTransitionElement.setAttribute("id", stateTransition.getTransitionState().getId().toString());
@@ -269,7 +257,7 @@ public class WorkflowConfigurationExportService {
 
         return stateTransitionElement;
     }
-    
+
     private void buildRoleTransitionsElement(Document document, StateTransition stateTransition, Element stateTransitionElement) {
         Element roleTransitionsElement = document.createElement("role-transitions");
         stateTransitionElement.appendChild(roleTransitionsElement);
@@ -279,7 +267,7 @@ public class WorkflowConfigurationExportService {
             roleTransitionsElement.appendChild(roleTransitionElement);
         }
     }
-    
+
     private Element buildRoleTransitionElement(Document document, RoleTransition roleTransition) {
         Element roleTransitionElement = document.createElement("role-transition");
         roleTransitionElement.setAttribute("id", roleTransition.getRole().getId().toString());
@@ -318,13 +306,13 @@ public class WorkflowConfigurationExportService {
             roleTransitionExclusionsElement.appendChild(roleTransitionExclusionElement);
         }
     }
-    
+
     private Element buildRoleTransitionExclusionElement(Document document, Role excludedRole) {
         Element roleTransitionExclusionElement = document.createElement("exclusion");
         roleTransitionExclusionElement.setAttribute("id", excludedRole.getId().toString());
         return roleTransitionExclusionElement;
     }
-    
+
     private void buildPropagatedActionsElement(Document document, StateTransition stateTransition, Element stateTransitionElement) {
         Element propagatedActionsElement = document.createElement("propagated-actions");
         stateTransitionElement.appendChild(propagatedActionsElement);
@@ -334,13 +322,13 @@ public class WorkflowConfigurationExportService {
             propagatedActionsElement.appendChild(propagatedActionElement);
         }
     }
-    
+
     private Element buildPropagatedActionElement(Document document, Action propagatedAction) {
         Element propagatedActionElement = document.createElement("propagated-action");
         propagatedActionElement.setAttribute("id", propagatedAction.getId().toString());
         return propagatedActionElement;
     }
-    
+
     private void buildStateActionNotificationsElement(Document document, StateAction stateAction, Element actionElement) {
         Element stateActionNotificationsElement = document.createElement("update-notifications");
         actionElement.appendChild(stateActionNotificationsElement);
@@ -350,18 +338,18 @@ public class WorkflowConfigurationExportService {
             stateActionNotificationsElement.appendChild(stateActionNotificationElement);
         }
     }
-    
+
     private Element buildStateActionNotificationElement(Document document, StateActionNotification stateActionNotification) {
         Element stateActionNotificationElement = document.createElement("update-notification");
         stateActionNotificationElement.setAttribute("id", stateActionNotification.getNotificationTemplate().getId().toString());
         stateActionNotificationElement.setAttribute("role", stateActionNotification.getRole().getId().toString());
         return stateActionNotificationElement;
     }
-    
+
     private void buildActionRedactionsElement(Document document, Action action, Element actionElement) {
         Element actionRedactionsElement = document.createElement("redactions");
         actionElement.appendChild(actionRedactionsElement);
-        
+
         for (ActionRedaction actionRedaction : action.getRedactions()) {
             Element actionRedactionElement = buildActionRedactionElement(document, actionRedaction);
             actionRedactionsElement.appendChild(actionRedactionElement);

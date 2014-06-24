@@ -54,7 +54,7 @@ public class EntityService {
         return persistentResource;
     }
     
-    public <T extends IUniqueResource> void createOrUpdate(T transientResource) {
+    public <T extends IUniqueResource> T createOrUpdate(T transientResource) {
         T persistentResource = (T) getDuplicateEntity(transientResource);
         if (persistentResource == null) {
             save(transientResource);
@@ -67,6 +67,7 @@ public class EntityService {
                 throw new Error(e);
             }
         }
+        return transientResource;
     }
 
     public java.io.Serializable save(Object entity) {

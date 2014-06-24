@@ -24,11 +24,16 @@ import org.xml.sax.SAXException;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.StateActionAssignment;
+import com.zuehlke.pgadmissions.domain.StateActionEnhancement;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismActionEnhancementType;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationPurpose;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
@@ -54,7 +59,7 @@ public class WorkflowConfigurationImportService {
 
     @Autowired
     private EntityService entityService;
-    
+
     @Autowired
     private NotificationService notificationService;
 
@@ -72,9 +77,11 @@ public class WorkflowConfigurationImportService {
             Document document = documentBuilder.parse(configuration);
 
             stateService.disableStateActions();
+            stateService.disableStateActionAssignments();
+            stateService.disableStateActionEnhancements();
 
             String feedback = importScopes(document);
-            boolean outcome = feedback.length() == 0;
+            boolean outcome = feedback == null;
             return new AbstractMap.SimpleEntry<Boolean, String>(outcome, outcome ? IMPORT_SUCCESS : feedback);
         } catch (SAXException e) {
             String parseError = e.getMessage();
@@ -105,9 +112,10 @@ public class WorkflowConfigurationImportService {
     }
 
     // TODO: Test invalid scope
+    @SuppressWarnings("unused")
     private String importScopes(Document document) {
-        String feedback = "";
         NodeList scopeElements = document.getElementsByTagName("scope");
+
         for (int i = 0; i < scopeElements.getLength(); i++) {
             Element scopeElement = (Element) scopeElements.item(i);
             String scopeElementId = scopeElement.getAttribute("id");
@@ -115,37 +123,37 @@ public class WorkflowConfigurationImportService {
             PrismScope scopeId = getValueOf(PrismScope.class, scopeElementId);
 
             if (scopeId == null) {
-                feedback = getInvalidEntityError(PrismScope.class, scopeElementId);
+                return getInvalidEntityError(PrismScope.class, scopeId);
             }
 
-            feedback = importStates(scopeElement, scopeId);
+            return importStates(scopeElement, scopeId);
         }
 
-        return feedback;
+        return null;
     }
 
     // TODO: Test invalid state
     // TODO: Test invalid state scope
+    @SuppressWarnings("unused")
     private String importStates(Element scopeElement, PrismScope scopeId) {
-        String feedback = "";
         NodeList stateElements = scopeElement.getElementsByTagName("state");
 
-        for (int j = 0; j < stateElements.getLength(); j++) {
-            Element stateElement = (Element) stateElements.item(j);
+        for (int i = 0; i < stateElements.getLength(); i++) {
+            Element stateElement = (Element) stateElements.item(i);
             String stateElementId = stateElement.getAttribute("id");
 
             PrismState stateId = getValueOf(PrismState.class, stateElementId);
 
             if (stateId == null) {
-                feedback = getInvalidEntityError(PrismState.class, stateElementId);
+                return getInvalidEntityError(PrismState.class, stateId);
             } else if (stateId.getScope() != scopeId) {
-                feedback = getInvalidEntityAssignmentError(PrismState.class, scopeId, stateElementId);
+                return getInvalidEntityAssignmentError(PrismState.class, scopeId, stateId);
             }
 
-            feedback = importActions(stateElement, stateId);
+            return importActions(stateElement, stateId);
         }
 
-        return feedback;
+        return null;
     }
 
     // TODO: Test invalid action
@@ -154,8 +162,8 @@ public class WorkflowConfigurationImportService {
     // TODO: Test invalid notification template scope
     // TODO: Test invalid notification template type
     // TODO: Test importing new version of workflow
+    @SuppressWarnings("unused")
     private String importActions(Element stateElement, PrismState stateId) {
-        String feedback = "";
         NodeList actionElements = stateElement.getElementsByTagName("action");
         for (int i = 0; i < actionElements.getLength(); i++) {
             Element actionElement = (Element) actionElements.item(i);
@@ -164,9 +172,9 @@ public class WorkflowConfigurationImportService {
             PrismAction actionId = getValueOf(PrismAction.class, actionElementId);
 
             if (actionId == null) {
-                feedback = getInvalidEntityError(PrismAction.class, actionElementId);
+                return getInvalidEntityError(PrismAction.class, actionId);
             } else if (stateId.getScope() != actionId.getScope()) {
-                feedback = getInvalidEntityAssignmentError(PrismAction.class, stateId, actionElementId);
+                return getInvalidEntityAssignmentError(PrismAction.class, stateId, actionId);
             }
 
             NotificationTemplate notificationTemplate = null;
@@ -177,11 +185,11 @@ public class WorkflowConfigurationImportService {
                 notificationTemplateId = getValueOf(PrismNotificationTemplate.class, actionElementNotification);
 
                 if (notificationTemplateId == null) {
-                    feedback = getInvalidEntityError(PrismNotificationTemplate.class, actionElementNotification);
+                    return getInvalidEntityError(PrismNotificationTemplate.class, notificationTemplateId);
                 } else if (actionId.getScope() != notificationTemplateId.getScope()) {
-                    feedback = getInvalidEntityAssignmentError(PrismNotificationTemplate.class, actionId.getScope(), actionElementNotification);
+                    return getInvalidEntityAssignmentError(PrismNotificationTemplate.class, actionId, notificationTemplateId);
                 } else if (notificationTemplateId.getNotificationPurpose() != PrismNotificationPurpose.REQUEST) {
-                    feedback = getInvalidNotificationTemplateError(actionElementNotification, notificationTemplateId.getNotificationPurpose());
+                    return getInvalidNotificationTemplateError(actionElementNotification, notificationTemplateId.getNotificationPurpose());
                 }
 
                 String actionReminderInterval = actionElement.getAttribute("reminder-interval");
@@ -189,7 +197,7 @@ public class WorkflowConfigurationImportService {
                     reminderInterval = Integer.parseInt(actionReminderInterval);
 
                     if (reminderInterval < 1) {
-                        feedback = actionReminderInterval + " " + IMPORT_INVALID_ENTITY + " " + IMPORT_INVALID_REMINDER_INTERVAL;
+                        return actionReminderInterval + " " + IMPORT_INVALID_ENTITY + " " + IMPORT_INVALID_REMINDER_INTERVAL;
                     }
                 }
 
@@ -202,16 +210,91 @@ public class WorkflowConfigurationImportService {
             boolean defaultAction = actionElement.getAttribute("default") == "true";
 
             StateAction transientStateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(raisesUrgentFlag)
-                    .withDefaultAction(defaultAction).withNotificationTemplate(notificationTemplate);
-            entityService.createOrUpdate(transientStateAction);
-            
+                    .withDefaultAction(defaultAction).withNotificationTemplate(notificationTemplate).withEnabled(true);
+            StateAction stateAction = entityService.createOrUpdate(transientStateAction);
+
             if (reminderInterval != null) {
                 NotificationConfiguration configuration = notificationService.getConfiguration(systemService.getSystem(), notificationTemplate);
                 configuration.setReminderInterval(reminderInterval);
             }
+
+            return importRoles(actionElement, stateAction);
         }
 
-        return feedback;
+        return null;
+    }
+
+    // TODO: Test invalid action assignment
+    // TODO: Test invalid action assignment scope
+    @SuppressWarnings("unused")
+    private String importRoles(Element actionElement, StateAction stateAction) {
+        NodeList roleElements = actionElement.getElementsByTagName("role");
+
+        for (int i = 0; i < roleElements.getLength(); i++) {
+            Element roleElement = (Element) roleElements.item(i);
+            String roleElementId = roleElement.getAttribute("id");
+
+            PrismRole roleId = getValueOf(PrismRole.class, roleElementId);
+            PrismAction actionId = stateAction.getAction().getId();
+
+            if (roleId == null) {
+                return getInvalidEntityError(PrismRole.class, roleId);
+            } else if (roleId.getScope().getPrecedence() < actionId.getScope().getPrecedence()) {
+                return getInvalidEntityAssignmentError(PrismRole.class, actionId, roleId);
+            }
+
+            Role role = entityService.getByProperty(Role.class, "id", roleId);
+
+            StateActionAssignment transientStateActionAssignment = new StateActionAssignment().withStateAction(stateAction).withRole(role).withEnabled(true);
+            StateActionAssignment stateActionAssignment = entityService.createOrUpdate(transientStateActionAssignment);
+
+            return importEnhancements(roleElement, stateActionAssignment);
+        }
+
+        return null;
+    }
+
+    // TODO: Test invalid action assignment enhancement
+    // TODO: Test invalid action assignment enhancement scope
+    // TODO: Test invalid delegate action
+    // TODO: Test invalid delegate action scope
+    private String importEnhancements(Element roleElement, StateActionAssignment stateActionAssignment) {
+        NodeList enhancementElements = roleElement.getElementsByTagName("enhancement");
+
+        for (int i = 0; i < enhancementElements.getLength(); i++) {
+            Element enhancementElement = (Element) enhancementElements.item(i);
+            String enhancementElementType = enhancementElement.getAttribute("type");
+
+            PrismActionEnhancementType enhancementType = getValueOf(PrismActionEnhancementType.class, enhancementElementType);
+            PrismAction actionId = stateActionAssignment.getStateAction().getAction().getId();
+
+            if (enhancementType == null) {
+                return getInvalidEntityError(PrismActionEnhancementType.class, enhancementType);
+            } else if (enhancementType.getScope() != actionId.getScope()) {
+                return getInvalidEntityAssignmentError(PrismActionEnhancementType.class, actionId, enhancementType);
+            }
+
+            Action delegatedAction = null;
+            PrismAction delegatedActionId = null;
+            String enhancementElementDelegatedAction = enhancementElement.getAttribute("delegated-action");
+            if (enhancementElementDelegatedAction != null) {
+                delegatedActionId = getValueOf(PrismAction.class, enhancementElementDelegatedAction);
+
+                if (delegatedActionId == null) {
+                    return getInvalidEntityError(PrismAction.class, delegatedActionId);
+                } else if (delegatedActionId.getScope() != actionId.getScope()) {
+                    return getInvalidEntityAssignmentError(PrismAction.class, actionId, delegatedActionId);
+                }
+
+                delegatedAction = entityService.getByProperty(Action.class, "id", actionId);
+            }
+
+            StateActionEnhancement transientStateActionEnhancement = new StateActionEnhancement().withStateActionAssignment(stateActionAssignment)
+                    .withEnhancementType(enhancementType).withDelegatedAction(delegatedAction).withEnabled(true);
+            entityService.createOrUpdate(transientStateActionEnhancement);
+
+        }
+        return null;
     }
 
     private <T extends Enum<T>> T getValueOf(Class<T> clazz, String stringValue) {
@@ -222,12 +305,12 @@ public class WorkflowConfigurationImportService {
         }
     }
 
-    private <T extends Enum<T>> String getInvalidEntityError(Class<T> entityClass, String stringValue) {
-        return WordUtils.capitalizeFully(stringValue) + " " + IMPORT_INVALID_ENTITY + " " + entityClass.getSimpleName().toLowerCase();
+    private <T extends Enum<T>> String getInvalidEntityError(Class<T> entityClass, Enum<T> value) {
+        return WordUtils.capitalizeFully(value.name()) + " " + IMPORT_INVALID_ENTITY + " " + entityClass.getSimpleName().toLowerCase();
     }
 
-    private <T extends Enum<T>, U extends Enum<U>> String getInvalidEntityAssignmentError(Class<T> entityClass, Enum<U> parentEntity, String stringValue) {
-        return WordUtils.capitalizeFully(stringValue) + " " + IMPORT_INVALID_ENTITY + " " + entityClass.getSimpleName().toLowerCase() + " "
+    private <T extends Enum<T>, U extends Enum<U>> String getInvalidEntityAssignmentError(Class<T> entityClass, Enum<U> parentEntity, Enum<T> value) {
+        return WordUtils.capitalizeFully(value.name()) + " " + IMPORT_INVALID_ENTITY + " " + entityClass.getSimpleName().toLowerCase() + " "
                 + IMPORT_INVALID_ENTITY_ASSIGNMENT + " " + parentEntity.getClass().getSimpleName().toLowerCase() + " " + parentEntity.name().toLowerCase();
     }
 

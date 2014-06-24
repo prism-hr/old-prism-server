@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.IUniqueResource;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,7 @@ public class EntityService {
     }
 
     public <T> T getByCode(Class<T> klass, String code) {
-        return entityDAO.getByCode(klass, code);
+        return entityDAO.getByProperty(klass, "code", code);
     }
 
     public <T> T getByProperty(Class<T> klass, String propertyName, Object propertyValue) {
@@ -52,6 +53,22 @@ public class EntityService {
         }
         return persistentResource;
     }
+    
+    public <T extends IUniqueResource> T createOrUpdate(T transientResource) {
+        T persistentResource = (T) getDuplicateEntity(transientResource);
+        if (persistentResource == null) {
+            save(transientResource);
+        } else {
+            try {
+                Object persistentId = PropertyUtils.getSimpleProperty(persistentResource, "id");
+                PropertyUtils.setSimpleProperty(transientResource, "id", persistentId);
+                update(transientResource);
+            } catch (Exception e) {
+                throw new Error(e);
+            }
+        }
+        return transientResource;
+    }
 
     public java.io.Serializable save(Object entity) {
         return entityDAO.save(entity);
@@ -74,10 +91,5 @@ public class EntityService {
     public void flush() {
         entityDAO.flush();
     }
-
-    public void clear() {
-        entityDAO.clear();
-    }
-
 
 }

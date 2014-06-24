@@ -156,6 +156,11 @@ public class StateAction implements IUniqueResource  {
         this.notificationTemplate = notificationTemplate;
         return this;
     }
+    
+    public StateAction withEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
 
     @Override
     public ResourceSignature getResourceSignature() {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<disabilitys>
+<disabilities>
   <disability>
     <code>0</code>
     <name>No Disability</name>
@@ -40,4 +40,4 @@
     <code>8</code>
     <name>2 or more Impairments/med conditions</name>
   </disability>
-</disabilitys>
+</disabilities>

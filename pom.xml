@@ -451,7 +451,6 @@
                             <packageName>com.zuehlke.pgadmissions.referencedata.jaxb</packageName>
                             <outputDirectory>${project.build.directory}/generated-sources/jaxb/import</outputDirectory>
                             <schemaDirectory>${project.basedir}/src/main/xsd/import</schemaDirectory>
-                            <staleFile>${project.build.directory}/jaxb2/.schema5XjcStaleFlag</staleFile>
                         </configuration>
                     </execution>
                     <execution>
@@ -463,7 +462,6 @@
                             <packageName>com.zuehlke.pgadmissions.admissionsservice.jaxb</packageName>
                             <outputDirectory>${project.build.directory}/generated-sources/jaxb/export</outputDirectory>
                             <schemaDirectory>${project.basedir}/src/main/xsd/export</schemaDirectory>
-                            <staleFile>${project.build.directory}/jaxb2/.schema3XjcStaleFlag</staleFile>
                         </configuration>
                     </execution>
                     <execution>
@@ -476,7 +474,6 @@
                             <outputDirectory>${project.build.directory}/generated-sources/jaxb/scoringConfig
                             </outputDirectory>
                             <schemaDirectory>${project.basedir}/src/main/resources</schemaDirectory>
-                            <staleFile>${project.build.directory}/jaxb2/.schema4XjcStaleFlag</staleFile>
                         </configuration>
                     </execution>
                 </executions>

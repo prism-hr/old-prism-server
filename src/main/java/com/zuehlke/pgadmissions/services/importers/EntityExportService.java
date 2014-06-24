@@ -41,7 +41,7 @@ public class EntityExportService {
             Document document = documentBuilder.newDocument();
             document.setXmlVersion("1.0");
 
-            Element mainElement = document.createElement(entityName + "s");
+            Element mainElement = document.createElement(pluralize(entityName));
             document.appendChild(mainElement);
 
             for (Object entity : entityService.getAll(entityClass)) {
@@ -85,6 +85,15 @@ public class EntityExportService {
         } finally {
             Closeables.close(fileWriter, true);
         }
+    }
+
+    private String pluralize(String entityName) {
+        if (entityName.equals("sourceOfInterest")) {
+            return "sourcesOfInterest";
+        } else if (entityName.endsWith("y")) {
+            return entityName.substring(0, entityName.length() - 1) + "ies";
+        }
+        return entityName + "s";
     }
 
 }

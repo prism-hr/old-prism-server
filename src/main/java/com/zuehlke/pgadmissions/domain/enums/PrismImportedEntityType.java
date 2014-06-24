@@ -1,26 +1,25 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.Disability;
-import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.Ethnicity;
-import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationType;
-import com.zuehlke.pgadmissions.domain.ReferralSource;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.referencedata.jaxb.*;
 
 public enum PrismImportedEntityType {
 
     //TODO: behaviours for TITLE, FUNDING_SOURCE, LANGUAGE_QUALIFICATION_TYPE, PROGRAM_STUDY_OPTION
-    
-    COUNTRY(com.zuehlke.pgadmissions.referencedata.jaxb.Countries.class, "country", Country.class), //
-    DISABILITY(com.zuehlke.pgadmissions.referencedata.jaxb.Disabilities.class, "disability", Disability.class), //
-    DOMICILE(com.zuehlke.pgadmissions.referencedata.jaxb.Domiciles.class, "domicile", Domicile.class), //
-    ETHNICITY(com.zuehlke.pgadmissions.referencedata.jaxb.Ethnicities.class, "ethnicity", Ethnicity.class), //
-    NATIONALITY(com.zuehlke.pgadmissions.referencedata.jaxb.Nationalities.class, "nationality", Language.class), //
-    PROGRAM(com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.class, "programmeOccurrence", Program.class), //
-    QUALIFICATION_TYPE(com.zuehlke.pgadmissions.referencedata.jaxb.Qualifications.class, "qualification", QualificationType.class), //
-    REFERRAL_SOURCE(com.zuehlke.pgadmissions.referencedata.jaxb.SourcesOfInterest.class, "sourceOfInterest", ReferralSource.class);
+
+    COUNTRY(Countries.class, "country", Country.class), //
+    DISABILITY(Disabilities.class, "disability", Disability.class), //
+    DOMICILE(Domiciles.class, "domicile", Domicile.class), //
+    ETHNICITY(Ethnicities.class, "ethnicity", Ethnicity.class), //
+    NATIONALITY(Nationalities.class, "nationality", Language.class), //
+    PROGRAM(ProgrammeOccurrences.class, "programmeOccurrence", Program.class), //
+    QUALIFICATION_TYPE(Qualifications.class, "qualification", QualificationType.class), //
+    REFERRAL_SOURCE(SourcesOfInterest.class, "sourceOfInterest", ReferralSource.class),
+
+    INSTITUTION(Institutions.class, "institution", Institution.class),
+    FUNDING_SOURCE(FundingSources.class, "fundingSource", FundingSource.class),
+    LANGUAGE_QUALIFICATION_TYPE(LanguageQualificationTypes.class, "languageQualificationType", LanguageQualificationType.class),
+    TITLE(Titles.class, "title", Title.class);
 
     private Class<?> jaxbClass;
 

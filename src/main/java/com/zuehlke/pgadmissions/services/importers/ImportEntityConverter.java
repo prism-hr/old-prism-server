@@ -35,7 +35,7 @@ public class ImportEntityConverter<E extends ImportedEntity> implements Function
             importedEntity.setInstitution(institution);
             return importedEntity;
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new Error(e);
         }
     }
 

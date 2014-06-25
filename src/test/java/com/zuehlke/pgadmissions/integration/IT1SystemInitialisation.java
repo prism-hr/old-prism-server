@@ -24,7 +24,6 @@ import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
@@ -94,7 +93,6 @@ public class IT1SystemInitialisation {
             verifyActionCreation();
             verifyRoleCreation();       
             verifyStateCreation();
-            verifyStateTransitionEvaluation();
             
             System system = systemService.getSystem();
             assertEquals(system.getName(), systemName);
@@ -151,16 +149,10 @@ public class IT1SystemInitialisation {
         }
     }
 
-    private void verifyStateTransitionEvaluation() {
-        for (StateTransitionEvaluation evaluation : stateService.getTransitionEvaluations()) {
-            assertEquals(evaluation.getId().getMethodName(), evaluation.getMethodName());
-            assertEquals(evaluation.getId().getScope(), evaluation.getScope().getId());
-        }
-    }
-
     private void verifyStateCreation() {
         for (State state : stateService.getStates()) {
             assertEquals(PrismState.getParentState(state.getId()), state.getParentState().getId());
+            assertEquals(state.getId().getSequenceOrder(), state.getSequenceOrder());
             assertEquals(state.getId().getScope(), state.getScope().getId());    
         }
     }

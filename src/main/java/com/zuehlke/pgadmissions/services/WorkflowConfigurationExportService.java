@@ -231,13 +231,8 @@ public class WorkflowConfigurationExportService {
     private Element buildStateTransitionElement(Document document, StateTransition stateTransition) {
         Element stateTransitionElement = document.createElement("transition-state");
         stateTransitionElement.setAttribute("id", stateTransition.getTransitionState().getId().toString());
-        stateTransitionElement.setAttribute("transition-action", stateTransition.getTransitionAction().getId().toString());
-        stateTransitionElement.setAttribute("post-comment", getXmlBoolean(stateTransition.isDoPostComment()));
-
-        Integer displayOrder = stateTransition.getDisplayOrder();
-        if (displayOrder != null) {
-            stateTransitionElement.setAttribute("display-order", displayOrder.toString());
-        }
+        stateTransitionElement.setAttribute("action", stateTransition.getTransitionAction().getId().toString());
+        stateTransitionElement.setAttribute("comment", getXmlBoolean(stateTransition.isDoPostComment()));
 
         if (!stateTransition.getRoleTransitions().isEmpty()) {
             buildRoleTransitionsElement(document, stateTransition, stateTransitionElement);

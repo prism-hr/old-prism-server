@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateDuration;
-import com.zuehlke.pgadmissions.domain.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
@@ -32,7 +31,6 @@ import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.mail.MailService;
 
 @Service
@@ -111,7 +109,6 @@ public class SystemService {
         initialiseActions();
         initialiseRoles();
         initialiseStates();
-        initialiseStateTransitionEvaluations();
 
         User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail);
         System system = getOrCreateSystem(systemUser);
@@ -156,7 +153,7 @@ public class SystemService {
     private void initialiseStates() {
         for (PrismState prismState : PrismState.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismState.getScope());
-            State transientState = new State().withId(prismState).withScope(scope);
+            State transientState = new State().withId(prismState).withSequenceOrder(prismState.getSequenceOrder()).withScope(scope);
             entityService.getOrCreate(transientState);
         }
         for (PrismState prismState : PrismState.values()) {
@@ -220,15 +217,6 @@ public class SystemService {
                 StateDuration transientStateDuration = new StateDuration().withSystem(system).withState(state).withDuration(prismState.getDuration());
                 entityService.getOrCreate(transientStateDuration);
             }
-        }
-    }
-
-    private void initialiseStateTransitionEvaluations() {
-        for (PrismStateTransitionEvaluation prismEvaluation : PrismStateTransitionEvaluation.values()) {
-            Scope scope = entityService.getByProperty(Scope.class, "id", prismEvaluation.getScope());
-            StateTransitionEvaluation transientEvaluation = new StateTransitionEvaluation().withId(prismEvaluation)
-                    .withMethodName(prismEvaluation.getMethodName()).withScope(scope);
-            entityService.getOrCreate(transientEvaluation);
         }
     }
 

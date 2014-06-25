@@ -11,7 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -42,7 +41,6 @@ public class CommentCustomQuestion implements IUniqueResource {
     private boolean enabled;
     
     @OneToMany(mappedBy = "commentCustomQuestion")
-    @OrderBy("createdTimestamp DESC")
     private Set<CommentCustomQuestionVersion> versions = Sets.newHashSet();
 
     public Integer getId() {

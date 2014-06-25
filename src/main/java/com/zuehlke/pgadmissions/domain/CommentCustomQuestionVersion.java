@@ -8,6 +8,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
 @Entity
 @Table(name = "COMMENT_CUSTOM_QUESTION_VERSION")
 public class CommentCustomQuestionVersion {
@@ -22,6 +25,10 @@ public class CommentCustomQuestionVersion {
 
     @Column(name = "content", nullable = false)
     private String content;
+    
+    @Column(name = "created_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdTimestamp;
 
     public Integer getId() {
         return id;
@@ -35,7 +42,7 @@ public class CommentCustomQuestionVersion {
         return commentCustomQuestion;
     }
 
-    public void setCommentCustomVersion(CommentCustomQuestion commentCustomQuestion) {
+    public void setCommentCustomQuestion(CommentCustomQuestion commentCustomQuestion) {
         this.commentCustomQuestion = commentCustomQuestion;
     }
 
@@ -45,6 +52,14 @@ public class CommentCustomQuestionVersion {
 
     public void setContent(String content) {
         this.content = content;
+    }
+    
+    public DateTime getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public void setCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
     }
     
     public CommentCustomQuestionVersion withCommentCustomQuestion(CommentCustomQuestion commentCustomQuestion) {

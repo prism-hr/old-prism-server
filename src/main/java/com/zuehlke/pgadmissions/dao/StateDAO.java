@@ -163,8 +163,7 @@ public class StateDAO {
     
     public PrismStateTransitionEvaluation getStateTransitionEvaluationByStateAction(StateAction stateAction) {
         return (PrismStateTransitionEvaluation) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
-                .setProjection(Projections.property("stateTransitionEvaluation.id")) //
-                .createAlias("stateTransitionEvaluation", "stateTransitionEvaluation", JoinType.INNER_JOIN) //
+                .setProjection(Projections.property("stateTransitionEvaluation"))
                 .add(Restrictions.eq("stateAction", stateAction)) //
                 .add(Restrictions.isNotNull("stateTransitionEvaluation")) //
                 .setMaxResults(1) //
@@ -190,6 +189,14 @@ public class StateDAO {
     public void disableStateActionEnhancements() {
         Query query = sessionFactory.getCurrentSession().createQuery( //
                 "update StateActionEnhancement"
+                + "set enabled = :enabled");
+        query.setParameter("enabled", false);
+        query.executeUpdate();
+    }
+
+    public void disableStateTransitions() {
+        Query query = sessionFactory.getCurrentSession().createQuery( //
+                "update StateTransition"
                 + "set enabled = :enabled");
         query.setParameter("enabled", false);
         query.executeUpdate();

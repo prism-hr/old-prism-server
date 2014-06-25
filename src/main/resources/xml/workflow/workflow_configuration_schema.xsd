@@ -18,35 +18,6 @@
                                 <xs:element name="action" maxOccurs="unbounded" minOccurs="0">
                                   <xs:complexType>
                                     <xs:choice maxOccurs="unbounded" minOccurs="0">
-                                      <xs:element name="roles">
-                                        <xs:complexType>
-                                          <xs:sequence>
-                                            <xs:element name="role" maxOccurs="unbounded" minOccurs="0">
-                                              <xs:complexType mixed="true">
-                                                <xs:sequence>
-                                                  <xs:element name="enhancements" minOccurs="0">
-                                                    <xs:complexType>
-                                                      <xs:sequence>
-                                                        <xs:element name="enhancement" maxOccurs="unbounded" minOccurs="0">
-                                                          <xs:complexType>
-                                                            <xs:simpleContent>
-                                                            <xs:extension base="xs:string">
-                                                            <xs:attribute type="xs:string" name="type" use="optional"/>
-                                                            <xs:attribute type="xs:string" name="delegated-action" use="optional"/>
-                                                            </xs:extension>
-                                                            </xs:simpleContent>
-                                                          </xs:complexType>
-                                                        </xs:element>
-                                                      </xs:sequence>
-                                                    </xs:complexType>
-                                                  </xs:element>
-                                                </xs:sequence>
-                                                <xs:attribute type="xs:string" name="id" use="optional"/>
-                                              </xs:complexType>
-                                            </xs:element>
-                                          </xs:sequence>
-                                        </xs:complexType>
-                                      </xs:element>
                                       <xs:element name="transition-states">
                                         <xs:complexType>
                                           <xs:sequence>
@@ -108,14 +79,42 @@
                                                     </xs:complexType>
                                                   </xs:element>
                                                 </xs:choice>
+                                                <xs:attribute type="xs:string" name="action" use="optional"/>
+                                                <xs:attribute type="xs:string" name="comment" use="optional"/>
                                                 <xs:attribute type="xs:string" name="id" use="optional"/>
-                                                <xs:attribute type="xs:string" name="post-comment" use="optional"/>
-                                                <xs:attribute type="xs:string" name="transition-action" use="optional"/>
-                                                <xs:attribute type="xs:byte" name="display-order" use="optional"/>
                                               </xs:complexType>
                                             </xs:element>
                                           </xs:sequence>
                                           <xs:attribute type="xs:string" name="evaluation" use="optional"/>
+                                        </xs:complexType>
+                                      </xs:element>
+                                      <xs:element name="roles">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="role" maxOccurs="unbounded" minOccurs="0">
+                                              <xs:complexType mixed="true">
+                                                <xs:sequence>
+                                                  <xs:element name="enhancements" minOccurs="0">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="enhancement" maxOccurs="unbounded" minOccurs="0">
+                                                          <xs:complexType>
+                                                            <xs:simpleContent>
+                                                            <xs:extension base="xs:string">
+                                                            <xs:attribute type="xs:string" name="type" use="optional"/>
+                                                            <xs:attribute type="xs:string" name="delegated-action" use="optional"/>
+                                                            </xs:extension>
+                                                            </xs:simpleContent>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                                <xs:attribute type="xs:string" name="id" use="optional"/>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
                                         </xs:complexType>
                                       </xs:element>
                                       <xs:element name="update-notifications">

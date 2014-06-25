@@ -4,7 +4,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -27,6 +36,9 @@ public class State implements IUniqueResource {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_state_id")
     private State parentState;
+    
+    @Column(name = "sequence_order")
+    private Integer sequenceOrder;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "scope_id", nullable = false)
@@ -62,6 +74,14 @@ public class State implements IUniqueResource {
         this.parentState = parentState;
     }
 
+    public Integer getSequenceOrder() {
+        return sequenceOrder;
+    }
+
+    public void setSequenceOrder(Integer sequenceOrder) {
+        this.sequenceOrder = sequenceOrder;
+    }
+
     public Scope getScope() {
         return scope;
     }
@@ -76,6 +96,11 @@ public class State implements IUniqueResource {
     
     public State withId(PrismState id) {
         this.id = id;
+        return this;
+    }
+    
+    public State withSequenceOrder(Integer sequenceOrder) {
+        this.sequenceOrder = sequenceOrder;
         return this;
     }
     

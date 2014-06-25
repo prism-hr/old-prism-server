@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateTransition;
-import com.zuehlke.pgadmissions.domain.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
@@ -36,7 +35,7 @@ import com.zuehlke.pgadmissions.mail.MailService;
 @Service
 @Transactional
 public class StateService {
-
+    
     @Autowired
     private StateDAO stateDAO;
 
@@ -74,10 +73,6 @@ public class StateService {
     
     public List<State> getStates() {
         return entityService.getAll(State.class);
-    }
-    
-    public List<StateTransitionEvaluation> getTransitionEvaluations() {
-        return entityService.getAll(StateTransitionEvaluation.class);
     }
     
     public Integer getStateDuration(Resource resource, State state) {
@@ -170,6 +165,10 @@ public class StateService {
     public void disableStateActionEnhancements() {
         stateDAO.disableStateActionEnhancements();
     }
+    
+    public void disableStateTransitions() {
+        stateDAO.disableStateTransitions();
+    }
 
     private void postResourceStateChange(ResourceDynamic resource, StateTransition stateTransition, Comment comment) {
         State transitionState = stateTransition.getTransitionState();
@@ -225,7 +224,7 @@ public class StateService {
                 String method = potentialStateTransitions.get(0).getStateTransitionEvaluation().getMethodName();
                 stateTransition = (StateTransition) MethodUtils.invokeExactMethod(this, method, new Object[] { resource, comment, potentialStateTransitions });
             } catch (Exception e) {
-                throw new Error(PrismStateTransitionEvaluation.INCORRECT_PROCESSOR_TYPE, e);
+                throw new Error(e);
             }
         } else {
             stateTransition = potentialStateTransitions.get(0);

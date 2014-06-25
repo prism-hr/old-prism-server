@@ -1,43 +1,48 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.lang.WordUtils;
+
 public enum PrismStateTransitionEvaluation {
     
-    APPLICATION_COMPLETED_OUTCOME("getApplicationCompletedOutcome", PrismScope.APPLICATION), //
-    APPLICATION_CONFIRM_SUPERVISION_OUTCOME("getApplicationConfirmSupervisionOutcome", PrismScope.APPLICATION), //
-    APPLICATION_ELIGIBILITY_ASSESSED_OUTCOME("getApplicationEligibilityAssessedOutcome", PrismScope.APPLICATION), //
-    APPLICATION_EXPORTED_OUTCOME("getApplicationExportedOutcome", PrismScope.APPLICATION), //
-    APPLICATION_INTERVIEW_AVAILABILITY_OUTCOME("getApplicationInterviewAvailabilityOutcome", PrismScope.APPLICATION), //
-    APPLICATION_INTERVIEW_FEEDBACK_OUTCOME("getApplicationInterviewFeedbackOutcome", PrismScope.APPLICATION), //
-    APPLICATION_INTERVIEW_SCHEDULED_OUTCOME("getApplicationInterviewScheduledOutcome", PrismScope.APPLICATION), //
-    APPLICATION_PROCESSING_COMPLETED_OUTCOME("getApplicationProcessingCompletedOutcome", PrismScope.APPLICATION), //
-    APPLICATION_RECRUITMENT_OUTCOME("getApplicationRecruitmentOutcome", PrismScope.APPLICATION), //
-    APPLICATION_REVIEW_OUTCOME("getApplicationReviewOutcome", PrismScope.APPLICATION), //
-    APPLICATION_STATE_COMPLETED_OUTCOME("getApplicationStateCompletedOutcome", PrismScope.APPLICATION), //
-    PROGRAM_APPROVED_OUTCOME("getProgramApprovedOutcome", PrismScope.PROGRAM), //
-    PROGRAM_CONFIGURED_OUTCOME("getProgramConfiguredOutcome", PrismScope.PROGRAM), //
-    PROGRAM_CREATED_OUTCOME("getProgramCreationOutcome", PrismScope.PROGRAM), //
-    PROGRAM_EXPIRED_OUTCOME("getProgramExpiredOutcome", PrismScope.PROGRAM), //
-    PROGRAM_REACTIVATED_OUTCOME("getProgramReactivatedOutcome", PrismScope.PROGRAM), //
-    PROJECT_CONFIGURED_OUTCOME("getProjectConfiguredOutcome", PrismScope.PROJECT), //
-    PROJECT_REACTIVATED_OUTCOME("getProjectReactivatedOutcome", PrismScope.PROJECT);
+    APPLICATION_COMPLETED_OUTCOME(Arrays.asList(PrismAction.APPLICATION_COMPLETE)), //
+    APPLICATION_CONFIRM_SUPERVISION_OUTCOME(Arrays.asList(PrismAction.APPLICATION_CONFIRM_SUPERVISION)), //
+    APPLICATION_ELIGIBILITY_ASSESSED_OUTCOME(Arrays.asList(PrismAction.APPLICATION_ASSESS_ELIGIBILITY)), //
+    APPLICATION_EVALUATED_OUTCOME(Arrays.asList(PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE, PrismAction.APPLICATION_COMPLETE_INTERVIEW_STAGE, PrismAction.APPLICATION_COMPLETE_REVIEW_STAGE, PrismAction.APPLICATION_COMPLETE_VALIDATION_STAGE, PrismAction.APPLICATION_MOVE_TO_DIFFERENT_STAGE)), //
+    APPLICATION_EXPORTED_OUTCOME(Arrays.asList(PrismAction.APPLICATION_EXPORT)), //
+    APPLICATION_INTERVIEW_AVAILABILITY_OUTCOME(Arrays.asList(PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY)), //
+    APPLICATION_INTERVIEW_FEEDBACK_OUTCOME(Arrays.asList(PrismAction.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK)), //
+    APPLICATION_INTERVIEW_SCHEDULED_OUTCOME(Arrays.asList(PrismAction.APPLICATION_ASSIGN_INTERVIEWERS, PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS)), //
+    APPLICATION_PROCESSED_OUTCOME(Arrays.asList(PrismAction.APPLICATION_WITHDRAW, PrismAction.APPLICATION_TERMINATE, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION, PrismAction.APPLICATION_CONFIRM_REJECTION)), //
+    APPLICATION_RECRUITMENT_OUTCOME(Arrays.asList(PrismAction.PROGRAM_CONCLUDE, PrismAction.PROJECT_CONCLUDE)), //
+    APPLICATION_REVIEW_OUTCOME(Arrays.asList(PrismAction.APPLICATION_PROVIDE_REVIEW)), //
+    PROGRAM_APPROVED_OUTCOME(Arrays.asList(PrismAction.PROGRAM_COMPLETE_APPROVAL_STAGE)), //
+    PROGRAM_CONFIGURED_OUTCOME(Arrays.asList(PrismAction.PROGRAM_CONFIGURE)), //
+    PROGRAM_EVALUATED_OUTCOME(Arrays.asList(PrismAction.INSTITUTION_CREATE_PROGRAM)), //
+    PROGRAM_EXPIRED_OUTCOME(Arrays.asList(PrismAction.PROGRAM_ESCALATE)), //
+    PROGRAM_REACTIVATED_OUTCOME(Arrays.asList(PrismAction.PROGRAM_RESTORE)), //
+    PROJECT_CONFIGURED_OUTCOME(Arrays.asList(PrismAction.PROJECT_CONFIGURE)), //
+    PROJECT_REACTIVATED_OUTCOME(Arrays.asList(PrismAction.PROJECT_RESTORE));
     
-    public static String INCORRECT_PROCESSOR_TYPE = "Tried to invoke state transition processor on incorrect resource type";
+    private List<PrismAction> invokingActions;
     
-    private String methodName;
-    
-    private PrismScope scope;
-    
-    private PrismStateTransitionEvaluation(String methodName, PrismScope scope) {
-        this.methodName = methodName;
-        this.scope = scope;
+    private PrismStateTransitionEvaluation(List<PrismAction> invokingActions) {
+        this.invokingActions = invokingActions;
     }
 
     public String getMethodName() {
+        String[] nameParts = name().split("_");
+        String methodName = "get";
+        for (String namePart : nameParts) {
+            methodName = methodName + WordUtils.capitalizeFully(namePart);
+        }
         return methodName;
     }
 
-    public PrismScope getScope() {
-        return scope;
+    public List<PrismAction> getInvokingActions() {
+        return invokingActions;
     }
 
 }

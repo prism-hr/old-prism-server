@@ -476,6 +476,17 @@
                             <schemaDirectory>${project.basedir}/src/main/resources/xml/scoring</schemaDirectory>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>xjc-4</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                        <configuration>
+                            <packageName>com.zuehlke.pgadmissions.iso.jaxb</packageName>
+                            <outputDirectory>${project.build.directory}/generated-sources/jaxb/isoCountryCodes</outputDirectory>
+                            <schemaDirectory>${project.basedir}/src/main/xsd/isoCountryCodesImport</schemaDirectory>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 

@@ -49,7 +49,7 @@ public class ImportedEntityDAO {
         sessionFactory.getCurrentSession().update(entity);
     }
 
-    public void disableAllEntities(Class<? extends ImportedEntity> entityClass) {
+    public void disableAllEntities(Class<?> entityClass) {
         sessionFactory.getCurrentSession().createQuery("update " + entityClass.getSimpleName() + " set enabled = false") //
                 .executeUpdate();
     }

@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.workflow;
+package com.zuehlke.pgadmissions.integration;
 
 import static org.junit.Assert.assertEquals;
 
@@ -43,7 +43,7 @@ import com.zuehlke.pgadmissions.services.SystemService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
-public class SystemInitialisationIT {
+public class IT1SystemInitialisation {
     
     private final String EMAIL_DEFAULT_SUBJECT_DIRECTORY = "email/subject/";
 

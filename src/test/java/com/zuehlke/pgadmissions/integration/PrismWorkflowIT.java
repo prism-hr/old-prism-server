@@ -1,8 +1,9 @@
-package com.zuehlke.pgadmissions.workflow;
+package com.zuehlke.pgadmissions.integration;
 
 import static org.junit.Assert.assertEquals;
 
-import org.apache.commons.lang.WordUtils;
+import java.beans.Introspector;
+
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,10 +20,11 @@ import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.integration.providers.ApplicationTestDataProvider;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -36,8 +38,6 @@ import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 import com.zuehlke.pgadmissions.timers.XMLDataImportTask;
-
-import java.beans.Introspector;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")

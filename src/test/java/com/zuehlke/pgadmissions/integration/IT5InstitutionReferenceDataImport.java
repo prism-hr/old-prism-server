@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.workflow;
+package com.zuehlke.pgadmissions.integration;
 
 import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.System;
@@ -10,6 +10,7 @@ import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.importers.EntityImportService;
+
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +23,7 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
-public class EntityImportIT {
+public class IT5InstitutionReferenceDataImport {
 
     @Autowired
     private EntityImportService entityImportService;
@@ -37,7 +38,7 @@ public class EntityImportIT {
     private ProgramService programService;
 
     @Autowired
-    private SystemInitialisationIT systemInitialisationIT;
+    private IT1SystemInitialisation systemInitialisationIT;
 
     @Autowired
     private SystemService systemService;
@@ -108,6 +109,7 @@ public class EntityImportIT {
     }
 
 
+    @SuppressWarnings("unchecked")
     public void testConflictsInProgramImport(Institution institution) throws Exception {
         ImportedEntityFeed importedEntityFeed = new ImportedEntityFeed();
         importedEntityFeed.setImportedEntityType(PrismImportedEntityType.PROGRAM);

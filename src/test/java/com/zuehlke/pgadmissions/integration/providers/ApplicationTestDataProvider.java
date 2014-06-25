@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.workflow;
+package com.zuehlke.pgadmissions.integration.providers;
 
 import java.util.UUID;
 

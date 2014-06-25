@@ -1,0 +1,38 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+          <!-- XML Schema Generated from XML Document on Tue Jun 24 2014 17:47:36 GMT+0100 (GMT Daylight Time) -->
+          <!-- with XmlGrid.net Free Online Service http://xmlgrid.net -->
+       <xs:element name="country-codes">
+              <xs:complexType>
+                     <xs:sequence>
+                            <xs:element name="country" maxOccurs="unbounded">
+                                   <xs:complexType>
+                                          <xs:sequence>
+                                                 <xs:element name="alpha-2-code" type="xs:string"></xs:element>
+                                                 <xs:element name="status" type="xs:string"></xs:element>
+                                                 <xs:element name="status-remark" type="xs:string"></xs:element>
+                                                 <xs:element name="short-name-upper-case" type="xs:string">
+                                                        <xs:complexType>
+                                                               <xs:attribute name="lang3code" type="xs:string"></xs:attribute>
+                                                               <xs:attribute name="xml:lang" type="xs:string"></xs:attribute>
+                                                           </xs:complexType>
+                                                    </xs:element>
+                                                 <xs:element name="language">
+                                                        <xs:complexType>
+                                                               <xs:sequence>
+                                                                      <xs:element name="language-alpha-2-code" type="xs:string"></xs:element>
+                                                                      <xs:element name="language-alpha-3-code" type="xs:string"></xs:element>
+                                                                      <xs:element name="language-is-administrative" type="xs:string"></xs:element>
+                                                                  </xs:sequence>
+                                                           </xs:complexType>
+                                                    </xs:element>
+                                             </xs:sequence>
+                                          <xs:attribute name="id" type="xs:string"></xs:attribute>
+                                          <xs:attribute name="version" type="xs:int"></xs:attribute>
+                                      </xs:complexType>
+                               </xs:element>
+                        </xs:sequence>
+                     <xs:attribute name="generated" type="xs:string"></xs:attribute>
+                 </xs:complexType>
+          </xs:element>
+   </xs:schema>
+   

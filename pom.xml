@@ -473,7 +473,7 @@
                             <packageName>com.zuehlke.pgadmissions.scoring.jaxb</packageName>
                             <outputDirectory>${project.build.directory}/generated-sources/jaxb/scoringConfig
                             </outputDirectory>
-                            <schemaDirectory>${project.basedir}/src/main/resources</schemaDirectory>
+                            <schemaDirectory>${project.basedir}/src/main/resources/xml/scoring</schemaDirectory>
                         </configuration>
                     </execution>
                 </executions>

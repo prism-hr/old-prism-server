@@ -35,7 +35,7 @@ public class ScoringDefinitionParser {
 
 	public ScoringDefinitionParser() throws Exception {
 		File file = new DefaultResourceLoader().getResource(
-				"classpath:scoringConfig.xsd").getFile();
+				"classpath:xml/scoring/scoringConfig.xsd").getFile();
 
 		SchemaFactory schemaFactory = SchemaFactory
 				.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);

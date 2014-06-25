@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.IUniqueResource;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -97,4 +98,7 @@ public class EntityService {
     }
 
 
+    public void merge(Object entity) {
+        entityDAO.merge(entity);
+    }
 }

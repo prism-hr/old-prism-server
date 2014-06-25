@@ -123,4 +123,8 @@ public class EntityDAO {
     public <T> T getByCode(Class<T> klass, String code) {
         return getByProperty(klass, "code", code);
     }
+
+    public void merge(Object entity) {
+        sessionFactory.getCurrentSession().merge(entity);
+    }
 }

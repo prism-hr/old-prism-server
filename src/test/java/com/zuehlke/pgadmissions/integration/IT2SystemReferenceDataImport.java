@@ -17,12 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
@@ -53,26 +49,33 @@ public class IT2SystemReferenceDataImport {
     public void testImportData() throws Exception {
         it1SystemInitialisation.testSystemInitialisation();
         testImportInstitutionDomiciles();
-
-//        Institution institution = createInstitution();
-//        testImportDisabilities(institution);
-//        testConflictsInProgramImport(institution);
-//
-//        importRemainingEntities(institution);
+        Institution institution = createInstitution();
+        testImportDisabilities(institution);
+        testConflictsInProgramImport(institution);
+        importRemainingEntities(institution);
     }
 
     private void testImportInstitutionDomiciles() throws Exception {
+        institutionDomicileImportService.importEntities("reference_data/isoCountryCodes/iso_country_codes.xml");
         institutionDomicileImportService.importEntities("xml/iso/iso_country_codes.xml");
+
+        InstitutionDomicile poland = entityService.getByProperty(InstitutionDomicile.class, "id", "PL");
+        assertEquals("Poland", poland.getName());
+        assertTrue(poland.isEnabled());
+
+        InstitutionDomicileRegion wojBielskie = entityService.getByProperty(InstitutionDomicileRegion.class, "id", "PL-BIELSKO");
+        assertEquals("Bielskie", wojBielskie.getName());
+        assertFalse(wojBielskie.isEnabled());
     }
 
     public Institution createInstitution() {
         com.zuehlke.pgadmissions.domain.System system = systemService.getSystem();
         State institutionState = entityService.getByProperty(State.class, "id", PrismState.INSTITUTION_APPROVED);
 
-        InstitutionDomicile institutionDomicile = new InstitutionDomicile().withName("Poland").withEnabled(true).withId("PL");
+        InstitutionDomicile poland = entityService.getByProperty(InstitutionDomicile.class, "id", "PL");
         User user = new User().withEmail("jerzy@urban.pl").withFirstName("Jerzy").withLastName("Urban").withActivationCode("jurekjurektrzymajsie");
-        Institution institution = new Institution().withDomicile(institutionDomicile).withName("Akademia Gorniczo-Hutnicza").withState(institutionState).withCode("AGH").withHomepage("www.agh.edu.pl").withSystem(system).withUser(user);
-        entityService.save(institutionDomicile, user, institution);
+        Institution institution = new Institution().withDomicile(poland).withName("Akademia Gorniczo-Hutnicza").withState(institutionState).withCode("AGH").withHomepage("www.agh.edu.pl").withSystem(system).withUser(user);
+        entityService.save(user, institution);
 
         return institution;
     }
@@ -233,6 +236,5 @@ public class IT2SystemReferenceDataImport {
         importedEntityFeed.setLocation("reference_data/conflicts/institutions/institution.xml");
         entityImportService.importEntities(importedEntityFeed);
     }
-
 
 }

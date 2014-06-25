@@ -23,7 +23,7 @@ public class InstitutionDomicileRegion {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "otherName", nullable = false)
+    @Column(name = "otherName")
     private String otherName;
 
     @Column(name = "enabled", nullable = false)
@@ -83,5 +83,40 @@ public class InstitutionDomicileRegion {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public InstitutionDomicileRegion withId(String id) {
+        this.id = id;
+        return this;
+    }
+
+    public InstitutionDomicileRegion withDomicile(InstitutionDomicile domicile) {
+        this.domicile = domicile;
+        return this;
+    }
+
+    public InstitutionDomicileRegion withParentRegion(InstitutionDomicileRegion parentRegion) {
+        this.parentRegion = parentRegion;
+        return this;
+    }
+
+    public InstitutionDomicileRegion withRegionType(String regionType) {
+        this.regionType = regionType;
+        return this;
+    }
+
+    public InstitutionDomicileRegion withName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public InstitutionDomicileRegion withOtherName(String otherName) {
+        this.otherName = otherName;
+        return this;
+    }
+
+    public InstitutionDomicileRegion withEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
     }
 }

@@ -218,7 +218,13 @@ public class WorkflowConfigurationImportService {
                 configuration.setReminderInterval(reminderInterval);
             }
 
-            return importRoles(actionElement, stateAction);
+            String feedback = importRoles(actionElement, stateAction);
+            
+            if (feedback == null) {
+                
+            }
+            
+            return feedback;
         }
 
         return null;

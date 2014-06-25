@@ -154,16 +154,8 @@ public class WorkflowConfigurationExportService {
             buildStateActionAssignmentsElement(document, stateAction, actionElement);
         }
 
-        Element nextAppend = actionElement;
-        PrismStateTransitionEvaluation stateTransitionEvaluation = stateService.getTransitionEvaluation(stateAction);
-        if (stateTransitionEvaluation != null) {
-            Element stateTransitionEvaluationElement = buildStateTransitionEvaluationElement(document, stateTransitionEvaluation);
-            actionElement.appendChild(stateTransitionEvaluationElement);
-            nextAppend = stateTransitionEvaluationElement;
-        }
-
         if (!stateAction.getStateTransitions().isEmpty()) {
-            buildStateTransitionsElement(document, stateAction, nextAppend);
+            buildStateTransitionsElement(document, stateAction, actionElement);
         }
 
         if (!stateAction.getStateActionNotifications().isEmpty()) {
@@ -220,15 +212,15 @@ public class WorkflowConfigurationExportService {
         return stateActionEnhancementElement;
     }
 
-    private Element buildStateTransitionEvaluationElement(Document document, PrismStateTransitionEvaluation stateTransitionEvaluation) {
-        Element stateTransitionEvaluationElement = document.createElement("state-transition-evaluation");
-        stateTransitionEvaluationElement.setAttribute("id", stateTransitionEvaluation.toString());
-        return stateTransitionEvaluationElement;
-    }
-
-    private void buildStateTransitionsElement(Document document, StateAction stateAction, Element nextAppend) {
+    private void buildStateTransitionsElement(Document document, StateAction stateAction, Element actionElement) {
         Element transitionStatesElement = document.createElement("transition-states");
-        nextAppend.appendChild(transitionStatesElement);
+        
+        PrismStateTransitionEvaluation stateTransitionEvaluation = stateService.getTransitionEvaluation(stateAction);
+        if (stateTransitionEvaluation != null) {
+            transitionStatesElement.setAttribute("evaluation", stateTransitionEvaluation.toString());
+        }
+        
+        actionElement.appendChild(transitionStatesElement);
 
         for (StateTransition stateTransition : stateAction.getStateTransitions()) {
             Element stateTransitionElement = buildStateTransitionElement(document, stateTransition);

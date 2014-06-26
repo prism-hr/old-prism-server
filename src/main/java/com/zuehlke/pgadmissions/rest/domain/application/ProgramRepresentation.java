@@ -1,14 +1,11 @@
 package com.zuehlke.pgadmissions.rest.domain.application;
 
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
-import org.hibernate.annotations.Type;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.rest.domain.CommentRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 public class ProgramRepresentation {
 
@@ -23,6 +20,10 @@ public class ProgramRepresentation {
     private DateTime createdTimestamp;
 
     private DateTime updatedTimestamp;
+
+    private List<PrismAction> actions;
+
+    private List<CommentRepresentation> comments;
 
     public String getCode() {
         return code;
@@ -70,5 +71,21 @@ public class ProgramRepresentation {
 
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
+    }
+
+    public List<PrismAction> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<PrismAction> actions) {
+        this.actions = actions;
+    }
+
+    public List<CommentRepresentation> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentRepresentation> comments) {
+        this.comments = comments;
     }
 }

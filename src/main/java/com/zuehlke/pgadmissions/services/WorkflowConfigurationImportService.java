@@ -4,7 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -13,7 +14,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.apache.commons.lang.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +22,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
@@ -48,12 +48,6 @@ public class WorkflowConfigurationImportService {
 
     private final static String WORKFLOW_CONFIGURATION_XSD = "xml/workflow_configuration_schema.xsd";
 
-    private final HashSet<PrismState> configuredStates = Sets.newHashSet();
-    
-    private final HashMultimap<PrismState, PrismState> configuredLastStates = HashMultimap.create();
-
-    private final HashMultimap<PrismState, PrismState> configuredNextStates = HashMultimap.create();
-
     private static final String IMPORT_SUCCESS = "Your workflow configuration has been applied successfully";
 
     private static final String IMPORT_FAILURE_XML_INVALID = "Your workflow configuration is not compliant with our schema";
@@ -67,6 +61,10 @@ public class WorkflowConfigurationImportService {
     private static final String IMPORT_INVALID_NOTIFICATION = "template";
 
     private static final String IMPORT_INVALID_REMINDER_INTERVAL = "reminder interval";
+
+    private static final String IMPORT_INVALID_STATE_TRANSITION = "has no unambiguous transition state";
+    
+    private WorkflowGraph workflowGraph = new WorkflowGraph();
 
     @Autowired
     private EntityService entityService;
@@ -168,8 +166,6 @@ public class WorkflowConfigurationImportService {
             if (feedback != null) {
                 return feedback;
             }
-            
-            configuredStates.add(stateId);
         }
 
         return null;
@@ -333,7 +329,7 @@ public class WorkflowConfigurationImportService {
     // TODO: Test invalid transition state assignment
     // TODO: Test invalid transition action
     // TODO: Test invalid transition action assignment
-    // TODO: Test cut-off states
+    // TODO: Test invalid state transition (ambiguous)
     private String importStateTransitions(Element actionElement, StateAction stateAction) {
         PrismAction actionId = stateAction.getAction().getId();
 
@@ -357,7 +353,7 @@ public class WorkflowConfigurationImportService {
             }
 
             NodeList stateTransitionElements = stateTransitionsElement.getElementsByTagName("transition-state");
-
+            
             for (int i = 0; i < stateTransitionElements.getLength(); i++) {
                 Element stateTransitionElement = (Element) stateTransitionElements.item(i);
                 String stateTransitionElementStateId = stateTransitionElement.getAttribute("id");
@@ -378,6 +374,8 @@ public class WorkflowConfigurationImportService {
                     return getInvalidEntityError(PrismAction.class, transitionActionId);
                 } else if (transitionActionId.getScope() != actionId.getScope()) {
                     return getInvalidEntityAssignmentError(PrismAction.class, actionId, transitionActionId);
+                } else if (i > 0 && stateTransitionEvaluation == null) {
+                    return getInvalidStateTransitionError(stateAction.getState().getId());
                 }
 
                 // TODO: propagated actions
@@ -390,10 +388,9 @@ public class WorkflowConfigurationImportService {
                         .withTransitionAction(transitionAction).withStateTransitionEvaluation(stateTransitionEvaluation).withDoPostComment(doPostComment)
                         .withEnabled(true);
                 entityService.createOrUpdate(transientStateTransition);
-
-                configuredNextStates.put(stateAction.getState().getId(), transitionStateId);
-                configuredLastStates.put(transitionStateId, stateAction.getState().getId());
-
+                
+                
+                workflowGraph.createOrUpdateNode(stateAction.getState().getId(), transitionStateId, stateTransitionEvaluation);
             }
         }
 
@@ -409,16 +406,86 @@ public class WorkflowConfigurationImportService {
     }
 
     private <T extends Enum<T>> String getInvalidEntityError(Class<T> entityClass, Enum<T> value) {
-        return WordUtils.capitalizeFully(value.name()) + " " + IMPORT_INVALID_ENTITY + " " + entityClass.getSimpleName().toLowerCase();
+        return value.name() + " " + IMPORT_INVALID_ENTITY + " " + entityClass.getSimpleName().toLowerCase();
     }
 
     private <T extends Enum<T>, U extends Enum<U>> String getInvalidEntityAssignmentError(Class<T> entityClass, Enum<U> parentEntity, Enum<T> value) {
-        return WordUtils.capitalizeFully(value.name()) + " " + IMPORT_INVALID_ENTITY + " " + entityClass.getSimpleName().toLowerCase() + " "
-                + IMPORT_INVALID_ENTITY_ASSIGNMENT + " " + parentEntity.getClass().getSimpleName().toLowerCase() + " " + parentEntity.name().toLowerCase();
+        return value.name() + " " + IMPORT_INVALID_ENTITY + " " + entityClass.getSimpleName().toLowerCase() + " " + IMPORT_INVALID_ENTITY_ASSIGNMENT + " "
+                + parentEntity.getClass().getSimpleName().toLowerCase() + " " + parentEntity.name().toLowerCase();
     }
 
     private String getInvalidNotificationTemplateError(String templateId, PrismNotificationPurpose purpose) {
-        return WordUtils.capitalizeFully(templateId) + " " + IMPORT_INVALID_ENTITY + purpose.name().toLowerCase() + " " + IMPORT_INVALID_NOTIFICATION;
+        return templateId + " " + IMPORT_INVALID_ENTITY + purpose.name().toLowerCase() + " " + IMPORT_INVALID_NOTIFICATION;
+    }
+
+    private String getInvalidStateTransitionError(PrismState stateId) {
+        return stateId + " " + IMPORT_INVALID_STATE_TRANSITION;
+    }
+    
+    private class WorkflowGraph {
+        
+        private final HashMap<PrismState, WorkflowNode> nodes = Maps.newHashMap();
+        
+        private final List<PrismState> entryNodes = Lists.newArrayList();
+        
+        private final List<PrismState> exitNodes = Lists.newArrayList();
+        
+        public void createOrUpdateNode(PrismState stateId, PrismState transitionStateId, PrismStateTransitionEvaluation stateTransitionEvaluation) {
+            WorkflowNode node = nodes.get(stateId);
+            WorkflowNode inverseNode = nodes.get(transitionStateId);
+            
+            if (node == null) {
+                node = nodes.put(stateId, new WorkflowNode());
+            }
+            
+            if (inverseNode == null) {
+                inverseNode = nodes.put(transitionStateId, new WorkflowNode());
+            }
+            
+            node.addOutgoingEdge(stateId, stateTransitionEvaluation);
+            inverseNode.addIncomingEdge(stateId, stateTransitionEvaluation);
+            
+            if (node.isEntryPoint() && !entryNodes.contains(stateId)) {
+                entryNodes.add(stateId);
+            }
+            
+            if (node.isExitPoint() && !exitNodes.contains(stateId)) {
+                exitNodes.add(stateId);
+            }
+        }
+        
+        private class WorkflowNode {
+
+            private HashMap<PrismState, PrismStateTransitionEvaluation> incomingEdges = Maps.newHashMap();
+
+            private HashMap<PrismState, PrismStateTransitionEvaluation> outgoingEdges = Maps.newHashMap();
+
+            public HashMap<PrismState, PrismStateTransitionEvaluation> getIncomingEdges() {
+                return incomingEdges;
+            }
+
+            public void addIncomingEdge(PrismState transitionStateId, PrismStateTransitionEvaluation transitionEvaluation) {
+                incomingEdges.put(transitionStateId, transitionEvaluation);
+            }
+
+            public HashMap<PrismState, PrismStateTransitionEvaluation> getOutgoingEdges() {
+                return outgoingEdges;
+            }
+
+            public void addOutgoingEdge(PrismState transitionStateId, PrismStateTransitionEvaluation transitionEvaluation) {
+                outgoingEdges.put(transitionStateId, transitionEvaluation);
+            }
+
+            public boolean isEntryPoint() {
+                return incomingEdges.isEmpty();
+            }
+
+            public boolean isExitPoint() {
+                return outgoingEdges.isEmpty();
+            }
+
+        }
+        
     }
 
 }

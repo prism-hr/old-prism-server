@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
-import com.zuehlke.pgadmissions.domain.enums.PrismActionRedactionType;
+import com.zuehlke.pgadmissions.domain.enums.PrismRedactionType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
@@ -114,7 +114,7 @@ public class ActionService {
         return new ActionOutcome(actionOwner, nextActionResource, transitionAction);
     }
     
-    public List<PrismActionRedactionType> getRedactions(User user, ResourceDynamic resource, Action action) {
+    public List<PrismRedactionType> getRedactions(User user, ResourceDynamic resource, Action action) {
         return actionDAO.getRedactions(user, resource, action);
     }
 

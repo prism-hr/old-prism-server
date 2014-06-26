@@ -43,6 +43,9 @@ public class StateDuration implements IUniqueResource {
     @Column(name = "day_duration", nullable = false)
     private Integer duration;
     
+    @Column(name = "enabled", nullable = false)
+    private boolean enabled;
+    
     public Integer getId() {
         return id;
     }
@@ -91,6 +94,14 @@ public class StateDuration implements IUniqueResource {
         this.duration = duration;
     }
     
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+    
     public StateDuration withSystem(System system) {
         this.system = system;
         return this;
@@ -103,6 +114,11 @@ public class StateDuration implements IUniqueResource {
     
     public StateDuration withDuration(Integer duration) {
         this.duration = duration;
+        return this;
+    }
+    
+    public StateDuration withEnabled(boolean enabled) {
+        this.enabled = enabled;
         return this;
     }
     

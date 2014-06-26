@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,12 +17,14 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.zuehlke.pgadmissions.domain.enums.PrismActionRedactionType;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.enums.PrismRedactionType;
 
 @Entity
 @Table(name = "ACTION_REDACTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "action_id", "role_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class ActionRedaction {
+public class ActionRedaction implements IUniqueResource {
 
     @Id
     @GeneratedValue
@@ -34,8 +39,8 @@ public class ActionRedaction {
     private Role role;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "action_redaction_type", nullable = false)
-    private PrismActionRedactionType redactionType;
+    @Column(name = "redaction_type", nullable = false)
+    private PrismRedactionType redactionType;
 
     public Integer getId() {
         return id;
@@ -61,12 +66,37 @@ public class ActionRedaction {
         this.role = role;
     }
 
-    public PrismActionRedactionType getRedactionType() {
+    public PrismRedactionType getRedactionType() {
         return redactionType;
     }
 
-    public void setRule(PrismActionRedactionType redactionType) {
+    public void setRedactionType(PrismRedactionType redactionType) {
         this.redactionType = redactionType;
+    }
+    
+    public ActionRedaction withAction(Action action) {
+        this.action = action;
+        return this;
+    }
+    
+    public ActionRedaction withRole(Role role) {
+        this.role = role;
+        return this;
+    }
+    
+    public ActionRedaction withRedactionType(PrismRedactionType redactionType) {
+        this.redactionType = redactionType;
+        return this;
+    }
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("action", action);
+        properties.put("role", role);
+        propertiesWrapper.add(properties);
+        return new ResourceSignature(propertiesWrapper);
     }
 
 }

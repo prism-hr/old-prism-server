@@ -91,4 +91,11 @@ public class NotificationService {
         return notificationDAO.getConfiguration(resource, template);
     }
     
+    public void disableConfigurations() {
+        notificationDAO.disableConfigurations();
+    }
+    
+    public void enableConfigurations(NotificationTemplate template) {
+        notificationDAO.enableConfigurations(template);
+    }
 }

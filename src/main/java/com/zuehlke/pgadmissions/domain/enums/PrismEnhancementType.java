@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-public enum PrismActionEnhancementType {
+public enum PrismEnhancementType {
 
     APPLICATION_EDIT_ALL_DATA(PrismScope.APPLICATION), //
     APPLICATION_EDIT_EXPORT_DATA(PrismScope.APPLICATION),
@@ -11,7 +11,7 @@ public enum PrismActionEnhancementType {
     
     private PrismScope scope;
     
-    private PrismActionEnhancementType(PrismScope scope) {
+    private PrismEnhancementType(PrismScope scope) {
         this.scope = scope;
     }
 

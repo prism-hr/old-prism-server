@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.StateActionEnhancement;
 import com.zuehlke.pgadmissions.domain.StateActionNotification;
+import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.enums.PrismStateTransitionEvaluation;
 
@@ -115,9 +116,9 @@ public class WorkflowConfigurationExportService {
         Element stateElement = document.createElement("state");
         stateElement.setAttribute("id", state.getId().toString());
 
-        Integer defaultStateDuration = systemService.getStateDuration(state);
+        StateDuration defaultStateDuration = systemService.getStateDuration(state);
         if (defaultStateDuration != null) {
-            stateElement.setAttribute("default-duration", defaultStateDuration.toString());
+            stateElement.setAttribute("duration", defaultStateDuration.getDuration().toString());
         }
 
         if (!state.getStateActions().isEmpty()) {
@@ -147,7 +148,7 @@ public class WorkflowConfigurationExportService {
         NotificationTemplate notificationTemplate = stateAction.getNotificationTemplate();
         if (notificationTemplate != null) {
             actionElement.setAttribute("notification", notificationTemplate.getId().toString());
-            actionElement.setAttribute("reminder-interval", notificationService.getReminderDuration(systemService.getSystem(), notificationTemplate).toString());
+            actionElement.setAttribute("interval", notificationService.getReminderDuration(systemService.getSystem(), notificationTemplate).toString());
         }
 
         if (!stateAction.getStateActionAssignments().isEmpty()) {
@@ -259,7 +260,7 @@ public class WorkflowConfigurationExportService {
         Element roleTransitionElement = document.createElement("role-transition");
         roleTransitionElement.setAttribute("id", roleTransition.getRole().getId().toString());
         roleTransitionElement.setAttribute("type", roleTransition.getRoleTransitionType().toString());
-        roleTransitionElement.setAttribute("restrict-to-owner", getXmlBoolean(roleTransition.isRestrictToActionOwner()));
+        roleTransitionElement.setAttribute("restrict", getXmlBoolean(roleTransition.isRestrictToActionOwner()));
 
         Integer minimumPermittedTransitions = roleTransition.getMinimumPermitted();
         if (minimumPermittedTransitions != null) {
@@ -317,7 +318,7 @@ public class WorkflowConfigurationExportService {
     }
 
     private void buildStateActionNotificationsElement(Document document, StateAction stateAction, Element actionElement) {
-        Element stateActionNotificationsElement = document.createElement("update-notifications");
+        Element stateActionNotificationsElement = document.createElement("notifications");
         actionElement.appendChild(stateActionNotificationsElement);
 
         for (StateActionNotification stateActionNotification : stateAction.getStateActionNotifications()) {
@@ -327,7 +328,7 @@ public class WorkflowConfigurationExportService {
     }
 
     private Element buildStateActionNotificationElement(Document document, StateActionNotification stateActionNotification) {
-        Element stateActionNotificationElement = document.createElement("update-notification");
+        Element stateActionNotificationElement = document.createElement("notification");
         stateActionNotificationElement.setAttribute("id", stateActionNotification.getNotificationTemplate().getId().toString());
         stateActionNotificationElement.setAttribute("role", stateActionNotification.getRole().getId().toString());
         return stateActionNotificationElement;

@@ -1,14 +1,13 @@
 package com.zuehlke.pgadmissions.services.importers;
 
-import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
+import java.lang.reflect.InvocationTargetException;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConstructorUtils;
 
 import com.google.common.base.Function;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.Institution;
-
-import java.lang.reflect.InvocationTargetException;
 
 public class GenericEntityImportConverter<E extends ImportedEntity> implements Function<Object, E> {
 
@@ -24,8 +23,7 @@ public class GenericEntityImportConverter<E extends ImportedEntity> implements F
     public static <E extends ImportedEntity> GenericEntityImportConverter<E> create(Class<E> importedEntityType, Institution institution) {
         return new GenericEntityImportConverter<E>(importedEntityType, institution);
     }
-
-    @SuppressWarnings("unchecked")
+    
     @Override
     public E apply(Object input) {
         try {

@@ -88,7 +88,7 @@ public class SystemService {
         return entityService.getByProperty(Scope.class, "id", scopeId);
     }
 
-    public Integer getStateDuration(State state) {
+    public StateDuration getStateDuration(State state) {
         return stateService.getStateDuration(getSystem(), state);
     }
 
@@ -99,7 +99,7 @@ public class SystemService {
     public List<Scope> getScopes() {
         return entityService.getAll(Scope.class);
     }
-    
+
     public List<Configuration> getConfigurations() {
         return configurationService.getConfigurations(getSystem());
     }
@@ -123,7 +123,7 @@ public class SystemService {
         if (systemUser.getUserAccount() == null) {
             mailService.sendEmailNotification(systemUser, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
         }
-        
+
         entityService.flush();
     }
 
@@ -175,13 +175,13 @@ public class SystemService {
         HashMap<NotificationTemplate, NotificationTemplateVersion> createdTemplates = Maps.newHashMap();
         for (PrismNotificationTemplate prismTemplate : PrismNotificationTemplate.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismTemplate.getScope());
-            
+
             NotificationTemplate template;
             NotificationTemplate transientTemplate = new NotificationTemplate().withId(prismTemplate).withNotificationType(prismTemplate.getNotificationType())
                     .withNotificationPurpose(prismTemplate.getNotificationPurpose()).withScope(scope);
             NotificationTemplate duplicateTemplate = entityService.getDuplicateEntity(transientTemplate);
             NotificationTemplateVersion version;
-            
+
             if (duplicateTemplate == null) {
                 entityService.save(transientTemplate);
                 template = transientTemplate;
@@ -197,7 +197,7 @@ public class SystemService {
                     version = notificationService.getLatestVersion(system, template);
                 }
             }
-            
+
             createdTemplates.put(template, version);
         }
 
@@ -205,7 +205,7 @@ public class SystemService {
             template.setReminderTemplate(notificationService.getById(PrismNotificationTemplate.getReminderTemplate(template.getId())));
             NotificationConfiguration transientConfiguration = new NotificationConfiguration().withSystem(system).withNotificationTemplate(template)
                     .withNotificationTemplateVersion(createdTemplates.get(template))
-                    .withReminderInterval(PrismNotificationTemplate.getReminderInterval(template.getId()));
+                    .withReminderInterval(PrismNotificationTemplate.getReminderInterval(template.getId())).withEnabled(false);
             entityService.getOrCreate(transientConfiguration);
         }
     }
@@ -214,7 +214,8 @@ public class SystemService {
         for (PrismState prismState : PrismState.values()) {
             if (prismState.getDuration() != null) {
                 State state = stateService.getById(prismState);
-                StateDuration transientStateDuration = new StateDuration().withSystem(system).withState(state).withDuration(prismState.getDuration());
+                StateDuration transientStateDuration = new StateDuration().withSystem(system).withState(state).withDuration(prismState.getDuration())
+                        .withEnabled(false);
                 entityService.getOrCreate(transientStateDuration);
             }
         }

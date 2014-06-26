@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
@@ -75,7 +76,7 @@ public class StateService {
         return entityService.getAll(State.class);
     }
     
-    public Integer getStateDuration(Resource resource, State state) {
+    public StateDuration getStateDuration(Resource resource, State state) {
         return stateDAO.getStateDuration(resource, state);
     }
 
@@ -169,6 +170,14 @@ public class StateService {
     public void disableStateTransitions() {
         stateDAO.disableStateTransitions();
     }
+    
+    public void disableStateDurations() {
+        stateDAO.disableStateDurations();
+    }
+    
+    public void enableStateDurations(State state) {
+        stateDAO.enableStateDurations(state);
+    }
 
     private void postResourceStateChange(ResourceDynamic resource, StateTransition stateTransition, Comment comment) {
         State transitionState = stateTransition.getTransitionState();
@@ -187,8 +196,8 @@ public class StateService {
         LocalDate dueDate = comment.getUserSpecifiedDueDate();
         if (dueDate == null && comment.getAction().getActionType() == PrismActionType.SYSTEM_ESCALATION) {
             LocalDate dueDateBaseline = resource.getDueDateBaseline();
-            Integer stateDurationSeconds = stateDAO.getCurrentStateDuration(resource);
-            dueDate = dueDateBaseline.plusDays(stateDurationSeconds != null ? stateDurationSeconds : 0);
+            Integer stateDuration = stateDAO.getCurrentStateDuration(resource).getDuration();
+            dueDate = dueDateBaseline.plusDays(stateDuration != null ? stateDuration : 0);
         }
         resource.setDueDate(dueDate);
     }

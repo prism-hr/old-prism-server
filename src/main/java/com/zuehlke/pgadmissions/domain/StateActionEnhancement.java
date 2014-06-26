@@ -19,10 +19,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.enums.PrismActionEnhancementType;
+import com.zuehlke.pgadmissions.domain.enums.PrismEnhancementType;
 
 @Entity
-@Table(name = "STATE_ACTION_ENHANCEMENT", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_assignment_id", "action_enhancement_type" }) })
+@Table(name = "STATE_ACTION_ENHANCEMENT", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_assignment_id", "enhancement_type" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class StateActionEnhancement implements IUniqueResource {
     
@@ -35,8 +35,8 @@ public class StateActionEnhancement implements IUniqueResource {
     private StateActionAssignment stateActionAssignment;
     
     @Enumerated(EnumType.STRING)
-    @Column(name = "action_enhancement_type", nullable = false)
-    private PrismActionEnhancementType enhancementType;
+    @Column(name = "enhancement_type", nullable = false)
+    private PrismEnhancementType enhancementType;
     
     @ManyToOne
     @JoinColumn(name = "delegated_action_id")
@@ -61,11 +61,11 @@ public class StateActionEnhancement implements IUniqueResource {
         this.stateActionAssignment = stateActionAssignment;
     }
 
-    public PrismActionEnhancementType getEnhancementType() {
+    public PrismEnhancementType getEnhancementType() {
         return enhancementType;
     }
 
-    public void setEnhancementType(PrismActionEnhancementType enhancementType) {
+    public void setEnhancementType(PrismEnhancementType enhancementType) {
         this.enhancementType = enhancementType;
     }
 
@@ -90,7 +90,7 @@ public class StateActionEnhancement implements IUniqueResource {
         return this;
     }
     
-    public StateActionEnhancement withEnhancementType(PrismActionEnhancementType enhancementType) {
+    public StateActionEnhancement withEnhancementType(PrismEnhancementType enhancementType) {
         this.enhancementType = enhancementType;
         return this;
     }

@@ -38,8 +38,8 @@ public class WorkflowConfigurationException extends Exception {
         super(stateId + " has no unambigious transition state");
     }
 
-    public WorkflowConfigurationException(Integer reminderInterval) {
-        super(reminderInterval.toString() + " is not a valid reminder interval");
+    public WorkflowConfigurationException(Integer interval) {
+        super(interval.toString() + " is not a valid time interval");
     }
 
 }

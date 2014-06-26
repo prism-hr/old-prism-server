@@ -55,9 +55,8 @@ public class StateDAO {
                 .uniqueResult();
     }
 
-    public Integer getCurrentStateDuration(ResourceDynamic resource) {
-        return (Integer) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
-                .setProjection(Projections.property("duration")) //
+    public StateDuration getCurrentStateDuration(ResourceDynamic resource) {
+        return (StateDuration) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
@@ -71,9 +70,8 @@ public class StateDAO {
                 .uniqueResult();
     }
     
-    public Integer getStateDuration(Resource resource, State state) {
-        return (Integer) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
-                .setProjection(Projections.property("duration")) //
+    public StateDuration getStateDuration(Resource resource, State state) {
+        return (StateDuration) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
                 .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
                 .add(Restrictions.eq("state", state)) //
                 .uniqueResult();
@@ -199,6 +197,24 @@ public class StateDAO {
                 "update StateTransition"
                 + "set enabled = :enabled");
         query.setParameter("enabled", false);
+        query.executeUpdate();
+    }
+    
+    public void disableStateDurations() {
+        Query query = sessionFactory.getCurrentSession().createQuery( //
+                "update StateDuration"
+                + "set enabled = :enabled");
+        query.setParameter("enabled", false);
+        query.executeUpdate();
+    }
+    
+    public void enableStateDurations(State state) {
+        Query query = sessionFactory.getCurrentSession().createQuery( //
+                "update StateDuration"
+                + "set enabled = :enabled"
+                + "where state = :state");
+        query.setParameter("enabled", true);
+        query.setParameter("state", state);
         query.executeUpdate();
     }
 

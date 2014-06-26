@@ -34,7 +34,6 @@ public class ApplicationRepresentation {
 
     private DateTime updatedTimestamp;
 
-    private List<PrismAction> actions = Lists.newArrayList();
 
     private PersonalDetailsRepresentation personalDetails;
 
@@ -53,6 +52,8 @@ public class ApplicationRepresentation {
     private ApplicationDocumentRepresentation document;
 
     private AdditionalInformationRepresentation additionalInformation;
+
+    private List<PrismAction> actions;
 
     private List<CommentRepresentation> comments;
 

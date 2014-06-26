@@ -27,6 +27,8 @@ public class ResourceConsoleListRowDTO {
 
     private String projectTitle;
 
+    private String institutionTitle;
+
     private Date displayTimestamp;
 
     private String actions;
@@ -119,6 +121,14 @@ public class ResourceConsoleListRowDTO {
 
     public void setProjectTitle(String projectTitle) {
         this.projectTitle = projectTitle;
+    }
+
+    public String getInstitutionTitle() {
+        return institutionTitle;
+    }
+
+    public void setInstitutionTitle(String institutionTitle) {
+        this.institutionTitle = institutionTitle;
     }
 
     public Date getDisplayTimestamp() {

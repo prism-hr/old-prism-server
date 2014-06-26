@@ -75,13 +75,13 @@ public class SystemService {
     private UserService userService;
 
     public System getSystem() {
-        return (System) entityService.getByProperty(System.class, "name", systemName);
+        return entityService.getByProperty(System.class, "name", systemName);
     }
 
     public System getOrCreateSystem(User systemUser) {
         State systemRunning = stateService.getById(PrismState.SYSTEM_APPROVED);
         System transientSystem = new System().withName(systemName).withUser(systemUser).withState(systemRunning);
-        return (System) entityService.getOrCreate(transientSystem);
+        return entityService.getOrCreate(transientSystem);
     }
 
     public Scope getScope(PrismScope scopeId) {
@@ -90,10 +90,6 @@ public class SystemService {
 
     public StateDuration getStateDuration(State state) {
         return stateService.getStateDuration(getSystem(), state);
-    }
-
-    public Integer getReminderDuration(NotificationTemplate template) {
-        return notificationService.getReminderDuration(getSystem(), template);
     }
 
     public List<Scope> getScopes() {

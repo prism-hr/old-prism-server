@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -22,7 +23,9 @@ import org.xml.sax.SAXException;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -30,11 +33,14 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.StateActionEnhancement;
+import com.zuehlke.pgadmissions.domain.StateActionNotification;
+import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
-import com.zuehlke.pgadmissions.domain.enums.PrismActionEnhancementType;
+import com.zuehlke.pgadmissions.domain.enums.PrismEnhancementType;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationPurpose;
 import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.enums.PrismRedactionType;
 import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -44,14 +50,18 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 @Service
 @Transactional(timeout = 60)
 public class WorkflowConfigurationImportService {
-    
-    private final static String WORKFLOW_CONFIGURATION_XSD = "xml/workflow_configuration_schema.xsd";
-    
-    private WorkflowGraph workflowGraph = new WorkflowGraph();
 
-    @Autowired 
-    private ActionService actionService;
+    private final static String WORKFLOW_CONFIGURATION_XSD = "xml/workflow_configuration_schema.xsd";
+
+    private final WorkflowGraph workflowGraph = new WorkflowGraph();
     
+    private final Set<State> configuredStates = Sets.newHashSet();
+    
+    private final Set<NotificationTemplate> configuredTemplates = Sets.newHashSet();
+
+    @Autowired
+    private ActionService actionService;
+
     @Autowired
     private EntityService entityService;
 
@@ -72,11 +82,21 @@ public class WorkflowConfigurationImportService {
             Document document = documentBuilder.parse(configuration);
 
             stateService.disableStateActions();
+            notificationService.disableConfigurations();
             stateService.disableStateActionAssignments();
             stateService.disableStateActionEnhancements();
             stateService.disableStateTransitions();
+            stateService.disableStateDurations();
 
             importScopes(document);
+            
+            for (State state : configuredStates) {
+                stateService.enableStateDurations(state);
+            }
+            
+            for (NotificationTemplate template : configuredTemplates) {
+                notificationService.enableConfigurations(template);
+            }
         } catch (IOException e) {
             throw new WorkflowConfigurationException(e);
         } catch (SAXException e) {
@@ -120,6 +140,7 @@ public class WorkflowConfigurationImportService {
 
     // TODO: Test invalid state
     // TODO: Test invalid state scope
+    // TODO: Test invalid state duration
     private void importStates(Element scopeElement, PrismScope scopeId) throws WorkflowConfigurationException {
         NodeList stateElements = scopeElement.getElementsByTagName("state");
 
@@ -133,7 +154,24 @@ public class WorkflowConfigurationImportService {
                 throw new WorkflowConfigurationException(stateId, scopeId);
             }
 
-           importActions(stateElement, stateId);
+            String stateElementDuration = stateElement.getAttribute("duration");
+            
+            if (stateElementDuration != null) {
+                Integer stateDuration = Integer.parseInt(stateElementDuration);
+                
+                if (stateDuration < 1) {
+                    throw new WorkflowConfigurationException(stateDuration);
+                }
+                
+                State state = entityService.getByProperty(State.class, "id", stateId);
+                
+                StateDuration transientStateDuration = new StateDuration().withSystem(systemService.getSystem()).withState(state).withDuration(stateDuration);
+                entityService.createOrUpdate(transientStateDuration);
+                
+                configuredStates.add(state);
+            }
+            
+            importActions(stateElement, stateId);
         }
     }
 
@@ -145,7 +183,7 @@ public class WorkflowConfigurationImportService {
     // TODO: Test importing new version of workflow
     private void importActions(Element stateElement, PrismState stateId) throws WorkflowConfigurationException {
         NodeList actionElements = stateElement.getElementsByTagName("action");
-        
+
         for (int i = 0; i < actionElements.getLength(); i++) {
             Element actionElement = (Element) actionElements.item(i);
             String actionElementId = actionElement.getAttribute("id");
@@ -156,20 +194,20 @@ public class WorkflowConfigurationImportService {
                 throw new WorkflowConfigurationException(actionId, stateId);
             }
 
-            NotificationTemplate notificationTemplate = null;
-            PrismNotificationTemplate notificationTemplateId = null;
+            NotificationTemplate template = null;
+            PrismNotificationTemplate templateId = null;
             Integer reminderInterval = null;
             String actionElementNotification = actionElement.getAttribute("notification");
             if (actionElementNotification != null) {
-                notificationTemplateId = getValueOf(PrismNotificationTemplate.class, actionElementNotification);
+                templateId = getValueOf(PrismNotificationTemplate.class, actionElementNotification);
 
-                if (actionId.getScope() != notificationTemplateId.getScope()) {
-                    throw new WorkflowConfigurationException(notificationTemplateId, actionId);
-                } else if (notificationTemplateId.getNotificationPurpose() != PrismNotificationPurpose.REQUEST) {
-                    throw new WorkflowConfigurationException(notificationTemplateId, PrismNotificationPurpose.REQUEST);
+                if (actionId.getScope() != templateId.getScope()) {
+                    throw new WorkflowConfigurationException(templateId, actionId);
+                } else if (templateId.getNotificationPurpose() != PrismNotificationPurpose.REQUEST) {
+                    throw new WorkflowConfigurationException(templateId, PrismNotificationPurpose.REQUEST);
                 }
 
-                String actionReminderInterval = actionElement.getAttribute("reminder-interval");
+                String actionReminderInterval = actionElement.getAttribute("interval");
                 if (actionReminderInterval != null) {
                     reminderInterval = Integer.parseInt(actionReminderInterval);
 
@@ -178,7 +216,9 @@ public class WorkflowConfigurationImportService {
                     }
                 }
 
-                notificationTemplate = entityService.getByProperty(NotificationTemplate.class, "id", notificationTemplateId);
+                template = entityService.getByProperty(NotificationTemplate.class, "id", templateId);
+                
+                configuredTemplates.add(template);
             }
 
             State state = entityService.getByProperty(State.class, "id", stateId);
@@ -187,16 +227,18 @@ public class WorkflowConfigurationImportService {
             boolean defaultAction = actionElement.getAttribute("default") == "true";
 
             StateAction transientStateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(raisesUrgentFlag)
-                    .withDefaultAction(defaultAction).withNotificationTemplate(notificationTemplate).withEnabled(true);
+                    .withDefaultAction(defaultAction).withNotificationTemplate(template).withEnabled(true);
             StateAction stateAction = entityService.createOrUpdate(transientStateAction);
 
             if (reminderInterval != null) {
-                NotificationConfiguration configuration = notificationService.getConfiguration(systemService.getSystem(), notificationTemplate);
+                NotificationConfiguration configuration = notificationService.getConfiguration(systemService.getSystem(), template);
                 configuration.setReminderInterval(reminderInterval);
             }
 
             importRoles(actionElement, stateAction);
             importStateTransitions(actionElement, stateAction);
+            importRedactions(actionElement, stateAction);
+            importNotifications(actionElement, stateAction);
         }
     }
 
@@ -237,7 +279,7 @@ public class WorkflowConfigurationImportService {
             Element enhancementElement = (Element) enhancementElements.item(i);
             String enhancementElementType = enhancementElement.getAttribute("type");
 
-            PrismActionEnhancementType enhancementType = getValueOf(PrismActionEnhancementType.class, enhancementElementType);
+            PrismEnhancementType enhancementType = getValueOf(PrismEnhancementType.class, enhancementElementType);
 
             if (enhancementType.getScope() != actionId.getScope()) {
                 throw new WorkflowConfigurationException(enhancementType, actionId);
@@ -287,11 +329,10 @@ public class WorkflowConfigurationImportService {
                 if (!stateTransitionEvaluation.getInvokingActions().contains(actionId)) {
                     throw new WorkflowConfigurationException(stateTransitionEvaluation, actionId);
                 }
-
             }
 
             NodeList stateTransitionElements = stateTransitionsElement.getElementsByTagName("transition-state");
-            
+
             for (int i = 0; i < stateTransitionElements.getLength(); i++) {
                 Element stateTransitionElement = (Element) stateTransitionElements.item(i);
                 String stateTransitionElementStateId = stateTransitionElement.getAttribute("id");
@@ -299,7 +340,7 @@ public class WorkflowConfigurationImportService {
 
                 PrismState transitionStateId = getValueOf(PrismState.class, stateTransitionElementStateId);
                 boolean isCreationTransition = actionService.isCreationAction(stateId, transitionStateId, actionId);
-                
+
                 if (transitionStateId.getScope() != actionId.getScope() && !isCreationTransition) {
                     throw new WorkflowConfigurationException(transitionStateId, stateId);
                 }
@@ -312,9 +353,6 @@ public class WorkflowConfigurationImportService {
                     throw new WorkflowConfigurationException(stateId);
                 }
 
-                // TODO: propagated actions
-//                String feedback = importPropagatedActions(stateTransitionElement, stateTransition);
-
                 State transitionState = entityService.getByProperty(State.class, "id", transitionStateId);
                 Action transitionAction = entityService.getByProperty(Action.class, "id", transitionActionId);
                 boolean doPostComment = stateTransitionElement.getAttribute("comment") == "true";
@@ -322,11 +360,98 @@ public class WorkflowConfigurationImportService {
                 StateTransition transientStateTransition = new StateTransition().withStateAction(stateAction).withTransitionState(transitionState)
                         .withTransitionAction(transitionAction).withStateTransitionEvaluation(stateTransitionEvaluation).withDoPostComment(doPostComment)
                         .withEnabled(true);
-                entityService.createOrUpdate(transientStateTransition);
-                
+                StateTransition stateTransition = entityService.createOrUpdate(transientStateTransition);
+
                 workflowGraph.createOrUpdateNode(stateAction.getState().getId(), transitionStateId, stateTransitionEvaluation);
+
+                importPropagatedActions(stateTransitionElement, stateTransition);
+                importRoleTransitions(stateTransitionElement, stateTransition);
             }
         }
+    }
+
+    // TODO: test invalid redaction role
+    // TODO: test invalid redaction type
+    private void importRedactions(Element actionElement, StateAction stateAction) throws WorkflowConfigurationException {
+        NodeList redactionElements = actionElement.getElementsByTagName("redaction");
+
+        for (int i = 0; i < redactionElements.getLength(); i++) {
+            Element redactionElement = (Element) redactionElements.item(i);
+
+            String redactionElementRole = redactionElement.getAttribute("role");
+            PrismRole redactionRoleId = getValueOf(PrismRole.class, redactionElementRole);
+
+            String redactionElementType = redactionElement.getAttribute("type");
+            PrismRedactionType redactionType = getValueOf(PrismRedactionType.class, redactionElementType);
+
+            Role role = entityService.getByProperty(Role.class, "id", redactionRoleId);
+
+            ActionRedaction transientActionRedaction = new ActionRedaction().withAction(stateAction.getAction()).withRole(role)
+                    .withRedactionType(redactionType);
+            entityService.createOrUpdate(transientActionRedaction);
+        }
+    }
+    
+    // TODO: Test invalid notification template
+    // TODO: Test invalid notification template assignment
+    // TODO: Test invalid notification template purpose
+    // TODO: Test invalid role
+    private void importNotifications(Element actionElement, StateAction stateAction) throws WorkflowConfigurationException {
+        PrismAction actionId = stateAction.getAction().getId();
+        NodeList notificationElements = actionElement.getElementsByTagName("notification");
+
+        for (int i = 0; i < notificationElements.getLength(); i++) {
+            Element notificationElement = (Element) notificationElements.item(i);
+
+            String notificationElementId = notificationElement.getAttribute("id");
+            PrismNotificationTemplate templateId = getValueOf(PrismNotificationTemplate.class, notificationElementId);
+
+            if (templateId.getScope() != actionId.getScope()) {
+                throw new WorkflowConfigurationException(templateId, actionId);
+            } else if (templateId.getNotificationPurpose() != PrismNotificationPurpose.UPDATE) {
+                throw new WorkflowConfigurationException(templateId, PrismNotificationPurpose.UPDATE);
+            }
+
+            String notificationElementRole = notificationElement.getAttribute("role");
+            PrismRole roleId = getValueOf(PrismRole.class, notificationElementRole);
+
+            Role role = entityService.getByProperty(Role.class, "id", roleId);
+            NotificationTemplate template = entityService.getByProperty(NotificationTemplate.class, "id", templateId);
+
+            StateActionNotification transientStateActionNotification = new StateActionNotification().withStateAction(stateAction).withRole(role)
+                    .withNotificationTemplate(template);
+            entityService.createOrUpdate(transientStateActionNotification);
+            
+            configuredTemplates.add(template);
+        }
+
+    }
+
+    // TODO: Test invalid propagated action
+    // TODO: Test invalid propagated action assignment
+    private void importPropagatedActions(Element stateTransitionElement, StateTransition stateTransition) throws WorkflowConfigurationException {
+        NodeList propagatedActionElements = stateTransitionElement.getElementsByTagName("propagated-action");
+
+        for (int i = 0; i < propagatedActionElements.getLength(); i++) {
+            Element propagatedActionElement = (Element) propagatedActionElements.item(i);
+
+            String propagatedActionElementId = propagatedActionElement.getAttribute("id");
+            PrismAction propagatedActionId = getValueOf(PrismAction.class, propagatedActionElementId);
+
+            Action propagatedAction = entityService.getByProperty(Action.class, "id", propagatedActionId);
+            stateTransition.getPropagatedActions().add(propagatedAction);
+
+            workflowGraph.attachPropagatedActionToNode(stateTransition.getStateAction().getState().getId(), propagatedActionId);
+        }
+    }
+
+    private void importRoleTransitions(Element stateTransitionElement, StateTransition stateTransition) throws WorkflowConfigurationException {
+        NodeList roleTransitionElements = stateTransitionElement.getElementsByTagName("role-transition");
+        
+        for (int i = 0; i < roleTransitionElements.getLength(); i++) {
+            Element roleTransitionElement = (Element) roleTransitionElements.item(i);
+        }
+
     }
 
     private <T extends Enum<T>> T getValueOf(Class<T> clazz, String value) throws WorkflowConfigurationException {
@@ -336,44 +461,55 @@ public class WorkflowConfigurationImportService {
             throw new WorkflowConfigurationException(clazz, value);
         }
     }
-    
+
     private class WorkflowGraph {
-        
+
         private final HashMap<PrismState, WorkflowNode> nodes = Maps.newHashMap();
-        
+
         private final List<PrismState> entryNodes = Lists.newArrayList();
-        
+
         private final List<PrismState> exitNodes = Lists.newArrayList();
-        
+
         public void createOrUpdateNode(PrismState stateId, PrismState transitionStateId, PrismStateTransitionEvaluation stateTransitionEvaluation) {
-            WorkflowNode node = nodes.get(stateId);
-            WorkflowNode inverseNode = nodes.get(transitionStateId);
-            
+            WorkflowNode node = getWorkflowNode(stateId);
+            WorkflowNode inverseNode = getWorkflowNode(transitionStateId);
+
             if (node == null) {
                 node = nodes.put(stateId, new WorkflowNode());
             }
-            
+
             if (inverseNode == null) {
                 inverseNode = nodes.put(transitionStateId, new WorkflowNode());
             }
-            
+
             node.addOutgoingEdge(stateId, stateTransitionEvaluation);
             inverseNode.addIncomingEdge(stateId, stateTransitionEvaluation);
-            
+
             if (node.isEntryPoint() && !entryNodes.contains(stateId)) {
                 entryNodes.add(stateId);
             }
-            
+
             if (node.isExitPoint() && !exitNodes.contains(stateId)) {
                 exitNodes.add(stateId);
             }
         }
-        
+
+        public void attachPropagatedActionToNode(PrismState stateId, PrismAction propagatedActionId) {
+            WorkflowNode node = getWorkflowNode(stateId);
+            node.addPropagatedAction(propagatedActionId);
+        }
+
+        public WorkflowNode getWorkflowNode(PrismState stateId) {
+            return nodes.get(stateId);
+        }
+
         private class WorkflowNode {
 
             private HashMap<PrismState, PrismStateTransitionEvaluation> incomingEdges = Maps.newHashMap();
 
             private HashMap<PrismState, PrismStateTransitionEvaluation> outgoingEdges = Maps.newHashMap();
+
+            private List<PrismAction> propagatedActions = Lists.newArrayList();
 
             public HashMap<PrismState, PrismStateTransitionEvaluation> getIncomingEdges() {
                 return incomingEdges;
@@ -391,6 +527,16 @@ public class WorkflowConfigurationImportService {
                 outgoingEdges.put(transitionStateId, transitionEvaluation);
             }
 
+            public List<PrismAction> getPropagatedActions() {
+                return propagatedActions;
+            }
+
+            public void addPropagatedAction(PrismAction propagatedActionId) {
+                if (!propagatedActions.contains(propagatedActionId)) {
+                    propagatedActions.add(propagatedActionId);
+                }
+            }
+
             public boolean isEntryPoint() {
                 return incomingEdges.isEmpty();
             }
@@ -400,7 +546,7 @@ public class WorkflowConfigurationImportService {
             }
 
         }
-        
+
     }
 
 }

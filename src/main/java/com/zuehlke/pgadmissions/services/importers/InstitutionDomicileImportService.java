@@ -1,5 +1,23 @@
 package com.zuehlke.pgadmissions.services.importers;
 
+import java.net.Authenticator;
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
@@ -10,34 +28,24 @@ import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
-import com.zuehlke.pgadmissions.iso.jaxb.*;
+import com.zuehlke.pgadmissions.iso.jaxb.CategoryNameType;
+import com.zuehlke.pgadmissions.iso.jaxb.CategoryType;
+import com.zuehlke.pgadmissions.iso.jaxb.CountryCodesType;
+import com.zuehlke.pgadmissions.iso.jaxb.CountryType;
+import com.zuehlke.pgadmissions.iso.jaxb.ShortNameType;
+import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionLocaleType;
+import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionType;
 import com.zuehlke.pgadmissions.mail.MailService;
-import com.zuehlke.pgadmissions.services.*;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
-import java.net.Authenticator;
-import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.services.ProgramInstanceService;
+import com.zuehlke.pgadmissions.services.ProgramService;
+import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.SystemService;
 
 @Service
 public class InstitutionDomicileImportService {
 
     private static final Logger log = LoggerFactory.getLogger(InstitutionDomicileImportService.class);
-
-    private static DateTimeFormatter dtFormatter = DateTimeFormat.forPattern("dd-MMM-yy");
 
     @Autowired
     private ImportedEntityDAO importedEntityDAO;
@@ -63,7 +71,6 @@ public class InstitutionDomicileImportService {
     @Autowired
     private RoleService roleService;
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public void importEntities(String fileLocation) throws XMLDataImportException {
         InstitutionDomicileImportService thisBean = applicationContext.getBean(InstitutionDomicileImportService.class);
         log.info("Starting the import from file: " + fileLocation);
@@ -83,7 +90,7 @@ public class InstitutionDomicileImportService {
             URL fileUrl = new DefaultResourceLoader().getResource(fileLocation).getURL();
             JAXBContext jaxbContext = JAXBContext.newInstance(CountryCodesType.class);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            JAXBElement unmarshaled = (JAXBElement) unmarshaller.unmarshal(fileUrl);
+            JAXBElement<CountryCodesType> unmarshaled = (JAXBElement<CountryCodesType>) unmarshaller.unmarshal(fileUrl);
             CountryCodesType countryCodes = (CountryCodesType) unmarshaled.getValue();
             return countryCodes.getCountry();
         } finally {

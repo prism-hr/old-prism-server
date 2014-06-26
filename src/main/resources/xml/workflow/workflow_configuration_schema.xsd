@@ -18,20 +18,21 @@
                                 <xs:element name="action" maxOccurs="unbounded" minOccurs="0">
                                   <xs:complexType>
                                     <xs:choice maxOccurs="unbounded" minOccurs="0">
-                                      <xs:element name="transition-states">
+                                      <xs:element name="roles">
                                         <xs:complexType>
                                           <xs:sequence>
-                                            <xs:element name="transition-state" maxOccurs="unbounded" minOccurs="0">
+                                            <xs:element name="role" maxOccurs="unbounded" minOccurs="0">
                                               <xs:complexType mixed="true">
-                                                <xs:choice maxOccurs="unbounded" minOccurs="0">
-                                                  <xs:element name="propagated-actions">
+                                                <xs:sequence>
+                                                  <xs:element name="enhancements" minOccurs="0">
                                                     <xs:complexType>
                                                       <xs:sequence>
-                                                        <xs:element name="propagated-action" maxOccurs="unbounded" minOccurs="0">
+                                                        <xs:element name="enhancement" maxOccurs="unbounded" minOccurs="0">
                                                           <xs:complexType>
                                                             <xs:simpleContent>
                                                             <xs:extension base="xs:string">
-                                                            <xs:attribute type="xs:string" name="id" use="optional"/>
+                                                            <xs:attribute type="xs:string" name="type" use="optional"/>
+                                                            <xs:attribute type="xs:string" name="delegated-action" use="optional"/>
                                                             </xs:extension>
                                                             </xs:simpleContent>
                                                           </xs:complexType>
@@ -39,6 +40,19 @@
                                                       </xs:sequence>
                                                     </xs:complexType>
                                                   </xs:element>
+                                                </xs:sequence>
+                                                <xs:attribute type="xs:string" name="id" use="optional"/>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                      <xs:element name="transition-states">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="transition-state" maxOccurs="unbounded" minOccurs="0">
+                                              <xs:complexType mixed="true">
+                                                <xs:choice maxOccurs="unbounded" minOccurs="0">
                                                   <xs:element name="role-transitions">
                                                     <xs:complexType>
                                                       <xs:sequence>
@@ -71,8 +85,23 @@
                                                             <xs:attribute type="xs:string" name="id" use="optional"/>
                                                             <xs:attribute type="xs:byte" name="maximum" use="optional"/>
                                                             <xs:attribute type="xs:byte" name="minimum" use="optional"/>
-                                                            <xs:attribute type="xs:string" name="restrict-to-owner" use="optional"/>
+                                                            <xs:attribute type="xs:string" name="restrict" use="optional"/>
                                                             <xs:attribute type="xs:string" name="type" use="optional"/>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                  <xs:element name="propagated-actions">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="propagated-action" maxOccurs="unbounded" minOccurs="0">
+                                                          <xs:complexType>
+                                                            <xs:simpleContent>
+                                                            <xs:extension base="xs:string">
+                                                            <xs:attribute type="xs:string" name="id" use="optional"/>
+                                                            </xs:extension>
+                                                            </xs:simpleContent>
                                                           </xs:complexType>
                                                         </xs:element>
                                                       </xs:sequence>
@@ -88,39 +117,10 @@
                                           <xs:attribute type="xs:string" name="evaluation" use="optional"/>
                                         </xs:complexType>
                                       </xs:element>
-                                      <xs:element name="roles">
+                                      <xs:element name="notifications">
                                         <xs:complexType>
                                           <xs:sequence>
-                                            <xs:element name="role" maxOccurs="unbounded" minOccurs="0">
-                                              <xs:complexType mixed="true">
-                                                <xs:sequence>
-                                                  <xs:element name="enhancements" minOccurs="0">
-                                                    <xs:complexType>
-                                                      <xs:sequence>
-                                                        <xs:element name="enhancement" maxOccurs="unbounded" minOccurs="0">
-                                                          <xs:complexType>
-                                                            <xs:simpleContent>
-                                                            <xs:extension base="xs:string">
-                                                            <xs:attribute type="xs:string" name="type" use="optional"/>
-                                                            <xs:attribute type="xs:string" name="delegated-action" use="optional"/>
-                                                            </xs:extension>
-                                                            </xs:simpleContent>
-                                                          </xs:complexType>
-                                                        </xs:element>
-                                                      </xs:sequence>
-                                                    </xs:complexType>
-                                                  </xs:element>
-                                                </xs:sequence>
-                                                <xs:attribute type="xs:string" name="id" use="optional"/>
-                                              </xs:complexType>
-                                            </xs:element>
-                                          </xs:sequence>
-                                        </xs:complexType>
-                                      </xs:element>
-                                      <xs:element name="update-notifications">
-                                        <xs:complexType>
-                                          <xs:sequence>
-                                            <xs:element name="update-notification" maxOccurs="unbounded" minOccurs="0">
+                                            <xs:element name="notification" maxOccurs="unbounded" minOccurs="0">
                                               <xs:complexType>
                                                 <xs:simpleContent>
                                                   <xs:extension base="xs:string">
@@ -153,8 +153,8 @@
                                     <xs:attribute type="xs:string" name="default" use="optional"/>
                                     <xs:attribute type="xs:string" name="id" use="optional"/>
                                     <xs:attribute type="xs:string" name="urgent" use="optional"/>
+                                    <xs:attribute type="xs:byte" name="interval" use="optional"/>
                                     <xs:attribute type="xs:string" name="notification" use="optional"/>
-                                    <xs:attribute type="xs:byte" name="reminder-interval" use="optional"/>
                                   </xs:complexType>
                                 </xs:element>
                               </xs:sequence>
@@ -162,7 +162,7 @@
                           </xs:element>
                         </xs:sequence>
                         <xs:attribute type="xs:string" name="id" use="optional"/>
-                        <xs:attribute type="xs:byte" name="default-duration" use="optional"/>
+                        <xs:attribute type="xs:byte" name="duration" use="optional"/>
                       </xs:complexType>
                     </xs:element>
                   </xs:sequence>

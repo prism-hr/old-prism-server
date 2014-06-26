@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -70,6 +71,24 @@ public class NotificationDAO {
                 .add(Restrictions.eq("notificationTemplate", template)) //
                 .addOrder(Order.desc("id")) //
                 .list();
+    }
+    
+    public void disableConfigurations() {
+        Query query = sessionFactory.getCurrentSession().createQuery( //
+                "update NotificationConfiguration"
+                + "set enabled = :enabled");
+        query.setParameter("enabled", false);
+        query.executeUpdate();
+    }
+    
+    public void enableConfigurations(NotificationTemplate template) {
+        Query query = sessionFactory.getCurrentSession().createQuery( //
+                "update NotificationConfiguration"
+                + "set enabled = :enabled"
+                + "where notificationTemplate = :state");
+        query.setParameter("enabled", true);
+        query.setParameter("notificationTemplate", template);
+        query.executeUpdate();
     }
 
 }

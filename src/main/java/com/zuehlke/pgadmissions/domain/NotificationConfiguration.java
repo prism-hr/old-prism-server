@@ -48,6 +48,9 @@ public class NotificationConfiguration implements IUniqueResource {
 
     @Column(name = "day_reminder_interval")
     private Integer reminderInterval;
+    
+    @Column(name = "enabled", nullable = false)
+    private boolean enabled;
 
     public Integer getId() {
         return id;
@@ -105,6 +108,14 @@ public class NotificationConfiguration implements IUniqueResource {
         this.reminderInterval = reminderInterval;
     }
     
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public NotificationConfiguration withSystem(System system) {
         this.system = system;
         return this;
@@ -122,6 +133,11 @@ public class NotificationConfiguration implements IUniqueResource {
     
     public NotificationConfiguration withReminderInterval(Integer reminderInterval) {
         this.reminderInterval = reminderInterval;
+        return this;
+    }
+    
+    public NotificationConfiguration withEnabled(boolean enabled) {
+        this.enabled = enabled;
         return this;
     }
     

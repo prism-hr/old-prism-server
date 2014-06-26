@@ -1,12 +1,11 @@
 package com.zuehlke.pgadmissions.services.importers;
 
-import com.zuehlke.pgadmissions.dao.EntityDAO;
+import org.apache.commons.beanutils.PropertyUtils;
+
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
 import com.zuehlke.pgadmissions.services.EntityService;
-import org.apache.commons.beanutils.PropertyUtils;
 
 public class InstitutionImportConverter extends GenericEntityImportConverter<ImportedInstitution> {
 

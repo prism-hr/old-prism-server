@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionEnhancement;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
-import com.zuehlke.pgadmissions.domain.enums.PrismActionRedactionType;
+import com.zuehlke.pgadmissions.domain.enums.PrismRedactionType;
 import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
 
 @Repository
@@ -124,8 +124,8 @@ public class ActionDAO {
     }
     
     @SuppressWarnings("unchecked")
-    public List<PrismActionRedactionType> getRedactions(User user, ResourceDynamic resource, Action action) {
-        return (List<PrismActionRedactionType>) sessionFactory.getCurrentSession().createCriteria(ActionRedaction.class)
+    public List<PrismRedactionType> getRedactions(User user, ResourceDynamic resource, Action action) {
+        return (List<PrismRedactionType>) sessionFactory.getCurrentSession().createCriteria(ActionRedaction.class)
                 .setProjection(Projections.groupProperty("redactionType")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //

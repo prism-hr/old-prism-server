@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
@@ -121,7 +122,9 @@ public class IT1SystemInitialisation {
 
     private void verifyStateDurationCreation() {
         for (State state : stateService.getConfigurableStates()) {
-            assertEquals(state.getId().getDuration(), systemService.getStateDuration(state));
+            StateDuration stateDuration = systemService.getStateDuration(state);
+            assertEquals(state.getId().getDuration(), stateDuration.getDuration());
+            assertEquals(false, stateDuration.isEnabled());
         }
     }
 
@@ -136,6 +139,7 @@ public class IT1SystemInitialisation {
             assertEquals(configuration.getNotificationTemplate(), template);
             assertEquals(configuration.getNotificationTemplateVersion().getNotificationTemplate(), template);
             assertEquals(PrismNotificationTemplate.getReminderInterval(template.getId()), configuration.getReminderInterval());
+            assertEquals(false, configuration.isEnabled());
             
             NotificationTemplateVersion version = configuration.getNotificationTemplateVersion();
             assertEquals(getFileContent(EMAIL_DEFAULT_SUBJECT_DIRECTORY + template.getId().getInitialTemplateSubject()), version.getSubject());

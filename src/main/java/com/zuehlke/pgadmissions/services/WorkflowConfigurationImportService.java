@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.AbstractMap;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,31 +39,19 @@ import com.zuehlke.pgadmissions.domain.enums.PrismRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.PrismStateTransitionEvaluation;
+import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 
 @Service
 @Transactional(timeout = 60)
 public class WorkflowConfigurationImportService {
-
+    
     private final static String WORKFLOW_CONFIGURATION_XSD = "xml/workflow_configuration_schema.xsd";
-
-    private static final String IMPORT_SUCCESS = "Your workflow configuration has been applied successfully";
-
-    private static final String IMPORT_FAILURE_XML_INVALID = "Your workflow configuration is not compliant with our schema";
-
-    private static final String IMPORT_FAILURE_XML_MALFORMED = "Your workflow configuration is malformed";
-
-    private static final String IMPORT_INVALID_ENTITY = "is not a not a valid";
-
-    private static final String IMPORT_INVALID_ENTITY_ASSIGNMENT = "for the";
-
-    private static final String IMPORT_INVALID_NOTIFICATION = "template";
-
-    private static final String IMPORT_INVALID_REMINDER_INTERVAL = "reminder interval";
-
-    private static final String IMPORT_INVALID_STATE_TRANSITION = "has no unambiguous transition state";
     
     private WorkflowGraph workflowGraph = new WorkflowGraph();
 
+    @Autowired 
+    private ActionService actionService;
+    
     @Autowired
     private EntityService entityService;
 
@@ -80,7 +66,7 @@ public class WorkflowConfigurationImportService {
 
     // TODO: Test invalid XML
     // TODO: Test malformed XML
-    public SimpleEntry<Boolean, String> importWorkflowConfiguration(String configuration) {
+    public void importWorkflowConfiguration(String configuration) throws WorkflowConfigurationException {
         try {
             DocumentBuilder documentBuilder = prepareDocumentBuilder();
             Document document = documentBuilder.parse(configuration);
@@ -90,14 +76,11 @@ public class WorkflowConfigurationImportService {
             stateService.disableStateActionEnhancements();
             stateService.disableStateTransitions();
 
-            String feedback = importScopes(document);
-            boolean outcome = feedback == null;
-            return new AbstractMap.SimpleEntry<Boolean, String>(outcome, outcome ? IMPORT_SUCCESS : feedback);
-        } catch (SAXException e) {
-            String parseError = e.getMessage();
-            return new AbstractMap.SimpleEntry<Boolean, String>(false, IMPORT_FAILURE_XML_INVALID + (parseError != null ? ". " + parseError : ""));
+            importScopes(document);
         } catch (IOException e) {
-            return new AbstractMap.SimpleEntry<Boolean, String>(false, IMPORT_FAILURE_XML_MALFORMED);
+            throw new WorkflowConfigurationException(e);
+        } catch (SAXException e) {
+            throw new WorkflowConfigurationException(e);
         }
     }
 
@@ -123,7 +106,7 @@ public class WorkflowConfigurationImportService {
 
     // TODO: Test invalid scope
     // TODO: Test no creation action for scope
-    private String importScopes(Document document) {
+    private void importScopes(Document document) throws WorkflowConfigurationException {
         NodeList scopeElements = document.getElementsByTagName("scope");
 
         for (int i = 0; i < scopeElements.getLength(); i++) {
@@ -131,23 +114,13 @@ public class WorkflowConfigurationImportService {
             String scopeElementId = scopeElement.getAttribute("id");
 
             PrismScope scopeId = getValueOf(PrismScope.class, scopeElementId);
-
-            if (scopeId == null) {
-                return getInvalidEntityError(PrismScope.class, scopeId);
-            }
-
-            String feedback = importStates(scopeElement, scopeId);
-            if (feedback != null) {
-                return feedback;
-            }
+            importStates(scopeElement, scopeId);
         }
-
-        return null;
     }
 
     // TODO: Test invalid state
     // TODO: Test invalid state scope
-    private String importStates(Element scopeElement, PrismScope scopeId) {
+    private void importStates(Element scopeElement, PrismScope scopeId) throws WorkflowConfigurationException {
         NodeList stateElements = scopeElement.getElementsByTagName("state");
 
         for (int i = 0; i < stateElements.getLength(); i++) {
@@ -156,19 +129,12 @@ public class WorkflowConfigurationImportService {
 
             PrismState stateId = getValueOf(PrismState.class, stateElementId);
 
-            if (stateId == null) {
-                return getInvalidEntityError(PrismState.class, stateId);
-            } else if (stateId.getScope() != scopeId) {
-                return getInvalidEntityAssignmentError(PrismState.class, scopeId, stateId);
+            if (stateId.getScope() != scopeId) {
+                throw new WorkflowConfigurationException(stateId, scopeId);
             }
 
-            String feedback = importActions(stateElement, stateId);
-            if (feedback != null) {
-                return feedback;
-            }
+           importActions(stateElement, stateId);
         }
-
-        return null;
     }
 
     // TODO: Test invalid action
@@ -177,18 +143,17 @@ public class WorkflowConfigurationImportService {
     // TODO: Test invalid notification template scope
     // TODO: Test invalid notification template type
     // TODO: Test importing new version of workflow
-    private String importActions(Element stateElement, PrismState stateId) {
+    private void importActions(Element stateElement, PrismState stateId) throws WorkflowConfigurationException {
         NodeList actionElements = stateElement.getElementsByTagName("action");
+        
         for (int i = 0; i < actionElements.getLength(); i++) {
             Element actionElement = (Element) actionElements.item(i);
             String actionElementId = actionElement.getAttribute("id");
 
             PrismAction actionId = getValueOf(PrismAction.class, actionElementId);
 
-            if (actionId == null) {
-                return getInvalidEntityError(PrismAction.class, actionId);
-            } else if (stateId.getScope() != actionId.getScope()) {
-                return getInvalidEntityAssignmentError(PrismAction.class, stateId, actionId);
+            if (stateId.getScope() != actionId.getScope()) {
+                throw new WorkflowConfigurationException(actionId, stateId);
             }
 
             NotificationTemplate notificationTemplate = null;
@@ -198,12 +163,10 @@ public class WorkflowConfigurationImportService {
             if (actionElementNotification != null) {
                 notificationTemplateId = getValueOf(PrismNotificationTemplate.class, actionElementNotification);
 
-                if (notificationTemplateId == null) {
-                    return getInvalidEntityError(PrismNotificationTemplate.class, notificationTemplateId);
-                } else if (actionId.getScope() != notificationTemplateId.getScope()) {
-                    return getInvalidEntityAssignmentError(PrismNotificationTemplate.class, actionId, notificationTemplateId);
+                if (actionId.getScope() != notificationTemplateId.getScope()) {
+                    throw new WorkflowConfigurationException(notificationTemplateId, actionId);
                 } else if (notificationTemplateId.getNotificationPurpose() != PrismNotificationPurpose.REQUEST) {
-                    return getInvalidNotificationTemplateError(actionElementNotification, notificationTemplateId.getNotificationPurpose());
+                    throw new WorkflowConfigurationException(notificationTemplateId, PrismNotificationPurpose.REQUEST);
                 }
 
                 String actionReminderInterval = actionElement.getAttribute("reminder-interval");
@@ -211,7 +174,7 @@ public class WorkflowConfigurationImportService {
                     reminderInterval = Integer.parseInt(actionReminderInterval);
 
                     if (reminderInterval < 1) {
-                        return actionReminderInterval + " " + IMPORT_INVALID_ENTITY + " " + IMPORT_INVALID_REMINDER_INTERVAL;
+                        throw new WorkflowConfigurationException(reminderInterval);
                     }
                 }
 
@@ -232,25 +195,15 @@ public class WorkflowConfigurationImportService {
                 configuration.setReminderInterval(reminderInterval);
             }
 
-            String feedback = importRoles(actionElement, stateAction);
-
-            if (feedback == null) {
-                feedback = importStateTransitions(actionElement, stateAction);
-            }
-
-            if (feedback != null) {
-                return feedback;
-            }
+            importRoles(actionElement, stateAction);
+            importStateTransitions(actionElement, stateAction);
         }
-
-        return null;
     }
 
     // TODO: Test invalid action assignment
     // TODO: Test invalid action assignment scope
-    private String importRoles(Element actionElement, StateAction stateAction) {
+    private void importRoles(Element actionElement, StateAction stateAction) throws WorkflowConfigurationException {
         PrismAction actionId = stateAction.getAction().getId();
-
         NodeList roleElements = actionElement.getElementsByTagName("role");
 
         for (int i = 0; i < roleElements.getLength(); i++) {
@@ -259,10 +212,8 @@ public class WorkflowConfigurationImportService {
 
             PrismRole roleId = getValueOf(PrismRole.class, roleElementId);
 
-            if (roleId == null) {
-                return getInvalidEntityError(PrismRole.class, roleId);
-            } else if (roleId.getScope().getPrecedence() < actionId.getScope().getPrecedence()) {
-                return getInvalidEntityAssignmentError(PrismRole.class, actionId, roleId);
+            if (roleId.getScope().getPrecedence() < actionId.getScope().getPrecedence()) {
+                throw new WorkflowConfigurationException(roleId, actionId);
             }
 
             Role role = entityService.getByProperty(Role.class, "id", roleId);
@@ -270,22 +221,16 @@ public class WorkflowConfigurationImportService {
             StateActionAssignment transientStateActionAssignment = new StateActionAssignment().withStateAction(stateAction).withRole(role).withEnabled(true);
             StateActionAssignment stateActionAssignment = entityService.createOrUpdate(transientStateActionAssignment);
 
-            String feedback = importEnhancements(roleElement, stateActionAssignment);
-            if (feedback != null) {
-                return feedback;
-            }
+            importEnhancements(roleElement, stateActionAssignment);
         }
-
-        return null;
     }
 
     // TODO: Test invalid action assignment enhancement
     // TODO: Test invalid action assignment enhancement scope
     // TODO: Test invalid delegate action
     // TODO: Test invalid delegate action scope
-    private String importEnhancements(Element roleElement, StateActionAssignment stateActionAssignment) {
+    private void importEnhancements(Element roleElement, StateActionAssignment stateActionAssignment) throws WorkflowConfigurationException {
         PrismAction actionId = stateActionAssignment.getStateAction().getAction().getId();
-
         NodeList enhancementElements = roleElement.getElementsByTagName("enhancement");
 
         for (int i = 0; i < enhancementElements.getLength(); i++) {
@@ -294,10 +239,8 @@ public class WorkflowConfigurationImportService {
 
             PrismActionEnhancementType enhancementType = getValueOf(PrismActionEnhancementType.class, enhancementElementType);
 
-            if (enhancementType == null) {
-                return getInvalidEntityError(PrismActionEnhancementType.class, enhancementType);
-            } else if (enhancementType.getScope() != actionId.getScope()) {
-                return getInvalidEntityAssignmentError(PrismActionEnhancementType.class, actionId, enhancementType);
+            if (enhancementType.getScope() != actionId.getScope()) {
+                throw new WorkflowConfigurationException(enhancementType, actionId);
             }
 
             Action delegatedAction = null;
@@ -306,10 +249,8 @@ public class WorkflowConfigurationImportService {
             if (enhancementElementDelegatedAction != null) {
                 delegatedActionId = getValueOf(PrismAction.class, enhancementElementDelegatedAction);
 
-                if (delegatedActionId == null) {
-                    return getInvalidEntityError(PrismAction.class, delegatedActionId);
-                } else if (delegatedActionId.getScope() != actionId.getScope()) {
-                    return getInvalidEntityAssignmentError(PrismAction.class, actionId, delegatedActionId);
+                if (delegatedActionId.getScope() != actionId.getScope()) {
+                    throw new WorkflowConfigurationException(delegatedActionId, actionId);
                 }
 
                 delegatedAction = entityService.getByProperty(Action.class, "id", actionId);
@@ -320,7 +261,6 @@ public class WorkflowConfigurationImportService {
             entityService.createOrUpdate(transientStateActionEnhancement);
 
         }
-        return null;
     }
 
     // TODO: Test invalid state transition evaluation
@@ -330,9 +270,9 @@ public class WorkflowConfigurationImportService {
     // TODO: Test invalid transition action
     // TODO: Test invalid transition action assignment
     // TODO: Test invalid state transition (ambiguous)
-    private String importStateTransitions(Element actionElement, StateAction stateAction) {
+    private void importStateTransitions(Element actionElement, StateAction stateAction) throws WorkflowConfigurationException {
+        PrismState stateId = stateAction.getState().getId();
         PrismAction actionId = stateAction.getAction().getId();
-
         NodeList stateTransitionsElements = actionElement.getElementsByTagName("transition-states");
 
         if (stateTransitionsElements.getLength() > 1) {
@@ -344,10 +284,8 @@ public class WorkflowConfigurationImportService {
             if (stateTransitionsElementEvaluation != null) {
                 stateTransitionEvaluation = getValueOf(PrismStateTransitionEvaluation.class, stateTransitionsElementEvaluation);
 
-                if (stateTransitionEvaluation == null) {
-                    return getInvalidEntityError(PrismStateTransitionEvaluation.class, stateTransitionEvaluation);
-                } else if (!stateTransitionEvaluation.getInvokingActions().contains(actionId)) {
-                    return getInvalidEntityAssignmentError(PrismStateTransitionEvaluation.class, actionId, stateTransitionEvaluation);
+                if (!stateTransitionEvaluation.getInvokingActions().contains(actionId)) {
+                    throw new WorkflowConfigurationException(stateTransitionEvaluation, actionId);
                 }
 
             }
@@ -360,25 +298,22 @@ public class WorkflowConfigurationImportService {
                 String stateTransitionElementActionId = stateTransitionElement.getAttribute("action");
 
                 PrismState transitionStateId = getValueOf(PrismState.class, stateTransitionElementStateId);
-
-                if (transitionStateId == null) {
-                    return getInvalidEntityError(PrismState.class, transitionStateId);
-                } else if (transitionStateId.getScope() != actionId.getScope()
-                        && !(transitionStateId.getScope().getPrecedence() < actionId.getScope().getPrecedence() && actionId.name().contains("_CREATE_"))) {
-                    return getInvalidEntityAssignmentError(PrismState.class, actionId, transitionStateId);
+                boolean isCreationTransition = actionService.isCreationAction(stateId, transitionStateId, actionId);
+                
+                if (transitionStateId.getScope() != actionId.getScope() && !isCreationTransition) {
+                    throw new WorkflowConfigurationException(transitionStateId, stateId);
                 }
 
                 PrismAction transitionActionId = getValueOf(PrismAction.class, stateTransitionElementActionId);
 
-                if (transitionActionId == null) {
-                    return getInvalidEntityError(PrismAction.class, transitionActionId);
-                } else if (transitionActionId.getScope() != actionId.getScope()) {
-                    return getInvalidEntityAssignmentError(PrismAction.class, actionId, transitionActionId);
+                if (transitionActionId.getScope() != actionId.getScope() && !isCreationTransition) {
+                    throw new WorkflowConfigurationException(transitionActionId, actionId);
                 } else if (i > 0 && stateTransitionEvaluation == null) {
-                    return getInvalidStateTransitionError(stateAction.getState().getId());
+                    throw new WorkflowConfigurationException(stateId);
                 }
 
                 // TODO: propagated actions
+//                String feedback = importPropagatedActions(stateTransitionElement, stateTransition);
 
                 State transitionState = entityService.getByProperty(State.class, "id", transitionStateId);
                 Action transitionAction = entityService.getByProperty(Action.class, "id", transitionActionId);
@@ -389,37 +324,17 @@ public class WorkflowConfigurationImportService {
                         .withEnabled(true);
                 entityService.createOrUpdate(transientStateTransition);
                 
-                
                 workflowGraph.createOrUpdateNode(stateAction.getState().getId(), transitionStateId, stateTransitionEvaluation);
             }
         }
-
-        return null;
     }
 
-    private <T extends Enum<T>> T getValueOf(Class<T> clazz, String stringValue) {
+    private <T extends Enum<T>> T getValueOf(Class<T> clazz, String value) throws WorkflowConfigurationException {
         try {
-            return Enum.valueOf(clazz, stringValue);
+            return Enum.valueOf(clazz, value);
         } catch (IllegalArgumentException e) {
-            return null;
+            throw new WorkflowConfigurationException(clazz, value);
         }
-    }
-
-    private <T extends Enum<T>> String getInvalidEntityError(Class<T> entityClass, Enum<T> value) {
-        return value.name() + " " + IMPORT_INVALID_ENTITY + " " + entityClass.getSimpleName().toLowerCase();
-    }
-
-    private <T extends Enum<T>, U extends Enum<U>> String getInvalidEntityAssignmentError(Class<T> entityClass, Enum<U> parentEntity, Enum<T> value) {
-        return value.name() + " " + IMPORT_INVALID_ENTITY + " " + entityClass.getSimpleName().toLowerCase() + " " + IMPORT_INVALID_ENTITY_ASSIGNMENT + " "
-                + parentEntity.getClass().getSimpleName().toLowerCase() + " " + parentEntity.name().toLowerCase();
-    }
-
-    private String getInvalidNotificationTemplateError(String templateId, PrismNotificationPurpose purpose) {
-        return templateId + " " + IMPORT_INVALID_ENTITY + purpose.name().toLowerCase() + " " + IMPORT_INVALID_NOTIFICATION;
-    }
-
-    private String getInvalidStateTransitionError(PrismState stateId) {
-        return stateId + " " + IMPORT_INVALID_STATE_TRANSITION;
     }
     
     private class WorkflowGraph {

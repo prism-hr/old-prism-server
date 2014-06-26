@@ -21,27 +21,27 @@ import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 
 public abstract class AbstractValidator implements org.springframework.validation.Validator, ApplicationContextAware, ConstraintValidatorFactory {
 
-    protected static final String EMPTY_FIELD_ERROR_MESSAGE = "text.field.empty";
+    public static final String EMPTY_FIELD_ERROR_MESSAGE = "text.field.empty";
     
-    protected static final String MAXIMUM_500_CHARACTERS = "maximum.500.characters";
+    public static final String MAXIMUM_500_CHARACTERS = "maximum.500.characters";
 
     public static final String EMPTY_DROPDOWN_ERROR_MESSAGE = "dropdown.radio.select.none";
 
-    protected static final String NOT_BEFORE_ERROR_MESSAGE = "date.field.notbefore";
+    public static final String NOT_BEFORE_ERROR_MESSAGE = "date.field.notbefore";
 
-    protected static final String NOT_AFTER_ERROR_MESSAGE = "date.field.notafter";
+    public static final String NOT_AFTER_ERROR_MESSAGE = "date.field.notafter";
 
-    protected static final String MANDATORY_CHECKBOX = "checkbox.mandatory";
+    public static final String MANDATORY_CHECKBOX = "checkbox.mandatory";
 
-    protected static final String MUST_SELECT_DATE_AND_TIME = "datepicker.field.mustselectdate";
+    public static final String MUST_SELECT_DATE_AND_TIME = "datepicker.field.mustselectdate";
 
-    protected static final String MUST_SELECT_DATE_AND_TIMES_IN_THE_FUTURE = "datepicker.field.mustselectdatetimesinfuture";
+    public static final String MUST_SELECT_DATE_AND_TIMES_IN_THE_FUTURE = "datepicker.field.mustselectdatetimesinfuture";
 
-    protected static final String INVALID_TIME = "time.field.invalid";
+    public static final String INVALID_TIME = "time.field.invalid";
 
-    protected static final Pattern TIME_PATTERN = Pattern.compile("([01]?[0-9]|2[0-3]):[0-5][0-9]");
+    public static final Pattern TIME_PATTERN = Pattern.compile("([01]?[0-9]|2[0-3]):[0-5][0-9]");
     
-    protected static final String PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER = "prospectus.durationOfStudy.emptyOrNotInteger";
+    public static final String PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER = "prospectus.durationOfStudy.emptyOrNotInteger";
 
     @Autowired
     private Validator validator;

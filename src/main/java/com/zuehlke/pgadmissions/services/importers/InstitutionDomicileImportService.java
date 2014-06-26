@@ -54,22 +54,10 @@ public class InstitutionDomicileImportService {
     private EntityService entityService;
 
     @Autowired
-    private ProgramService programService;
-
-    @Autowired
-    private SystemService systemService;
-
-    @Autowired
     private ProgramInstanceService programInstanceService;
 
     @Autowired
     private ApplicationContext applicationContext;
-
-    @Autowired
-    private MailService mailSendingService;
-
-    @Autowired
-    private RoleService roleService;
 
     public void importEntities(String fileLocation) throws XMLDataImportException {
         InstitutionDomicileImportService thisBean = applicationContext.getBean(InstitutionDomicileImportService.class);
@@ -201,21 +189,6 @@ public class InstitutionDomicileImportService {
     public void disableAllDomicilesAndRegions() {
         importedEntityDAO.disableAllEntities(InstitutionDomicile.class);
         importedEntityDAO.disableAllEntities(InstitutionDomicileRegion.class);
-    }
-
-    @Transactional
-    public void attemptInsert(Object entity) {
-        entityService.save(entity);
-    }
-
-    @Transactional
-    public void attemptUpdate(ProgramInstance programInstance) {
-        ProgramInstance persistentProgramInstance = programInstanceService.getByProgramAndAcademicYearAndStudyOption(programInstance.getProgram(),
-                programInstance.getAcademicYear(), programInstance.getStudyOption());
-        persistentProgramInstance.setIdentifier(programInstance.getIdentifier());
-        persistentProgramInstance.setApplicationStartDate(programInstance.getApplicationStartDate());
-        persistentProgramInstance.setApplicationDeadline(programInstance.getApplicationDeadline());
-        persistentProgramInstance.setEnabled(true);
     }
 
 }

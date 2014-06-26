@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismActionRedactionType;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
 
@@ -121,4 +122,8 @@ public class ActionService {
         return entityService.getAll(Action.class);
     }
 
+    public boolean isCreationAction(PrismState stateId, PrismState transitionStateId, PrismAction actionId) {
+        return stateId.getScope().getPrecedence() > transitionStateId.getScope().getPrecedence() && !actionId.name().contains("_CREATE_");
+    }
+    
 }

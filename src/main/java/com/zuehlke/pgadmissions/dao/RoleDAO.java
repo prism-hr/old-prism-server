@@ -1,8 +1,11 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
+import com.zuehlke.pgadmissions.domain.enums.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.domain.enums.PrismScope;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
@@ -13,18 +16,8 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.RoleTransition;
-import com.zuehlke.pgadmissions.domain.StateAction;
-import com.zuehlke.pgadmissions.domain.StateTransition;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
-import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
-import com.zuehlke.pgadmissions.domain.enums.PrismRoleTransitionType;
+import java.util.List;
+import java.util.Set;
 
 @Repository
 public class RoleDAO {
@@ -82,7 +75,7 @@ public class RoleDAO {
     @SuppressWarnings("unchecked")
     public List<RoleTransition> getRoleTransitions(StateTransition stateTransition, List<Role> invokerRoles) {
         Criterion restrictToInvokerCriterion = invokerRoles.isEmpty() ? //
-        Restrictions.eq("roleTransitionType", PrismRoleTransitionType.CREATE)
+                Restrictions.eq("roleTransitionType", PrismRoleTransitionType.CREATE)
                 : Restrictions.in("role", invokerRoles);
 
         return (List<RoleTransition>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
@@ -119,7 +112,7 @@ public class RoleDAO {
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .list();
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<Role> getActionOwnerRoles(User user, Resource resource, Action action) {
         return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
@@ -172,7 +165,7 @@ public class RoleDAO {
                 .add(Restrictions.eq("stateTransition", stateTransition)) //
                 .add(Restrictions.ne("roleTransitionType", PrismRoleTransitionType.CREATE)) //
                 .list();
-        
+
         HashMultimap<RoleTransition, User> userRoleTransitions = HashMultimap.create();
         for (RoleTransition roleTransition : roleTransitions) {
             List<User> users = sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
@@ -187,14 +180,14 @@ public class RoleDAO {
                                     .add(Restrictions.eq("userRole.user", invoker))) //
                             .add(Restrictions.eq("restrictToInvoker", false))) //
                     .list();
-            
+
             for (User user : users) {
                 userRoleTransitions.put(roleTransition, user);
             }
         }
-        
+
         return userRoleTransitions;
-        
+
     }
 
     @SuppressWarnings("unchecked")
@@ -218,5 +211,19 @@ public class RoleDAO {
                 .add(Restrictions.eq("user", user)) //
                 .uniqueResult();
     }
-    
+
+    public List<User> getUsers(Resource resource) {
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("user"))
+                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource))
+                .list();
+    }
+
+    public List<PrismRole> getRoles(Resource resource, User user) {
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("role.id"))
+                .add(Restrictions.eq("user", user))
+                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource))
+                .list();
+    }
 }

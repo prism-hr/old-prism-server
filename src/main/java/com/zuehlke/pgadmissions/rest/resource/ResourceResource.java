@@ -3,12 +3,15 @@ package com.zuehlke.pgadmissions.rest.resource;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.rest.domain.CommentRepresentation;
-import com.zuehlke.pgadmissions.rest.domain.application.ResourceListRowRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.application.ApplicationRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.application.ProgramRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.application.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.services.*;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = {"api/applications"})
-public class ApplicationResource {
+@RequestMapping(value = {"api/{resourceType}"})
+public class ResourceResource {
 
     @Autowired
     private EntityService entityService;
@@ -41,14 +44,14 @@ public class ApplicationResource {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @Transactional
-    public ApplicationRepresentation getApplication(@PathVariable Integer id) {
+    public ResourceRepresentation getResource(@PathVariable String resourceType, @PathVariable Integer id) {
         User currentUser = userService.getCurrentUser();
         Application application = entityService.getById(Application.class, id);
         if (application == null) {
             return null;
         }
 
-        ApplicationRepresentation representation = dozerBeanMapper.map(application, ApplicationRepresentation.class);
+        ResourceRepresentation representation = dozerBeanMapper.map(application, resourceType.equals("applications") ? ApplicationRepresentation.class : ProgramRepresentation.class);
 
         List<Comment> comments = commentService.getVisibleComments(application, currentUser);
         representation.setComments(Lists.<CommentRepresentation>newArrayListWithExpectedSize(comments.size()));
@@ -62,8 +65,8 @@ public class ApplicationResource {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<ResourceListRowRepresentation> getApplications(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
-        List<ResourceConsoleListRowDTO> consoleListBlock = resourceService.getConsoleListBlock(Application.class, page, perPage);
+    public List<ResourceListRowRepresentation> getResources(@PathVariable String resourceType, @RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
+        List<ResourceConsoleListRowDTO> consoleListBlock = resourceService.getConsoleListBlock(resourceType.equals("applications") ? Application.class : Program.class, page, perPage);
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
         for (ResourceConsoleListRowDTO appDTO : consoleListBlock) {
             representations.add(dozerBeanMapper.map(appDTO, ResourceListRowRepresentation.class));

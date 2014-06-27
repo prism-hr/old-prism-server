@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.domain;
+package com.zuehlke.pgadmissions.rest.domain.workflow;
 
 public class StateActionRepresentation {
 

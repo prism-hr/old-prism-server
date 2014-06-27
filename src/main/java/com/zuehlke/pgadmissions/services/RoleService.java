@@ -207,4 +207,11 @@ public class RoleService {
         }
     }
 
+    public List<User> getUsers(Resource resource) {
+        return roleDAO.getUsers(resource);
+    }
+
+    public List<PrismRole> getRoles(Resource resource, User user) {
+        return roleDAO.getRoles(resource, user);
+    }
 }

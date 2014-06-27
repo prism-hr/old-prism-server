@@ -2,14 +2,13 @@ package com.zuehlke.pgadmissions.rest.domain.application;
 
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.rest.domain.CommentRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.util.List;
 
-public class ProgramRepresentation {
-
-    private String code;
+public class ProgramRepresentation extends ResourceRepresentation {
 
     private String title;
 
@@ -20,18 +19,6 @@ public class ProgramRepresentation {
     private DateTime createdTimestamp;
 
     private DateTime updatedTimestamp;
-
-    private List<PrismAction> actions;
-
-    private List<CommentRepresentation> comments;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public String getTitle() {
         return title;
@@ -73,19 +60,4 @@ public class ProgramRepresentation {
         this.updatedTimestamp = updatedTimestamp;
     }
 
-    public List<PrismAction> getActions() {
-        return actions;
-    }
-
-    public void setActions(List<PrismAction> actions) {
-        this.actions = actions;
-    }
-
-    public List<CommentRepresentation> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<CommentRepresentation> comments) {
-        this.comments = comments;
-    }
 }

@@ -64,8 +64,8 @@
     </mapping>
 
     <mapping>
-        <class-a>com.zuehlke.pgadmissions.domain.Application</class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.domain.application.ApplicationRepresentation</class-b>
+        <class-a>com.zuehlke.pgadmissions.domain.Resource</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation</class-b>
         <field>
             <a>state.id</a>
             <b>state</b>

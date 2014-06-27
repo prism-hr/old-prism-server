@@ -7,7 +7,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.rest.domain.CommentRepresentation;
-import com.zuehlke.pgadmissions.rest.domain.application.ApplicationListRowRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.application.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.application.ApplicationRepresentation;
 import com.zuehlke.pgadmissions.services.*;
 import org.dozer.DozerBeanMapper;
@@ -62,11 +62,11 @@ public class ApplicationResource {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<ApplicationListRowRepresentation> getApplications(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
+    public List<ResourceListRowRepresentation> getApplications(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
         List<ResourceConsoleListRowDTO> consoleListBlock = resourceService.getConsoleListBlock(Application.class, page, perPage);
-        List<ApplicationListRowRepresentation> representations = Lists.newArrayList();
+        List<ResourceListRowRepresentation> representations = Lists.newArrayList();
         for (ResourceConsoleListRowDTO appDTO : consoleListBlock) {
-            representations.add(dozerBeanMapper.map(appDTO, ApplicationListRowRepresentation.class));
+            representations.add(dozerBeanMapper.map(appDTO, ResourceListRowRepresentation.class));
         }
         return representations;
     }

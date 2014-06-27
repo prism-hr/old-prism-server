@@ -187,5 +187,4 @@ public class ApplicationRepresentation extends ResourceRepresentation {
         return "APPLICATION";
     }
 
-
 }

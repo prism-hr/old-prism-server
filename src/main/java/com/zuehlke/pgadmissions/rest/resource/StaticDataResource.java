@@ -2,11 +2,13 @@ package com.zuehlke.pgadmissions.rest.resource;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.rest.domain.StateActionRepresentation;
-import com.zuehlke.pgadmissions.rest.domain.StateRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.workflow.RoleRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.workflow.StateActionRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.workflow.StateRepresentation;
 import com.zuehlke.pgadmissions.services.EntityService;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +56,16 @@ public class StaticDataResource {
         }
         staticData.put("states", stateRepresentations);
 
+        List<Role> roles = entityService.getAll(Role.class);
+        List<RoleRepresentation> roleRepresentationsRepresentations = Lists.newArrayListWithExpectedSize(roles.size());
+        for (Role role : roles) {
+            RoleRepresentation roleRepresentation = dozerBeanMapper.map(role, RoleRepresentation.class);
+            roleRepresentation.setDisplayValue(applicationContext.getMessage("role." + role.getId().toString(), null, LocaleContextHolder.getLocale()));
+            roleRepresentationsRepresentations.add(roleRepresentation);
+        }
+        staticData.put("roles", roleRepresentationsRepresentations);
+
+        // Display names for enum classes
         for (Class enumClass : new Class[]{Gender.class}) {
             List<EnumDefinition> definitions = Lists.newArrayListWithExpectedSize(enumClass.getEnumConstants().length);
             for (java.lang.Object key : enumClass.getEnumConstants()) {

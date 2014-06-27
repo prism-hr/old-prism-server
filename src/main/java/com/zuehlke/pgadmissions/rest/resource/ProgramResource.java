@@ -1,16 +1,14 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismAction;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.rest.domain.CommentRepresentation;
-import com.zuehlke.pgadmissions.rest.domain.application.ApplicationListRowRepresentation;
-import com.zuehlke.pgadmissions.rest.domain.application.ApplicationRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.application.ProgramRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.application.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.services.*;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,11 +62,11 @@ public class ProgramResource {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<ProgramRepresentation> getPrograms(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
+    public List<ResourceListRowRepresentation> getPrograms(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage) {
         List<ResourceConsoleListRowDTO> consoleListBlock = resourceService.getConsoleListBlock(Program.class, page, perPage);
-        List<ProgramRepresentation> representations = Lists.newArrayList();
+        List<ResourceListRowRepresentation> representations = Lists.newArrayList();
         for (ResourceConsoleListRowDTO appDTO : consoleListBlock) {
-            representations.add(dozerBeanMapper.map(appDTO, ProgramRepresentation.class));
+            representations.add(dozerBeanMapper.map(appDTO, ResourceListRowRepresentation.class));
         }
         return representations;
     }

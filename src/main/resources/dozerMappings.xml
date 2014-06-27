@@ -15,7 +15,7 @@
 
     <mapping>
         <class-a>com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO</class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.domain.application.ApplicationListRowRepresentation</class-b>
+        <class-b>com.zuehlke.pgadmissions.rest.domain.application.ResourceListRowRepresentation</class-b>
         <field>
             <a>creatorFirstName</a>
             <b>user.firstName</b>
@@ -31,6 +31,10 @@
         <field>
             <a>creatorLastName</a>
             <b>user.lastName</b>
+        </field>
+        <field>
+            <a>institutionTitle</a>
+            <b>institution.title</b>
         </field>
         <field>
             <a>programTitle</a>

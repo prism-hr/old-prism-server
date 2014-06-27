@@ -50,6 +50,7 @@ public class ResourceDAO {
                 .addScalar("creatorFirstName2", StringType.INSTANCE)
                 .addScalar("creatorFirstName3", StringType.INSTANCE)
                 .addScalar("creatorLastName", StringType.INSTANCE)
+                .addScalar("institutionTitle", StringType.INSTANCE)
                 .addScalar("programTitle", StringType.INSTANCE)
                 .addScalar("projectTitle", StringType.INSTANCE)
                 .addScalar("displayTimestamp", DateType.INSTANCE)

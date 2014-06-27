@@ -8,13 +8,15 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-public class ApplicationListRowRepresentation {
+public class ResourceListRowRepresentation {
 
     private Integer id;
 
     private String code;
 
     private UserRepresentation user;
+
+    private InstitutionRepresentation institution;
 
     private ProgramRepresentation program;
 
@@ -62,6 +64,14 @@ public class ApplicationListRowRepresentation {
 
     public void setUser(UserRepresentation user) {
         this.user = user;
+    }
+
+    public InstitutionRepresentation getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(InstitutionRepresentation institution) {
+        this.institution = institution;
     }
 
     public ProjectRepresentation getProject() {
@@ -138,6 +148,19 @@ public class ApplicationListRowRepresentation {
     }
 
     public static class ProgramRepresentation {
+
+        private String title;
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+    }
+
+    public static class InstitutionRepresentation {
 
         private String title;
 

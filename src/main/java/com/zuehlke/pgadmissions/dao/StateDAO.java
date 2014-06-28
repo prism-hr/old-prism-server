@@ -159,4 +159,10 @@ public class StateDAO {
         return escalations;
     }
 
+    public List<StateTransition> getTransitionsWithPropagations() {
+        return (List<StateTransition>) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
+                .add(Restrictions.isNotEmpty("propagatedActions")) //
+                .list();
+    }
+
 }

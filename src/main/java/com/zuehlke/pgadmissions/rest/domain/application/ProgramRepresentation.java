@@ -1,18 +1,14 @@
 package com.zuehlke.pgadmissions.rest.domain.application;
 
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
-import org.hibernate.annotations.Type;
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.rest.domain.CommentRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
-public class ProgramRepresentation {
-
-    private String code;
+public class ProgramRepresentation extends ResourceRepresentation {
 
     private String title;
 
@@ -23,14 +19,6 @@ public class ProgramRepresentation {
     private DateTime createdTimestamp;
 
     private DateTime updatedTimestamp;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public String getTitle() {
         return title;
@@ -71,4 +59,5 @@ public class ProgramRepresentation {
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
+
 }

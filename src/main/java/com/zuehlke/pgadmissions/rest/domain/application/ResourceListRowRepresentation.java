@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.domain.application;
 
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.domain.UserRepresentation;
 import org.joda.time.LocalDate;
 

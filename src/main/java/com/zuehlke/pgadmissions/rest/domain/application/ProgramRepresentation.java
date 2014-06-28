@@ -1,12 +1,9 @@
 package com.zuehlke.pgadmissions.rest.domain.application;
 
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
-import com.zuehlke.pgadmissions.rest.domain.CommentRepresentation;
-import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import java.util.List;
+import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
 
 public class ProgramRepresentation extends ResourceRepresentation {
 

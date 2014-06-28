@@ -1,20 +1,19 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mail.MailService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
 
 @Service
 @Transactional
@@ -57,7 +56,7 @@ public class RegistrationService {
     }
 
     public void sendConfirmationEmail(User newUser, Resource resource) {
-        notificationService.sendEmailNotification(newUser, resource, SYSTEM_COMPLETE_REGISTRATION_REQUEST, null);
+        notificationService.sendEmailNotification(newUser, resource, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST, null);
     }
 
     public User findUserForActivationCode(String activationCode) {

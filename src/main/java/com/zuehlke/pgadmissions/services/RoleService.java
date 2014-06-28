@@ -44,8 +44,8 @@ public class RoleService {
         return entityService.getAll(Role.class);
     }
     
-    public List<Role> getRolesWithExclusions() {
-        return roleDAO.getRolesWithExclusions();
+    public void deleteRoleExclusions() {
+        roleDAO.deleteRoleExclusions();
     }
  
     public UserRole createUserRole(Resource resource, User user, Role role) {

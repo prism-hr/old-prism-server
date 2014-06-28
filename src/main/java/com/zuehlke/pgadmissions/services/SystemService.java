@@ -227,16 +227,10 @@ public class SystemService {
     
     private void initialiseStateActions() {
         if (stateService.getPendingStateTransitions().size() == 0) {
-            systemDAO.deleteWorkflowResource(ActionRedaction.class);
-            systemDAO.deleteWorkflowResource(RoleTransition.class);
-            
-            for (Role role : roleService.getRolesWithExclusions()) {
-                role.getExcludedRoles().clear();
-            }
-            
-            for (StateTransition transition : stateService.getTransitionsWithPropagations()) {
-                transition.getPropagatedActions().clear();
-            }
+            systemDAO.deleteWorkflowResources(ActionRedaction.class);
+            systemDAO.deleteWorkflowResources(RoleTransition.class);
+            roleService.deleteRoleExclusions();
+            stateService.deletePropagatedActions();
             
             // TODO: refactor join table entities so we can delete them in bulk
             // TODO: build the workflow data
@@ -244,8 +238,8 @@ public class SystemService {
             List<State> configurableStates = stateService.getConfigurableStates();
             List<NotificationTemplate> configurableTemplates = notificationService.getConfigurableTemplates();
             
-            systemDAO.deleteObseleteWorkflowResourceConfiguration(StateDuration.class, configurableStates);
-            systemDAO.deleteObseleteWorkflowResourceConfiguration(NotificationConfiguration.class, configurableTemplates);
+            systemDAO.deleteObseleteWorkflowResourceConfigurations(StateDuration.class, configurableStates);
+            systemDAO.deleteObseleteWorkflowResourceConfigurations(NotificationConfiguration.class, configurableTemplates);
         } else {
             try {
                 stateService.executePropagatedStateTransitions();

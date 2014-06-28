@@ -13,13 +13,13 @@ public class SystemDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public <T extends IUniqueResource> void deleteWorkflowResource(Class<T> workflowResourceClass) {
+    public <T extends IUniqueResource> void deleteWorkflowResources(Class<T> workflowResourceClass) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete " + workflowResourceClass.getSimpleName()) //
                 .executeUpdate();
     }
 
-    public <T extends WorkflowResourceConfiguration, U extends WorkflowResource> void deleteObseleteWorkflowResourceConfiguration(
+    public <T extends WorkflowResourceConfiguration, U extends WorkflowResource> void deleteObseleteWorkflowResourceConfigurations(
             Class<T> workflowResourceConfigurationClass, List<U> configurableResources) {
         if (!configurableResources.isEmpty()) {
             String configurableResourceClass = Introspector.decapitalize(configurableResources.get(0).getClass().getSimpleName());

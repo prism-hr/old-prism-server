@@ -1,0 +1,116 @@
+package com.zuehlke.pgadmissions.rest.domain;
+
+
+import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.domain.enums.PrismRole;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
+
+import java.util.List;
+
+public class ResourceRepresentation {
+
+    private Integer id;
+
+    private String code;
+
+    private PrismState state;
+
+    private List<PrismAction> actions;
+
+    private List<CommentRepresentation> comments;
+
+    private List<UserRolesRepresentation> users;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public PrismState getState() {
+        return state;
+    }
+
+    public void setState(PrismState state) {
+        this.state = state;
+    }
+
+    public List<PrismAction> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<PrismAction> actions) {
+        this.actions = actions;
+    }
+
+    public List<CommentRepresentation> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentRepresentation> comments) {
+        this.comments = comments;
+    }
+
+    public List<UserRolesRepresentation> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<UserRolesRepresentation> users) {
+        this.users = users;
+    }
+
+    public static class UserRolesRepresentation {
+
+        private String firstName;
+
+        private String lastName;
+
+        private String email;
+
+        private List<PrismRole> roles;
+
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public void setFirstName(String firstName) {
+            this.firstName = firstName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+
+        public void setLastName(String lastName) {
+            this.lastName = lastName;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public List<PrismRole> getRoles() {
+            return roles;
+        }
+
+        public void setRoles(List<PrismRole> roles) {
+            this.roles = roles;
+        }
+    }
+}
+
+

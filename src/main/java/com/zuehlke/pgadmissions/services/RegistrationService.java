@@ -1,25 +1,25 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mail.MailService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
 
 @Service
 @Transactional
 public class RegistrationService {
-    
+
     @Autowired
     private EncryptionUtils encryptionUtils;
 
@@ -38,7 +38,7 @@ public class RegistrationService {
     @Autowired
     private EntityService entityService;
 
-    public User submitRegistration(User pendingUser, Resource prismScope) {
+    public User submitRegistration(User pendingUser, Resource resource) {
         User user = userService.getOrCreateUser(pendingUser.getFirstName(), pendingUser.getLastName(), pendingUser.getEmail());
 
         if (pendingUser.getActivationCode() != null && !user.getActivationCode().equals(pendingUser.getActivationCode())) {
@@ -46,7 +46,7 @@ public class RegistrationService {
         }
 
         user.getUserAccount().setPassword(encryptionUtils.getMD5Hash(pendingUser.getPassword()));
-        sendConfirmationEmail(user);
+        sendConfirmationEmail(user, resource);
         return user;
     }
 
@@ -56,8 +56,8 @@ public class RegistrationService {
         return user;
     }
 
-    public void sendConfirmationEmail(User newUser) {
-        notificationService.sendEmailNotification(newUser, null, SYSTEM_COMPLETE_REGISTRATION_REQUEST, null);
+    public void sendConfirmationEmail(User newUser, Resource resource) {
+        notificationService.sendEmailNotification(newUser, resource, SYSTEM_COMPLETE_REGISTRATION_REQUEST, null);
     }
 
     public User findUserForActivationCode(String activationCode) {

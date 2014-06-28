@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.zuehlke.pgadmissions.services.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,12 +21,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.services.RegistrationService;
-import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.RegisterFormValidator;
 
 @Controller
@@ -52,6 +47,9 @@ public class RegistrationController {
 
     @Autowired
     private ActionService actionService;
+
+    @Autowired
+    private SystemService systemService;
 
     @RequestMapping(value = "/submit", method = RequestMethod.GET)
     public String defaultGet(@ModelAttribute("pendingUser") User pendingUser, Model model, HttpSession session) {
@@ -83,7 +81,7 @@ public class RegistrationController {
             throw new ResourceNotFoundException();
         }
         // TODO resend confirmation email
-        registrationService.sendConfirmationEmail(user);
+        registrationService.sendConfirmationEmail(user, systemService.getSystem());
         model.addAttribute("pendingUser", user);
         return TemplateLocation.REGISTRATION_SUCCESS_CONFIRMATION;
     }

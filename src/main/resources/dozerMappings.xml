@@ -15,7 +15,7 @@
 
     <mapping>
         <class-a>com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO</class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.domain.application.ApplicationListRowRepresentation</class-b>
+        <class-b>com.zuehlke.pgadmissions.rest.domain.application.ResourceListRowRepresentation</class-b>
         <field>
             <a>creatorFirstName</a>
             <b>user.firstName</b>
@@ -33,6 +33,10 @@
             <b>user.lastName</b>
         </field>
         <field>
+            <a>institutionTitle</a>
+            <b>institution.title</b>
+        </field>
+        <field>
             <a>programTitle</a>
             <b>program.title</b>
         </field>
@@ -48,7 +52,7 @@
 
     <mapping>
         <class-a>com.zuehlke.pgadmissions.domain.StateAction</class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.domain.StateActionRepresentation</class-b>
+        <class-b>com.zuehlke.pgadmissions.rest.domain.workflow.StateActionRepresentation</class-b>
         <field>
             <a>state.id</a>
             <b>state</b>
@@ -60,8 +64,8 @@
     </mapping>
 
     <mapping>
-        <class-a>com.zuehlke.pgadmissions.domain.Application</class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.domain.application.ApplicationRepresentation</class-b>
+        <class-a>com.zuehlke.pgadmissions.domain.Resource</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation</class-b>
         <field>
             <a>state.id</a>
             <b>state</b>

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.domain.CommentRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.UserRepresentation;
 
 import org.joda.time.DateTime;
@@ -11,11 +12,7 @@ import org.joda.time.LocalDate;
 
 import java.util.List;
 
-public class ApplicationRepresentation {
-
-    private Integer id;
-
-    private String code;
+public class ApplicationRepresentation extends ResourceRepresentation {
 
     private UserRepresentation user;
 
@@ -27,15 +24,11 @@ public class ApplicationRepresentation {
 
     private DateTime submittedTimestamp;
 
-    private PrismState state;
-
     private LocalDate dueDate;
 
     private DateTime createdTimestamp;
 
     private DateTime updatedTimestamp;
-
-    private List<PrismAction> actions = Lists.newArrayList();
 
     private PersonalDetailsRepresentation personalDetails;
 
@@ -55,34 +48,12 @@ public class ApplicationRepresentation {
 
     private AdditionalInformationRepresentation additionalInformation;
 
-    private List<CommentRepresentation> comments;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public void setActions(List<PrismAction> actions) {
-        this.actions = actions;
-    }
-
     public ProgramRepresentation getProgram() {
         return program;
     }
 
     public void setProgram(ProgramRepresentation program) {
         this.program = program;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public UserRepresentation getUser() {
@@ -117,14 +88,6 @@ public class ApplicationRepresentation {
         this.submittedTimestamp = submittedTimestamp;
     }
 
-    public PrismState getState() {
-        return state;
-    }
-
-    public void setState(PrismState state) {
-        this.state = state;
-    }
-
     public LocalDate getDueDate() {
         return dueDate;
     }
@@ -147,10 +110,6 @@ public class ApplicationRepresentation {
 
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
-    }
-
-    public List<PrismAction> getActions() {
-        return actions;
     }
 
     public PersonalDetailsRepresentation getPersonalDetails() {
@@ -225,17 +184,8 @@ public class ApplicationRepresentation {
         this.additionalInformation = additionalInformation;
     }
 
-    public List<CommentRepresentation> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<CommentRepresentation> comments) {
-        this.comments = comments;
-    }
-
     public String getResourceType() {
         return "APPLICATION";
     }
-
 
 }

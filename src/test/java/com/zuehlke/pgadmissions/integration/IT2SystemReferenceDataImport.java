@@ -35,6 +35,9 @@ public class IT2SystemReferenceDataImport {
     private InstitutionDomicileImportService institutionDomicileImportService;
 
     @Autowired
+    private OpportunityCategoryImportService opportunityCategoryImportService;
+
+    @Autowired
     private EntityService entityService;
 
     @Autowired
@@ -50,6 +53,7 @@ public class IT2SystemReferenceDataImport {
     public void testImportData() throws Exception {
         it1SystemInitialisation.testSystemInitialisation();
         testImportInstitutionDomiciles();
+        testOpportunityCategories();
         Institution institution = createInstitution();
         testImportDisabilities(institution);
         testConflictsInProgramImport(institution);
@@ -67,6 +71,10 @@ public class IT2SystemReferenceDataImport {
         InstitutionDomicileRegion wojBielskie = entityService.getByProperty(InstitutionDomicileRegion.class, "id", "PL-BIELSKO");
         assertEquals("Bielskie", wojBielskie.getName());
         assertFalse(wojBielskie.isEnabled());
+    }
+
+    private void testOpportunityCategories() throws Exception{
+        opportunityCategoryImportService.importEntities("xml/opportunityCategories/soc2010.csv");
     }
 
     public Institution createInstitution() {

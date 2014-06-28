@@ -238,6 +238,7 @@ public class SystemService {
             systemDAO.deleteObseleteWorkflowResourceConfiguration(NotificationConfiguration.class, configurableStates);
         } else {
             try {
+                stateService.executePropagatedStateTransitions();
                 Thread.sleep(100);
                 initialiseStateActions();
             } catch (InterruptedException e) {

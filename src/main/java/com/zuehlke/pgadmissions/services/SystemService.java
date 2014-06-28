@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateDuration;
+import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.SystemDAO;
 import com.zuehlke.pgadmissions.domain.User;
@@ -228,6 +229,14 @@ public class SystemService {
         if (stateService.getPendingStateTransitions().size() == 0) {
             systemDAO.deleteWorkflowResource(ActionRedaction.class);
             systemDAO.deleteWorkflowResource(RoleTransition.class);
+            
+            for (Role role : roleService.getRolesWithExclusions()) {
+                role.getExcludedRoles().clear();
+            }
+            
+            for (StateTransition transition : stateService.getTransitionsWithPropagations()) {
+                transition.getPropagatedActions().clear();
+            }
             
             // TODO: refactor join table entities so we can delete them in bulk
             // TODO: build the workflow data

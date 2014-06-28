@@ -43,7 +43,11 @@ public class RoleService {
     public List<Role> getRoles() {
         return entityService.getAll(Role.class);
     }
-
+    
+    public List<Role> getRolesWithExclusions() {
+        return roleDAO.getRolesWithExclusions();
+    }
+ 
     public UserRole createUserRole(Resource resource, User user, Role role) {
         UserRole userRole = new UserRole();
         userRole.setResource(resource);

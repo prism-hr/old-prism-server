@@ -86,5 +86,9 @@ public class NotificationService {
     public NotificationConfiguration getConfiguration(Resource resource, NotificationTemplate template) {
         return notificationDAO.getConfiguration(resource, template);
     }
+
+    public List<NotificationTemplate> getConfigurableTemplates() {
+        return notificationDAO.getConfigurableTemplates();
+    }
     
 }

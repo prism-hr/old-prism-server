@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.beans.Introspector;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
@@ -18,13 +19,16 @@ public class SystemDAO {
                 .executeUpdate();
     }
 
-    public <T extends WorkflowResourceConfiguration> void deleteObseleteWorkflowResourceConfiguration(Class<T> workflowResourceConfigurationClass,
-            List<State> configurableStates) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "delete " + workflowResourceConfigurationClass.getSimpleName() + " " //
-                        + "where state not in (:configurableStates)") //
-                .setParameterList("configurableStates", configurableStates) //
-                .executeUpdate();
+    public <T extends WorkflowResourceConfiguration, U extends WorkflowResource> void deleteObseleteWorkflowResourceConfiguration(
+            Class<T> workflowResourceConfigurationClass, List<U> configurableResources) {
+        if (!configurableResources.isEmpty()) {
+            String configurableResourceClass = Introspector.decapitalize(configurableResources.get(0).getClass().getSimpleName());
+            sessionFactory.getCurrentSession().createQuery( //
+                    "delete " + workflowResourceConfigurationClass.getSimpleName() + " " //
+                            + "where state not in (:configurableStates)") //
+                    .setParameterList(configurableResourceClass, configurableResources) //
+                    .executeUpdate();
+        }
     }
 
 }

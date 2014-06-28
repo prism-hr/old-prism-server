@@ -238,9 +238,13 @@ public class RoleDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Role> getRolesWithExclusions() { 
-        return (List<Role>) sessionFactory.getCurrentSession().createCriteria(Role.class) //
+    public void deleteRoleExclusions() { 
+        List<Role> roles = sessionFactory.getCurrentSession().createCriteria(Role.class) //
                 .add(Restrictions.isNotEmpty("excludedRoles")) //
                 .list();
+        
+        for (Role role : roles) {
+            role.getExcludedRoles().clear();
+        }
     }
 }

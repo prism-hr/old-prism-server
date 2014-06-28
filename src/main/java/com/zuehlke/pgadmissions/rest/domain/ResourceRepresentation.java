@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.domain;
 
 
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 import java.util.List;
 

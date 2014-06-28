@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.rest.domain.application;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.domain.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.UserRepresentation;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 

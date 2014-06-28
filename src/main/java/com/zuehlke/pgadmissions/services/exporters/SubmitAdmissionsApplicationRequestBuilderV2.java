@@ -62,8 +62,8 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ReferralSource;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.Gender;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 public class SubmitAdmissionsApplicationRequestBuilderV2 {
 

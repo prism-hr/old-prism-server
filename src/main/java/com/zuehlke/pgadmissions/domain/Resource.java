@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
-import com.zuehlke.pgadmissions.domain.enums.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public abstract class Resource implements IUniqueResource {
 

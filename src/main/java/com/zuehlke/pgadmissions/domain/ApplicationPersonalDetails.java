@@ -19,7 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.definitions.Gender;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity

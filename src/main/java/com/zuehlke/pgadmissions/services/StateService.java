@@ -21,15 +21,13 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.PrismStateTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.mail.MailDescriptor;
 import com.zuehlke.pgadmissions.mail.MailService;
 
@@ -79,7 +77,7 @@ public class StateService {
     public StateDuration getStateDuration(Resource resource, State state) {
         return stateDAO.getStateDuration(resource, state);
     }
-
+    
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public StateTransition executeStateTransition(Resource operativeResource, ResourceDynamic resource, Action action, Comment comment) {
         StateTransition stateTransition = getStateTransition(operativeResource, action, comment);
@@ -113,7 +111,7 @@ public class StateService {
 
     public void executePropagatedStateTransitions() {
         Resource lastResource = null;
-        for (StateTransitionPending pendingStateTransition : stateDAO.getPendingStateTransitions()) {
+        for (StateTransitionPending pendingStateTransition : getPendingStateTransitions()) {
             Resource thisResource = pendingStateTransition.getResource();
 
             if (thisResource != lastResource) {
@@ -128,15 +126,19 @@ public class StateService {
             lastResource = thisResource;
         }
     }
+    
+    public List<StateTransitionPending> getPendingStateTransitions() {
+        return stateDAO.getPendingStateTransitions();
+    }
 
     public void executeEscalatedStateTransitions() {
         executeThreadedStateTransitions(stateDAO.getEscalatedStateTransitions(), systemService.getSystem().getUser());
     }
-    
-    public PrismStateTransitionEvaluation getTransitionEvaluation(StateAction stateAction) {
-        return stateDAO.getStateTransitionEvaluationByStateAction(stateAction);
-    }
 
+    public ThreadPoolExecutor getThreadedStateTransitionPool() {
+        return threadedStateTransitionPool;
+    }
+    
     private void executeThreadedStateTransitions(final HashMultimap<Action, ResourceDynamic> threadedStateTransitions, final User invoker) {
         for (final Action action : threadedStateTransitions.keySet()) {
             for (final ResourceDynamic resource : threadedStateTransitions.get(action)) {
@@ -150,35 +152,7 @@ public class StateService {
             }
         }
     }
-
-    public ThreadPoolExecutor getThreadedStateTransitionPool() {
-        return threadedStateTransitionPool;
-    }
     
-    public void disableStateActions() {
-        stateDAO.disableStateActions();
-    }
-    
-    public void disableStateActionAssignments() {
-        stateDAO.disableStateActionAssignments();
-    }
-    
-    public void disableStateActionEnhancements() {
-        stateDAO.disableStateActionEnhancements();
-    }
-    
-    public void disableStateTransitions() {
-        stateDAO.disableStateTransitions();
-    }
-    
-    public void disableStateDurations() {
-        stateDAO.disableStateDurations();
-    }
-    
-    public void enableStateDurations(State state) {
-        stateDAO.enableStateDurations(state);
-    }
-
     private void postResourceStateChange(ResourceDynamic resource, StateTransition stateTransition, Comment comment) {
         State transitionState = stateTransition.getTransitionState();
         resource.setPreviousState(resource.getState());

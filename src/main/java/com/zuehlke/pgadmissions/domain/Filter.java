@@ -21,8 +21,8 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationListSortCategory;
-import com.zuehlke.pgadmissions.domain.enums.ResourceListSortOrder;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationListSortCategory;
+import com.zuehlke.pgadmissions.domain.definitions.ResourceListSortOrder;
 
 @Entity
 @Table(name = "FILTER", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_account_id", "scope_id" }) })

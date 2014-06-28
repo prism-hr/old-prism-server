@@ -2,16 +2,18 @@ package com.zuehlke.pgadmissions.rest.domain;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationResidenceStatus;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.YesNoUnsureResponse;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationResidenceStatus;
+import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.domain.application.DocumentRepresentation;
+
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+
 import java.util.Set;
 import java.util.TimeZone;
 

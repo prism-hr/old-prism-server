@@ -21,7 +21,7 @@ import com.google.visualization.datasource.datatable.value.ValueType;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
+import com.zuehlke.pgadmissions.domain.definitions.ReportFormat;
 
 @Service("applicationsReportService")
 @Transactional

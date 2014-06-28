@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 import java.io.IOException;
 
 import com.zuehlke.pgadmissions.domain.*;
+
 import org.apache.commons.io.FileUtils;
 import org.hibernate.SessionFactory;
 import org.joda.time.DateTime;
@@ -11,9 +12,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.enums.DocumentType;
-import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.DocumentType;
+import com.zuehlke.pgadmissions.domain.definitions.Gender;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 public class ValidApplicationFormBuilder {
 

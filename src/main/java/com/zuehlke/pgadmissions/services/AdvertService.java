@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
-import com.zuehlke.pgadmissions.domain.enums.OpportunityListType;
+import com.zuehlke.pgadmissions.domain.definitions.OpportunityListType;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 
 @Service

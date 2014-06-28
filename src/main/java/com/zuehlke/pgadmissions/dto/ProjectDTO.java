@@ -6,7 +6,7 @@ import javax.validation.constraints.Size;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.validators.ATASConstraint;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 

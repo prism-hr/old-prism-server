@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.domain.application;
 
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
 public class ActionRepresentation {
 

@@ -17,8 +17,8 @@ import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.mail.MailDescriptor;
 
 @Repository

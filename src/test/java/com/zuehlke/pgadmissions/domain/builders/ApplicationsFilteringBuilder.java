@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.FilterConstraint;
 import com.zuehlke.pgadmissions.domain.Filter;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationListSortCategory;
-import com.zuehlke.pgadmissions.domain.enums.ResourceListSortOrder;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationListSortCategory;
+import com.zuehlke.pgadmissions.domain.definitions.ResourceListSortOrder;
 
 public class ApplicationsFilteringBuilder {
 

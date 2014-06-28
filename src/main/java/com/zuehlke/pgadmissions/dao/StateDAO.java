@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
-import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -22,9 +21,8 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
-import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
-import com.zuehlke.pgadmissions.domain.enums.PrismScope;
-import com.zuehlke.pgadmissions.domain.enums.PrismStateTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -72,7 +70,7 @@ public class StateDAO {
     
     public StateDuration getStateDuration(Resource resource, State state) {
         return (StateDuration) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
-                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
+                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource))
                 .add(Restrictions.eq("state", state)) //
                 .uniqueResult();
     }
@@ -119,7 +117,7 @@ public class StateDAO {
                 
                 propagations.putAll(propagateAction, propagateResources);
             } catch (Exception e) {
-                throw new Error("Tried to propagate an invalid prism resource", e);
+                throw new Error(e);
             }
         }
         
@@ -152,70 +150,11 @@ public class StateDAO {
                     escalations.putAll(escalateAction, escalateResources);
                 }
             } catch (Exception e) {
-                throw new Error("Tried to escalate an invalid prism resource", e);
+                throw new Error(e);
             }
         }
 
         return escalations;
-    }
-    
-    public PrismStateTransitionEvaluation getStateTransitionEvaluationByStateAction(StateAction stateAction) {
-        return (PrismStateTransitionEvaluation) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
-                .setProjection(Projections.property("stateTransitionEvaluation"))
-                .add(Restrictions.eq("stateAction", stateAction)) //
-                .add(Restrictions.isNotNull("stateTransitionEvaluation")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-    
-    public void disableStateActions() {
-        Query query = sessionFactory.getCurrentSession().createQuery( //
-                "update StateAction " //
-                + "set enabled = :enabled");
-        query.setParameter("enabled", false);
-        query.executeUpdate();
-    }
-    
-    public void disableStateActionAssignments() {
-        Query query = sessionFactory.getCurrentSession().createQuery( //
-                "update StateActionAssignment"
-                + "set enabled = :enabled");
-        query.setParameter("enabled", false);
-        query.executeUpdate();
-    }
-    
-    public void disableStateActionEnhancements() {
-        Query query = sessionFactory.getCurrentSession().createQuery( //
-                "update StateActionEnhancement"
-                + "set enabled = :enabled");
-        query.setParameter("enabled", false);
-        query.executeUpdate();
-    }
-
-    public void disableStateTransitions() {
-        Query query = sessionFactory.getCurrentSession().createQuery( //
-                "update StateTransition"
-                + "set enabled = :enabled");
-        query.setParameter("enabled", false);
-        query.executeUpdate();
-    }
-    
-    public void disableStateDurations() {
-        Query query = sessionFactory.getCurrentSession().createQuery( //
-                "update StateDuration"
-                + "set enabled = :enabled");
-        query.setParameter("enabled", false);
-        query.executeUpdate();
-    }
-    
-    public void enableStateDurations(State state) {
-        Query query = sessionFactory.getCurrentSession().createQuery( //
-                "update StateDuration"
-                + "set enabled = :enabled"
-                + "where state = :state");
-        query.setParameter("enabled", true);
-        query.setParameter("state", state);
-        query.executeUpdate();
     }
 
 }

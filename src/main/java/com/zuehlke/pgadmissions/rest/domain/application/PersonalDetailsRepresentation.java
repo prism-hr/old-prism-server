@@ -1,7 +1,8 @@
 package com.zuehlke.pgadmissions.rest.domain.application;
 
 import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.definitions.Gender;
+
 import org.joda.time.LocalDate;
 
 public class PersonalDetailsRepresentation {

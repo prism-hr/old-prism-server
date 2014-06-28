@@ -18,7 +18,7 @@ import com.google.common.collect.Maps;
 @Entity
 @Table(name = "state_duration", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "state_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "state_id" }), @UniqueConstraint(columnNames = { "program_id", "state_id" }) })
-public class StateDuration implements IUniqueResource {
+public class StateDuration extends WorkflowResourceConfiguration {
 
     @Id
     @GeneratedValue
@@ -43,39 +43,12 @@ public class StateDuration implements IUniqueResource {
     @Column(name = "day_duration", nullable = false)
     private Integer duration;
     
-    @Column(name = "enabled", nullable = false)
-    private boolean enabled;
-    
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public System getSystem() {
-        return system;
-    }
-
-    public void setSystem(System system) {
-        this.system = system;
-    }
-
-    public Institution getInstitution() {
-        return institution;
-    }
-
-    public void setInstitution(Institution institution) {
-        this.institution = institution;
-    }
-
-    public Program getProgram() {
-        return program;
-    }
-
-    public void setProgram(Program program) {
-        this.program = program;
     }
 
     public State getState() {
@@ -93,15 +66,7 @@ public class StateDuration implements IUniqueResource {
     public void setDuration(Integer duration) {
         this.duration = duration;
     }
-    
-    public boolean isEnabled() {
-        return enabled;
-    }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-    
     public StateDuration withSystem(System system) {
         this.system = system;
         return this;
@@ -117,9 +82,34 @@ public class StateDuration implements IUniqueResource {
         return this;
     }
     
-    public StateDuration withEnabled(boolean enabled) {
-        this.enabled = enabled;
-        return this;
+    @Override
+    public System getSystem() {
+        return system;
+    }
+
+    @Override
+    public void setSystem(System system) {
+        this.system = system;
+    }
+
+    @Override
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    @Override
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
+
+    @Override
+    public Program getProgram() {
+        return program;
+    }
+
+    @Override
+    public void setProgram(Program program) {
+        this.program = program;
     }
     
     @Override

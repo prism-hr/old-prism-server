@@ -2,9 +2,9 @@ package com.zuehlke.pgadmissions.integration;
 
 import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.System;
-import com.zuehlke.pgadmissions.domain.enums.PrismImportedEntityType;
-import com.zuehlke.pgadmissions.domain.enums.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramService;

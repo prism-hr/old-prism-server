@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Configuration;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.enums.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 @Repository
 public class ConfigurationDAO {

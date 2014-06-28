@@ -19,7 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.PrismProgramExportFormat;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramExportFormat;
 
 @Entity
 @Table(name = "program_export", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "title" }) })

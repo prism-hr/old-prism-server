@@ -10,8 +10,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationListFilterCategory;
-import com.zuehlke.pgadmissions.domain.enums.ResourceListSearchPredicate;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationListFilterCategory;
+import com.zuehlke.pgadmissions.domain.definitions.ResourceListSearchPredicate;
 
 @Entity
 @Table(name = "FILTER_CONSTRAINT", uniqueConstraints = { @UniqueConstraint(columnNames = { "filter_id", "filter_position_id" }) })

@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -15,16 +13,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.PrismNotificationPurpose;
-import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.enums.PrismNotificationType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationPurpose;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 
 @Entity
 @Table(name = "NOTIFICATION_TEMPLATE")
-public class NotificationTemplate implements IUniqueResource {
+public class NotificationTemplate extends WorkflowResource {
 
     @Id
     @Column(name = "id")
@@ -49,20 +45,15 @@ public class NotificationTemplate implements IUniqueResource {
     
     @OneToMany(mappedBy = "notificationTemplate")
     private Set<NotificationConfiguration> reminderIntervals = Sets.newHashSet();
-    
-    public NotificationTemplate() {
-    }
-    
-    public NotificationTemplate(PrismNotificationTemplate id) {
-        this.id = id;
-    }
 
+    @Override
     public PrismNotificationTemplate getId() {
         return id;
     }
 
-    public void setId(PrismNotificationTemplate id) {
-        this.id = id;
+    @Override
+    public void setId(Object id) {
+        this.id = (PrismNotificationTemplate) id;
     }
 
     public PrismNotificationType getNotificationType() {
@@ -124,15 +115,6 @@ public class NotificationTemplate implements IUniqueResource {
     public NotificationTemplate withReminderTemplate(NotificationTemplate reminderTemplate) {
         this.reminderTemplate = reminderTemplate;
         return this;
-    }
-
-    @Override
-    public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("id", id);
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
     }
     
 }

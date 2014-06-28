@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.FilterConstraint;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationListFilterCategory;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationListFilterCategory;
 
 public class ApplicationsFiltersPropertyEditorTest {
 

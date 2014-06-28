@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.dto;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 
 public class UpdateUserRolesDTO {
 	private User selectedUser;

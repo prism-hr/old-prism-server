@@ -4,7 +4,7 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 
 public class UserDTO {
 

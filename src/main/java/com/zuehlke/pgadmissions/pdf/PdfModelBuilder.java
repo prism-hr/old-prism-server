@@ -49,7 +49,7 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.DocumentType;
+import com.zuehlke.pgadmissions.domain.definitions.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 
 public class PdfModelBuilder extends AbstractPdfModelBuilder {

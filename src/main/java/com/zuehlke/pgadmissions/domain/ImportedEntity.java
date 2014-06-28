@@ -1,12 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import com.google.common.base.Objects;
-import org.apache.solr.analysis.*;
-import org.hibernate.search.annotations.*;
-import org.hibernate.search.annotations.Parameter;
-
-import javax.persistence.*;
-
 public interface ImportedEntity {
 
     public Institution getInstitution() ;

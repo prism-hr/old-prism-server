@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.mail.MailSender;
 
 @Service
@@ -79,10 +79,6 @@ public class NotificationService {
         return templateVersion;
     }
     
-    public Integer getReminderDuration(Resource resource, NotificationTemplate template) {
-        return notificationDAO.getReminderDuration(resource, template);
-    }
-
     public List<NotificationTemplate> getTemplates() {
         return entityService.getAll(NotificationTemplate.class);
     }
@@ -91,11 +87,4 @@ public class NotificationService {
         return notificationDAO.getConfiguration(resource, template);
     }
     
-    public void disableConfigurations() {
-        notificationDAO.disableConfigurations();
-    }
-    
-    public void enableConfigurations(NotificationTemplate template) {
-        notificationDAO.enableConfigurations(template);
-    }
 }

@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.enums.PrismUserIdentityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentityType;
 
 @Entity
 @Table(name = "user_institution_identity", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "institution_id", "user_identity_type_id" }) })

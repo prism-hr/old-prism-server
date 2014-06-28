@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.integration.providers;
 import java.util.UUID;
 
 import com.zuehlke.pgadmissions.domain.*;
+
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.builders.TestObjectProvider;
-import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.definitions.Gender;
 import com.zuehlke.pgadmissions.services.AdditionalInformationService;
 import com.zuehlke.pgadmissions.services.ApplicationAddressService;
 import com.zuehlke.pgadmissions.services.ApplicationDocumentService;

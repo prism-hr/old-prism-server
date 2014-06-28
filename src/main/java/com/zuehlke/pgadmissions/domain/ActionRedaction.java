@@ -19,7 +19,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.enums.PrismRedactionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
 
 @Entity
 @Table(name = "ACTION_REDACTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "action_id", "role_id" }) })
@@ -73,7 +73,7 @@ public class ActionRedaction implements IUniqueResource {
     public void setRedactionType(PrismRedactionType redactionType) {
         this.redactionType = redactionType;
     }
-    
+
     public ActionRedaction withAction(Action action) {
         this.action = action;
         return this;

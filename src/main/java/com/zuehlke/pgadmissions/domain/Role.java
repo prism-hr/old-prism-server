@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -20,15 +18,13 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 
 @Entity
 @Table(name = "ROLE")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class Role implements GrantedAuthority, IUniqueResource {
+public class Role extends WorkflowResource implements GrantedAuthority {
 
     private static final long serialVersionUID = 4265990408553249748L;
 
@@ -50,20 +46,13 @@ public class Role implements GrantedAuthority, IUniqueResource {
     @OneToMany(mappedBy = "role")
     private Set<StateActionAssignment> stateActionAssignments = Sets.newHashSet();
 
-    public Role() {
-    }
-
-    public Role(PrismRole id, Scope scope) {
-        this.id = id;
-        this.scope = scope;
-    }
-
+    @Override
     public PrismRole getId() {
         return id;
     }
 
-    public void setId(PrismRole id) {
-        this.id = id;
+    public void setId(Object id) {
+        this.id = (PrismRole) id;
     }
 
     public Scope getScope() {
@@ -117,15 +106,6 @@ public class Role implements GrantedAuthority, IUniqueResource {
         }
         final Role other = (Role) obj;
         return Objects.equal(id, other.getId());
-    }
-
-    @Override
-    public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("id", id);
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
     }
 
 }

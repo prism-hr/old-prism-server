@@ -28,11 +28,11 @@ import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.FilterConstraint;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationListFilterCategory;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationListFilterCategory.CategoryType;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationListSortCategory;
-import com.zuehlke.pgadmissions.domain.enums.ResourceListSearchPredicate;
-import com.zuehlke.pgadmissions.domain.enums.ResourceListSortOrder;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationListFilterCategory;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationListSortCategory;
+import com.zuehlke.pgadmissions.domain.definitions.ResourceListSearchPredicate;
+import com.zuehlke.pgadmissions.domain.definitions.ResourceListSortOrder;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationListFilterCategory.CategoryType;
 
 @Repository
 public class ApplicationFormListDAO {

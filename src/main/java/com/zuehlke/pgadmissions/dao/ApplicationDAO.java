@@ -1,7 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
 import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;

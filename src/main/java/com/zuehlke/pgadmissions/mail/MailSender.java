@@ -24,7 +24,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.services.NotificationService;
 

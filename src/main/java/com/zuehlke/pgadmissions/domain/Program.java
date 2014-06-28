@@ -5,9 +5,10 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -15,6 +16,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import javax.persistence.*;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

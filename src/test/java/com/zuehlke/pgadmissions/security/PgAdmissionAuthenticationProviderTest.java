@@ -24,7 +24,7 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)

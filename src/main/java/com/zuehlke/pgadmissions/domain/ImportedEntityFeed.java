@@ -11,7 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.enums.PrismImportedEntityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntityType;
 
 @Entity
 @Table(name = "imported_entity_feed", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_entity_type" }) })

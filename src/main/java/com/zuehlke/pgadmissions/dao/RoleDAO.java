@@ -22,9 +22,9 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
-import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
-import com.zuehlke.pgadmissions.domain.enums.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 
 @Repository
 public class RoleDAO {

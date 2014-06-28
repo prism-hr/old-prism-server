@@ -4,10 +4,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
-import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.definitions.Gender;
 import com.zuehlke.pgadmissions.rest.domain.StateActionRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.StateRepresentation;
 import com.zuehlke.pgadmissions.services.EntityService;
+
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;

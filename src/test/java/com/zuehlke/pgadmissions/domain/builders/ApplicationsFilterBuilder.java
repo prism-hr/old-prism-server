@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import com.zuehlke.pgadmissions.domain.FilterConstraint;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationListFilterCategory;
-import com.zuehlke.pgadmissions.domain.enums.ResourceListSearchPredicate;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationListFilterCategory;
+import com.zuehlke.pgadmissions.domain.definitions.ResourceListSearchPredicate;
 
 public class ApplicationsFilterBuilder {
 

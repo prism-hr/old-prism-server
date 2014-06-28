@@ -14,7 +14,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.zuehlke.pgadmissions.domain.enums.DocumentType;
+import com.zuehlke.pgadmissions.domain.definitions.DocumentType;
 
 @Entity
 @Table(name = "DOCUMENT")

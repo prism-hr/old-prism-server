@@ -2,14 +2,12 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -18,8 +16,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 @Entity
 @Table(name = "SCOPE")
@@ -33,17 +30,6 @@ public class Scope implements IUniqueResource {
     
     @Column(name = "precedence", nullable = false, unique = true)
     private Integer precedence;
-    
-    @OneToMany(mappedBy = "scope")
-    private Set<State> states = Sets.newHashSet();
-
-    public Scope() {
-    }
-    
-    public Scope(PrismScope id, Integer precedence) {
-        this.id = id;
-        this.precedence = precedence;
-    }
     
     public PrismScope getId() {
         return id;
@@ -59,10 +45,6 @@ public class Scope implements IUniqueResource {
 
     public void setPrecedence(Integer precedence) {
         this.precedence = precedence;
-    }
-    
-    public Set<State> getStates() {
-        return states;
     }
     
     public Scope withId(PrismScope id) {

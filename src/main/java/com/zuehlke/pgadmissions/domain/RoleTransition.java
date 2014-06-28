@@ -13,13 +13,13 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.zuehlke.pgadmissions.domain.enums.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 
 @Entity
 @Table(name = "ROLE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_transition_id", "role_id", "role_transition_type",
         "restrict_to_action_owner", "transition_role_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class RoleTransition {
+public class RoleTransition implements IUniqueResource {
 
     @Id
     private Integer id;
@@ -111,6 +111,12 @@ public class RoleTransition {
 
     public void setMaximumPermitted(Integer maximumPermitted) {
         this.maximumPermitted = maximumPermitted;
+    }
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

@@ -20,7 +20,7 @@ import com.google.common.collect.Maps;
 @Table(name = "NOTIFICATION_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "notification_template_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "notification_template_id" }),
         @UniqueConstraint(columnNames = { "program_id", "notification_template_id" }) })
-public class NotificationConfiguration implements IUniqueResource {
+public class NotificationConfiguration extends WorkflowResourceConfiguration {
 
     @Id
     @GeneratedValue
@@ -48,9 +48,6 @@ public class NotificationConfiguration implements IUniqueResource {
 
     @Column(name = "day_reminder_interval")
     private Integer reminderInterval;
-    
-    @Column(name = "enabled", nullable = false)
-    private boolean enabled;
 
     public Integer getId() {
         return id;
@@ -59,31 +56,7 @@ public class NotificationConfiguration implements IUniqueResource {
     public void setId(Integer id) {
         this.id = id;
     }
-
-    public System getSystem() {
-        return system;
-    }
-
-    public void setSystem(System system) {
-        this.system = system;
-    }
-
-    public Institution getInstitution() {
-        return institution;
-    }
-
-    public void setInstitution(Institution institution) {
-        this.institution = institution;
-    }
-
-    public Program getProgram() {
-        return program;
-    }
-
-    public void setProgram(Program program) {
-        this.program = program;
-    }
-
+    
     public NotificationTemplate getNotificationTemplate() {
         return notificationTemplate;
     }
@@ -107,14 +80,6 @@ public class NotificationConfiguration implements IUniqueResource {
     public void setReminderInterval(Integer reminderInterval) {
         this.reminderInterval = reminderInterval;
     }
-    
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
 
     public NotificationConfiguration withSystem(System system) {
         this.system = system;
@@ -136,9 +101,34 @@ public class NotificationConfiguration implements IUniqueResource {
         return this;
     }
     
-    public NotificationConfiguration withEnabled(boolean enabled) {
-        this.enabled = enabled;
-        return this;
+    @Override
+    public System getSystem() {
+        return system;
+    }
+
+    @Override
+    public void setSystem(System system) {
+        this.system = system;
+    }
+
+    @Override
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    @Override
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
+
+    @Override
+    public Program getProgram() {
+        return program;
+    }
+
+    @Override
+    public void setProgram(Program program) {
+        this.program = program;
     }
     
     @Override

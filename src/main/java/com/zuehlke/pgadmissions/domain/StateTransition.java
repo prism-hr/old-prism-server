@@ -23,7 +23,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.PrismStateTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 
 @Entity
 @Table(name = "STATE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "transition_state_id" }) })
@@ -47,13 +47,10 @@ public class StateTransition implements IUniqueResource {
 
     @Column(name = "state_transition_evaluation")
     @Enumerated(EnumType.STRING)
-    private PrismStateTransitionEvaluation stateTransitionEvaluation;
+    private PrismTransitionEvaluation stateTransitionEvaluation;
 
     @Column(name = "do_post_comment", nullable = false)
     private boolean doPostComment;
-    
-    @Column(name = "enabled", nullable = false)
-    private boolean enabled;
     
     @OneToMany(mappedBy = "stateTransition")
     private Set<RoleTransition> roleTransitions = Sets.newHashSet();
@@ -94,11 +91,11 @@ public class StateTransition implements IUniqueResource {
         this.transitionAction = transitionAction;
     }
 
-    public PrismStateTransitionEvaluation getStateTransitionEvaluation() {
+    public PrismTransitionEvaluation getStateTransitionEvaluation() {
         return stateTransitionEvaluation;
     }
 
-    public void setStateTransitionEvaluation(PrismStateTransitionEvaluation stateTransitionEvaluation) {
+    public void setStateTransitionEvaluation(PrismTransitionEvaluation stateTransitionEvaluation) {
         this.stateTransitionEvaluation = stateTransitionEvaluation;
     }
     
@@ -108,14 +105,6 @@ public class StateTransition implements IUniqueResource {
 
     public void setDoPostComment(boolean doPostComment) {
         this.doPostComment = doPostComment;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
     public Set<RoleTransition> getRoleTransitions() {
@@ -141,18 +130,13 @@ public class StateTransition implements IUniqueResource {
         return this;
     }
     
-    public StateTransition withStateTransitionEvaluation(PrismStateTransitionEvaluation stateTransitionEvaluation) {
+    public StateTransition withStateTransitionEvaluation(PrismTransitionEvaluation stateTransitionEvaluation) {
         this.stateTransitionEvaluation = stateTransitionEvaluation;
         return this;
     }
     
     public StateTransition withDoPostComment(boolean doPostComment) {
         this.doPostComment = doPostComment;
-        return this;
-    }
-    
-    public StateTransition withEnabled(boolean enabled) {
-        this.enabled = enabled;
         return this;
     }
 

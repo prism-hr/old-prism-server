@@ -16,7 +16,7 @@ import javax.persistence.UniqueConstraint;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.enums.PrismConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismConfiguration;
 
 @Entity
 @Table(name = "CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "configuration_parameter" }),

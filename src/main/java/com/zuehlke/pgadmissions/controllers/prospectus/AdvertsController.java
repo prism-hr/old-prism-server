@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
-import com.zuehlke.pgadmissions.domain.enums.OpportunityListType;
+import com.zuehlke.pgadmissions.domain.definitions.OpportunityListType;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationService;

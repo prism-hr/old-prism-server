@@ -18,7 +18,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.DurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 
 import freemarker.template.Template;

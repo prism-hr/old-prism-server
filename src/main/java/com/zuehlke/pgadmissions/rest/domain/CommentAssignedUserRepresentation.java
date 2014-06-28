@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.domain;
 
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 
 public class CommentAssignedUserRepresentation {
 

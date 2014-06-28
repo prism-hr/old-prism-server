@@ -24,8 +24,8 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationResidenceStatus;
-import com.zuehlke.pgadmissions.domain.enums.YesNoUnsureResponse;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationResidenceStatus;
+import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 
 @Entity
 @Table(name = "COMMENT")

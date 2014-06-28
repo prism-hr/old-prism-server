@@ -24,14 +24,13 @@ import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -122,9 +121,7 @@ public class IT1SystemInitialisation {
 
     private void verifyStateDurationCreation() {
         for (State state : stateService.getConfigurableStates()) {
-            StateDuration stateDuration = systemService.getStateDuration(state);
-            assertEquals(state.getId().getDuration(), stateDuration.getDuration());
-            assertEquals(false, stateDuration.isEnabled());
+            assertEquals(state.getId().getDuration(), systemService.getStateDuration(state).getDuration());
         }
     }
 
@@ -139,7 +136,6 @@ public class IT1SystemInitialisation {
             assertEquals(configuration.getNotificationTemplate(), template);
             assertEquals(configuration.getNotificationTemplateVersion().getNotificationTemplate(), template);
             assertEquals(PrismNotificationTemplate.getReminderInterval(template.getId()), configuration.getReminderInterval());
-            assertEquals(false, configuration.isEnabled());
             
             NotificationTemplateVersion version = configuration.getNotificationTemplateVersion();
             assertEquals(getFileContent(EMAIL_DEFAULT_SUBJECT_DIRECTORY + template.getId().getInitialTemplateSubject()), version.getSubject());

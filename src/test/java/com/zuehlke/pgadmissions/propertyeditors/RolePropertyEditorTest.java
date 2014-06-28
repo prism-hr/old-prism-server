@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.services.RoleService;
 
 public class RolePropertyEditorTest {

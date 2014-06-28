@@ -1,15 +1,16 @@
 package com.zuehlke.pgadmissions.integration;
 
 import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.enums.PrismImportedEntityType;
-import com.zuehlke.pgadmissions.domain.enums.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 import com.zuehlke.pgadmissions.services.importers.InstitutionDomicileImportService;
+
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;

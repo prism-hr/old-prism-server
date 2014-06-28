@@ -17,9 +17,9 @@ import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionEnhancement;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
-import com.zuehlke.pgadmissions.domain.enums.PrismRedactionType;
-import com.zuehlke.pgadmissions.domain.enums.PrismActionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
 
 @Repository
 public class ActionDAO {
@@ -97,7 +97,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .uniqueResult();
     }
-
+    
     @SuppressWarnings("unchecked")
     public List<PrismAction> getPermittedActions(Resource resource, User user) {
         return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //

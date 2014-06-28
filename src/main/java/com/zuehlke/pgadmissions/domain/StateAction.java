@@ -24,7 +24,7 @@ import com.google.common.collect.Maps;
 @Entity
 @Table(name = "STATE_ACTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_id", "action_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class StateAction implements IUniqueResource  {
+public class StateAction implements IUniqueResource {
 
     @Id
     @GeneratedValue
@@ -47,13 +47,7 @@ public class StateAction implements IUniqueResource  {
     @ManyToOne
     @JoinColumn(name = "notification_template_id")
     private NotificationTemplate notificationTemplate;
-    
-    @Column(name = "enabled", nullable = false)
-    private boolean enabled;
 
-    @OneToMany(mappedBy = "stateAction")
-    private Set<StateActionAssignment> stateActionAssignments = new HashSet<StateActionAssignment>();
-    
     @OneToMany(mappedBy = "stateAction")
     private Set<StateActionNotification> stateActionNotifications = new HashSet<StateActionNotification>();
 
@@ -108,18 +102,6 @@ public class StateAction implements IUniqueResource  {
         this.notificationTemplate = notificationTemplate;
     }
 
-    public Boolean getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public Set<StateActionAssignment> getStateActionAssignments() {
-        return stateActionAssignments;
-    }
-
     public Set<StateActionNotification> getStateActionNotifications() {
         return stateActionNotifications;
     }
@@ -154,11 +136,6 @@ public class StateAction implements IUniqueResource  {
     
     public StateAction withNotificationTemplate(NotificationTemplate notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
-        return this;
-    }
-    
-    public StateAction withEnabled(boolean enabled) {
-        this.enabled = enabled;
         return this;
     }
 

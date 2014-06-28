@@ -15,22 +15,25 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.Configuration;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.System;
+import com.zuehlke.pgadmissions.domain.SystemDAO;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
-import com.zuehlke.pgadmissions.domain.enums.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
-import com.zuehlke.pgadmissions.domain.enums.PrismScope;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.mail.MailService;
 
 @Service
@@ -53,6 +56,9 @@ public class SystemService {
     @Value("${system.user.email}")
     private String systemUserEmail;
 
+    @Autowired
+    private SystemDAO systemDAO;
+    
     @Autowired
     private ConfigurationService configurationService;
 
@@ -92,10 +98,6 @@ public class SystemService {
         return stateService.getStateDuration(getSystem(), state);
     }
 
-    public Integer getReminderDuration(NotificationTemplate template) {
-        return notificationService.getReminderDuration(getSystem(), template);
-    }
-
     public List<Scope> getScopes() {
         return entityService.getAll(Scope.class);
     }
@@ -119,6 +121,8 @@ public class SystemService {
         initialiseConfigurations(system);
         initialiseNotificationTemplates(system);
         initialiseStateDurations(system);
+        
+//        initialiseStateActions();
 
         if (systemUser.getUserAccount() == null) {
             mailService.sendEmailNotification(systemUser, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
@@ -205,7 +209,7 @@ public class SystemService {
             template.setReminderTemplate(notificationService.getById(PrismNotificationTemplate.getReminderTemplate(template.getId())));
             NotificationConfiguration transientConfiguration = new NotificationConfiguration().withSystem(system).withNotificationTemplate(template)
                     .withNotificationTemplateVersion(createdTemplates.get(template))
-                    .withReminderInterval(PrismNotificationTemplate.getReminderInterval(template.getId())).withEnabled(false);
+                    .withReminderInterval(PrismNotificationTemplate.getReminderInterval(template.getId()));
             entityService.getOrCreate(transientConfiguration);
         }
     }
@@ -214,9 +218,30 @@ public class SystemService {
         for (PrismState prismState : PrismState.values()) {
             if (prismState.getDuration() != null) {
                 State state = stateService.getById(prismState);
-                StateDuration transientStateDuration = new StateDuration().withSystem(system).withState(state).withDuration(prismState.getDuration())
-                        .withEnabled(false);
+                StateDuration transientStateDuration = new StateDuration().withSystem(system).withState(state).withDuration(prismState.getDuration());
                 entityService.getOrCreate(transientStateDuration);
+            }
+        }
+    }
+    
+    private void initialiseStateActions() {
+        if (stateService.getPendingStateTransitions().size() == 0) {
+            systemDAO.deleteWorkflowResource(ActionRedaction.class);
+            systemDAO.deleteWorkflowResource(RoleTransition.class);
+            
+            // TODO: refactor join table entities so we can delete them in bulk
+            // TODO: build the workflow data
+            
+            List<State> configurableStates = stateService.getConfigurableStates();
+            
+            systemDAO.deleteObseleteWorkflowResourceConfiguration(StateDuration.class, configurableStates);
+            systemDAO.deleteObseleteWorkflowResourceConfiguration(NotificationConfiguration.class, configurableStates);
+        } else {
+            try {
+                Thread.sleep(100);
+                initialiseStateActions();
+            } catch (InterruptedException e) {
+                throw new Error(e);
             }
         }
     }

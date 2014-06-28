@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
 
 import java.util.HashMap;
 import java.util.Map;

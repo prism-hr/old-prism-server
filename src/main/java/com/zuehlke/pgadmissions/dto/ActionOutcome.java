@@ -8,7 +8,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
 public class ActionOutcome {
 

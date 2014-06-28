@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.zuehlke.pgadmissions.dao.DocumentDAO;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.enums.DocumentType;
+import com.zuehlke.pgadmissions.domain.definitions.DocumentType;
 
 @Service
 @Transactional

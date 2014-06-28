@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -36,9 +35,6 @@ public class StateActionAssignment implements IUniqueResource {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
     
-    @Column(name = "enabled", nullable = false)
-    private boolean enabled;
-    
     @OneToMany(mappedBy = "stateActionAssignment")
     private Set<StateActionEnhancement> enhancements = Sets.newHashSet();
 
@@ -66,14 +62,6 @@ public class StateActionAssignment implements IUniqueResource {
         this.role = role;
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     public Set<StateActionEnhancement> getEnhancements() {
         return enhancements;
     }
@@ -88,11 +76,6 @@ public class StateActionAssignment implements IUniqueResource {
         return this;
     }
     
-    public StateActionAssignment withEnabled(boolean enabled) {
-        this.enabled = enabled;
-        return this;
-    }
-
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();

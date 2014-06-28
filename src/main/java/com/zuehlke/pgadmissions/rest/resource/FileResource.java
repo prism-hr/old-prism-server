@@ -2,8 +2,9 @@ package com.zuehlke.pgadmissions.rest.resource;
 
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.enums.DocumentType;
+import com.zuehlke.pgadmissions.domain.definitions.DocumentType;
 import com.zuehlke.pgadmissions.services.EntityService;
+
 import org.bouncycastle.util.io.Streams;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.Part;
+
 import java.io.IOException;
 import java.util.Map;
 

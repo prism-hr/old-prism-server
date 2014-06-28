@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.dao.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilderV2;
 import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;

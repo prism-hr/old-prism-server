@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.timers;
 
-import static com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate.SYSTEM_IMPORT_ERROR_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.SYSTEM_IMPORT_ERROR_NOTIFICATION;
 
 import java.net.Authenticator;
 
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.mail.MailService;
 import com.zuehlke.pgadmissions.services.SystemService;

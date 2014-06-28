@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.SystemService;

@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -18,15 +16,13 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Entity
 @Table(name = "STATE")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class State implements IUniqueResource {
+public class State extends WorkflowResource {
 
     @Id
     @Column(name = "id")
@@ -49,23 +45,17 @@ public class State implements IUniqueResource {
     
     @OneToMany(mappedBy = "state")
     private Set<Application> applications = Sets.newHashSet();
-    
-    public State() {
-    }
-    
-    public State(PrismState id, Scope scope) {
-        this.id = id;
-        this.scope = scope;
-    }
 
+    @Override
     public PrismState getId() {
         return id;
     }
 
-    public void setId(PrismState id) {
-        this.id = id;
+    @Override
+    public void setId(Object id) {
+        this.id = (PrismState) id;
     }
-
+    
     public State getParentState() {
         return parentState;
     }
@@ -89,11 +79,15 @@ public class State implements IUniqueResource {
     public void setScope(Scope scope) {
         this.scope = scope;
     }
-
+    
     public Set<StateAction> getStateActions() {
         return stateActions;
     }
-    
+
+    public Set<Application> getApplications() {
+        return applications;
+    }
+
     public State withId(PrismState id) {
         this.id = id;
         return this;
@@ -107,15 +101,6 @@ public class State implements IUniqueResource {
     public State withScope(Scope scope) {
         this.scope = scope;
         return this;
-    }
-
-    @Override
-    public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("id", id);
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
     }
 
 }

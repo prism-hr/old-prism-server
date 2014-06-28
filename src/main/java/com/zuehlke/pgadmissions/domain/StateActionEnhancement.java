@@ -19,7 +19,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.enums.PrismEnhancementType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismEnhancementType;
 
 @Entity
 @Table(name = "STATE_ACTION_ENHANCEMENT", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_assignment_id", "enhancement_type" }) })
@@ -41,9 +41,6 @@ public class StateActionEnhancement implements IUniqueResource {
     @ManyToOne
     @JoinColumn(name = "delegated_action_id")
     private Action delegatedAction;
-
-    @Column(name = "enabled", nullable = false)
-    private boolean enabled;
     
     public Integer getId() {
         return Id;
@@ -76,14 +73,6 @@ public class StateActionEnhancement implements IUniqueResource {
     public void setDelegatedAction(Action delegatedAction) {
         this.delegatedAction = delegatedAction;
     }
-    
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
 
     public StateActionEnhancement withStateActionAssignment(StateActionAssignment stateActionAssignment) {
         this.stateActionAssignment = stateActionAssignment;
@@ -97,11 +86,6 @@ public class StateActionEnhancement implements IUniqueResource {
     
     public StateActionEnhancement withDelegatedAction(Action delegatedAction) {
         this.delegatedAction = delegatedAction;
-        return this;
-    }
-    
-    public StateActionEnhancement withEnabled(boolean enabled) {
-        this.enabled = enabled;
         return this;
     }
 

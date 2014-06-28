@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dto;
 
-import com.zuehlke.pgadmissions.domain.enums.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
 public class ActionDefinition {
 

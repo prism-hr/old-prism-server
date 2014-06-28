@@ -34,6 +34,8 @@ public class StateDAO {
     public List<State> getConfigurableStates() {
         return (List<State>) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
                 .setProjection(Projections.property("state")) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNotNull("system")) //
                 .list();
     }

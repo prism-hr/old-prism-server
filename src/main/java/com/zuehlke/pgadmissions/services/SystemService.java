@@ -233,9 +233,10 @@ public class SystemService {
             // TODO: build the workflow data
             
             List<State> configurableStates = stateService.getConfigurableStates();
+            List<NotificationTemplate> configurableTemplates = notificationService.getConfigurableTemplates();
             
             systemDAO.deleteObseleteWorkflowResourceConfiguration(StateDuration.class, configurableStates);
-            systemDAO.deleteObseleteWorkflowResourceConfiguration(NotificationConfiguration.class, configurableStates);
+            systemDAO.deleteObseleteWorkflowResourceConfiguration(NotificationConfiguration.class, configurableTemplates);
         } else {
             try {
                 stateService.executePropagatedStateTransitions();

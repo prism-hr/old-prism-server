@@ -32,44 +32,44 @@ public enum PrismRole {
     
     private PrismScope scope;
     
-    private static final HashMultimap<PrismRole, PrismRole> exclusions = HashMultimap.create();
+    private static final HashMultimap<PrismRole, PrismRole> excludedRoles = HashMultimap.create();
 
     static {
-        exclusions.put(PrismRole.APPLICATION_ADMINISTRATOR, PrismRole.APPLICATION_CREATOR);
-        exclusions.put(PrismRole.APPLICATION_CREATOR, PrismRole.INSTITUTION_ADMINISTRATOR);
-        exclusions.put(PrismRole.APPLICATION_CREATOR, PrismRole.INSTITUTION_ADMITTER);
-        exclusions.put(PrismRole.APPLICATION_CREATOR, PrismRole.PROGRAM_ADMINISTRATOR);
-        exclusions.put(PrismRole.APPLICATION_CREATOR, PrismRole.PROGRAM_APPROVER);
-        exclusions.put(PrismRole.APPLICATION_CREATOR, PrismRole.PROGRAM_VIEWER);
-        exclusions.put(PrismRole.APPLICATION_CREATOR, PrismRole.PROJECT_ADMINISTRATOR);
-        exclusions.put(PrismRole.APPLICATION_CREATOR, PrismRole.PROJECT_PRIMARY_SUPERVISOR);
-        exclusions.put(PrismRole.APPLICATION_CREATOR, PrismRole.PROJECT_SECONDARY_SUPERVISOR);
-        exclusions.put(PrismRole.APPLICATION_CREATOR, PrismRole.SYSTEM_ADMINISTRATOR);
-        exclusions.put(PrismRole.APPLICATION_INTERVIEWER, PrismRole.APPLICATION_CREATOR);
-        exclusions.put(PrismRole.APPLICATION_POTENTIAL_INTERVIEWER, PrismRole.APPLICATION_CREATOR);
-        exclusions.put(PrismRole.APPLICATION_PRIMARY_SUPERVISOR, PrismRole.APPLICATION_CREATOR);
-        exclusions.put(PrismRole.APPLICATION_REFEREE, PrismRole.APPLICATION_CREATOR);
-        exclusions.put(PrismRole.APPLICATION_REVIEWER, PrismRole.APPLICATION_CREATOR);
-        exclusions.put(PrismRole.APPLICATION_SECONDARY_SUPERVISOR, PrismRole.APPLICATION_CREATOR);
-        exclusions.put(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR, PrismRole.APPLICATION_CREATOR);
-        exclusions.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.INSTITUTION_ADMINISTRATOR);
-        exclusions.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.INSTITUTION_ADMITTER);
-        exclusions.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROGRAM_ADMINISTRATOR);
-        exclusions.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROGRAM_APPROVER);
-        exclusions.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROGRAM_VIEWER);
-        exclusions.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROJECT_ADMINISTRATOR);
-        exclusions.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROJECT_PRIMARY_SUPERVISOR);
-        exclusions.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROJECT_SECONDARY_SUPERVISOR);
-        exclusions.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.SYSTEM_ADMINISTRATOR);
-        exclusions.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.INSTITUTION_ADMINISTRATOR);
-        exclusions.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.INSTITUTION_ADMITTER);
-        exclusions.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.PROGRAM_ADMINISTRATOR);
-        exclusions.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.PROGRAM_APPROVER);
-        exclusions.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.PROGRAM_VIEWER);
-        exclusions.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.PROJECT_ADMINISTRATOR);
-        exclusions.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.PROJECT_PRIMARY_SUPERVISOR);
-        exclusions.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.PROJECT_SECONDARY_SUPERVISOR);
-        exclusions.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.SYSTEM_ADMINISTRATOR);
+        excludedRoles.put(PrismRole.APPLICATION_ADMINISTRATOR, PrismRole.APPLICATION_CREATOR);
+        excludedRoles.put(PrismRole.APPLICATION_CREATOR, PrismRole.INSTITUTION_ADMINISTRATOR);
+        excludedRoles.put(PrismRole.APPLICATION_CREATOR, PrismRole.INSTITUTION_ADMITTER);
+        excludedRoles.put(PrismRole.APPLICATION_CREATOR, PrismRole.PROGRAM_ADMINISTRATOR);
+        excludedRoles.put(PrismRole.APPLICATION_CREATOR, PrismRole.PROGRAM_APPROVER);
+        excludedRoles.put(PrismRole.APPLICATION_CREATOR, PrismRole.PROGRAM_VIEWER);
+        excludedRoles.put(PrismRole.APPLICATION_CREATOR, PrismRole.PROJECT_ADMINISTRATOR);
+        excludedRoles.put(PrismRole.APPLICATION_CREATOR, PrismRole.PROJECT_PRIMARY_SUPERVISOR);
+        excludedRoles.put(PrismRole.APPLICATION_CREATOR, PrismRole.PROJECT_SECONDARY_SUPERVISOR);
+        excludedRoles.put(PrismRole.APPLICATION_CREATOR, PrismRole.SYSTEM_ADMINISTRATOR);
+        excludedRoles.put(PrismRole.APPLICATION_INTERVIEWER, PrismRole.APPLICATION_CREATOR);
+        excludedRoles.put(PrismRole.APPLICATION_POTENTIAL_INTERVIEWER, PrismRole.APPLICATION_CREATOR);
+        excludedRoles.put(PrismRole.APPLICATION_PRIMARY_SUPERVISOR, PrismRole.APPLICATION_CREATOR);
+        excludedRoles.put(PrismRole.APPLICATION_REFEREE, PrismRole.APPLICATION_CREATOR);
+        excludedRoles.put(PrismRole.APPLICATION_REVIEWER, PrismRole.APPLICATION_CREATOR);
+        excludedRoles.put(PrismRole.APPLICATION_SECONDARY_SUPERVISOR, PrismRole.APPLICATION_CREATOR);
+        excludedRoles.put(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR, PrismRole.APPLICATION_CREATOR);
+        excludedRoles.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.INSTITUTION_ADMINISTRATOR);
+        excludedRoles.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.INSTITUTION_ADMITTER);
+        excludedRoles.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROGRAM_ADMINISTRATOR);
+        excludedRoles.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROGRAM_APPROVER);
+        excludedRoles.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROGRAM_VIEWER);
+        excludedRoles.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROJECT_ADMINISTRATOR);
+        excludedRoles.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROJECT_PRIMARY_SUPERVISOR);
+        excludedRoles.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROJECT_SECONDARY_SUPERVISOR);
+        excludedRoles.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.SYSTEM_ADMINISTRATOR);
+        excludedRoles.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.INSTITUTION_ADMINISTRATOR);
+        excludedRoles.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.INSTITUTION_ADMITTER);
+        excludedRoles.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.PROGRAM_ADMINISTRATOR);
+        excludedRoles.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.PROGRAM_APPROVER);
+        excludedRoles.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.PROGRAM_VIEWER);
+        excludedRoles.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.PROJECT_ADMINISTRATOR);
+        excludedRoles.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.PROJECT_PRIMARY_SUPERVISOR);
+        excludedRoles.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.PROJECT_SECONDARY_SUPERVISOR);
+        excludedRoles.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.SYSTEM_ADMINISTRATOR);
     }
     
     private PrismRole(PrismScope scope) {
@@ -80,8 +80,8 @@ public enum PrismRole {
         return scope;
     }
     
-    public Set<PrismRole> getExclusions(PrismRole role) {
-        return exclusions.get(role);
+    public static Set<PrismRole> getExcludedRoles(PrismRole role) {
+        return excludedRoles.get(role);
     }
 
 }

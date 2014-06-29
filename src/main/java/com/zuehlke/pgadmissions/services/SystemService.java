@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ActionRedaction;
@@ -25,11 +27,11 @@ import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateDuration;
-import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.SystemDAO;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -59,7 +61,7 @@ public class SystemService {
 
     @Autowired
     private SystemDAO systemDAO;
-    
+
     @Autowired
     private ConfigurationService configurationService;
 
@@ -109,8 +111,8 @@ public class SystemService {
 
     public void initialiseSystem() {
         initialiseScopes();
-        initialiseActions();
         initialiseRoles();
+        initialiseActions();
         initialiseStates();
 
         User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail);
@@ -122,8 +124,8 @@ public class SystemService {
         initialiseConfigurations(system);
         initialiseNotificationTemplates(system);
         initialiseStateDurations(system);
-        
-//        initialiseStateActions();
+
+        // initialiseStateActions();
 
         if (systemUser.getUserAccount() == null) {
             mailService.sendEmailNotification(systemUser, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
@@ -139,19 +141,44 @@ public class SystemService {
         }
     }
 
+    private void initialiseRoles() {
+        Set<Role> rolesWithExclusions = Sets.newHashSet();
+
+        for (PrismRole prismRole : PrismRole.values()) {
+            Scope scope = entityService.getByProperty(Scope.class, "id", prismRole.getScope());
+            Role transientRole = new Role().withId(prismRole).withScope(scope);
+            Role role = entityService.getOrCreate(transientRole);
+
+            if (!PrismRole.getExcludedRoles(prismRole).isEmpty()) {
+                rolesWithExclusions.add(role);
+            }
+        }
+
+        for (Role roleWithExclusions : rolesWithExclusions) {
+            for (PrismRole excludedPrismRole : PrismRole.getExcludedRoles(roleWithExclusions.getId())) {
+                Role excludedRole = roleService.getById(excludedPrismRole);
+                roleWithExclusions.getExcludedRoles().add(excludedRole);
+            }
+        }
+    }
+    
     private void initialiseActions() {
         for (PrismAction prismAction : PrismAction.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismAction.getScope());
             Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType()).withScope(scope);
-            entityService.getOrCreate(transientAction);
-        }
-    }
+            Action action = entityService.getOrCreate(transientAction);
 
-    private void initialiseRoles() {
-        for (PrismRole prismRole : PrismRole.values()) {
-            Scope scope = entityService.getByProperty(Scope.class, "id", prismRole.getScope());
-            Role transientRole = new Role().withId(prismRole).withScope(scope);
-            entityService.getOrCreate(transientRole);
+            List<PrismActionRedaction> prismActionRedactions = prismAction.getRedactions();
+            
+            if (prismActionRedactions != null) {
+                for (PrismActionRedaction prismActionRedaction : prismActionRedactions) {
+                    Role role = roleService.getById(prismActionRedaction.getRole());
+                    ActionRedaction transientActionRedaction = new ActionRedaction().withAction(action).withRole(role)
+                            .withRedactionType(prismActionRedaction.getRedactionType());
+                    ActionRedaction actionRedaction = entityService.getOrCreate(transientActionRedaction);
+                    action.getRedactions().add(actionRedaction);
+                }
+            }
         }
     }
 
@@ -224,20 +251,20 @@ public class SystemService {
             }
         }
     }
-    
+
     private void initialiseStateActions() {
         if (stateService.getPendingStateTransitions().size() == 0) {
             systemDAO.deleteWorkflowResources(ActionRedaction.class);
             systemDAO.deleteWorkflowResources(RoleTransition.class);
             roleService.deleteRoleExclusions();
             stateService.deletePropagatedActions();
-            
+
             // TODO: refactor join table entities so we can delete them in bulk
             // TODO: build the workflow data
-            
+
             List<State> configurableStates = stateService.getConfigurableStates();
             List<NotificationTemplate> configurableTemplates = notificationService.getConfigurableTemplates();
-            
+
             systemDAO.deleteObseleteWorkflowResourceConfigurations(StateDuration.class, configurableStates);
             systemDAO.deleteObseleteWorkflowResourceConfigurations(NotificationConfiguration.class, configurableTemplates);
         } else {

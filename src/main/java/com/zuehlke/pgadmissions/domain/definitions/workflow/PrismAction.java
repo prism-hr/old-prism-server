@@ -139,30 +139,4 @@ public enum PrismAction {
         return redactions;
     }
 
-    public static class PrismActionRedaction {
-
-        private PrismRole role;
-
-        private PrismRedactionType redactionType;
-
-        public PrismRole getRole() {
-            return role;
-        }
-
-        public PrismRedactionType getRedactionType() {
-            return redactionType;
-        }
-
-        public PrismAction.PrismActionRedaction withRole(PrismRole role) {
-            this.role = role;
-            return this;
-        }
-
-        public PrismAction.PrismActionRedaction withRedactionType(PrismRedactionType redactionType) {
-            this.redactionType = redactionType;
-            return this;
-        }
-
-    }
-
 }

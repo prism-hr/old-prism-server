@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionEnha
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
-public class PrismWithdrawnCompleted extends PrismWorkflowState {
+public class PrismApplicationWithdrawnCompleted extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {
@@ -49,6 +49,9 @@ public class PrismWithdrawnCompleted extends PrismWorkflowState {
                         .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR) // 
+                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                    new PrismStateActionNotification() // 
+                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
                         .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 

@@ -49,6 +49,9 @@ public class PrismProjectDisabledPendingProgramReactivation extends PrismWorkflo
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR) // 
                         .withTemplate(PrismNotificationTemplate.PROJECT_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
+                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
+                        .withTemplate(PrismNotificationTemplate.PROJECT_UPDATE_NOTIFICATION), // 
+                    new PrismStateActionNotification() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR) // 
                         .withTemplate(PrismNotificationTemplate.PROJECT_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
@@ -81,6 +84,9 @@ public class PrismProjectDisabledPendingProgramReactivation extends PrismWorkflo
                         .withTemplate(PrismNotificationTemplate.PROJECT_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR) // 
+                        .withTemplate(PrismNotificationTemplate.PROJECT_UPDATE_NOTIFICATION), // 
+                    new PrismStateActionNotification() // 
+                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
                         .withTemplate(PrismNotificationTemplate.PROJECT_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR) // 

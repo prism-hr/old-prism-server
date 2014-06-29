@@ -54,7 +54,7 @@ public class PrismProgramApproval extends PrismWorkflowState {
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_PROGRAM_LIST) // 
                         .withEvaluation(PrismTransitionEvaluation.PROGRAM_APPROVED_OUTCOME) // 
                         .withPostComment(true)))); //
-        
+    
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_EMAIL_CREATOR) //
             .withRaisesUrgentFlag(false) //
@@ -64,7 +64,7 @@ public class PrismProgramApproval extends PrismWorkflowState {
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
-        
+    
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_VIEW) //
             .withRaisesUrgentFlag(false) //
@@ -76,7 +76,7 @@ public class PrismProgramApproval extends PrismWorkflowState {
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR), // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
-        
+    
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_VIEW_APPLICATION_LIST) //
             .withRaisesUrgentFlag(false) //
@@ -126,7 +126,7 @@ public class PrismProgramApproval extends PrismWorkflowState {
                         .withRole(PrismRole.PROJECT_SECONDARY_SUPERVISOR), // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
-        
+    
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_VIEW_PROJECT_LIST) //
             .withRaisesUrgentFlag(false) //

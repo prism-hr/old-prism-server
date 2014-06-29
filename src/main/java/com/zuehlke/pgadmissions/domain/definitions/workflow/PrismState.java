@@ -48,7 +48,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectD
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectDisabledPendingProgramReactivation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectDisabledPendingReactivation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismSystemApproved;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismWithdrawnCompleted;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnCompleted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismWithdrawnPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismWorkflowState;
 
@@ -80,7 +80,7 @@ public enum PrismState {
     APPLICATION_VALIDATION_PENDING_COMPLETION(null, null, PrismScope.APPLICATION, new PrismApplicationValidationPendingCompletion()), //
     APPLICATION_VALIDATION_PENDING_FEEDBACK(null, 3, PrismScope.APPLICATION, new PrismApplicationValidationPendingFeedback()), //
     APPLICATION_WITHDRAWN(0, null, PrismScope.APPLICATION, new PrismApplicationWithdrawn()), //
-    APPLICATION_WITHDRAWN_COMPLETED(null, null, PrismScope.APPLICATION, new PrismWithdrawnCompleted()), //
+    APPLICATION_WITHDRAWN_COMPLETED(null, null, PrismScope.APPLICATION, new PrismApplicationWithdrawnCompleted()), //
     APPLICATION_WITHDRAWN_PENDING_CORRECTION(null, null, PrismScope.APPLICATION, new PrismWithdrawnPendingCorrection()), //
     INSTITUTION_APPROVED(1, null, PrismScope.INSTITUTION, new PrismInstitutionApproved()), //
     PROGRAM_APPROVAL(1, null, PrismScope.PROGRAM, new PrismProgramApproval()), //

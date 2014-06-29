@@ -53,13 +53,16 @@ public class PrismApplicationApprovedCompleted extends PrismWorkflowState {
                         .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR) // 
+                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                    new PrismStateActionNotification() // 
+                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
                         .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVED_COMPLETED) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
                         .withPostComment(true)))); //
-        
+    
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_EMAIL_CREATOR) //
             .withRaisesUrgentFlag(false) //
@@ -87,7 +90,7 @@ public class PrismApplicationApprovedCompleted extends PrismWorkflowState {
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR), // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR)))); //
-        
+    
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //

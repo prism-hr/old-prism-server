@@ -43,8 +43,8 @@ public class State extends WorkflowResource {
     @OneToMany(mappedBy = "state")
     private Set<StateAction> stateActions = Sets.newHashSet();
     
-    @OneToMany(mappedBy = "state")
-    private Set<Application> applications = Sets.newHashSet();
+    @OneToMany(mappedBy = "transitionState")
+    private Set<StateTransition> inverseStateTransitions = Sets.newHashSet();
 
     @Override
     public PrismState getId() {
@@ -84,8 +84,8 @@ public class State extends WorkflowResource {
         return stateActions;
     }
 
-    public Set<Application> getApplications() {
-        return applications;
+    public Set<StateTransition> getInverseStateTransitions() {
+        return inverseStateTransitions;
     }
 
     public State withId(PrismState id) {

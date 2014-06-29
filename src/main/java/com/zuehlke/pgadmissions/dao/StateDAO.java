@@ -189,4 +189,10 @@ public class StateDAO {
                 .uniqueResult();
     }
     
+    public List<State> getRootState() {
+        return (List<State>) sessionFactory.getCurrentSession().createCriteria(State.class)
+                .add(Restrictions.isEmpty("inverseStateTransitions"))
+                .list();
+    }
+    
 }

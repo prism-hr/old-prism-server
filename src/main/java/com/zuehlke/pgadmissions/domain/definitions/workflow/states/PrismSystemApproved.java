@@ -27,7 +27,7 @@ public class PrismSystemApproved extends PrismWorkflowState {
             .withDefaultAction(false) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
-                        .withTransitionState(PrismState.SYSTEM_APPROVED) // 
+                        .withTransitionState(PrismState.INSTITUTION_APPROVED) // 
                         .withTransitionAction(PrismAction.SYSTEM_CREATE_INSTITUTION) // 
                         .withPostComment(false)))); //
     

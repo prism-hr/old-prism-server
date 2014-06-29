@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
@@ -81,7 +82,7 @@ public enum PrismRole {
     }
     
     public static Set<PrismRole> getExcludedRoles(PrismRole role) {
-        return excludedRoles.get(role);
+        return excludedRoles.get(role) == null ? new HashSet<PrismRole>() : excludedRoles.get(role);
     }
 
 }

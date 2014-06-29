@@ -50,3 +50,28 @@ WHERE notification_template_id = "APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOT
 ALTER TABLE ROLE_TRANSITION
 	MODIFY COLUMN transition_role_id VARCHAR(50) NOT NULL AFTER role_transition_type
 ;
+
+/* Mistake in workflow */
+
+DELETE FROM ROLE_TRANSITION
+WHERE role_id = "PROJECT_ADMINISTRATOR"
+AND restrict_to_action_owner = 1
+;
+
+ALTER TABLE ROLE_TRANSITION
+	DROP INDEX state_transition_id,
+	ADD UNIQUE INDEX (state_transition_id, role_id, role_transition_type)
+;
+
+INSERT IGNORE INTO STATE_ACTION_ASSIGNMENT (state_action_id, role_id)
+	SELECT state_action_id, "PROJECT_PRIMARY_SUPERVISOR"
+	FROM STATE_ACTION_ASSIGNMENT
+	WHERE role_id = "PROJECT_ADMINISTRATOR"
+;
+
+INSERT IGNORE INTO STATE_ACTION_NOTIFICATION (state_action_id, role_id, notification_template_id)
+	SELECT state_action_id, "PROJECT_PRIMARY_SUPERVISOR", notification_template_id
+	FROM STATE_ACTION_NOTIFICATION
+	WHERE role_id = "PROJECT_ADMINISTRATOR"
+;
+

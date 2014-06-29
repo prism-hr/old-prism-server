@@ -124,7 +124,7 @@ public enum PrismAction {
     private PrismAction(PrismActionType actionType, PrismScope scope, List<PrismActionRedaction> redactions) {
         this.actionType = actionType;
         this.scope = scope;
-        this.redactions = redactions;
+        this.redactions = redactions == null ? this.redactions : redactions;
     }
 
     public PrismActionType getActionType() {

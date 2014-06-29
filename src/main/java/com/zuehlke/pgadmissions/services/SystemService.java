@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
@@ -22,10 +23,17 @@ import com.zuehlke.pgadmissions.domain.Configuration;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
+import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.StateActionAssignment;
+import com.zuehlke.pgadmissions.domain.StateActionEnhancement;
+import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.StateDuration;
+import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -33,12 +41,19 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionEnhancement;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import com.zuehlke.pgadmissions.mail.MailService;
 
 @Service
-@Transactional
+@Transactional(timeout = 60)
 public class SystemService {
 
     private final String EMAIL_DEFAULT_SUBJECT_DIRECTORY = "email/subject/";
@@ -68,6 +83,12 @@ public class SystemService {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private ActionService actionService;
+
+    @Autowired
+    private ResourceService resourceService;
 
     @Autowired
     private RoleService roleService;
@@ -104,7 +125,7 @@ public class SystemService {
         return configurationService.getConfigurations(getSystem());
     }
 
-    public void initialiseSystem() {
+    public WorkflowGraph initialiseSystem() {
         initialiseScopes();
         initialiseRoles();
         initialiseActions();
@@ -120,13 +141,15 @@ public class SystemService {
         initialiseNotificationTemplates(system);
         initialiseStateDurations(system);
 
-        // initialiseStateActions();
+//        WorkflowGraph workflow = initialiseStateActions();
 
         if (systemUser.getUserAccount() == null) {
             mailService.sendEmailNotification(systemUser, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
         }
 
         entityService.flush();
+//        return workflow;
+        return null;
     }
 
     private void initialiseScopes() {
@@ -157,24 +180,22 @@ public class SystemService {
             }
         }
     }
-    
+
     private void initialiseActions() {
         for (PrismAction prismAction : PrismAction.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismAction.getScope());
             Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType()).withScope(scope);
             Action action = entityService.getOrCreate(transientAction);
             action.getRedactions().clear();
-            
+
             List<PrismActionRedaction> prismActionRedactions = prismAction.getRedactions();
-            
-            if (prismActionRedactions != null) {
-                for (PrismActionRedaction prismActionRedaction : prismActionRedactions) {
-                    Role role = roleService.getById(prismActionRedaction.getRole());
-                    ActionRedaction transientActionRedaction = new ActionRedaction().withAction(action).withRole(role)
-                            .withRedactionType(prismActionRedaction.getRedactionType());
-                    ActionRedaction actionRedaction = entityService.getOrCreate(transientActionRedaction);
-                    action.getRedactions().add(actionRedaction);
-                }
+
+            for (PrismActionRedaction prismActionRedaction : prismActionRedactions) {
+                Role role = roleService.getById(prismActionRedaction.getRole());
+                ActionRedaction transientActionRedaction = new ActionRedaction().withAction(action).withRole(role)
+                        .withRedactionType(prismActionRedaction.getRedactionType());
+                ActionRedaction actionRedaction = entityService.getOrCreate(transientActionRedaction);
+                action.getRedactions().add(actionRedaction);
             }
         }
     }
@@ -239,6 +260,14 @@ public class SystemService {
         }
     }
 
+    private String getFileContent(String filePath) {
+        try {
+            return Joiner.on(java.lang.System.lineSeparator()).join(Resources.readLines(Resources.getResource(filePath), Charsets.UTF_8));
+        } catch (IOException e) {
+            throw new Error("Could not access default notification template", e);
+        }
+    }
+
     private void initialiseStateDurations(System system) {
         for (PrismState prismState : PrismState.values()) {
             if (prismState.getDuration() != null) {
@@ -249,31 +278,168 @@ public class SystemService {
         }
     }
 
-    private void initialiseStateActions() {
+    private WorkflowGraph initialiseStateActions() {
+        WorkflowGraph workflow = new WorkflowGraph();
+
         if (stateService.getPendingStateTransitions().size() == 0) {
             stateService.deleteStateActions();
 
-            // TODO: build the workflow data
+            for (State state : stateService.getStates()) {
+                for (PrismStateAction prismStateAction : state.getId().getStateActions()) {
+                    Action action = actionService.getById(prismStateAction.getAction());
+                    NotificationTemplate template = notificationService.getById(prismStateAction.getNotificationTemplate());
+                    StateAction transientStateAction = new StateAction().withState(state).withAction(action)
+                            .withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag()).withDefaultAction(prismStateAction.isDefaultAction())
+                            .withNotificationTemplate(template);
+                    StateAction stateAction = entityService.getOrCreate(transientStateAction);
+                    initialiseStateActionAssignments(prismStateAction, stateAction);
+                    initialiseStateActionNotifications(prismStateAction, stateAction);
+                    initialiseStateTransitions(prismStateAction, stateAction, workflow);
+                }
+            }
 
             stateService.deleteObseleteStateDurations();
             notificationService.deleteObseleteNotificationConfigurations();
+
+            reassignResourceStates();
         } else {
             try {
                 stateService.executePropagatedStateTransitions();
                 Thread.sleep(100);
-                initialiseStateActions();
+                workflow = initialiseStateActions();
             } catch (InterruptedException e) {
                 throw new Error(e);
             }
         }
+        return workflow;
     }
 
-    private String getFileContent(String filePath) {
-        try {
-            return Joiner.on(java.lang.System.lineSeparator()).join(Resources.readLines(Resources.getResource(filePath), Charsets.UTF_8));
-        } catch (IOException e) {
-            throw new Error("Could not access default notification template", e);
+    private void initialiseStateActionAssignments(PrismStateAction prismStateAction, StateAction stateAction) {
+        for (PrismStateActionAssignment prismAssignment : prismStateAction.getAssignments()) {
+            Role role = roleService.getById(prismAssignment.getRole());
+            StateActionAssignment transientAssignment = new StateActionAssignment().withStateAction(stateAction).withRole(role);
+            StateActionAssignment assignment = entityService.getOrCreate(transientAssignment);
+            stateAction.getStateActionAssignments().add(assignment);
+            initialiseStateActionEnhancements(prismAssignment, assignment);
         }
+    }
+
+    private void initialiseStateActionEnhancements(PrismStateActionAssignment prismAssignment, StateActionAssignment assignment) {
+        for (PrismStateActionEnhancement prismEnhancement : prismAssignment.getEnhancements()) {
+            Action delegatedAction = actionService.getById(prismEnhancement.getDelegatedAction());
+            StateActionEnhancement transientEnhancement = new StateActionEnhancement().withStateActionAssignment(assignment)
+                    .withEnhancementType(prismEnhancement.getEnhancement()).withDelegatedAction(delegatedAction);
+            StateActionEnhancement enhancement = entityService.getOrCreate(transientEnhancement);
+            assignment.getEnhancements().add(enhancement);
+        }
+    }
+
+    private void initialiseStateActionNotifications(PrismStateAction prismStateAction, StateAction stateAction) {
+        for (PrismStateActionNotification prismNotification : prismStateAction.getNotifications()) {
+            Role role = roleService.getById(prismNotification.getRole());
+            NotificationTemplate template = notificationService.getById(prismNotification.getTemplate());
+            StateActionNotification transientNotification = new StateActionNotification().withStateAction(stateAction).withRole(role)
+                    .withNotificationTemplate(template);
+            StateActionNotification notification = entityService.getOrCreate(transientNotification);
+            stateAction.getStateActionNotifications().add(notification);
+        }
+    }
+
+    private void initialiseStateTransitions(PrismStateAction prismStateAction, StateAction stateAction, WorkflowGraph workflow) {
+        for (PrismStateTransition prismStateTransition : prismStateAction.getTransitions()) {
+            State transitionState = stateService.getById(prismStateTransition.getTransitionState());
+            Action transitionAction = actionService.getById(prismStateTransition.getTransitionAction());
+            PrismTransitionEvaluation transitionEvaluation = prismStateTransition.getEvaluation();
+            StateTransition transientStateTransition = new StateTransition().withStateAction(stateAction).withTransitionState(transitionState)
+                    .withTransitionAction(transitionAction).withStateTransitionEvaluation(transitionEvaluation)
+                    .withDoPostComment(prismStateTransition.isPostComment());
+            StateTransition stateTransition = entityService.getOrCreate(transientStateTransition);
+            stateAction.getStateTransitions().add(stateTransition);
+            initialiseRoleTransitions(prismStateTransition, stateTransition);
+
+            Set<Action> propagatedActions = stateTransition.getPropagatedActions();
+            for (PrismAction prismAction : prismStateTransition.getPropagatedActions()) {
+                Action action = actionService.getById(prismAction);
+                propagatedActions.add(action);
+            }
+
+            workflow.createOrUpdateNode(stateAction.getState().getId(), transitionState.getId(), transitionEvaluation);
+        }
+    }
+
+    private void initialiseRoleTransitions(PrismStateTransition prismStateTransition, StateTransition stateTransition) {
+        for (PrismRoleTransition prismRoleTransition : prismStateTransition.getRoleTransitions()) {
+            Role role = roleService.getById(prismRoleTransition.getRole());
+            Role transitionRole = roleService.getById(prismRoleTransition.getTransitionRole());
+            RoleTransition transientRoleTransition = new RoleTransition().withStateTransition(stateTransition).withRole(role)
+                    .withRoleTransitionType(prismRoleTransition.getTransitionType()).withTransitionRole(transitionRole)
+                    .withRestrictToActionOwner(prismRoleTransition.isRestrictToActionOwner()).withMinimumPermitted(prismRoleTransition.getMinimumPermitted())
+                    .withMaximumPermitted(prismRoleTransition.getMaximumPermitted());
+            RoleTransition roleTransition = entityService.getOrCreate(transientRoleTransition);
+            stateTransition.getRoleTransitions().add(roleTransition);
+        }
+    }
+
+    private void reassignResourceStates() {
+        for (Scope scope : getScopes()) {
+            Class<? extends Resource> resourceClass = scope.getId().getResourceClass();
+            for (State state : stateService.getDeprecatedStates(resourceClass)) {
+                State degradationState = stateService.getDegradationState(state);
+                resourceService.reassignState(resourceClass, state, degradationState);
+            }
+        }
+    }
+
+    private class WorkflowGraph {
+
+        private final HashMap<PrismState, WorkflowNode> nodes = Maps.newHashMap();
+
+        public void createOrUpdateNode(PrismState stateId, PrismState transitionStateId, PrismTransitionEvaluation stateTransitionEvaluation) {
+            WorkflowNode node = getWorkflowNode(stateId);
+            WorkflowNode inverseNode = getWorkflowNode(transitionStateId);
+
+            if (node == null) {
+                node = nodes.put(stateId, new WorkflowNode());
+            }
+
+            if (inverseNode == null) {
+                inverseNode = nodes.put(transitionStateId, new WorkflowNode());
+            }
+
+            node.addOutgoingEdge(stateId, stateTransitionEvaluation);
+            inverseNode.addIncomingEdge(stateId, stateTransitionEvaluation);
+        }
+
+        public WorkflowNode getWorkflowNode(PrismState stateId) {
+            return nodes.get(stateId);
+        }
+
+        private class WorkflowNode {
+
+            private HashMap<PrismState, PrismTransitionEvaluation> incomingEdges = Maps.newHashMap();
+
+            private HashMap<PrismState, PrismTransitionEvaluation> outgoingEdges = Maps.newHashMap();
+
+            public HashMap<PrismState, PrismTransitionEvaluation> getIncomingEdges() {
+                return incomingEdges;
+            }
+
+            public void addIncomingEdge(PrismState transitionStateId, PrismTransitionEvaluation transitionEvaluation) {
+                incomingEdges.put(transitionStateId, transitionEvaluation);
+            }
+
+            public HashMap<PrismState, PrismTransitionEvaluation> getOutgoingEdges() {
+                return outgoingEdges;
+            }
+
+            public void addOutgoingEdge(PrismState transitionStateId, PrismTransitionEvaluation transitionEvaluation) {
+                outgoingEdges.put(transitionStateId, transitionEvaluation);
+            }
+
+
+
+        }
+
     }
 
 }

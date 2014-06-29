@@ -64,12 +64,12 @@ public class PrismStateTransition {
     }
     
     public PrismStateTransition withRoleTransitions(List<PrismRoleTransition> roleTransitions) {
-        this.roleTransitions = roleTransitions;
+        this.roleTransitions = roleTransitions == null ? this.roleTransitions : roleTransitions;
         return this;
     }
     
     public PrismStateTransition withPropagatedActions(List<PrismAction> propagatedActions) {
-        this.propagatedActions = propagatedActions;
+        this.propagatedActions = propagatedActions == null ? this.propagatedActions : propagatedActions;
         return this;
     }
     

@@ -16,9 +16,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.ResourceDynamic;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 
 import freemarker.template.Template;
@@ -81,6 +84,16 @@ public class ResourceDAO {
         } catch (Exception e) {
             throw new Error("Could not build " + resourceTypeString + " list", e);
         }
+    }
+
+    public <T extends Resource> void reassignState(Class<T> resourceClass, State state, State degradationState) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update " + PrismScope.getResourceScope(resourceClass).getLowerCaseName() + " " //
+                    + "set state = :degradationState " //
+                    + "where state = : state") //
+                .setParameter("degradationState", degradationState) //
+                .setParameter("state", state) // 
+                .executeUpdate();
     }
 
 }

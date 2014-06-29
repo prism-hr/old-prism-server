@@ -1,9 +1,13 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -13,15 +17,17 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 
 @Entity
-@Table(name = "ROLE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_transition_id", "role_id", "role_transition_type",
-        "restrict_to_action_owner", "transition_role_id" }) })
+@Table(name = "ROLE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_transition_id", "role_id", "role_transition_type" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class RoleTransition implements IUniqueResource {
 
     @Id
+    @GeneratedValue
     private Integer id;
 
     @ManyToOne
@@ -36,12 +42,12 @@ public class RoleTransition implements IUniqueResource {
     @Enumerated(EnumType.STRING)
     private PrismRoleTransitionType roleTransitionType;
 
-    @Column(name = "restrict_to_action_owner", nullable = false)
-    private boolean restrictToActionOwner;
-
     @ManyToOne
     @JoinColumn(name = "transition_role_id", nullable = false)
     private Role transitionRole;
+    
+    @Column(name = "restrict_to_action_owner", nullable = false)
+    private boolean restrictToActionOwner;
 
     @Column(name = "minimum_permitted")
     private Integer minimumPermitted;
@@ -112,11 +118,51 @@ public class RoleTransition implements IUniqueResource {
     public void setMaximumPermitted(Integer maximumPermitted) {
         this.maximumPermitted = maximumPermitted;
     }
-
+    
+    public RoleTransition withStateTransition(StateTransition stateTransition) {
+        this.stateTransition = stateTransition;
+        return this;
+    }
+    
+    public RoleTransition withRole(Role role) {
+        this.role = role;
+        return this;
+    }
+    
+    public RoleTransition withRoleTransitionType(PrismRoleTransitionType roleTransitionType) {
+        this.roleTransitionType = roleTransitionType;
+        return this;
+    }
+    
+    public RoleTransition withTransitionRole(Role transitionRole) {
+        this.transitionRole = transitionRole;
+        return this;
+    }
+    
+    public RoleTransition withRestrictToActionOwner(boolean restrictToActionOwner) {
+        this.restrictToActionOwner = restrictToActionOwner;
+        return this;
+    }
+    
+    public RoleTransition withMinimumPermitted(Integer minimumPermitted) {
+        this.minimumPermitted = minimumPermitted;
+        return this;
+    }
+    
+    public RoleTransition withMaximumPermitted(Integer maximumPermitted) {
+        this.maximumPermitted = maximumPermitted;
+        return this;
+    }
+    
     @Override
     public ResourceSignature getResourceSignature() {
-        // TODO Auto-generated method stub
-        return null;
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("stateTransition", stateTransition);
+        properties.put("role", role);
+        properties.put("roleTransitionType", roleTransitionType);
+        propertiesWrapper.add(properties);
+        return new ResourceSignature(propertiesWrapper);
     }
 
 }

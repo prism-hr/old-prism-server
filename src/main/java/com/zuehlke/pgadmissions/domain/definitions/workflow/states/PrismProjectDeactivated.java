@@ -46,6 +46,8 @@ public class PrismProjectDeactivated extends PrismWorkflowState {
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR), // 
                     new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR), // 
+                    new PrismStateActionAssignment() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
@@ -97,6 +99,9 @@ public class PrismProjectDeactivated extends PrismWorkflowState {
                         .withTemplate(PrismNotificationTemplate.PROJECT_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR) // 
+                        .withTemplate(PrismNotificationTemplate.PROJECT_UPDATE_NOTIFICATION), // 
+                    new PrismStateActionNotification() // 
+                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
                         .withTemplate(PrismNotificationTemplate.PROJECT_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR) // 

@@ -125,7 +125,7 @@ public class SystemService {
         return configurationService.getConfigurations(getSystem());
     }
 
-    public WorkflowGraph initialiseSystem() {
+    public void initialiseSystem() {
         initialiseScopes();
         initialiseRoles();
         initialiseActions();
@@ -148,8 +148,6 @@ public class SystemService {
         }
 
         entityService.flush();
-//        return workflow;
-        return null;
     }
 
     private void initialiseScopes() {
@@ -278,9 +276,7 @@ public class SystemService {
         }
     }
 
-    private WorkflowGraph initialiseStateActions() {
-        WorkflowGraph workflow = new WorkflowGraph();
-
+    private void initialiseStateActions() {
         if (stateService.getPendingStateTransitions().size() == 0) {
             stateService.deleteStateActions();
 
@@ -294,7 +290,7 @@ public class SystemService {
                     StateAction stateAction = entityService.getOrCreate(transientStateAction);
                     initialiseStateActionAssignments(prismStateAction, stateAction);
                     initialiseStateActionNotifications(prismStateAction, stateAction);
-                    initialiseStateTransitions(prismStateAction, stateAction, workflow);
+                    initialiseStateTransitions(prismStateAction, stateAction);
                 }
             }
 
@@ -306,12 +302,11 @@ public class SystemService {
             try {
                 stateService.executePropagatedStateTransitions();
                 Thread.sleep(100);
-                workflow = initialiseStateActions();
+                initialiseStateActions();
             } catch (InterruptedException e) {
                 throw new Error(e);
             }
         }
-        return workflow;
     }
 
     private void initialiseStateActionAssignments(PrismStateAction prismStateAction, StateAction stateAction) {
@@ -345,7 +340,7 @@ public class SystemService {
         }
     }
 
-    private void initialiseStateTransitions(PrismStateAction prismStateAction, StateAction stateAction, WorkflowGraph workflow) {
+    private void initialiseStateTransitions(PrismStateAction prismStateAction, StateAction stateAction) {
         for (PrismStateTransition prismStateTransition : prismStateAction.getTransitions()) {
             State transitionState = stateService.getById(prismStateTransition.getTransitionState());
             Action transitionAction = actionService.getById(prismStateTransition.getTransitionAction());
@@ -362,8 +357,6 @@ public class SystemService {
                 Action action = actionService.getById(prismAction);
                 propagatedActions.add(action);
             }
-
-            workflow.createOrUpdateNode(stateAction.getState().getId(), transitionState.getId(), transitionEvaluation);
         }
     }
 
@@ -388,58 +381,6 @@ public class SystemService {
                 resourceService.reassignState(resourceClass, state, degradationState);
             }
         }
-    }
-
-    private class WorkflowGraph {
-
-        private final HashMap<PrismState, WorkflowNode> nodes = Maps.newHashMap();
-
-        public void createOrUpdateNode(PrismState stateId, PrismState transitionStateId, PrismTransitionEvaluation stateTransitionEvaluation) {
-            WorkflowNode node = getWorkflowNode(stateId);
-            WorkflowNode inverseNode = getWorkflowNode(transitionStateId);
-
-            if (node == null) {
-                node = nodes.put(stateId, new WorkflowNode());
-            }
-
-            if (inverseNode == null) {
-                inverseNode = nodes.put(transitionStateId, new WorkflowNode());
-            }
-
-            node.addOutgoingEdge(stateId, stateTransitionEvaluation);
-            inverseNode.addIncomingEdge(stateId, stateTransitionEvaluation);
-        }
-
-        public WorkflowNode getWorkflowNode(PrismState stateId) {
-            return nodes.get(stateId);
-        }
-
-        private class WorkflowNode {
-
-            private HashMap<PrismState, PrismTransitionEvaluation> incomingEdges = Maps.newHashMap();
-
-            private HashMap<PrismState, PrismTransitionEvaluation> outgoingEdges = Maps.newHashMap();
-
-            public HashMap<PrismState, PrismTransitionEvaluation> getIncomingEdges() {
-                return incomingEdges;
-            }
-
-            public void addIncomingEdge(PrismState transitionStateId, PrismTransitionEvaluation transitionEvaluation) {
-                incomingEdges.put(transitionStateId, transitionEvaluation);
-            }
-
-            public HashMap<PrismState, PrismTransitionEvaluation> getOutgoingEdges() {
-                return outgoingEdges;
-            }
-
-            public void addOutgoingEdge(PrismState transitionStateId, PrismTransitionEvaluation transitionEvaluation) {
-                outgoingEdges.put(transitionStateId, transitionEvaluation);
-            }
-
-
-
-        }
-
     }
 
 }

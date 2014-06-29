@@ -111,14 +111,8 @@ public class PrismProgramDeactivated extends PrismWorkflowState {
                                 .withRole(PrismRole.PROJECT_ADMINISTRATOR) //
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.PROJECT_ADMINISTRATOR) //
-                                .withRestrictToActionOwner(true) //
-                                .withMinimumPermitted(1) //
-                                .withMaximumPermitted(1), // 
-                            new PrismRoleTransition() //
-                                .withRole(PrismRole.PROJECT_ADMINISTRATOR) //
-                                .withTransitionType(PrismRoleTransitionType.CREATE) //
-                                .withTransitionRole(PrismRole.PROJECT_ADMINISTRATOR) //
                                 .withRestrictToActionOwner(false) //
+                                .withMinimumPermitted(0) //
                                 .withMaximumPermitted(1), // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //

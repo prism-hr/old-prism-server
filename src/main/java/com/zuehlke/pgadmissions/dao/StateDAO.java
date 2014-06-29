@@ -173,4 +173,20 @@ public class StateDAO {
                 .executeUpdate();
     }
     
+    public <T extends Resource> List<State> getDeprecatedStates(Class<T> resourceClass) {
+        return (List<State>) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
+                .setProjection(Projections.groupProperty("state")) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .add(Restrictions.isEmpty("stateActions")) //
+                .list();
+    }
+
+    public State getDegradationState(State state) {
+        return (State) sessionFactory.getCurrentSession().createCriteria(State.class) //
+                .add(Restrictions.le("sequenceOrder", state.getParentState().getSequenceOrder())) //
+                .addOrder(Order.desc("sequenceOrder")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+    
 }

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -15,7 +16,7 @@ public class PrismStateActionAssignment {
     }
 
     public List<PrismStateActionEnhancement> getEnhancements() {
-        return enhancements;
+        return enhancements == null ? new ArrayList<PrismStateActionEnhancement>() : enhancements;
     }
     
     public PrismStateActionAssignment withRole(PrismRole role) {

@@ -143,6 +143,14 @@ public class StateService {
         stateDAO.deleteObseleteStateDurations();
     }
     
+    public <T extends Resource> List<State> getDeprecatedStates(Class<T> resourceClass) {
+        return stateDAO.getDeprecatedStates(resourceClass);
+    }
+    
+    public State getDegradationState(State state) {
+        return stateDAO.getDegradationState(state);
+    }
+    
     public ThreadPoolExecutor getThreadedStateTransitionPool() {
         return threadedStateTransitionPool;
     }

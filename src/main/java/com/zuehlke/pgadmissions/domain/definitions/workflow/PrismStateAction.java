@@ -69,17 +69,17 @@ public class PrismStateAction {
     }
     
     public PrismStateAction withAssignments(List<PrismStateActionAssignment> assignments) {
-        this.assignments = assignments;
+        this.assignments = assignments == null ? this.assignments : assignments;
         return this;
     }
     
     public PrismStateAction withNotifications(List<PrismStateActionNotification> notifications) {
-        this.notifications = notifications;
+        this.notifications = notifications == null ? this.notifications : notifications;
         return this;
     }
     
     public PrismStateAction withTransitions(List<PrismStateTransition> transitions) {
-        this.transitions = transitions;
+        this.transitions = transitions == null ? this.transitions : transitions;
         return this;
     }
     

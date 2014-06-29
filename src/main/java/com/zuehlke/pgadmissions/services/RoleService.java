@@ -36,8 +36,8 @@ public class RoleService {
     @Autowired
     private EntityService entityService;
 
-    public Role getById(PrismRole authority) {
-        return roleDAO.getById(authority);
+    public Role getById(PrismRole roleId) {
+        return roleDAO.getById(roleId);
     }
     
     public List<Role> getRoles() {

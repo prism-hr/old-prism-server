@@ -1,8 +1,11 @@
 package com.zuehlke.pgadmissions.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +20,7 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.Configuration;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
@@ -27,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -91,8 +96,8 @@ public class IT1SystemInitialisation {
             systemService.initialiseSystem();
 
             verifyScopeCreation();
-            verifyActionCreation();
             verifyRoleCreation();
+            verifyActionCreation();
             verifyStateCreation();
 
             System system = systemService.getSystem();
@@ -113,16 +118,72 @@ public class IT1SystemInitialisation {
             verifyStateDurationCreation();
 
             if (i == 0) {
-                registrationHelper.assertActivationEmailRegisterAndActivateUser(systemUser, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+                registrationHelper.assertActivationEmailRegisterAndActivateUser(systemUser, system,
+                        PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
             }
 
             mailSenderMock.verify();
         }
     }
+    
+    private void verifyScopeCreation() {
+        for (Scope scope : systemService.getScopes()) {
+            assertEquals(scope.getId().getPrecedence(), scope.getPrecedence());
+        }
+    }
+    
+    private void verifyRoleCreation() {
+        for (Role role : roleService.getRoles()) {
+            assertEquals(role.getId().getScope(), role.getScope().getId());
+            
+            Set<Role> excludedRoles = role.getExcludedRoles();
+            Set<PrismRole> prismExcludedRoles = PrismRole.getExcludedRoles(role.getId());
+            
+            if (prismExcludedRoles == null) {
+                assertEquals(0, excludedRoles.size());
+            } else {
+                assertEquals(prismExcludedRoles.size(), excludedRoles.size());
+            }
+            
+            for (Role excludedRole : role.getExcludedRoles()) {
+                assertTrue(prismExcludedRoles.contains(excludedRole.getId()));
+            }
+        }
+    }
+    
+    private void verifyActionCreation() {
+        for (Action action : actionService.getActions()) {
+            assertEquals(action.getId().getActionType(), action.getActionType());
+            assertEquals(action.getId().getScope(), action.getScope().getId());
 
-    private void verifyStateDurationCreation() {
-        for (State state : stateService.getConfigurableStates()) {
-            assertEquals(state.getId().getDuration(), systemService.getStateDuration(state).getDuration());
+            Set<ActionRedaction> redactions = action.getRedactions();
+            List<PrismActionRedaction> prismActionRedactions = action.getId().getRedactions();
+            
+            if (prismActionRedactions == null) {
+                assertEquals(0, redactions.size());
+            } else {
+                assertEquals(prismActionRedactions.size(), redactions.size());
+            }
+            
+            for (ActionRedaction redaction : redactions) {
+                PrismActionRedaction prismActionRedaction = new PrismActionRedaction().withRole(redaction.getRole().getId()).withRedactionType(
+                        redaction.getRedactionType());
+                assertTrue(prismActionRedactions.contains(prismActionRedaction));
+            }
+        }
+    }
+
+    private void verifyStateCreation() {
+        for (State state : stateService.getStates()) {
+            assertEquals(PrismState.getParentState(state.getId()), state.getParentState().getId());
+            assertEquals(state.getId().getSequenceOrder(), state.getSequenceOrder());
+            assertEquals(state.getId().getScope(), state.getScope().getId());
+        }
+    }
+    
+    private void verifyConfigurationCreation() {
+        for (Configuration configuration : systemService.getConfigurations()) {
+            assertEquals(configuration.getParameter().getDefaultValue(), configuration.getValue());
         }
     }
 
@@ -131,7 +192,8 @@ public class IT1SystemInitialisation {
             assertEquals(template.getId().getNotificationType(), template.getNotificationType());
             assertEquals(template.getId().getNotificationPurpose(), template.getNotificationPurpose());
             assertEquals(template.getId().getScope(), template.getScope().getId());
-            assertEquals(PrismNotificationTemplate.getReminderTemplate(template.getId()), (template.getReminderTemplate()) == null ? null : template.getReminderTemplate().getId());
+            assertEquals(PrismNotificationTemplate.getReminderTemplate(template.getId()), (template.getReminderTemplate()) == null ? null : template
+                    .getReminderTemplate().getId());
 
             NotificationConfiguration configuration = notificationTemplateService.getConfiguration(system, template);
             assertEquals(configuration.getNotificationTemplate(), template);
@@ -143,37 +205,10 @@ public class IT1SystemInitialisation {
             assertEquals(getFileContent(EMAIL_DEFAULT_CONTENT_DIRECTORY + template.getId().getInitialTemplateContent()), version.getContent());
         }
     }
-
-    private void verifyConfigurationCreation() {
-        for (Configuration configuration : systemService.getConfigurations()) {
-            assertEquals(configuration.getParameter().getDefaultValue(), configuration.getValue());
-        }
-    }
-
-    private void verifyStateCreation() {
-        for (State state : stateService.getStates()) {
-            assertEquals(PrismState.getParentState(state.getId()), state.getParentState().getId());
-            assertEquals(state.getId().getSequenceOrder(), state.getSequenceOrder());
-            assertEquals(state.getId().getScope(), state.getScope().getId());
-        }
-    }
-
-    private void verifyRoleCreation() {
-        for (Role role : roleService.getRoles()) {
-            assertEquals(role.getId().getScope(), role.getScope().getId());
-        }
-    }
-
-    private void verifyActionCreation() {
-        for (Action action : actionService.getActions()) {
-            assertEquals(action.getId().getActionType(), action.getActionType());
-            assertEquals(action.getId().getScope(), action.getScope().getId());
-        }
-    }
-
-    private void verifyScopeCreation() {
-        for (Scope scope : systemService.getScopes()) {
-            assertEquals(scope.getId().getPrecedence(), scope.getPrecedence());
+    
+    private void verifyStateDurationCreation() {
+        for (State state : stateService.getConfigurableStates()) {
+            assertEquals(state.getId().getDuration(), systemService.getStateDuration(state).getDuration());
         }
     }
 

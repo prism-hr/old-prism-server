@@ -139,11 +139,7 @@ public class IT1SystemInitialisation {
             Set<Role> excludedRoles = role.getExcludedRoles();
             Set<PrismRole> prismExcludedRoles = PrismRole.getExcludedRoles(role.getId());
             
-            if (prismExcludedRoles == null) {
-                assertEquals(0, excludedRoles.size());
-            } else {
-                assertEquals(prismExcludedRoles.size(), excludedRoles.size());
-            }
+            assertEquals(prismExcludedRoles.size(), excludedRoles.size());
             
             for (Role excludedRole : role.getExcludedRoles()) {
                 assertTrue(prismExcludedRoles.contains(excludedRole.getId()));
@@ -159,11 +155,7 @@ public class IT1SystemInitialisation {
             Set<ActionRedaction> redactions = action.getRedactions();
             List<PrismActionRedaction> prismActionRedactions = action.getId().getRedactions();
             
-            if (prismActionRedactions == null) {
-                assertEquals(0, redactions.size());
-            } else {
-                assertEquals(prismActionRedactions.size(), redactions.size());
-            }
+            assertEquals(prismActionRedactions.size(), redactions.size());
             
             for (ActionRedaction redaction : redactions) {
                 PrismActionRedaction prismActionRedaction = new PrismActionRedaction().withRole(redaction.getRole().getId()).withRedactionType(
@@ -210,6 +202,14 @@ public class IT1SystemInitialisation {
         for (State state : stateService.getConfigurableStates()) {
             assertEquals(state.getId().getDuration(), systemService.getStateDuration(state).getDuration());
         }
+    }
+    
+    private void verifyWorkflow() {
+        List<State> potentialRootState = stateService.getRootState();
+        assertTrue(potentialRootState.size() == 1);
+        
+        State rootState = potentialRootState.get(0);
+        assertTrue(rootState.getScope().getPrecedence() == 1);
     }
 
     private String getFileContent(String filePath) {

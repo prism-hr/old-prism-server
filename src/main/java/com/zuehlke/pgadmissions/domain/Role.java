@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -36,7 +37,7 @@ public class Role extends WorkflowResource implements GrantedAuthority {
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "ROLE_EXCLUSION", joinColumns = { @JoinColumn(name = "role_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "excluded_role_id", nullable = false) })
     private Set<Role> excludedRoles = Sets.newHashSet();
 

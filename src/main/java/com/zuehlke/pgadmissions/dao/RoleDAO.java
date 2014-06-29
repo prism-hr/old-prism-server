@@ -236,15 +236,5 @@ public class RoleDAO {
                 .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource))
                 .list();
     }
-
-    @SuppressWarnings("unchecked")
-    public void deleteRoleExclusions() { 
-        List<Role> roles = sessionFactory.getCurrentSession().createCriteria(Role.class) //
-                .add(Restrictions.isNotEmpty("excludedRoles")) //
-                .list();
-        
-        for (Role role : roles) {
-            role.getExcludedRoles().clear();
-        }
-    }
+    
 }

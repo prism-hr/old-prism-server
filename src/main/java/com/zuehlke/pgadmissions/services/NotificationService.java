@@ -87,8 +87,12 @@ public class NotificationService {
         return notificationDAO.getConfiguration(resource, template);
     }
 
-    public List<NotificationTemplate> getConfigurableTemplates() {
-        return notificationDAO.getConfigurableTemplates();
+    public List<NotificationTemplate> getConfigurableNotificationTemplates() {
+        return notificationDAO.getConfigurableNotificationTemplates();
+    }
+    
+    public void deleteObseleteNotificationConfigurations() {
+        notificationDAO.deleteObseleteNotificationConfigurations();
     }
     
 }

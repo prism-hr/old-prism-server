@@ -134,9 +134,13 @@ public class StateService {
     public void executeEscalatedStateTransitions() {
         executeThreadedStateTransitions(stateDAO.getEscalatedStateTransitions(), systemService.getSystem().getUser());
     }
-
-    public void deletePropagatedActions() {
-        stateDAO.deletePropagatedActions();
+    
+    public void deleteStateActions() {
+        stateDAO.deleteStateActions();
+    }
+    
+    public void deleteObseleteStateDurations() {
+        stateDAO.deleteObseleteStateDurations();
     }
     
     public ThreadPoolExecutor getThreadedStateTransitionPool() {

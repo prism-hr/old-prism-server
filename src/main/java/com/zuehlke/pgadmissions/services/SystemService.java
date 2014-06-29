@@ -23,12 +23,10 @@ import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.System;
-import com.zuehlke.pgadmissions.domain.SystemDAO;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
@@ -58,9 +56,6 @@ public class SystemService {
 
     @Value("${system.user.email}")
     private String systemUserEmail;
-
-    @Autowired
-    private SystemDAO systemDAO;
 
     @Autowired
     private ConfigurationService configurationService;
@@ -148,6 +143,7 @@ public class SystemService {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismRole.getScope());
             Role transientRole = new Role().withId(prismRole).withScope(scope);
             Role role = entityService.getOrCreate(transientRole);
+            role.getExcludedRoles().clear();
 
             if (!PrismRole.getExcludedRoles(prismRole).isEmpty()) {
                 rolesWithExclusions.add(role);
@@ -167,7 +163,8 @@ public class SystemService {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismAction.getScope());
             Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType()).withScope(scope);
             Action action = entityService.getOrCreate(transientAction);
-
+            action.getRedactions().clear();
+            
             List<PrismActionRedaction> prismActionRedactions = prismAction.getRedactions();
             
             if (prismActionRedactions != null) {
@@ -254,19 +251,12 @@ public class SystemService {
 
     private void initialiseStateActions() {
         if (stateService.getPendingStateTransitions().size() == 0) {
-            systemDAO.deleteWorkflowResources(ActionRedaction.class);
-            systemDAO.deleteWorkflowResources(RoleTransition.class);
-            roleService.deleteRoleExclusions();
-            stateService.deletePropagatedActions();
+            stateService.deleteStateActions();
 
-            // TODO: refactor join table entities so we can delete them in bulk
             // TODO: build the workflow data
 
-            List<State> configurableStates = stateService.getConfigurableStates();
-            List<NotificationTemplate> configurableTemplates = notificationService.getConfigurableTemplates();
-
-            systemDAO.deleteObseleteWorkflowResourceConfigurations(StateDuration.class, configurableStates);
-            systemDAO.deleteObseleteWorkflowResourceConfigurations(NotificationConfiguration.class, configurableTemplates);
+            stateService.deleteObseleteStateDurations();
+            notificationService.deleteObseleteNotificationConfigurations();
         } else {
             try {
                 stateService.executePropagatedStateTransitions();

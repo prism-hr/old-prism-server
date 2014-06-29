@@ -159,14 +159,18 @@ public class StateDAO {
         return escalations;
     }
 
-    public void deletePropagatedActions() {
-        List<StateTransition> transitions = sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
-                .add(Restrictions.isNotEmpty("propagatedActions")) //
-                .list();
-        
-        for (StateTransition transition : transitions) {
-            transition.getPropagatedActions().clear();
-        }
+    public void deleteStateActions() {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete StateAction") //
+                .executeUpdate();
     }
-
+    
+    public void deleteObseleteStateDurations() {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete StateDuration " //
+                    + "where state not in (:configurableStates)") //
+                .setParameterList("configurableStates", getConfigurableStates()) //
+                .executeUpdate();
+    }
+    
 }

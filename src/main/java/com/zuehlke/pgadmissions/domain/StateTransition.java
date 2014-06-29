@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -52,10 +53,10 @@ public class StateTransition implements IUniqueResource {
     @Column(name = "do_post_comment", nullable = false)
     private boolean doPostComment;
     
-    @OneToMany(mappedBy = "stateTransition")
+    @OneToMany(mappedBy = "stateTransition", cascade = CascadeType.ALL)
     private Set<RoleTransition> roleTransitions = Sets.newHashSet();
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "STATE_TRANSITION_PROPAGATION", joinColumns = { @JoinColumn(name = "state_transition_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "propagated_action_id", nullable = false) })
     private Set<Action> propagatedActions = Sets.newHashSet();
 

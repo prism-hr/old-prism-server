@@ -69,7 +69,7 @@ public class NotificationDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<NotificationTemplate> getConfigurableTemplates() {
+    public List<NotificationTemplate> getConfigurableNotificationTemplates() {
         Set<NotificationTemplate> templates = Sets.newHashSet(sessionFactory.getCurrentSession().createCriteria(StateAction.class)
                 .setProjection(Projections.groupProperty("notificationTemplate")) //
                 .list());
@@ -79,6 +79,14 @@ public class NotificationDAO {
                 .list()));
 
         return Lists.newArrayList(templates);
+    }
+    
+    public void deleteObseleteNotificationConfigurations() {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete NotificationConfiguration " //
+                    + "where notificationTemplate not in (:configurableTemplates)") //
+                .setParameterList("configurableTemplates", getConfigurableNotificationTemplates()) //
+                .executeUpdate();
     }
 
 }

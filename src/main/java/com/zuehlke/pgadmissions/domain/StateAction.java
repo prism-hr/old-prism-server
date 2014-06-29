@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,6 +20,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "STATE_ACTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_id", "action_id" }) })
@@ -47,12 +48,15 @@ public class StateAction implements IUniqueResource {
     @ManyToOne
     @JoinColumn(name = "notification_template_id")
     private NotificationTemplate notificationTemplate;
+    
+    @OneToMany(mappedBy = "stateAction", cascade = CascadeType.ALL)
+    private Set<StateActionAssignment> stateActionAssignments = Sets.newHashSet();
 
-    @OneToMany(mappedBy = "stateAction")
-    private Set<StateActionNotification> stateActionNotifications = new HashSet<StateActionNotification>();
+    @OneToMany(mappedBy = "stateAction", cascade = CascadeType.ALL)
+    private Set<StateActionNotification> stateActionNotifications = Sets.newHashSet();
 
-    @OneToMany(mappedBy = "stateAction")
-    private Set<StateTransition> stateTransitions = new HashSet<StateTransition>();
+    @OneToMany(mappedBy = "stateAction", cascade = CascadeType.ALL)
+    private Set<StateTransition> stateTransitions = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -100,6 +104,10 @@ public class StateAction implements IUniqueResource {
 
     public void setNotificationTemplate(NotificationTemplate notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
+    }
+
+    public Set<StateActionAssignment> getStateActionAssignments() {
+        return stateActionAssignments;
     }
 
     public Set<StateActionNotification> getStateActionNotifications() {

@@ -55,7 +55,7 @@ public class RoleService {
 
     public void removeUserRoles(Resource resource, User user, PrismRole... authorities) {
         for (UserRole roleToRemove : roleDAO.getUserRoles(resource, user, authorities)) {
-            entityService.delete(roleToRemove);
+            deleteUserRole(roleToRemove);
         }
     }
 
@@ -64,6 +64,9 @@ public class RoleService {
     }
 
     public void deleteUserRole(UserRole userRole) {
+        for (UserNotificationIndividual pendingNotification : userRole.getPendingNotifications()) {
+            entityService.delete(pendingNotification);
+        }
         entityService.delete(userRole);
     }
 

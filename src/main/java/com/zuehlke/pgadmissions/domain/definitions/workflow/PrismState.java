@@ -166,12 +166,8 @@ public enum PrismState {
 
     static {
         for (PrismState state : PrismState.values()) {
-            try {
-                PrismWorkflowState workflowState = (PrismWorkflowState) BeanUtils.instantiate(state.getWorkflowStateClassName());
-                workflowStateDefinitions.put(state, workflowState);
-            } catch (Exception e) {
-                throw new Error(e);
-            }
+            PrismWorkflowState workflowState = (PrismWorkflowState) BeanUtils.instantiate(state.getWorkflowStateClassName());
+            workflowStateDefinitions.put(state, workflowState);
         }
     }
 

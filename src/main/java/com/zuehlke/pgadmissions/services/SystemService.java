@@ -52,7 +52,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvalu
 import com.zuehlke.pgadmissions.mail.MailService;
 
 @Service
-@Transactional(timeout = 60)
+@Transactional(timeout = 300)
 public class SystemService {
 
     private final String EMAIL_DEFAULT_SUBJECT_DIRECTORY = "email/subject/";
@@ -278,13 +278,14 @@ public class SystemService {
             stateService.deleteStateActions();
 
             for (State state : stateService.getStates()) {
-                for (PrismStateAction prismStateAction : state.getId().getStateActions()) {
+                for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
                     Action action = actionService.getById(prismStateAction.getAction());
                     NotificationTemplate template = notificationService.getById(prismStateAction.getNotificationTemplate());
                     StateAction transientStateAction = new StateAction().withState(state).withAction(action)
                             .withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag()).withDefaultAction(prismStateAction.isDefaultAction())
                             .withNotificationTemplate(template);
                     StateAction stateAction = entityService.getOrCreate(transientStateAction);
+                    
                     initialiseStateActionAssignments(prismStateAction, stateAction);
                     initialiseStateActionNotifications(prismStateAction, stateAction);
                     initialiseStateTransitions(prismStateAction, stateAction);

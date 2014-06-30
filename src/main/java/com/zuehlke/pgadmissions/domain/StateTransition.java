@@ -55,7 +55,7 @@ public class StateTransition implements IUniqueResource {
     @Column(name = "do_post_comment", nullable = false)
     private boolean doPostComment;
     
-    @OneToMany(mappedBy = "stateTransition", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "stateTransition")
     private Set<RoleTransition> roleTransitions = Sets.newHashSet();
 
     @ManyToMany(cascade = CascadeType.ALL)

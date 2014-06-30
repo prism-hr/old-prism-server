@@ -210,7 +210,8 @@ public class RoleService {
     public User addUserToResource(Resource resource, String firstName, String lastName, String email, PrismRole... authorities) {
         User user = userService.getOrCreateUser(firstName, lastName, email);
 
-        removeUserRoles(resource, user);
+        PrismRole[] possibleRoles = getRoles(resource.getClass()).toArray(new PrismRole[0]);
+        removeUserRoles(resource, user, possibleRoles);
 
         for (PrismRole authority : authorities) {
             getOrCreateUserRole(resource, user, authority);

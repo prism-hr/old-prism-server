@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
@@ -157,6 +158,10 @@ public class StateService {
     
     public ThreadPoolExecutor getThreadedStateTransitionPool() {
         return threadedStateTransitionPool;
+    }
+    
+    public List<StateAction> getStateActions() {
+        return entityService.getAll(StateAction.class);
     }
     
     private void executeThreadedStateTransitions(final HashMultimap<Action, ResourceDynamic> threadedStateTransitions, final User invoker) {

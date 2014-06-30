@@ -154,4 +154,5 @@ public class ResourceConsoleListRowDTO {
     public void setAverageRating(BigDecimal averageRating) {
         this.averageRating = averageRating;
     }
+    
 }

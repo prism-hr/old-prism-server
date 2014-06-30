@@ -62,6 +62,16 @@ public class ResourceDAO {
                 .setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowDTO.class)) //
                 .list();
     }
+    
+    public <T extends Resource> void reassignState(Class<T> resourceClass, State state, State degradationState) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update " + PrismScope.getResourceScope(resourceClass).getLowerCaseName() + " " //
+                    + "set state = :degradationState " //
+                    + "where state = : state") //
+                .setParameter("degradationState", degradationState) //
+                .setParameter("state", state) // 
+                .executeUpdate();
+    }
 
     private <T extends ResourceDynamic> String getResourceListBlockSelect(User user, Class<T> resourceType, int page, int perPage) {
         String resourceTypeString = resourceType.getSimpleName();
@@ -84,16 +94,6 @@ public class ResourceDAO {
         } catch (Exception e) {
             throw new Error("Could not build " + resourceTypeString + " list", e);
         }
-    }
-
-    public <T extends Resource> void reassignState(Class<T> resourceClass, State state, State degradationState) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update " + PrismScope.getResourceScope(resourceClass).getLowerCaseName() + " " //
-                    + "set state = :degradationState " //
-                    + "where state = : state") //
-                .setParameter("degradationState", degradationState) //
-                .setParameter("state", state) // 
-                .executeUpdate();
     }
 
 }

@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
@@ -140,8 +139,7 @@ public class SystemService {
         initialiseConfigurations(system);
         initialiseNotificationTemplates(system);
         initialiseStateDurations(system);
-
-//        WorkflowGraph workflow = initialiseStateActions();
+        initialiseStateActions();
 
         if (systemUser.getUserAccount() == null) {
             mailService.sendEmailNotification(systemUser, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
@@ -344,7 +342,7 @@ public class SystemService {
         for (PrismStateTransition prismStateTransition : prismStateAction.getTransitions()) {
             State transitionState = stateService.getById(prismStateTransition.getTransitionState());
             Action transitionAction = actionService.getById(prismStateTransition.getTransitionAction());
-            PrismTransitionEvaluation transitionEvaluation = prismStateTransition.getEvaluation();
+            PrismTransitionEvaluation transitionEvaluation = prismStateTransition.getTransitionEvaluation();
             StateTransition transientStateTransition = new StateTransition().withStateAction(stateAction).withTransitionState(transitionState)
                     .withTransitionAction(transitionAction).withStateTransitionEvaluation(transitionEvaluation)
                     .withDoPostComment(prismStateTransition.isPostComment());

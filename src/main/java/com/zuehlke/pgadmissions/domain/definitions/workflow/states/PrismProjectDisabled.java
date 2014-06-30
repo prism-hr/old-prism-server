@@ -24,12 +24,12 @@ public class PrismProjectDisabled extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DISABLED) // 
                         .withTransitionAction(PrismAction.PROJECT_CONCLUDE) // 
-                        .withEvaluation(PrismTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME) // 
                         .withPostComment(true), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DISABLED_COMPLETED) // 
                         .withTransitionAction(PrismAction.PROJECT_CONCLUDE) // 
-                        .withEvaluation(PrismTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME) // 
                         .withPostComment(true)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.APPLICATION_TERMINATE))))); //

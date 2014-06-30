@@ -1,28 +1,18 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.HashMap;
-import java.util.List;
-
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.dao.RoleDAO;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.ResourceDynamic;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.RoleTransition;
-import com.zuehlke.pgadmissions.domain.StateTransition;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import java.util.HashMap;
+import java.util.List;
 
 @Service
 @Transactional
@@ -37,14 +27,17 @@ public class RoleService {
     @Autowired
     private EntityService entityService;
 
+    @Autowired
+    private UserService userService;
+
     public Role getById(PrismRole roleId) {
         return roleDAO.getById(roleId);
     }
-    
+
     public List<Role> getRoles() {
         return entityService.getAll(Role.class);
     }
- 
+
     public UserRole createUserRole(Resource resource, User user, PrismRole roleId) {
         Role role = getById(roleId);
         UserRole userRole = new UserRole();
@@ -73,12 +66,12 @@ public class RoleService {
     public void deleteUserRole(UserRole userRole) {
         entityService.delete(userRole);
     }
-    
+
     public void executeUserRoleTransitions(Resource resource, StateTransition stateTransition, Comment comment) {
         HashMap<User, RoleTransition> userRoleTransitions = Maps.newHashMap();
         userRoleTransitions.putAll(getUserRoleUpdateTransitions(stateTransition, resource, comment.getUser()));
         userRoleTransitions.putAll(getUserCreationRoleTransitions(stateTransition, resource, comment.getUser(), comment));
-        
+
         for (User user : userRoleTransitions.keySet()) {
             executeRoleTransition(resource, user, userRoleTransitions.get(user));
         }
@@ -86,60 +79,46 @@ public class RoleService {
 
     public void executeRoleTransition(Resource resource, User user, RoleTransition roleTransition) {
         switch (roleTransition.getRoleTransitionType()) {
-        case BRANCH:
-        case CREATE:
-            saveUserRole(getOrCreateUserRole(resource, user, roleTransition.getTransitionRole().getId()));
-            break;
-        case REJOIN:
-            saveUserRole(getOrCreateUserRole(resource, user, roleTransition.getTransitionRole().getId()));
-            deleteUserRole(getOrCreateUserRole(resource, user, roleTransition.getRole().getId()));
-            break;
-        case UPDATE:
-            UserRole userRole = getOrCreateUserRole(resource, user, roleTransition.getRole().getId());
-            userRole.setRole(roleTransition.getTransitionRole());
-            saveUserRole(userRole);
-            break;
+            case BRANCH:
+            case CREATE:
+                saveUserRole(getOrCreateUserRole(resource, user, roleTransition.getTransitionRole().getId()));
+                break;
+            case REJOIN:
+                saveUserRole(getOrCreateUserRole(resource, user, roleTransition.getTransitionRole().getId()));
+                deleteUserRole(getOrCreateUserRole(resource, user, roleTransition.getRole().getId()));
+                break;
+            case UPDATE:
+                UserRole userRole = getOrCreateUserRole(resource, user, roleTransition.getRole().getId());
+                userRole.setRole(roleTransition.getTransitionRole());
+                saveUserRole(userRole);
+                break;
         }
     }
 
-    public boolean hasAnyRole(User user, PrismRole... authorities) {
-        for (PrismRole authority : authorities) {
-            if (hasRole(user, authority, null)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+    @Deprecated
     public boolean hasRole(User user, PrismRole authority) {
         return hasRole(user, authority, null);
     }
 
+    @Deprecated
     public boolean hasRole(User user, PrismRole authority, Resource scope) {
         return roleDAO.getUserRole(user, scope, authority) != null;
     }
 
-    public List<User> getUsersInRole(Resource scope, PrismRole... authorities) {
-        return roleDAO.getUsersByRole(scope, authorities);
-    }
-
+    @Deprecated
     public User getUserInRole(Resource scope, PrismRole... authorities) {
         List<User> users = roleDAO.getUsersByRole(scope, authorities);
         return users.get(0);
     }
 
+    @Deprecated
     public List<Program> getProgramsByUserAndRole(User currentUser, PrismRole administrator) {
-        // TODO Auto-generated method stub
         return null;
     }
 
+    @Deprecated
     public List<User> getProgramAdministrators(Program program) {
-        // TODO Auto-generated method stub
         return null;
-    }
-
-    public UserRole getUserRole(User user, PrismRole authority) {
-        return roleDAO.getUserRole(user, authority);
     }
 
     public List<Role> getActionRoles(Resource resource, Action action) {
@@ -149,21 +128,21 @@ public class RoleService {
     public List<Role> getActionOwnerRoles(User user, Resource resource, Action action) {
         return roleDAO.getActionOwnerRoles(user, resource, action);
     }
-    
+
     public List<Role> getDelegateActionOwnerRoles(User user, Resource resource, Action action) {
         return roleDAO.getActionOwnerRoles(user, resource, action);
     }
 
     private HashMap<User, RoleTransition> getUserRoleUpdateTransitions(StateTransition stateTransition, Resource resource, User actionOwner) {
         HashMap<User, RoleTransition> userRoleTransitions = Maps.newHashMap();
-        
+
         HashMultimap<RoleTransition, User> roleTransitionUsers = roleDAO.getRoleTransitionUsers(stateTransition, resource, actionOwner);
         for (RoleTransition roleTransition : roleTransitionUsers.keySet()) {
             for (User user : roleTransitionUsers.get(roleTransition)) {
                 validateUserRoleTransition(resource, userRoleTransitions, roleTransition, user);
             }
         }
-        
+
         return userRoleTransitions;
 
     }
@@ -171,7 +150,7 @@ public class RoleService {
     public Role getResourceCreatorRole(ResourceDynamic resource, Action createAction) {
         return (Role) roleDAO.getResourceCreatorRole(resource, createAction);
     }
-    
+
     private HashMap<User, RoleTransition> getUserCreationRoleTransitions(StateTransition stateTransition, Resource resource, User actionOwner, Comment comment) {
         HashMap<User, RoleTransition> userRoleTransitions = Maps.newHashMap();
 
@@ -220,12 +199,23 @@ public class RoleService {
 
     public void updateRoles(ResourceDynamic resource, User user, List<ResourceRepresentation.RoleRepresentation> roles) {
         for (ResourceRepresentation.RoleRepresentation role : roles) {
-            if(role.getValue()) {
+            if (role.getValue()) {
                 getOrCreateUserRole(resource, user, role.getId());
             } else {
                 removeUserRoles(resource, user, role.getId());
             }
         }
+    }
+
+    public User addUserToResource(Resource resource, String firstName, String lastName, String email, PrismRole... authorities) {
+        User user = userService.getOrCreateUser(firstName, lastName, email);
+
+        removeUserRoles(resource, user);
+
+        for (PrismRole authority : authorities) {
+            getOrCreateUserRole(resource, user, authority);
+        }
+        return user;
     }
 
     public List<PrismRole> getRoles(Class<? extends Resource> resourceType) {

@@ -107,6 +107,19 @@ public class ResourceResource {
         roleService.updateRoles(resource, user, roles);
     }
 
+    @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
+    public void addUserToResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor, ResourceRepresentation.UserRolesRepresentation userRolesRepresentation) {
+        ResourceDynamic resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+
+        List<PrismRole> roles = Lists.newLinkedList();
+        for (ResourceRepresentation.RoleRepresentation roleRepresentation : userRolesRepresentation.getRoles()) {
+            if (roleRepresentation.getValue()) {
+                roles.add(roleRepresentation.getId());
+            }
+        }
+        roleService.addUserToResource(resource, userRolesRepresentation.getFirstName(), userRolesRepresentation.getLastName(), userRolesRepresentation.getEmail(), roles.toArray(new PrismRole[0]));
+    }
+
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceType) {
         if ("applications".equals(resourceType)) {

@@ -1,9 +1,11 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 
 
 public enum PrismRole {

@@ -29,10 +29,10 @@ public class ManageUsersService {
             PrismRole... authorities) {
         User user = userService.getOrCreateUser(firstname, lastname, email);
         if (overwriteRoles) {
-            roleService.removeUserRoles(user, resource);
+            roleService.removeUserRoles(resource, user);
         }
         for (PrismRole authority : authorities) {
-            roleService.getOrCreateUserRole(systemService.getSystem(), user, roleService.getById(authority));
+            roleService.getOrCreateUserRole(systemService.getSystem(), user, authority);
         }
         return user;
     }

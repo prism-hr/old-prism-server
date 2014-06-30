@@ -71,13 +71,23 @@ public class ResourceRepresentation {
 
     public static class UserRolesRepresentation {
 
+        private Integer id;
+
         private String firstName;
 
         private String lastName;
 
         private String email;
 
-        private List<PrismRole> roles;
+        private List<RoleRepresentation> roles;
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
 
         public String getFirstName() {
             return firstName;
@@ -103,12 +113,43 @@ public class ResourceRepresentation {
             this.email = email;
         }
 
-        public List<PrismRole> getRoles() {
+        public List<RoleRepresentation> getRoles() {
             return roles;
         }
 
-        public void setRoles(List<PrismRole> roles) {
+        public void setRoles(List<RoleRepresentation> roles) {
             this.roles = roles;
+        }
+    }
+
+    public static class RoleRepresentation {
+
+        private PrismRole id;
+
+        private Boolean value;
+
+        public RoleRepresentation() {
+        }
+
+        public RoleRepresentation(PrismRole id, Boolean value) {
+            this.id = id;
+            this.value = value;
+        }
+
+        public PrismRole getId() {
+            return id;
+        }
+
+        public void setId(PrismRole id) {
+            this.id = id;
+        }
+
+        public Boolean getValue() {
+            return value;
+        }
+
+        public void setValue(Boolean value) {
+            this.value = value;
         }
     }
 }

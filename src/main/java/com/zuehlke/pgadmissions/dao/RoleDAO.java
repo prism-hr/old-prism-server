@@ -77,7 +77,7 @@ public class RoleDAO {
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.in("role.id", authorities)) //
                 .add(Restrictions.eq(resource.getResourceType().toString().toLowerCase(), resource)) //
-                .uniqueResult();
+                .list();
     }
 
     @SuppressWarnings("unchecked")
@@ -236,5 +236,11 @@ public class RoleDAO {
                 .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource))
                 .list();
     }
-    
+
+    public List<PrismRole> getRoles(Class<? extends Resource> resourceType) {
+        return sessionFactory.getCurrentSession().createCriteria(Role.class)
+                .setProjection(Projections.property("id"))
+                .add(Restrictions.eq("scope.id", PrismScope.getResourceScope(resourceType)))
+                .list();
+    }
 }

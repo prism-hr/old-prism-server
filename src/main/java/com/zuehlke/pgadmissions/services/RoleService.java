@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.util.HashMap;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,8 @@ public class RoleService {
         return entityService.getAll(Role.class);
     }
  
-    public UserRole createUserRole(Resource resource, User user, Role role) {
+    public UserRole createUserRole(Resource resource, User user, PrismRole roleId) {
+        Role role = getById(roleId);
         UserRole userRole = new UserRole();
         userRole.setResource(resource);
         userRole.setUser(user);
@@ -53,12 +55,12 @@ public class RoleService {
         return userRole;
     }
 
-    public UserRole getOrCreateUserRole(Resource resource, User user, Role role) {
+    public UserRole getOrCreateUserRole(Resource resource, User user, PrismRole role) {
         UserRole transientUserRole = createUserRole(resource, user, role);
         return entityService.getOrCreate(transientUserRole);
     }
 
-    public void removeUserRoles(User user, Resource resource, PrismRole... authorities) {
+    public void removeUserRoles(Resource resource, User user, PrismRole... authorities) {
         for (UserRole roleToRemove : roleDAO.getUserRoles(resource, user, authorities)) {
             entityService.delete(roleToRemove);
         }
@@ -86,14 +88,14 @@ public class RoleService {
         switch (roleTransition.getRoleTransitionType()) {
         case BRANCH:
         case CREATE:
-            saveUserRole(getOrCreateUserRole(resource, user, roleTransition.getTransitionRole()));
+            saveUserRole(getOrCreateUserRole(resource, user, roleTransition.getTransitionRole().getId()));
             break;
         case REJOIN:
-            saveUserRole(getOrCreateUserRole(resource, user, roleTransition.getTransitionRole()));
-            deleteUserRole(getOrCreateUserRole(resource, user, roleTransition.getRole()));
+            saveUserRole(getOrCreateUserRole(resource, user, roleTransition.getTransitionRole().getId()));
+            deleteUserRole(getOrCreateUserRole(resource, user, roleTransition.getRole().getId()));
             break;
         case UPDATE:
-            UserRole userRole = getOrCreateUserRole(resource, user, roleTransition.getRole());
+            UserRole userRole = getOrCreateUserRole(resource, user, roleTransition.getRole().getId());
             userRole.setRole(roleTransition.getTransitionRole());
             saveUserRole(userRole);
             break;
@@ -213,5 +215,19 @@ public class RoleService {
 
     public List<PrismRole> getRoles(Resource resource, User user) {
         return roleDAO.getRoles(resource, user);
+    }
+
+    public void updateRoles(ResourceDynamic resource, User user, List<ResourceRepresentation.RoleRepresentation> roles) {
+        for (ResourceRepresentation.RoleRepresentation role : roles) {
+            if(role.getValue()) {
+                getOrCreateUserRole(resource, user, role.getId());
+            } else {
+                removeUserRoles(resource, user, role.getId());
+            }
+        }
+    }
+
+    public List<PrismRole> getRoles(Class<? extends Resource> resourceType) {
+        return roleDAO.getRoles(resourceType);
     }
 }

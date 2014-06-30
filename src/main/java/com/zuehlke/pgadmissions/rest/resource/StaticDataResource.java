@@ -52,7 +52,7 @@ public class StaticDataResource {
         List<StateRepresentation> stateRepresentations = Lists.newArrayListWithExpectedSize(states.size());
         for (State state : states) {
             StateRepresentation stateRepresentation = dozerBeanMapper.map(state, StateRepresentation.class);
-            stateRepresentation.setDisplayValue(applicationContext.getMessage("state." + state.getParentState().getId().toString(), null, LocaleContextHolder.getLocale()));
+            stateRepresentation.setDisplayName(applicationContext.getMessage("state." + state.getParentState().getId().toString(), null, LocaleContextHolder.getLocale()));
             stateRepresentations.add(stateRepresentation);
         }
         staticData.put("states", stateRepresentations);
@@ -61,7 +61,7 @@ public class StaticDataResource {
         List<RoleRepresentation> roleRepresentationsRepresentations = Lists.newArrayListWithExpectedSize(roles.size());
         for (Role role : roles) {
             RoleRepresentation roleRepresentation = dozerBeanMapper.map(role, RoleRepresentation.class);
-            roleRepresentation.setDisplayValue(applicationContext.getMessage("role." + role.getId().toString(), null, LocaleContextHolder.getLocale()));
+            roleRepresentation.setDisplayName(applicationContext.getMessage("role." + role.getId().toString(), null, LocaleContextHolder.getLocale()));
             roleRepresentationsRepresentations.add(roleRepresentation);
         }
         staticData.put("roles", roleRepresentationsRepresentations);

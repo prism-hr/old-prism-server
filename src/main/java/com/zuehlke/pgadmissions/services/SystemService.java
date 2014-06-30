@@ -134,8 +134,7 @@ public class SystemService {
         User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail);
         System system = getOrCreateSystem(systemUser);
 
-        Role systemRole = roleService.getById(PrismRole.SYSTEM_ADMINISTRATOR);
-        roleService.getOrCreateUserRole(system, systemUser, systemRole);
+        roleService.getOrCreateUserRole(system, systemUser, PrismRole.SYSTEM_ADMINISTRATOR);
 
         initialiseConfigurations(system);
         initialiseNotificationTemplates(system);

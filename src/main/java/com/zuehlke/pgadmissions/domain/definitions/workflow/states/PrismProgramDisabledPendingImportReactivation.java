@@ -24,7 +24,7 @@ public class PrismProgramDisabledPendingImportReactivation extends PrismWorkflow
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DISABLED_COMPLETED) // 
                         .withTransitionAction(PrismAction.PROGRAM_CONCLUDE) // 
-                        .withEvaluation(PrismTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME) // 
                         .withPostComment(true)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.APPLICATION_TERMINATE,  //
@@ -32,7 +32,7 @@ public class PrismProgramDisabledPendingImportReactivation extends PrismWorkflow
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DISABLED_PENDING_IMPORT_REACTIVATION) // 
                         .withTransitionAction(PrismAction.PROGRAM_CONCLUDE) // 
-                        .withEvaluation(PrismTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME) // 
                         .withPostComment(true)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.PROJECT_SUSPEND))))); //
@@ -90,14 +90,14 @@ public class PrismProgramDisabledPendingImportReactivation extends PrismWorkflow
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVED) // 
                         .withTransitionAction(PrismAction.PROGRAM_RESTORE) // 
-                        .withEvaluation(PrismTransitionEvaluation.PROGRAM_REACTIVATED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_REACTIVATED_OUTCOME) // 
                         .withPostComment(true)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.PROJECT_RESTORE)), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DEACTIVATED) // 
                         .withTransitionAction(PrismAction.PROGRAM_RESTORE) // 
-                        .withEvaluation(PrismTransitionEvaluation.PROGRAM_REACTIVATED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_REACTIVATED_OUTCOME) // 
                         .withPostComment(true)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.PROJECT_RESTORE))))); //

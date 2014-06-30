@@ -193,7 +193,7 @@ public class RoleService {
                         validateUserRoleTransition(resource, userRoleTransitions, roleTransition, user);
                     }
                 }
-
+                // TODO : custom workflow error
                 throw new Error("Attempted to process an invalid role creation transition");
             }
         }
@@ -205,6 +205,7 @@ public class RoleService {
         if (roleDAO.getExcludingUserRole(user, resource, roleTransition.getRole().getExcludedRoles()).isEmpty()) {
             userRoleTransitions.put(user, roleTransition);
         } else {
+            // TODO : custom workflow error
             throw new Error("Attempted to process a conflicted role creation transition");
         }
     }

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -49,13 +48,13 @@ public class StateAction implements IUniqueResource {
     @JoinColumn(name = "notification_template_id")
     private NotificationTemplate notificationTemplate;
     
-    @OneToMany(mappedBy = "stateAction", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "stateAction")
     private Set<StateActionAssignment> stateActionAssignments = Sets.newHashSet();
 
-    @OneToMany(mappedBy = "stateAction", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "stateAction")
     private Set<StateActionNotification> stateActionNotifications = Sets.newHashSet();
 
-    @OneToMany(mappedBy = "stateAction", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "stateAction")
     private Set<StateTransition> stateTransitions = Sets.newHashSet();
 
     public Integer getId() {

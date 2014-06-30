@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping(value = {"api/{resourceType}"})
+@RequestMapping(value = { "api/{resourceType}" })
 public class ResourceResource {
 
     @Autowired
@@ -60,7 +60,7 @@ public class ResourceResource {
 
         // set visible comments
         List<Comment> comments = commentService.getVisibleComments(resource, currentUser);
-        representation.setComments(Lists.<CommentRepresentation>newArrayListWithExpectedSize(comments.size()));
+        representation.setComments(Lists.<CommentRepresentation> newArrayListWithExpectedSize(comments.size()));
         for (Comment comment : comments) {
             representation.getComments().add(dozerBeanMapper.map(comment, CommentRepresentation.class));
         }
@@ -79,7 +79,8 @@ public class ResourceResource {
             for (PrismRole availableRole : availableRoles) {
                 userRoles.add(new ResourceRepresentation.RoleRepresentation(availableRole, roles.contains(availableRole)));
             }
-            ResourceRepresentation.UserRolesRepresentation userRolesRepresentation = dozerBeanMapper.map(user, ResourceRepresentation.UserRolesRepresentation.class);
+            ResourceRepresentation.UserRolesRepresentation userRolesRepresentation = dozerBeanMapper.map(user,
+                    ResourceRepresentation.UserRolesRepresentation.class);
             userRolesRepresentation.setRoles(userRoles);
             userRolesRepresentations.add(userRolesRepresentation);
         }
@@ -88,7 +89,8 @@ public class ResourceResource {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<ResourceListRowRepresentation> getResources(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+    public List<ResourceListRowRepresentation> getResources(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage,
+            @ModelAttribute ResourceDescriptor resourceDescriptor) {
         List<ResourceConsoleListRowDTO> consoleListBlock = resourceService.getConsoleListBlock(resourceDescriptor.getType(), page, perPage);
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
         for (ResourceConsoleListRowDTO appDTO : consoleListBlock) {
@@ -100,7 +102,8 @@ public class ResourceResource {
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.PUT)
-    public void changeRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor, @RequestBody List<ResourceRepresentation.RoleRepresentation> roles) {
+    public void changeRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @RequestBody List<ResourceRepresentation.RoleRepresentation> roles) {
         ResourceDynamic resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
 
@@ -108,7 +111,8 @@ public class ResourceResource {
     }
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
-    public void addUserToResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor, @RequestBody ResourceRepresentation.UserRolesRepresentation userRolesRepresentation) {
+    public void addUserToResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @RequestBody ResourceRepresentation.UserRolesRepresentation userRolesRepresentation) {
         ResourceDynamic resource = entityService.getById(resourceDescriptor.getType(), resourceId);
 
         List<PrismRole> roles = Lists.newLinkedList();
@@ -117,7 +121,8 @@ public class ResourceResource {
                 roles.add(roleRepresentation.getId());
             }
         }
-        roleService.addUserToResource(resource, userRolesRepresentation.getFirstName(), userRolesRepresentation.getLastName(), userRolesRepresentation.getEmail(), roles.toArray(new PrismRole[0]));
+        userService.getOrCreateUserWithRoles(userRolesRepresentation.getFirstName(), userRolesRepresentation.getLastName(), userRolesRepresentation.getEmail(),
+                resource, roles.toArray(new PrismRole[0]));
     }
 
     @ModelAttribute

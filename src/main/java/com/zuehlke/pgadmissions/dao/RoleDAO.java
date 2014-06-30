@@ -237,6 +237,7 @@ public class RoleDAO {
                 .list();
     }
 
+    @SuppressWarnings("unchecked")
     public List<PrismRole> getRoles(Class<? extends Resource> resourceType) {
         return sessionFactory.getCurrentSession().createCriteria(Role.class)
                 .setProjection(Projections.property("id"))

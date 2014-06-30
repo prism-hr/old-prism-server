@@ -108,7 +108,7 @@ public class ResourceResource {
     }
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
-    public void addUserToResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor, ResourceRepresentation.UserRolesRepresentation userRolesRepresentation) {
+    public void addUserToResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor, @RequestBody ResourceRepresentation.UserRolesRepresentation userRolesRepresentation) {
         ResourceDynamic resource = entityService.getById(resourceDescriptor.getType(), resourceId);
 
         List<PrismRole> roles = Lists.newLinkedList();

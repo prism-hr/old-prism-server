@@ -1,18 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.collect.ImmutableMap;
-import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
-import com.zuehlke.pgadmissions.dao.RoleDAO;
-import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
-import com.zuehlke.pgadmissions.mail.MailDescriptor;
-import com.zuehlke.pgadmissions.mail.MailService;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.utils.HibernateUtils;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -23,7 +12,23 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.google.common.collect.ImmutableMap;
+import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.Filter;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.Scope;
+import com.zuehlke.pgadmissions.domain.StateTransition;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserAccount;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
+import com.zuehlke.pgadmissions.mail.MailDescriptor;
+import com.zuehlke.pgadmissions.mail.MailService;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
 @Service("userService")
 @Transactional
@@ -35,7 +40,7 @@ public class UserService {
     private UserDAO userDAO;
 
     @Autowired
-    private RoleDAO roleDAO;
+    private RoleService roleService;
 
     @Autowired
     private ApplicationsFilteringDAO filteringDAO;
@@ -97,6 +102,22 @@ public class UserService {
         } else {
             user = duplicateUser;
         }
+        return user;
+    }
+    
+    public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource, PrismRole... rolesToCreate) {
+        User user = getOrCreateUser(firstName, lastName, email);
+        
+        for (PrismRole possibleRole : roleService.getRoles(resource.getClass()).toArray(new PrismRole[0])) {
+            if (!Arrays.asList(rolesToCreate).contains(possibleRole)) {
+                roleService.removeUserRoles(resource, user, possibleRole);
+            }
+        }
+
+        for (PrismRole roleToCreate : rolesToCreate) {
+            roleService.getOrCreateUserRole(resource, user, roleToCreate);
+        }
+        
         return user;
     }
 

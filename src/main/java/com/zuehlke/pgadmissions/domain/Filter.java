@@ -85,6 +85,14 @@ public class Filter {
         this.id = id;
     }
     
+    public UserAccount getUserAccount() {
+        return userAccount;
+    }
+
+    public Scope getScope() {
+        return scope;
+    }
+    
     public Boolean isSatisfyAllConditions() {
         return satisfyAllConditions;
     }

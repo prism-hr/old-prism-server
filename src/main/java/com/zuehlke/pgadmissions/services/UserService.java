@@ -17,13 +17,11 @@ import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.MailDescriptor;
 import com.zuehlke.pgadmissions.mail.MailService;
@@ -222,9 +220,7 @@ public class UserService {
 
     public void setFiltering(final User user, final Filter filter) {
         Filter mergedFilter = filteringDAO.merge(filter);
-        // TODO: generalise for program and project scopes
-        Scope filterScope = systemService.getScope(PrismScope.APPLICATION);
-        user.getUserAccount().getFilters().put(filterScope, mergedFilter);
+        user.getUserAccount().getFilters().put(filter.getScope(), mergedFilter);
         userDAO.save(user);
     }
 

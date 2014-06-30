@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -12,12 +13,18 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.IUniqueResource;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.ResourceDynamic;
+import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.StateActionAssignment;
+import com.zuehlke.pgadmissions.domain.StateActionEnhancement;
+import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
@@ -28,6 +35,17 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 @SuppressWarnings("unchecked")
 public class StateDAO {
 
+    private static final Set<Class<? extends IUniqueResource>> workflowConfigurationClasses = Sets.newLinkedHashSet();
+    
+    static {
+        workflowConfigurationClasses.add(RoleTransition.class);
+        workflowConfigurationClasses.add(StateTransition.class);
+        workflowConfigurationClasses.add(StateActionEnhancement.class);
+        workflowConfigurationClasses.add(StateActionAssignment.class);
+        workflowConfigurationClasses.add(StateActionNotification.class);
+        workflowConfigurationClasses.add(StateAction.class);
+    }
+    
     @Autowired
     private SessionFactory sessionFactory;
 
@@ -160,9 +178,11 @@ public class StateDAO {
     }
 
     public void deleteStateActions() {
-        sessionFactory.getCurrentSession().createQuery( //
-                "delete StateAction") //
-                .executeUpdate();
+        for (Class<? extends IUniqueResource> workflowConfigurationClass : workflowConfigurationClasses) {
+            sessionFactory.getCurrentSession().createQuery( //
+                    "delete " + workflowConfigurationClass.getSimpleName()) //
+                    .executeUpdate();
+        }
     }
     
     public void deleteObseleteStateDurations() {
@@ -177,7 +197,7 @@ public class StateDAO {
         return (List<State>) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
                 .setProjection(Projections.groupProperty("state")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.isEmpty("stateActions")) //
+                .add(Restrictions.isEmpty("state.stateActions")) //
                 .list();
     }
 

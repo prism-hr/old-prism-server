@@ -14,7 +14,7 @@ public abstract class PrismWorkflowState {
     
     protected HashMap<PrismAction, PrismStateAction> stateActionsByAction = Maps.newHashMap();
     
-    PrismWorkflowState() {
+    protected PrismWorkflowState() {
         setStateActions();
         indexStateActionsByAction();
     }

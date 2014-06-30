@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -38,6 +39,7 @@ import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -129,7 +131,11 @@ public class IT1SystemInitialisation {
             verifyConfigurationCreation();
             verifyNotificationTemplateCreation(system);
             verifyStateDurationCreation();
+            
             verifyStateActionCreation();
+            
+            verifyNotificationTemplateCreation(system);
+            verifyStateDurationCreation();
 
             if (i == 0) {
                 registrationHelper.assertActivationEmailRegisterAndActivateUser(systemUser, system,
@@ -221,23 +227,30 @@ public class IT1SystemInitialisation {
     private void verifyStateActionCreation() {
         Integer stateActionsExpected = 0;
         for (PrismState prismState : PrismState.values()) {
-            stateActionsExpected = stateActionsExpected + prismState.getStateActions().size();
+            stateActionsExpected = stateActionsExpected + PrismState.getStateActions(prismState).size();
         }
 
         List<StateAction> stateActions = stateService.getStateActions();
         assertTrue(stateActionsExpected == stateActions.size());
 
         for (StateAction stateAction : stateActions) {
-            PrismStateAction prismStateAction = stateAction.getState().getId().getStateAction(stateAction.getAction().getId());
+            PrismStateAction prismStateAction = PrismState.getStateAction(stateAction.getState().getId(), stateAction.getAction().getId());
             assertNotNull(prismStateAction);
             assertEquals(prismStateAction.isRaisesUrgentFlag(), stateAction.isRaisesUrgentFlag());
             assertEquals(prismStateAction.isDefaultAction(), stateAction.isDefaultAction());
-            assertEquals(prismStateAction.getNotificationTemplate(), stateAction.getNotificationTemplate().getId());
+            
+            NotificationTemplate template = stateAction.getNotificationTemplate();
+            PrismNotificationTemplate prismTemplate = prismStateAction.getNotificationTemplate();
+            if (prismTemplate == null) {
+                assertNull(template);
+            } else {
+                assertNotNull(template);
+                assertEquals(prismTemplate, stateAction.getNotificationTemplate().getId());
+            }
 
             verifyStateActionAssignmentCreation(stateAction, prismStateAction);
             verifyStateActionNotificationCreation(stateAction, prismStateAction);
             verifyStateTransitionCreation(stateAction, prismStateAction);
-
         }
     }
 
@@ -249,9 +262,10 @@ public class IT1SystemInitialisation {
             PrismStateActionAssignment prismStateActionAssignment = new PrismStateActionAssignment().withRole(stateActionAssignment.getRole().getId());
 
             for (StateActionEnhancement stateActionEnhancement : stateActionAssignment.getEnhancements()) {
+                Action delegatedAction = stateActionEnhancement.getDelegatedAction();
                 prismStateActionAssignment.getEnhancements().add(
                         new PrismStateActionEnhancement().withEnhancement(stateActionEnhancement.getEnhancementType()).withDelegatedAction(
-                                stateActionEnhancement.getDelegatedAction().getId()));
+                                (PrismAction) (delegatedAction == null ? delegatedAction : delegatedAction.getId())));
             }
 
             assertTrue(prismStateAction.getAssignments().contains(prismStateActionAssignment));

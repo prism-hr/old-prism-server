@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -38,7 +37,7 @@ public class StateActionAssignment implements IUniqueResource {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
     
-    @OneToMany(mappedBy = "stateActionAssignment", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "stateActionAssignment")
     private Set<StateActionEnhancement> enhancements = Sets.newHashSet();
 
     public Integer getId() {

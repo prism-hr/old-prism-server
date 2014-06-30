@@ -41,19 +41,19 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVAL) // 
                         .withTransitionAction(PrismAction.INSTITUTION_CREATE_PROGRAM) // 
-                        .withEvaluation(PrismTransitionEvaluation.PROGRAM_CREATED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CREATED_OUTCOME) // 
                         .withPostComment(true), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVED) // 
                         .withTransitionAction(PrismAction.INSTITUTION_CREATE_PROGRAM) // 
-                        .withEvaluation(PrismTransitionEvaluation.PROGRAM_CREATED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CREATED_OUTCOME) // 
                         .withPostComment(true) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.PROGRAM_ADMINISTRATOR) //
-                                .withRestrictToActionOwner(true) //
+                                .withRestrictToOwner(true) //
                                 .withMinimumPermitted(1) //
                                 .withMaximumPermitted(1)))))); //
     

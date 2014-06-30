@@ -37,22 +37,22 @@ public class PrismProgramApproval extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVAL) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_PROGRAM_LIST) // 
-                        .withEvaluation(PrismTransitionEvaluation.PROGRAM_APPROVED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_APPROVED_OUTCOME) // 
                         .withPostComment(true), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVAL_PENDING_CORRECTION) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_PROGRAM_LIST) // 
-                        .withEvaluation(PrismTransitionEvaluation.PROGRAM_APPROVED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_APPROVED_OUTCOME) // 
                         .withPostComment(true), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVED) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_PROGRAM_LIST) // 
-                        .withEvaluation(PrismTransitionEvaluation.PROGRAM_APPROVED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_APPROVED_OUTCOME) // 
                         .withPostComment(true), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_REJECTED) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_PROGRAM_LIST) // 
-                        .withEvaluation(PrismTransitionEvaluation.PROGRAM_APPROVED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_APPROVED_OUTCOME) // 
                         .withPostComment(true)))); //
     
         stateActions.add(new PrismStateAction() //

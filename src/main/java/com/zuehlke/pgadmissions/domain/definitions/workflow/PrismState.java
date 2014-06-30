@@ -30,10 +30,11 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicat
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidationPendingCompletion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidationPendingFeedback;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawn;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnCompleted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApprovalPendingCorrection;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramApproved;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismInstitutionApproved;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramApproval;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramApproved;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramDeactivated;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramDisabled;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramDisabledCompleted;
@@ -48,7 +49,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectD
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectDisabledPendingProgramReactivation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectDisabledPendingReactivation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismSystemApproved;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnCompleted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismWithdrawnPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismWorkflowState;
 
@@ -100,73 +100,73 @@ public enum PrismState {
     PROJECT_DISABLED_PENDING_PROGRAM_REACTIVATION(null, null, PrismScope.PROJECT, new PrismProjectDisabledPendingProgramReactivation()), //
     PROJECT_DISABLED_PENDING_REACTIVATION(null, 28, PrismScope.PROJECT, new PrismProjectDisabledPendingReactivation()), //
     SYSTEM_APPROVED(1, null, PrismScope.SYSTEM, new PrismSystemApproved());
-    
+
     private Integer sequenceOrder;
-    
+
     private Integer duration;
-    
+
     private PrismScope scope;
-    
-    private PrismWorkflowState stateActions;
-    
+
+    private PrismWorkflowState workflowState;
+
     private static final HashMap<PrismState, PrismState> parentState = Maps.newHashMap();
-    
+
     static {
-        parentState.put(APPLICATION_APPROVAL,APPLICATION_APPROVAL);
-        parentState.put(APPLICATION_APPROVAL_PENDING_COMPLETION,APPLICATION_APPROVAL);
-        parentState.put(APPLICATION_APPROVAL_PENDING_FEEDBACK,APPLICATION_APPROVAL);
-        parentState.put(APPLICATION_APPROVED,APPLICATION_APPROVED);
-        parentState.put(APPLICATION_APPROVED_COMPLETED,APPLICATION_APPROVED);
-        parentState.put(APPLICATION_APPROVED_PENDING_CORRECTION,APPLICATION_APPROVED);
-        parentState.put(APPLICATION_APPROVED_PENDING_EXPORT,APPLICATION_APPROVED);
-        parentState.put(APPLICATION_INTERVIEW,APPLICATION_INTERVIEW);
-        parentState.put(APPLICATION_INTERVIEW_PENDING_AVAILABILITY,APPLICATION_INTERVIEW);
-        parentState.put(APPLICATION_INTERVIEW_PENDING_COMPLETION,APPLICATION_INTERVIEW);
-        parentState.put(APPLICATION_INTERVIEW_PENDING_FEEDBACK,APPLICATION_INTERVIEW);
-        parentState.put(APPLICATION_INTERVIEW_PENDING_INTERVIEW,APPLICATION_INTERVIEW);
-        parentState.put(APPLICATION_INTERVIEW_PENDING_SCHEDULING,APPLICATION_INTERVIEW);
-        parentState.put(APPLICATION_REJECTED,APPLICATION_REJECTED);
-        parentState.put(APPLICATION_REJECTED_COMPLETED,APPLICATION_REJECTED);
-        parentState.put(APPLICATION_REJECTED_PENDING_CORRECTION,APPLICATION_REJECTED);
-        parentState.put(APPLICATION_REJECTED_PENDING_EXPORT,APPLICATION_REJECTED);
-        parentState.put(APPLICATION_REVIEW,APPLICATION_REVIEW);
-        parentState.put(APPLICATION_REVIEW_PENDING_COMPLETION,APPLICATION_REVIEW);
-        parentState.put(APPLICATION_REVIEW_PENDING_FEEDBACK,APPLICATION_REVIEW);
-        parentState.put(APPLICATION_UNSUBMITTED,APPLICATION_UNSUBMITTED);
-        parentState.put(APPLICATION_UNSUBMITTED_PENDING_COMPLETION,APPLICATION_UNSUBMITTED);
-        parentState.put(APPLICATION_VALIDATION,APPLICATION_VALIDATION);
-        parentState.put(APPLICATION_VALIDATION_PENDING_COMPLETION,APPLICATION_VALIDATION);
-        parentState.put(APPLICATION_VALIDATION_PENDING_FEEDBACK,APPLICATION_VALIDATION);
-        parentState.put(APPLICATION_WITHDRAWN,APPLICATION_WITHDRAWN);
-        parentState.put(APPLICATION_WITHDRAWN_COMPLETED,APPLICATION_WITHDRAWN);
-        parentState.put(APPLICATION_WITHDRAWN_PENDING_CORRECTION,APPLICATION_WITHDRAWN);
-        parentState.put(INSTITUTION_APPROVED,INSTITUTION_APPROVED);
-        parentState.put(PROGRAM_APPROVAL,PROGRAM_APPROVAL);
-        parentState.put(PROGRAM_APPROVAL_PENDING_CORRECTION,PROGRAM_APPROVAL);
-        parentState.put(PROGRAM_APPROVED,PROGRAM_APPROVED);
-        parentState.put(PROGRAM_DEACTIVATED,PROGRAM_APPROVED);
-        parentState.put(PROGRAM_DISABLED,PROGRAM_DISABLED);
-        parentState.put(PROGRAM_DISABLED_COMPLETED,PROGRAM_DISABLED);
-        parentState.put(PROGRAM_DISABLED_PENDING_IMPORT_REACTIVATION,PROGRAM_DISABLED);
-        parentState.put(PROGRAM_DISABLED_PENDING_REACTIVATION,PROGRAM_DISABLED);
-        parentState.put(PROGRAM_REJECTED,PROGRAM_REJECTED);
-        parentState.put(PROGRAM_WITHDRAWN,PROGRAM_WITHDRAWN);
-        parentState.put(PROJECT_APPROVED,PROJECT_APPROVED);
-        parentState.put(PROJECT_DEACTIVATED,PROJECT_APPROVED);
-        parentState.put(PROJECT_DISABLED,PROJECT_DISABLED);
-        parentState.put(PROJECT_DISABLED_COMPLETED,PROJECT_DISABLED);
-        parentState.put(PROJECT_DISABLED_PENDING_PROGRAM_REACTIVATION,PROJECT_DISABLED);
-        parentState.put(PROJECT_DISABLED_PENDING_REACTIVATION,PROJECT_DISABLED);
-        parentState.put(SYSTEM_APPROVED,SYSTEM_APPROVED);
+        parentState.put(APPLICATION_APPROVAL, APPLICATION_APPROVAL);
+        parentState.put(APPLICATION_APPROVAL_PENDING_COMPLETION, APPLICATION_APPROVAL);
+        parentState.put(APPLICATION_APPROVAL_PENDING_FEEDBACK, APPLICATION_APPROVAL);
+        parentState.put(APPLICATION_APPROVED, APPLICATION_APPROVED);
+        parentState.put(APPLICATION_APPROVED_COMPLETED, APPLICATION_APPROVED);
+        parentState.put(APPLICATION_APPROVED_PENDING_CORRECTION, APPLICATION_APPROVED);
+        parentState.put(APPLICATION_APPROVED_PENDING_EXPORT, APPLICATION_APPROVED);
+        parentState.put(APPLICATION_INTERVIEW, APPLICATION_INTERVIEW);
+        parentState.put(APPLICATION_INTERVIEW_PENDING_AVAILABILITY, APPLICATION_INTERVIEW);
+        parentState.put(APPLICATION_INTERVIEW_PENDING_COMPLETION, APPLICATION_INTERVIEW);
+        parentState.put(APPLICATION_INTERVIEW_PENDING_FEEDBACK, APPLICATION_INTERVIEW);
+        parentState.put(APPLICATION_INTERVIEW_PENDING_INTERVIEW, APPLICATION_INTERVIEW);
+        parentState.put(APPLICATION_INTERVIEW_PENDING_SCHEDULING, APPLICATION_INTERVIEW);
+        parentState.put(APPLICATION_REJECTED, APPLICATION_REJECTED);
+        parentState.put(APPLICATION_REJECTED_COMPLETED, APPLICATION_REJECTED);
+        parentState.put(APPLICATION_REJECTED_PENDING_CORRECTION, APPLICATION_REJECTED);
+        parentState.put(APPLICATION_REJECTED_PENDING_EXPORT, APPLICATION_REJECTED);
+        parentState.put(APPLICATION_REVIEW, APPLICATION_REVIEW);
+        parentState.put(APPLICATION_REVIEW_PENDING_COMPLETION, APPLICATION_REVIEW);
+        parentState.put(APPLICATION_REVIEW_PENDING_FEEDBACK, APPLICATION_REVIEW);
+        parentState.put(APPLICATION_UNSUBMITTED, APPLICATION_UNSUBMITTED);
+        parentState.put(APPLICATION_UNSUBMITTED_PENDING_COMPLETION, APPLICATION_UNSUBMITTED);
+        parentState.put(APPLICATION_VALIDATION, APPLICATION_VALIDATION);
+        parentState.put(APPLICATION_VALIDATION_PENDING_COMPLETION, APPLICATION_VALIDATION);
+        parentState.put(APPLICATION_VALIDATION_PENDING_FEEDBACK, APPLICATION_VALIDATION);
+        parentState.put(APPLICATION_WITHDRAWN, APPLICATION_WITHDRAWN);
+        parentState.put(APPLICATION_WITHDRAWN_COMPLETED, APPLICATION_WITHDRAWN);
+        parentState.put(APPLICATION_WITHDRAWN_PENDING_CORRECTION, APPLICATION_WITHDRAWN);
+        parentState.put(INSTITUTION_APPROVED, INSTITUTION_APPROVED);
+        parentState.put(PROGRAM_APPROVAL, PROGRAM_APPROVAL);
+        parentState.put(PROGRAM_APPROVAL_PENDING_CORRECTION, PROGRAM_APPROVAL);
+        parentState.put(PROGRAM_APPROVED, PROGRAM_APPROVED);
+        parentState.put(PROGRAM_DEACTIVATED, PROGRAM_APPROVED);
+        parentState.put(PROGRAM_DISABLED, PROGRAM_DISABLED);
+        parentState.put(PROGRAM_DISABLED_COMPLETED, PROGRAM_DISABLED);
+        parentState.put(PROGRAM_DISABLED_PENDING_IMPORT_REACTIVATION, PROGRAM_DISABLED);
+        parentState.put(PROGRAM_DISABLED_PENDING_REACTIVATION, PROGRAM_DISABLED);
+        parentState.put(PROGRAM_REJECTED, PROGRAM_REJECTED);
+        parentState.put(PROGRAM_WITHDRAWN, PROGRAM_WITHDRAWN);
+        parentState.put(PROJECT_APPROVED, PROJECT_APPROVED);
+        parentState.put(PROJECT_DEACTIVATED, PROJECT_APPROVED);
+        parentState.put(PROJECT_DISABLED, PROJECT_DISABLED);
+        parentState.put(PROJECT_DISABLED_COMPLETED, PROJECT_DISABLED);
+        parentState.put(PROJECT_DISABLED_PENDING_PROGRAM_REACTIVATION, PROJECT_DISABLED);
+        parentState.put(PROJECT_DISABLED_PENDING_REACTIVATION, PROJECT_DISABLED);
+        parentState.put(SYSTEM_APPROVED, SYSTEM_APPROVED);
     }
 
-    private PrismState(Integer sequenceOrder, Integer duration, PrismScope scope, PrismWorkflowState definition) {
+    private PrismState(Integer sequenceOrder, Integer duration, PrismScope scope, PrismWorkflowState workflowState) {
         this.sequenceOrder = sequenceOrder;
         this.duration = duration;
         this.scope = scope;
-        this.stateActions = definition;
+        this.workflowState = workflowState;
     }
-    
+
     public Integer getSequenceOrder() {
         return sequenceOrder;
     }
@@ -178,13 +178,17 @@ public enum PrismState {
     public PrismScope getScope() {
         return scope;
     }
-    
+
     public List<PrismStateAction> getStateActions() {
-        return stateActions.getStateActions();
+        return workflowState.getStateActions();
     }
     
+    public PrismStateAction getStateAction(PrismAction action) {
+        return workflowState.getStateActionsByAction(action);
+    }
+
     public static PrismState getParentState(PrismState state) {
         return parentState.get(state);
     }
-    
+
 }

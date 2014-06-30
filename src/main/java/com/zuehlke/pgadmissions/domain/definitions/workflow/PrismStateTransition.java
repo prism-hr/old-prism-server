@@ -2,21 +2,21 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import java.util.List;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
-
 
 public class PrismStateTransition {
 
     private PrismState transitionState;
-    
+
     private PrismAction transitionAction;
-    
-    private PrismTransitionEvaluation evaluation;
-    
+
+    private PrismTransitionEvaluation transitionEvaluation;
+
     boolean postComment;
-    
+
     private List<PrismRoleTransition> roleTransitions = Lists.newArrayList();
-    
+
     private List<PrismAction> propagatedActions = Lists.newArrayList();
 
     public PrismState getTransitionState() {
@@ -27,14 +27,14 @@ public class PrismStateTransition {
         return transitionAction;
     }
 
-    public PrismTransitionEvaluation getEvaluation() {
-        return evaluation;
+    public PrismTransitionEvaluation getTransitionEvaluation() {
+        return transitionEvaluation;
     }
 
     public boolean isPostComment() {
         return postComment;
     }
-    
+
     public List<PrismRoleTransition> getRoleTransitions() {
         return roleTransitions;
     }
@@ -47,30 +47,51 @@ public class PrismStateTransition {
         this.transitionState = transitionState;
         return this;
     }
-    
+
     public PrismStateTransition withTransitionAction(PrismAction transitionAction) {
         this.transitionAction = transitionAction;
         return this;
     }
-    
-    public PrismStateTransition withEvaluation(PrismTransitionEvaluation evaluation) {
-        this.evaluation = evaluation;
+
+    public PrismStateTransition withTransitionEvaluation(PrismTransitionEvaluation transitionEvaluation) {
+        this.transitionEvaluation = transitionEvaluation;
         return this;
     }
-    
+
     public PrismStateTransition withPostComment(boolean postComment) {
         this.postComment = postComment;
         return this;
     }
-    
+
     public PrismStateTransition withRoleTransitions(List<PrismRoleTransition> roleTransitions) {
         this.roleTransitions = roleTransitions == null ? this.roleTransitions : roleTransitions;
         return this;
     }
-    
+
     public PrismStateTransition withPropagatedActions(List<PrismAction> propagatedActions) {
         this.propagatedActions = propagatedActions == null ? this.propagatedActions : propagatedActions;
         return this;
     }
-    
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(transitionState, transitionAction, transitionEvaluation, postComment, roleTransitions, propagatedActions);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PrismStateTransition other = (PrismStateTransition) obj;
+        final List<PrismRoleTransition> otherRoleTransitions = other.getRoleTransitions();
+        final List<PrismAction> otherPropagatedActions = other.getPropagatedActions();
+        return Objects.equal(transitionState, other.getTransitionState()) && Objects.equal(transitionAction, other.getTransitionAction())
+                && Objects.equal(transitionEvaluation, other.getTransitionEvaluation()) && Objects.equal(postComment, other.isPostComment())
+                && roleTransitions.size() == otherRoleTransitions.size() && roleTransitions.containsAll(otherRoleTransitions)
+                && propagatedActions.size() == otherPropagatedActions.size() && propagatedActions.containsAll(otherPropagatedActions);
+    }
 }

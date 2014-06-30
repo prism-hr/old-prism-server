@@ -92,17 +92,17 @@ public class PrismApplicationWithdrawn extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_WITHDRAWN) // 
                         .withTransitionAction(PrismAction.APPLICATION_EXPORT) // 
-                        .withEvaluation(PrismTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME) // 
                         .withPostComment(true), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_WITHDRAWN_COMPLETED) // 
                         .withTransitionAction(PrismAction.APPLICATION_EXPORT) // 
-                        .withEvaluation(PrismTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME) // 
                         .withPostComment(true), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_WITHDRAWN_PENDING_CORRECTION) // 
                         .withTransitionAction(PrismAction.APPLICATION_EXPORT) // 
-                        .withEvaluation(PrismTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME) // 
                         .withPostComment(true)))); //
     
         stateActions.add(new PrismStateAction() //

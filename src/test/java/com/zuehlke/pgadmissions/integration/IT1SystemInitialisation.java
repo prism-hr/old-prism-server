@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -26,15 +27,27 @@ import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.StateActionAssignment;
+import com.zuehlke.pgadmissions.domain.StateActionEnhancement;
+import com.zuehlke.pgadmissions.domain.StateActionNotification;
+import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionEnhancement;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.integration.helpers.RegistrationHelper;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -116,6 +129,7 @@ public class IT1SystemInitialisation {
             verifyConfigurationCreation();
             verifyNotificationTemplateCreation(system);
             verifyStateDurationCreation();
+            verifyStateActionCreation();
 
             if (i == 0) {
                 registrationHelper.assertActivationEmailRegisterAndActivateUser(systemUser, system,
@@ -125,28 +139,28 @@ public class IT1SystemInitialisation {
             mailSenderMock.verify();
         }
     }
-    
+
     private void verifyScopeCreation() {
         for (Scope scope : systemService.getScopes()) {
             assertEquals(scope.getId().getPrecedence(), scope.getPrecedence());
         }
     }
-    
+
     private void verifyRoleCreation() {
         for (Role role : roleService.getRoles()) {
             assertEquals(role.getId().getScope(), role.getScope().getId());
-            
+
             Set<Role> excludedRoles = role.getExcludedRoles();
             Set<PrismRole> prismExcludedRoles = PrismRole.getExcludedRoles(role.getId());
-            
+
             assertEquals(prismExcludedRoles.size(), excludedRoles.size());
-            
+
             for (Role excludedRole : role.getExcludedRoles()) {
                 assertTrue(prismExcludedRoles.contains(excludedRole.getId()));
             }
         }
     }
-    
+
     private void verifyActionCreation() {
         for (Action action : actionService.getActions()) {
             assertEquals(action.getId().getActionType(), action.getActionType());
@@ -154,9 +168,9 @@ public class IT1SystemInitialisation {
 
             Set<ActionRedaction> redactions = action.getRedactions();
             List<PrismActionRedaction> prismActionRedactions = action.getId().getRedactions();
-            
+
             assertEquals(prismActionRedactions.size(), redactions.size());
-            
+
             for (ActionRedaction redaction : redactions) {
                 PrismActionRedaction prismActionRedaction = new PrismActionRedaction().withRole(redaction.getRole().getId()).withRedactionType(
                         redaction.getRedactionType());
@@ -172,7 +186,7 @@ public class IT1SystemInitialisation {
             assertEquals(state.getId().getScope(), state.getScope().getId());
         }
     }
-    
+
     private void verifyConfigurationCreation() {
         for (Configuration configuration : systemService.getConfigurations()) {
             assertEquals(configuration.getParameter().getDefaultValue(), configuration.getValue());
@@ -197,17 +211,93 @@ public class IT1SystemInitialisation {
             assertEquals(getFileContent(EMAIL_DEFAULT_CONTENT_DIRECTORY + template.getId().getInitialTemplateContent()), version.getContent());
         }
     }
-    
+
     private void verifyStateDurationCreation() {
         for (State state : stateService.getConfigurableStates()) {
             assertEquals(state.getId().getDuration(), systemService.getStateDuration(state).getDuration());
         }
     }
+
+    private void verifyStateActionCreation() {
+        Integer stateActionsExpected = 0;
+        for (PrismState prismState : PrismState.values()) {
+            stateActionsExpected = stateActionsExpected + prismState.getStateActions().size();
+        }
+
+        List<StateAction> stateActions = stateService.getStateActions();
+        assertTrue(stateActionsExpected == stateActions.size());
+
+        for (StateAction stateAction : stateActions) {
+            PrismStateAction prismStateAction = stateAction.getState().getId().getStateAction(stateAction.getAction().getId());
+            assertNotNull(prismStateAction);
+            assertEquals(prismStateAction.isRaisesUrgentFlag(), stateAction.isRaisesUrgentFlag());
+            assertEquals(prismStateAction.isDefaultAction(), stateAction.isDefaultAction());
+            assertEquals(prismStateAction.getNotificationTemplate(), stateAction.getNotificationTemplate().getId());
+
+            verifyStateActionAssignmentCreation(stateAction, prismStateAction);
+            verifyStateActionNotificationCreation(stateAction, prismStateAction);
+            verifyStateTransitionCreation(stateAction, prismStateAction);
+
+        }
+    }
+
+    private void verifyStateActionAssignmentCreation(StateAction stateAction, PrismStateAction prismStateAction) {
+        Set<StateActionAssignment> stateActionAssignments = stateAction.getStateActionAssignments();
+        assertTrue(prismStateAction.getAssignments().size() == stateActionAssignments.size());
+
+        for (StateActionAssignment stateActionAssignment : stateActionAssignments) {
+            PrismStateActionAssignment prismStateActionAssignment = new PrismStateActionAssignment().withRole(stateActionAssignment.getRole().getId());
+
+            for (StateActionEnhancement stateActionEnhancement : stateActionAssignment.getEnhancements()) {
+                prismStateActionAssignment.getEnhancements().add(
+                        new PrismStateActionEnhancement().withEnhancement(stateActionEnhancement.getEnhancementType()).withDelegatedAction(
+                                stateActionEnhancement.getDelegatedAction().getId()));
+            }
+
+            assertTrue(prismStateAction.getAssignments().contains(prismStateActionAssignment));
+        }
+    }
+
+    private void verifyStateActionNotificationCreation(StateAction stateAction, PrismStateAction prismStateAction) {
+        Set<StateActionNotification> stateActionNotifications = stateAction.getStateActionNotifications();
+        assertTrue(prismStateAction.getNotifications().size() == stateActionNotifications.size());
+
+        for (StateActionNotification stateActionNotification : stateActionNotifications) {
+            PrismStateActionNotification prismStateActionNotification = new PrismStateActionNotification().withRole(stateActionNotification.getRole().getId())
+                    .withTemplate(stateActionNotification.getNotificationTemplate().getId());
+            assertTrue(prismStateAction.getNotifications().contains(prismStateActionNotification));
+        }
+    }
     
+    private void verifyStateTransitionCreation(StateAction stateAction, PrismStateAction prismStateAction) {
+        Set<StateTransition> stateTransitions = stateAction.getStateTransitions();
+        assertTrue(prismStateAction.getTransitions().size() == stateTransitions.size());
+
+        for (StateTransition stateTransition : stateTransitions) {
+            PrismStateTransition prismStateTransition = new PrismStateTransition().withTransitionState(stateTransition.getTransitionState().getId())
+                    .withTransitionAction(stateTransition.getTransitionAction().getId())
+                    .withTransitionEvaluation(stateTransition.getStateTransitionEvaluation()).withPostComment(stateTransition.isDoPostComment());
+
+            for (RoleTransition roleTransition : stateTransition.getRoleTransitions()) {
+                prismStateTransition.getRoleTransitions().add(
+                        new PrismRoleTransition().withRole(roleTransition.getRole().getId()).withTransitionType(roleTransition.getRoleTransitionType())
+                                .withTransitionRole(roleTransition.getTransitionRole().getId())
+                                .withRestrictToOwner(roleTransition.isRestrictToActionOwner()).withMinimumPermitted(roleTransition.getMinimumPermitted())
+                                .withMaximumPermitted(roleTransition.getMaximumPermitted()));
+            }
+            
+            for (Action propagatedAction : stateTransition.getPropagatedActions()) {
+                prismStateTransition.getPropagatedActions().add(propagatedAction.getId());
+            }
+            
+            assertTrue(prismStateAction.getTransitions().contains(prismStateTransition));
+        }
+    }
+
     private void verifyWorkflow() {
         List<State> potentialRootState = stateService.getRootState();
         assertTrue(potentialRootState.size() == 1);
-        
+
         State rootState = potentialRootState.get(0);
         assertTrue(rootState.getScope().getPrecedence() == 1);
     }

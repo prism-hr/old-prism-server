@@ -20,13 +20,13 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 public class ApplicationsFilteringService {
     
     @Autowired
-    private SystemService systemService;
+    private ScopeService scopeService;
 
     // TODO: Generalise for other list types
     public Filter getDefaultApplicationFiltering(User user) {
         Filter filtering;
         if (user.getUserAccount().getFilters().get(PrismScope.APPLICATION) != null) {
-            filtering = user.getUserAccount().getFilters().get(systemService.getScope(PrismScope.APPLICATION));
+            filtering = user.getUserAccount().getFilters().get(scopeService.getById(PrismScope.APPLICATION));
         } else {
             filtering = getActiveApplicationFiltering();
         }

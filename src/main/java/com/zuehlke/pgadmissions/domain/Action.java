@@ -38,6 +38,10 @@ public class Action extends WorkflowResource {
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
     
+    @ManyToOne
+    @JoinColumn(name = "creation_scope_id")
+    private Scope creationScope;
+    
     @OneToMany(mappedBy = "action", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ActionRedaction> redactions = Sets.newHashSet();
 
@@ -67,6 +71,18 @@ public class Action extends WorkflowResource {
         this.scope = scope;
     }
 
+    public Scope getCreationScope() {
+        return creationScope;
+    }
+
+    public void setCreationScope(Scope creationScope) {
+        this.creationScope = creationScope;
+    }
+    
+    public boolean isCreationAction() {
+        return creationScope != null;
+    }
+
     public Set<ActionRedaction> getRedactions() {
         return redactions;
     }
@@ -83,6 +99,11 @@ public class Action extends WorkflowResource {
     
     public Action withScope(Scope scope) {
         this.scope = scope;
+        return this;
+    }
+    
+    public Action withCreationScope(Scope creationScope) {
+        this.creationScope = creationScope;
         return this;
     }
 

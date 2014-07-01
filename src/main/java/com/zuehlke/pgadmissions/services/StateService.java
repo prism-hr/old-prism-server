@@ -87,7 +87,7 @@ public class StateService {
         postResourceUpdate(resource, comment);
         setResourceDueDate(resource, comment);
 
-        if (operativeResource != resource) {
+        if (action.isCreationAction()) {
             createResource(operativeResource, resource, action, comment);
         } else {
             updateResource(resource, action, comment);

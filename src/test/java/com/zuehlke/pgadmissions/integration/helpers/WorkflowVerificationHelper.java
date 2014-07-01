@@ -13,16 +13,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
+import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.StateService;
 
 @Service
 @Transactional
 public class WorkflowVerificationHelper {
 
+    private final Set<Scope> actualCreatableScopes = Sets.newHashSet();
+    
+    @Autowired
+    private ScopeService scopeService;
+    
     @Autowired
     private StateService stateService;
     
@@ -47,8 +54,7 @@ public class WorkflowVerificationHelper {
 
     private void verifyStateActions(State state) {
         for (StateAction stateAction : state.getStateActions()) {
-            verifyStateTransitions(stateAction);
-            
+            verifyStateTransitions(stateAction);   
         }
     }
 
@@ -63,6 +69,10 @@ public class WorkflowVerificationHelper {
             if (stateTransitions.size() > 1) {
                 verifyStateTransitionEvaluation(stateTransitions);
             }
+        }
+        
+        if (action.isCreationAction()) { 
+            actualCreatableScopes.add(action.getCreationScope());
         }
     }
 

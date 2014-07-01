@@ -47,6 +47,9 @@ public class StateDAO {
     }
     
     @Autowired
+    private ScopeDAO scopeDAO;
+    
+    @Autowired
     private SessionFactory sessionFactory;
 
     public List<State> getConfigurableStates() {
@@ -96,9 +99,7 @@ public class StateDAO {
     }
     
     public List<StateTransitionPending> getPendingStateTransitions() {
-        List<Scope> scopes = sessionFactory.getCurrentSession().createCriteria(Scope.class) //
-                .addOrder(Order.desc("precedence")) //
-                .list();
+        List<Scope> scopes = scopeDAO.getScopes();
         
         List<StateTransitionPending> pendingStateTransitions = Lists.newArrayList();
         for (Scope scope : scopes) {

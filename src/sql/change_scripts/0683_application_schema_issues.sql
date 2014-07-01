@@ -46,3 +46,31 @@ UPDATE STATE_TRANSITION
 SET state_transition_evaluation = NULL
 WHERE state_transition_evaluation = "APPLICATION_COMPLETED_OUTCOME"
 ;
+
+/* Explicity identify resource creation actions */
+
+ALTER TABLE ACTION
+	ADD COLUMN creation_scope_id VARCHAR(50) AFTER scope_id,
+	ADD INDEX (creation_scope_id),
+	ADD FOREIGN KEY (creation_scope_id) REFERENCES SCOPE (id)
+;
+
+UPDATE ACTION
+SET creation_scope_id = "INSTITUTION"
+WHERE id LIKE "%_CREATE_INSTITUTION"
+;
+
+UPDATE ACTION
+SET creation_scope_id = "PROGRAM"
+WHERE id LIKE "%_CREATE_PROGRAM"
+;
+
+UPDATE ACTION
+SET creation_scope_id = "PROJECT"
+WHERE id LIKE "%_CREATE_PROJECT"
+;
+
+UPDATE ACTION
+SET creation_scope_id = "APPLICATION"
+WHERE id LIKE "%_CREATE_APPLICATION"
+;

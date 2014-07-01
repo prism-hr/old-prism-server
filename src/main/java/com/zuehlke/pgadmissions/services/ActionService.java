@@ -86,19 +86,12 @@ public class ActionService {
     }
 
     public ActionOutcome executeAction(ResourceDynamic resource, Action action, Comment comment) {
-        Resource operativeResource = resource;
-        if (!resource.getClass().equals(action.getId().getScope().getResourceClass())) {
-            operativeResource = resource.getParentResource(action.getId().getScope());
-        }
-        return executeAction(operativeResource, resource, action, comment);
-    }
-
-    public ActionOutcome executeAction(Resource operativeResource, ResourceDynamic resource, Action action, Comment comment) {
-        validateAction(resource, action, comment.getUser(), comment.getDelegateUser());
+        Resource operativeResource = action.isCreationAction() ? resource.getParentResource(resource.getResourceScope()) : resource;
+        validateAction(operativeResource, action, comment.getUser(), comment.getDelegateUser());
 
         User actionOwner = comment.getUser();
 
-        if (operativeResource != resource) {
+        if (action.getCreationScope() != null) {
             ResourceDynamic duplicateResource = entityService.getDuplicateEntity(resource);
             if (duplicateResource != null) {
                 Action redirectAction = actionDAO.getRedirectAction(duplicateResource, actionOwner);
@@ -113,7 +106,7 @@ public class ActionService {
 
         return new ActionOutcome(actionOwner, nextActionResource, transitionAction);
     }
-    
+
     public List<PrismRedactionType> getRedactions(User user, ResourceDynamic resource, Action action) {
         return actionDAO.getRedactions(user, resource, action);
     }
@@ -125,5 +118,5 @@ public class ActionService {
     public boolean isCreationAction(PrismState stateId, PrismState transitionStateId, PrismAction actionId) {
         return stateId.getScope().getPrecedence() > transitionStateId.getScope().getPrecedence() && !actionId.name().contains("_CREATE_");
     }
-    
+
 }

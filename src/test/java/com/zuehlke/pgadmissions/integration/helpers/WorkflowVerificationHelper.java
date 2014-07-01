@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
@@ -17,6 +18,8 @@ import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateTransition;
+import com.zuehlke.pgadmissions.domain.System;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.StateService;
@@ -26,6 +29,7 @@ import com.zuehlke.pgadmissions.services.StateService;
 public class WorkflowVerificationHelper {
 
     private final Set<Scope> actualCreatableScopes = Sets.newHashSet();
+    private final Set<PrismAction> actualCreationActions = Sets.newHashSet();
     
     @Autowired
     private ScopeService scopeService;
@@ -35,6 +39,14 @@ public class WorkflowVerificationHelper {
     
     public void verifyWorkflowConfiguration() {
         verifyWorkflowConfiguration(null);
+        
+        List<Scope> expectedCreatableScopes = scopeService.getChildScopes(System.class);
+        assertEquals(expectedCreatableScopes.size(), actualCreatableScopes.size());
+        assertTrue(actualCreatableScopes.containsAll(expectedCreatableScopes));
+        
+        List<PrismAction> expectedCreationActions = PrismAction.getCreationActions();
+        assertEquals(expectedCreationActions.size(), actualCreationActions.size());
+        assertTrue(actualCreationActions.containsAll(expectedCreationActions));
     }
     
     private void verifyWorkflowConfiguration(State state) {
@@ -73,6 +85,7 @@ public class WorkflowVerificationHelper {
         
         if (action.isCreationAction()) { 
             actualCreatableScopes.add(action.getCreationScope());
+            actualCreationActions.add(action.getId());
         }
     }
 

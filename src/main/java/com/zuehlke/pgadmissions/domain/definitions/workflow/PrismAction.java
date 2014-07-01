@@ -122,6 +122,16 @@ public enum PrismAction {
     private PrismScope creationScope;
 
     private List<PrismActionRedaction> redactions = Lists.newArrayList();
+    
+    private static final List<PrismAction> creationActions = Lists.newArrayList();
+    
+    static {
+        for (PrismAction action : PrismAction.values()) {
+            if (action.getCreationScope() != null) {
+                creationActions.add(action);
+            }
+        }
+    }
 
     private PrismAction(PrismActionType actionType, PrismScope scope, PrismScope creationScope, List<PrismActionRedaction> redactions) {
         this.actionType = actionType;
@@ -144,6 +154,10 @@ public enum PrismAction {
 
     public List<PrismActionRedaction> getRedactions() {
         return redactions;
+    }
+
+    public static List<PrismAction> getCreationActions() {
+        return creationActions;
     }
 
 }

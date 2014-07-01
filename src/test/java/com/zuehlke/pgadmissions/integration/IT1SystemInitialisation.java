@@ -318,7 +318,7 @@ public class IT1SystemInitialisation {
         try {
             return Joiner.on(java.lang.System.lineSeparator()).join(Resources.readLines(Resources.getResource(filePath), Charsets.UTF_8));
         } catch (IOException e) {
-            throw new Error("Could not access default notification template", e);
+            throw new Error(e);
         }
     }
 

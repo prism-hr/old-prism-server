@@ -21,6 +21,7 @@ public class PrismApplicationApprovedPendingCorrection extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_COMMENT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR), // 
@@ -60,13 +61,13 @@ public class PrismApplicationApprovedPendingCorrection extends PrismWorkflowStat
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVED_PENDING_CORRECTION) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
-                        .withPostComment(true)))); //
+                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_CORRECT) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
+            .withPostComment(true) //
             .withNotificationTemplate(PrismNotificationTemplate.APPLICATION_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
@@ -83,13 +84,13 @@ public class PrismApplicationApprovedPendingCorrection extends PrismWorkflowStat
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVED_PENDING_EXPORT) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
-                        .withPostComment(true)))); //
+                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_EMAIL_CREATOR) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR), // 
@@ -118,6 +119,7 @@ public class PrismApplicationApprovedPendingCorrection extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
+            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_CREATOR) // 
@@ -210,8 +212,7 @@ public class PrismApplicationApprovedPendingCorrection extends PrismWorkflowStat
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVED_PENDING_EXPORT) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
-                        .withPostComment(true))));
+                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST))));
     }
 
 }

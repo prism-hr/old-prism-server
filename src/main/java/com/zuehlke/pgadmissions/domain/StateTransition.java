@@ -52,9 +52,6 @@ public class StateTransition implements IUniqueResource {
     @Enumerated(EnumType.STRING)
     private PrismTransitionEvaluation stateTransitionEvaluation;
 
-    @Column(name = "do_post_comment", nullable = false)
-    private boolean doPostComment;
-    
     @OneToMany(mappedBy = "stateTransition")
     private Set<RoleTransition> roleTransitions = Sets.newHashSet();
 
@@ -101,14 +98,6 @@ public class StateTransition implements IUniqueResource {
     public void setStateTransitionEvaluation(PrismTransitionEvaluation stateTransitionEvaluation) {
         this.stateTransitionEvaluation = stateTransitionEvaluation;
     }
-    
-    public boolean isDoPostComment() {
-        return doPostComment;
-    }
-
-    public void setDoPostComment(boolean doPostComment) {
-        this.doPostComment = doPostComment;
-    }
 
     public Set<RoleTransition> getRoleTransitions() {
         return roleTransitions;
@@ -135,11 +124,6 @@ public class StateTransition implements IUniqueResource {
     
     public StateTransition withStateTransitionEvaluation(PrismTransitionEvaluation stateTransitionEvaluation) {
         this.stateTransitionEvaluation = stateTransitionEvaluation;
-        return this;
-    }
-    
-    public StateTransition withDoPostComment(boolean doPostComment) {
-        this.doPostComment = doPostComment;
         return this;
     }
 

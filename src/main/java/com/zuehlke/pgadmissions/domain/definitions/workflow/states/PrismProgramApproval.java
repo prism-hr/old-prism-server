@@ -20,6 +20,7 @@ public class PrismProgramApproval extends PrismWorkflowState {
             .withAction(PrismAction.PROGRAM_COMPLETE_APPROVAL_STAGE) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
+            .withPostComment(true) //
             .withNotificationTemplate(PrismNotificationTemplate.PROGRAM_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
@@ -37,28 +38,25 @@ public class PrismProgramApproval extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVAL) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_PROGRAM_LIST) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_APPROVED_OUTCOME) // 
-                        .withPostComment(true), // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_APPROVED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVAL_PENDING_CORRECTION) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_PROGRAM_LIST) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_APPROVED_OUTCOME) // 
-                        .withPostComment(true), // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_APPROVED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVED) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_PROGRAM_LIST) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_APPROVED_OUTCOME) // 
-                        .withPostComment(true), // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_APPROVED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_REJECTED) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_PROGRAM_LIST) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_APPROVED_OUTCOME) // 
-                        .withPostComment(true)))); //
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_APPROVED_OUTCOME)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_EMAIL_CREATOR) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -69,6 +67,7 @@ public class PrismProgramApproval extends PrismWorkflowState {
             .withAction(PrismAction.PROGRAM_VIEW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -81,6 +80,7 @@ public class PrismProgramApproval extends PrismWorkflowState {
             .withAction(PrismAction.PROGRAM_VIEW_APPLICATION_LIST) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -131,6 +131,7 @@ public class PrismProgramApproval extends PrismWorkflowState {
             .withAction(PrismAction.PROGRAM_VIEW_PROJECT_LIST) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 

@@ -20,6 +20,7 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
             .withAction(PrismAction.INSTITUTION_CONFIGURE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -32,6 +33,7 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
             .withAction(PrismAction.INSTITUTION_CREATE_PROGRAM) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -40,14 +42,12 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVAL) // 
-                        .withTransitionAction(PrismAction.INSTITUTION_CREATE_PROGRAM) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CREATED_OUTCOME) // 
-                        .withPostComment(true), // 
+                        .withTransitionAction(PrismAction.SYSTEM_VIEW_PROGRAM_LIST) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CREATED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVED) // 
                         .withTransitionAction(PrismAction.INSTITUTION_CREATE_PROGRAM) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CREATED_OUTCOME) // 
-                        .withPostComment(true) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
@@ -61,6 +61,7 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
             .withAction(PrismAction.INSTITUTION_EXPORT_APPLICATIONS) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -71,6 +72,7 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
             .withAction(PrismAction.INSTITUTION_EXPORT_PROGRAMS) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -81,16 +83,17 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
             .withAction(PrismAction.INSTITUTION_IMPORT_PROGRAM) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(true) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVED) // 
-                        .withTransitionAction(PrismAction.INSTITUTION_IMPORT_PROGRAM) // 
-                        .withPostComment(true)))); //
+                        .withTransitionAction(PrismAction.INSTITUTION_IMPORT_PROGRAM)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.INSTITUTION_VIEW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -139,6 +142,7 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
             .withAction(PrismAction.INSTITUTION_VIEW_APPLICATION_LIST) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -189,6 +193,7 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
             .withAction(PrismAction.INSTITUTION_VIEW_PROGRAM_LIST) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -239,6 +244,7 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
             .withAction(PrismAction.INSTITUTION_VIEW_PROJECT_LIST) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 

@@ -51,6 +51,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionEnha
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.integration.helpers.RegistrationHelper;
+import com.zuehlke.pgadmissions.integration.helpers.WorkflowVerificationHelper;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -103,6 +104,9 @@ public class IT1SystemInitialisation {
 
     @Autowired
     private RegistrationHelper registrationHelper;
+    
+    @Autowired
+    private WorkflowVerificationHelper workflowVerificationHelper;
 
     @Test
     @Transactional
@@ -133,12 +137,13 @@ public class IT1SystemInitialisation {
             verifyStateDurationCreation();
             
             verifyStateActionCreation();
+            workflowVerificationHelper.verifyWorkflowConfiguration();
             
             verifyNotificationTemplateCreation(system);
             verifyStateDurationCreation();
 
             if (i == 0) {
-                registrationHelper.assertActivationEmailRegisterAndActivateUser(systemUser, system,
+                registrationHelper.registerAndActivateUser(systemUser, system,
                         PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
             }
 
@@ -238,6 +243,7 @@ public class IT1SystemInitialisation {
             assertNotNull(prismStateAction);
             assertEquals(prismStateAction.isRaisesUrgentFlag(), stateAction.isRaisesUrgentFlag());
             assertEquals(prismStateAction.isDefaultAction(), stateAction.isDefaultAction());
+            assertEquals(prismStateAction.isPostComment(), stateAction.isPostComment());
             
             NotificationTemplate template = stateAction.getNotificationTemplate();
             PrismNotificationTemplate prismTemplate = prismStateAction.getNotificationTemplate();
@@ -290,7 +296,7 @@ public class IT1SystemInitialisation {
         for (StateTransition stateTransition : stateTransitions) {
             PrismStateTransition prismStateTransition = new PrismStateTransition().withTransitionState(stateTransition.getTransitionState().getId())
                     .withTransitionAction(stateTransition.getTransitionAction().getId())
-                    .withTransitionEvaluation(stateTransition.getStateTransitionEvaluation()).withPostComment(stateTransition.isDoPostComment());
+                    .withTransitionEvaluation(stateTransition.getStateTransitionEvaluation());
 
             for (RoleTransition roleTransition : stateTransition.getRoleTransitions()) {
                 prismStateTransition.getRoleTransitions().add(
@@ -306,14 +312,6 @@ public class IT1SystemInitialisation {
             
             assertTrue(prismStateAction.getTransitions().contains(prismStateTransition));
         }
-    }
-
-    private void verifyWorkflow() {
-        List<State> potentialRootState = stateService.getRootState();
-        assertTrue(potentialRootState.size() == 1);
-
-        State rootState = potentialRootState.get(0);
-        assertTrue(rootState.getScope().getPrecedence() == 1);
     }
 
     private String getFileContent(String filePath) {

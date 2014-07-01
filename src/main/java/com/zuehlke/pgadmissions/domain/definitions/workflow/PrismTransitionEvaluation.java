@@ -4,7 +4,6 @@ import org.apache.commons.lang.WordUtils;
 
 public enum PrismTransitionEvaluation {
 
-    APPLICATION_COMPLETED_OUTCOME, //
     APPLICATION_SUPERVISION_CONFIRMED_OUTCOME, //
     APPLICATION_ELIGIBILITY_ASSESSED_OUTCOME, //
     APPLICATION_EVALUATED_OUTCOME, //

@@ -20,20 +20,19 @@ public class PrismProgramDisabledPendingImportReactivation extends PrismWorkflow
             .withAction(PrismAction.PROGRAM_CONCLUDE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(true) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DISABLED_COMPLETED) // 
                         .withTransitionAction(PrismAction.PROGRAM_CONCLUDE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME) // 
-                        .withPostComment(true)// 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.APPLICATION_TERMINATE,  //
                                 PrismAction.PROJECT_TERMINATE)), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DISABLED_PENDING_IMPORT_REACTIVATION) // 
                         .withTransitionAction(PrismAction.PROGRAM_CONCLUDE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME) // 
-                        .withPostComment(true)// 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.PROJECT_SUSPEND))))); //
     
@@ -41,6 +40,7 @@ public class PrismProgramDisabledPendingImportReactivation extends PrismWorkflow
             .withAction(PrismAction.PROGRAM_ESCALATE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(true) //
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
@@ -54,8 +54,7 @@ public class PrismProgramDisabledPendingImportReactivation extends PrismWorkflow
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DISABLED_COMPLETED) // 
-                        .withTransitionAction(PrismAction.PROGRAM_ESCALATE) // 
-                        .withPostComment(true)// 
+                        .withTransitionAction(PrismAction.PROGRAM_ESCALATE)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.APPLICATION_TERMINATE,  //
                                 PrismAction.PROJECT_TERMINATE))))); //
@@ -64,6 +63,7 @@ public class PrismProgramDisabledPendingImportReactivation extends PrismWorkflow
             .withAction(PrismAction.PROGRAM_EXPORT_APPLICATIONS) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -76,6 +76,7 @@ public class PrismProgramDisabledPendingImportReactivation extends PrismWorkflow
             .withAction(PrismAction.PROGRAM_RESTORE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
+            .withPostComment(true) //
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
@@ -90,15 +91,13 @@ public class PrismProgramDisabledPendingImportReactivation extends PrismWorkflow
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVED) // 
                         .withTransitionAction(PrismAction.PROGRAM_RESTORE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_REACTIVATED_OUTCOME) // 
-                        .withPostComment(true)// 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_REACTIVATED_OUTCOME)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.PROJECT_RESTORE)), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DEACTIVATED) // 
                         .withTransitionAction(PrismAction.PROGRAM_RESTORE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_REACTIVATED_OUTCOME) // 
-                        .withPostComment(true)// 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_REACTIVATED_OUTCOME)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.PROJECT_RESTORE))))); //
     
@@ -106,6 +105,7 @@ public class PrismProgramDisabledPendingImportReactivation extends PrismWorkflow
             .withAction(PrismAction.PROGRAM_VIEW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -154,6 +154,7 @@ public class PrismProgramDisabledPendingImportReactivation extends PrismWorkflow
             .withAction(PrismAction.PROGRAM_VIEW_APPLICATION_LIST) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -204,6 +205,7 @@ public class PrismProgramDisabledPendingImportReactivation extends PrismWorkflow
             .withAction(PrismAction.PROGRAM_VIEW_PROJECT_LIST) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 

@@ -73,7 +73,7 @@ public class ResourceResource {
         List<User> users = roleService.getUsers(resource);
         List<ResourceRepresentation.UserRolesRepresentation> userRolesRepresentations = Lists.newArrayListWithCapacity(users.size());
         for (User user : users) {
-            List<PrismRole> availableRoles = roleService.getRoles(resourceDescriptor.getType());
+            List<PrismRole> availableRoles = roleService.getRolesToRemove(resourceDescriptor.getType());
             Set<PrismRole> roles = Sets.newHashSet(roleService.getRoles(resource, user));
             List<ResourceRepresentation.RoleRepresentation> userRoles = Lists.newArrayListWithCapacity(availableRoles.size());
             for (PrismRole availableRole : availableRoles) {

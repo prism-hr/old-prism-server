@@ -38,8 +38,8 @@ public class RoleService {
         return entityService.getAll(Role.class);
     }
 
-    public UserRole createUserRole(Resource resource, User user, PrismRole roleId) {
-        Role role = getById(roleId);
+    public UserRole createUserRole(Resource resource, User user, PrismRole roleToCreate) {
+        Role role = getById(roleToCreate);
         UserRole userRole = new UserRole();
         userRole.setResource(resource);
         userRole.setUser(user);
@@ -48,13 +48,19 @@ public class RoleService {
         return userRole;
     }
 
-    public UserRole getOrCreateUserRole(Resource resource, User user, PrismRole role) {
-        UserRole transientUserRole = createUserRole(resource, user, role);
+    public UserRole getOrCreateUserRole(Resource resource, User user, PrismRole roleToCreate) {
+        UserRole transientUserRole = createUserRole(resource, user, roleToCreate);
         return entityService.getOrCreate(transientUserRole);
     }
+    
+    public void getOrCreateUserRoles(Resource resource, User user, PrismRole... rolesToCreate) {
+        for (PrismRole roleToCreate : rolesToCreate) {
+            getOrCreateUserRole(resource, user, roleToCreate);
+        }
+    }
 
-    public void removeUserRoles(Resource resource, User user, PrismRole... authorities) {
-        for (UserRole roleToRemove : roleDAO.getUserRoles(resource, user, authorities)) {
+    public void removeUserRoles(Resource resource, User user, PrismRole... rolesToRemove) {
+        for (UserRole roleToRemove : roleDAO.getUserRoles(resource, user, rolesToRemove)) {
             deleteUserRole(roleToRemove);
         }
     }
@@ -210,7 +216,7 @@ public class RoleService {
         }
     }
 
-    public List<PrismRole> getRoles(Class<? extends Resource> resourceType) {
-        return roleDAO.getRoles(resourceType);
+    public List<PrismRole> getRolesToRemove(Class<? extends Resource> resourceClass, PrismRole... rolesToCreate) {
+        return roleDAO.getRolesToRemove(resourceClass);
     }
 }

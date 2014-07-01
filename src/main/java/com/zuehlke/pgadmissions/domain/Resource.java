@@ -36,17 +36,17 @@ public abstract class Resource implements IUniqueResource {
 
     public abstract void setUser(User user);
 
-    public PrismScope getResourceType() {
-        return PrismScope.valueOf(this.getClass().getSimpleName().toUpperCase());
+    public PrismScope getResourceScope() {
+        return PrismScope.getResourceScope(this.getClass());
     }
 
-    public Resource getEnclosingResource(PrismScope resourceType) {
-        return getResourceType().equals(resourceType) ? this : getParentResource(resourceType);
+    public Resource getEnclosingResource(PrismScope resourceScope) {
+        return getResourceScope().equals(resourceScope) ? this : getParentResource(resourceScope);
     }
 
-    public Resource getParentResource(PrismScope resourceType) {
+    public Resource getParentResource(PrismScope resourceScope) {
         try {
-            return (Resource) PropertyUtils.getSimpleProperty(this, resourceType.getLowerCaseName());
+            return (Resource) PropertyUtils.getSimpleProperty(this, resourceScope.getLowerCaseName());
         } catch (Exception e) {
             throw new Error(e);
         }

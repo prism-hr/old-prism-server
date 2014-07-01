@@ -79,7 +79,7 @@ public class ResourceDAO {
         HashMap<String, Object> queryParameters = Maps.newHashMap();
         queryParameters.put("user", user);
         queryParameters.put("queryScope", resourceTypeString);
-        queryParameters.put("parentScopes", scopeDAO.getParentScopesByType(resourceType));
+        queryParameters.put("parentScopes", scopeDAO.getParentScopes(resourceType));
         queryParameters.put("queryRangeValue", RESOURCE_LIST_YEAR_RANGE);
         queryParameters.put("queryRangeUnit", DurationUnit.YEARS.getSqlValue());
         queryParameters.put("rowIndex", page * perPage);

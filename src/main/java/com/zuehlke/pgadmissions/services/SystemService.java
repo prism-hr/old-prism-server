@@ -93,6 +93,9 @@ public class SystemService {
     private RoleService roleService;
 
     @Autowired
+    private ScopeService scopeService;
+    
+    @Autowired
     private StateService stateService;
 
     @Autowired
@@ -108,22 +111,14 @@ public class SystemService {
         return entityService.getOrCreate(transientSystem);
     }
 
-    public Scope getScope(PrismScope scopeId) {
-        return entityService.getByProperty(Scope.class, "id", scopeId);
-    }
-
-    public StateDuration getStateDuration(State state) {
-        return stateService.getStateDuration(getSystem(), state);
-    }
-
-    public List<Scope> getScopes() {
-        return entityService.getAll(Scope.class);
-    }
-
     public List<Configuration> getConfigurations() {
         return configurationService.getConfigurations(getSystem());
     }
-
+    
+    public StateDuration getStateDuration(State state) {
+        return stateService.getStateDuration(getSystem(), state);
+    }
+    
     public void initialiseSystem() {
         initialiseScopes();
         initialiseRoles();
@@ -179,13 +174,13 @@ public class SystemService {
     private void initialiseActions() {
         for (PrismAction prismAction : PrismAction.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismAction.getScope());
-            Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType()).withScope(scope);
+            Scope creationScope = entityService.getByProperty(Scope.class, "id", prismAction.getCreationScope());
+            Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType()).withScope(scope)
+                    .withCreationScope(creationScope);
             Action action = entityService.getOrCreate(transientAction);
             action.getRedactions().clear();
 
-            List<PrismActionRedaction> prismActionRedactions = prismAction.getRedactions();
-
-            for (PrismActionRedaction prismActionRedaction : prismActionRedactions) {
+            for (PrismActionRedaction prismActionRedaction : prismAction.getRedactions()) {
                 Role role = roleService.getById(prismActionRedaction.getRole());
                 ActionRedaction transientActionRedaction = new ActionRedaction().withAction(action).withRole(role)
                         .withRedactionType(prismActionRedaction.getRedactionType());
@@ -371,7 +366,7 @@ public class SystemService {
     }
 
     private void reassignResourceStates() {
-        for (Scope scope : getScopes()) {
+        for (Scope scope : scopeService.getScopes()) {
             Class<? extends Resource> resourceClass = scope.getId().getResourceClass();
             for (State state : stateService.getDeprecatedStates(resourceClass)) {
                 State degradationState = stateService.getDegradationState(state);

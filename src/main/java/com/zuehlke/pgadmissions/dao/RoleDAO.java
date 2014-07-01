@@ -53,7 +53,7 @@ public class RoleDAO {
         return (UserRole) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("role.id", authority)) //
-                .add(Restrictions.eq(resource.getResourceType().toString().toLowerCase(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().toString().toLowerCase(), resource)) //
                 .uniqueResult();
     }
 
@@ -76,7 +76,7 @@ public class RoleDAO {
         return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.in("role.id", authorities)) //
-                .add(Restrictions.eq(resource.getResourceType().toString().toLowerCase(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().toString().toLowerCase(), resource)) //
                 .list();
     }
 

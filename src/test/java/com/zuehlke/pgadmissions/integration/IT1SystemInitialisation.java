@@ -57,6 +57,7 @@ import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
@@ -94,6 +95,9 @@ public class IT1SystemInitialisation {
     private RoleService roleService;
 
     @Autowired
+    private ScopeService scopeService;
+    
+    @Autowired
     private StateService stateService;
 
     @Autowired
@@ -104,7 +108,7 @@ public class IT1SystemInitialisation {
 
     @Autowired
     private RegistrationHelper registrationHelper;
-    
+
     @Autowired
     private WorkflowVerificationHelper workflowVerificationHelper;
 
@@ -135,16 +139,15 @@ public class IT1SystemInitialisation {
             verifyConfigurationCreation();
             verifyNotificationTemplateCreation(system);
             verifyStateDurationCreation();
-            
+
             verifyStateActionCreation();
             workflowVerificationHelper.verifyWorkflowConfiguration();
-            
+
             verifyNotificationTemplateCreation(system);
             verifyStateDurationCreation();
 
             if (i == 0) {
-                registrationHelper.registerAndActivateUser(systemUser, system,
-                        PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+                registrationHelper.registerAndActivateUser(systemUser, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
             }
 
             mailSenderMock.verify();
@@ -152,7 +155,7 @@ public class IT1SystemInitialisation {
     }
 
     private void verifyScopeCreation() {
-        for (Scope scope : systemService.getScopes()) {
+        for (Scope scope : scopeService.getScopes()) {
             assertEquals(scope.getId().getPrecedence(), scope.getPrecedence());
         }
     }
@@ -176,6 +179,7 @@ public class IT1SystemInitialisation {
         for (Action action : actionService.getActions()) {
             assertEquals(action.getId().getActionType(), action.getActionType());
             assertEquals(action.getId().getScope(), action.getScope().getId());
+            assertEquals(action.getId().getCreationScope(), action.getCreationScope() == null ? null : action.getCreationScope().getId());
 
             Set<ActionRedaction> redactions = action.getRedactions();
             List<PrismActionRedaction> prismActionRedactions = action.getId().getRedactions();
@@ -244,7 +248,7 @@ public class IT1SystemInitialisation {
             assertEquals(prismStateAction.isRaisesUrgentFlag(), stateAction.isRaisesUrgentFlag());
             assertEquals(prismStateAction.isDefaultAction(), stateAction.isDefaultAction());
             assertEquals(prismStateAction.isPostComment(), stateAction.isPostComment());
-            
+
             NotificationTemplate template = stateAction.getNotificationTemplate();
             PrismNotificationTemplate prismTemplate = prismStateAction.getNotificationTemplate();
             if (prismTemplate == null) {
@@ -288,7 +292,7 @@ public class IT1SystemInitialisation {
             assertTrue(prismStateAction.getNotifications().contains(prismStateActionNotification));
         }
     }
-    
+
     private void verifyStateTransitionCreation(StateAction stateAction, PrismStateAction prismStateAction) {
         Set<StateTransition> stateTransitions = stateAction.getStateTransitions();
         assertTrue(prismStateAction.getTransitions().size() == stateTransitions.size());
@@ -301,15 +305,14 @@ public class IT1SystemInitialisation {
             for (RoleTransition roleTransition : stateTransition.getRoleTransitions()) {
                 prismStateTransition.getRoleTransitions().add(
                         new PrismRoleTransition().withRole(roleTransition.getRole().getId()).withTransitionType(roleTransition.getRoleTransitionType())
-                                .withTransitionRole(roleTransition.getTransitionRole().getId())
-                                .withRestrictToOwner(roleTransition.isRestrictToActionOwner()).withMinimumPermitted(roleTransition.getMinimumPermitted())
-                                .withMaximumPermitted(roleTransition.getMaximumPermitted()));
+                                .withTransitionRole(roleTransition.getTransitionRole().getId()).withRestrictToOwner(roleTransition.isRestrictToActionOwner())
+                                .withMinimumPermitted(roleTransition.getMinimumPermitted()).withMaximumPermitted(roleTransition.getMaximumPermitted()));
             }
-            
+
             for (Action propagatedAction : stateTransition.getPropagatedActions()) {
                 prismStateTransition.getPropagatedActions().add(propagatedAction.getId());
             }
-            
+
             assertTrue(prismStateAction.getTransitions().contains(prismStateTransition));
         }
     }

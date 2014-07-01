@@ -135,7 +135,7 @@ public class SystemService {
         initialiseStateDurations(system);
         initialiseStateActions();
 
-        if (systemUser.getUserAccount() == null) {
+        if (systemUser.getUserAccount() == null || !systemUser.isEnabled()) {
             mailService.sendEmailNotification(systemUser, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
         }
 
@@ -280,6 +280,7 @@ public class SystemService {
                             .withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag()).withDefaultAction(prismStateAction.isDefaultAction())
                             .withPostComment(prismStateAction.isPostComment()).withNotificationTemplate(template);
                     StateAction stateAction = entityService.getOrCreate(transientStateAction);
+                    state.getStateActions().add(stateAction);
 
                     initialiseStateActionAssignments(prismStateAction, stateAction);
                     initialiseStateActionNotifications(prismStateAction, stateAction);

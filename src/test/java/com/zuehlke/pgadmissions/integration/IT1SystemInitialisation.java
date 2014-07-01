@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -114,6 +115,7 @@ public class IT1SystemInitialisation {
 
     @Test
     @Transactional
+    @Rollback(false)
     public void testSystemInitialisation() {
         for (int i = 0; i < 2; i++) {
             systemService.initialiseSystem();

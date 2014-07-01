@@ -42,7 +42,10 @@ public class StateAction implements IUniqueResource {
     private boolean raisesUrgentFlag;
     
     @Column(name = "is_default_action", nullable = false)
-    private boolean defaultAction;    
+    private boolean defaultAction;
+    
+    @Column(name = "do_post_comment", nullable = false)
+    private boolean postComment;
 
     @ManyToOne
     @JoinColumn(name = "notification_template_id")
@@ -97,6 +100,14 @@ public class StateAction implements IUniqueResource {
         this.defaultAction = defaultAction;
     }
 
+    public boolean isPostComment() {
+        return postComment;
+    }
+
+    public void setPostComment(boolean postComment) {
+        this.postComment = postComment;
+    }
+
     public NotificationTemplate getNotificationTemplate() {
         return notificationTemplate;
     }
@@ -138,6 +149,11 @@ public class StateAction implements IUniqueResource {
     
     public StateAction withDefaultAction(boolean defaultAction) {
         this.defaultAction = defaultAction;
+        return this;
+    }
+    
+    public StateAction withPostComment(boolean postComment) {
+        this.postComment = postComment;
         return this;
     }
     

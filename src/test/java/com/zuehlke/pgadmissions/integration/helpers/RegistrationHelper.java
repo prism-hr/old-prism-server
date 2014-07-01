@@ -23,7 +23,7 @@ public class RegistrationHelper {
     @Autowired
     private RegistrationService registrationService;
 
-    public void assertActivationEmailRegisterAndActivateUser(User user, Resource resource, PrismNotificationTemplate activationTemplate) {
+    public void registerAndActivateUser(User user, Resource resource, PrismNotificationTemplate activationTemplate) {
         if (user.getUserAccount() != null) {
             throw new IllegalStateException("User already registered");
         }

@@ -52,7 +52,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvalu
 import com.zuehlke.pgadmissions.mail.MailService;
 
 @Service
-@Transactional(timeout = 300)
+@Transactional(timeout = 120)
 public class SystemService {
 
     private final String EMAIL_DEFAULT_SUBJECT_DIRECTORY = "email/subject/";
@@ -283,9 +283,9 @@ public class SystemService {
                     NotificationTemplate template = notificationService.getById(prismStateAction.getNotificationTemplate());
                     StateAction transientStateAction = new StateAction().withState(state).withAction(action)
                             .withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag()).withDefaultAction(prismStateAction.isDefaultAction())
-                            .withNotificationTemplate(template);
+                            .withPostComment(prismStateAction.isPostComment()).withNotificationTemplate(template);
                     StateAction stateAction = entityService.getOrCreate(transientStateAction);
-                    
+
                     initialiseStateActionAssignments(prismStateAction, stateAction);
                     initialiseStateActionNotifications(prismStateAction, stateAction);
                     initialiseStateTransitions(prismStateAction, stateAction);
@@ -344,8 +344,7 @@ public class SystemService {
             Action transitionAction = actionService.getById(prismStateTransition.getTransitionAction());
             PrismTransitionEvaluation transitionEvaluation = prismStateTransition.getTransitionEvaluation();
             StateTransition transientStateTransition = new StateTransition().withStateAction(stateAction).withTransitionState(transitionState)
-                    .withTransitionAction(transitionAction).withStateTransitionEvaluation(transitionEvaluation)
-                    .withDoPostComment(prismStateTransition.isPostComment());
+                    .withTransitionAction(transitionAction).withStateTransitionEvaluation(transitionEvaluation);
             StateTransition stateTransition = entityService.getOrCreate(transientStateTransition);
             stateAction.getStateTransitions().add(stateTransition);
             initialiseRoleTransitions(prismStateTransition, stateTransition);

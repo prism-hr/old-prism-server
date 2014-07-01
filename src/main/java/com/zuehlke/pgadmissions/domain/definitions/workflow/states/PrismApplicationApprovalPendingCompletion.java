@@ -24,6 +24,7 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_COMMENT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -67,13 +68,13 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVAL_PENDING_COMPLETION) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
-                        .withPostComment(true)))); //
+                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
+            .withPostComment(true) //
             .withNotificationTemplate(PrismNotificationTemplate.APPLICATION_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
@@ -112,7 +113,6 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
                         .withTransitionState(PrismState.APPLICATION_APPROVAL) // 
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_SUPERVISORS) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EVALUATED_OUTCOME) // 
-                        .withPostComment(true) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
@@ -139,7 +139,6 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
                         .withTransitionState(PrismState.APPLICATION_APPROVED) // 
                         .withTransitionAction(PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EVALUATED_OUTCOME) // 
-                        .withPostComment(true) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
@@ -160,7 +159,6 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
                         .withTransitionState(PrismState.APPLICATION_INTERVIEW) // 
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_INTERVIEWERS) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EVALUATED_OUTCOME) // 
-                        .withPostComment(true) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
@@ -187,7 +185,6 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
                         .withTransitionState(PrismState.APPLICATION_REJECTED) // 
                         .withTransitionAction(PrismAction.APPLICATION_CONFIRM_REJECTION) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EVALUATED_OUTCOME) // 
-                        .withPostComment(true) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
@@ -208,7 +205,6 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
                         .withTransitionState(PrismState.APPLICATION_REVIEW) // 
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_REVIEWERS) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EVALUATED_OUTCOME) // 
-                        .withPostComment(true) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
@@ -236,6 +232,7 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_CONFIRM_SUPERVISION) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
+            .withPostComment(true) //
             .withNotificationTemplate(PrismNotificationTemplate.APPLICATION_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
@@ -265,7 +262,6 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVAL_PENDING_COMPLETION) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
-                        .withPostComment(true) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR) //
@@ -282,6 +278,7 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_EMAIL_CREATOR) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -314,6 +311,7 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_PROVIDE_REFERENCE) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
+            .withPostComment(true) //
             .withNotificationTemplate(PrismNotificationTemplate.APPLICATION_PROVIDE_REFERENCE_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
@@ -344,7 +342,6 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVAL_PENDING_COMPLETION) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
-                        .withPostComment(true) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_REFEREE) //
@@ -356,6 +353,7 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_TERMINATE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(true) //
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.APPLICATION_CREATOR) // 
@@ -365,7 +363,6 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
                         .withTransitionState(PrismState.APPLICATION_REJECTED_COMPLETED) // 
                         .withTransitionAction(PrismAction.APPLICATION_TERMINATE) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
-                        .withPostComment(true) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
@@ -391,7 +388,6 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
                         .withTransitionState(PrismState.APPLICATION_REJECTED_PENDING_EXPORT) // 
                         .withTransitionAction(PrismAction.APPLICATION_TERMINATE) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
-                        .withPostComment(true) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
@@ -418,6 +414,7 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR) // 
@@ -514,6 +511,7 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_WITHDRAW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_CREATOR))) //
@@ -541,7 +539,6 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
                         .withTransitionState(PrismState.APPLICATION_WITHDRAWN) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
-                        .withPostComment(true) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
@@ -567,7 +564,6 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
                         .withTransitionState(PrismState.APPLICATION_WITHDRAWN_COMPLETED) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
-                        .withPostComment(true) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //

@@ -15,6 +15,7 @@ public class PrismProjectDisabledCompleted extends PrismWorkflowState {
             .withAction(PrismAction.PROJECT_VIEW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -63,6 +64,7 @@ public class PrismProjectDisabledCompleted extends PrismWorkflowState {
             .withAction(PrismAction.PROJECT_VIEW_APPLICATION_LIST) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 

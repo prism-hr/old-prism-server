@@ -19,6 +19,7 @@ public class PrismApprovalPendingCorrection extends PrismWorkflowState {
             .withAction(PrismAction.PROGRAM_COMPLETE_APPROVAL_STAGE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -36,6 +37,7 @@ public class PrismApprovalPendingCorrection extends PrismWorkflowState {
             .withAction(PrismAction.PROGRAM_CORRECT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
+            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -46,13 +48,13 @@ public class PrismApprovalPendingCorrection extends PrismWorkflowState {
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVAL) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_PROGRAM_LIST) // 
-                        .withPostComment(true)))); //
+                        .withTransitionAction(PrismAction.SYSTEM_VIEW_PROGRAM_LIST)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_EMAIL_CREATOR) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -63,6 +65,7 @@ public class PrismApprovalPendingCorrection extends PrismWorkflowState {
             .withAction(PrismAction.PROGRAM_VIEW_APPLICATION_LIST) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -113,6 +116,7 @@ public class PrismApprovalPendingCorrection extends PrismWorkflowState {
             .withAction(PrismAction.PROGRAM_VIEW_PROJECT_LIST) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -163,14 +167,14 @@ public class PrismApprovalPendingCorrection extends PrismWorkflowState {
             .withAction(PrismAction.PROGRAM_WITHDRAW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_WITHDRAWN) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_PROGRAM_LIST) // 
-                        .withPostComment(true))));
+                        .withTransitionAction(PrismAction.SYSTEM_VIEW_PROGRAM_LIST))));
     }
 
 }

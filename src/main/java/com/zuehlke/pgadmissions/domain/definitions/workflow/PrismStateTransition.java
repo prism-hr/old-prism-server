@@ -13,8 +13,6 @@ public class PrismStateTransition {
 
     private PrismTransitionEvaluation transitionEvaluation;
 
-    boolean postComment;
-
     private List<PrismRoleTransition> roleTransitions = Lists.newArrayList();
 
     private List<PrismAction> propagatedActions = Lists.newArrayList();
@@ -29,10 +27,6 @@ public class PrismStateTransition {
 
     public PrismTransitionEvaluation getTransitionEvaluation() {
         return transitionEvaluation;
-    }
-
-    public boolean isPostComment() {
-        return postComment;
     }
 
     public List<PrismRoleTransition> getRoleTransitions() {
@@ -58,11 +52,6 @@ public class PrismStateTransition {
         return this;
     }
 
-    public PrismStateTransition withPostComment(boolean postComment) {
-        this.postComment = postComment;
-        return this;
-    }
-
     public PrismStateTransition withRoleTransitions(List<PrismRoleTransition> roleTransitions) {
         this.roleTransitions = roleTransitions == null ? this.roleTransitions : roleTransitions;
         return this;
@@ -75,7 +64,7 @@ public class PrismStateTransition {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(transitionState, transitionAction, transitionEvaluation, postComment, roleTransitions, propagatedActions);
+        return Objects.hashCode(transitionState, transitionAction, transitionEvaluation, roleTransitions, propagatedActions);
     }
 
     @Override
@@ -90,8 +79,8 @@ public class PrismStateTransition {
         final List<PrismRoleTransition> otherRoleTransitions = other.getRoleTransitions();
         final List<PrismAction> otherPropagatedActions = other.getPropagatedActions();
         return Objects.equal(transitionState, other.getTransitionState()) && Objects.equal(transitionAction, other.getTransitionAction())
-                && Objects.equal(transitionEvaluation, other.getTransitionEvaluation()) && Objects.equal(postComment, other.isPostComment())
-                && roleTransitions.size() == otherRoleTransitions.size() && roleTransitions.containsAll(otherRoleTransitions)
-                && propagatedActions.size() == otherPropagatedActions.size() && propagatedActions.containsAll(otherPropagatedActions);
+                && Objects.equal(transitionEvaluation, other.getTransitionEvaluation()) && roleTransitions.size() == otherRoleTransitions.size()
+                && roleTransitions.containsAll(otherRoleTransitions) && propagatedActions.size() == otherPropagatedActions.size()
+                && propagatedActions.containsAll(otherPropagatedActions);
     }
 }

@@ -17,6 +17,7 @@ public class PrismSystemApproved extends PrismWorkflowState {
             .withAction(PrismAction.SYSTEM_CONFIGURE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
@@ -25,16 +26,17 @@ public class PrismSystemApproved extends PrismWorkflowState {
             .withAction(PrismAction.SYSTEM_CREATE_INSTITUTION) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.INSTITUTION_APPROVED) // 
-                        .withTransitionAction(PrismAction.SYSTEM_CREATE_INSTITUTION) // 
-                        .withPostComment(false)))); //
+                        .withTransitionAction(PrismAction.SYSTEM_CREATE_INSTITUTION)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.SYSTEM_EXPORT_APPLICATIONS) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
@@ -43,6 +45,7 @@ public class PrismSystemApproved extends PrismWorkflowState {
             .withAction(PrismAction.SYSTEM_EXPORT_PROGRAMS) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
@@ -51,6 +54,7 @@ public class PrismSystemApproved extends PrismWorkflowState {
             .withAction(PrismAction.SYSTEM_MANAGE_ACCOUNT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -101,6 +105,7 @@ public class PrismSystemApproved extends PrismWorkflowState {
             .withAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -151,6 +156,7 @@ public class PrismSystemApproved extends PrismWorkflowState {
             .withAction(PrismAction.SYSTEM_VIEW_INSTITUTION_LIST) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -201,6 +207,7 @@ public class PrismSystemApproved extends PrismWorkflowState {
             .withAction(PrismAction.SYSTEM_VIEW_PROGRAM_LIST) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -251,6 +258,7 @@ public class PrismSystemApproved extends PrismWorkflowState {
             .withAction(PrismAction.SYSTEM_VIEW_PROJECT_LIST) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 

@@ -103,7 +103,7 @@ public class StateService {
             entityService.save(new StateTransitionPending().withResource(operativeResource).withStateTransition(stateTransition));
         }
         
-        if (stateTransition.isDoPostComment()) {
+        if (stateTransition.getStateAction().isPostComment()) {
             entityService.save(comment);
         }
 

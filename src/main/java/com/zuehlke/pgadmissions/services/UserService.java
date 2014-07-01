@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -106,15 +105,10 @@ public class UserService {
     public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource, PrismRole... rolesToCreate) {
         User user = getOrCreateUser(firstName, lastName, email);
         
-        for (PrismRole possibleRole : roleService.getRoles(resource.getClass()).toArray(new PrismRole[0])) {
-            if (!Arrays.asList(rolesToCreate).contains(possibleRole)) {
-                roleService.removeUserRoles(resource, user, possibleRole);
-            }
-        }
-
-        for (PrismRole roleToCreate : rolesToCreate) {
-            roleService.getOrCreateUserRole(resource, user, roleToCreate);
-        }
+        PrismRole[] rolesToRemove = (PrismRole[]) roleService.getRolesToRemove(resource.getClass(), rolesToCreate).toArray();
+        roleService.removeUserRoles(resource, user, rolesToRemove);
+        
+        roleService.getOrCreateUserRoles(resource, user, rolesToCreate);
         
         return user;
     }

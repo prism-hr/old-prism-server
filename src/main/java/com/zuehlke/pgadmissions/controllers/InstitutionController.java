@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.zuehlke.pgadmissions.services.EntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,7 +36,7 @@ public class InstitutionController {
     private InstitutionService qualificationInstitutionService;
     
     @Autowired
-    private ImportedEntityService importedEntityService;
+    private EntityService entityService;
 
     @Autowired
     private UserService userService;
@@ -59,7 +60,7 @@ public class InstitutionController {
     @RequestMapping(value = "/getInstitutionInformation", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String getInstitutions(@RequestParam Integer domicileId) {
-        Domicile domicile = importedEntityService.getDomicileById(domicileId);
+        Domicile domicile = entityService.getById(Domicile.class, domicileId);
         List<ImportedInstitution> institutions = qualificationInstitutionService.getEnabledImportedInstitutionsByDomicile(domicile);
         return gson.toJson(institutions);
     }
@@ -67,7 +68,7 @@ public class InstitutionController {
     @RequestMapping(value = "/getUserInstitutionInformation", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String getAdministratorInstitutions(@RequestParam Integer domicileId) {
-        Domicile domicile = importedEntityService.getDomicileById(domicileId);
+        Domicile domicile = entityService.getById(Domicile.class, domicileId);
         Integer userId = userService.getCurrentUser().getId();
         LinkedHashMap<Object, Object> returnMap = Maps.newLinkedHashMap();
 //        returnMap.put("userInstitutions", qualificationInstitutionService.getEnabledInstitutionsByUserIdAndDomicile(userId, domicile));

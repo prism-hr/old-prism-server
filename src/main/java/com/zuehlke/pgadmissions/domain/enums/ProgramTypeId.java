@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.enums;
 public enum ProgramTypeId {
     
     MRES("MRes"),
+    MDRES("MD(Res)"),
     MSC("MSc"),
     RESEARCH_DEGREE("Research Degree"),
     ENGINEERING_DOCTORATE("Engineering Doctorate"),

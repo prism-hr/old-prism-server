@@ -51,7 +51,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssi
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
-import com.zuehlke.pgadmissions.integration.helpers.RegistrationHelper;
+import com.zuehlke.pgadmissions.integration.helpers.UserHelper;
 import com.zuehlke.pgadmissions.integration.helpers.WorkflowVerificationHelper;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -108,7 +108,7 @@ public class IT1SystemInitialisation {
     private MailSenderMock mailSenderMock;
 
     @Autowired
-    private RegistrationHelper registrationHelper;
+    private UserHelper registrationHelper;
 
     @Autowired
     private WorkflowVerificationHelper workflowVerificationHelper;
@@ -149,7 +149,7 @@ public class IT1SystemInitialisation {
             verifyStateDurationCreation();
 
             if (i == 0) {
-                registrationHelper.registerAndActivateUser(systemUser, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+                registrationHelper.registerAndActivateUser(system, systemUser, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
             }
 
             mailSenderMock.verify();

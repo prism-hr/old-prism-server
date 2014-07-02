@@ -158,7 +158,6 @@ public class IT2SystemReferenceDataImport {
 
         entityImportService.importEntities(importedEntityFeed);
 
-        assertEquals(2, programService.getAllPrograms().size());
         Program program1 = programService.getProgramByCode("AGH-1");
         Program otherProgram = programService.getProgramByCode("AGH-99");
         assertEquals("MRes program1", program1.getTitle());
@@ -185,7 +184,6 @@ public class IT2SystemReferenceDataImport {
         importedEntityFeed.setLocation("reference_data/conflicts/programs/updatedPrograms.xml");
         entityImportService.importEntities(importedEntityFeed);
 
-        assertEquals(2, programService.getAllPrograms().size());
         program1 = programService.getProgramByCode("AGH-1");
         otherProgram = programService.getProgramByCode("AGH-99");
         assertEquals("MRes new_program1", program1.getTitle());
@@ -262,6 +260,10 @@ public class IT2SystemReferenceDataImport {
 
         importedEntityFeed.setImportedEntityType(PrismImportedEntityType.INSTITUTION);
         importedEntityFeed.setLocation("reference_data/conflicts/institutions/institution.xml");
+        entityImportService.importEntities(importedEntityFeed);
+
+        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.PROGRAM);
+        importedEntityFeed.setLocation("reference_data/2014-05-08/program.xml");
         entityImportService.importEntities(importedEntityFeed);
     }
 

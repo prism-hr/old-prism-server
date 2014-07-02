@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -33,6 +34,9 @@ public class Role extends WorkflowResource implements GrantedAuthority {
     @Enumerated(EnumType.STRING)
     private PrismRole id;
 
+    @Column(name = "is_scope_owner", nullable = false)
+    private boolean scopeOwner;
+    
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
@@ -54,6 +58,14 @@ public class Role extends WorkflowResource implements GrantedAuthority {
 
     public void setId(Object id) {
         this.id = (PrismRole) id;
+    }
+
+    public boolean isScopeOwner() {
+        return scopeOwner;
+    }
+
+    public void setScopeOwner(boolean scopeOwner) {
+        this.scopeOwner = scopeOwner;
     }
 
     public Scope getScope() {
@@ -79,6 +91,11 @@ public class Role extends WorkflowResource implements GrantedAuthority {
 
     public Role withId(PrismRole id) {
         this.id = id;
+        return this;
+    }
+    
+    public Role withScopeOwner(boolean scopeOwner) {
+        this.scopeOwner = scopeOwner;
         return this;
     }
     

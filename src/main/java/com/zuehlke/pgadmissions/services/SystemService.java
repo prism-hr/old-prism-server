@@ -52,7 +52,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvalu
 import com.zuehlke.pgadmissions.mail.MailService;
 
 @Service
-@Transactional(timeout = 120)
+@Transactional(timeout = 60)
 public class SystemService {
 
     private final String EMAIL_DEFAULT_SUBJECT_DIRECTORY = "email/subject/";
@@ -94,7 +94,7 @@ public class SystemService {
 
     @Autowired
     private ScopeService scopeService;
-    
+
     @Autowired
     private StateService stateService;
 
@@ -114,11 +114,11 @@ public class SystemService {
     public List<Configuration> getConfigurations() {
         return configurationService.getConfigurations(getSystem());
     }
-    
+
     public StateDuration getStateDuration(State state) {
         return stateService.getStateDuration(getSystem(), state);
     }
-    
+
     public void initialiseSystem() {
         initialiseScopes();
         initialiseRoles();
@@ -154,7 +154,7 @@ public class SystemService {
 
         for (PrismRole prismRole : PrismRole.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismRole.getScope());
-            Role transientRole = new Role().withId(prismRole).withScope(scope);
+            Role transientRole = new Role().withId(prismRole).withScopeOwner(prismRole.isScopeOwner()).withScope(scope);
             Role role = entityService.getOrCreate(transientRole);
             role.getExcludedRoles().clear();
 
@@ -193,7 +193,8 @@ public class SystemService {
     private void initialiseStates() {
         for (PrismState prismState : PrismState.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismState.getScope());
-            State transientState = new State().withId(prismState).withSequenceOrder(prismState.getSequenceOrder()).withScope(scope);
+            State transientState = new State().withId(prismState).withInitialState(prismState.isInitialState()).withFinalState(prismState.isFinalState())
+                    .withSequenceOrder(prismState.getSequenceOrder()).withScope(scope);
             entityService.getOrCreate(transientState);
         }
         for (PrismState prismState : PrismState.values()) {
@@ -247,14 +248,6 @@ public class SystemService {
                     .withNotificationTemplateVersion(createdTemplates.get(template))
                     .withReminderInterval(PrismNotificationTemplate.getReminderInterval(template.getId()));
             entityService.getOrCreate(transientConfiguration);
-        }
-    }
-
-    private String getFileContent(String filePath) {
-        try {
-            return Joiner.on(java.lang.System.lineSeparator()).join(Resources.readLines(Resources.getResource(filePath), Charsets.UTF_8));
-        } catch (IOException e) {
-            throw new Error(e);
         }
     }
 
@@ -373,6 +366,14 @@ public class SystemService {
                 State degradationState = stateService.getDegradationState(state);
                 resourceService.reassignState(resourceClass, state, degradationState);
             }
+        }
+    }
+
+    private String getFileContent(String filePath) {
+        try {
+            return Joiner.on(java.lang.System.lineSeparator()).join(Resources.readLines(Resources.getResource(filePath), Charsets.UTF_8));
+        } catch (IOException e) {
+            throw new Error(e);
         }
     }
 

@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -22,7 +21,7 @@ public class ApplicationLanguageQualification {
     @GeneratedValue
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "imported_language_qualification_type_id", nullable = false)
     private LanguageQualificationType languageQualificationType;
 

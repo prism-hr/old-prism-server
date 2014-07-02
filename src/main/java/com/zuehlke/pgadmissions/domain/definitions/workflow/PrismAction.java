@@ -74,7 +74,7 @@ public enum PrismAction {
             new PrismActionRedaction().withRole(PrismRole.APPLICATION_REFEREE).withRedactionType(PrismRedactionType.ALL_CONTENT))), //
     APPLICATION_WITHDRAW(PrismActionType.USER_INVOCATION, PrismScope.APPLICATION, null, null), //
     INSTITUTION_CONFIGURE(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
-    INSTITUTION_CREATE_PROGRAM(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
+    INSTITUTION_CREATE_PROGRAM(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, PrismScope.PROGRAM, null), //
     INSTITUTION_EXPORT_APPLICATIONS(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_EXPORT_PROGRAMS(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_IMPORT_PROGRAM(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //

@@ -238,13 +238,11 @@ public class RoleDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<PrismRole> getRolesToRemove(Class<? extends Resource> resourceClass, PrismRole... rolesToCreate) {
+    public List<PrismRole> getPossibleRoles(Class<? extends Resource> resourceClass) {
         return sessionFactory.getCurrentSession().createCriteria(Role.class) //
                 .setProjection(Projections.property("id")) //
                 .createAlias("scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("scope.id", PrismScope.getResourceScope(resourceClass))) //
-                .add(Restrictions.not( //
-                        Restrictions.in("id", rolesToCreate))) //
                 .list();
     }
     

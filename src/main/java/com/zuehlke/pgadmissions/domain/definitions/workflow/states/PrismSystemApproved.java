@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
@@ -30,7 +32,15 @@ public class PrismSystemApproved extends PrismWorkflowState {
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.INSTITUTION_APPROVED) // 
-                        .withTransitionAction(PrismAction.SYSTEM_CREATE_INSTITUTION)))); //
+                        .withTransitionAction(PrismAction.SYSTEM_CREATE_INSTITUTION)
+                        .withRoleTransitions(Arrays.asList( // 
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.INSTITUTION_ADMINISTRATOR) //
+                                .withRestrictToOwner(true) //
+                                .withMinimumPermitted(1) //
+                                .withMaximumPermitted(1)))))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.SYSTEM_EXPORT_APPLICATIONS) //

@@ -6,7 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -29,14 +28,20 @@ public class State extends WorkflowResource {
     @Enumerated(EnumType.STRING)
     private PrismState id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "parent_state_id")
     private State parentState;
     
+    @Column(name = "is_initial_state", nullable = false)
+    private boolean initialState;
+    
+    @Column(name = "is_final_state", nullable = false)
+    private boolean finalState;
+
     @Column(name = "sequence_order")
     private Integer sequenceOrder;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
     
@@ -62,6 +67,22 @@ public class State extends WorkflowResource {
 
     public void setParentState(State parentState) {
         this.parentState = parentState;
+    }
+    
+    public boolean isInitialState() {
+        return initialState;
+    }
+
+    public void setInitialState(boolean initialState) {
+        this.initialState = initialState;
+    }
+
+    public boolean isFinalState() {
+        return finalState;
+    }
+
+    public void setFinalState(boolean finalState) {
+        this.finalState = finalState;
     }
 
     public Integer getSequenceOrder() {
@@ -90,6 +111,16 @@ public class State extends WorkflowResource {
 
     public State withId(PrismState id) {
         this.id = id;
+        return this;
+    }
+    
+    public State withInitialState(boolean initialState) {
+        this.initialState = initialState;
+        return this;
+    }
+    
+    public State withFinalState(boolean finalState) {
+        this.finalState = finalState;
         return this;
     }
     

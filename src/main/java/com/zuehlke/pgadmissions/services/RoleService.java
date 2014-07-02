@@ -217,6 +217,6 @@ public class RoleService {
     }
 
     public List<PrismRole> getRolesToRemove(Class<? extends Resource> resourceClass, PrismRole... rolesToCreate) {
-        return roleDAO.getRolesToRemove(resourceClass);
+        return roleDAO.getPossibleRoles(resourceClass);
     }
 }

@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -42,7 +41,7 @@ public class Action extends WorkflowResource {
     @JoinColumn(name = "creation_scope_id")
     private Scope creationScope;
     
-    @OneToMany(mappedBy = "action", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "action")
     private Set<ActionRedaction> redactions = Sets.newHashSet();
 
     @Override

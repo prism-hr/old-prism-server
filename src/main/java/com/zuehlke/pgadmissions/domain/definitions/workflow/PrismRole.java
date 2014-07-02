@@ -1,37 +1,37 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 
 
 public enum PrismRole {
 
-    APPLICATION_ADMINISTRATOR(PrismScope.APPLICATION), //
-    APPLICATION_CREATOR(PrismScope.APPLICATION), //
-    APPLICATION_INTERVIEWEE(PrismScope.APPLICATION), //
-    APPLICATION_INTERVIEWER(PrismScope.APPLICATION), //
-    APPLICATION_POTENTIAL_INTERVIEWEE(PrismScope.APPLICATION), //
-    APPLICATION_POTENTIAL_INTERVIEWER(PrismScope.APPLICATION), //
-    APPLICATION_PRIMARY_SUPERVISOR(PrismScope.APPLICATION), //
-    APPLICATION_REFEREE(PrismScope.APPLICATION), //
-    APPLICATION_REVIEWER(PrismScope.APPLICATION), //
-    APPLICATION_SECONDARY_SUPERVISOR(PrismScope.APPLICATION), //
-    APPLICATION_SUGGESTED_SUPERVISOR(PrismScope.APPLICATION), //
-    APPLICATION_VIEWER_RECRUITER(PrismScope.APPLICATION), //
-    APPLICATION_VIEWER_REFEREE(PrismScope.APPLICATION), //
-    INSTITUTION_ADMINISTRATOR(PrismScope.INSTITUTION), //
-    INSTITUTION_ADMITTER(PrismScope.INSTITUTION), //
-    PROGRAM_ADMINISTRATOR(PrismScope.PROGRAM), //
-    PROGRAM_APPROVER(PrismScope.PROGRAM), //
-    PROGRAM_VIEWER(PrismScope.PROGRAM), //
-    PROJECT_ADMINISTRATOR(PrismScope.PROJECT), //
-    PROJECT_PRIMARY_SUPERVISOR(PrismScope.PROJECT), //
-    PROJECT_SECONDARY_SUPERVISOR(PrismScope.PROJECT), //
-    SYSTEM_ADMINISTRATOR(PrismScope.SYSTEM);
+    APPLICATION_ADMINISTRATOR(PrismScope.APPLICATION, false), //
+    APPLICATION_CREATOR(PrismScope.APPLICATION, true), //
+    APPLICATION_INTERVIEWEE(PrismScope.APPLICATION, false), //
+    APPLICATION_INTERVIEWER(PrismScope.APPLICATION, false), //
+    APPLICATION_POTENTIAL_INTERVIEWEE(PrismScope.APPLICATION, false), //
+    APPLICATION_POTENTIAL_INTERVIEWER(PrismScope.APPLICATION, false), //
+    APPLICATION_PRIMARY_SUPERVISOR(PrismScope.APPLICATION, false), //
+    APPLICATION_REFEREE(PrismScope.APPLICATION, false), //
+    APPLICATION_REVIEWER(PrismScope.APPLICATION, false), //
+    APPLICATION_SECONDARY_SUPERVISOR(PrismScope.APPLICATION, false), //
+    APPLICATION_SUGGESTED_SUPERVISOR(PrismScope.APPLICATION, false), //
+    APPLICATION_VIEWER_RECRUITER(PrismScope.APPLICATION, false), //
+    APPLICATION_VIEWER_REFEREE(PrismScope.APPLICATION, false), //
+    INSTITUTION_ADMINISTRATOR(PrismScope.INSTITUTION, true), //
+    INSTITUTION_ADMITTER(PrismScope.INSTITUTION, false), //
+    PROGRAM_ADMINISTRATOR(PrismScope.PROGRAM, true), //
+    PROGRAM_APPROVER(PrismScope.PROGRAM, false), //
+    PROGRAM_VIEWER(PrismScope.PROGRAM, false), //
+    PROJECT_ADMINISTRATOR(PrismScope.PROJECT, true), //
+    PROJECT_PRIMARY_SUPERVISOR(PrismScope.PROJECT, true), //
+    PROJECT_SECONDARY_SUPERVISOR(PrismScope.PROJECT, false), //
+    SYSTEM_ADMINISTRATOR(PrismScope.SYSTEM, true);
+    
+    private boolean scopeOwner;
     
     private PrismScope scope;
     
@@ -75,8 +75,13 @@ public enum PrismRole {
         excludedRoles.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.SYSTEM_ADMINISTRATOR);
     }
     
-    private PrismRole(PrismScope scope) {
+    private PrismRole(PrismScope scope, boolean scopeOwner) {
         this.scope = scope;
+        this.scopeOwner = scopeOwner;
+    }
+
+    public boolean isScopeOwner() {
+        return scopeOwner;
     }
 
     public PrismScope getScope() {

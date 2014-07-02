@@ -1,0 +1,7 @@
+CREATE TABLE APPROVAL_STATE_CHANGE_EVENT (
+  id INTEGER UNSIGNED NOT NULL,
+  approval_round_id INTEGER UNSIGNED,
+  CONSTRAINT approval_event_app_round_fk FOREIGN KEY (approval_round_id) REFERENCES APPROVAL_ROUND(id),
+  CONSTRAINT approval_event_fk FOREIGN KEY (id) REFERENCES EVENT(id)
+)
+ENGINE = InnoDB;

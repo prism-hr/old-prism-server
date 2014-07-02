@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.Advert;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,10 @@ public class AdvertService {
         advertDTOs.addAll(feedAdvertDTOs);
         return advertDTOs;
 
+    }
+
+    public List<Advert> getAdverts() {
+        return advertDAO.getAdverts();
     }
     
 }

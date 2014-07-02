@@ -16,6 +16,7 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import com.google.common.io.Resources;
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -55,7 +56,7 @@ public class ProgrammesImporterTest {
         programInstanceDAO = EasyMock.createMock(ProgramInstanceDAO.class);
         programFeedDAO = EasyMock.createMock(ProgramFeedDAO.class);
         importService = EasyMock.createMock(ImportService.class);
-        importer = new ProgrammesImporter(applicationContext, programInstanceDAO, programDAO, programFeedDAO, importService, "user", "password");
+        importer = new ProgrammesImporter(applicationContext, programInstanceDAO, programDAO, programFeedDAO, importService, null, "user", "password");
     }
     
     @Test
@@ -90,7 +91,7 @@ public class ProgrammesImporterTest {
     @SuppressWarnings("unchecked")
     public void shouldImportProgramsForProgramFeed() throws Exception {
         List<ProgramInstance> currentData = new ArrayList<ProgramInstance>();
-        URL xmlFileLocation = new File("src/test/resources/reference_data/programme_feed_atas.xml").toURI().toURL();
+        URL xmlFileLocation = Resources.getResource("reference_data/programme_feed_atas.xml");
         ProgramFeed programFeed = new ProgramFeedBuilder().feedUrl(xmlFileLocation.toExternalForm()).build();
         Program p1 = new ProgramBuilder().programFeed(programFeed).code("DDNBENSING09").title("A").atasRequired(false).id(1).build();
         Program p2 = new ProgramBuilder().programFeed(programFeed).code("DDNCIVSUSR09").title("B").atasRequired(true).id(2).build();

@@ -11,6 +11,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import com.zuehlke.pgadmissions.services.UserService;
 import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,16 +48,17 @@ public class ProgrammesImporter implements IProgrammesImporter {
     private final ProgramDAO programDAO;
     private final ProgramFeedDAO programFeedDAO;
     private final ImportService importService;
+    private final UserService userService;
 
     private final String user;
     private final String password;
 
     public ProgrammesImporter() throws JAXBException {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public ProgrammesImporter(ApplicationContext applicationContext, ProgramInstanceDAO programDAO, ProgramDAO programDao, ProgramFeedDAO programFeedDAO, ImportService importService,
+    public ProgrammesImporter(ApplicationContext applicationContext, ProgramInstanceDAO programDAO, ProgramDAO programDao, ProgramFeedDAO programFeedDAO, ImportService importService, UserService userService,
             @Value("${xml.data.import.prismProgrammes.user}") String user, @Value("${xml.data.import.prismProgrammes.password}") String password)
             throws JAXBException {
         this.applicationContext = applicationContext;
@@ -64,6 +66,7 @@ public class ProgrammesImporter implements IProgrammesImporter {
         this.programDAO = programDao;
         this.programFeedDAO = programFeedDAO;
         this.importService = importService;
+        this.userService = userService;
         this.user = user;
         this.password = password;
         context = JAXBContext.newInstance(ProgrammeOccurrences.class);
@@ -108,6 +111,7 @@ public class ProgrammesImporter implements IProgrammesImporter {
                 ProgramType programType = programDAO.getProgramTypeById(programTypeId);
                 program.setProgramType(programType);
                 program.setStudyDuration(programType.getDefaultStudyDuration());
+                program.setContactUser(userService.getUserByEmail("prism@ucl.ac.uk"));
                 programDAO.save(program);
             }
             programInstanceDAO.save(programInstance);
@@ -122,8 +126,6 @@ public class ProgrammesImporter implements IProgrammesImporter {
                 programDAO.save(prismProgram);
             }
         }
-        
-        
 
     }
 

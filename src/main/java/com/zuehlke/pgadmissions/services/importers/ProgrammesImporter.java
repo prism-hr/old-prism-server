@@ -99,7 +99,6 @@ public class ProgrammesImporter implements IProgrammesImporter {
         List<ProgramInstance> changes = importService.merge(currentData, importData);
 
         for (ProgramInstance programInstance : changes) {
-            programInstanceDAO.save(programInstance);
             Program program = programInstance.getProgram();
             if (program.getId() == null) {
                 program.setProgramFeed(programFeed);
@@ -111,6 +110,7 @@ public class ProgrammesImporter implements IProgrammesImporter {
                 program.setStudyDuration(programType.getDefaultStudyDuration());
                 programDAO.save(program);
             }
+            programInstanceDAO.save(programInstance);
         }
 
         // Update the require ATAS flag in our PRISM domain object

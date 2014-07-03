@@ -5,6 +5,8 @@ import java.util.Arrays;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
@@ -70,11 +72,81 @@ public class PrismProjectDisabledPendingReactivation extends PrismWorkflowState 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_APPROVED) // 
                         .withTransitionAction(PrismAction.PROJECT_CONFIGURE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_CONFIGURED_OUTCOME), // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_CONFIGURED_OUTCOME)
+                        .withRoleTransitions(Arrays.asList( // 
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROJECT_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.PROJECT_ADMINISTRATOR) //
+                                .withRestrictToOwner(false) //
+                                .withMaximumPermitted(1), //
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROJECT_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.PROJECT_ADMINISTRATOR) //
+                                .withRestrictToOwner(false), //
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
+                                .withRestrictToOwner(false) //
+                                .withMinimumPermitted(1) //
+                                .withMaximumPermitted(1), //
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
+                                .withRestrictToOwner(false), //
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROJECT_SECONDARY_SUPERVISOR) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.PROJECT_SECONDARY_SUPERVISOR) //
+                                .withRestrictToOwner(false) //
+                                .withMaximumPermitted(1),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROJECT_SECONDARY_SUPERVISOR) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
+                                .withRestrictToOwner(false))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DEACTIVATED) // 
                         .withTransitionAction(PrismAction.PROJECT_CONFIGURE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_CONFIGURED_OUTCOME), // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_CONFIGURED_OUTCOME)
+                        .withRoleTransitions(Arrays.asList( // 
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROJECT_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.PROJECT_ADMINISTRATOR) //
+                                .withRestrictToOwner(false) //
+                                .withMaximumPermitted(1), //
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROJECT_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.PROJECT_ADMINISTRATOR) //
+                                .withRestrictToOwner(false), //
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
+                                .withRestrictToOwner(false) //
+                                .withMinimumPermitted(1) //
+                                .withMaximumPermitted(1), //
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
+                                .withRestrictToOwner(false), //
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROJECT_SECONDARY_SUPERVISOR) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.PROJECT_SECONDARY_SUPERVISOR) //
+                                .withRestrictToOwner(false) //
+                                .withMaximumPermitted(1),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROJECT_SECONDARY_SUPERVISOR) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
+                                .withRestrictToOwner(false))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DISABLED) // 
                         .withTransitionAction(PrismAction.PROJECT_CONFIGURE) // 
@@ -82,7 +154,42 @@ public class PrismProjectDisabledPendingReactivation extends PrismWorkflowState 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DISABLED_PENDING_REACTIVATION) // 
                         .withTransitionAction(PrismAction.PROJECT_CONFIGURE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_CONFIGURED_OUTCOME)))); //
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_CONFIGURED_OUTCOME)
+                        .withRoleTransitions(Arrays.asList( // 
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROJECT_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.PROJECT_ADMINISTRATOR) //
+                                .withRestrictToOwner(false) //
+                                .withMaximumPermitted(1), //
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROJECT_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.PROJECT_ADMINISTRATOR) //
+                                .withRestrictToOwner(false), //
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
+                                .withRestrictToOwner(false) //
+                                .withMinimumPermitted(1) //
+                                .withMaximumPermitted(1), //
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
+                                .withRestrictToOwner(false), //
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROJECT_SECONDARY_SUPERVISOR) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.PROJECT_SECONDARY_SUPERVISOR) //
+                                .withRestrictToOwner(false) //
+                                .withMaximumPermitted(1),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROJECT_SECONDARY_SUPERVISOR) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
+                                .withRestrictToOwner(false)))))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_ESCALATE) //

@@ -54,15 +54,108 @@ public class PrismProgramApproved extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVAL) // 
                         .withTransitionAction(PrismAction.PROGRAM_CONFIGURE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CONFIGURED_OUTCOME), // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CONFIGURED_OUTCOME)
+                        .withRoleTransitions(Arrays.asList( // 
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.PROGRAM_ADMINISTRATOR) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.PROGRAM_ADMINISTRATOR) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROGRAM_APPROVER) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.PROGRAM_APPROVER) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROGRAM_APPROVER) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.PROGRAM_VIEWER) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROGRAM_VIEWER) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.PROGRAM_VIEWER) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROGRAM_VIEWER) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.PROGRAM_VIEWER) //
+                                .withRestrictToOwner(false))), //  
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVED) // 
                         .withTransitionAction(PrismAction.PROGRAM_CONFIGURE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CONFIGURED_OUTCOME), // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CONFIGURED_OUTCOME)
+                        .withRoleTransitions(Arrays.asList( // 
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.PROGRAM_ADMINISTRATOR) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.PROGRAM_ADMINISTRATOR) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROGRAM_APPROVER) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.PROGRAM_APPROVER) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROGRAM_APPROVER) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.PROGRAM_VIEWER) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROGRAM_VIEWER) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.PROGRAM_VIEWER) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROGRAM_VIEWER) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.PROGRAM_VIEWER) //
+                                .withRestrictToOwner(false))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DEACTIVATED) // 
                         .withTransitionAction(PrismAction.PROGRAM_CONFIGURE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CONFIGURED_OUTCOME), // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CONFIGURED_OUTCOME)
+                        .withRoleTransitions(Arrays.asList( // 
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.PROGRAM_ADMINISTRATOR) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.PROGRAM_ADMINISTRATOR) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROGRAM_APPROVER) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.PROGRAM_APPROVER) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROGRAM_APPROVER) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.PROGRAM_VIEWER) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROGRAM_VIEWER) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.PROGRAM_VIEWER) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.PROGRAM_VIEWER) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.PROGRAM_VIEWER) //
+                                .withRestrictToOwner(false))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DISABLED) // 
                         .withTransitionAction(PrismAction.PROGRAM_CONFIGURE) // 

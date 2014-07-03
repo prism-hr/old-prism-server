@@ -1,3 +1,4 @@
+
 /* Some more information about state to make the workflow verifiable */
 
 ALTER TABLE STATE
@@ -39,3 +40,9 @@ SET is_scope_owner = 1
 WHERE id IN ("APPLICATION_CREATOR", "PROJECT_ADMINISTRATOR", "PROJECT_PRIMARY_SUPERVISOR", 
 	"PROGRAM_ADMINISTRATOR", "INSTITUTION_ADMINISTRATOR", "SYSTEM_ADMINISTRATOR")
 ;
+
+UPDATE ROLE_TRANSITION
+SET role_transition_type = "REMOVE"
+WHERE role_transition_type = "REJOIN"
+;
+

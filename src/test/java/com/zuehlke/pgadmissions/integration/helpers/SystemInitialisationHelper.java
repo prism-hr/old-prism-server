@@ -235,7 +235,7 @@ public class SystemInitialisationHelper {
         verifyNotificationTemplateCreation();
         verifyStateDurationCreation();
         
-//        workflowConfigurationHelper.verifyWorkflowConfiguration();
+        workflowConfigurationHelper.verifyWorkflowConfiguration();
     }
     
     public void verifySystemUserRegistration() {

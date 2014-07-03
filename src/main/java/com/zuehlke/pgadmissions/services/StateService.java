@@ -152,10 +152,6 @@ public class StateService {
         return stateDAO.getDegradationState(state);
     }
     
-    public List<State> getRootState() {
-        return stateDAO.getRootState();
-    }
-    
     public ThreadPoolExecutor getThreadedStateTransitionPool() {
         return threadedStateTransitionPool;
     }

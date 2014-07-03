@@ -27,7 +27,32 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMITTER), // 
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
+                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))
+                .withTransitions(Arrays.asList( // 
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.INSTITUTION_APPROVED) // 
+                        .withTransitionAction(PrismAction.INSTITUTION_CONFIGURE)
+                        .withRoleTransitions(Arrays.asList( // 
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.INSTITUTION_ADMINISTRATOR) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.INSTITUTION_ADMINISTRATOR) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.INSTITUTION_ADMITTER) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.INSTITUTION_ADMITTER) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.INSTITUTION_ADMITTER) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.INSTITUTION_ADMITTER) //
+                                .withRestrictToOwner(false)))))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.INSTITUTION_CREATE_PROGRAM) //

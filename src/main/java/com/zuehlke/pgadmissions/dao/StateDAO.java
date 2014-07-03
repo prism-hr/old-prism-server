@@ -80,7 +80,7 @@ public class StateDAO {
     public StateDuration getCurrentStateDuration(ResourceDynamic resource) {
         return (StateDuration) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
                 .add(Restrictions.eq("state", resource.getState())) //
-                .add(Restrictions.disjunction() //
+                .add(Restrictions.disjunction()
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.eq("system", resource.getSystem())) //
                                 .add(Restrictions.isNull("institution")) //

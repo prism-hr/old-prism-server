@@ -49,7 +49,7 @@ public class RegistrationService {
             throw new ResourceNotFoundException();
         }
 
-        if(user.getUserAccount() == null) {
+        if (user.getUserAccount() == null) {
             user.setUserAccount(new UserAccount());
         }
 

@@ -395,7 +395,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         applicationTp.setRefereeList(buildReferee());
 
         switch (applicationForm.getState().getId()) {
-        case APPLICATION_WITHDRAWN:
+        case APPLICATION_WITHDRAWN_PENDING_EXPORT:
             applicationTp.setApplicationStatus("WITHDRAWN");
             break;
         case APPLICATION_APPROVED:

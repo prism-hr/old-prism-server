@@ -63,41 +63,6 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                         .withTemplate(PrismNotificationTemplate.PROGRAM_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
-                        .withTransitionState(PrismState.PROGRAM_APPROVAL) // 
-                        .withTransitionAction(PrismAction.PROGRAM_CONFIGURE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CONFIGURED_OUTCOME)
-                        .withRoleTransitions(Arrays.asList( // 
-                            new PrismRoleTransition() //
-                                .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
-                                .withTransitionType(PrismRoleTransitionType.CREATE) //
-                                .withTransitionRole(PrismRole.PROGRAM_ADMINISTRATOR) //
-                                .withRestrictToOwner(false),
-                            new PrismRoleTransition() //
-                                .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
-                                .withTransitionRole(PrismRole.PROGRAM_ADMINISTRATOR) //
-                                .withRestrictToOwner(false),
-                            new PrismRoleTransition() //
-                                .withRole(PrismRole.PROGRAM_APPROVER) //
-                                .withTransitionType(PrismRoleTransitionType.CREATE) //
-                                .withTransitionRole(PrismRole.PROGRAM_APPROVER) //
-                                .withRestrictToOwner(false),
-                            new PrismRoleTransition() //
-                                .withRole(PrismRole.PROGRAM_APPROVER) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
-                                .withTransitionRole(PrismRole.PROGRAM_VIEWER) //
-                                .withRestrictToOwner(false),
-                            new PrismRoleTransition() //
-                                .withRole(PrismRole.PROGRAM_VIEWER) //
-                                .withTransitionType(PrismRoleTransitionType.CREATE) //
-                                .withTransitionRole(PrismRole.PROGRAM_VIEWER) //
-                                .withRestrictToOwner(false),
-                            new PrismRoleTransition() //
-                                .withRole(PrismRole.PROGRAM_VIEWER) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
-                                .withTransitionRole(PrismRole.PROGRAM_VIEWER) //
-                                .withRestrictToOwner(false))), //  
-                    new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVED) // 
                         .withTransitionAction(PrismAction.PROGRAM_CONFIGURE) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CONFIGURED_OUTCOME)
@@ -168,7 +133,7 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                                 .withTransitionRole(PrismRole.PROGRAM_VIEWER) //
                                 .withRestrictToOwner(false))), // 
                     new PrismStateTransition() // 
-                        .withTransitionState(PrismState.PROGRAM_DISABLED) // 
+                        .withTransitionState(PrismState.PROGRAM_DISABLED_COMPLETED) // 
                         .withTransitionAction(PrismAction.PROGRAM_CONFIGURE) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CONFIGURED_OUTCOME), // 
                     new PrismStateTransition() // 
@@ -249,152 +214,19 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
             .withAction(PrismAction.PROGRAM_VIEW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
-            .withPostComment(false) //
-                .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_CREATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_INTERVIEWER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_POTENTIAL_INTERVIEWER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_REFEREE), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_REVIEWER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_SECONDARY_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_VIEWER_RECRUITER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_VIEWER_REFEREE), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMITTER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_APPROVER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_VIEWER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROJECT_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROJECT_SECONDARY_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
+            .withPostComment(false)); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_VIEW_APPLICATION_LIST) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(false) //
-                .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_CREATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_INTERVIEWEE), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_INTERVIEWER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_POTENTIAL_INTERVIEWER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_REFEREE), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_REVIEWER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_SECONDARY_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_VIEWER_RECRUITER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_VIEWER_REFEREE), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMITTER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_APPROVER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_VIEWER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROJECT_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROJECT_SECONDARY_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
+            .withPostComment(false)); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_VIEW_PROJECT_LIST) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(false) //
-                .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_CREATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_INTERVIEWEE), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_INTERVIEWER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_POTENTIAL_INTERVIEWER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_REFEREE), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_REVIEWER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_SECONDARY_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_VIEWER_RECRUITER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_VIEWER_REFEREE), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMITTER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_APPROVER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_VIEWER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROJECT_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROJECT_SECONDARY_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR))));
+            .withPostComment(false));
     }
 
 }

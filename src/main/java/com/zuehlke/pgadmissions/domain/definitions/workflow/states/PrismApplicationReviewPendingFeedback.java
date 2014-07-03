@@ -504,7 +504,7 @@ public class PrismApplicationReviewPendingFeedback extends PrismWorkflowState {
                         .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
-                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN) // 
+                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 

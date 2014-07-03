@@ -360,7 +360,7 @@ public class SystemService {
     }
 
     private void reassignResourceStates() {
-        for (Scope scope : scopeService.getScopes()) {
+        for (Scope scope : scopeService.getScopesDescending()) {
             Class<? extends Resource> resourceClass = scope.getId().getResourceClass();
             for (State state : stateService.getDeprecatedStates(resourceClass)) {
                 State degradationState = stateService.getDegradationState(state);

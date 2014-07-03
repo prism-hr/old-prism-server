@@ -46,3 +46,12 @@ SET role_transition_type = "REMOVE"
 WHERE role_transition_type = "REJOIN"
 ;
 
+INSERT INTO STATE(id, is_final_state, is_initial_state, parent_state_id, scope_id)
+VALUES("APPLICATION_WITHDRAWN_PENDING_EXPORT", 0, 0, "APPLICATION_WITHDRAWN", "APPLICATION")
+;
+
+UPDATE APPLICATION
+SET state_id = "APPLICATION_WITHDRAWN_PENDING_EXPORT"
+WHERE state_id = "APPLICATION_WITHDRAWN"
+;
+

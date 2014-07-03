@@ -102,7 +102,7 @@ public class SystemInitialisationHelper {
     private WorkflowConfigurationHelper workflowConfigurationHelper;
     
     public void verifyScopeCreation() {
-        for (Scope scope : scopeService.getScopes()) {
+        for (Scope scope : scopeService.getScopesDescending()) {
             assertEquals(scope.getId().getPrecedence(), scope.getPrecedence());
         }
     }

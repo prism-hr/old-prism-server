@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNoti
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 
-public class PrismApplicationWithdrawn extends PrismWorkflowState {
+public class PrismApplicationWithdrawnPendingExport extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {
@@ -57,7 +57,7 @@ public class PrismApplicationWithdrawn extends PrismWorkflowState {
                         .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
-                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN) // 
+                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST)))); //
     
         stateActions.add(new PrismStateAction() //
@@ -92,7 +92,7 @@ public class PrismApplicationWithdrawn extends PrismWorkflowState {
             .withPostComment(true) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
-                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN) // 
+                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT) // 
                         .withTransitionAction(PrismAction.APPLICATION_EXPORT) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME), // 
                     new PrismStateTransition() // 

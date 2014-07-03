@@ -161,7 +161,7 @@ public class ApplicationSummaryService {
     public Map<String, String> getSummary(final String applicationNumber) {
         Application form = applicationsService.getByApplicationNumber(applicationNumber);
 
-        if (form.getState().equals(PrismState.APPLICATION_WITHDRAWN) || form.getState().equals(PrismState.APPLICATION_UNSUBMITTED)) {
+        if (form.getState().equals(PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT) || form.getState().equals(PrismState.APPLICATION_UNSUBMITTED)) {
             return Collections.emptyMap();
         }
 

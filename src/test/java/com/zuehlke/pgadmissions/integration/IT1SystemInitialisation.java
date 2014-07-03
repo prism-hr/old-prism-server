@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.zuehlke.pgadmissions.integration.helpers.RegistrationHelper;
 import com.zuehlke.pgadmissions.integration.helpers.SystemInitialisationHelper;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
 import com.zuehlke.pgadmissions.services.SystemService;
@@ -20,9 +19,6 @@ public class IT1SystemInitialisation {
 
     @Autowired
     private MailSenderMock mailSenderMock;
-
-    @Autowired
-    private RegistrationHelper registrationHelper;
 
     @Autowired
     private SystemInitialisationHelper systemInitialisationHelper;

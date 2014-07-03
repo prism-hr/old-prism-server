@@ -96,7 +96,7 @@ public class SystemInitialisationHelper {
     private SystemService systemService;
     
     @Autowired
-    private RegistrationHelper registrationHelper;
+    private UserHelper userHelper;
     
     @Autowired
     private WorkflowConfigurationHelper workflowConfigurationHelper;
@@ -240,7 +240,7 @@ public class SystemInitialisationHelper {
     
     public void verifySystemUserRegistration() {
         System system = systemService.getSystem();
-        registrationHelper.registerAndActivateUser(system.getUser(), system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+        userHelper.registerAndActivateUser(system, system.getUser(), PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
     }
 
     private void verifyStateActionAssignmentCreation(StateAction stateAction, PrismStateAction prismStateAction) {

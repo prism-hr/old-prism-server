@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import java.util.HashMap;
+import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Institution;
@@ -32,6 +34,16 @@ public enum PrismScope {
         resourceScopes.put(Application.class, APPLICATION);
     }
     
+    private static List<PrismScope> creatableScopes = Lists.newArrayList();
+    
+    static {
+        for (PrismScope scope : PrismScope.values()) {
+            if (scope.getPrecedence() > 1) {
+                creatableScopes.add(scope);
+            }
+        }
+    }
+    
     private PrismScope(Class<? extends Resource> resourceClass, int precedence) {
         this.resourceClass = resourceClass;
         this.precedence = precedence;
@@ -49,6 +61,10 @@ public enum PrismScope {
         return resourceScopes.get(resourceClass);
     }
     
+    public static List<PrismScope> getCreatableScopes() {
+        return creatableScopes;
+    }
+
     public String getLowerCaseName() {
         return resourceClass.getSimpleName().toLowerCase();
     }

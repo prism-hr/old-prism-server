@@ -45,7 +45,7 @@ public class RefereeDAO {
                 .add(Restrictions.isNull("referenceComment.id"))
                 .add(Restrictions.eq("declined", false))
                 .add(Restrictions.isNotNull("user"))
-                .add(Restrictions.not(Restrictions.in("application.status", new PrismState[]{PrismState.APPLICATION_WITHDRAWN,
+                .add(Restrictions.not(Restrictions.in("application.status", new PrismState[]{PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT,
                         PrismState.APPLICATION_APPROVED, PrismState.APPLICATION_REJECTED, PrismState.APPLICATION_UNSUBMITTED})))
                 .add(Restrictions.le("lastNotified", dateWithSubtractedInterval)).list();
     }

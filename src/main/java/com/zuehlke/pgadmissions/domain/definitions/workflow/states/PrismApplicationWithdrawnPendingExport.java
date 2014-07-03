@@ -12,8 +12,9 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssi
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 
-public class PrismWithdrawnPendingCorrection extends PrismWorkflowState {
+public class PrismApplicationWithdrawnPendingExport extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {
@@ -56,30 +57,7 @@ public class PrismWithdrawnPendingCorrection extends PrismWorkflowState {
                         .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
-                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN_PENDING_CORRECTION) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST)))); //
-    
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.APPLICATION_CORRECT) //
-            .withRaisesUrgentFlag(true) //
-            .withDefaultAction(false) //
-            .withPostComment(true) //
-            .withNotificationTemplate(PrismNotificationTemplate.APPLICATION_TASK_REQUEST) //
-                .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMITTER))) //
-                .withNotifications(Arrays.asList( // 
-                    new PrismStateActionNotification() // 
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
-                    new PrismStateActionNotification() // 
-                        .withRole(PrismRole.INSTITUTION_ADMITTER) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION))) //
-                .withTransitions(Arrays.asList( // 
-                    new PrismStateTransition() // 
-                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN) // 
+                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST)))); //
     
         stateActions.add(new PrismStateAction() //
@@ -108,10 +86,29 @@ public class PrismWithdrawnPendingCorrection extends PrismWorkflowState {
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR)))); //
     
         stateActions.add(new PrismStateAction() //
+            .withAction(PrismAction.APPLICATION_EXPORT) //
+            .withRaisesUrgentFlag(false) //
+            .withDefaultAction(false) //
+            .withPostComment(true) //
+                .withTransitions(Arrays.asList( // 
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT) // 
+                        .withTransitionAction(PrismAction.APPLICATION_EXPORT) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME), // 
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN_COMPLETED) // 
+                        .withTransitionAction(PrismAction.APPLICATION_EXPORT) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME), // 
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN_PENDING_CORRECTION) // 
+                        .withTransitionAction(PrismAction.APPLICATION_EXPORT) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME)))); //
+    
+        stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
-            .withPostComment(true) //
+            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_CREATOR) // 
@@ -179,18 +176,7 @@ public class PrismWithdrawnPendingCorrection extends PrismWorkflowState {
                             new PrismStateActionEnhancement() //
                                 .withEnhancement(PrismEnhancementType.APPLICATION_VIEW_EXPORT_DATA), // 
                             new PrismStateActionEnhancement() //
-                                .withEnhancement(PrismEnhancementType.APPLICATION_VIEW_REFERENCE_DATA))))) //
-                .withNotifications(Arrays.asList( // 
-                    new PrismStateActionNotification() // 
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
-                    new PrismStateActionNotification() // 
-                        .withRole(PrismRole.INSTITUTION_ADMITTER) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION))) //
-                .withTransitions(Arrays.asList( // 
-                    new PrismStateTransition() // 
-                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST))));
+                                .withEnhancement(PrismEnhancementType.APPLICATION_VIEW_REFERENCE_DATA))))));
     }
 
 }

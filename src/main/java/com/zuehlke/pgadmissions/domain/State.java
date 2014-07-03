@@ -6,12 +6,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -20,7 +20,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Entity
-@Table(name = "STATE")
+@Table(name = "STATE", uniqueConstraints = { @UniqueConstraint(columnNames = { "scope_id", "sequence_order" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class State extends WorkflowResource {
 
@@ -29,14 +29,20 @@ public class State extends WorkflowResource {
     @Enumerated(EnumType.STRING)
     private PrismState id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "parent_state_id")
     private State parentState;
     
+    @Column(name = "is_initial_state", nullable = false)
+    private boolean initialState;
+    
+    @Column(name = "is_final_state", nullable = false)
+    private boolean finalState;
+
     @Column(name = "sequence_order")
     private Integer sequenceOrder;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
     
@@ -45,7 +51,7 @@ public class State extends WorkflowResource {
     
     @OneToMany(mappedBy = "transitionState")
     private Set<StateTransition> inverseStateTransitions = Sets.newHashSet();
-
+    
     @Override
     public PrismState getId() {
         return id;
@@ -62,6 +68,22 @@ public class State extends WorkflowResource {
 
     public void setParentState(State parentState) {
         this.parentState = parentState;
+    }
+    
+    public boolean isInitialState() {
+        return initialState;
+    }
+
+    public void setInitialState(boolean initialState) {
+        this.initialState = initialState;
+    }
+
+    public boolean isFinalState() {
+        return finalState;
+    }
+
+    public void setFinalState(boolean finalState) {
+        this.finalState = finalState;
     }
 
     public Integer getSequenceOrder() {
@@ -88,8 +110,22 @@ public class State extends WorkflowResource {
         return inverseStateTransitions;
     }
 
+    public void setInverseStateTransitions(Set<StateTransition> inverseStateTransitions) {
+        this.inverseStateTransitions = inverseStateTransitions;
+    }
+
     public State withId(PrismState id) {
         this.id = id;
+        return this;
+    }
+    
+    public State withInitialState(boolean initialState) {
+        this.initialState = initialState;
+        return this;
+    }
+    
+    public State withFinalState(boolean finalState) {
+        this.finalState = finalState;
         return this;
     }
     

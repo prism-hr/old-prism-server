@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.dao;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -88,6 +89,10 @@ public class StateDAO {
                                 .add(Restrictions.eq("institution", resource.getInstitution())) //
                                 .add(Restrictions.isNull("program"))) //
                         .add(Restrictions.eq("program", resource.getProgram()))) //
+                .addOrder(Order.desc("system")) //
+                .addOrder(Order.desc("institution")) //
+                .addOrder(Order.desc("program")) //
+                .setMaxResults(1) //
                 .uniqueResult();
     }
     
@@ -99,7 +104,7 @@ public class StateDAO {
     }
     
     public List<StateTransitionPending> getPendingStateTransitions() {
-        List<Scope> scopes = scopeDAO.getScopes();
+        List<Scope> scopes = scopeDAO.getScopesDescending();
         
         List<StateTransitionPending> pendingStateTransitions = Lists.newArrayList();
         for (Scope scope : scopes) {
@@ -210,9 +215,31 @@ public class StateDAO {
                 .uniqueResult();
     }
     
-    public List<State> getRootState() {
-        return (List<State>) sessionFactory.getCurrentSession().createCriteria(State.class)
-                .add(Restrictions.isEmpty("inverseStateTransitions"))
+    public List<State> getOrderedTransitionStates(State state, State... excludedTransitionStates) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.groupProperty("stateTransition.transitionState")) //
+                .createAlias("stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
+                .createAlias("stateTransition.transitionState", "transitionState", JoinType.INNER_JOIN) //
+                .createAlias("transitionState.parentState", "parentState", JoinType.INNER_JOIN) //
+                .createAlias("transitionState.scope", "scope", JoinType.INNER_JOIN) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .createAlias("action.creationScope", "creationScope", JoinType.LEFT_OUTER_JOIN) //
+                .add(Restrictions.eq("state", state));
+        
+        for (State excludedTransitionState : excludedTransitionStates) {
+            criteria.add(Restrictions.ne("stateTransition.transitionState", excludedTransitionState));
+        }
+        
+        return (List<State>) criteria //
+                .addOrder(Order.asc("creationScope.precedence")) //
+                .addOrder(Order.asc("scope.precedence")) //
+                .addOrder(Order.asc("parentState.sequenceOrder")) //
+                .list();
+    }
+
+    public List<State> getWorkflowStates() {
+        return (List<State>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.groupProperty("state")) //
                 .list();
     }
     

@@ -75,6 +75,10 @@ public class StateService {
         return entityService.getAll(State.class);
     }
     
+    public List<State> getWorkflowStates() {
+        return stateDAO.getWorkflowStates();
+    }
+    
     public StateDuration getStateDuration(Resource resource, State state) {
         return stateDAO.getStateDuration(resource, state);
     }
@@ -152,16 +156,16 @@ public class StateService {
         return stateDAO.getDegradationState(state);
     }
     
-    public List<State> getRootState() {
-        return stateDAO.getRootState();
-    }
-    
     public ThreadPoolExecutor getThreadedStateTransitionPool() {
         return threadedStateTransitionPool;
     }
     
     public List<StateAction> getStateActions() {
         return entityService.getAll(StateAction.class);
+    }
+    
+    public List<State> getOrderedTransitionStates(State state, State...excludedTransitionStates) {
+        return stateDAO.getOrderedTransitionStates(state, excludedTransitionStates);
     }
     
     private void executeThreadedStateTransitions(final HashMultimap<Action, ResourceDynamic> threadedStateTransitions, final User invoker) {

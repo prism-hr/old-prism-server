@@ -47,6 +47,8 @@ public enum PrismNotificationTemplate {
             "program_task_request_reminder_subject.ftl", "program_task_request_reminder_content.ftl"), //
     PROGRAM_UPDATE_NOTIFICATION(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.UPDATE, PrismScope.PROGRAM,
             "program_update_notification_subject.ftl", "program_update_notification_content.ftl"), //
+    PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.PROJECT,
+            "project_complete_approval_stage_notification_subject.ftl", "project_complete_approval_stage_notification_content.ftl"), //
     PROJECT_TASK_REQUEST(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REQUEST, PrismScope.PROJECT, "project_task_request_subject.ftl",
             "project_task_request_content.ftl"), //
     PROJECT_TASK_REQUEST_REMINDER(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REMINDER, PrismScope.PROJECT,
@@ -147,12 +149,12 @@ public enum PrismNotificationTemplate {
         public int getInterval() {
             return interval;
         }
-        
+
         public PrismNotificationTemplate.PrismReminderDefinition withTemplate(PrismNotificationTemplate template) {
             this.template = template;
             return this;
         }
-        
+
         public PrismNotificationTemplate.PrismReminderDefinition withInterval(int interval) {
             this.interval = interval;
             return this;

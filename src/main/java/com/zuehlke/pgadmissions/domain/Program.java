@@ -45,16 +45,16 @@ public class Program extends Advert {
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "program")
+    @OneToMany(mappedBy = "program")
     private Set<Project> projects = Sets.newHashSet();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
+    @OneToMany(mappedBy = "project")
     private Set<Application> applications = Sets.newHashSet();
 
     @Column(name = "is_imported", nullable = false)
     private boolean imported;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "program")
+    @OneToMany(mappedBy = "program")
     @OrderBy("applicationStartDate")
     private Set<ProgramInstance> programInstances = Sets.newHashSet();
 

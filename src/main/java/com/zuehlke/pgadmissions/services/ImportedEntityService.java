@@ -31,55 +31,28 @@ public class ImportedEntityService {
         return importedEntityDAO.getImportedEntities(Disability.class);
     }
 
-    public Disability getDisabilityById(Integer id) {
-        return importedEntityDAO.getById(id);
-    }
-
     public List<Language> getAllLanguages() {
         return importedEntityDAO.getImportedEntities(Language.class);
-    }
-
-    public Language getLanguageById(Integer id) {
-        return importedEntityDAO.getById(id);
     }
 
     public List<ReferralSource> getAllSourcesOfInterest() {
         return importedEntityDAO.getImportedEntities(ReferralSource.class);
     }
 
-    public ReferralSource getSourceOfInterestById(Integer id) {
-        return importedEntityDAO.getById(id);
-    }
-
     public List<Ethnicity> getAllEthnicities() {
         return importedEntityDAO.getImportedEntities(Ethnicity.class);
-    }
-
-    public Ethnicity getEthnicityById(Integer id) {
-        return importedEntityDAO.getById(id);
     }
 
     public List<Domicile> getAllDomiciles() {
         return importedEntityDAO.getImportedEntities(Domicile.class);
     }
 
-    public Domicile getDomicileById(Integer id) {
-        return importedEntityDAO.getById(id);
-    }
-
     public List<Country> getAllCountries() {
         return importedEntityDAO.getImportedEntities(Country.class);
-    }
-
-    public Domicile getCountryById(Integer id) {
-        return importedEntityDAO.getById(id);
     }
 
     public List<QualificationType> getAllQualificationTypes() {
         return importedEntityDAO.getImportedEntities(QualificationType.class);
     }
 
-    public QualificationType getQualificationTypeById(Integer id) {
-        return importedEntityDAO.getById(id);
-    }
 }

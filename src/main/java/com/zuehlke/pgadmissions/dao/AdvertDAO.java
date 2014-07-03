@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.OpportunityListType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -17,20 +17,16 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramExport;
-import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.definitions.OpportunityListType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.dto.AdvertDTO;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")
 public class AdvertDAO {
-    
+
     private static final BigDecimal RECOMMENDED_ADVERT_FEED_THRESHOLD = new BigDecimal(0.15);
-    
+
     @Autowired
     private SessionFactory sessionFactory;
 
@@ -38,20 +34,20 @@ public class AdvertDAO {
         if (selectedAdvertId == null) {
             selectedAdvertId = 0;
         }
-        
+
         Session session = sessionFactory.getCurrentSession();
         Criteria programQuery = null;
         Criteria projectQuery = null;
         ProjectionList programProjectionList = Projections.projectionList();
         ProjectionList projectProjectionList = Projections.projectionList();
-        
+
         if (feedKey == null) {
             programQuery = getProgramAdvertCriteria(session);
             projectQuery = getProjectAdvertCriteria(session);
         } else if (BooleanUtils.isTrue(OpportunityListType.isCurrentOpportunityListType(feedKey))) {
             programProjectionList.add(Projections.property("program.active"), "selected");
             projectProjectionList.add(Projections.property("project.active"), "selected");
-            
+
             if (feedKey == OpportunityListType.CURRENTOPPORTUNITYBYADVERTID) {
                 programQuery = getProgramAdvertByAdvertIdCriteria(session, feedKeyValue);
                 projectQuery = getProjectAdvertByAdvertIdCriteria(session, feedKeyValue);
@@ -59,7 +55,7 @@ public class AdvertDAO {
                 programQuery = getProgramAdvertByApplicationFormIdCriteria(session, feedKeyValue);
                 projectQuery = getProjectAdvertByApplicationFormIdCriteria(session, feedKeyValue);
             }
-            
+
         } else if (feedKey == OpportunityListType.OPPORTUNITIESBYFEEDID) {
             programQuery = getProgramAdvertByFeedIdCriteria(session, feedKeyValue);
             projectQuery = getProjectAdvertByFeedIdCriteria(session, feedKeyValue);
@@ -71,89 +67,89 @@ public class AdvertDAO {
             projectQuery = getProjectAdvertByUserUsernameCriteria(session, feedKeyValue);
         } else if (feedKey == OpportunityListType.RECOMMENDEDOPPORTUNTIIESBYAPPLICANTID) {
 //            return getRecommendedAdvertFeed(feedKeyValue);
-        } 
-        
+        }
+
         DateTime baseline = new DateTime(new Date());
         DateTime cleanBaseline = new DateTime(baseline.getYear(), baseline.getMonthOfYear(), baseline.getDayOfMonth(), 0, 0, 0);
         Date baselineDate = cleanBaseline.toDate();
-        
+
         List<AdvertDTO> advertDTOs = getProgramAdvertDTOs(programQuery, programProjectionList, baselineDate, selectedAdvertId);
-        
-        if (!(BooleanUtils.isTrue(OpportunityListType.isSingletonOpportunityListType(feedKey)) && advertDTOs.size() == 1)) {        
+
+        if (!(BooleanUtils.isTrue(OpportunityListType.isSingletonOpportunityListType(feedKey)) && advertDTOs.size() == 1)) {
             advertDTOs.addAll(getProjectAdvertDTOs(projectQuery, projectProjectionList, baselineDate, selectedAdvertId));
         }
-            
+
         return advertDTOs;
     }
-    
+
     private Criteria getProgramAdvertCriteria(Session session) {
         return session.createCriteria(Program.class, "program");
     }
-    
+
     private Criteria getProjectAdvertCriteria(Session session) {
         return getProgramAdvertCriteria(session)
                 .createAlias("program.projects", "project", JoinType.INNER_JOIN);
     }
-    
+
     private Criteria getProgramAdvertByAdvertIdCriteria(Session session, String feedKeyValue) {
         return getProgramAdvertCriteria(session)
                 .add(Restrictions.eq("id", Integer.parseInt(feedKeyValue)));
     }
-    
+
     private Criteria getProjectAdvertByAdvertIdCriteria(Session session, String feedKeyValue) {
         return getProjectAdvertCriteria(session)
                 .add(Restrictions.eq("project.id", Integer.parseInt(feedKeyValue)));
     }
-    
+
     private Criteria getProgramAdvertByApplicationFormIdCriteria(Session session, String feedKeyValue) {
         return session.createCriteria(Application.class, "applicationForm")
                 .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("applicationForm.id", Integer.parseInt(feedKeyValue)));
     }
-    
+
     private Criteria getProjectAdvertByApplicationFormIdCriteria(Session session, String feedKeyValue) {
         return getProgramAdvertByApplicationFormIdCriteria(session, feedKeyValue)
                 .createAlias("applicationForm.project", "project");
     }
-    
+
     private Criteria getProgramAdvertByFeedIdCriteria(Session session, String feedKeyValue) {
         return session.createCriteria(ProgramExport.class)
                 .createAlias("programs", "program", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("id", Integer.parseInt(feedKeyValue)));
     }
-    
+
     private Criteria getProjectAdvertByFeedIdCriteria(Session session, String feedKeyValue) {
         return getProgramAdvertByFeedIdCriteria(session, feedKeyValue)
                 .createAlias("program.projects", "project", JoinType.INNER_JOIN);
     }
-    
+
     private Criteria getProgramAdvertByUserUpiCriteria(Session session, String feedKeyValue) {
         return getAdvertByUserAttributeCriteria(session)
-                .add(Restrictions.eq("registeredUser.upi", feedKeyValue)); 
+                .add(Restrictions.eq("registeredUser.upi", feedKeyValue));
     }
-    
+
     private Criteria getProjectAdvertByUserUpiCriteria(Session session, String feedKeyValue) {
         return getProgramAdvertByUserUpiCriteria(session, feedKeyValue)
                 .createAlias("program.projects", "project", JoinType.INNER_JOIN);
     }
-    
+
     private Criteria getProgramAdvertByUserUsernameCriteria(Session session, String feedKeyValue) {
         return getAdvertByUserAttributeCriteria(session)
-                .add(Restrictions.eq("registeredUser.username", feedKeyValue));      
+                .add(Restrictions.eq("registeredUser.username", feedKeyValue));
     }
-    
+
     private Criteria getProjectAdvertByUserUsernameCriteria(Session session, String feedKeyValue) {
         return getProgramAdvertByUserUsernameCriteria(session, feedKeyValue)
                 .createAlias("program.projects", "project", JoinType.INNER_JOIN);
     }
-    
-    private Criteria getAdvertByUserAttributeCriteria (Session session) {
+
+    private Criteria getAdvertByUserAttributeCriteria(Session session) {
         return session.createCriteria(UserRole.class)
                 .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
                 .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN);
     }
-    
+
     private List<AdvertDTO> getProgramAdvertDTOs(Criteria programQuery, ProjectionList programProjectionList, Date baselineDate, Integer selectedAdvertId) {
         return (List<AdvertDTO>) programQuery
                 .setProjection(programProjectionList.add(Projections.groupProperty("program.id"), "id")
@@ -176,7 +172,7 @@ public class AdvertDAO {
                 .add(Restrictions.ne("program.id", selectedAdvertId))
                 .setResultTransformer(Transformers.aliasToBean(AdvertDTO.class)).list();
     }
-    
+
     private List<AdvertDTO> getProjectAdvertDTOs(Criteria projectQuery, ProjectionList projectProjectionList, Date baselineDate, Integer selectedAdvertId) {
         return (List<AdvertDTO>) projectQuery
                 .setProjection(projectProjectionList.add(Projections.groupProperty("project.id"), "id")
@@ -199,4 +195,8 @@ public class AdvertDAO {
                 .setResultTransformer(Transformers.aliasToBean(AdvertDTO.class)).list();
     }
 
+
+    public List<Advert> getAdverts() {
+        return sessionFactory.getCurrentSession().createCriteria(Advert.class).list();
+    }
 }

@@ -73,7 +73,7 @@ public class ResourceResource {
         List<User> users = roleService.getUsers(resource);
         List<ResourceRepresentation.UserRolesRepresentation> userRolesRepresentations = Lists.newArrayListWithCapacity(users.size());
         for (User user : users) {
-            List<PrismRole> availableRoles = roleService.getRolesToRemove(resourceDescriptor.getType());
+            List<PrismRole> availableRoles = roleService.getRoles(resourceDescriptor.getType());
             Set<PrismRole> roles = Sets.newHashSet(roleService.getRoles(resource, user));
             List<ResourceRepresentation.RoleRepresentation> userRoles = Lists.newArrayListWithCapacity(availableRoles.size());
             for (PrismRole availableRole : availableRoles) {
@@ -115,14 +115,8 @@ public class ResourceResource {
             @RequestBody ResourceRepresentation.UserRolesRepresentation userRolesRepresentation) {
         ResourceDynamic resource = entityService.getById(resourceDescriptor.getType(), resourceId);
 
-        List<PrismRole> roles = Lists.newLinkedList();
-        for (ResourceRepresentation.RoleRepresentation roleRepresentation : userRolesRepresentation.getRoles()) {
-            if (roleRepresentation.getValue()) {
-                roles.add(roleRepresentation.getId());
-            }
-        }
         userService.getOrCreateUserWithRoles(userRolesRepresentation.getFirstName(), userRolesRepresentation.getLastName(), userRolesRepresentation.getEmail(),
-                resource, roles.toArray(new PrismRole[0]));
+                resource, userRolesRepresentation.getRoles());
     }
 
     @ModelAttribute

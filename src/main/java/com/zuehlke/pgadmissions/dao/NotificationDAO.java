@@ -38,8 +38,20 @@ public class NotificationDAO {
     public NotificationTemplateVersion getActiveVersion(Resource resource, PrismNotificationTemplate templateId) {
         return (NotificationTemplateVersion) sessionFactory.getCurrentSession().createCriteria(NotificationConfiguration.class) //
                 .setProjection(Projections.property("notificationTemplateVersion")) //
-                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
-                .add(Restrictions.eq("notificationTemplate.id", templateId)) //
+                .add(Restrictions.eq("notificationTemplate.id", templateId))
+                .add(Restrictions.disjunction()
+                    .add(Restrictions.conjunction() //
+                            .add(Restrictions.eq("system", resource.getSystem())) //
+                            .add(Restrictions.isNull("institution")) //
+                            .add(Restrictions.isNull("program"))) //
+                    .add(Restrictions.conjunction() //
+                            .add(Restrictions.eq("institution", resource.getInstitution())) //
+                            .add(Restrictions.isNull("program"))) //
+                    .add(Restrictions.eq("program", resource.getProgram()))) //
+                .addOrder(Order.desc("system")) //
+                .addOrder(Order.desc("institution")) //
+                .addOrder(Order.desc("program")) //
+                .setMaxResults(1) //
                 .uniqueResult();
     }
 

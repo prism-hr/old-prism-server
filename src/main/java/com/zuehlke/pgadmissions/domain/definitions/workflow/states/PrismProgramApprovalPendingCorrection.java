@@ -35,9 +35,17 @@ public class PrismProgramApprovalPendingCorrection extends PrismWorkflowState {
             .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
+                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR)))); //
+        
+        stateActions.add(new PrismStateAction() //
+            .withAction(PrismAction.PROGRAM_ESCALATE) //
+            .withRaisesUrgentFlag(false) //
+            .withDefaultAction(false) //
+            .withPostComment(true) //
+                .withTransitions(Arrays.asList( // 
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.PROGRAM_WITHDRAWN) // 
+                        .withTransitionAction(PrismAction.PROGRAM_ESCALATE)))); //
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_VIEW) //
@@ -48,9 +56,7 @@ public class PrismProgramApprovalPendingCorrection extends PrismWorkflowState {
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
+                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_WITHDRAW) //

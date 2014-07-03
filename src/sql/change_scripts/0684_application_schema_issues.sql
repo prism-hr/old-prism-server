@@ -55,3 +55,7 @@ SET state_id = "APPLICATION_WITHDRAWN_PENDING_EXPORT"
 WHERE state_id = "APPLICATION_WITHDRAWN"
 ;
 
+ALTER TABLE STATE
+	DROP INDEX scope_id,
+	ADD UNIQUE INDEX (scope_id, sequence_order)
+;

@@ -24,9 +24,7 @@ public class PrismProjectWithdrawn extends PrismWorkflowState {
                 new PrismStateActionAssignment() // 
                     .withRole(PrismRole.PROJECT_ADMINISTRATOR), // 
                 new PrismStateActionAssignment() // 
-                    .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR), // 
-                new PrismStateActionAssignment() // 
-                    .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
+                    .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR)))); //
     }
 
 }

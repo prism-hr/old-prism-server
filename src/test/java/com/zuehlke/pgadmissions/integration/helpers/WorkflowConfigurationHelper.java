@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -27,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -39,10 +39,12 @@ import com.zuehlke.pgadmissions.services.SystemService;
 @Service
 @Transactional
 public class WorkflowConfigurationHelper {
-    
-    private final Set<StateTransition> stateTransitionsFollowed = Sets.newHashSet();
 
-    private final Set<PrismRole> rolesCreated = Sets.newHashSet();
+    private final Set<State> statesVisited = Sets.newHashSet();
+    
+    private final Set<State> actualEscalationStates = Sets.newHashSet();
+
+    private final Set<PrismRole> actualRolesCreated = Sets.newHashSet();
 
     private final Set<PrismScope> actualCreatableScopes = Sets.newHashSet();
 
@@ -61,72 +63,143 @@ public class WorkflowConfigurationHelper {
     @Autowired
     private SystemService systemService;
 
-    public void verifyWorkflowConfiguration() {
-        State rootState = stateService.getById(PrismState.SYSTEM_APPROVED);
-        rolesCreated.add(PrismRole.SYSTEM_ADMINISTRATOR);
-
-        verifyStateActions(rootState);
+    public void verifyWorkflowConfiguration() {        
+        verifyState(null);
+        
+        List<State> workflowStates = stateService.getWorkflowStates();
+        assertEquals(workflowStates.size(), statesVisited.size());
+        assertEquals(workflowStates.size(), actualEscalationStates.size() + actualFinalStates.size());
 
         assertCollectionEquals(PrismScope.getCreatableScopes(), actualCreatableScopes);
         assertCollectionEquals(PrismAction.getCreationActions(), actualCreationActions);
         assertCollectionEquals(PrismState.getInitialStates(), actualInitialStates);
         assertCollectionEquals(PrismState.getFinalStates(), actualFinalStates);
+        
+        statesVisited.clear();
+        actualEscalationStates.clear();
+        actualRolesCreated.clear();
+        actualCreatableScopes.clear();
+        actualInitialStates.clear();
+        actualFinalStates.clear();
+        actualCreationActions.clear();
+    }
+
+    private void verifyState(State state) {
+        if (state == null) {
+            state = getRootState();
+        }
+        
+        statesVisited.add(state);
+        assertTrue(state.getSequenceOrder() == null || state == state.getParentState());
+
+        verifyAsInitialState(state);
+        verifyAsFinalState(state);
+
+        verifyStateActions(state);
+        verifyStateActionAssignments(state);
+        verifyStateActionNotifications(state);
+        
+        List<State> transitionStates = stateService.getOrderedTransitionStates(state, statesVisited.toArray(new State[statesVisited.size()]));
+        for (State transitionState : transitionStates) {
+            verifyState(transitionState);
+        }
+    }
+    
+    private State getRootState() {
+        State rootState = stateService.getById(PrismState.SYSTEM_APPROVED);
+        assertTrue(rootState.getScope().getPrecedence() == 1);
+        
+        Set<StateTransition> inverseStateTransitions = rootState.getInverseStateTransitions();
+        int inverseStateTransitionCount = inverseStateTransitions.size();
+        assertTrue(inverseStateTransitionCount <= 1);
+        
+        if (inverseStateTransitionCount == 1) {
+            assertEquals(PrismState.SYSTEM_APPROVED, inverseStateTransitions.iterator().next().getStateAction().getState().getId());
+        }
+        
+        return rootState;
+    }
+    
+    private void verifyAsInitialState(State state) {
+        if (state.isInitialState()) {
+            Scope scope = state.getScope();
+            Set<Scope> parentScopes = Sets.newHashSet();
+            
+            Set<StateTransition> inverseStateTransitions = state.getInverseStateTransitions();
+            for (StateTransition stateTransition : inverseStateTransitions) {
+                Scope fromScope = stateTransition.getStateAction().getState().getScope();
+                
+                if (fromScope != scope) {
+                    parentScopes.add(fromScope);
+                }
+            }
+            
+            assertTrue(parentScopes.size() > 0 || state.isFinalState());
+            actualInitialStates.add(state.getId());
+        }
+    }
+    
+    private void verifyAsFinalState(State state) {
+        if (state.isFinalState()) {
+            Set<State> transitionStates = Sets.newHashSet();
+            
+            for (StateAction stateAction : state.getStateActions()) {
+                for (StateTransition stateTransition : stateAction.getStateTransitions()) {
+                    transitionStates.add(stateTransition.getTransitionState());
+                }
+            }
+            
+            int transitionStateCount = transitionStates.size();
+            assertTrue(transitionStateCount <= 1 || state.isInitialState());
+            
+            if (transitionStateCount == 1) {
+                assertEquals(state, transitionStates.iterator().next());
+            }
+            
+            actualFinalStates.add(state.getId());
+        }
     }
 
     private void verifyStateActions(State state) {
-        System.out.print(state.getId().toString() + "\n");
+        Set<Action> escalationActions = Sets.newHashSet();
+        
+        for (StateAction stateAction : state.getStateActions()) {
+            Action action = stateAction.getAction();
 
-        if (state.isInitialState()) {
-            actualInitialStates.add(state.getId());
-        }
-
-        if (state.isFinalState()) {
-            actualFinalStates.add(state.getId());
-        }
-
-        Set<State> transitionStates = Sets.newHashSet();
-        Set<StateAction> stateActions = state.getStateActions();
-
-        for (StateAction stateAction : stateActions) {
-            System.out.print("\t" + stateAction.getState().getId().toString() + ":" + stateAction.getAction().getId().toString() + "\n");
-            HashMultimap<PrismScope, State> thisTransitionStates = verifyStateTransitions(stateAction);
+            if (action.getActionType().isSystemAction()) {
+                assertNotSame(stateAction.getState(),  stateAction.getStateTransitions().iterator().next());
+                assertFalse(stateAction.isRaisesUrgentFlag());
+                assertNull(stateAction.getNotificationTemplate());
+                actualEscalationStates.add(state);
+            } 
+           
+            if (stateAction.isRaisesUrgentFlag()) {
+                assertNotNull(stateAction.getNotificationTemplate());
+            } 
             
-            List<Scope> ascendingScopes = scopeService.getScopesAscending();
-            for (Scope scope : ascendingScopes) {
-                transitionStates.addAll(thisTransitionStates.get(scope.getId()));
+            if (action.isCreationAction()) {
+                actualCreatableScopes.add(action.getCreationScope().getId());
+                actualCreationActions.add(action.getId());
+            } 
+            
+            if (action.getActionType() == PrismActionType.SYSTEM_ESCALATION) {
+                escalationActions.add(action);
             }
+
+            verifyStateTransitions(stateAction);
         }
         
-        for (State transitionState : transitionStates) {
-            verifyStateActions(transitionState);
+        if (systemService.getStateDuration(state) != null) {
+            assertFalse(escalationActions.isEmpty());
         }
     }
 
-    private HashMultimap<PrismScope, State> verifyStateTransitions(StateAction stateAction) {
-        Action action = stateAction.getAction();
-        Set<StateTransition> stateTransitions = stateAction.getStateTransitions();
-        
-        if (action.getActionType().isSystemAction()) {
-            assertNotSame(stateAction.getState(), stateTransitions.iterator().next());
-            assertFalse(stateAction.isRaisesUrgentFlag());
-            assertNull(stateAction.getNotificationTemplate());
-        } else if (stateAction.isRaisesUrgentFlag()) {
-            assertNotNull(stateAction.getNotificationTemplate());
-        } else if (action.isCreationAction()) {
-            actualCreatableScopes.add(action.getCreationScope().getId());
-            actualCreationActions.add(action.getId());
-        }
-
-        return verifyStateTransitionEvaluation(stateAction);
-    }
-
-    private HashMultimap<PrismScope, State> verifyStateTransitionEvaluation(StateAction stateAction) {
-        HashMultimap<PrismScope, State> transitionStates = HashMultimap.create();
+    private void verifyStateTransitions(StateAction stateAction) {
         PrismTransitionEvaluation lastTransitionEvaluation = null;
 
         Set<StateTransition> stateTransitions = stateAction.getStateTransitions();
         int stateTransitionCount = stateTransitions.size();
-        
+
         for (StateTransition stateTransition : stateTransitions) {
             PrismTransitionEvaluation thisTransitionEvaluation = stateTransition.getStateTransitionEvaluation();
 
@@ -137,21 +210,8 @@ public class WorkflowConfigurationHelper {
             }
 
             lastTransitionEvaluation = thisTransitionEvaluation;
-            
             verifyRoleTransitions(stateTransition);
-            verifyStateActionAssignments(stateAction);
-            verifyStateActionNotifications(stateAction);
-
-            Action action = stateAction.getAction();
-            if (!stateTransitionsFollowed.contains(stateTransition)) {
-                Scope transitionScope = action.isCreationAction() ? action.getCreationScope() : action.getScope();
-                transitionStates.put(transitionScope.getId(), stateTransition.getTransitionState());
-            }
-            
-            stateTransitionsFollowed.add(stateTransition);
         }
-
-        return transitionStates;
     }
 
     private void verifyRoleTransitions(StateTransition stateTransition) {
@@ -159,20 +219,21 @@ public class WorkflowConfigurationHelper {
         Set<PrismRole> actualProcessedRoles = Sets.newHashSet();
 
         for (RoleTransition roleTransition : stateTransition.getRoleTransitions()) {
-            Role role = roleTransition.getRole();
-            PrismRole RoleId = role.getId();
+            Role transitionRole = roleTransition.getTransitionRole();
+            PrismRole transitionRoleId = transitionRole.getId();
 
-            actualProcessedRoles.add(RoleId);
+            actualProcessedRoles.add(transitionRoleId);
+            PrismRoleTransitionType roleTransitionType = roleTransition.getRoleTransitionType();
 
-            if (roleTransition.getRoleTransitionType() == PrismRoleTransitionType.CREATE) {
-                rolesCreated.add(RoleId);
-                if (role.isScopeOwner()) {
-                    actualOwnerRoles.add(RoleId);
+            if (roleTransitionType != PrismRoleTransitionType.REMOVE) {
+                actualRolesCreated.add(transitionRoleId);
+                if (transitionRole.isScopeOwner() && roleTransitionType == PrismRoleTransitionType.CREATE) {
+                    actualOwnerRoles.add(transitionRoleId);
                 }
             }
         }
 
-        assertTrue(rolesCreated.containsAll(actualProcessedRoles));
+        assertTrue(actualRolesCreated.containsAll(actualProcessedRoles));
 
         Action action = stateTransition.getStateAction().getAction();
         if (action.isCreationAction()) {
@@ -180,18 +241,26 @@ public class WorkflowConfigurationHelper {
             assertCollectionEquals(expectedOwnerRoles, actualOwnerRoles);
         }
     }
-    
-    private void verifyStateActionAssignments(StateAction stateAction) {
-        for (StateActionAssignment assignment : stateAction.getStateActionAssignments()) {
-            System.out.print("\t\t" + stateAction.getState().getId().toString() + ":" + stateAction.getAction().getId().toString() + ":"
-                    + assignment.getRole().getId().toString() + "\n");
-            assertTrue(rolesCreated.contains(assignment.getRole().getId()));
+
+    private void verifyStateActionAssignments(State state) {
+        for (StateAction stateAction : state.getStateActions()) {
+            Set<StateActionAssignment> assignments = stateAction.getStateActionAssignments();
+
+            if (stateAction.getAction().isSystemAction()) {
+                assertTrue(assignments.size() == 0);
+            }
+
+            for (StateActionAssignment assignment : assignments) {
+                assertTrue(actualRolesCreated.contains(assignment.getRole().getId()));
+            }
         }
     }
-    
-    private void verifyStateActionNotifications(StateAction stateAction) {
-        for (StateActionNotification notification : stateAction.getStateActionNotifications()) {
-            assertTrue(rolesCreated.contains(notification.getRole().getId()));
+
+    private void verifyStateActionNotifications(State state) {
+        for (StateAction stateAction : state.getStateActions()) {
+            for (StateActionNotification notification : stateAction.getStateActionNotifications()) {
+                assertTrue(actualRolesCreated.contains(notification.getRole().getId()));
+            }
         }
     }
 

@@ -57,11 +57,11 @@ import com.zuehlke.pgadmissions.services.SystemService;
 @Service
 @Transactional
 public class SystemInitialisationHelper {
-    
+
     private final String EMAIL_DEFAULT_SUBJECT_DIRECTORY = "email/subject/";
 
     private final String EMAIL_DEFAULT_CONTENT_DIRECTORY = "email/content/";
-    
+
     @Value("${system.name}")
     private String systemName;
 
@@ -73,45 +73,45 @@ public class SystemInitialisationHelper {
 
     @Value("${system.user.email}")
     private String systemUserEmail;
-    
+
     @Autowired
     private ActionService actionService;
-    
+
     @Autowired
     private EntityService entityService;
 
     @Autowired
     private NotificationService notificationService;
-    
+
     @Autowired
     private RoleService roleService;
-    
+
     @Autowired
     private ScopeService scopeService;
-    
+
     @Autowired
     private StateService stateService;
-    
+
     @Autowired
     private SystemService systemService;
-    
+
     @Autowired
     private UserHelper userHelper;
-    
+
     @Autowired
     private WorkflowConfigurationHelper workflowConfigurationHelper;
-    
+
     public void verifyScopeCreation() {
         for (Scope scope : scopeService.getScopesDescending()) {
             assertEquals(scope.getId().getPrecedence(), scope.getPrecedence());
         }
     }
-    
+
     public void verifyRoleCreation() {
         for (Role role : roleService.getRoles()) {
             assertEquals(role.getId().getScope(), role.getScope().getId());
             assertEquals(role.getId().isScopeOwner(), role.isScopeOwner());
-            
+
             Set<Role> excludedRoles = role.getExcludedRoles();
             Set<PrismRole> prismExcludedRoles = PrismRole.getExcludedRoles(role.getId());
 
@@ -122,7 +122,7 @@ public class SystemInitialisationHelper {
             }
         }
     }
-    
+
     public void verifyActionCreation() {
         for (Action action : actionService.getActions()) {
             assertEquals(action.getId().getActionType(), action.getActionType());
@@ -141,7 +141,7 @@ public class SystemInitialisationHelper {
             }
         }
     }
-    
+
     public void verifyStateCreation() {
         for (State state : stateService.getStates()) {
             assertEquals(PrismState.getParentState(state.getId()), state.getParentState().getId());
@@ -151,19 +151,19 @@ public class SystemInitialisationHelper {
             assertEquals(state.getId().getScope(), state.getScope().getId());
         }
     }
-    
+
     public void verifyConfigurationCreation() {
         for (Configuration configuration : systemService.getConfigurations()) {
             assertEquals(configuration.getParameter().getDefaultValue(), configuration.getValue());
         }
     }
-    
+
     public void verifySystemCreation() {
         System system = systemService.getSystem();
         assertEquals(system.getName(), systemName);
         assertEquals(system.getState().getId(), PrismState.SYSTEM_APPROVED);
     }
-    
+
     public void verifySystemUserCreation() {
         System system = systemService.getSystem();
         User systemUser = system.getUser();
@@ -175,7 +175,7 @@ public class SystemInitialisationHelper {
             assertEquals(userRole.getRole().getId(), PrismRole.SYSTEM_ADMINISTRATOR);
         }
     }
-    
+
     public void verifyNotificationTemplateCreation() {
         System system = systemService.getSystem();
         for (NotificationTemplate template : notificationService.getTemplates()) {
@@ -231,13 +231,13 @@ public class SystemInitialisationHelper {
             verifyStateActionNotificationCreation(stateAction, prismStateAction);
             verifyStateTransitionCreation(stateAction, prismStateAction);
         }
-        
+
         verifyNotificationTemplateCreation();
         verifyStateDurationCreation();
-        
+
         workflowConfigurationHelper.verifyWorkflowConfiguration();
     }
-    
+
     public void verifySystemUserRegistration() {
         System system = systemService.getSystem();
         userHelper.registerAndActivateUser(system, system.getUser(), PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
@@ -251,7 +251,7 @@ public class SystemInitialisationHelper {
             PrismStateActionAssignment prismStateActionAssignment = new PrismStateActionAssignment().withRole(stateActionAssignment.getRole().getId());
 
             Set<StateActionEnhancement> stateActionEnhancements = stateActionAssignment.getEnhancements();
-            
+
             for (StateActionEnhancement stateActionEnhancement : stateActionEnhancements) {
                 Action delegatedAction = stateActionEnhancement.getDelegatedAction();
                 prismStateActionAssignment.getEnhancements().add(
@@ -282,14 +282,14 @@ public class SystemInitialisationHelper {
             PrismStateTransition prismStateTransition = new PrismStateTransition().withTransitionState(stateTransition.getTransitionState().getId())
                     .withTransitionAction(stateTransition.getTransitionAction().getId())
                     .withTransitionEvaluation(stateTransition.getStateTransitionEvaluation());
-            
+
             for (RoleTransition roleTransition : stateTransition.getRoleTransitions()) {
                 prismStateTransition.getRoleTransitions().add(
                         new PrismRoleTransition().withRole(roleTransition.getRole().getId()).withTransitionType(roleTransition.getRoleTransitionType())
                                 .withTransitionRole(roleTransition.getTransitionRole().getId()).withRestrictToOwner(roleTransition.isRestrictToActionOwner())
                                 .withMinimumPermitted(roleTransition.getMinimumPermitted()).withMaximumPermitted(roleTransition.getMaximumPermitted()));
             }
-            
+
             for (Action propagatedAction : stateTransition.getPropagatedActions()) {
                 prismStateTransition.getPropagatedActions().add(propagatedAction.getId());
             }
@@ -305,5 +305,5 @@ public class SystemInitialisationHelper {
             throw new Error(e);
         }
     }
-    
+
 }

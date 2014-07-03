@@ -75,6 +75,16 @@ public enum PrismRole {
         excludedRoles.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.SYSTEM_ADMINISTRATOR);
     }
     
+    private static HashMultimap<PrismScope, PrismRole> scopeOwners = HashMultimap.create();
+    
+    static {
+        for (PrismRole role : PrismRole.values()) {
+            if (role.isScopeOwner()) {
+                scopeOwners.put(role.getScope(), role);
+            }
+        }
+    }
+    
     private PrismRole(PrismScope scope, boolean scopeOwner) {
         this.scope = scope;
         this.scopeOwner = scopeOwner;
@@ -90,6 +100,10 @@ public enum PrismRole {
     
     public static Set<PrismRole> getExcludedRoles(PrismRole role) {
         return excludedRoles.get(role) == null ? new HashSet<PrismRole>() : excludedRoles.get(role);
+    }
+    
+    public static Set<PrismRole> getScopeOwners(PrismScope scope) {
+        return scopeOwners.get(scope);
     }
 
 }

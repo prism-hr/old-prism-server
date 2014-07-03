@@ -22,7 +22,22 @@ public class PrismSystemApproved extends PrismWorkflowState {
             .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
+                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))
+                .withTransitions(Arrays.asList( // 
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.SYSTEM_APPROVED) // 
+                        .withTransitionAction(PrismAction.SYSTEM_CONFIGURE)
+                        .withRoleTransitions(Arrays.asList( // 
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.SYSTEM_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.SYSTEM_ADMINISTRATOR) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.SYSTEM_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionRole(PrismRole.SYSTEM_ADMINISTRATOR) //
+                                .withRestrictToOwner(false)))))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.SYSTEM_CREATE_INSTITUTION) //

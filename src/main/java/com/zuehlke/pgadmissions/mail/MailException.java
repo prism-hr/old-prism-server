@@ -16,12 +16,12 @@ public class MailException extends RuntimeException {
         this.emailMessage = emailMessage;
     }
 
-    public MailException(final Throwable cause, final MailMessageDTO emailMessage) {
+    public MailException(final MailMessageDTO emailMessage, final Throwable cause) {
         super(cause);
         this.emailMessage = emailMessage;
     }
 
-    public MailException(final String message, final Throwable cause, final MailMessageDTO emailMessage) {
+    public MailException(final String message, final MailMessageDTO emailMessage, final Throwable cause) {
         super(message, cause);
         this.emailMessage = emailMessage;
     }

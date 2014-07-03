@@ -3,6 +3,9 @@ package com.zuehlke.pgadmissions.services;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.zuehlke.pgadmissions.domain.UserAccount;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,14 +40,20 @@ public class RegistrationService {
     @Autowired
     private EntityService entityService;
 
-    public User submitRegistration(User pendingUser, Resource resource) {
-        User user = userService.getOrCreateUser(pendingUser.getFirstName(), pendingUser.getLastName(), pendingUser.getEmail());
+    public User submitRegistration(RegistrationDetails registrationDetails) {
+        Class<? extends Resource> resourceClass = registrationDetails.getResourceType().getResourceClass();
+        Resource resource = entityService.getById(resourceClass, registrationDetails.getResourceId());
+        User user = userService.getOrCreateUser(registrationDetails.getFirstName(), registrationDetails.getLastName(), registrationDetails.getEmail());
 
-        if (pendingUser.getActivationCode() != null && !user.getActivationCode().equals(pendingUser.getActivationCode())) {
+        if (registrationDetails.getActivationCode() != null && !user.getActivationCode().equals(registrationDetails.getActivationCode())) {
             throw new ResourceNotFoundException();
         }
 
-        user.getUserAccount().setPassword(encryptionUtils.getMD5Hash(pendingUser.getPassword()));
+        if(user.getUserAccount() == null) {
+            user.setUserAccount(new UserAccount());
+        }
+
+        user.getUserAccount().setPassword(encryptionUtils.getMD5Hash(registrationDetails.getPassword()));
         sendConfirmationEmail(user, resource);
         return user;
     }

@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.mail;
 import java.util.Collections;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -61,13 +63,14 @@ public class MailService {
         message.setTo(Collections.singletonList(recipient));
         message.setModel(createModel(recipient, resource, notificationTemplate, comment));
         message.setTemplate(notificationTemplate);
+        message.setAttachments(Lists.<PdfAttachmentInputSource>newArrayList());
 
         mailSender.sendEmail(message);
     }
     
-    private Map<String, Object> createModel(User recipient, Resource resource, NotificationTemplateVersion notificationTemplate, Comment comment) {
+    private Map<String, Object> createModel(User user, Resource resource, NotificationTemplateVersion notificationTemplate, Comment comment) {
         Map<String, Object> model = Maps.newHashMap();
-        model.put("recipient", recipient.getDisplayName());
+        model.put("user", user);
 
         Program program = resource.getProgram();
         Project project = resource.getProject();

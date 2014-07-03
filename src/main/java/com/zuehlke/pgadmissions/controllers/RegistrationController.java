@@ -63,21 +63,21 @@ public class RegistrationController {
         return TemplateLocation.REGISTRATION_FORM;
     }
 
-    @RequestMapping(value = "/submit", method = RequestMethod.POST)
-    public String submitRegistration(@ModelAttribute("pendingUser") User pendingUser, BindingResult result, Model model, HttpServletRequest request) {
-        registerFormValidator.validate(pendingUser, result);
-
-        if (result.hasErrors()) {
-            model.addAttribute("pendingUser", pendingUser);
-            return TemplateLocation.REGISTRATION_FORM;
-        }
-
-        Integer advertId = (Integer) request.getSession().getAttribute("requestAdvertId");
-        Advert advert = programService.getById(advertId);
-        User user = registrationService.submitRegistration(pendingUser, advert);
-        model.addAttribute("pendingUser", user);
-        return TemplateLocation.REGISTRATION_SUCCESS_CONFIRMATION;
-    }
+//    @RequestMapping(value = "/submit", method = RequestMethod.POST)
+//    public String submitRegistration(@ModelAttribute("pendingUser") User pendingUser, BindingResult result, Model model, HttpServletRequest request) {
+//        registerFormValidator.validate(pendingUser, result);
+//
+//        if (result.hasErrors()) {
+//            model.addAttribute("pendingUser", pendingUser);
+//            return TemplateLocation.REGISTRATION_FORM;
+//        }
+//
+//        Integer advertId = (Integer) request.getSession().getAttribute("requestAdvertId");
+//        Advert advert = programService.getById(advertId);
+//        User user = registrationService.submitRegistration(pendingUser, advert);
+//        model.addAttribute("pendingUser", user);
+//        return TemplateLocation.REGISTRATION_SUCCESS_CONFIRMATION;
+//    }
 
     @RequestMapping(method = RequestMethod.GET, value = "/resendConfirmation")
     public String resendConfirmation(@RequestParam String activationCode, Model model) {

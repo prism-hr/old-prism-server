@@ -5,10 +5,12 @@ import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.integration.providers.ApplicationTestDataProvider;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
 import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
 import com.zuehlke.pgadmissions.services.*;
 import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 import com.zuehlke.pgadmissions.timers.XMLDataImportTask;
@@ -80,7 +82,7 @@ public class PrismWorkflowIT {
 
         User programAdministrator = userService.getOrCreateUserWithRoles("Jerzy", "Urban", "jerzy@urban.pl", program, Lists.newArrayList(new ResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_ADMINISTRATOR, true)));
 
-        User applicant = registerAndActivateApplicant(program, "Kuba", "Fibinger", "kuba@fibinger.pl");
+        User applicant = registerAndActivateApplicant(PrismScope.PROGRAM, program.getId(), "Kuba", "Fibinger", "kuba@fibinger.pl");
 
         Comment createApplicationComment = new Comment().withCreatedTimestamp(new DateTime()).withUser(applicant);
         Application application = new Application().withInitialData(applicant, program, null);
@@ -103,9 +105,9 @@ public class PrismWorkflowIT {
 
     }
 
-    private User registerAndActivateApplicant(Advert advert, String firstName, String lastName, String email) {
+    private User registerAndActivateApplicant(PrismScope resourceType, int resourceId, String firstName, String lastName, String email) {
         User applicant = registrationService.submitRegistration(
-                new User().withFirstName(firstName).withLastName(lastName).withEmail(email).withAccount(new UserAccount().withPassword("password")), advert);
+                new RegistrationDetails().withFirstName(firstName).withLastName(lastName).withEmail(email).withPassword("password").withResourceType(resourceType).withResourceId(resourceId));
         mailSenderMock.assertEmailSent(applicant, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
         applicant = registrationService.activateAccount(applicant.getActivationCode());
         return applicant;

@@ -1,8 +1,10 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -10,16 +12,8 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
-import com.zuehlke.pgadmissions.domain.NotificationTemplate;
-import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.StateAction;
-import com.zuehlke.pgadmissions.domain.StateActionNotification;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import java.util.List;
+import java.util.Set;
 
 @Repository
 public class NotificationDAO {
@@ -38,8 +32,20 @@ public class NotificationDAO {
     public NotificationTemplateVersion getActiveVersion(Resource resource, PrismNotificationTemplate templateId) {
         return (NotificationTemplateVersion) sessionFactory.getCurrentSession().createCriteria(NotificationConfiguration.class) //
                 .setProjection(Projections.property("notificationTemplateVersion")) //
-                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
-                .add(Restrictions.eq("notificationTemplate.id", templateId)) //
+                .add(Restrictions.eq("notificationTemplate.id", templateId))
+                .add(Restrictions.disjunction()
+                    .add(Restrictions.conjunction() //
+                            .add(Restrictions.eq("system", resource.getSystem())) //
+                            .add(Restrictions.isNull("institution")) //
+                            .add(Restrictions.isNull("program"))) //
+                    .add(Restrictions.conjunction() //
+                            .add(Restrictions.eq("institution", resource.getInstitution())) //
+                            .add(Restrictions.isNull("program"))) //
+                    .add(Restrictions.eq("program", resource.getProgram()))) //
+                .addOrder(Order.desc("system")) //
+                .addOrder(Order.desc("institution")) //
+                .addOrder(Order.desc("program")) //
+                .setMaxResults(1) //
                 .uniqueResult();
     }
 
@@ -80,11 +86,11 @@ public class NotificationDAO {
 
         return Lists.newArrayList(templates);
     }
-    
+
     public void deleteObseleteNotificationConfigurations() {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete NotificationConfiguration " //
-                    + "where notificationTemplate not in (:configurableTemplates)") //
+                        + "where notificationTemplate not in (:configurableTemplates)") //
                 .setParameterList("configurableTemplates", getConfigurableNotificationTemplates()) //
                 .executeUpdate();
     }

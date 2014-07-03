@@ -193,7 +193,7 @@ public class MailSender {
             });
         } catch (Exception e) {
             log.error(String.format("Failed to send email message %s", message.toString()), e);
-            throw new MailException(message);
+            throw new MailException(message, e);
         }
     }
 

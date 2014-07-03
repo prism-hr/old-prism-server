@@ -14,6 +14,7 @@
                    authentication-manager-ref="authenticationManager">
         <security:custom-filter ref="authenticationTokenProcessingFilter" position="FORM_LOGIN_FILTER"/>
         <security:intercept-url pattern="/api/user/authenticate" access="permitAll"/>
+        <security:intercept-url pattern="/api/user/register" access="permitAll"/>
         <security:intercept-url pattern="/api/files" access="permitAll"/>
         <security:intercept-url pattern="/workflowConfiguration/*" access="permitAll"/>
         <security:intercept-url pattern="/resource" access="permitAll"/>

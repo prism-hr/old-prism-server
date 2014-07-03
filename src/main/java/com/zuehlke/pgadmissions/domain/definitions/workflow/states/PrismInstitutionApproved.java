@@ -86,28 +86,6 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
                                 .withMaximumPermitted(1)))))); //
     
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.INSTITUTION_EXPORT_APPLICATIONS) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-            .withPostComment(false) //
-                .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
-    
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.INSTITUTION_EXPORT_PROGRAMS) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-            .withPostComment(false) //
-                .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
-    
-        stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.INSTITUTION_IMPORT_PROGRAM) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //

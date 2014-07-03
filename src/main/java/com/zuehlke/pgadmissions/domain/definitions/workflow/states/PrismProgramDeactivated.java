@@ -43,9 +43,7 @@ public class PrismProgramDeactivated extends PrismWorkflowState {
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR))) //
+                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVED) // 
@@ -195,19 +193,6 @@ public class PrismProgramDeactivated extends PrismWorkflowState {
                         .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_EXPIRED_OUTCOME)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.PROJECT_SUSPEND))))); //
-    
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROGRAM_EXPORT_APPLICATIONS) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-            .withPostComment(false) //
-                .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_VIEW) //

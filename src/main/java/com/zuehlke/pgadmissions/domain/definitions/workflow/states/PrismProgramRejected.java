@@ -20,9 +20,7 @@ public class PrismProgramRejected extends PrismWorkflowState {
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
+                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR)))); //
     }
 
 }

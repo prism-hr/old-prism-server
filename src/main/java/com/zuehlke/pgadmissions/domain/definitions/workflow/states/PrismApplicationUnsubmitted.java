@@ -52,9 +52,6 @@ public class PrismApplicationUnsubmitted extends PrismWorkflowState {
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
             .withPostComment(false) //
-                .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_CREATOR))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_UNSUBMITTED_PENDING_COMPLETION) // 
@@ -65,9 +62,6 @@ public class PrismApplicationUnsubmitted extends PrismWorkflowState {
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
             .withPostComment(true) //
-                .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_CREATOR))) //
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.APPLICATION_CREATOR) // 

@@ -7,7 +7,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTem
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
@@ -32,23 +31,6 @@ public class PrismProjectDisabledPendingProgramReactivation extends PrismWorkflo
                         .withTransitionState(PrismState.PROJECT_DISABLED_PENDING_PROGRAM_REACTIVATION) // 
                         .withTransitionAction(PrismAction.PROJECT_CONCLUDE) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)))); //
-        
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROJECT_EXPORT_APPLICATIONS) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-            .withPostComment(false) //
-                .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROJECT_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_RESTORE) //

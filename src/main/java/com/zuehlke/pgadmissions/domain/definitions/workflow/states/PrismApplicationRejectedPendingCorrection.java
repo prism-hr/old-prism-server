@@ -106,6 +106,16 @@ public class PrismApplicationRejectedPendingCorrection extends PrismWorkflowStat
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR), // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR)))); //
+        
+        stateActions.add(new PrismStateAction() //
+            .withAction(PrismAction.APPLICATION_ESCALATE) //
+            .withRaisesUrgentFlag(false) //
+            .withDefaultAction(false) //
+            .withPostComment(false) //
+                .withTransitions(Arrays.asList( // 
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.APPLICATION_REJECTED_COMPLETED) // 
+                        .withTransitionAction(PrismAction.APPLICATION_ESCALATE)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //

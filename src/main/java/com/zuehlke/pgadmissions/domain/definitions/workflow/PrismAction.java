@@ -75,8 +75,6 @@ public enum PrismAction {
     APPLICATION_WITHDRAW(PrismActionType.USER_INVOCATION, PrismScope.APPLICATION, null, null), //
     INSTITUTION_CONFIGURE(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_CREATE_PROGRAM(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, PrismScope.PROGRAM, null), //
-    INSTITUTION_EXPORT_APPLICATIONS(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
-    INSTITUTION_EXPORT_PROGRAMS(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_IMPORT_PROGRAM(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_VIEW(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_VIEW_APPLICATION_LIST(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
@@ -90,7 +88,6 @@ public enum PrismAction {
     PROGRAM_CREATE_PROJECT(PrismActionType.USER_INVOCATION, PrismScope.PROGRAM, PrismScope.PROJECT, null), //
     PROGRAM_EMAIL_CREATOR(PrismActionType.USER_INVOCATION, PrismScope.PROGRAM, null, null), //
     PROGRAM_ESCALATE(PrismActionType.SYSTEM_ESCALATION, PrismScope.PROGRAM, null, null), //
-    PROGRAM_EXPORT_APPLICATIONS(PrismActionType.USER_INVOCATION, PrismScope.PROGRAM, null, null), //
     PROGRAM_RESTORE(PrismActionType.SYSTEM_PROPAGATION, PrismScope.PROGRAM, null, null), //
     PROGRAM_VIEW_APPLICATION_LIST(PrismActionType.USER_INVOCATION, PrismScope.PROGRAM, null, null), //
     PROGRAM_VIEW(PrismActionType.USER_INVOCATION, PrismScope.PROGRAM, null, null), //
@@ -103,7 +100,6 @@ public enum PrismAction {
     PROJECT_CREATE_APPLICATION(PrismActionType.USER_INVOCATION, PrismScope.PROJECT, PrismScope.APPLICATION, null), //
     PROJECT_EMAIL_CREATOR(PrismActionType.USER_INVOCATION, PrismScope.PROJECT, null, null), //
     PROJECT_ESCALATE(PrismActionType.SYSTEM_ESCALATION, PrismScope.PROJECT, null, null), //
-    PROJECT_EXPORT_APPLICATIONS(PrismActionType.USER_INVOCATION, PrismScope.PROJECT, null, null), //
     PROJECT_RESTORE(PrismActionType.SYSTEM_PROPAGATION, PrismScope.PROJECT, null, null), //
     PROJECT_SUSPEND(PrismActionType.SYSTEM_PROPAGATION, PrismScope.PROJECT, null, null), //
     PROJECT_TERMINATE(PrismActionType.SYSTEM_PROPAGATION, PrismScope.PROJECT, null, null), //
@@ -112,8 +108,6 @@ public enum PrismAction {
     PROJECT_WITHDRAW(PrismActionType.USER_INVOCATION, PrismScope.PROJECT, null, null), //
     SYSTEM_CONFIGURE(PrismActionType.USER_INVOCATION, PrismScope.SYSTEM, null, null), //
     SYSTEM_CREATE_INSTITUTION(PrismActionType.USER_INVOCATION, PrismScope.SYSTEM, PrismScope.INSTITUTION, null), //
-    SYSTEM_EXPORT_APPLICATIONS(PrismActionType.USER_INVOCATION, PrismScope.SYSTEM, null, null), //
-    SYSTEM_EXPORT_PROGRAMS(PrismActionType.USER_INVOCATION, PrismScope.SYSTEM, null, null), //
     SYSTEM_MANAGE_ACCOUNT(PrismActionType.USER_INVOCATION, PrismScope.SYSTEM, null, null), //
     SYSTEM_VIEW_APPLICATION_LIST(PrismActionType.USER_INVOCATION, PrismScope.SYSTEM, null, null), //
     SYSTEM_VIEW_INSTITUTION_LIST(PrismActionType.USER_INVOCATION, PrismScope.SYSTEM, null, null), //

@@ -58,24 +58,6 @@ public class PrismSystemApproved extends PrismWorkflowState {
                                 .withMaximumPermitted(1)))))); //
     
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.SYSTEM_EXPORT_APPLICATIONS) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-            .withPostComment(false) //
-                .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
-    
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.SYSTEM_EXPORT_PROGRAMS) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-            .withPostComment(false) //
-                .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
-    
-        stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.SYSTEM_MANAGE_ACCOUNT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //

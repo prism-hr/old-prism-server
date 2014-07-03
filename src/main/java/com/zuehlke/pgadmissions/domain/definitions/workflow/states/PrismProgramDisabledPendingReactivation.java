@@ -48,18 +48,13 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR))) //
+                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR))) //
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
                         .withTemplate(PrismNotificationTemplate.PROGRAM_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.PROGRAM_UPDATE_NOTIFICATION), // 
-                    new PrismStateActionNotification() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR) // 
                         .withTemplate(PrismNotificationTemplate.PROGRAM_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
@@ -185,9 +180,6 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                         .withTemplate(PrismNotificationTemplate.PROGRAM_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.PROGRAM_UPDATE_NOTIFICATION), // 
-                    new PrismStateActionNotification() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR) // 
                         .withTemplate(PrismNotificationTemplate.PROGRAM_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
@@ -196,19 +188,6 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.APPLICATION_TERMINATE,  //
                                 PrismAction.PROJECT_TERMINATE))))); //
-    
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROGRAM_EXPORT_APPLICATIONS) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-            .withPostComment(false) //
-                .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_VIEW) //

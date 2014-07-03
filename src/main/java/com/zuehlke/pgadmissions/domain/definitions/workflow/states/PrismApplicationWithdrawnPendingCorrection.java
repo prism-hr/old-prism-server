@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionEnha
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
-public class PrismWithdrawnPendingCorrection extends PrismWorkflowState {
+public class PrismApplicationWithdrawnPendingCorrection extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {
@@ -106,6 +106,16 @@ public class PrismWithdrawnPendingCorrection extends PrismWorkflowState {
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR), // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR)))); //
+        
+        stateActions.add(new PrismStateAction() //
+            .withAction(PrismAction.APPLICATION_ESCALATE) //
+            .withRaisesUrgentFlag(false) //
+            .withDefaultAction(false) //
+            .withPostComment(false) //
+                .withTransitions(Arrays.asList( // 
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN_COMPLETED) // 
+                        .withTransitionAction(PrismAction.APPLICATION_ESCALATE)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //

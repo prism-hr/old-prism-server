@@ -81,6 +81,10 @@ public class Action extends WorkflowResource {
     public boolean isCreationAction() {
         return creationScope != null;
     }
+    
+    public boolean isSystemAction() {
+        return actionType.isSystemAction();
+    }
 
     public Set<ActionRedaction> getRedactions() {
         return redactions;

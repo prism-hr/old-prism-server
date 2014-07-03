@@ -52,9 +52,7 @@ public class PrismProjectApproved extends PrismWorkflowState {
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR), // 
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR))) //
+                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_APPROVED) // 
@@ -176,23 +174,6 @@ public class PrismProjectApproved extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DISABLED_PENDING_REACTIVATION) // 
                         .withTransitionAction(PrismAction.PROJECT_ESCALATE)))); //
-        
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROJECT_EXPORT_APPLICATIONS) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-            .withPostComment(false) //
-                .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROJECT_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_SUSPEND) //

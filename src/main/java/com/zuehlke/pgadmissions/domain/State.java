@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -19,7 +20,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Entity
-@Table(name = "STATE")
+@Table(name = "STATE", uniqueConstraints = { @UniqueConstraint(columnNames = { "scope_id", "sequence_order" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class State extends WorkflowResource {
 
@@ -47,7 +48,10 @@ public class State extends WorkflowResource {
     
     @OneToMany(mappedBy = "state")
     private Set<StateAction> stateActions = Sets.newHashSet();
-
+    
+    @OneToMany(mappedBy = "transitionState")
+    private Set<StateTransition> inverseStateTransitions = Sets.newHashSet();
+    
     @Override
     public PrismState getId() {
         return id;
@@ -100,6 +104,14 @@ public class State extends WorkflowResource {
     
     public Set<StateAction> getStateActions() {
         return stateActions;
+    }
+
+    public Set<StateTransition> getInverseStateTransitions() {
+        return inverseStateTransitions;
+    }
+
+    public void setInverseStateTransitions(Set<StateTransition> inverseStateTransitions) {
+        this.inverseStateTransitions = inverseStateTransitions;
     }
 
     public State withId(PrismState id) {

@@ -1,10 +1,9 @@
 package com.zuehlke.pgadmissions.domain;
 
-import static javax.persistence.CascadeType.ALL;
-
 import java.util.Arrays;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -41,7 +40,7 @@ public class ProgramExport {
     @Column(name = "program_export_format", nullable = false)
     private PrismProgramExportFormat format;
 
-    @ManyToMany(cascade = ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "program_export_program", joinColumns = { @JoinColumn(name = "program_export_id", nullable = false) })
     private Set<Program> programs = Sets.newHashSet();
 

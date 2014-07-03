@@ -69,11 +69,11 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
         applications.addAll(applicationFormDAO.getAllApplicationsByStatus(PrismState.APPLICATION_REJECTED));
         applications.addAll(applicationFormDAO.getAllApplicationsByStatus(PrismState.APPLICATION_REVIEW));
         applications.addAll(applicationFormDAO.getAllApplicationsByStatus(PrismState.APPLICATION_VALIDATION));
-        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(PrismState.APPLICATION_WITHDRAWN));
+        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT));
 
         State approvedState = stateService.getById(PrismState.APPLICATION_APPROVED);
         State rejectedState = stateService.getById(PrismState.APPLICATION_REJECTED);
-        State withdrawnState = stateService.getById(PrismState.APPLICATION_WITHDRAWN);
+        State withdrawnState = stateService.getById(PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT);
 
         for (Application form : applications) {
             try {

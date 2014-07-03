@@ -140,7 +140,7 @@ public class ExportService {
      */
     @Transactional
     protected void prepareApplicationForm(final Application application) {
-        if (application.getState().getId() == PrismState.APPLICATION_WITHDRAWN || application.getState().getId() == PrismState.APPLICATION_REJECTED) {
+        if (application.getState().getId() == PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT || application.getState().getId() == PrismState.APPLICATION_REJECTED) {
             if (porticoService.getReferencesToSendToPortico(application).size() < 2) {
                 final HashMap<Integer, ApplicationReferee> refereesToSend = new HashMap<Integer, ApplicationReferee>();
 

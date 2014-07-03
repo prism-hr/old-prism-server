@@ -58,7 +58,7 @@ public class UserDAO {
         return (Long) sessionFactory.getCurrentSession().createCriteria(Application.class).add(Restrictions.eq("applicant", applicant))
                 .add(Restrictions.not(Restrictions.eq("status", PrismState.APPLICATION_APPROVED)))
                 .add(Restrictions.not(Restrictions.eq("status", PrismState.APPLICATION_REJECTED)))
-                .add(Restrictions.not(Restrictions.eq("status", PrismState.APPLICATION_WITHDRAWN))).setProjection(Projections.rowCount()).uniqueResult();
+                .add(Restrictions.not(Restrictions.eq("status", PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT))).setProjection(Projections.rowCount()).uniqueResult();
     }
 
     public List<User> getUsersWithUpi(final String upi) {

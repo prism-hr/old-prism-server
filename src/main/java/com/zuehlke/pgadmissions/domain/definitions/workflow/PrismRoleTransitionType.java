@@ -4,7 +4,7 @@ public enum PrismRoleTransitionType {
     
     BRANCH, //
     CREATE, //
-    REJOIN, //
+    REMOVE, //
     UPDATE;
     
 }

@@ -107,7 +107,7 @@ public class TestObjectProvider {
     }
 
     public Program getDisabledProgram() {
-        return getProgram(PrismState.PROGRAM_DISABLED, null);
+        return getProgram(PrismState.PROGRAM_DISABLED_COMPLETED, null);
     }
 
     public Project getEnabledProject() {
@@ -115,7 +115,7 @@ public class TestObjectProvider {
     }
 
     public Project getDisabledProject() {
-        return getProject(PrismState.PROJECT_DISABLED);
+        return getProject(PrismState.PROJECT_DISABLED_COMPLETED);
     }
 
     public Program getAlternativeEnabledProgram(Program program) {
@@ -123,7 +123,7 @@ public class TestObjectProvider {
     }
 
     public Program getAlternativeDisabledProgram(Program program) {
-        return getProgram(PrismState.PROGRAM_DISABLED, program);
+        return getProgram(PrismState.PROGRAM_DISABLED_COMPLETED, program);
     }
 
     public Role getRole(PrismRole authority) {

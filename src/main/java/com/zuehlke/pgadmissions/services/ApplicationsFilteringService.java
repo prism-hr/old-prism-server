@@ -38,7 +38,7 @@ public class ApplicationsFilteringService {
         Set<FilterConstraint> filters = filtering.getFilterConstraints();
         filters.add(getFilterForNonStatus(PrismState.APPLICATION_APPROVED));
         filters.add(getFilterForNonStatus(PrismState.APPLICATION_REJECTED));
-        filters.add(getFilterForNonStatus(PrismState.APPLICATION_WITHDRAWN));
+        filters.add(getFilterForNonStatus(PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT));
         return filtering;
     }
     

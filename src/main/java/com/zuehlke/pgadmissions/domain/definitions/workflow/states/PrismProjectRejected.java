@@ -7,12 +7,12 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 
-public class PrismProgramRejected extends PrismWorkflowState {
+public class PrismProjectRejected extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROGRAM_VIEW) //
+            .withAction(PrismAction.PROJECT_VIEW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
             .withPostComment(false)
@@ -20,7 +20,11 @@ public class PrismProgramRejected extends PrismWorkflowState {
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR)))); //
+                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR), // 
+                    new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.PROJECT_ADMINISTRATOR), // 
+                    new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR)))); //
     }
 
 }

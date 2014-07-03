@@ -29,8 +29,12 @@ public class ScopeService {
         return scopeDAO.getByResourceClass(resourceClass);
     }
     
-    public List<Scope> getScopes() {
-        return scopeDAO.getScopes();
+    public List<Scope> getScopesAscending() {
+        return scopeDAO.getScopesAscending();
+    }
+    
+    public List<Scope> getScopesDescending() {
+        return scopeDAO.getScopesDescending();
     }
     
     public <T extends Resource> List<Scope> getParentScopes(Class<T> resourceClass) {

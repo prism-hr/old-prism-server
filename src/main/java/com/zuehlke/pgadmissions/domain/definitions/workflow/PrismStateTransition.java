@@ -83,4 +83,5 @@ public class PrismStateTransition {
                 && roleTransitions.containsAll(otherRoleTransitions) && propagatedActions.size() == otherPropagatedActions.size()
                 && propagatedActions.containsAll(otherPropagatedActions);
     }
+    
 }

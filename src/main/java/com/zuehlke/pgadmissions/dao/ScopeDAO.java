@@ -26,7 +26,14 @@ public class ScopeDAO {
     }
     
     @SuppressWarnings("unchecked")
-    public List<Scope> getScopes() {
+    public List<Scope> getScopesAscending() {
+        return (List<Scope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
+                .addOrder(Order.asc("precedence")) //
+                .list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Scope> getScopesDescending() {
         return (List<Scope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
                 .addOrder(Order.desc("precedence")) //
                 .list();

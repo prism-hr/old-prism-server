@@ -141,7 +141,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldNotSetDepartmentalDecisionWhenWithdrawn() {
-        applicationForm.setState(new State().withId(PrismState.APPLICATION_WITHDRAWN));
+        applicationForm.setState(new State().withId(PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT));
         SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(applicationForm).build();
         assertEquals("WITHDRAWN", request.getApplication().getCourseApplication().getApplicationStatus());
         assertNull(request.getApplication().getCourseApplication().getDepartmentalDecision());
@@ -149,7 +149,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldNotSendDecimalValueForLanguageScores() {
-        applicationForm.setState(new State().withId(PrismState.APPLICATION_WITHDRAWN));
+        applicationForm.setState(new State().withId(PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT));
         ApplicationLanguageQualification qualification = applicationForm.getPersonalDetails().getLanguageQualification();
         qualification.setListeningScore("4.0");
         qualification.setOverallScore("4.5");

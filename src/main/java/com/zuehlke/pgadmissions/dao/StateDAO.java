@@ -99,7 +99,7 @@ public class StateDAO {
     }
     
     public List<StateTransitionPending> getPendingStateTransitions() {
-        List<Scope> scopes = scopeDAO.getScopes();
+        List<Scope> scopes = scopeDAO.getScopesDescending();
         
         List<StateTransitionPending> pendingStateTransitions = Lists.newArrayList();
         for (Scope scope : scopes) {

@@ -42,7 +42,7 @@ public class WithdrawServiceTest {
         service.withdrawApplication(applicationForm);
         verify();
 
-        assertEquals(PrismState.APPLICATION_WITHDRAWN, applicationForm.getState());
+        assertEquals(PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT, applicationForm.getState());
     }
 
     @Test
@@ -55,7 +55,7 @@ public class WithdrawServiceTest {
         service.withdrawApplication(applicationForm);
         verify();
 
-        assertEquals(PrismState.APPLICATION_WITHDRAWN, applicationForm.getState());
+        assertEquals(PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT, applicationForm.getState());
     }
 
     @Test

@@ -212,8 +212,9 @@ public class Project extends Advert {
         properties.put("title", title);
         propertiesWrapper.add(properties);
         HashMultimap<String, Object> exclusions = HashMultimap.create();
-        exclusions.put("state.id", PrismState.PROJECT_DISABLED);
         exclusions.put("state.id", PrismState.PROJECT_DISABLED_COMPLETED);
+        exclusions.put("state.id", PrismState.PROJECT_REJECTED);
+        exclusions.put("state.id", PrismState.PROJECT_WITHDRAWN);
         return new ResourceSignature(propertiesWrapper, exclusions);
     }
 

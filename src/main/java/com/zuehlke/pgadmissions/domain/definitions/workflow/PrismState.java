@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,25 +33,27 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicat
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidationPendingCompletion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidationPendingFeedback;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawn;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnCompleted;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApprovalPendingCorrection;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnPendingExport;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismInstitutionApproved;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramApproval;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramApprovalPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramApproved;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramDeactivated;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramDisabled;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramDisabledCompleted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramDisabledPendingImportReactivation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramDisabledPendingReactivation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramRejected;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramWithdrawn;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectApproval;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectApprovalPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectApproved;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectDeactivated;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectDisabled;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectDisabledCompleted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectDisabledPendingProgramReactivation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectDisabledPendingReactivation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectRejected;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectWithdrawn;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismSystemApproved;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismWithdrawnPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismWorkflowState;
@@ -82,26 +85,31 @@ public enum PrismState {
     APPLICATION_VALIDATION(false, false, 2, null, PrismScope.APPLICATION, PrismApplicationValidation.class), //
     APPLICATION_VALIDATION_PENDING_COMPLETION(false, false, null, null, PrismScope.APPLICATION, PrismApplicationValidationPendingCompletion.class), //
     APPLICATION_VALIDATION_PENDING_FEEDBACK(false, false, null, 3, PrismScope.APPLICATION, PrismApplicationValidationPendingFeedback.class), //
-    APPLICATION_WITHDRAWN(false, false, 0, null, PrismScope.APPLICATION, PrismApplicationWithdrawn.class), //
+    APPLICATION_WITHDRAWN(false, false, 0, null, PrismScope.APPLICATION, null), //
+    APPLICATION_WITHDRAWN_PENDING_EXPORT(false, false, 0, null, PrismScope.APPLICATION, PrismApplicationWithdrawnPendingExport.class), //
     APPLICATION_WITHDRAWN_COMPLETED(false, true, null, null, PrismScope.APPLICATION, PrismApplicationWithdrawnCompleted.class), //
     APPLICATION_WITHDRAWN_PENDING_CORRECTION(false, false, null, null, PrismScope.APPLICATION, PrismWithdrawnPendingCorrection.class), //
     INSTITUTION_APPROVED(true, true, 1, null, PrismScope.INSTITUTION, PrismInstitutionApproved.class), //
     PROGRAM_APPROVAL(true, false, 1, null, PrismScope.PROGRAM, PrismProgramApproval.class), //
-    PROGRAM_APPROVAL_PENDING_CORRECTION(false, false, null, null, PrismScope.PROGRAM, PrismApprovalPendingCorrection.class), //
+    PROGRAM_APPROVAL_PENDING_CORRECTION(false, false, null, null, PrismScope.PROGRAM, PrismProgramApprovalPendingCorrection.class), //
     PROGRAM_APPROVED(true, false, 2, null, PrismScope.PROGRAM, PrismProgramApproved.class), //
     PROGRAM_DEACTIVATED(false, false, null, null, PrismScope.PROGRAM, PrismProgramDeactivated.class), //
-    PROGRAM_DISABLED(false, false, 4, 28, PrismScope.PROGRAM, PrismProgramDisabled.class), //
+    PROGRAM_DISABLED(false, false, 4, 28, PrismScope.PROGRAM, null), //
     PROGRAM_DISABLED_COMPLETED(false, true, null, null, PrismScope.PROGRAM, PrismProgramDisabledCompleted.class), //
     PROGRAM_DISABLED_PENDING_IMPORT_REACTIVATION(false, false, null, 28, PrismScope.PROGRAM, PrismProgramDisabledPendingImportReactivation.class), //
     PROGRAM_DISABLED_PENDING_REACTIVATION(false, false, null, 28, PrismScope.PROGRAM, PrismProgramDisabledPendingReactivation.class), //
     PROGRAM_REJECTED(false, true, 3, null, PrismScope.PROGRAM, PrismProgramRejected.class), //
     PROGRAM_WITHDRAWN(false, true, 0, null, PrismScope.PROGRAM, PrismProgramWithdrawn.class), //
-    PROJECT_APPROVED(true, false, 1, null, PrismScope.PROJECT, PrismProjectApproved.class), //
+    PROJECT_APPROVAL(true, false, 1, null, PrismScope.PROJECT, PrismProjectApproval.class), //
+    PROJECT_APPROVAL_PENDING_CORRECTION(false, false, null, null, PrismScope.PROGRAM, PrismProjectApprovalPendingCorrection.class), //
+    PROJECT_APPROVED(true, false, 2, null, PrismScope.PROJECT, PrismProjectApproved.class), //
     PROJECT_DEACTIVATED(false, false, null, null, PrismScope.PROJECT, PrismProjectDeactivated.class), //
-    PROJECT_DISABLED(false, false, 2, 28, PrismScope.PROJECT, PrismProjectDisabled.class), //
+    PROJECT_DISABLED(false, false, 3, 28, PrismScope.PROJECT, null), //
     PROJECT_DISABLED_COMPLETED(false, true, null, null, PrismScope.PROJECT, PrismProjectDisabledCompleted.class), //
     PROJECT_DISABLED_PENDING_PROGRAM_REACTIVATION(false, false, null, null, PrismScope.PROJECT, PrismProjectDisabledPendingProgramReactivation.class), //
     PROJECT_DISABLED_PENDING_REACTIVATION(false, false, null, 28, PrismScope.PROJECT, PrismProjectDisabledPendingReactivation.class), //
+    PROJECT_REJECTED(false, true, 3, null, PrismScope.PROGRAM, PrismProjectRejected.class), //
+    PROJECT_WITHDRAWN(false, true, 0, null, PrismScope.PROGRAM, PrismProjectWithdrawn.class), //
     SYSTEM_APPROVED(true, true, 1, null, PrismScope.SYSTEM, PrismSystemApproved.class);
 
     private boolean initialState;
@@ -147,6 +155,7 @@ public enum PrismState {
         parentState.put(APPLICATION_VALIDATION_PENDING_COMPLETION, APPLICATION_VALIDATION);
         parentState.put(APPLICATION_VALIDATION_PENDING_FEEDBACK, APPLICATION_VALIDATION);
         parentState.put(APPLICATION_WITHDRAWN, APPLICATION_WITHDRAWN);
+        parentState.put(APPLICATION_WITHDRAWN_PENDING_EXPORT, APPLICATION_WITHDRAWN);
         parentState.put(APPLICATION_WITHDRAWN_COMPLETED, APPLICATION_WITHDRAWN);
         parentState.put(APPLICATION_WITHDRAWN_PENDING_CORRECTION, APPLICATION_WITHDRAWN);
         parentState.put(INSTITUTION_APPROVED, INSTITUTION_APPROVED);
@@ -160,19 +169,25 @@ public enum PrismState {
         parentState.put(PROGRAM_DISABLED_PENDING_REACTIVATION, PROGRAM_DISABLED);
         parentState.put(PROGRAM_REJECTED, PROGRAM_REJECTED);
         parentState.put(PROGRAM_WITHDRAWN, PROGRAM_WITHDRAWN);
+        parentState.put(PROJECT_APPROVAL, PROJECT_APPROVAL);
+        parentState.put(PROJECT_APPROVAL_PENDING_CORRECTION, PROJECT_APPROVAL);
         parentState.put(PROJECT_APPROVED, PROJECT_APPROVED);
         parentState.put(PROJECT_DEACTIVATED, PROJECT_APPROVED);
         parentState.put(PROJECT_DISABLED, PROJECT_DISABLED);
         parentState.put(PROJECT_DISABLED_COMPLETED, PROJECT_DISABLED);
         parentState.put(PROJECT_DISABLED_PENDING_PROGRAM_REACTIVATION, PROJECT_DISABLED);
         parentState.put(PROJECT_DISABLED_PENDING_REACTIVATION, PROJECT_DISABLED);
+        parentState.put(PROJECT_REJECTED, PROJECT_REJECTED);
+        parentState.put(PROJECT_WITHDRAWN, PROJECT_WITHDRAWN);        
         parentState.put(SYSTEM_APPROVED, SYSTEM_APPROVED);
     }
 
     static {
         for (PrismState state : PrismState.values()) {
-            PrismWorkflowState workflowState = (PrismWorkflowState) BeanUtils.instantiate(state.getWorkflowStateClassName());
-            workflowStateDefinitions.put(state, workflowState);
+            if (state.getWorkflowStateClassName() != null) {
+                PrismWorkflowState workflowState = (PrismWorkflowState) BeanUtils.instantiate(state.getWorkflowStateClassName());
+                workflowStateDefinitions.put(state, workflowState);
+            }
         }
     }
 
@@ -236,11 +251,11 @@ public enum PrismState {
     }
     
     public static List<PrismStateAction> getStateActions(PrismState state) {
-        return workflowStateDefinitions.get(state).getStateActions();
+        return workflowStateDefinitions.containsKey(state) ? workflowStateDefinitions.get(state).getStateActions() : new ArrayList<PrismStateAction>();
     }
 
     public static PrismStateAction getStateAction(PrismState state, PrismAction action) {
-        return workflowStateDefinitions.get(state).getStateActionsByAction(action);
+        return workflowStateDefinitions.containsKey(state) ? workflowStateDefinitions.get(state).getStateActionsByAction(action) : null;
     }
 
     public static List<PrismState> getInitialStates() {

@@ -92,7 +92,7 @@ public class RoleService {
             case CREATE:
                 saveUserRole(getOrCreateUserRole(resource, user, roleTransition.getTransitionRole().getId()));
                 break;
-            case REMOVE:
+            case REJOIN:
                 saveUserRole(getOrCreateUserRole(resource, user, roleTransition.getTransitionRole().getId()));
                 deleteUserRole(getOrCreateUserRole(resource, user, roleTransition.getRole().getId()));
                 break;
@@ -106,11 +106,10 @@ public class RoleService {
 
     @Deprecated
     public boolean hasRole(User user, PrismRole authority) {
-        return hasRole(user, authority, null);
+        return hasRole(null, user, authority);
     }
 
-    @Deprecated
-    public boolean hasRole(User user, PrismRole authority, Resource scope) {
+    public boolean hasRole(Resource scope, User user, PrismRole authority) {
         return roleDAO.getUserRole(user, scope, authority) != null;
     }
 
@@ -206,7 +205,7 @@ public class RoleService {
         return roleDAO.getRoles(resource, user);
     }
 
-    public void updateRoles(ResourceDynamic resource, User user, List<ResourceRepresentation.RoleRepresentation> roles) {
+    public void updateRoles(Resource resource, User user, List<ResourceRepresentation.RoleRepresentation> roles) {
         for (ResourceRepresentation.RoleRepresentation role : roles) {
             if (role.getValue()) {
                 getOrCreateUserRole(resource, user, role.getId());
@@ -216,7 +215,7 @@ public class RoleService {
         }
     }
 
-    public List<PrismRole> getRolesToRemove(Class<? extends Resource> resourceClass, PrismRole... rolesToCreate) {
-        return roleDAO.getPossibleRoles(resourceClass);
+    public List<PrismRole> getRoles(Class<? extends Resource> resourceClass, PrismRole... rolesToCreate) {
+        return roleDAO.getRoles(resourceClass);
     }
 }

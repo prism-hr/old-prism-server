@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,13 +103,10 @@ public class UserService {
         return user;
     }
     
-    public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource, PrismRole... rolesToCreate) {
+    public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource, List<ResourceRepresentation.RoleRepresentation> roles) {
         User user = getOrCreateUser(firstName, lastName, email);
-        
-        PrismRole[] rolesToRemove = (PrismRole[]) roleService.getRolesToRemove(resource.getClass(), rolesToCreate).toArray();
-        roleService.removeUserRoles(resource, user, rolesToRemove);
-        
-        roleService.getOrCreateUserRoles(resource, user, rolesToCreate);
+
+        roleService.updateRoles(resource, user, roles);
         
         return user;
     }

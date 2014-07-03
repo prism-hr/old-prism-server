@@ -1,9 +1,17 @@
 package com.zuehlke.pgadmissions.integration;
 
-import static org.junit.Assert.assertEquals;
-
-import java.beans.Introspector;
-
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.integration.providers.ApplicationTestDataProvider;
+import com.zuehlke.pgadmissions.mail.MailSenderMock;
+import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
+import com.zuehlke.pgadmissions.services.*;
+import com.zuehlke.pgadmissions.services.importers.EntityImportService;
+import com.zuehlke.pgadmissions.timers.XMLDataImportTask;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,31 +21,9 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
-import com.zuehlke.pgadmissions.integration.providers.ApplicationTestDataProvider;
-import com.zuehlke.pgadmissions.mail.MailSenderMock;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.CommentService;
-import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.services.RegistrationService;
-import com.zuehlke.pgadmissions.services.ReviewService;
-import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.services.importers.EntityImportService;
-import com.zuehlke.pgadmissions.timers.XMLDataImportTask;
+import java.beans.Introspector;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
@@ -84,7 +70,7 @@ public class PrismWorkflowIT {
 
     @Autowired
     private CommentService commentService;
-    
+
     @Autowired
     private UserService userService;
 
@@ -92,7 +78,7 @@ public class PrismWorkflowIT {
     public void runWorkflowTest() throws Exception {
         Program program = programService.getAllEnabledPrograms().get(0);
 
-        User programAdministrator = userService.getOrCreateUserWithRoles("Jerzy", "Urban", "jerzy@urban.pl", program, PrismRole.PROGRAM_ADMINISTRATOR);
+        User programAdministrator = userService.getOrCreateUserWithRoles("Jerzy", "Urban", "jerzy@urban.pl", program, Lists.newArrayList(new ResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_ADMINISTRATOR, true)));
 
         User applicant = registerAndActivateApplicant(program, "Kuba", "Fibinger", "kuba@fibinger.pl");
 
@@ -127,7 +113,7 @@ public class PrismWorkflowIT {
 
     @Before
     public void initializeData() {
-        userService.getOrCreateUserWithRoles("Jozef", "Oleksy", "jozek@oleksy.pl", systemService.getSystem(), PrismRole.SYSTEM_ADMINISTRATOR);
+        userService.getOrCreateUserWithRoles("Jozef", "Oleksy", "jozek@oleksy.pl", systemService.getSystem(), Lists.newArrayList(new ResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_ADMINISTRATOR, true)));
 
         for (ImportedEntityFeed feed : entityImportService.getImportedEntityFeeds()) {
             String entityName = Introspector.decapitalize(feed.getImportedEntityType().getEntityClass().getSimpleName());

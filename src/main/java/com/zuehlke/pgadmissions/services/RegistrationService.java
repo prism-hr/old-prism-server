@@ -41,8 +41,11 @@ public class RegistrationService {
     private EntityService entityService;
 
     public User submitRegistration(RegistrationDetails registrationDetails) {
-        Class<? extends Resource> resourceClass = registrationDetails.getResourceType().getResourceClass();
-        Resource resource = entityService.getById(resourceClass, registrationDetails.getResourceId());
+        Resource resource = null;
+        if(registrationDetails.getCreateAction() != null) {
+            Class<? extends Resource> resourceClass = registrationDetails.getCreateAction().getScope().getResourceClass();
+            resource = entityService.getById(resourceClass, registrationDetails.getResourceId());
+        }
         User user = userService.getOrCreateUser(registrationDetails.getFirstName(), registrationDetails.getLastName(), registrationDetails.getEmail());
 
         if (registrationDetails.getActivationCode() != null && !user.getActivationCode().equals(registrationDetails.getActivationCode())) {

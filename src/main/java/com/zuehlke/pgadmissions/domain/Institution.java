@@ -1,39 +1,17 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
-import org.apache.solr.analysis.LowerCaseFilterFactory;
-import org.apache.solr.analysis.SnowballPorterFilterFactory;
-import org.apache.solr.analysis.StandardTokenizerFactory;
-import org.apache.solr.analysis.StopFilterFactory;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import org.apache.solr.analysis.*;
 import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.AnalyzerDef;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.*;
 import org.hibernate.search.annotations.Parameter;
-import org.hibernate.search.annotations.Store;
-import org.hibernate.search.annotations.TokenFilterDef;
-import org.hibernate.search.annotations.TokenizerDef;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import javax.persistence.*;
+import java.util.HashMap;
+import java.util.List;
 
 @AnalyzerDef(name = "institutionNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
@@ -69,19 +47,19 @@ public class Institution extends ResourceDynamic {
 
     @Column(name = "homepage", nullable = false)
     private String homepage;
-    
+
     @ManyToOne
     @JoinColumn(name = "institution_address_id")
     private InstitutionAddress address;
-    
+
     @ManyToOne
     @JoinColumn(name = "state_id", nullable = false)
     private State state;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "previous_state_id", nullable = true)
     private State previousState;
-    
+
     @Column(name = "due_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dueDate;
@@ -183,9 +161,19 @@ public class Institution extends ResourceDynamic {
         this.homepage = homepage;
         return this;
     }
-    
+
     public Institution withAddress(InstitutionAddress address) {
         this.address = address;
+        return this;
+    }
+
+    public Institution withCreatedTimestamp(final DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+        return this;
+    }
+
+    public Institution withUpdatedTimestamp(final DateTime updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
         return this;
     }
 
@@ -230,7 +218,7 @@ public class Institution extends ResourceDynamic {
     public Application getApplication() {
         return null;
     }
-    
+
     @Override
     public State getState() {
         return state;
@@ -289,7 +277,7 @@ public class Institution extends ResourceDynamic {
     @Override
     public void setCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
-        
+
     }
 
     @Override
@@ -313,5 +301,5 @@ public class Institution extends ResourceDynamic {
         propertiesWrapper.add(properties2);
         return new ResourceSignature(propertiesWrapper);
     }
-    
+
 }

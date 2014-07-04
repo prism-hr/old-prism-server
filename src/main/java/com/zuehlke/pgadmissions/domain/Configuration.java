@@ -113,18 +113,16 @@ public class Configuration implements IUniqueResource {
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties1 = Maps.newHashMap();
-        properties1.put("system", system);
-        properties1.put("parameter", parameter);
-        propertiesWrapper.add(properties1);
-        HashMap<String, Object> properties2 = Maps.newHashMap();
-        properties2.put("institution", institution);
-        properties2.put("parameter", parameter);
-        propertiesWrapper.add(properties2);
-        HashMap<String, Object> properties3 = Maps.newHashMap();
-        properties3.put("program", program);
-        properties3.put("parameter", parameter);
-        propertiesWrapper.add(properties3);
+        HashMap<String, Object> properties = Maps.newHashMap();
+        if (system != null) {
+            properties.put("system", system);
+        } else if (institution != null) {
+            properties.put("institution", institution);
+        } else if (program != null) {
+            properties.put("program", program);
+        }
+        properties.put("parameter", parameter);
+        propertiesWrapper.add(properties);
         return new ResourceSignature(propertiesWrapper);
     }
 

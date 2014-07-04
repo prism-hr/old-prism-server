@@ -3,6 +3,9 @@ package com.zuehlke.pgadmissions.services;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.zuehlke.pgadmissions.domain.UserAccount;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,11 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mail.MailService;
-import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service

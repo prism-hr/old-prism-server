@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -16,7 +18,11 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.IUniqueResource.ResourceSignature;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Entity
@@ -137,6 +143,21 @@ public class State extends WorkflowResource {
     public State withScope(Scope scope) {
         this.scope = scope;
         return this;
+    }
+    
+    @Override
+    public ResourceSignature getResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties1 = Maps.newHashMap();
+        properties1.put("id", id);
+        propertiesWrapper.add(properties1);
+        if (sequenceOrder != null) {
+            HashMap<String, Object> properties2 = Maps.newHashMap();
+            properties2.put("scope", scope);
+            properties2.put("sequenceOrder", sequenceOrder);
+            propertiesWrapper.add(properties2);
+        }
+        return new ResourceSignature(propertiesWrapper);
     }
 
 }

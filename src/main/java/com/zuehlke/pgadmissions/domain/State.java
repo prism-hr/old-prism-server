@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Entity
 @Table(name = "STATE", uniqueConstraints = { @UniqueConstraint(columnNames = { "scope_id", "sequence_order" }) })
-@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class State extends WorkflowResource {
 
     @Id

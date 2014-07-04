@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.integration.helpers;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
@@ -31,7 +32,7 @@ public class UserHelper {
     @Autowired
     private RoleService roleService;
 
-    public void registerAndActivateUser(Resource resource, User user, PrismNotificationTemplate activationTemplate) {
+    public void registerAndActivateUser(PrismAction createAction, Integer resourceId, User user, PrismNotificationTemplate activationTemplate) {
         if (user.getUserAccount() != null) {
             throw new IllegalStateException("User already registered");
         }
@@ -40,7 +41,7 @@ public class UserHelper {
 
         registrationService.submitRegistration(new RegistrationDetails().withFirstName(user.getFirstName())
                 .withLastName(user.getLastName()).withEmail(user.getEmail()).withActivationCode(user.getActivationCode())
-                .withPassword("password").withResourceType(resource.getResourceScope()).withResourceId(resource.getId()));
+                .withPassword("password").withCreateAction(createAction).withResourceId(resourceId));
 
         mailSenderMock.assertEmailSent(user, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
 
@@ -57,9 +58,9 @@ public class UserHelper {
         roleService.updateRoles(resource, user, roleRepresentations);
     }
 
-    public void registerAndActivateUserInRoles(Resource resource, User user, PrismNotificationTemplate activationTemplate, PrismRole... roles) {
+    public void registerAndActivateUserInRoles(PrismAction createAction, Resource resource, User user, PrismNotificationTemplate activationTemplate, PrismRole... roles) {
         addRoles(resource, user, roles);
-        registerAndActivateUser(resource, user, activationTemplate);
+        registerAndActivateUser(createAction, resource.getId(), user, activationTemplate);
     }
 
 }

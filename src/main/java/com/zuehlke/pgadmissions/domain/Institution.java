@@ -3,16 +3,11 @@ package com.zuehlke.pgadmissions.domain;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import org.apache.solr.analysis.*;
-import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.*;
 import org.hibernate.search.annotations.Parameter;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 import javax.persistence.*;
-
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,7 +18,7 @@ import java.util.List;
 @Entity
 @Table(name = "INSTITUTION", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_domicile_id", "name"})})
 @Indexed
-public class Institution extends ResourceDynamic {
+public class Institution extends Resource {
 
     @Id
     @GeneratedValue
@@ -54,18 +49,6 @@ public class Institution extends ResourceDynamic {
     @ManyToOne
     @JoinColumn(name = "state_id", nullable = false)
     private State state;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "previous_state_id", nullable = true)
-    private State previousState;
-
-    @Column(name = "created_timestamp", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime createdTimestamp;
-
-    @Column(name = "updated_timestamp", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime updatedTimestamp;
 
     @Override
     public Integer getId() {
@@ -226,62 +209,6 @@ public class Institution extends ResourceDynamic {
         properties2.put("code", code);
         propertiesWrapper.add(properties2);
         return new ResourceSignature(propertiesWrapper);
-    }
-
-    @Override
-    public State getPreviousState() {
-        return previousState;
-    }
-
-    @Override
-    public void setPreviousState(State previousState) {
-        this.previousState = previousState;
-    }
-
-    @Override
-    public LocalDate getDueDate() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void setDueDate(LocalDate dueDate) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public String generateCode() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public LocalDate getDueDateBaseline() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public DateTime getCreatedTimestamp() {
-        return createdTimestamp;
-    }
-
-    @Override
-    public void setCreatedTimestamp(DateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
-        
-    }
-
-    @Override
-    public DateTime getUpdatedTimestamp() {
-        return updatedTimestamp;
-    }
-
-    @Override
-    public void setUpdatedTimestamp(DateTime updatedTimestamp) {
-        this.updatedTimestamp = updatedTimestamp;
-        
     }
 
 }

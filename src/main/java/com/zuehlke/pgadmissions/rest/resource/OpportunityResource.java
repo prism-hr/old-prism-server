@@ -4,10 +4,12 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.domain.OpportunityRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.UserRepresentation;
 import com.zuehlke.pgadmissions.security.TokenUtils;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.utils.HibernateUtils;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,7 +44,9 @@ public class OpportunityResource {
         List<Advert> adverts = advertService.getAdverts();
         List<OpportunityRepresentation> representations = Lists.newArrayListWithExpectedSize(adverts.size());
         for (Advert advert : adverts) {
-            representations.add(dozerBeanMapper.map(advert, OpportunityRepresentation.class));
+            OpportunityRepresentation representation = dozerBeanMapper.map(advert, OpportunityRepresentation.class);
+            representation.setResourceType(advert.getProject() == null ? PrismScope.PROGRAM : PrismScope.PROJECT);
+            representations.add(representation);
         }
         return representations;
     }

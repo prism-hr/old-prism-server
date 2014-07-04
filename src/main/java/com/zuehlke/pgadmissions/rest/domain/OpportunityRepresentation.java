@@ -1,8 +1,7 @@
 package com.zuehlke.pgadmissions.rest.domain;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import org.joda.time.LocalDate;
-
-import java.util.Date;
 
 public class OpportunityRepresentation {
 
@@ -16,9 +15,11 @@ public class OpportunityRepresentation {
 
     private String code;
 
-	private LocalDate closingDate;
+    private LocalDate closingDate;
 
-	private UserRepresentation user;
+    private UserRepresentation user;
+
+    private PrismScope resourceType;
 
     public Integer getId() {
         return id;
@@ -74,5 +75,13 @@ public class OpportunityRepresentation {
 
     public void setUser(UserRepresentation user) {
         this.user = user;
+    }
+
+    public PrismScope getResourceType() {
+        return resourceType;
+    }
+
+    public void setResourceType(PrismScope resourceType) {
+        this.resourceType = resourceType;
     }
 }

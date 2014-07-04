@@ -23,7 +23,7 @@ public class PrismInitialisationService implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-//        initializeWorkflow();
+        initializeWorkflow();
         if (BooleanUtils.isTrue(buildIndex)) {
             initialiseHibernateSearchIndexes();
         }

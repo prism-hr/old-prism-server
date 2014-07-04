@@ -1,13 +1,31 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 
 @Entity
 @Table(name = "ADVERT")
@@ -17,17 +35,41 @@ public abstract class Advert extends ResourceDynamic {
     @Id
     @GeneratedValue
     private Integer id;
-
-    @Column(name = "description")
-    private String description;
-
-    @Column(name = "month_study_duration")
-    private Integer studyDuration;
     
     @ManyToOne
     @JoinColumn(name = "user_id", unique = true)
     private User user;
 
+    @Column(name = "description")
+    private String description;
+    
+    @ManyToOne
+    @JoinColumn(name = "institution_address_id")
+    private InstitutionAddress address;
+
+    @Column(name = "month_study_duration")
+    private Integer studyDuration;
+    
+    @Column(name = "fee_interval")
+    @Enumerated(EnumType.STRING)
+    private DurationUnit feeInterval;
+    
+    @Column(name = "fee_value")
+    private BigDecimal feeValue;
+    
+    @Column(name = "fee_annualised")
+    private BigDecimal feeAnnualised;
+    
+    @Column(name = "pay_interval")
+    @Enumerated(EnumType.STRING)
+    private DurationUnit payInterval;
+    
+    @Column(name = "pay_value")
+    private BigDecimal payValue;
+    
+    @Column(name = "pay_annualised")
+    private BigDecimal payAnnualised;
+    
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "advert_closing_date_id", unique = true)
     private AdvertClosingDate closingDate;
@@ -50,6 +92,14 @@ public abstract class Advert extends ResourceDynamic {
         this.id = id;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+    
     public String getDescription() {
         return description;
     }
@@ -58,20 +108,68 @@ public abstract class Advert extends ResourceDynamic {
         this.description = description;
     }
 
+    public InstitutionAddress getAddress() {
+        return address;
+    }
+
+    public void setAddress(InstitutionAddress address) {
+        this.address = address;
+    }
+
     public Integer getStudyDuration() {
         return studyDuration;
     }
 
+    public DurationUnit getFeeInterval() {
+        return feeInterval;
+    }
+
+    public void setFeeInterval(DurationUnit feeInterval) {
+        this.feeInterval = feeInterval;
+    }
+
+    public BigDecimal getFeeValue() {
+        return feeValue;
+    }
+
+    public void setFeeValue(BigDecimal feeValue) {
+        this.feeValue = feeValue;
+    }
+
+    public BigDecimal getFeeAnnualised() {
+        return feeAnnualised;
+    }
+
+    public void setFeeAnnualised(BigDecimal feeAnnualised) {
+        this.feeAnnualised = feeAnnualised;
+    }
+
+    public DurationUnit getPayInterval() {
+        return payInterval;
+    }
+
+    public void setPayInterval(DurationUnit payInterval) {
+        this.payInterval = payInterval;
+    }
+
+    public BigDecimal getPayValue() {
+        return payValue;
+    }
+
+    public void setPayValue(BigDecimal payValue) {
+        this.payValue = payValue;
+    }
+
+    public BigDecimal getPayAnnualised() {
+        return payAnnualised;
+    }
+
+    public void setPayAnnualised(BigDecimal payAnnualised) {
+        this.payAnnualised = payAnnualised;
+    }
+
     public void setStudyDuration(Integer studyDuration) {
         this.studyDuration = studyDuration;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public AdvertClosingDate getClosingDate() {
@@ -84,6 +182,10 @@ public abstract class Advert extends ResourceDynamic {
 
     public List<AdvertClosingDate> getClosingDates() {
         return closingDates;
+    }
+    
+    public Set<OpportunityCategory> getCategories() {
+        return categories;
     }
 
     @Override

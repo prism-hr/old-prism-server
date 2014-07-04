@@ -130,7 +130,7 @@ public class ValidApplicationFormBuilder {
                         new ApplicationLanguageQualification()
                                 .withExamDate(new LocalDate())
                                 .withLanguageQualificationType(
-                                        new LanguageQualificationType().withInitialData(new Institution().withInitialData("test"), "test", "test"))
+                                        new LanguageQualificationType().withInitialData(new Institution().withName("test"), "test", "test"))
                                 .withListeningScore("1").withOverallScore("1").withReadingScore("1").withSpeakingScore("1").withWritingScore("1")
                                 .withProofOfAward(languageQualificationDocument)).withPhoneNumber("+44 (0) 123 123 1234").withResidenceCountry(domicile)
                 .withTitle(new Title().withName("test").withCode("test"));

@@ -1,13 +1,20 @@
 package com.zuehlke.pgadmissions.domain;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -15,12 +22,13 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import javax.persistence.*;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
 @Table(name = "PROGRAM")
@@ -226,13 +234,6 @@ public class Program extends Advert {
         return this;
     }
 
-    public Program withInitialData(Institution institution, String code, String title) {
-        this.institution = Preconditions.checkNotNull(institution);
-        this.code = code;
-        this.title = Preconditions.checkNotNull(title);
-        return this;
-    }
-
     @Override
     public System getSystem() {
         return system;
@@ -355,7 +356,7 @@ public class Program extends Advert {
         if (!imported) {
             postfix = String.format("%010d", getId());
         }
-        return String.format("%010d", institution.getCode()) + "-" + postfix;
+        return institution.getCode() + "-" + postfix;
     }
 
 }

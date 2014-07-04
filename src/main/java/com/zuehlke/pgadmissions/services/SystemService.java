@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -54,6 +56,8 @@ import com.zuehlke.pgadmissions.mail.MailService;
 @Service
 @Transactional(timeout = 60)
 public class SystemService {
+    
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final String EMAIL_DEFAULT_SUBJECT_DIRECTORY = "email/subject/";
 
@@ -120,22 +124,37 @@ public class SystemService {
     }
 
     public void initialiseSystem() {
+        logger.info("Initialising scope definitions");
         initialiseScopes();
+        
+        logger.info("Initialising role definitions");
         initialiseRoles();
+        
+        logger.info("Initialising action definitions");
         initialiseActions();
+        
+        logger.info("Initialising state definitions");
         initialiseStates();
 
+        logger.info("Initialisting system");
         User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail);
         System system = getOrCreateSystem(systemUser);
-
         roleService.getOrCreateUserRole(system, systemUser, PrismRole.SYSTEM_ADMINISTRATOR);
 
+        logger.info("Initialising configuration definitions");
         initialiseConfigurations(system);
+        
+        logger.info("Initialising notification definitions");
         initialiseNotificationTemplates(system);
+        
+        logger.info("Initialising state duration definitions");
         initialiseStateDurations(system);
+        
+        logger.info("Initialising workflow definitions");
         initialiseStateActions();
 
         if (systemUser.getUserAccount() == null || !systemUser.isEnabled()) {
+            logger.info("Initialising system user");
             mailService.sendEmailNotification(systemUser, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
         }
 

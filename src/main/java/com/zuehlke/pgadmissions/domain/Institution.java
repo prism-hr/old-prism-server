@@ -1,15 +1,39 @@
 package com.zuehlke.pgadmissions.domain;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import org.apache.solr.analysis.*;
-import org.hibernate.search.annotations.*;
-import org.hibernate.search.annotations.Parameter;
-
-import javax.persistence.*;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
+import org.apache.solr.analysis.LowerCaseFilterFactory;
+import org.apache.solr.analysis.SnowballPorterFilterFactory;
+import org.apache.solr.analysis.StandardTokenizerFactory;
+import org.apache.solr.analysis.StopFilterFactory;
+import org.hibernate.annotations.Type;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.AnalyzerDef;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Parameter;
+import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.TokenFilterDef;
+import org.hibernate.search.annotations.TokenizerDef;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @AnalyzerDef(name = "institutionNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
@@ -18,7 +42,7 @@ import java.util.List;
 @Entity
 @Table(name = "INSTITUTION", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_domicile_id", "name"})})
 @Indexed
-public class Institution extends Resource {
+public class Institution extends ResourceDynamic {
 
     @Id
     @GeneratedValue
@@ -45,10 +69,30 @@ public class Institution extends Resource {
 
     @Column(name = "homepage", nullable = false)
     private String homepage;
-
+    
+    @ManyToOne
+    @JoinColumn(name = "institution_address_id")
+    private InstitutionAddress address;
+    
     @ManyToOne
     @JoinColumn(name = "state_id", nullable = false)
     private State state;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "previous_state_id", nullable = true)
+    private State previousState;
+    
+    @Column(name = "due_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate dueDate;
+
+    @Column(name = "created_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdTimestamp;
+
+    @Column(name = "updated_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime updatedTimestamp;
 
     @Override
     public Integer getId() {
@@ -92,6 +136,14 @@ public class Institution extends Resource {
         this.homepage = homepage;
     }
 
+    public InstitutionAddress getAddress() {
+        return address;
+    }
+
+    public void setAddress(InstitutionAddress address) {
+        this.address = address;
+    }
+
     public Institution withId(Integer id) {
         this.id = id;
         return this;
@@ -131,9 +183,9 @@ public class Institution extends Resource {
         this.homepage = homepage;
         return this;
     }
-
-    public Institution withInitialData(String name) {
-        this.name = Preconditions.checkNotNull(name);
+    
+    public Institution withAddress(InstitutionAddress address) {
+        this.address = address;
         return this;
     }
 
@@ -175,6 +227,11 @@ public class Institution extends Resource {
     }
 
     @Override
+    public Application getApplication() {
+        return null;
+    }
+    
+    @Override
     public State getState() {
         return state;
     }
@@ -182,11 +239,6 @@ public class Institution extends Resource {
     @Override
     public void setState(State state) {
         this.state = state;
-    }
-
-    @Override
-    public Application getApplication() {
-        return null;
     }
 
     @Override
@@ -200,6 +252,57 @@ public class Institution extends Resource {
     }
 
     @Override
+    public State getPreviousState() {
+        return previousState;
+    }
+
+    @Override
+    public void setPreviousState(State previousState) {
+        this.previousState = previousState;
+    }
+
+    @Override
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    @Override
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    @Override
+    public String generateCode() {
+        return domicile.getId() + "-" + String.format("%010d", id);
+    }
+
+    @Override
+    public LocalDate getDueDateBaseline() {
+        return new LocalDate();
+    }
+
+    @Override
+    public DateTime getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    @Override
+    public void setCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+        
+    }
+
+    @Override
+    public DateTime getUpdatedTimestamp() {
+        return updatedTimestamp;
+    }
+
+    @Override
+    public void setUpdatedTimestamp(DateTime updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
+    }
+
+    @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
         HashMap<String, Object> properties1 = Maps.newHashMap();
@@ -210,5 +313,5 @@ public class Institution extends Resource {
         propertiesWrapper.add(properties2);
         return new ResourceSignature(propertiesWrapper);
     }
-
+    
 }

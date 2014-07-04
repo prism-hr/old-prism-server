@@ -42,11 +42,11 @@ public class Application extends ResourceDynamic {
 
     @Column(name = "code", unique = true)
     private String code;
-    
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    
+
     @ManyToOne
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
@@ -66,7 +66,7 @@ public class Application extends ResourceDynamic {
     @Column(name = "closing_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate closingDate;
-    
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_personal_detail_id", unique = true)
     private ApplicationPersonalDetails personalDetails;
@@ -75,22 +75,22 @@ public class Application extends ResourceDynamic {
     @JoinColumn(name = "application_program_detail_id", unique = true)
     @Valid
     private ApplicationProgramDetails programDetails;
-    
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_address_id", unique = true)
     @Valid
     private ApplicationAddress address;
-    
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     @Valid
     private List<ApplicationQualification> qualifications = new ArrayList<ApplicationQualification>();
-    
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     @Valid
     private List<ApplicationEmploymentPosition> employmentPositions = new ArrayList<ApplicationEmploymentPosition>();
-    
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     @Valid
@@ -100,21 +100,21 @@ public class Application extends ResourceDynamic {
     @JoinColumn(name = "application_id", nullable = false)
     @Valid
     private List<ApplicationReferee> referees = new ArrayList<ApplicationReferee>();
-    
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_document_id", unique = true)
     @Valid
     private ApplicationDocument document;
-    
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_additional_information_id", unique = true)
     @Valid
     private ApplicationAdditionalInformation additionalInformation;
-    
+
     @Column(name = "submitted_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime submittedTimestamp;
-    
+
     @ManyToOne
     @JoinColumn(name = "state_id", nullable = false)
     private State state;

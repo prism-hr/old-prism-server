@@ -54,7 +54,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvalu
 import com.zuehlke.pgadmissions.mail.MailService;
 
 @Service
-@Transactional(timeout = 60)
+@Transactional(timeout = 120)
 public class SystemService {
     
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

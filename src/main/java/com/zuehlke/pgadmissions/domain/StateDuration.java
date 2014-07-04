@@ -123,7 +123,7 @@ public class StateDuration extends WorkflowResourceConfiguration {
         } else if (program != null) {
             properties.put("program", program);
         }
-        properties.put("system", system);
+        properties.put("state", state);
         propertiesWrapper.add(properties);
         return new ResourceSignature(propertiesWrapper);
     }

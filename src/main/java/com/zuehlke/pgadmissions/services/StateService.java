@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -26,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -166,6 +168,22 @@ public class StateService {
     
     public List<State> getOrderedTransitionStates(State state, State...excludedTransitionStates) {
         return stateDAO.getOrderedTransitionStates(state, excludedTransitionStates);
+    }
+    
+    public List<State> getRootState() {
+        return stateDAO.getRootState();
+    }
+    
+    public List<State> getUpstreamStates(State state) {
+        return stateDAO.getUpstreamStates(state);
+    }
+    
+    public List<State> getDownstreamStates(State state) {
+        return stateDAO.getDownstreamStates(state);
+    }
+    
+    public List<PrismState> getActionableStates(Collection<PrismAction> actions) { 
+        return stateDAO.getActionableStates(actions);
     }
     
     private void executeThreadedStateTransitions(final HashMultimap<Action, ResourceDynamic> threadedStateTransitions, final User invoker) {

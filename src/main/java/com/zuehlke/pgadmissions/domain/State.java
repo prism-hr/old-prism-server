@@ -18,11 +18,9 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.IUniqueResource.ResourceSignature;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Entity

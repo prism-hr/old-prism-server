@@ -8,6 +8,7 @@
 
     <security:http pattern="/api/static" security="none"/>
     <security:http pattern="/api/opportunities" security="none"/>
+    <security:http pattern="/api/domiciles/**" security="none"/>
 
     <security:http realm="Prism API" use-expressions="true" auto-config="false" create-session="stateless"
                    entry-point-ref="unauthorizedEntryPoint"

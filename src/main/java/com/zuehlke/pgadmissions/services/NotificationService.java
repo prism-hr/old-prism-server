@@ -80,7 +80,7 @@ public class NotificationService {
     }
     
     public List<NotificationTemplate> getTemplates() {
-        return entityService.getAll(NotificationTemplate.class);
+        return entityService.list(NotificationTemplate.class);
     }
     
     public NotificationConfiguration getConfiguration(Resource resource, NotificationTemplate template) {

@@ -72,7 +72,7 @@ public class StateService {
     }
     
     public List<State> getStates() {
-        return entityService.getAll(State.class);
+        return entityService.list(State.class);
     }
     
     public List<State> getWorkflowStates() {
@@ -161,7 +161,7 @@ public class StateService {
     }
     
     public List<StateAction> getStateActions() {
-        return entityService.getAll(StateAction.class);
+        return entityService.list(StateAction.class);
     }
     
     public List<State> getOrderedTransitionStates(State state, State...excludedTransitionStates) {

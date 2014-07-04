@@ -59,8 +59,14 @@ public class EntityDAO {
     }
     
     @SuppressWarnings("unchecked")
-    public <T> List<T> getAll(Class<T> klass) {
+    public <T> List<T> list(Class<T> klass) {
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(klass) //
+                .list();
+    }
+
+    public <T> List<T> listByProperty(Class<T> klass, String propertyName, Object propertyValue) {
+        return (List<T>) sessionFactory.getCurrentSession().createCriteria(klass)
+                .add(Restrictions.eq(propertyName, propertyValue))
                 .list();
     }
 
@@ -127,4 +133,6 @@ public class EntityDAO {
     public void merge(Object entity) {
         sessionFactory.getCurrentSession().merge(entity);
     }
+
+
 }

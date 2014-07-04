@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.rest.resource;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
@@ -39,7 +40,7 @@ public class StaticDataResource {
     public Map<String, Object> getStaticData() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        List<StateAction> stateActions = entityService.getAll(StateAction.class);
+        List<StateAction> stateActions = entityService.list(StateAction.class);
         List<StateActionRepresentation> stateActionRepresentations = Lists.newArrayListWithExpectedSize(stateActions.size());
         for (StateAction stateAction : stateActions) {
             StateActionRepresentation actionRepresentation = dozerBeanMapper.map(stateAction, StateActionRepresentation.class);
@@ -48,7 +49,7 @@ public class StaticDataResource {
         }
         staticData.put("stateActions", stateActionRepresentations);
 
-        List<State> states = entityService.getAll(State.class);
+        List<State> states = entityService.list(State.class);
         List<StateRepresentation> stateRepresentations = Lists.newArrayListWithExpectedSize(states.size());
         for (State state : states) {
             StateRepresentation stateRepresentation = dozerBeanMapper.map(state, StateRepresentation.class);
@@ -57,7 +58,7 @@ public class StaticDataResource {
         }
         staticData.put("states", stateRepresentations);
 
-        List<Role> roles = entityService.getAll(Role.class);
+        List<Role> roles = entityService.list(Role.class);
         List<RoleRepresentation> roleRepresentationsRepresentations = Lists.newArrayListWithExpectedSize(roles.size());
         for (Role role : roles) {
             RoleRepresentation roleRepresentation = dozerBeanMapper.map(role, RoleRepresentation.class);
@@ -65,6 +66,9 @@ public class StaticDataResource {
             roleRepresentationsRepresentations.add(roleRepresentation);
         }
         staticData.put("roles", roleRepresentationsRepresentations);
+
+        List<InstitutionDomicile> institutionDomiciles = entityService.list(InstitutionDomicile.class);
+        staticData.put("institutionDomiciles", institutionDomiciles);
 
         // Display names for enum classes
         for (Class enumClass : new Class[]{Gender.class}) {

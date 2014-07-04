@@ -112,7 +112,7 @@ public class ActionService {
     }
 
     public List<Action> getActions() {
-        return entityService.getAll(Action.class);
+        return entityService.list(Action.class);
     }
 
     public boolean isCreationAction(PrismState stateId, PrismState transitionStateId, PrismAction actionId) {

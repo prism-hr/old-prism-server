@@ -35,7 +35,7 @@ public class RoleService {
     }
 
     public List<Role> getRoles() {
-        return entityService.getAll(Role.class);
+        return entityService.list(Role.class);
     }
 
     public UserRole createUserRole(Resource resource, User user, PrismRole roleToCreate) {

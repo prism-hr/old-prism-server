@@ -23,7 +23,7 @@ public class InstitutionDomicileRegion {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "otherName")
+    @Column(name = "other_name")
     private String otherName;
 
     @Column(name = "enabled", nullable = false)

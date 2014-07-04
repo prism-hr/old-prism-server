@@ -1,17 +1,14 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
+import com.zuehlke.pgadmissions.dao.EntityDAO;
+import com.zuehlke.pgadmissions.domain.IUniqueResource;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.EntityDAO;
-import com.zuehlke.pgadmissions.domain.IUniqueResource;
+import java.util.HashMap;
+import java.util.List;
 
 @Service
 @Transactional
@@ -40,8 +37,12 @@ public class EntityService {
         return entityDAO.getByProperties(klass, properties);
     }
 
-    public <T> List<T> getAll(Class<T> klass) {
-        return entityDAO.getAll(klass);
+    public <T> List<T> list(Class<T> klass) {
+        return entityDAO.list(klass);
+    }
+
+    public <T> List<T> listByProperty(Class<T> klass, String propertyName, Object propertyValue) {
+        return entityDAO.listByProperty(klass, propertyName, propertyValue);
     }
 
     public <T extends IUniqueResource> T getDuplicateEntity(T uniqueResource) {
@@ -56,7 +57,7 @@ public class EntityService {
         }
         return persistentResource;
     }
-    
+
     public <T extends IUniqueResource> T createOrUpdate(T transientResource) {
         T persistentResource = (T) getDuplicateEntity(transientResource);
         if (persistentResource == null) {
@@ -102,5 +103,5 @@ public class EntityService {
     public void merge(Object entity) {
         entityDAO.merge(entity);
     }
-    
+
 }

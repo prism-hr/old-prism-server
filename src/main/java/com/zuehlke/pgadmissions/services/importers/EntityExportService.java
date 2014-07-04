@@ -44,7 +44,7 @@ public class EntityExportService {
             Element mainElement = document.createElement(pluralize(entityName));
             document.appendChild(mainElement);
 
-            for (Object entity : entityService.getAll(entityClass)) {
+            for (Object entity : entityService.list(entityClass)) {
                 Element entityElement = document.createElement(entityName);
                 Element codeElement = document.createElement("code");
                 codeElement.setTextContent((String) PropertyUtils.getSimpleProperty(entity, "code"));

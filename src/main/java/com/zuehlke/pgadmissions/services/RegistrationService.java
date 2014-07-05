@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,8 +41,8 @@ public class RegistrationService {
 
     public User submitRegistration(RegistrationDetails registrationDetails) {
         Resource resource = null;
-        if(registrationDetails.getCreateAction() != null) {
-            Class<? extends Resource> resourceClass = registrationDetails.getCreateAction().getScope().getResourceClass();
+        if(registrationDetails.getRegistrationAction() != null) {
+            Class<? extends Resource> resourceClass = registrationDetails.getRegistrationAction().getScope().getResourceClass();
             resource = entityService.getById(resourceClass, registrationDetails.getResourceId());
         }
         User user = userService.getOrCreateUser(registrationDetails.getFirstName(), registrationDetails.getLastName(), registrationDetails.getEmail());

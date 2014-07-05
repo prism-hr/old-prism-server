@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -30,7 +29,9 @@ public class RegistrationDetails {
     private Integer resourceId;
 
     @NotNull
-    private PrismAction createAction;
+    private PrismAction registrationAction;
+
+    private InstitutionDTO newInstitution;
 
     public String getFirstName() {
         return firstName;
@@ -80,12 +81,20 @@ public class RegistrationDetails {
         this.resourceId = resourceId;
     }
 
-    public PrismAction getCreateAction() {
-        return createAction;
+    public PrismAction getRegistrationAction() {
+        return registrationAction;
     }
 
-    public void setCreateAction(PrismAction createAction) {
-        this.createAction = createAction;
+    public void setRegistrationAction(PrismAction registrationAction) {
+        this.registrationAction = registrationAction;
+    }
+
+    public InstitutionDTO getNewInstitution() {
+        return newInstitution;
+    }
+
+    public void setNewInstitution(InstitutionDTO newInstitution) {
+        this.newInstitution = newInstitution;
     }
 
     public RegistrationDetails withFirstName(final String firstName) {
@@ -119,7 +128,7 @@ public class RegistrationDetails {
     }
 
     public RegistrationDetails withCreateAction(final PrismAction createAction) {
-        this.createAction = createAction;
+        this.registrationAction = createAction;
         return this;
     }
 

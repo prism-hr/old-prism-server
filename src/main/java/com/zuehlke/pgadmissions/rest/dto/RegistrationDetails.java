@@ -33,6 +33,8 @@ public class RegistrationDetails {
 
     private InstitutionDTO newInstitution;
 
+    private ProgramDTO newProgram;
+
     public String getFirstName() {
         return firstName;
     }
@@ -95,6 +97,14 @@ public class RegistrationDetails {
 
     public void setNewInstitution(InstitutionDTO newInstitution) {
         this.newInstitution = newInstitution;
+    }
+
+    public ProgramDTO getNewProgram() {
+        return newProgram;
+    }
+
+    public void setNewProgram(ProgramDTO newProgram) {
+        this.newProgram = newProgram;
     }
 
     public RegistrationDetails withFirstName(final String firstName) {

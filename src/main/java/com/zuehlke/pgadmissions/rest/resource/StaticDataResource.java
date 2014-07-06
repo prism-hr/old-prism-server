@@ -2,12 +2,10 @@ package com.zuehlke.pgadmissions.rest.resource;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.definitions.Gender;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.rest.domain.application.ImportedEntityRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.workflow.RoleRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.workflow.StateActionRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.workflow.StateRepresentation;
@@ -71,6 +69,13 @@ public class StaticDataResource {
 
         List<InstitutionDomicile> institutionDomiciles = entityService.list(InstitutionDomicile.class);
         staticData.put("institutionDomiciles", institutionDomiciles);
+
+        List<StudyOption> studyOptions = entityService.list(StudyOption.class);
+        List<ImportedEntityRepresentation> studyOptionRepresentations = Lists.newArrayListWithCapacity(studyOptions.size());
+        for (StudyOption studyOption : studyOptions) {
+            studyOptionRepresentations.add(dozerBeanMapper.map(studyOption, ImportedEntityRepresentation.class));
+        }
+        staticData.put("studyOptions", studyOptionRepresentations);
 
         // Display names for enum classes
         for (Class enumClass : new Class[]{Gender.class, PrismProgramType.class}) {

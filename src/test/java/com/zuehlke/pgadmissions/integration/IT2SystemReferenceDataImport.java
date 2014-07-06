@@ -54,7 +54,7 @@ public class IT2SystemReferenceDataImport {
 
     @Test
     public void testImportData() throws Exception {
-//        it1SystemInitialisation.testSystemInitialisation();
+        it1SystemInitialisation.testSystemInitialisation();
         testImportInstitutionDomiciles();
         testOpportunityCategories();
         Institution institution = createInstitution();

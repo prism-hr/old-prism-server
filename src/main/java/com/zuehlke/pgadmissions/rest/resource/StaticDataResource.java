@@ -7,11 +7,13 @@ import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.definitions.Gender;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.rest.domain.workflow.RoleRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.workflow.StateActionRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.workflow.StateRepresentation;
 import com.zuehlke.pgadmissions.services.EntityService;
 
+import org.apache.commons.lang.WordUtils;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -71,13 +73,18 @@ public class StaticDataResource {
         staticData.put("institutionDomiciles", institutionDomiciles);
 
         // Display names for enum classes
-        for (Class enumClass : new Class[]{Gender.class}) {
+        for (Class enumClass : new Class[]{Gender.class, PrismProgramType.class}) {
             List<EnumDefinition> definitions = Lists.newArrayListWithExpectedSize(enumClass.getEnumConstants().length);
+            String simpleName = enumClass.getSimpleName();
+            if(simpleName.startsWith("Prism")) {
+                simpleName =  simpleName.replaceFirst("Prism", "");
+            }
+            simpleName = WordUtils.uncapitalize(simpleName);
             for (java.lang.Object key : enumClass.getEnumConstants()) {
-                String message = applicationContext.getMessage(enumClass.getSimpleName().toLowerCase() + "." + key, null, LocaleContextHolder.getLocale());
+                String message = applicationContext.getMessage(simpleName + "." + key, null, LocaleContextHolder.getLocale());
                 definitions.add(new EnumDefinition(key.toString(), message));
             }
-            staticData.put(enumClass.getSimpleName().toLowerCase() + "s", definitions);
+            staticData.put(simpleName + "s", definitions);
         }
 
         return staticData;

@@ -1,15 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserAccount;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mail.MailService;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import org.joda.time.DateTime;
@@ -19,10 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @Transactional
 public class RegistrationService {
+
+    private static final Pattern createActionPattern = Pattern.compile("(\\w+)_CREATE_(\\w+)");
 
     @Autowired
     private EncryptionUtils encryptionUtils;
@@ -34,7 +38,7 @@ public class RegistrationService {
     private UserService userService;
 
     @Autowired
-    private RefereeDAO refereeDAO;
+    private ResourceService resourceService;
 
     @Autowired
     private MailService notificationService;
@@ -53,21 +57,38 @@ public class RegistrationService {
         }
         user.getUserAccount().setPassword(encryptionUtils.getMD5Hash(registrationDetails.getPassword()));
 
-        Resource resource = performRegistrationAction(user, registrationDetails.getResourceId(), registrationDetails.getRegistrationAction());
+        Resource resource = performRegistrationAction(user, registrationDetails);
         sendConfirmationEmail(user, resource);
         return user;
     }
 
-    private Resource performRegistrationAction(User user, Integer resourceId, PrismAction registrationAction) {
+    private Resource performRegistrationAction(User user, RegistrationDetails registrationDetails) {
         Resource resource = null;
+        PrismAction registrationAction = registrationDetails.getRegistrationAction();
         if (registrationAction != null) {
             Class<? extends Resource> resourceClass = registrationAction.getScope().getResourceClass();
-            resource = entityService.getById(resourceClass, resourceId);
+            resource = entityService.getById(resourceClass, registrationDetails.getResourceId());
+            if (createActionPattern.matcher(registrationAction.name()).matches()) {
+                resource = createResource(resource, user, registrationAction.getCreationScope(), registrationDetails);
+            }
             Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime());
             ActionOutcome actionOutcome = actionService.executeAction((com.zuehlke.pgadmissions.domain.ResourceDynamic) resource, registrationAction, comment);
             resource = actionOutcome.getResource();
         }
         return resource;
+    }
+
+    private Resource createResource(Resource parentResource, User user, PrismScope creationScope, RegistrationDetails registrationDetails) {
+        Resource resource = null;
+        switch (creationScope) {
+            case INSTITUTION:
+                InstitutionDTO institutionDTO = registrationDetails.getNewInstitution();
+                return resourceService.createNewInstitution((System)parentResource, user, institutionDTO);
+            case PROGRAM:
+                return new Program();
+            default:
+                throw new IllegalArgumentException(creationScope.name());
+        }
     }
 
     public User activateAccount(String activationCode) {

@@ -18,12 +18,17 @@ public class PrismInitialisationService implements InitializingBean {
     @Autowired
     private SystemService systemService;
 
-    @Value("${hibernate.search.default.buildIndexOnStartup}")
+    @Value("${startup.hibernate.search.buildIndex}")
     private Boolean buildIndex;
+
+    @Value("${startup.workflow.initialize}")
+    private Boolean initializeWorkflow;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        initializeWorkflow();
+        if (initializeWorkflow) {
+            initializeWorkflow();
+        }
         if (BooleanUtils.isTrue(buildIndex)) {
             initialiseHibernateSearchIndexes();
         }

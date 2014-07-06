@@ -1,21 +1,24 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.zuehlke.pgadmissions.dao.RefereeDAO;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.mail.MailService;
 import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.RefereeDAO;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.mail.MailService;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -25,7 +28,7 @@ public class RegistrationService {
     private EncryptionUtils encryptionUtils;
 
     @Autowired
-    private RoleService roleService;
+    private ActionService actionService;
 
     @Autowired
     private UserService userService;
@@ -40,13 +43,7 @@ public class RegistrationService {
     private EntityService entityService;
 
     public User submitRegistration(RegistrationDetails registrationDetails) {
-        Resource resource = null;
-        if(registrationDetails.getRegistrationAction() != null) {
-            Class<? extends Resource> resourceClass = registrationDetails.getRegistrationAction().getScope().getResourceClass();
-            resource = entityService.getById(resourceClass, registrationDetails.getResourceId());
-        }
         User user = userService.getOrCreateUser(registrationDetails.getFirstName(), registrationDetails.getLastName(), registrationDetails.getEmail());
-
         if (registrationDetails.getActivationCode() != null && !user.getActivationCode().equals(registrationDetails.getActivationCode())) {
             throw new ResourceNotFoundException();
         }
@@ -54,10 +51,23 @@ public class RegistrationService {
         if (user.getUserAccount() == null) {
             user.setUserAccount(new UserAccount());
         }
-
         user.getUserAccount().setPassword(encryptionUtils.getMD5Hash(registrationDetails.getPassword()));
+
+        Resource resource = performRegistrationAction(user, registrationDetails.getResourceId(), registrationDetails.getRegistrationAction());
         sendConfirmationEmail(user, resource);
         return user;
+    }
+
+    private Resource performRegistrationAction(User user, Integer resourceId, PrismAction registrationAction) {
+        Resource resource = null;
+        if (registrationAction != null) {
+            Class<? extends Resource> resourceClass = registrationAction.getScope().getResourceClass();
+            resource = entityService.getById(resourceClass, resourceId);
+            Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime());
+            ActionOutcome actionOutcome = actionService.executeAction((com.zuehlke.pgadmissions.domain.ResourceDynamic) resource, registrationAction, comment);
+            resource = actionOutcome.getResource();
+        }
+        return resource;
     }
 
     public User activateAccount(String activationCode) {

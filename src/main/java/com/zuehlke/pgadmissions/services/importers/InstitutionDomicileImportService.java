@@ -171,10 +171,6 @@ public class InstitutionDomicileImportService {
 
             InstitutionDomicileRegion currentRegion = new InstitutionDomicileRegion().withId(subdivision.getSubdivisionCode().getValue()).withEnabled(true)
                     .withDomicile(domicile).withParentRegion(parentRegion).withName(name).withOtherName(otherName).withRegionType(regionType);
-            if (currentRegion.getParentRegion() == null) {
-                currentRegion.setParentRegion(currentRegion);
-            }
-
 
             if (subdivision.getSubdivision().isEmpty()) {
                 return Lists.newArrayList(currentRegion);

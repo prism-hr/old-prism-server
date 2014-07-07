@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "INSTITUTION_DOMICILE_REGION", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_domicile_id", "parent_region_id", "region_type", "name"})})
@@ -28,6 +29,9 @@ public class InstitutionDomicileRegion {
 
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
+
+    @OneToMany(mappedBy = "parentRegion")
+    private Set<InstitutionDomicileRegion> subRegions;
 
     public String getId() {
         return id;
@@ -83,6 +87,10 @@ public class InstitutionDomicileRegion {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Set<InstitutionDomicileRegion> getSubRegions() {
+        return subRegions;
     }
 
     public InstitutionDomicileRegion withId(String id) {

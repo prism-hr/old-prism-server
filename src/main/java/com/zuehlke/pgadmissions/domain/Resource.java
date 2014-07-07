@@ -35,21 +35,23 @@ public abstract class Resource implements IUniqueResource {
     public abstract User getUser();
 
     public abstract void setUser(User user);
-
-    public PrismScope getResourceScope() {
-        return PrismScope.getResourceScope(this.getClass());
-    }
-
-    public Resource getEnclosingResource(PrismScope resourceScope) {
-        return getResourceScope().equals(resourceScope) ? this : getParentResource(resourceScope);
-    }
-
-    public Resource getParentResource(PrismScope resourceScope) {
-        try {
-            return (Resource) PropertyUtils.getSimpleProperty(this, resourceScope.getLowerCaseName());
-        } catch (Exception e) {
-            throw new Error(e);
+    
+    public Resource getParentResource() {
+        PrismScope resourceScope = PrismScope.getResourceScope(this.getClass());
+        switch (resourceScope) {
+        case SYSTEM:
+            return this;
+        case INSTITUTION:
+            return getSystem();
+        case PROGRAM:
+            return getInstitution();
+        case PROJECT:
+            return getProgram();
+        case APPLICATION:
+            Resource project = getProject();
+            return project == null ? getProgram() : project;
         }
+        throw new Error();
     }
 
     public void setParentResource(Resource parentResource) {
@@ -58,6 +60,22 @@ public abstract class Resource implements IUniqueResource {
             setProgram(parentResource.getProgram());
             setInstitution(parentResource.getInstitution());
             setSystem(parentResource.getSystem());
+        }
+    }
+    
+    public PrismScope getResourceScope() {
+        return PrismScope.getResourceScope(this.getClass());
+    }
+
+    public Resource getEnclosingResource(PrismScope resourceScope) {
+        if (getResourceScope().equals(resourceScope)) {
+            return this;
+        } else {
+            try {
+                return (Resource) PropertyUtils.getSimpleProperty(this, resourceScope.getLowerCaseName());
+            } catch (Exception e) {
+                throw new Error(e);
+            }
         }
     }
 

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
@@ -48,7 +49,10 @@ public class RegistrationService {
 
     @Autowired
     private EntityService entityService;
-
+    
+    @Autowired
+    private SystemService systemService;
+    
     public User submitRegistration(RegistrationDetails registrationDetails) {
         User user = userService.getOrCreateUser(registrationDetails.getFirstName(), registrationDetails.getLastName(), registrationDetails.getEmail());
         if (registrationDetails.getActivationCode() != null && !user.getActivationCode().equals(registrationDetails.getActivationCode())) {
@@ -75,8 +79,10 @@ public class RegistrationService {
                 resource = createResource(resource, user, registrationAction.getCreationScope(), registrationDetails);
             }
             Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime());
-            ActionOutcome actionOutcome = actionService.executeAction((com.zuehlke.pgadmissions.domain.ResourceDynamic) resource, registrationAction, comment);
+            ActionOutcome actionOutcome = actionService.executeAction((ResourceDynamic) resource, registrationAction, comment);
             resource = actionOutcome.getResource();
+        } else {
+            resource = systemService.getSystem();
         }
         return resource;
     }

@@ -7,7 +7,6 @@ public class InstitutionAddressDTO {
     @NotEmpty
     private String countryId;
 
-//    @NotEmpty
     private String regionId;
 
     @NotEmpty
@@ -18,7 +17,6 @@ public class InstitutionAddressDTO {
     @NotEmpty
     private String addressTown;
 
-    @NotEmpty
     private String addressCode;
 
     public String getCountryId() {

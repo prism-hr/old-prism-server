@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.*;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
@@ -12,17 +13,14 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
-
 @Repository
 @SuppressWarnings("unchecked")
 public class InstitutionDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
+
+
 
     public List<Institution> getEnabledByDomicile(InstitutionDomicile domicile) {
         return (List<Institution>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
@@ -61,4 +59,11 @@ public class InstitutionDAO {
         sessionFactory.getCurrentSession().saveOrUpdate(institution);
     }
 
+    public List<InstitutionDomicileRegion> getTopLevelRegions(InstitutionDomicile domicile) {
+        return sessionFactory.getCurrentSession().createCriteria(InstitutionDomicileRegion.class)
+                .add(Restrictions.eq("domicile", domicile))
+                .add(Restrictions.isNull("parentRegion"))
+                .add(Restrictions.eq("enabled", true))
+                .list();
+    }
 }

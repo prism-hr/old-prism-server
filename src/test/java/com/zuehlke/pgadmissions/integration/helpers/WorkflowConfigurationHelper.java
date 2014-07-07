@@ -42,7 +42,7 @@ import com.zuehlke.pgadmissions.services.SystemService;
 @Transactional
 public class WorkflowConfigurationHelper {
 
-    private final Set<PrismState> statesVisited = Sets.newHashSet();
+    private final Set<State> statesVisited = Sets.newHashSet();
 
     private final HashMultimap<PrismScope, PrismScope> actualChildScopes = HashMultimap.create();
     
@@ -105,7 +105,7 @@ public class WorkflowConfigurationHelper {
             state = verifyRootState();
         }
 
-        statesVisited.add(state.getId());
+        statesVisited.add(state);
         assertTrue(state.getSequenceOrder() == null || state == state.getParentState());
 
         verifyAsInitialState(state);
@@ -115,7 +115,7 @@ public class WorkflowConfigurationHelper {
         verifyStateActionAssignments(state);
         verifyStateActionNotifications(state);
 
-        for (State transitionState : stateService.getOrderedTransitionStates(state, statesVisited.toArray(new State[statesVisited.size()]))) {
+        for (State transitionState : stateService.getOrderedTransitionStates(state, statesVisited.toArray(new State[0]))) {
             verifyState(transitionState);
         }
     }

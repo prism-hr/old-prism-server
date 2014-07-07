@@ -2,16 +2,13 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
-import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Service
@@ -52,4 +49,7 @@ public class InstitutionService {
         return persistentInstitution;
     }
 
+    public List<InstitutionDomicileRegion> getTopLevelRegions(InstitutionDomicile domicile) {
+        return institutionDAO.getTopLevelRegions(domicile);
+    }
 }

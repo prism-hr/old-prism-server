@@ -71,7 +71,7 @@ public class RegistrationService {
                 resource = createResource(resource, user, registrationAction.getCreationScope(), registrationDetails);
             }
             Action action = entityService.getByProperty(Action.class, "id", registrationAction);
-            Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action);
+            Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false);
             ActionOutcome actionOutcome = actionService.executeAction((com.zuehlke.pgadmissions.domain.ResourceDynamic) resource, registrationAction, comment);
             resource = actionOutcome.getResource();
         }

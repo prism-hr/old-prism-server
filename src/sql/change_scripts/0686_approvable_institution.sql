@@ -14,3 +14,8 @@ ALTER TABLE INSTITUTION
 ALTER TABLE ADVERT
 	 MODIFY COLUMN institution_address_id INT(10) UNSIGNED AFTER description
 ;
+
+ALTER TABLE STATE
+	DROP INDEX scope_id,
+	ADD INDEX (scope_id)
+;

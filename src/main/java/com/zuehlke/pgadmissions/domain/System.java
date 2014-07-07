@@ -21,7 +21,7 @@ import com.google.common.collect.Maps;
 @Entity
 @Table(name = "SYSTEM")
 @Indexed
-@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class System extends Resource {
 
     @Id

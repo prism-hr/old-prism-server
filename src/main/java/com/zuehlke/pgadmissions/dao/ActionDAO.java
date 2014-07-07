@@ -14,6 +14,8 @@ import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.ResourceDynamic;
+import com.zuehlke.pgadmissions.domain.Scope;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionEnhancement;
 import com.zuehlke.pgadmissions.domain.User;
@@ -22,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class ActionDAO {
     
     @Autowired
@@ -98,7 +101,6 @@ public class ActionDAO {
                 .uniqueResult();
     }
     
-    @SuppressWarnings("unchecked")
     public List<PrismAction> getPermittedActions(Resource resource, User user) {
         return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("action.id"))
@@ -123,7 +125,6 @@ public class ActionDAO {
                 .list();
     }
     
-    @SuppressWarnings("unchecked")
     public List<PrismRedactionType> getRedactions(User user, ResourceDynamic resource, Action action) {
         return (List<PrismRedactionType>) sessionFactory.getCurrentSession().createCriteria(ActionRedaction.class)
                 .setProjection(Projections.groupProperty("redactionType")) //
@@ -138,6 +139,15 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                         .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
+                .list();
+    }
+    
+    public List<Action> getCreationActions(State state, Scope scope) {
+        return (List<Action>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.property("action")) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("state", state)) //
+                .add(Restrictions.eq("action.creationScope", scope)) //
                 .list();
     }
 

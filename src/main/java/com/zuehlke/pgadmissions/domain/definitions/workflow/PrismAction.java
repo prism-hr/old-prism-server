@@ -73,13 +73,18 @@ public enum PrismAction {
             new PrismActionRedaction().withRole(PrismRole.APPLICATION_CREATOR).withRedactionType(PrismRedactionType.ALL_CONTENT), //
             new PrismActionRedaction().withRole(PrismRole.APPLICATION_REFEREE).withRedactionType(PrismRedactionType.ALL_CONTENT))), //
     APPLICATION_WITHDRAW(PrismActionType.USER_INVOCATION, PrismScope.APPLICATION, null, null), //
+    INSTITUTION_COMPLETE_APPROVAL_STAGE(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_CONFIGURE(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
+    INSTITUTION_CORRECT(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_CREATE_PROGRAM(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, PrismScope.PROGRAM, null), //
+    INSTITUTION_EMAIL_CREATOR(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
+    INSTITUTION_ESCALATE(PrismActionType.SYSTEM_ESCALATION, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_IMPORT_PROGRAM(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_VIEW(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_VIEW_APPLICATION_LIST(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_VIEW_PROGRAM_LIST(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_VIEW_PROJECT_LIST(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
+    INSTITUTION_WITHDRAW(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
     PROGRAM_COMPLETE_APPROVAL_STAGE(PrismActionType.USER_INVOCATION, PrismScope.PROGRAM, null, null), //
     PROGRAM_CONCLUDE(PrismActionType.SYSTEM_PROPAGATION, PrismScope.PROGRAM, null, null), //
     PROGRAM_CONFIGURE(PrismActionType.USER_INVOCATION, PrismScope.PROGRAM, null, null), //

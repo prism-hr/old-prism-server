@@ -67,7 +67,9 @@ public class EntityService {
             try {
                 Object persistentId = PropertyUtils.getSimpleProperty(persistentResource, "id");
                 PropertyUtils.setSimpleProperty(transientResource, "id", persistentId);
+                
                 merge(transientResource);
+                evict(persistentResource);
             } catch (Exception e) {
                 throw new Error(e);
             }
@@ -105,4 +107,7 @@ public class EntityService {
         entityDAO.merge(entity);
     }
     
+    public void evict(Object entity) {
+        entityDAO.evict(entity);
+    }
 }

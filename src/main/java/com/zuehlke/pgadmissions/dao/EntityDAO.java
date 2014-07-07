@@ -134,6 +134,9 @@ public class EntityDAO {
     public void merge(Object entity) {
         sessionFactory.getCurrentSession().merge(entity);
     }
-
+    
+    public void evict(Object entity) {
+        sessionFactory.getCurrentSession().evict(entity);
+    }
 
 }

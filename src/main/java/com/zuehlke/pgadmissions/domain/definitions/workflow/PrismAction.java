@@ -79,7 +79,7 @@ public enum PrismAction {
     INSTITUTION_CREATE_PROGRAM(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, PrismScope.PROGRAM, null), //
     INSTITUTION_EMAIL_CREATOR(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_ESCALATE(PrismActionType.SYSTEM_ESCALATION, PrismScope.INSTITUTION, null, null), //
-    INSTITUTION_IMPORT_PROGRAM(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
+    INSTITUTION_IMPORT_PROGRAM(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, PrismScope.PROGRAM, null), //
     INSTITUTION_VIEW(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_VIEW_APPLICATION_LIST(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_VIEW_PROGRAM_LIST(PrismActionType.USER_INVOCATION, PrismScope.INSTITUTION, null, null), //

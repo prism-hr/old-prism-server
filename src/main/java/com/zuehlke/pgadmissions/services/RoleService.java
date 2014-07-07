@@ -93,7 +93,6 @@ public class RoleService {
                 saveUserRole(getOrCreateUserRole(resource, user, roleTransition.getTransitionRole().getId()));
                 break;
             case REMOVE:
-                saveUserRole(getOrCreateUserRole(resource, user, roleTransition.getTransitionRole().getId()));
                 deleteUserRole(getOrCreateUserRole(resource, user, roleTransition.getRole().getId()));
                 break;
             case UPDATE:

@@ -1,11 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,7 +63,7 @@ public class EntityService {
             try {
                 Object persistentId = PropertyUtils.getSimpleProperty(persistentResource, "id");
                 PropertyUtils.setSimpleProperty(transientResource, "id", persistentId);
-                update(transientResource);
+                merge(transientResource);
             } catch (Exception e) {
                 throw new Error(e);
             }

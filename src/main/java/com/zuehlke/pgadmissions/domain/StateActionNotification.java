@@ -19,7 +19,7 @@ import com.google.common.collect.Maps;
 
 @Entity
 @Table(name = "STATE_ACTION_NOTIFICATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "role_id" }) })
-@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class StateActionNotification implements IUniqueResource {
 
     @Id

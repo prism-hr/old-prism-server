@@ -1,8 +1,20 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.zuehlke.pgadmissions.dao.RefereeDAO;
-import com.zuehlke.pgadmissions.domain.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.System;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -12,15 +24,6 @@ import com.zuehlke.pgadmissions.mail.MailService;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @Transactional
@@ -79,7 +82,6 @@ public class RegistrationService {
     }
 
     private Resource createResource(Resource parentResource, User user, PrismScope creationScope, RegistrationDetails registrationDetails) {
-        Resource resource = null;
         switch (creationScope) {
             case INSTITUTION:
                 InstitutionDTO institutionDTO = registrationDetails.getNewInstitution();

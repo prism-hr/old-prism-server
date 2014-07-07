@@ -38,8 +38,12 @@ public class EntityService {
         return entityDAO.getByProperties(klass, properties);
     }
 
-    public <T> List<T> getAll(Class<T> klass) {
-        return entityDAO.getAll(klass);
+    public <T> List<T> list(Class<T> klass) {
+        return entityDAO.list(klass);
+    }
+    
+    public <T> List<T> listByProperty(Class<T> klass, String propertyName, Object propertyValue) {
+        return entityDAO.listByProperty(klass, propertyName, propertyValue);
     }
 
     public <T extends IUniqueResource> T getDuplicateEntity(T uniqueResource) {

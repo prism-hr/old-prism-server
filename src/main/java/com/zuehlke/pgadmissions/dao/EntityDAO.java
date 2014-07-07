@@ -64,6 +64,7 @@ public class EntityDAO {
                 .list();
     }
 
+    @SuppressWarnings("unchecked")
     public <T> List<T> listByProperty(Class<T> klass, String propertyName, Object propertyValue) {
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(klass)
                 .add(Restrictions.eq(propertyName, propertyValue))

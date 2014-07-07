@@ -11,6 +11,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +43,10 @@ import com.zuehlke.pgadmissions.services.SystemService;
 @Service
 @Transactional
 public class WorkflowConfigurationHelper {
+    
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    
+    private State rootState = null;
 
     private final Set<State> statesVisited = Sets.newHashSet();
 
@@ -74,7 +80,7 @@ public class WorkflowConfigurationHelper {
 
     public void verifyWorkflowConfiguration() {
         verifyState(null);
-
+        
         List<State> workflowStates = stateService.getWorkflowStates();
         assertEquals(workflowStates.size(), statesVisited.size());
         assertCollectionEquals(PrismScope.getCreatableScopes(), actualParentScopes.keySet());
@@ -103,13 +109,19 @@ public class WorkflowConfigurationHelper {
     private void verifyState(State state) {
         if (state == null) {
             state = verifyRootState();
+            rootState = state;
         }
-
+        
+        logger.info("Verifying state: " + state.getId().toString());
         statesVisited.add(state);
+        
         assertTrue(state.getSequenceOrder() == null || state == state.getParentState());
+        // TODO: test no duplicates in sequence order
 
-        verifyAsInitialState(state);
-        verifyAsFinalState(state);
+        if (state != rootState) {
+            verifyAsInitialState(state);
+            verifyAsFinalState(state);
+        }
 
         verifyStateActions(state);
         verifyStateActionAssignments(state);
@@ -151,10 +163,10 @@ public class WorkflowConfigurationHelper {
                 }
             }
 
-            assertTrue(parentScopes.size() > 0 || state.isFinalState());
+            assertTrue(parentScopes.size() > 0);
 
             for (Scope parentScope : parentScopes) {
-                assertTrue(parentScope.getPrecedence() > scope.getPrecedence());
+                assertTrue(parentScope.getPrecedence() < scope.getPrecedence());
             }
 
             actualInitialStates.add(state.getId());
@@ -166,7 +178,6 @@ public class WorkflowConfigurationHelper {
             List<State> downstreamStates = stateService.getDownstreamStates(state);
             
             assertTrue(downstreamStates.size() <= 1);
-            
             for (State downstreamState : downstreamStates) {
                 assertEquals(state, downstreamState);
             }

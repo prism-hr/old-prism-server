@@ -87,7 +87,7 @@ public class ActionService {
     }
 
     public ActionOutcome executeAction(ResourceDynamic resource, Action action, Comment comment) {
-        Resource operativeResource = action.isCreationAction() ? resource.getParentResource(resource.getResourceScope()) : resource;
+        Resource operativeResource = action.isCreationAction() ? resource.getParentResource() : resource;
         validateAction(operativeResource, action, comment.getUser(), comment.getDelegateUser());
 
         User actionOwner = comment.getUser();

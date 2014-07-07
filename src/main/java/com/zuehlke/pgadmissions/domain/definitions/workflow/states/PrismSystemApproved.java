@@ -46,7 +46,7 @@ public class PrismSystemApproved extends PrismWorkflowState {
             .withPostComment(false) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
-                        .withTransitionState(PrismState.INSTITUTION_APPROVED) // 
+                        .withTransitionState(PrismState.INSTITUTION_APPROVAL) // 
                         .withTransitionAction(PrismAction.SYSTEM_CREATE_INSTITUTION)
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //

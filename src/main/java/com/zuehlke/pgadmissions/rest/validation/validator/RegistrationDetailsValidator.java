@@ -27,7 +27,7 @@ public class RegistrationDetailsValidator extends AbstractValidator {
         if (!StringUtils.isBlank(user.getEmail())) {
             User userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(user.getEmail());
             if (userWithSameEmail != null) {
-                errors.rejectValue("email", "user.email.alreadyexists");
+                errors.rejectValue("email", "alreadyExists");
             }
         }
     }

@@ -85,7 +85,6 @@ public class StateService {
         return stateDAO.getStateDuration(resource, state);
     }
     
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public StateTransition executeStateTransition(Resource operativeResource, ResourceDynamic resource, Action action, Comment comment) {
         StateTransition stateTransition = getStateTransition(operativeResource, action, comment);
 
@@ -108,7 +107,7 @@ public class StateService {
         if (stateTransition.getPropagatedActions().size() > 0) {
             entityService.save(new StateTransitionPending().withResource(operativeResource).withStateTransition(stateTransition));
         }
-        
+
         if (stateTransition.getStateAction().isPostComment()) {
             entityService.save(comment);
         }

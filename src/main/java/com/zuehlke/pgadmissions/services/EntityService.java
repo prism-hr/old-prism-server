@@ -1,14 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.zuehlke.pgadmissions.dao.EntityDAO;
-import com.zuehlke.pgadmissions.domain.IUniqueResource;
+import java.util.HashMap;
+import java.util.List;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
+import com.zuehlke.pgadmissions.dao.EntityDAO;
+import com.zuehlke.pgadmissions.domain.IUniqueResource;
 
 @Service
 @Transactional
@@ -37,12 +38,8 @@ public class EntityService {
         return entityDAO.getByProperties(klass, properties);
     }
 
-    public <T> List<T> list(Class<T> klass) {
-        return entityDAO.list(klass);
-    }
-
-    public <T> List<T> listByProperty(Class<T> klass, String propertyName, Object propertyValue) {
-        return entityDAO.listByProperty(klass, propertyName, propertyValue);
+    public <T> List<T> getAll(Class<T> klass) {
+        return entityDAO.getAll(klass);
     }
 
     public <T extends IUniqueResource> T getDuplicateEntity(T uniqueResource) {
@@ -57,7 +54,7 @@ public class EntityService {
         }
         return persistentResource;
     }
-
+    
     public <T extends IUniqueResource> T createOrUpdate(T transientResource) {
         T persistentResource = (T) getDuplicateEntity(transientResource);
         if (persistentResource == null) {
@@ -66,7 +63,7 @@ public class EntityService {
             try {
                 Object persistentId = PropertyUtils.getSimpleProperty(persistentResource, "id");
                 PropertyUtils.setSimpleProperty(transientResource, "id", persistentId);
-                update(transientResource);
+                merge(transientResource);
             } catch (Exception e) {
                 throw new Error(e);
             }
@@ -103,5 +100,5 @@ public class EntityService {
     public void merge(Object entity) {
         entityDAO.merge(entity);
     }
-
+    
 }

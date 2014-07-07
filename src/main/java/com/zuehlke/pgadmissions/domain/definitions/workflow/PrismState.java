@@ -35,7 +35,11 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicat
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidationPendingFeedback;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnCompleted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnPendingExport;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismInstitutionApproval;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismInstitutionApprovalPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismInstitutionApproved;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismInstitutionRejected;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismInstitutionWithdrawn;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramApproval;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramApprovalPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramApproved;
@@ -89,7 +93,11 @@ public enum PrismState {
     APPLICATION_WITHDRAWN_PENDING_EXPORT(false, false, null, null, PrismScope.APPLICATION, PrismApplicationWithdrawnPendingExport.class), //
     APPLICATION_WITHDRAWN_COMPLETED(false, true, null, null, PrismScope.APPLICATION, PrismApplicationWithdrawnCompleted.class), //
     APPLICATION_WITHDRAWN_PENDING_CORRECTION(false, false, null, 28, PrismScope.APPLICATION, PrismApplicationWithdrawnPendingCorrection.class), //
-    INSTITUTION_APPROVED(true, true, 1, null, PrismScope.INSTITUTION, PrismInstitutionApproved.class), //
+    INSTITUTION_APPROVAL(true, false, 1, 28, PrismScope.INSTITUTION, PrismInstitutionApproval.class), //
+    INSTITUTION_APPROVAL_PENDING_CORRECTION(false, false, null, 28, PrismScope.INSTITUTION, PrismInstitutionApprovalPendingCorrection.class), //
+    INSTITUTION_APPROVED(false, true, 2, null, PrismScope.INSTITUTION, PrismInstitutionApproved.class), //
+    INSTITUTION_REJECTED(false, true, 3, null, PrismScope.INSTITUTION, PrismInstitutionRejected.class), //
+    INSTITUTION_WITHDRAWN(false, true, 4, null, PrismScope.INSTITUTION, PrismInstitutionWithdrawn.class), //
     PROGRAM_APPROVAL(true, false, 1, 28, PrismScope.PROGRAM, PrismProgramApproval.class), //
     PROGRAM_APPROVAL_PENDING_CORRECTION(false, false, null, 28, PrismScope.PROGRAM, PrismProgramApprovalPendingCorrection.class), //
     PROGRAM_APPROVED(true, false, 2, null, PrismScope.PROGRAM, PrismProgramApproved.class), //
@@ -158,7 +166,11 @@ public enum PrismState {
         parentState.put(APPLICATION_WITHDRAWN_PENDING_EXPORT, APPLICATION_WITHDRAWN);
         parentState.put(APPLICATION_WITHDRAWN_COMPLETED, APPLICATION_WITHDRAWN);
         parentState.put(APPLICATION_WITHDRAWN_PENDING_CORRECTION, APPLICATION_WITHDRAWN);
+        parentState.put(INSTITUTION_APPROVAL, INSTITUTION_APPROVAL);
+        parentState.put(INSTITUTION_APPROVAL_PENDING_CORRECTION, INSTITUTION_APPROVAL);
         parentState.put(INSTITUTION_APPROVED, INSTITUTION_APPROVED);
+        parentState.put(INSTITUTION_REJECTED, INSTITUTION_REJECTED);
+        parentState.put(INSTITUTION_WITHDRAWN, INSTITUTION_WITHDRAWN);
         parentState.put(PROGRAM_APPROVAL, PROGRAM_APPROVAL);
         parentState.put(PROGRAM_APPROVAL_PENDING_CORRECTION, PROGRAM_APPROVAL);
         parentState.put(PROGRAM_APPROVED, PROGRAM_APPROVED);

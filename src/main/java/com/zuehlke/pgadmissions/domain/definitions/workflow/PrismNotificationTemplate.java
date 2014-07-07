@@ -39,6 +39,14 @@ public enum PrismNotificationTemplate {
             "application_update_interview_availability_notification_subject.ftl", "application_update_interview_availability_notification_content.ftl"), //
     APPLICATION_UPDATE_NOTIFICATION(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
             "application_update_notification_subject.ftl", "application_update_notification_content.ftl"), //
+    INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.INSTITUTION,
+            "institution_complete_approval_stage_notification_subject.ftl", "institution_complete_approval_stage_notification_content.ftl"), //
+    INSTITUTION_TASK_REQUEST(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REQUEST, PrismScope.INSTITUTION,
+            "institution_task_request_subject.ftl", "institution_task_request_content.ftl"), //
+    INSTITUTION_TASK_REQUEST_REMINDER(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REMINDER, PrismScope.INSTITUTION,
+            "institution_task_request_reminder_subject.ftl", "institution_task_request_reminder_content.ftl"), //
+    INSTITUTION_UPDATE_NOTIFICATION(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.UPDATE, PrismScope.INSTITUTION,
+            "institution_update_notification_subject.ftl", "institution_update_notification_content.ftl"), //
     PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.PROGRAM,
             "program_complete_approval_stage_notification_subject.ftl", "program_complete_approval_stage_notification_content.ftl"), //
     PROGRAM_TASK_REQUEST(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REQUEST, PrismScope.PROGRAM, "program_task_request_subject.ftl",
@@ -77,14 +85,22 @@ public enum PrismNotificationTemplate {
     static {
         PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.APPLICATION_COMPLETE_REQUEST,
                 PrismNotificationTemplate.APPLICATION_COMPLETE_REQUEST_REMINDER, 7);
+        
         PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST,
                 PrismNotificationTemplate.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER, 1);
+        
         PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.APPLICATION_PROVIDE_REFERENCE_REQUEST,
                 PrismNotificationTemplate.APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER, 7);
+        
         PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.APPLICATION_TASK_REQUEST,
                 PrismNotificationTemplate.APPLICATION_TASK_REQUEST_REMINDER, 3);
+        
+        PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.INSTITUTION_TASK_REQUEST,
+                PrismNotificationTemplate.INSTITUTION_TASK_REQUEST_REMINDER, 3);
+        
         PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.PROGRAM_TASK_REQUEST,
                 PrismNotificationTemplate.PROGRAM_TASK_REQUEST_REMINDER, 3);
+        
         PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.PROJECT_TASK_REQUEST,
                 PrismNotificationTemplate.PROJECT_TASK_REQUEST_REMINDER, 3);
     }

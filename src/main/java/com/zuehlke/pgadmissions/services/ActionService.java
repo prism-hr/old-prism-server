@@ -11,11 +11,12 @@ import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.ResourceDynamic;
+import com.zuehlke.pgadmissions.domain.Scope;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
 
@@ -114,9 +115,9 @@ public class ActionService {
     public List<Action> getActions() {
         return entityService.list(Action.class);
     }
-
-    public boolean isCreationAction(PrismState stateId, PrismState transitionStateId, PrismAction actionId) {
-        return stateId.getScope().getPrecedence() > transitionStateId.getScope().getPrecedence() && !actionId.name().contains("_CREATE_");
+    
+    public List<Action> getCreationActions(State state, Scope scope) {
+        return actionDAO.getCreationActions(state, scope);
     }
 
 }

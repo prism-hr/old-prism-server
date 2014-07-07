@@ -51,11 +51,11 @@ ALTER TABLE ADVERT
 
 INSERT INTO INSTITUTION_DOMICILE_REGION (id, institution_domicile_id, parent_region_id, region_type, name, enabled)
 VALUES ("GB-ENG", "GB", "GB-ENG", "Country", "England", 1),
-	("GB-LDN", "GB", "GB-ENG", "City Corporation", "London, City of", 1)
+	("GB-LND", "GB", "GB-ENG", "City Corporation", "London, City of", 1)
 ;
 
 INSERT INTO INSTITUTION_ADDRESS (institution_id, institution_domicile_id, institution_domicile_region_id, address_line_1, address_town, address_code)
-VALUES (5243, "GB", "GB-LDN", "Gower Street",  "London", "WC1E 6BT")
+VALUES (5243, "GB", "GB-LND", "Gower Street",  "London", "WC1E 6BT")
 ;
 
 UPDATE ADVERT

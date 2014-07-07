@@ -38,7 +38,7 @@ public class Institution extends ResourceDynamic {
     @JoinColumn(name = "institution_domicile_id", nullable = false)
     private InstitutionDomicile domicile;
 
-    @Column(name = "code", nullable = false, unique = true)
+    @Column(name = "code", unique = true)
     private String code;
 
     @Column(name = "name", nullable = false)

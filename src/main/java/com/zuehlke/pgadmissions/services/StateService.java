@@ -225,6 +225,7 @@ public class StateService {
 
     private void createResource(Resource operativeResource, ResourceDynamic resource, Action createAction, Comment comment) {
         resource.setParentResource(operativeResource);
+        resource.setCreatedTimestamp(new DateTime());
         entityService.save(resource);
         resource.setCode(resource.generateCode());
         comment.setRole(roleService.getResourceCreatorRole(resource, createAction).getAuthority().toString());

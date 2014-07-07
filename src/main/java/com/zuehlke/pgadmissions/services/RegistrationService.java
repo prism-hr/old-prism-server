@@ -4,17 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.System;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.System;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -74,7 +70,8 @@ public class RegistrationService {
             if (createActionPattern.matcher(registrationAction.name()).matches()) {
                 resource = createResource(resource, user, registrationAction.getCreationScope(), registrationDetails);
             }
-            Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime());
+            Action action = entityService.getByProperty(Action.class, "id", registrationAction);
+            Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action);
             ActionOutcome actionOutcome = actionService.executeAction((com.zuehlke.pgadmissions.domain.ResourceDynamic) resource, registrationAction, comment);
             resource = actionOutcome.getResource();
         }

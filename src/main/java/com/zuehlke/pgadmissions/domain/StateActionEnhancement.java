@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismEnhancementType
 
 @Entity
 @Table(name = "STATE_ACTION_ENHANCEMENT", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_assignment_id", "enhancement_type" }) })
-@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class StateActionEnhancement implements IUniqueResource {
     
     @Id

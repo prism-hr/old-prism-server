@@ -85,16 +85,22 @@ public enum PrismNotificationTemplate {
     static {
         PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.APPLICATION_COMPLETE_REQUEST,
                 PrismNotificationTemplate.APPLICATION_COMPLETE_REQUEST_REMINDER, 7);
+        
         PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST,
                 PrismNotificationTemplate.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER, 1);
+        
         PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.APPLICATION_PROVIDE_REFERENCE_REQUEST,
                 PrismNotificationTemplate.APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER, 7);
+        
         PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.APPLICATION_TASK_REQUEST,
                 PrismNotificationTemplate.APPLICATION_TASK_REQUEST_REMINDER, 3);
+        
         PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.INSTITUTION_TASK_REQUEST,
                 PrismNotificationTemplate.INSTITUTION_TASK_REQUEST_REMINDER, 3);
+        
         PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.PROGRAM_TASK_REQUEST,
                 PrismNotificationTemplate.PROGRAM_TASK_REQUEST_REMINDER, 3);
+        
         PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.PROJECT_TASK_REQUEST,
                 PrismNotificationTemplate.PROJECT_TASK_REQUEST_REMINDER, 3);
     }

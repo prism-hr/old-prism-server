@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
 
 @Entity
 @Table(name = "ACTION_REDACTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "action_id", "role_id" }) })
-@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ActionRedaction implements IUniqueResource {
 
     @Id

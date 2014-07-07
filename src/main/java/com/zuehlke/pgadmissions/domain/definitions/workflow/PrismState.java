@@ -109,7 +109,7 @@ public enum PrismState {
     PROGRAM_REJECTED(false, true, 3, null, PrismScope.PROGRAM, PrismProgramRejected.class), //
     PROGRAM_WITHDRAWN(false, true, 5, null, PrismScope.PROGRAM, PrismProgramWithdrawn.class), //
     PROJECT_APPROVAL(true, false, 1, 28, PrismScope.PROJECT, PrismProjectApproval.class), //
-    PROJECT_APPROVAL_PENDING_CORRECTION(false, false, null, 28, PrismScope.PROGRAM, PrismProjectApprovalPendingCorrection.class), //
+    PROJECT_APPROVAL_PENDING_CORRECTION(false, false, null, 28, PrismScope.PROJECT, PrismProjectApprovalPendingCorrection.class), //
     PROJECT_APPROVED(true, false, 2, null, PrismScope.PROJECT, PrismProjectApproved.class), //
     PROJECT_DEACTIVATED(false, false, null, null, PrismScope.PROJECT, PrismProjectDeactivated.class), //
     PROJECT_DISABLED(false, false, 4, 28, PrismScope.PROJECT, null), //

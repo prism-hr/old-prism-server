@@ -33,7 +33,7 @@ public class PrismProjectApproval extends PrismWorkflowState {
                         .withTemplate(PrismNotificationTemplate.PROJECT_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.PROGRAM_UPDATE_NOTIFICATION),
+                        .withTemplate(PrismNotificationTemplate.PROJECT_UPDATE_NOTIFICATION),
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR) // 
                         .withTemplate(PrismNotificationTemplate.PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION),

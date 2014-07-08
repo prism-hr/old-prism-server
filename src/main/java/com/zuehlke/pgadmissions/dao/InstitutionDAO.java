@@ -66,4 +66,11 @@ public class InstitutionDAO {
                 .add(Restrictions.eq("enabled", true))
                 .list();
     }
+
+    public List<Institution> listByCountry(InstitutionDomicile domicile) {
+        return sessionFactory.getCurrentSession().createCriteria(Institution.class)
+                .createAlias("address", "address")
+                .add(Restrictions.eq("address.country", domicile))
+                .list();
+    }
 }

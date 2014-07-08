@@ -35,4 +35,8 @@ public class InstitutionService {
     public List<InstitutionDomicileRegion> getTopLevelRegions(InstitutionDomicile domicile) {
         return institutionDAO.getTopLevelRegions(domicile);
     }
+
+    public List<Institution> listByCountry(InstitutionDomicile domicile) {
+        return institutionDAO.listByCountry(domicile);
+    }
 }

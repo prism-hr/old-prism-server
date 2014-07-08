@@ -31,7 +31,7 @@ public class InstitutionDomicileResource {
     @ResponseBody
     public List<InstitutionRepresentation> getInstitutions(@PathVariable String domicileId) {
         InstitutionDomicile domicile = entityService.getByProperty(InstitutionDomicile.class, "id", domicileId);
-        List<Institution> institutions = entityService.listByProperty(Institution.class, "domicile", domicile);
+        List<Institution> institutions = institutionService.listByCountry(domicile);
         List<InstitutionRepresentation> institutionRepresentations = Lists.newArrayListWithCapacity(institutions.size());
         for (Institution institution : institutions) {
             institutionRepresentations.add(dozerBeanMapper.map(institution, InstitutionRepresentation.class));

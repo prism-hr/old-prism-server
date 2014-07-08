@@ -159,6 +159,7 @@ public class SystemService {
         }
         
         entityService.flush();
+        entityService.clear();
     }
 
     private void initialiseScopes() {
@@ -289,10 +290,10 @@ public class SystemService {
                 for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
                     Action action = actionService.getById(prismStateAction.getAction());
                     NotificationTemplate template = notificationService.getById(prismStateAction.getNotificationTemplate());
-                    StateAction transientStateAction = new StateAction().withState(state).withAction(action)
+                    StateAction stateAction = new StateAction().withState(state).withAction(action)
                             .withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag()).withDefaultAction(prismStateAction.isDefaultAction())
                             .withPostComment(prismStateAction.isPostComment()).withNotificationTemplate(template);
-                    StateAction stateAction = entityService.createOrUpdate(transientStateAction);
+                    entityService.save(stateAction);
                     state.getStateActions().add(stateAction);
 
                     initialiseStateActionAssignments(prismStateAction, stateAction);
@@ -319,8 +320,8 @@ public class SystemService {
     private void initialiseStateActionAssignments(PrismStateAction prismStateAction, StateAction stateAction) {
         for (PrismStateActionAssignment prismAssignment : prismStateAction.getAssignments()) {
             Role role = roleService.getById(prismAssignment.getRole());
-            StateActionAssignment transientAssignment = new StateActionAssignment().withStateAction(stateAction).withRole(role);
-            StateActionAssignment assignment = entityService.createOrUpdate(transientAssignment);
+            StateActionAssignment assignment = new StateActionAssignment().withStateAction(stateAction).withRole(role);
+            entityService.save(assignment);
             stateAction.getStateActionAssignments().add(assignment);
             initialiseStateActionEnhancements(prismAssignment, assignment);
         }
@@ -329,9 +330,9 @@ public class SystemService {
     private void initialiseStateActionEnhancements(PrismStateActionAssignment prismAssignment, StateActionAssignment assignment) {
         for (PrismStateActionEnhancement prismEnhancement : prismAssignment.getEnhancements()) {
             Action delegatedAction = actionService.getById(prismEnhancement.getDelegatedAction());
-            StateActionEnhancement transientEnhancement = new StateActionEnhancement().withStateActionAssignment(assignment)
+            StateActionEnhancement enhancement = new StateActionEnhancement().withStateActionAssignment(assignment)
                     .withEnhancementType(prismEnhancement.getEnhancement()).withDelegatedAction(delegatedAction);
-            StateActionEnhancement enhancement = entityService.createOrUpdate(transientEnhancement);
+            entityService.save(enhancement);
             assignment.getEnhancements().add(enhancement);
         }
     }
@@ -340,9 +341,9 @@ public class SystemService {
         for (PrismStateActionNotification prismNotification : prismStateAction.getNotifications()) {
             Role role = roleService.getById(prismNotification.getRole());
             NotificationTemplate template = notificationService.getById(prismNotification.getTemplate());
-            StateActionNotification transientNotification = new StateActionNotification().withStateAction(stateAction).withRole(role)
+            StateActionNotification notification = new StateActionNotification().withStateAction(stateAction).withRole(role)
                     .withNotificationTemplate(template);
-            StateActionNotification notification = entityService.createOrUpdate(transientNotification);
+            entityService.save(notification);
             stateAction.getStateActionNotifications().add(notification);
         }
     }
@@ -352,9 +353,9 @@ public class SystemService {
             State transitionState = stateService.getById(prismStateTransition.getTransitionState());
             Action transitionAction = actionService.getById(prismStateTransition.getTransitionAction());
             PrismTransitionEvaluation transitionEvaluation = prismStateTransition.getTransitionEvaluation();
-            StateTransition transientStateTransition = new StateTransition().withStateAction(stateAction).withTransitionState(transitionState)
+            StateTransition stateTransition = new StateTransition().withStateAction(stateAction).withTransitionState(transitionState)
                     .withTransitionAction(transitionAction).withStateTransitionEvaluation(transitionEvaluation);
-            StateTransition stateTransition = entityService.createOrUpdate(transientStateTransition);
+            entityService.save(stateTransition);
             stateAction.getStateTransitions().add(stateTransition);
             initialiseRoleTransitions(prismStateTransition, stateTransition);
 
@@ -370,11 +371,11 @@ public class SystemService {
         for (PrismRoleTransition prismRoleTransition : prismStateTransition.getRoleTransitions()) {
             Role role = roleService.getById(prismRoleTransition.getRole());
             Role transitionRole = roleService.getById(prismRoleTransition.getTransitionRole());
-            RoleTransition transientRoleTransition = new RoleTransition().withStateTransition(stateTransition).withRole(role)
+            RoleTransition roleTransition = new RoleTransition().withStateTransition(stateTransition).withRole(role)
                     .withRoleTransitionType(prismRoleTransition.getTransitionType()).withTransitionRole(transitionRole)
                     .withRestrictToActionOwner(prismRoleTransition.isRestrictToActionOwner()).withMinimumPermitted(prismRoleTransition.getMinimumPermitted())
                     .withMaximumPermitted(prismRoleTransition.getMaximumPermitted());
-            RoleTransition roleTransition = entityService.createOrUpdate(transientRoleTransition);
+            entityService.save(roleTransition);
             stateTransition.getRoleTransitions().add(roleTransition);
         }
     }

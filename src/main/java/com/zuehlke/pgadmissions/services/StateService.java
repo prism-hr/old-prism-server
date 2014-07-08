@@ -108,6 +108,7 @@ public class StateService {
             entityService.save(new StateTransitionPending().withResource(operativeResource).withStateTransition(stateTransition));
         }
 
+        // TODO: do post comment
         if (stateTransition.getStateAction().isPostComment()) {
             entityService.save(comment);
         }

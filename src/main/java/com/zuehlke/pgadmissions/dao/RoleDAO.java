@@ -90,6 +90,7 @@ public class RoleDAO {
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
+    // TODO: fix query to work property for creator role
     public Role getResourceCreatorRole(Resource resource, Action createAction) {
         return (Role) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
                 .setProjection(Projections.groupProperty("role")) //

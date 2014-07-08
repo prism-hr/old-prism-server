@@ -130,11 +130,13 @@ public class WorkflowConfigurationHelper {
         logger.info("Verifying state: " + state.getId().toString());
         statesVisited.add(state);
 
-        assertTrue(state.getSequenceOrder() == null || state == state.getParentState());
-        // TODO: test no duplicates in sequence order
-
         verifyAsInitialState(state);
         verifyAsFinalState(state);
+        
+        State parentState = state.getParentState();
+        assertTrue(state.getSequenceOrder() == null || state == parentState);
+        verifyAsParentState(state);
+        
         verifyStateActions(state);
         verifyStateActionAssignments(state);
         verifyStateActionNotifications(state);
@@ -197,6 +199,23 @@ public class WorkflowConfigurationHelper {
         }
     }
 
+    private void verifyAsParentState(State state) {
+        State parentState = state.getParentState();
+        
+        if (state == parentState) {
+            Integer sequenceIndex = 0;
+            
+            for (State childState : parentState.getChildStates()) {
+                Integer sequenceOrder = childState.getSequenceOrder();
+                
+                if (sequenceOrder != null) {
+                    assertNotSame(sequenceIndex, sequenceOrder);
+                    sequenceIndex = sequenceOrder;
+                }
+            }
+        }
+    }
+    
     private void verifyStateActions(State state) {
         Set<PrismAction> escalationActions = Sets.newHashSet();
 

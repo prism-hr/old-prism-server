@@ -157,7 +157,7 @@ public class SystemService {
             logger.info("Initialising system user");
             mailService.sendEmailNotification(systemUser, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
         }
-
+        
         entityService.flush();
     }
 
@@ -216,6 +216,7 @@ public class SystemService {
                     .withSequenceOrder(prismState.getSequenceOrder()).withScope(scope);
             entityService.createOrUpdate(transientState);
         }
+        
         for (PrismState prismState : PrismState.values()) {
             State childState = stateService.getById(prismState);
             State parentState = stateService.getById(PrismState.getParentState(prismState));

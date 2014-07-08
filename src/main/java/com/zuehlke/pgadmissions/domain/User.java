@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.beans.Transient;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;

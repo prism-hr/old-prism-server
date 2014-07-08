@@ -17,6 +17,8 @@ public class InstitutionAddressDTO {
     @NotEmpty
     private String addressTown;
 
+    private String addressDistrict;
+
     private String addressCode;
 
     public String getCountryId() {
@@ -57,6 +59,14 @@ public class InstitutionAddressDTO {
 
     public void setAddressTown(String addressTown) {
         this.addressTown = addressTown;
+    }
+
+    public String getAddressDistrict() {
+        return addressDistrict;
+    }
+
+    public void setAddressDistrict(String addressDistrict) {
+        this.addressDistrict = addressDistrict;
     }
 
     public String getAddressCode() {

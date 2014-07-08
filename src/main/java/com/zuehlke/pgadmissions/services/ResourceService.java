@@ -6,6 +6,7 @@ import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,5 +41,13 @@ public class ResourceService {
         InstitutionAddress address = new InstitutionAddress().withCountry(domicile).withAddressLine1(addressDTO.getAddressLine1()).withAddressLine2(addressDTO.getAddressLine2()).withAddressTown(addressDTO.getAddressTown()).withAddressCode(addressDTO.getAddressCode());
         return new Institution().withSystem(system).withUser(user).withName(institutionDTO.getName()).withHomepage(institutionDTO.getHomepage())
                 .withAddress(address);
+    }
+
+    public Resource createNewProgram(Institution institution, User user, ProgramDTO programDTO) {
+        return new Program().withInstitution(institution).withUser(user);
+    }
+
+    public Resource createNewApplication(Advert advert, User user) {
+        return new Application().withProgram(advert.getProgram()).withProject(advert.getProject()).withUser(user);
     }
 }

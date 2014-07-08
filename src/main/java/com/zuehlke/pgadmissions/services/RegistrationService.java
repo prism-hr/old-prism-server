@@ -4,19 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.System;
+import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.ResourceDynamic;
-import com.zuehlke.pgadmissions.domain.System;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -95,7 +90,10 @@ public class RegistrationService {
                 InstitutionDTO institutionDTO = registrationDetails.getNewInstitution();
                 return resourceService.createNewInstitution((System)parentResource, user, institutionDTO);
             case PROGRAM:
-                return new Program();
+                ProgramDTO programDTO = registrationDetails.getNewProgram();
+                return resourceService.createNewProgram((Institution)parentResource, user, programDTO);
+            case APPLICATION:
+                return resourceService.createNewApplication((Advert)parentResource, user);
             default:
                 throw new IllegalArgumentException(creationScope.name());
         }

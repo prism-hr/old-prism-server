@@ -17,10 +17,6 @@ public class InstitutionAddress {
     private Integer id;
     
     @ManyToOne
-    @JoinColumn(name = "institution_id", nullable = false)
-    private Institution institution;
-    
-    @ManyToOne
     @JoinColumn(name = "institution_domicile_id", nullable = false)
     private InstitutionDomicile country;
     
@@ -37,8 +33,8 @@ public class InstitutionAddress {
     @Column(name = "address_town", nullable = false)
     private String addressTown;
     
-    @Column(name = "address_region")
-    private String addressRegion;
+    @Column(name = "address_district")
+    private String addressDistrict;
     
     @Column(name = "address_code")
     private String addressCode;
@@ -49,14 +45,6 @@ public class InstitutionAddress {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Institution getInstitution() {
-        return institution;
-    }
-
-    public void setInstitution(Institution institution) {
-        this.institution = institution;
     }
 
     public InstitutionDomicile getCountry() {
@@ -99,12 +87,12 @@ public class InstitutionAddress {
         this.addressTown = addressTown;
     }
 
-    public String getAddressRegion() {
-        return addressRegion;
+    public String getAddressDistrict() {
+        return addressDistrict;
     }
 
-    public void setAddressRegion(String addressRegion) {
-        this.addressRegion = addressRegion;
+    public void setAddressRegion(String addressDistrict) {
+        this.addressDistrict = addressDistrict;
     }
 
     public String getAddressCode() {
@@ -113,11 +101,6 @@ public class InstitutionAddress {
 
     public void setAddressCode(String addressCode) {
         this.addressCode = addressCode;
-    }
-    
-    public InstitutionAddress withInstitution(Institution institution) {
-        this.institution = institution;
-        return this;
     }
     
     public InstitutionAddress withCountry(InstitutionDomicile country) {
@@ -145,8 +128,8 @@ public class InstitutionAddress {
         return this;
     }
     
-    public InstitutionAddress withAddressRegion(String addressRegion) {
-        this.addressRegion = addressRegion;
+    public InstitutionAddress withAddressDistrict(String addressDistrict) {
+        this.addressDistrict = addressDistrict;
         return this;
     }
     

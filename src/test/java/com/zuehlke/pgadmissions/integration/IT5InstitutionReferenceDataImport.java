@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;

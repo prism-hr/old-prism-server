@@ -105,12 +105,14 @@ public class SystemService {
     private UserService userService;
 
     public System getSystem() {
-        return entityService.getByProperty(System.class, "name", systemName);
+        return entityService.getByProperty(System.class, "code", systemName);
     }
 
     public System getOrCreateSystem(User systemUser) {
         State systemRunning = stateService.getById(PrismState.SYSTEM_APPROVED);
-        System transientSystem = new System().withCode(systemName).withUser(systemUser).withState(systemRunning);
+        DateTime startupTimestamp = new DateTime();
+        System transientSystem = new System().withCode(systemName).withUser(systemUser).withState(systemRunning).withCreatedTimestamp(startupTimestamp)
+                .withUpdatedTimestamp(startupTimestamp);
         return entityService.createOrUpdate(transientSystem);
     }
 

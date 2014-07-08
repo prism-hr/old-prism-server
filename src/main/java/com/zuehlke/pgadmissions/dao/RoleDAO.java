@@ -95,10 +95,9 @@ public class RoleDAO {
                 .setProjection(Projections.groupProperty("role")) //
                 .createAlias("stateTransition", "stateTransition", JoinType.INNER_JOIN) //
                 .createAlias("stateTransition.stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("stateAction.state", resource.getState())) //
                 .add(Restrictions.eq("stateAction.action", createAction)) //
-                .add(Restrictions.eq("type", PrismRoleTransitionType.CREATE)) //
-                .add(Restrictions.eq("restrictToInvoker", true)).uniqueResult();
+                .add(Restrictions.eq("roleTransitionType", PrismRoleTransitionType.CREATE)) //
+                .add(Restrictions.eq("restrictToActionOwner", true)).uniqueResult();
     }
 
     @SuppressWarnings("unchecked")

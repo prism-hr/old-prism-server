@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.System;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,7 +80,8 @@ public class RegistrationService {
             if (createActionPattern.matcher(registrationAction.name()).matches()) {
                 resource = createResource(resource, user, registrationAction.getCreationScope(), registrationDetails);
             }
-            Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime());
+            Action action = entityService.getByProperty(Action.class, "id", registrationAction);
+            Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false);
             ActionOutcome actionOutcome = actionService.executeAction((ResourceDynamic) resource, registrationAction, comment);
             resource = actionOutcome.getResource();
         } else {

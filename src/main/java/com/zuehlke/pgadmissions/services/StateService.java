@@ -85,7 +85,6 @@ public class StateService {
         return stateDAO.getStateDuration(resource, state);
     }
     
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public StateTransition executeStateTransition(Resource operativeResource, ResourceDynamic resource, Action action, Comment comment) {
         StateTransition stateTransition = getStateTransition(operativeResource, action, comment);
 
@@ -108,7 +107,7 @@ public class StateService {
         if (stateTransition.getPropagatedActions().size() > 0) {
             entityService.save(new StateTransitionPending().withResource(operativeResource).withStateTransition(stateTransition));
         }
-        
+
         if (stateTransition.getStateAction().isPostComment()) {
             entityService.save(comment);
         }
@@ -225,6 +224,7 @@ public class StateService {
 
     private void createResource(Resource operativeResource, ResourceDynamic resource, Action createAction, Comment comment) {
         resource.setParentResource(operativeResource);
+        resource.setCreatedTimestamp(new DateTime());
         entityService.save(resource);
         resource.setCode(resource.generateCode());
         comment.setRole(roleService.getResourceCreatorRole(resource, createAction).getAuthority().toString());

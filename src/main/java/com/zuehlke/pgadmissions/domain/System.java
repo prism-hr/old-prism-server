@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -13,7 +14,10 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Indexed;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -32,12 +36,28 @@ public class System extends Resource {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "name", nullable = false, unique = true)
-    private String name;
+    @Column(name = "code", nullable = false, unique = true)
+    private String code;
 
     @ManyToOne
     @JoinColumn(name = "state_id", nullable = false)
     private State state;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "previous_state_id", nullable = true)
+    private State previousState;
+
+    @Column(name = "due_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate dueDate;
+
+    @Column(name = "created_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdTimestamp;
+
+    @Column(name = "updated_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime updatedTimestamp;
     
     @Override
     public Integer getId() {
@@ -49,16 +69,8 @@ public class System extends Resource {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public System withName(String name) {
-        this.name = name;
+    public System withCode(String code) {
+        this.code = code;
         return this;
     }
     
@@ -134,12 +146,67 @@ public class System extends Resource {
     }
 
     @Override
+    public State getPreviousState() {
+        return previousState;
+    }
+
+    @Override
+    public void setPreviousState(State previousState) {
+        this.previousState = previousState;
+    }
+
+    @Override
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    @Override
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    @Override
+    public String getCode() {
+        return code;
+    }
+
+    @Override
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    @Override
+    public String generateCode() {
+        return "PRiSM";
+    }
+
+    @Override
+    public DateTime getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    @Override
+    public void setCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+    }
+
+    @Override
+    public DateTime getUpdatedTimestamp() {
+        return updatedTimestamp;
+    }
+
+    @Override
+    public void setUpdatedTimestamp(DateTime updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
+    }
+
+    @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
         HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("name", name);
+        properties.put("code", code);
         propertiesWrapper.add(properties);
         return new ResourceSignature(propertiesWrapper);
     }
-
+    
 }

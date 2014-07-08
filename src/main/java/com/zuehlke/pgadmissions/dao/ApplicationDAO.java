@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.Criteria;
@@ -13,8 +13,13 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
-import java.util.List;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Repository
 @SuppressWarnings("unchecked")

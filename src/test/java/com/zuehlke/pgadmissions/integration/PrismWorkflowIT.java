@@ -1,18 +1,9 @@
 package com.zuehlke.pgadmissions.integration;
 
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
-import com.zuehlke.pgadmissions.integration.providers.ApplicationTestDataProvider;
-import com.zuehlke.pgadmissions.mail.MailSenderMock;
-import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
-import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
-import com.zuehlke.pgadmissions.services.*;
-import com.zuehlke.pgadmissions.services.importers.EntityImportService;
-import com.zuehlke.pgadmissions.timers.XMLDataImportTask;
+import static org.junit.Assert.assertEquals;
+
+import java.beans.Introspector;
+
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,9 +13,32 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.beans.Introspector;
-
-import static org.junit.Assert.assertEquals;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.integration.providers.ApplicationTestDataProvider;
+import com.zuehlke.pgadmissions.mail.MailSenderMock;
+import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
+import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.CommentService;
+import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.services.ProgramService;
+import com.zuehlke.pgadmissions.services.RegistrationService;
+import com.zuehlke.pgadmissions.services.ReviewService;
+import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.importers.EntityImportService;
+import com.zuehlke.pgadmissions.timers.XMLDataImportTask;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")

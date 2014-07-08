@@ -13,7 +13,6 @@ import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
@@ -81,7 +80,7 @@ public class RegistrationService {
             }
             Action action = entityService.getByProperty(Action.class, "id", registrationAction);
             Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false);
-            ActionOutcome actionOutcome = actionService.executeAction((ResourceDynamic) resource, registrationAction, comment);
+            ActionOutcome actionOutcome = actionService.executeAction((Resource) resource, registrationAction, comment);
             resource = actionOutcome.getResource();
         } else {
             resource = systemService.getSystem();

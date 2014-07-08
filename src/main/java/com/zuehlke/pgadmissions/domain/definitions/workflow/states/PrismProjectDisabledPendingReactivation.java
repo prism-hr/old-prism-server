@@ -21,8 +21,7 @@ public class PrismProjectDisabledPendingReactivation extends PrismWorkflowState 
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_CONCLUDE) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-            .withPostComment(true) //
+            .withDefaultAction(false) // //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DISABLED_COMPLETED) // 
@@ -38,8 +37,7 @@ public class PrismProjectDisabledPendingReactivation extends PrismWorkflowState 
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_CONFIGURE) //
             .withRaisesUrgentFlag(true) //
-            .withDefaultAction(true) //
-            .withPostComment(true) //
+            .withDefaultAction(true) // //
             .withNotificationTemplate(PrismNotificationTemplate.PROJECT_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
@@ -189,8 +187,7 @@ public class PrismProjectDisabledPendingReactivation extends PrismWorkflowState 
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_ESCALATE) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-            .withPostComment(true) //
+            .withDefaultAction(false) // //
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
@@ -214,8 +211,7 @@ public class PrismProjectDisabledPendingReactivation extends PrismWorkflowState 
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_SUSPEND) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-            .withPostComment(true) //
+            .withDefaultAction(false) // //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DISABLED_PENDING_PROGRAM_REACTIVATION) // 
@@ -224,14 +220,12 @@ public class PrismProjectDisabledPendingReactivation extends PrismWorkflowState 
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_VIEW) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-            .withPostComment(false)); //
+            .withDefaultAction(false)); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_VIEW_APPLICATION_LIST) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-            .withPostComment(false));
+            .withDefaultAction(false));
     }
 
 }

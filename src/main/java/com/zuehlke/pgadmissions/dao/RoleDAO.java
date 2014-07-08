@@ -1,11 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import java.util.List;
+import java.util.Set;
+
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
@@ -16,8 +13,19 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Set;
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.RoleTransition;
+import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.StateTransition;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 @Repository
 public class RoleDAO {
@@ -89,16 +97,17 @@ public class RoleDAO {
                 .addOrder(Order.asc("processingOrder")) //
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
-
-    // TODO: fix query to work property for creator role
+    
     public Role getResourceCreatorRole(Resource resource, Action createAction) {
         return (Role) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
                 .setProjection(Projections.groupProperty("role")) //
                 .createAlias("stateTransition", "stateTransition", JoinType.INNER_JOIN) //
                 .createAlias("stateTransition.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.action", createAction)) //
+                .add(Restrictions.eq("stateAction.state", resource.getState())) //
                 .add(Restrictions.eq("roleTransitionType", PrismRoleTransitionType.CREATE)) //
-                .add(Restrictions.eq("restrictToActionOwner", true)).uniqueResult();
+                .add(Restrictions.eq("restrictToActionOwner", true)) //
+                .uniqueResult();
     }
 
     @SuppressWarnings("unchecked")
@@ -160,7 +169,7 @@ public class RoleDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public HashMultimap<RoleTransition, User> getRoleTransitionUsers(StateTransition stateTransition, Resource resource, User invoker) {
+    public HashMultimap<RoleTransition, User> getRoleUpdateUsers(StateTransition stateTransition, Resource resource, User invoker) {
         List<RoleTransition> roleTransitions = (List<RoleTransition>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
                 .add(Restrictions.eq("stateTransition", stateTransition)) //
                 .add(Restrictions.ne("roleTransitionType", PrismRoleTransitionType.CREATE)) //

@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 @Entity
 @Table(name = "APPLICATION")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Application extends ResourceDynamic {
+public class Application extends Resource {
 
     @Id
     @GeneratedValue

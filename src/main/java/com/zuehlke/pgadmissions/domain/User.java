@@ -45,7 +45,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Entity
 @Table(name = "USER")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class User implements UserDetails, Comparable<User>, IUniqueResource {
+public class User implements UserDetails, Comparable<User>, IUniqueEntity {
 
     private static final long serialVersionUID = 7913035836949510857L;
 

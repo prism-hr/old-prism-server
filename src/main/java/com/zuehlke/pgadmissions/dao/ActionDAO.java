@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
@@ -30,8 +29,8 @@ public class ActionDAO {
     @Autowired
     private SessionFactory sessionFactory;
     
-    public PrismAction getValidAction(Resource resource, PrismAction action) {
-        return (PrismAction) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+    public Action getValidAction(Resource resource, Action action) {
+        return (Action) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action.id")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
@@ -78,8 +77,8 @@ public class ActionDAO {
                 .uniqueResult();
     }
     
-    public PrismAction getPermittedAction(Resource resource, Action action, User user) {
-        return (PrismAction) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+    public Action getPermittedAction(Resource resource, Action action, User user) {
+        return (Action) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action.id")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
@@ -125,7 +124,7 @@ public class ActionDAO {
                 .list();
     }
     
-    public List<PrismRedactionType> getRedactions(User user, ResourceDynamic resource, Action action) {
+    public List<PrismRedactionType> getRedactions(User user, Resource resource, Action action) {
         return (List<PrismRedactionType>) sessionFactory.getCurrentSession().createCriteria(ActionRedaction.class)
                 .setProjection(Projections.groupProperty("redactionType")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //

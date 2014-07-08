@@ -29,10 +29,10 @@ import com.zuehlke.pgadmissions.domain.FilterConstraint;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.ApplicationListFilterCategory;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationListFilterCategory.CategoryType;
 import com.zuehlke.pgadmissions.domain.definitions.ApplicationListSortCategory;
 import com.zuehlke.pgadmissions.domain.definitions.ResourceListSearchPredicate;
 import com.zuehlke.pgadmissions.domain.definitions.ResourceListSortOrder;
-import com.zuehlke.pgadmissions.domain.definitions.ApplicationListFilterCategory.CategoryType;
 
 @Repository
 public class ApplicationFormListDAO {

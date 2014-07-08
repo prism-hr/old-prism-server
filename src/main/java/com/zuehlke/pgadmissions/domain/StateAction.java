@@ -24,7 +24,7 @@ import com.google.common.collect.Sets;
 @Entity
 @Table(name = "STATE_ACTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_id", "action_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class StateAction implements IUniqueResource {
+public class StateAction implements IUniqueEntity {
 
     @Id
     @GeneratedValue
@@ -43,9 +43,6 @@ public class StateAction implements IUniqueResource {
     
     @Column(name = "is_default_action", nullable = false)
     private boolean defaultAction;
-    
-    @Column(name = "do_post_comment", nullable = false)
-    private boolean postComment;
 
     @ManyToOne
     @JoinColumn(name = "notification_template_id")
@@ -99,15 +96,7 @@ public class StateAction implements IUniqueResource {
     public void setDefaultAction(boolean defaultAction) {
         this.defaultAction = defaultAction;
     }
-
-    public boolean isPostComment() {
-        return postComment;
-    }
-
-    public void setPostComment(boolean postComment) {
-        this.postComment = postComment;
-    }
-
+    
     public NotificationTemplate getNotificationTemplate() {
         return notificationTemplate;
     }
@@ -149,11 +138,6 @@ public class StateAction implements IUniqueResource {
     
     public StateAction withDefaultAction(boolean defaultAction) {
         this.defaultAction = defaultAction;
-        return this;
-    }
-    
-    public StateAction withPostComment(boolean postComment) {
-        this.postComment = postComment;
         return this;
     }
     

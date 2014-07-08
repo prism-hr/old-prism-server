@@ -24,7 +24,6 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
             .withAction(PrismAction.APPLICATION_COMMENT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -71,7 +70,6 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
             .withAction(PrismAction.APPLICATION_COMPLETE_INTERVIEW_STAGE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -273,7 +271,6 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
             .withAction(PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -384,7 +381,6 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
             .withAction(PrismAction.APPLICATION_EMAIL_CREATOR) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -417,7 +413,6 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
             .withAction(PrismAction.APPLICATION_ESCALATE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(false) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_INTERVIEW_PENDING_SCHEDULING) // 
@@ -427,7 +422,6 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
             .withAction(PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
             .withNotificationTemplate(PrismNotificationTemplate.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
@@ -475,7 +469,6 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
             .withAction(PrismAction.APPLICATION_PROVIDE_REFERENCE) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
             .withNotificationTemplate(PrismNotificationTemplate.APPLICATION_PROVIDE_REFERENCE_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
@@ -514,7 +507,6 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
             .withAction(PrismAction.APPLICATION_TERMINATE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.APPLICATION_CREATOR) // 
@@ -595,7 +587,6 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
             .withAction(PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_INTERVIEWEE), // 
@@ -622,7 +613,6 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
-            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR) // 
@@ -741,7 +731,6 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
             .withAction(PrismAction.APPLICATION_WITHDRAW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_CREATOR))) //

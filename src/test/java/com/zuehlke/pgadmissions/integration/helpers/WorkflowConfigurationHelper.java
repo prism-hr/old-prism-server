@@ -248,7 +248,7 @@ public class WorkflowConfigurationHelper {
             verifyStateTransitions(stateAction);
         }
 
-        if (systemService.getStateDuration(state) != null) {
+        if (stateService.getStateDuration(systemService.getSystem(), state) != null) {
             assertFalse(escalationActions.isEmpty());
         }
 
@@ -282,6 +282,7 @@ public class WorkflowConfigurationHelper {
             verifyRoleTransitions(stateTransition);
 
             if (!stateTransition.getPropagatedActions().isEmpty()) {
+                assertFalse(action.isCreationAction());
                 propagatingStateTransitions.add(stateTransition);
             }
         }
@@ -324,9 +325,8 @@ public class WorkflowConfigurationHelper {
 
     private void verifyPropagatedActions() {
         for (StateTransition stateTransition : propagatingStateTransitions) {
-
             Scope propagatingScope = stateTransition.getStateAction().getState().getScope();
-
+            
             Set<PrismScope> parentScopes = actualParentScopes.get(propagatingScope.getId());
             Set<PrismScope> childScopes = actualChildScopes.get(propagatingScope.getId());
 

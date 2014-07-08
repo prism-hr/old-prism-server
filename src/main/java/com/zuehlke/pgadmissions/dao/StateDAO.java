@@ -18,9 +18,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.IUniqueResource;
+import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
@@ -33,14 +32,13 @@ import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Repository
 @SuppressWarnings("unchecked")
 public class StateDAO {
 
-    private static final Set<Class<? extends IUniqueResource>> workflowConfigurationClasses = Sets.newLinkedHashSet();
+    private static final Set<Class<? extends IUniqueEntity>> workflowConfigurationClasses = Sets.newLinkedHashSet();
     
     static {
         workflowConfigurationClasses.add(RoleTransition.class);
@@ -81,9 +79,9 @@ public class StateDAO {
                 .uniqueResult();
     }
 
-    public StateDuration getCurrentStateDuration(ResourceDynamic resource) {
+    public StateDuration getStateDuration(Resource resource, State state) {
         return (StateDuration) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
-                .add(Restrictions.eq("state", resource.getState())) //
+                .add(Restrictions.eq("state", state)) //
                 .add(Restrictions.disjunction()
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.eq("system", resource.getSystem())) //
@@ -97,13 +95,6 @@ public class StateDAO {
                 .addOrder(Order.desc("institution")) //
                 .addOrder(Order.desc("program")) //
                 .setMaxResults(1) //
-                .uniqueResult();
-    }
-    
-    public StateDuration getStateDuration(Resource resource, State state) {
-        return (StateDuration) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
-                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource))
-                .add(Restrictions.eq("state", state)) //
                 .uniqueResult();
     }
     
@@ -124,8 +115,8 @@ public class StateDAO {
         return pendingStateTransitions;
     }
     
-    public HashMultimap<Action, ResourceDynamic> getPropagatedStateTransitions(StateTransitionPending pendingStateTransition) {
-        HashMultimap<Action, ResourceDynamic> propagations = HashMultimap.create();
+    public HashMultimap<Action, Resource> getPropagatedStateTransitions(StateTransitionPending pendingStateTransition) {
+        HashMultimap<Action, Resource> propagations = HashMultimap.create();
         for (Action propagateAction : pendingStateTransition.getStateTransition().getPropagatedActions()) {
             String propagateResourceName = propagateAction.getScope().getId().getLowerCaseName();
             String propagateResourceReference = propagateResourceName;
@@ -146,7 +137,7 @@ public class StateDAO {
         return propagations;
     }
 
-    public HashMultimap<Action, ResourceDynamic> getEscalatedStateTransitions() {
+    public HashMultimap<Action, Resource> getEscalatedStateTransitions() {
         List<Action> escalateActions = sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
@@ -155,7 +146,7 @@ public class StateDAO {
                 .addOrder(Order.desc("scope.precedence")) //
                 .list();
 
-        HashMultimap<Action, ResourceDynamic> escalations = HashMultimap.create();
+        HashMultimap<Action, Resource> escalations = HashMultimap.create();
         for (Action escalateAction : escalateActions) {
             
             escalations.putAll(escalateAction, sessionFactory.getCurrentSession() //
@@ -171,7 +162,7 @@ public class StateDAO {
     }
 
     public void deleteStateActions() {
-        for (Class<? extends IUniqueResource> workflowConfigurationClass : workflowConfigurationClasses) {
+        for (Class<? extends IUniqueEntity> workflowConfigurationClass : workflowConfigurationClasses) {
             sessionFactory.getCurrentSession().createQuery( //
                     "delete " + workflowConfigurationClass.getSimpleName()) //
                     .executeUpdate();

@@ -10,7 +10,6 @@ import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateTransition;
@@ -46,20 +45,21 @@ public class ActionService {
         return entityService.getByProperty(Action.class, "id", id);
     }
 
+    public void validateAction(Resource resource, Action action, User actionOwner, User delegateOwner) {
+        Resource operative = action.isCreationAction() ? resource.getParentResource() : resource;
+        if (delegateOwner == null && checkActionAvailable(operative, action, actionOwner)) {
+            return;
+        } else if (delegateOwner != null && checkActionAvailable(operative, action, delegateOwner)) {
+            return;
+        } else if (delegateOwner != null && checkDelegateActionAvailable(operative, action, delegateOwner)) {
+            return;
+        }
+        throw new CannotExecuteActionException(operative, action);
+    }
+    
     public void validateAction(Resource resource, PrismAction actionId, User actionOwner) {
         Action action = getById(actionId);
         validateAction(resource, action, actionOwner, null);
-    }
-
-    public void validateAction(Resource resource, Action action, User actionOwner, User delegateOwner) {
-        if (delegateOwner == null && checkActionAvailable(resource, action, actionOwner)) {
-            return;
-        } else if (delegateOwner != null && checkActionAvailable(resource, action, delegateOwner)) {
-            return;
-        } else if (delegateOwner != null && checkDelegateActionAvailable(resource, action, delegateOwner)) {
-            return;
-        }
-        throw new CannotExecuteActionException(resource, action);
     }
 
     public boolean checkActionAvailable(Resource resource, Action action, User invoker) {
@@ -76,24 +76,22 @@ public class ActionService {
     }
 
     public ActionOutcome executeAction(Integer resourceId, PrismAction actionId, Comment comment) {
-        ResourceDynamic resource = (ResourceDynamic) entityService.getById(actionId.getScope().getResourceClass(), resourceId);
+        Resource resource = (Resource) entityService.getById(actionId.getScope().getResourceClass(), resourceId);
         Action action = getById(actionId);
         return executeAction(resource, action, comment);
     }
 
-    public ActionOutcome executeAction(ResourceDynamic resource, PrismAction actionId, Comment comment) {
+    public ActionOutcome executeAction(Resource resource, PrismAction actionId, Comment comment) {
         Action action = getById(actionId);
         return executeAction(resource, action, comment);
     }
 
-    public ActionOutcome executeAction(ResourceDynamic resource, Action action, Comment comment) {
-        Resource operativeResource = action.isCreationAction() ? resource.getParentResource() : resource;
-        validateAction(operativeResource, action, comment.getUser(), comment.getDelegateUser());
-
+    public ActionOutcome executeAction(Resource resource, Action action, Comment comment) {
+        validateAction(resource, action, comment.getUser(), comment.getDelegateUser());
         User actionOwner = comment.getUser();
 
         if (action.getCreationScope() != null) {
-            ResourceDynamic duplicateResource = entityService.getDuplicateEntity(resource);
+            Resource duplicateResource = entityService.getDuplicateEntity(resource);
             if (duplicateResource != null) {
                 Action redirectAction = actionDAO.getRedirectAction(duplicateResource, actionOwner);
                 comment = new Comment().withResource(duplicateResource).withUser(actionOwner).withAction(redirectAction);
@@ -101,21 +99,21 @@ public class ActionService {
             }
         }
 
-        StateTransition stateTransition = stateService.executeStateTransition(operativeResource, resource, action, comment);
-        PrismAction transitionAction = stateTransition.getTransitionAction().getId();
-        Resource nextActionResource = resource.getEnclosingResource(transitionAction.getScope());
+        StateTransition stateTransition = stateService.executeStateTransition(resource, action, comment);
+        Action transitionAction = stateTransition == null ? action : stateTransition.getTransitionAction();
+        Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
-        return new ActionOutcome(actionOwner, nextActionResource, transitionAction);
+        return new ActionOutcome(actionOwner, transitionResource, transitionAction);
     }
 
-    public List<PrismRedactionType> getRedactions(User user, ResourceDynamic resource, Action action) {
+    public List<PrismRedactionType> getRedactions(User user, Resource resource, Action action) {
         return actionDAO.getRedactions(user, resource, action);
     }
 
     public List<Action> getActions() {
         return entityService.list(Action.class);
     }
-    
+
     public List<Action> getCreationActions(State state, Scope scope) {
         return actionDAO.getCreationActions(state, scope);
     }

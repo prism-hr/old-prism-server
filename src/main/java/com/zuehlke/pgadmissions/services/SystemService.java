@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTime;
@@ -56,7 +55,7 @@ import com.zuehlke.pgadmissions.mail.MailService;
 @Service
 @Transactional(timeout = 120)
 public class SystemService {
-    
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final String EMAIL_DEFAULT_SUBJECT_DIRECTORY = "email/subject/";
@@ -111,45 +110,37 @@ public class SystemService {
 
     public System getOrCreateSystem(User systemUser) {
         State systemRunning = stateService.getById(PrismState.SYSTEM_APPROVED);
-        System transientSystem = new System().withName(systemName).withUser(systemUser).withState(systemRunning);
+        System transientSystem = new System().withCode(systemName).withUser(systemUser).withState(systemRunning);
         return entityService.createOrUpdate(transientSystem);
-    }
-
-    public List<Configuration> getConfigurations() {
-        return configurationService.getConfigurations(getSystem());
-    }
-
-    public StateDuration getStateDuration(State state) {
-        return stateService.getStateDuration(getSystem(), state);
     }
 
     public void initialiseSystem() {
         logger.info("Initialising scope definitions");
         initialiseScopes();
-        
+
         logger.info("Initialising role definitions");
         initialiseRoles();
-        
+
         logger.info("Initialising action definitions");
         initialiseActions();
-        
+
         logger.info("Initialising state definitions");
         initialiseStates();
 
-        logger.info("Initialisting system");
+        logger.info("Initialising system");
         User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail);
         System system = getOrCreateSystem(systemUser);
         roleService.getOrCreateUserRole(system, systemUser, PrismRole.SYSTEM_ADMINISTRATOR);
 
         logger.info("Initialising configuration definitions");
         initialiseConfigurations(system);
-        
+
         logger.info("Initialising notification definitions");
         initialiseNotificationTemplates(system);
-        
+
         logger.info("Initialising state duration definitions");
         initialiseStateDurations(system);
-        
+
         logger.info("Initialising workflow definitions");
         initialiseStateActions();
 
@@ -157,7 +148,7 @@ public class SystemService {
             logger.info("Initialising system user");
             mailService.sendEmailNotification(systemUser, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
         }
-        
+
         entityService.flush();
         entityService.clear();
     }
@@ -195,8 +186,8 @@ public class SystemService {
         for (PrismAction prismAction : PrismAction.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismAction.getScope());
             Scope creationScope = entityService.getByProperty(Scope.class, "id", prismAction.getCreationScope());
-            Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType()).withScope(scope)
-                    .withCreationScope(creationScope);
+            Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType()).withSaveComment(prismAction.isSaveComment())
+                    .withScope(scope).withCreationScope(creationScope);
             Action action = entityService.createOrUpdate(transientAction);
             action.getRedactions().clear();
 
@@ -217,7 +208,7 @@ public class SystemService {
                     .withSequenceOrder(prismState.getSequenceOrder()).withScope(scope);
             entityService.createOrUpdate(transientState);
         }
-        
+
         for (PrismState prismState : PrismState.values()) {
             State childState = stateService.getById(prismState);
             State parentState = stateService.getById(PrismState.getParentState(prismState));
@@ -290,9 +281,8 @@ public class SystemService {
                 for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
                     Action action = actionService.getById(prismStateAction.getAction());
                     NotificationTemplate template = notificationService.getById(prismStateAction.getNotificationTemplate());
-                    StateAction stateAction = new StateAction().withState(state).withAction(action)
-                            .withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag()).withDefaultAction(prismStateAction.isDefaultAction())
-                            .withPostComment(prismStateAction.isPostComment()).withNotificationTemplate(template);
+                    StateAction stateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag())
+                            .withDefaultAction(prismStateAction.isDefaultAction()).withNotificationTemplate(template);
                     entityService.save(stateAction);
                     state.getStateActions().add(stateAction);
 
@@ -341,8 +331,7 @@ public class SystemService {
         for (PrismStateActionNotification prismNotification : prismStateAction.getNotifications()) {
             Role role = roleService.getById(prismNotification.getRole());
             NotificationTemplate template = notificationService.getById(prismNotification.getTemplate());
-            StateActionNotification notification = new StateActionNotification().withStateAction(stateAction).withRole(role)
-                    .withNotificationTemplate(template);
+            StateActionNotification notification = new StateActionNotification().withStateAction(stateAction).withRole(role).withNotificationTemplate(template);
             entityService.save(notification);
             stateAction.getStateActionNotifications().add(notification);
         }

@@ -11,12 +11,12 @@ import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
-import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 

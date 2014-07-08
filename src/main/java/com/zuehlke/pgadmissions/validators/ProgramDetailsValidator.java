@@ -13,8 +13,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
 import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.services.ProgramService;
 
 @Component

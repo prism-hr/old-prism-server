@@ -15,7 +15,6 @@ public class PrismProgramWithdrawn extends PrismWorkflowState {
             .withAction(PrismAction.PROGRAM_VIEW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
-            .withPostComment(false)
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 

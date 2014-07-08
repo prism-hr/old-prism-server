@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionEnha
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -76,6 +77,9 @@ public class SystemInitialisationHelper {
 
     @Autowired
     private ActionService actionService;
+    
+    @Autowired
+    private ConfigurationService configurationService;
 
     @Autowired
     private EntityService entityService;
@@ -126,6 +130,7 @@ public class SystemInitialisationHelper {
     public void verifyActionCreation() {
         for (Action action : actionService.getActions()) {
             assertEquals(action.getId().getActionType(), action.getActionType());
+            assertEquals(action.getId().isSaveComment(), action.isSaveComment());
             assertEquals(action.getId().getScope(), action.getScope().getId());
             assertEquals(action.getId().getCreationScope(), action.getCreationScope() == null ? null : action.getCreationScope().getId());
 
@@ -153,7 +158,8 @@ public class SystemInitialisationHelper {
     }
 
     public void verifyConfigurationCreation() {
-        for (Configuration configuration : systemService.getConfigurations()) {
+        System system = systemService.getSystem();
+        for (Configuration configuration : configurationService.getConfigurations(system)) {
             assertEquals(configuration.getParameter().getDefaultValue(), configuration.getValue());
         }
     }
@@ -197,8 +203,9 @@ public class SystemInitialisationHelper {
     }
 
     public void verifyStateDurationCreation() {
+        System system = systemService.getSystem();
         for (State state : stateService.getConfigurableStates()) {
-            assertEquals(state.getId().getDuration(), systemService.getStateDuration(state).getDuration());
+            assertEquals(state.getId().getDuration(), stateService.getStateDuration(system, state).getDuration());
         }
     }
 
@@ -216,7 +223,6 @@ public class SystemInitialisationHelper {
             assertNotNull(prismStateAction);
             assertEquals(prismStateAction.isRaisesUrgentFlag(), stateAction.isRaisesUrgentFlag());
             assertEquals(prismStateAction.isDefaultAction(), stateAction.isDefaultAction());
-            assertEquals(prismStateAction.isPostComment(), stateAction.isPostComment());
 
             NotificationTemplate template = stateAction.getNotificationTemplate();
             PrismNotificationTemplate prismTemplate = prismStateAction.getNotificationTemplate();

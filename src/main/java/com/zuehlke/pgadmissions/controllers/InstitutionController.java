@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import com.zuehlke.pgadmissions.services.EntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +22,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.HibernateProxyTypeAdapter;

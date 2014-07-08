@@ -24,7 +24,6 @@ public class PrismApplicationRejected extends PrismWorkflowState {
             .withAction(PrismAction.APPLICATION_COMMENT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_VIEWER_RECRUITER), // 
@@ -69,7 +68,6 @@ public class PrismApplicationRejected extends PrismWorkflowState {
             .withAction(PrismAction.APPLICATION_CONFIRM_REJECTION) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
             .withNotificationTemplate(PrismNotificationTemplate.APPLICATION_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
@@ -127,7 +125,6 @@ public class PrismApplicationRejected extends PrismWorkflowState {
             .withAction(PrismAction.APPLICATION_EMAIL_CREATOR) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_REFEREE), // 
@@ -154,7 +151,6 @@ public class PrismApplicationRejected extends PrismWorkflowState {
             .withAction(PrismAction.APPLICATION_MOVE_TO_DIFFERENT_STAGE) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
             .withNotificationTemplate(PrismNotificationTemplate.APPLICATION_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
@@ -232,7 +228,6 @@ public class PrismApplicationRejected extends PrismWorkflowState {
             .withAction(PrismAction.APPLICATION_PROVIDE_REFERENCE) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
             .withNotificationTemplate(PrismNotificationTemplate.APPLICATION_PROVIDE_REFERENCE_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
@@ -271,7 +266,6 @@ public class PrismApplicationRejected extends PrismWorkflowState {
             .withAction(PrismAction.APPLICATION_TERMINATE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.APPLICATION_CREATOR) // 
@@ -302,7 +296,6 @@ public class PrismApplicationRejected extends PrismWorkflowState {
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
-            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_CREATOR) // 
@@ -378,7 +371,6 @@ public class PrismApplicationRejected extends PrismWorkflowState {
             .withAction(PrismAction.APPLICATION_WITHDRAW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_CREATOR))) //

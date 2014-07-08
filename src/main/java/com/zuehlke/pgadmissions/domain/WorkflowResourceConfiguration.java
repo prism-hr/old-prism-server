@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
-public abstract class WorkflowResourceConfiguration implements IUniqueResource {
+public abstract class WorkflowResourceConfiguration implements IUniqueEntity {
 
     public abstract System getSystem();
     

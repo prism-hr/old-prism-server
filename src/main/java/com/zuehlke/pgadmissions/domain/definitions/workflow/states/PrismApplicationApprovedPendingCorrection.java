@@ -21,7 +21,6 @@ public class PrismApplicationApprovedPendingCorrection extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_COMMENT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR), // 
@@ -67,7 +66,6 @@ public class PrismApplicationApprovedPendingCorrection extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_CORRECT) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
             .withNotificationTemplate(PrismNotificationTemplate.APPLICATION_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
@@ -90,7 +88,6 @@ public class PrismApplicationApprovedPendingCorrection extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_EMAIL_CREATOR) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR), // 
@@ -119,7 +116,6 @@ public class PrismApplicationApprovedPendingCorrection extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_ESCALATE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(false) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVED_COMPLETED) // 
@@ -129,7 +125,6 @@ public class PrismApplicationApprovedPendingCorrection extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
-            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_CREATOR) // 

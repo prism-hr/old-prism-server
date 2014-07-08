@@ -6,22 +6,22 @@ import org.hibernate.Hibernate;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
 public class ActionOutcome {
 
     private User user;
 
-    private Resource resource;
+    private Resource transitionResource;
 
-    private PrismAction nextAction;
+    private Action transitionAction;
 
-    public ActionOutcome(User user, Resource resource, PrismAction nextAction) {
+    public ActionOutcome(User user, Resource transitionResource, Action transitionAction) {
         this.user = user;
-        this.resource = resource;
-        this.nextAction = nextAction;
+        this.transitionResource = transitionResource;
+        this.transitionAction = transitionAction;
     }
 
     public User getUser() {
@@ -29,19 +29,18 @@ public class ActionOutcome {
     }
 
     public Resource getResource() {
-        Hibernate.initialize(resource);
-        return resource;
+        Hibernate.initialize(transitionResource);
+        return transitionResource;
     }
 
-    public PrismAction getNextAction() {
-        return nextAction;
+    public Action getNextAction() {
+        return transitionAction;
     }
 
     public String createRedirectionUrl() {
         Map<String, String> params = Maps.newLinkedHashMap();
-        params.put("resource", resource.getId().toString());
-        params.put("action", nextAction.name());
-
+        params.put("resource", transitionResource.getId().toString());
+        params.put("action", transitionAction.getId().toString());
         return "redirect:/execute?" + Joiner.on("&").withKeyValueSeparator("=").join(params);
     }
 

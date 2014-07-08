@@ -1,14 +1,6 @@
 package com.zuehlke.pgadmissions.rest.domain.application;
 
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.QualificationType;
-import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
-import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
-
-import javax.persistence.*;
 
 public class QualificationRepresentation {
 

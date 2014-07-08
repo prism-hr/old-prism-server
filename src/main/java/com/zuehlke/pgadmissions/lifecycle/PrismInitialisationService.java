@@ -1,14 +1,15 @@
 package com.zuehlke.pgadmissions.lifecycle;
 
-import com.zuehlke.pgadmissions.services.FullTextSearchService;
-import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.services.importers.InstitutionDomicileImportService;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.zuehlke.pgadmissions.services.FullTextSearchService;
+import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.importers.InstitutionDomicileImportService;
 
 @Service
 public class PrismInitialisationService implements InitializingBean {

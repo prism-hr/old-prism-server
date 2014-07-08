@@ -3,8 +3,3 @@ ALTER TABLE INSTITUTION_ADDRESS
 	DROP FOREIGN KEY institution_address_ibfk_1,
 	DROP COLUMN institution_id
 ;
-
-ALTER TABLE INSTITUTION
-	DROP FOREIGN KEY institution_ibfk_6,
-	DROP COLUMN institution_domicile_id
-;

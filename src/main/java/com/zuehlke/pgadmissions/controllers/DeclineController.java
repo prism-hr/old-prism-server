@@ -52,13 +52,13 @@ public class DeclineController {
 
 	@RequestMapping(value = "/reference", method = RequestMethod.GET)
 	public String declineReference(@RequestParam String activationCode, @RequestParam String applicationId, @RequestParam(required = false) String confirmation, ModelMap modelMap) {
-	    Application applicationForm = getApplicationForm(applicationId);
-	    ApplicationReferee referee = getReferee(activationCode, applicationForm);
+	    Application application = getApplicationForm(applicationId);
+	    ApplicationReferee referee = getReferee(activationCode, application);
 	    User user = userService.getUserByActivationCode(activationCode);
 	    
 	    // TOTO: comment posting
 	    Action action = actionService.getById(PrismAction.APPLICATION_PROVIDE_REFERENCE);
-	    actionService.validateAction((Resource) applicationForm, action, referee.getUser(), null);
+	    actionService.validateAction((Resource) application, action, referee.getUser(), null);
 	    
 	    if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
 	        // the user clicked on "Confirm"
@@ -70,9 +70,9 @@ public class DeclineController {
 	    } else if (StringUtils.equalsIgnoreCase(confirmation, "Cancel")) {
 	        // the user clicked on "Provide Reference"
 	        if (!referee.getUser().isEnabled()) {
-	            return "redirect:/register?activationCode=" + referee.getUser().getActivationCode() + "&directToUrl=/referee/addReferences?applicationId=" + applicationForm.getCode();
+	            return "redirect:/register?activationCode=" + referee.getUser().getActivationCode() + "&directToUrl=/referee/addReferences?applicationId=" + application.getCode();
 	        } else {
-	            return "redirect:/referee/addReferences?applicationId=" + applicationForm.getCode() + "&activationCode=" + referee.getUser().getActivationCode();
+	            return "redirect:/referee/addReferences?applicationId=" + application.getCode() + "&activationCode=" + referee.getUser().getActivationCode();
 	        }
 	    } else {
 	        modelMap.put("message", "Please confirm that you wish to decline to provide a reference. <b>You will not be able to reverse this decision.</b>");

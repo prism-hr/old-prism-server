@@ -22,7 +22,7 @@ import java.util.List;
 @Entity
 @Table(name = "APPLICATION")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Application extends ResourceDynamic {
+public class Application extends Resource {
 
     @Id
     @GeneratedValue

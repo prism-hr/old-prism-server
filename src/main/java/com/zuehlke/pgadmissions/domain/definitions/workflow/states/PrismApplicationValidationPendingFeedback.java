@@ -24,7 +24,6 @@ public class PrismApplicationValidationPendingFeedback extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_COMMENT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -62,7 +61,6 @@ public class PrismApplicationValidationPendingFeedback extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_COMPLETE_VALIDATION_STAGE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -132,7 +130,6 @@ public class PrismApplicationValidationPendingFeedback extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_CONFIRM_ELIGIBILITY) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
             .withNotificationTemplate(PrismNotificationTemplate.APPLICATION_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
@@ -162,7 +159,6 @@ public class PrismApplicationValidationPendingFeedback extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_EMAIL_CREATOR) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -183,7 +179,6 @@ public class PrismApplicationValidationPendingFeedback extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_ESCALATE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(false) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION) // 
@@ -193,7 +188,6 @@ public class PrismApplicationValidationPendingFeedback extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_TERMINATE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.APPLICATION_CREATOR) // 
@@ -224,7 +218,6 @@ public class PrismApplicationValidationPendingFeedback extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
-            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_CREATOR) // 
@@ -306,7 +299,6 @@ public class PrismApplicationValidationPendingFeedback extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_WITHDRAW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_CREATOR))) //

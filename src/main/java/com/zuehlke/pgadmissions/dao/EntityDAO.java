@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.IUniqueResource;
+import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 
 @Repository
 public class EntityDAO {
@@ -80,8 +80,8 @@ public class EntityDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends IUniqueResource> T getDuplicateEntity(T uniqueResource) {
-        IUniqueResource.ResourceSignature signature = uniqueResource.getResourceSignature(); 
+    public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) {
+        IUniqueEntity.ResourceSignature signature = uniqueResource.getResourceSignature(); 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(uniqueResource.getClass());
         Disjunction indices = Restrictions.disjunction();
         
@@ -91,7 +91,7 @@ public class EntityDAO {
                 Conjunction index = Restrictions.conjunction();
                 for (Map.Entry<String, Object> property : properties.entrySet()) {
                     if (property.getKey() == null) {
-                        throw new Error(IUniqueResource.UNIQUE_IDENTIFICATION_ERROR);
+                        throw new Error(IUniqueEntity.UNIQUE_IDENTIFICATION_ERROR);
                     }
                     if (property.getValue() == null) {
                         index.add(Restrictions.isNull(property.getKey()));
@@ -112,7 +112,7 @@ public class EntityDAO {
             return (T) criteria.uniqueResult();
         }
 
-        throw new Error(IUniqueResource.UNIQUE_IDENTIFICATION_ERROR);
+        throw new Error(IUniqueEntity.UNIQUE_IDENTIFICATION_ERROR);
     }
 
     public void delete(Object entity) {

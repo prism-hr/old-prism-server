@@ -21,7 +21,6 @@ public class PrismApplicationUnsubmittedPendingCompletion extends PrismWorkflowS
             .withAction(PrismAction.APPLICATION_COMPLETE) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(true) //
-            .withPostComment(true) //
             .withNotificationTemplate(PrismNotificationTemplate.APPLICATION_COMPLETE_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
@@ -52,7 +51,6 @@ public class PrismApplicationUnsubmittedPendingCompletion extends PrismWorkflowS
             .withAction(PrismAction.APPLICATION_TERMINATE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.APPLICATION_CREATOR) // 
@@ -66,7 +64,6 @@ public class PrismApplicationUnsubmittedPendingCompletion extends PrismWorkflowS
             .withAction(PrismAction.APPLICATION_WITHDRAW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_CREATOR))) //

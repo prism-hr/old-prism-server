@@ -20,7 +20,7 @@ import java.util.List;
 @Entity
 @Table(name = "INSTITUTION")
 @Indexed
-public class Institution extends ResourceDynamic {
+public class Institution extends Resource {
 
     @Id
     @GeneratedValue
@@ -246,12 +246,7 @@ public class Institution extends ResourceDynamic {
     public String generateCode() {
         return getAddress().getCountry().getId() + "-" + String.format("%010d", id);
     }
-
-    @Override
-    public LocalDate getDueDateBaseline() {
-        return new LocalDate();
-    }
-
+    
     @Override
     public DateTime getCreatedTimestamp() {
         return createdTimestamp;

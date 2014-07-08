@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.rest.domain.application;
 
-import com.zuehlke.pgadmissions.domain.StudyOption;
-import org.joda.time.LocalDate;
-
 import java.util.List;
+
+import org.joda.time.LocalDate;
 
 public class ProgramDetailsRepresentation {
 

@@ -76,7 +76,7 @@ public class RegistrationService {
             }
             Action action = entityService.getByProperty(Action.class, "id", registrationAction);
             Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false);
-            ActionOutcome actionOutcome = actionService.executeAction((ResourceDynamic) resource, registrationAction, comment);
+            ActionOutcome actionOutcome = actionService.executeAction((Resource) resource, registrationAction, comment);
             resource = actionOutcome.getResource();
         } else {
             resource = systemService.getSystem();

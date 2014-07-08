@@ -202,7 +202,7 @@ public class Comment {
         this.id = id;
     }
 
-    public void setResource(ResourceDynamic resource) {
+    public void setResource(Resource resource) {
         try {
             PropertyUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
         } catch (Exception e) {
@@ -587,7 +587,7 @@ public class Comment {
         return this;
     }
 
-    public Comment withResource(ResourceDynamic resource) {
+    public Comment withResource(Resource resource) {
         setResource(resource);
         return this;
     }

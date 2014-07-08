@@ -12,8 +12,6 @@ public class PrismStateAction {
     
     private boolean defaultAction;
     
-    private boolean postComment;
-    
     private PrismNotificationTemplate notificationTemplate;
     
     private List<PrismStateActionAssignment> assignments = Lists.newArrayList();
@@ -32,10 +30,6 @@ public class PrismStateAction {
 
     public boolean isDefaultAction() {
         return defaultAction;
-    }
-
-    public boolean isPostComment() {
-        return postComment;
     }
 
     public PrismNotificationTemplate getNotificationTemplate() {
@@ -66,11 +60,6 @@ public class PrismStateAction {
     
     public PrismStateAction withDefaultAction(boolean defaultAction) {
         this.defaultAction = defaultAction;
-        return this;
-    }
-    
-    public PrismStateAction withPostComment(boolean postComment) {
-        this.postComment = postComment;
         return this;
     }
     

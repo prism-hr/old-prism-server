@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.*;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
@@ -12,6 +11,12 @@ import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
 
 @Repository
 @SuppressWarnings("unchecked")

@@ -1,10 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import java.util.List;
+import java.util.Set;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -12,8 +10,16 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Set;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
+import com.zuehlke.pgadmissions.domain.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.StateActionNotification;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 @Repository
 public class NotificationDAO {

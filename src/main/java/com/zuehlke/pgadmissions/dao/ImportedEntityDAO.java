@@ -1,15 +1,16 @@
 package com.zuehlke.pgadmissions.dao;
 
-import com.zuehlke.pgadmissions.domain.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
-import com.zuehlke.pgadmissions.domain.Institution;
+import java.util.List;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.zuehlke.pgadmissions.domain.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
+import com.zuehlke.pgadmissions.domain.Institution;
 
 @Repository
 @SuppressWarnings("unchecked")

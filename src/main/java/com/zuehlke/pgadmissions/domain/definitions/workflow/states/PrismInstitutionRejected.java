@@ -14,8 +14,7 @@ public class PrismInstitutionRejected extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.INSTITUTION_VIEW) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(true) //
-            .withPostComment(false)
+            .withDefaultAction(true)
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR), // 

@@ -20,7 +20,6 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
             .withAction(PrismAction.INSTITUTION_CONFIGURE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -58,7 +57,6 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
             .withAction(PrismAction.INSTITUTION_CREATE_PROGRAM) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVAL) // 
@@ -89,7 +87,6 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
             .withAction(PrismAction.INSTITUTION_IMPORT_PROGRAM) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVED) // 
@@ -106,26 +103,22 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.INSTITUTION_VIEW) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-            .withPostComment(false)); //
+            .withDefaultAction(false)); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.INSTITUTION_VIEW_APPLICATION_LIST) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-            .withPostComment(false)); //
+            .withDefaultAction(false)); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.INSTITUTION_VIEW_PROGRAM_LIST) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-            .withPostComment(false)); //
+            .withDefaultAction(false)); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.INSTITUTION_VIEW_PROJECT_LIST) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-            .withPostComment(false));
+            .withDefaultAction(false)); //
     }
 
 }

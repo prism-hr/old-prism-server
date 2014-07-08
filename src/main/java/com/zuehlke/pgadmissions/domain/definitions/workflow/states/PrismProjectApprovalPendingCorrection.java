@@ -19,7 +19,6 @@ public class PrismProjectApprovalPendingCorrection extends PrismWorkflowState {
             .withAction(PrismAction.PROJECT_CORRECT) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(true) //
-            .withPostComment(true) //
             .withNotificationTemplate(PrismNotificationTemplate.PROJECT_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
@@ -35,7 +34,6 @@ public class PrismProjectApprovalPendingCorrection extends PrismWorkflowState {
             .withAction(PrismAction.PROJECT_EMAIL_CREATOR) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), //
@@ -46,7 +44,6 @@ public class PrismProjectApprovalPendingCorrection extends PrismWorkflowState {
             .withAction(PrismAction.PROJECT_ESCALATE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_WITHDRAWN) // 
@@ -56,7 +53,6 @@ public class PrismProjectApprovalPendingCorrection extends PrismWorkflowState {
             .withAction(PrismAction.PROJECT_SUSPEND) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DISABLED_PENDING_PROGRAM_REACTIVATION) // 
@@ -66,7 +62,6 @@ public class PrismProjectApprovalPendingCorrection extends PrismWorkflowState {
             .withAction(PrismAction.PROJECT_TERMINATE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
@@ -89,7 +84,6 @@ public class PrismProjectApprovalPendingCorrection extends PrismWorkflowState {
             .withAction(PrismAction.PROJECT_VIEW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
-            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -104,7 +98,6 @@ public class PrismProjectApprovalPendingCorrection extends PrismWorkflowState {
             .withAction(PrismAction.PROJECT_WITHDRAW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withAssignments(Arrays.asList( //
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR),

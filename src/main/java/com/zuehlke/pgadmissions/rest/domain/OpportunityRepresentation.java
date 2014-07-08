@@ -1,7 +1,8 @@
 package com.zuehlke.pgadmissions.rest.domain;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import org.joda.time.LocalDate;
+
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class OpportunityRepresentation {
 

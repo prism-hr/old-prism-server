@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvalu
 @Entity
 @Table(name = "STATE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "transition_state_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class StateTransition implements IUniqueResource {
+public class StateTransition implements IUniqueEntity {
 
     @Id
     @GeneratedValue

@@ -23,7 +23,7 @@ import com.google.common.collect.Sets;
 @Entity
 @Table(name = "STATE_ACTION_ASSIGNMENT", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "role_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class StateActionAssignment implements IUniqueResource {
+public class StateActionAssignment implements IUniqueEntity {
 
     @Id
     @GeneratedValue

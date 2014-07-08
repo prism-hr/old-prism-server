@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.google.common.collect.HashMultimap;
 
-public interface IUniqueResource {
+public interface IUniqueEntity {
 
     public static String UNIQUE_CREATION_ERROR = "Tried to create a resource that has an invalid unique resource signature";
 

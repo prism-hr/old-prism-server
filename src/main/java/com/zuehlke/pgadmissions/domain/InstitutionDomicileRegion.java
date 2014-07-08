@@ -1,7 +1,15 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.persistence.*;
 import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "INSTITUTION_DOMICILE_REGION", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_domicile_id", "parent_region_id", "region_type", "name"})})

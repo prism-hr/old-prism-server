@@ -1,12 +1,13 @@
 package com.zuehlke.pgadmissions.rest.domain.application;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.rest.domain.UserRepresentation;
-import org.joda.time.LocalDate;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+
+import org.joda.time.LocalDate;
+
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.rest.domain.UserRepresentation;
 
 public class ResourceListRowRepresentation {
 

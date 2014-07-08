@@ -17,7 +17,6 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
@@ -43,7 +42,7 @@ public class ResourceDAO {
     private SessionFactory sessionFactory;
 
     @SuppressWarnings("unchecked")
-    public <T extends ResourceDynamic> List<ResourceConsoleListRowDTO> getConsoleListBlock(User user, Class<T> resourceType, int page, int perPage) {
+    public <T extends Resource> List<ResourceConsoleListRowDTO> getConsoleListBlock(User user, Class<T> resourceType, int page, int perPage) {
         return (List<ResourceConsoleListRowDTO>) sessionFactory.getCurrentSession().createSQLQuery(getResourceListBlockSelect(user, resourceType, page, perPage))
                 .addScalar("id", IntegerType.INSTANCE)
                 .addScalar("code", StringType.INSTANCE)
@@ -73,7 +72,7 @@ public class ResourceDAO {
                 .executeUpdate();
     }
 
-    private <T extends ResourceDynamic> String getResourceListBlockSelect(User user, Class<T> resourceType, int page, int perPage) {
+    private <T extends Resource> String getResourceListBlockSelect(User user, Class<T> resourceType, int page, int perPage) {
         String resourceTypeString = resourceType.getSimpleName();
 
         HashMap<String, Object> queryParameters = Maps.newHashMap();
@@ -92,7 +91,7 @@ public class ResourceDAO {
             resourceListSelect.process(queryParameters, writer);
             return writer.toString();
         } catch (Exception e) {
-            throw new Error("Could not build " + resourceTypeString + " list", e);
+            throw new Error(e);
         }
     }
 

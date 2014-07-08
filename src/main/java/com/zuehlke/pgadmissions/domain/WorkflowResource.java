@@ -7,7 +7,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public abstract class WorkflowResource implements IUniqueResource {
+public abstract class WorkflowResource implements IUniqueEntity {
     
     public abstract Object getId();
     

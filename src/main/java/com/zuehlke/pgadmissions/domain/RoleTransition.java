@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionT
 @Entity
 @Table(name = "ROLE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_transition_id", "role_id", "role_transition_type" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class RoleTransition implements IUniqueResource {
+public class RoleTransition implements IUniqueEntity {
 
     @Id
     @GeneratedValue

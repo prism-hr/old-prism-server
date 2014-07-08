@@ -303,11 +303,6 @@ public class Program extends Advert {
     }
 
     @Override
-    public LocalDate getDueDateBaseline() {
-        return new LocalDate();
-    }
-
-    @Override
     public DateTime getCreatedTimestamp() {
         return createdTimestamp;
     }

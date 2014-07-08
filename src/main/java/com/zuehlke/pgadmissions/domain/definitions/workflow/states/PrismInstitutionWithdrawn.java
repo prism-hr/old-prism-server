@@ -15,7 +15,6 @@ public class PrismInstitutionWithdrawn extends PrismWorkflowState {
             .withAction(PrismAction.INSTITUTION_VIEW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
-            .withPostComment(false)
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR), // 

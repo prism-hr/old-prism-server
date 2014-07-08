@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.rest.domain;
 
-import com.zuehlke.pgadmissions.domain.State;
 
 public class InstitutionRepresentation {
 

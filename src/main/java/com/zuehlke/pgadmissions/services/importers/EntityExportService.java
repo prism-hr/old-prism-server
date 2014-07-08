@@ -1,15 +1,9 @@
 package com.zuehlke.pgadmissions.services.importers;
 
-import com.google.common.io.Closeables;
-import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
-import com.zuehlke.pgadmissions.services.EntityService;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import java.io.File;
+import java.io.FileWriter;
+import java.math.BigDecimal;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -18,10 +12,18 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.FileWriter;
-import java.math.BigDecimal;
-import java.util.Map;
+
+import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.google.common.io.Closeables;
+import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
+import com.zuehlke.pgadmissions.services.EntityService;
 
 @Service
 public class EntityExportService {

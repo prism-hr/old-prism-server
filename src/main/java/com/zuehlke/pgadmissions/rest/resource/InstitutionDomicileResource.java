@@ -1,5 +1,15 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
+import java.util.List;
+
+import org.dozer.DozerBeanMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
@@ -8,11 +18,6 @@ import com.zuehlke.pgadmissions.rest.domain.InstitutionDomicileRegionRepresentat
 import com.zuehlke.pgadmissions.rest.domain.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
-import org.dozer.DozerBeanMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequestMapping("api/domiciles/{domicileId}")
 @RestController

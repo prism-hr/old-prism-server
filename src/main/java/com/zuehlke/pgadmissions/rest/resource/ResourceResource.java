@@ -1,8 +1,26 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
+import java.util.List;
+import java.util.Set;
+
+import org.dozer.DozerBeanMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
@@ -12,14 +30,12 @@ import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.application.ApplicationRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.application.ProgramRepresentation;
 import com.zuehlke.pgadmissions.rest.domain.application.ResourceListRowRepresentation;
-import com.zuehlke.pgadmissions.services.*;
-import org.dozer.DozerBeanMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Set;
+import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.CommentService;
+import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
 @RequestMapping(value = { "api/{resourceType}" })
@@ -50,7 +66,7 @@ public class ResourceResource {
     @Transactional
     public ResourceRepresentation getResource(@PathVariable Integer id, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         User currentUser = userService.getCurrentUser();
-        ResourceDynamic resource = entityService.getById(resourceDescriptor.getType(), id);
+        Resource resource = entityService.getById(resourceDescriptor.getType(), id);
         if (resource == null) {
             return null;
         }
@@ -104,7 +120,7 @@ public class ResourceResource {
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.PUT)
     public void changeRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestBody List<ResourceRepresentation.RoleRepresentation> roles) {
-        ResourceDynamic resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
 
         roleService.updateRoles(resource, user, roles);
@@ -113,7 +129,7 @@ public class ResourceResource {
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     public void addUserToResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestBody ResourceRepresentation.UserRolesRepresentation userRolesRepresentation) {
-        ResourceDynamic resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
 
         userService.getOrCreateUserWithRoles(userRolesRepresentation.getFirstName(), userRolesRepresentation.getLastName(), userRolesRepresentation.getEmail(),
                 resource, userRolesRepresentation.getRoles());
@@ -131,19 +147,19 @@ public class ResourceResource {
 
     private static class ResourceDescriptor {
 
-        private Class<? extends ResourceDynamic> type;
+        private Class<? extends Resource> type;
 
         private Class<? extends ResourceRepresentation> representationType;
 
         private String resourceType;
 
-        private ResourceDescriptor(Class<? extends ResourceDynamic> type, Class<? extends ResourceRepresentation> representationType, String resourceType) {
+        private ResourceDescriptor(Class<? extends Resource> type, Class<? extends ResourceRepresentation> representationType, String resourceType) {
             this.type = type;
             this.representationType = representationType;
             this.resourceType = resourceType;
         }
 
-        public Class<? extends ResourceDynamic> getType() {
+        public Class<? extends Resource> getType() {
             return type;
         }
 

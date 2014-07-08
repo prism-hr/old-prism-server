@@ -1,15 +1,7 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.Gender;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.rest.domain.application.ImportedEntityRepresentation;
-import com.zuehlke.pgadmissions.rest.domain.workflow.RoleRepresentation;
-import com.zuehlke.pgadmissions.rest.domain.workflow.StateActionRepresentation;
-import com.zuehlke.pgadmissions.rest.domain.workflow.StateRepresentation;
-import com.zuehlke.pgadmissions.services.EntityService;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.WordUtils;
 import org.dozer.DozerBeanMapper;
@@ -20,8 +12,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
+import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.StudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.Gender;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.rest.domain.application.ImportedEntityRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.workflow.RoleRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.workflow.StateActionRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.workflow.StateRepresentation;
+import com.zuehlke.pgadmissions.services.EntityService;
 
 @RestController
 @RequestMapping("/api/static")

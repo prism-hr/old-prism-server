@@ -1,11 +1,8 @@
 package com.zuehlke.pgadmissions.services.importers;
 
-import au.com.bytecode.opencsv.CSVReader;
-import com.google.common.base.Charsets;
-import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
-import com.zuehlke.pgadmissions.domain.OpportunityCategory;
-import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
-import com.zuehlke.pgadmissions.services.EntityService;
+import java.io.InputStreamReader;
+import java.net.URL;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +11,13 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.InputStreamReader;
-import java.net.URL;
+import au.com.bytecode.opencsv.CSVReader;
+
+import com.google.common.base.Charsets;
+import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
+import com.zuehlke.pgadmissions.domain.OpportunityCategory;
+import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
+import com.zuehlke.pgadmissions.services.EntityService;
 
 @Service
 public class OpportunityCategoryImportService {

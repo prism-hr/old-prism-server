@@ -8,7 +8,6 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
-import com.zuehlke.pgadmissions.mail.MailService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class ApprovalServiceTest {

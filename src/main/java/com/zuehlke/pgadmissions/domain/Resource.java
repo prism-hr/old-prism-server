@@ -1,10 +1,12 @@
 package com.zuehlke.pgadmissions.domain;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
-public abstract class Resource implements IUniqueResource {
+public abstract class Resource implements IUniqueEntity {
 
     public abstract Integer getId();
 
@@ -35,6 +37,32 @@ public abstract class Resource implements IUniqueResource {
     public abstract User getUser();
 
     public abstract void setUser(User user);
+    
+    public abstract State getPreviousState();
+
+    public abstract void setPreviousState(State previousState);
+    
+    public abstract LocalDate getDueDate();
+
+    public abstract void setDueDate(LocalDate dueDate);
+    
+    public abstract String getCode();
+    
+    public abstract void setCode(String code);
+    
+    public abstract String generateCode();
+    
+    public abstract DateTime getCreatedTimestamp();
+
+    public abstract void setCreatedTimestamp(DateTime createdTimestamp);
+    
+    public abstract DateTime getUpdatedTimestamp();
+
+    public abstract void setUpdatedTimestamp(DateTime updatedTimestamp);
+    
+    public LocalDate getDueDateBaseline() {
+        return new LocalDate();
+    }
     
     public Resource getParentResource() {
         PrismScope resourceScope = PrismScope.getResourceScope(this.getClass());
@@ -78,5 +106,5 @@ public abstract class Resource implements IUniqueResource {
             }
         }
     }
-
+    
 }

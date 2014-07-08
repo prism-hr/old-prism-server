@@ -15,7 +15,6 @@ public class PrismProjectRejected extends PrismWorkflowState {
             .withAction(PrismAction.PROJECT_VIEW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
-            .withPostComment(false)
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 

@@ -1,5 +1,13 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
@@ -11,13 +19,6 @@ import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
 import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.RoleService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
-import static org.junit.Assert.assertTrue;
 
 @Service
 @Transactional

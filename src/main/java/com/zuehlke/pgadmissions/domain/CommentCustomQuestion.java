@@ -20,7 +20,7 @@ import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "COMMENT_CUSTOM_QUESTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_id", "action_id" }) })
-public class CommentCustomQuestion implements IUniqueResource {
+public class CommentCustomQuestion implements IUniqueEntity {
 
     @Id
     private Integer id;

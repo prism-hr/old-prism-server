@@ -1,15 +1,21 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.dao.CommentDAO;
-import com.zuehlke.pgadmissions.dao.EntityDAO;
-import com.zuehlke.pgadmissions.dao.StateDAO;
-import com.zuehlke.pgadmissions.domain.*;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.dao.CommentDAO;
+import com.zuehlke.pgadmissions.dao.EntityDAO;
+import com.zuehlke.pgadmissions.dao.StateDAO;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.User;
 
 @Service
 @Transactional
@@ -44,15 +50,15 @@ public class CommentService {
         entityDAO.save(comment);
     }
 
-    public Comment getLastComment(ResourceDynamic resource) {
+    public Comment getLastComment(Resource resource) {
         return commentDAO.getLastComment(resource);
     }
 
-    public <T extends Comment> T getLastCommentOfType(ResourceDynamic resource, Class<T> clazz) {
+    public <T extends Comment> T getLastCommentOfType(Resource resource, Class<T> clazz) {
         return getLastCommentOfType(resource, clazz);
     }
 
-    public <T extends Comment> T getLastCommentOfType(ResourceDynamic resource, Class<T> clazz, User author) {
+    public <T extends Comment> T getLastCommentOfType(Resource resource, Class<T> clazz, User author) {
         return commentDAO.getLastCommentOfType(resource, clazz, author);
     }
 
@@ -60,7 +66,7 @@ public class CommentService {
         return commentDAO.getAssignedUsers(comment, role, invoker);
     }
 
-    public List<Comment> getVisibleComments(ResourceDynamic resource, User user) {
+    public List<Comment> getVisibleComments(Resource resource, User user) {
         List<Comment> comments = Lists.newArrayList();
         if (!actionService.getPermittedActions(resource, user).isEmpty()) {
             comments = commentDAO.getComments(resource);

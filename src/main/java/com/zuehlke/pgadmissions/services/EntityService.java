@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.EntityDAO;
-import com.zuehlke.pgadmissions.domain.IUniqueResource;
+import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 
 @Service
 @Transactional
@@ -46,11 +46,11 @@ public class EntityService {
         return entityDAO.listByProperty(klass, propertyName, propertyValue);
     }
 
-    public <T extends IUniqueResource> T getDuplicateEntity(T uniqueResource) {
+    public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) {
         return (T) entityDAO.getDuplicateEntity(uniqueResource);
     }
 
-    public <T extends IUniqueResource> T getOrCreate(T transientResource) {
+    public <T extends IUniqueEntity> T getOrCreate(T transientResource) {
         T persistentResource = (T) getDuplicateEntity(transientResource);
         if (persistentResource == null) {
             save(transientResource);
@@ -59,7 +59,7 @@ public class EntityService {
         return persistentResource;
     }
     
-    public <T extends IUniqueResource> T createOrUpdate(T transientResource) {
+    public <T extends IUniqueEntity> T createOrUpdate(T transientResource) {
         T persistentResource = (T) getDuplicateEntity(transientResource);
         if (persistentResource == null) {
             save(transientResource);

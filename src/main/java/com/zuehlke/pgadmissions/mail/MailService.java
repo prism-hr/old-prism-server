@@ -3,13 +3,12 @@ package com.zuehlke.pgadmissions.mail;
 import java.util.Collections;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -20,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.SystemService;
@@ -90,7 +90,7 @@ public class MailService {
         }
         
 
-        model.put("systemName", resource.getSystem().getName());
+        model.put("systemName", resource.getSystem().getCode());
 
         model.put("host", host);
         return model;

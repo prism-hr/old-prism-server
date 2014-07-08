@@ -22,7 +22,6 @@ public class PrismApplicationApprovedPendingExport extends PrismWorkflowState {
             .withAction(PrismAction.APPLICATION_COMMENT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR), // 
@@ -68,7 +67,6 @@ public class PrismApplicationApprovedPendingExport extends PrismWorkflowState {
             .withAction(PrismAction.APPLICATION_EMAIL_CREATOR) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR), // 
@@ -97,7 +95,6 @@ public class PrismApplicationApprovedPendingExport extends PrismWorkflowState {
             .withAction(PrismAction.APPLICATION_EXPORT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVED_COMPLETED) // 
@@ -116,7 +113,6 @@ public class PrismApplicationApprovedPendingExport extends PrismWorkflowState {
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
-            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_CREATOR) // 

@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.rest.domain.application;
 
-import com.zuehlke.pgadmissions.domain.State;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 

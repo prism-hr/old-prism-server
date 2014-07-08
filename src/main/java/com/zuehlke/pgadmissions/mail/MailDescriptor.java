@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.mail;
 
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.ResourceDynamic;
+import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 
@@ -9,7 +9,7 @@ public class MailDescriptor {
 
     private User recipient;
 
-    private ResourceDynamic resource;
+    private Resource resource;
 
     private PrismNotificationTemplate notificationTemplate;
     
@@ -23,11 +23,11 @@ public class MailDescriptor {
         this.recipient = recipient;
     }
 
-    public ResourceDynamic getResource() {
+    public Resource getResource() {
         return resource;
     }
 
-    public void setResource(ResourceDynamic resource) {
+    public void setResource(Resource resource) {
         this.resource = resource;
     }
 

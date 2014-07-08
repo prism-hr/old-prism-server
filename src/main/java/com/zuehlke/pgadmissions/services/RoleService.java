@@ -1,18 +1,28 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.dao.RoleDAO;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
+import java.util.HashMap;
+import java.util.List;
+
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.RoleTransition;
+import com.zuehlke.pgadmissions.domain.StateTransition;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserNotificationIndividual;
+import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
 
 @Service
 @Transactional
@@ -79,7 +89,7 @@ public class RoleService {
     public void executeUserRoleTransitions(Resource resource, StateTransition stateTransition, Comment comment) {
         HashMap<User, RoleTransition> userRoleTransitions = Maps.newHashMap();
         userRoleTransitions.putAll(getUserRoleUpdateTransitions(stateTransition, resource, comment.getUser()));
-        userRoleTransitions.putAll(getUserCreationRoleTransitions(stateTransition, resource, comment.getUser(), comment));
+        userRoleTransitions.putAll(getUserRoleCreationTransitions(stateTransition, resource, comment.getUser(), comment));
 
         for (User user : userRoleTransitions.keySet()) {
             executeRoleTransition(resource, user, userRoleTransitions.get(user));
@@ -140,10 +150,14 @@ public class RoleService {
         return roleDAO.getActionOwnerRoles(user, resource, action);
     }
 
+    public Role getResourceCreatorRole(Resource resource, Action createAction) {
+        return (Role) roleDAO.getResourceCreatorRole(resource, createAction);
+    }
+    
     private HashMap<User, RoleTransition> getUserRoleUpdateTransitions(StateTransition stateTransition, Resource resource, User actionOwner) {
         HashMap<User, RoleTransition> userRoleTransitions = Maps.newHashMap();
 
-        HashMultimap<RoleTransition, User> roleTransitionUsers = roleDAO.getRoleTransitionUsers(stateTransition, resource, actionOwner);
+        HashMultimap<RoleTransition, User> roleTransitionUsers = roleDAO.getRoleUpdateUsers(stateTransition, resource, actionOwner);
         for (RoleTransition roleTransition : roleTransitionUsers.keySet()) {
             for (User user : roleTransitionUsers.get(roleTransition)) {
                 validateUserRoleTransition(resource, userRoleTransitions, roleTransition, user);
@@ -154,11 +168,7 @@ public class RoleService {
 
     }
 
-    public Role getResourceCreatorRole(ResourceDynamic resource, Action createAction) {
-        return (Role) roleDAO.getResourceCreatorRole(resource, createAction);
-    }
-
-    private HashMap<User, RoleTransition> getUserCreationRoleTransitions(StateTransition stateTransition, Resource resource, User actionOwner, Comment comment) {
+    private HashMap<User, RoleTransition> getUserRoleCreationTransitions(StateTransition stateTransition, Resource resource, User actionOwner, Comment comment) {
         HashMap<User, RoleTransition> userRoleTransitions = Maps.newHashMap();
 
         HashMultimap<Role, RoleTransition> roleCreationTransitions = roleDAO.getRoleCreationTransitions(stateTransition);

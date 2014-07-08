@@ -7,10 +7,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
@@ -20,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.ResourceDynamic;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateDuration;
@@ -28,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.mail.MailDescriptor;
@@ -37,13 +33,13 @@ import com.zuehlke.pgadmissions.mail.MailService;
 @Service
 @Transactional
 public class StateService {
-    
+
     @Autowired
     private StateDAO stateDAO;
 
     @Autowired
     private EntityService entityService;
-    
+
     @Autowired
     private ResourceService resourceService;
 
@@ -72,32 +68,85 @@ public class StateService {
     public List<State> getConfigurableStates() {
         return stateDAO.getConfigurableStates();
     }
-    
+
     public List<State> getStates() {
         return entityService.list(State.class);
     }
-    
+
     public List<State> getWorkflowStates() {
         return stateDAO.getWorkflowStates();
     }
-    
+
     public StateDuration getStateDuration(Resource resource, State state) {
         return stateDAO.getStateDuration(resource, state);
     }
-    
-    public StateTransition executeStateTransition(Resource operativeResource, ResourceDynamic resource, Action action, Comment comment) {
-        StateTransition stateTransition = getStateTransition(operativeResource, action, comment);
 
-        postResourceStateChange(resource, stateTransition, comment);
-        postResourceUpdate(resource, comment);
-        setResourceDueDate(resource, comment);
+    public StateDuration getCurrentStateDuration(Resource resource) {
+        return stateDAO.getStateDuration(resource, resource.getState());
+    }
 
+    public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) {
         if (action.isCreationAction()) {
-            createResource(operativeResource, resource, action, comment);
+            commitResourceCreation(resource, action, comment);
         } else {
-            updateResource(resource, action, comment);
+            commitResourceUpdate(resource, action, comment);
         }
 
+        if (action.isSaveComment()) {
+            entityService.save(comment);
+        }
+        
+        StateTransition stateTransition = getStateTransition(resource, action, comment);
+        if (stateTransition != null) {
+            commitResourceTransition(resource, comment, stateTransition);
+        }
+        
+        return stateTransition;
+    }
+    
+    private StateTransition getStateTransition(Resource resource, Action action, Comment comment) {
+        Resource operative = action.isCreationAction() ? resource.getParentResource() : resource;
+        List<StateTransition> potentialStateTransitions = stateDAO.getStateTransitions(operative, action);
+        
+        if (potentialStateTransitions.size() > 1) {
+            try {
+                String method = potentialStateTransitions.get(0).getStateTransitionEvaluation().getMethodName();
+                return (StateTransition) MethodUtils.invokeExactMethod(this, method, new Object[] { operative, comment, potentialStateTransitions });
+            } catch (Exception e) {
+                throw new Error(e);
+            }
+        } else {
+            return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);
+        }
+    }
+
+    private void commitResourceCreation(Resource resource, Action action, Comment comment) {
+        resource.setCreatedTimestamp(new DateTime());
+        entityService.save(resource);
+        resource.setCode(resource.generateCode());
+        comment.setRole(roleService.getResourceCreatorRole(resource.getParentResource(), action).getAuthority().toString());
+    }
+
+    private void commitResourceUpdate(Resource resource, Action action, Comment comment) {
+        if (action.getActionType().isSystemAction()) {
+            comment.setRole(PrismRole.SYSTEM_ADMINISTRATOR.toString());
+        } else {
+            comment.setRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action)));
+            if (comment.getDelegateUser() != null) {
+                comment.setDelegateRole(Joiner.on(", ").join(roleService.getDelegateActionOwnerRoles(comment.getDelegateUser(), resource, action)));
+            }
+        }
+    }
+    
+    private void commitResourceTransition(Resource resource, Comment comment, StateTransition stateTransition) {
+        State transitionState = stateTransition.getTransitionState();
+        
+        resourceService.setTransitionState(resource, transitionState);
+        comment.setTransitionState(transitionState);
+        
+        resourceService.setDueDate(resource, comment, getStateDuration(resource, transitionState));
+        resource.setUpdatedTimestamp(new DateTime());
+        
         roleService.executeUserRoleTransitions(resource, stateTransition, comment);
 
         for (MailDescriptor notification : userService.getUserStateTransitionNotifications(stateTransition)) {
@@ -105,24 +154,17 @@ public class StateService {
         }
 
         if (stateTransition.getPropagatedActions().size() > 0) {
-            entityService.save(new StateTransitionPending().withResource(operativeResource).withStateTransition(stateTransition));
+            entityService.save(new StateTransitionPending().withResource(resource).withStateTransition(stateTransition));
         }
-
-        // TODO: do post comment
-        if (stateTransition.getStateAction().isPostComment()) {
-            entityService.save(comment);
-        }
-
-        return stateTransition;
     }
-
+    
     public void executePropagatedStateTransitions() {
         Resource lastResource = null;
         for (StateTransitionPending pendingStateTransition : getPendingStateTransitions()) {
             Resource thisResource = pendingStateTransition.getResource();
 
             if (thisResource != lastResource) {
-                HashMultimap<Action, ResourceDynamic> propagations = stateDAO.getPropagatedStateTransitions(pendingStateTransition);
+                HashMultimap<Action, Resource> propagations = stateDAO.getPropagatedStateTransitions(pendingStateTransition);
                 executeThreadedStateTransitions(propagations, systemService.getSystem().getUser());
 
                 if (propagations.isEmpty()) {
@@ -133,7 +175,7 @@ public class StateService {
             lastResource = thisResource;
         }
     }
-    
+
     public List<StateTransitionPending> getPendingStateTransitions() {
         return stateDAO.getPendingStateTransitions();
     }
@@ -141,127 +183,63 @@ public class StateService {
     public void executeEscalatedStateTransitions() {
         executeThreadedStateTransitions(stateDAO.getEscalatedStateTransitions(), systemService.getSystem().getUser());
     }
-    
+
     public void deleteStateActions() {
         stateDAO.deleteStateActions();
     }
-    
+
     public void deleteObseleteStateDurations() {
         stateDAO.deleteObseleteStateDurations();
     }
-    
+
     public <T extends Resource> List<State> getDeprecatedStates(Class<T> resourceClass) {
         return stateDAO.getDeprecatedStates(resourceClass);
     }
-    
+
     public State getDegradationState(State state) {
         return stateDAO.getDegradationState(state);
     }
-    
+
     public ThreadPoolExecutor getThreadedStateTransitionPool() {
         return threadedStateTransitionPool;
     }
-    
+
     public List<StateAction> getStateActions() {
         return entityService.list(StateAction.class);
     }
-    
-    public List<State> getOrderedTransitionStates(State state, State...excludedTransitionStates) {
+
+    public List<State> getOrderedTransitionStates(State state, State... excludedTransitionStates) {
         return stateDAO.getOrderedTransitionStates(state, excludedTransitionStates);
     }
-    
+
     public List<State> getRootState() {
         return stateDAO.getRootState();
     }
-    
+
     public List<State> getUpstreamStates(State state) {
         return stateDAO.getUpstreamStates(state);
     }
-    
+
     public List<State> getDownstreamStates(State state) {
         return stateDAO.getDownstreamStates(state);
     }
-    
-    public List<PrismState> getActionableStates(Collection<PrismAction> actions) { 
+
+    public List<PrismState> getActionableStates(Collection<PrismAction> actions) {
         return stateDAO.getActionableStates(actions);
     }
-    
-    private void executeThreadedStateTransitions(final HashMultimap<Action, ResourceDynamic> threadedStateTransitions, final User invoker) {
+
+    private void executeThreadedStateTransitions(final HashMultimap<Action, Resource> threadedStateTransitions, final User invoker) {
         for (final Action action : threadedStateTransitions.keySet()) {
-            for (final ResourceDynamic resource : threadedStateTransitions.get(action)) {
+            for (final Resource resource : threadedStateTransitions.get(action)) {
                 threadedStateTransitionPool.submit(new Runnable() {
                     @Override
                     public void run() {
                         Comment comment = new Comment().withResource(resource).withUser(invoker).withAction(action);
-                        executeStateTransition(resource, resource, action, comment);
+                        executeStateTransition(resource, action, comment);
                     }
                 });
             }
         }
-    }
-    
-    private void postResourceStateChange(ResourceDynamic resource, StateTransition stateTransition, Comment comment) {
-        State transitionState = stateTransition.getTransitionState();
-        resource.setPreviousState(resource.getState());
-        resource.setState(transitionState);
-        comment.setTransitionState(transitionState);
-    }
-
-    private void postResourceUpdate(ResourceDynamic resource, Comment comment) {
-        DateTime transitionTimestamp = new DateTime();
-        resource.setUpdatedTimestamp(transitionTimestamp);
-        comment.setCreatedTimestamp(transitionTimestamp);
-    }
-
-    private void setResourceDueDate(ResourceDynamic resource, Comment comment) {
-        LocalDate dueDate = comment.getUserSpecifiedDueDate();
-        if (dueDate == null && comment.getAction().getActionType() == PrismActionType.SYSTEM_ESCALATION) {
-            LocalDate dueDateBaseline = resource.getDueDateBaseline();
-            Integer stateDuration = stateDAO.getCurrentStateDuration(resource).getDuration();
-            dueDate = dueDateBaseline.plusDays(stateDuration != null ? stateDuration : 0);
-        }
-        resource.setDueDate(dueDate);
-    }
-
-    private void createResource(Resource operativeResource, ResourceDynamic resource, Action createAction, Comment comment) {
-        resource.setParentResource(operativeResource);
-        resource.setCreatedTimestamp(new DateTime());
-        entityService.save(resource);
-        resource.setCode(resource.generateCode());
-        comment.setRole(roleService.getResourceCreatorRole(resource, createAction).getAuthority().toString());
-    }
-
-    private void updateResource(ResourceDynamic resource, Action action, Comment comment) {
-        String role;
-        String delegateRole = null;
-        if (action.getActionType() != PrismActionType.USER_INVOCATION) {
-            role = PrismRole.SYSTEM_ADMINISTRATOR.toString();
-        } else {
-            role = Joiner.on("|").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action));
-            if (comment.getDelegateUser() != null) {
-                delegateRole = Joiner.on("|").join(roleService.getDelegateActionOwnerRoles(comment.getDelegateUser(), resource, action));
-            }
-        }
-        comment.setRole(role);
-        comment.setDelegateRole(delegateRole);
-    }
-
-    private StateTransition getStateTransition(Resource resource, Action action, Comment comment) {
-        StateTransition stateTransition = null;
-
-        List<StateTransition> potentialStateTransitions = stateDAO.getStateTransitions(resource, action);
-        if (potentialStateTransitions.size() > 1) {
-            try {
-                String method = potentialStateTransitions.get(0).getStateTransitionEvaluation().getMethodName();
-                stateTransition = (StateTransition) MethodUtils.invokeExactMethod(this, method, new Object[] { resource, comment, potentialStateTransitions });
-            } catch (Exception e) {
-                throw new Error(e);
-            }
-        } else {
-            stateTransition = potentialStateTransitions.get(0);
-        }
-
-        return stateTransition;
     }
 
     @SuppressWarnings("unused")

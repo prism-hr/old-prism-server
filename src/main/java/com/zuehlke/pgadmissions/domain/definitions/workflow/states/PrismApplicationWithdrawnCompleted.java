@@ -21,7 +21,6 @@ public class PrismApplicationWithdrawnCompleted extends PrismWorkflowState {
             .withAction(PrismAction.APPLICATION_COMMENT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_VIEWER_RECRUITER), // 
@@ -63,7 +62,6 @@ public class PrismApplicationWithdrawnCompleted extends PrismWorkflowState {
             .withAction(PrismAction.APPLICATION_EMAIL_CREATOR) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_VIEWER_RECRUITER), // 
@@ -88,7 +86,6 @@ public class PrismApplicationWithdrawnCompleted extends PrismWorkflowState {
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
-            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_CREATOR) // 

@@ -18,7 +18,6 @@ public class PrismProgramApprovalPendingCorrection extends PrismWorkflowState {
             .withAction(PrismAction.PROGRAM_CORRECT) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(true) //
-            .withPostComment(true) //
             .withNotificationTemplate(PrismNotificationTemplate.PROGRAM_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
@@ -31,8 +30,7 @@ public class PrismProgramApprovalPendingCorrection extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_EMAIL_CREATOR) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-            .withPostComment(false) //
+            .withDefaultAction(false)  //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR)))); //
@@ -41,7 +39,6 @@ public class PrismProgramApprovalPendingCorrection extends PrismWorkflowState {
             .withAction(PrismAction.PROGRAM_ESCALATE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_WITHDRAWN) // 
@@ -50,8 +47,7 @@ public class PrismProgramApprovalPendingCorrection extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_VIEW) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(true) //
-            .withPostComment(false) //
+            .withDefaultAction(true)  //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -62,7 +58,6 @@ public class PrismProgramApprovalPendingCorrection extends PrismWorkflowState {
             .withAction(PrismAction.PROGRAM_WITHDRAW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR))) //

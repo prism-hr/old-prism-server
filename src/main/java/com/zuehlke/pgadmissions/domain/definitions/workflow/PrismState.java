@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicat
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidationPendingCompletion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidationPendingFeedback;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnCompleted;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnPendingExport;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismInstitutionApproval;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismInstitutionApprovalPendingCorrection;
@@ -59,7 +60,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectD
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectRejected;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectWithdrawn;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismSystemApproved;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismWorkflowState;
 
 public enum PrismState {

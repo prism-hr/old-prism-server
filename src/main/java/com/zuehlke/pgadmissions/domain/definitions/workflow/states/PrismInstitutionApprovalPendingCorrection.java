@@ -18,7 +18,6 @@ public class PrismInstitutionApprovalPendingCorrection extends PrismWorkflowStat
             .withAction(PrismAction.INSTITUTION_CORRECT) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(true) //
-            .withPostComment(true) //
             .withNotificationTemplate(PrismNotificationTemplate.INSTITUTION_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
@@ -32,7 +31,6 @@ public class PrismInstitutionApprovalPendingCorrection extends PrismWorkflowStat
             .withAction(PrismAction.INSTITUTION_EMAIL_CREATOR) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
@@ -41,7 +39,6 @@ public class PrismInstitutionApprovalPendingCorrection extends PrismWorkflowStat
             .withAction(PrismAction.INSTITUTION_ESCALATE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.INSTITUTION_WITHDRAWN) // 
@@ -51,7 +48,6 @@ public class PrismInstitutionApprovalPendingCorrection extends PrismWorkflowStat
             .withAction(PrismAction.INSTITUTION_VIEW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
-            .withPostComment(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -62,7 +58,6 @@ public class PrismInstitutionApprovalPendingCorrection extends PrismWorkflowStat
             .withAction(PrismAction.INSTITUTION_WITHDRAW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withPostComment(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR))) //

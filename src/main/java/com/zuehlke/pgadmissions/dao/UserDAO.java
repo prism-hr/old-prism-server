@@ -55,14 +55,18 @@ public class UserDAO {
     }
 
     public Long getNumberOfActiveApplicationsForApplicant(final User applicant) {
-        return (Long) sessionFactory.getCurrentSession().createCriteria(Application.class).add(Restrictions.eq("applicant", applicant))
-                .add(Restrictions.not(Restrictions.eq("status", PrismState.APPLICATION_APPROVED)))
-                .add(Restrictions.not(Restrictions.eq("status", PrismState.APPLICATION_REJECTED)))
-                .add(Restrictions.not(Restrictions.eq("status", PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT))).setProjection(Projections.rowCount()).uniqueResult();
+        return (Long) sessionFactory.getCurrentSession().createCriteria(Application.class).add(Restrictions.eq("applicant", applicant)) //
+                .setProjection(Projections.rowCount()) //
+                .add(Restrictions.not(Restrictions.eq("status", PrismState.APPLICATION_APPROVED))) //
+                .add(Restrictions.not(Restrictions.eq("status", PrismState.APPLICATION_REJECTED))) //
+                .add(Restrictions.not(Restrictions.eq("status", PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT))) //
+                .uniqueResult();
     }
 
     public List<User> getUsersWithUpi(final String upi) {
-        return (List<User>) sessionFactory.getCurrentSession().createCriteria(User.class).add(Restrictions.eq("upi", upi)).list();
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .add(Restrictions.eq("upi", upi)) //
+                .list();
     }
     
     public List<User> getUsersForResource(Resource resource) {

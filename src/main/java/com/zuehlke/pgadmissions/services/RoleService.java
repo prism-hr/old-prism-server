@@ -180,7 +180,7 @@ public class RoleService {
                     }
                 }
                 // TODO : custom workflow error
-                throw new Error("Attempted to process an invalid role creation transition");
+//                throw new Error("Attempted to process an invalid role creation transition");
             }
         }
 

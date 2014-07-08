@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+    <xs:element name="country-codes" type="country-codesType"/>
+    <xs:complexType name="short-name-upper-caseType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="lang3code" use="optional"/>
+                <xs:attribute ref="xml:lang"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="languageType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="language-alpha-2-code"/>
+            <xs:element type="xs:string" name="language-alpha-3-code"/>
+            <xs:element type="xs:string" name="language-is-administrative"/>
+            <xs:element type="xs:string" name="language-sorting-order" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="countryType">
+        <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:element type="xs:string" name="alpha-2-code"/>
+            <xs:element type="xs:string" name="alpha-3-code"/>
+            <xs:element type="xs:short" name="numeric-code"/>
+            <xs:element type="xs:string" name="independent"/>
+            <xs:element type="xs:string" name="status"/>
+            <xs:element type="xs:string" name="status-remark"/>
+            <xs:element type="full-nameType" name="full-name"/>
+            <xs:element type="xs:date" name="validity-start-date"/>
+            <xs:element type="xs:date" name="validity-end-date"/>
+            <xs:element type="xs:string" name="alpha-4-code"/>
+            <xs:element type="short-nameType" name="short-name"/>
+            <xs:element type="short-name-upper-caseType" name="short-name-upper-case"/>
+            <xs:element type="languageType" name="language"/>
+            <xs:element type="territoryType" name="territory"/>
+            <xs:element type="categoryType" name="category"/>
+            <xs:element type="subdivisionType" name="subdivision"/>
+            <xs:element type="xs:string" name="list-source"/>
+            <xs:element type="xs:string" name="code-source"/>
+            <xs:element type="remark-part-1Type" name="remark-part-1"/>
+            <xs:element type="changeType" name="change"/>
+            <xs:element type="remark-part-2Type" name="remark-part-2"/>
+        </xs:choice>
+        <xs:attribute type="xs:string" name="id" use="optional"/>
+        <xs:attribute type="xs:byte" name="version" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="full-nameType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="lang3code" use="optional"/>
+                <xs:attribute ref="xml:lang"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="short-nameType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="lang3code" use="optional"/>
+                <xs:attribute ref="xml:lang"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="category-nameType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="lang3code" use="optional"/>
+                <xs:attribute ref="xml:lang"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="category-name-pluralType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="lang3code" use="optional"/>
+                <xs:attribute ref="xml:lang"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="categoryType">
+        <xs:sequence>
+            <xs:element type="category-nameType" name="category-name" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element type="category-name-pluralType" name="category-name-plural" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute type="xs:short" name="id" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="subdivision-codeType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="footnote" use="optional"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="subdivision-localeType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="subdivision-locale-name"/>
+            <xs:element type="xs:string" name="subdivision-locale-local-variation" minOccurs="0"/>
+            <xs:element type="subdivision-locale-romanization-systemType" name="subdivision-locale-romanization-system" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="lang3code" use="optional"/>
+        <xs:attribute ref="xml:lang"/>
+    </xs:complexType>
+    <xs:complexType name="subdivisionType">
+        <xs:sequence>
+            <xs:element type="subdivision-codeType" name="subdivision-code"/>
+            <xs:element type="subdivision-localeType" name="subdivision-locale" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element type="subdivisionType" name="subdivision" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute type="xs:short" name="category-id" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="subdivision-locale-romanization-systemType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:byte" name="romanization-system-id" use="optional"/>
+                <xs:attribute ref="xml:lang"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="change-descriptionType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute ref="xml:lang"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="changeType">
+        <xs:sequence>
+            <xs:element type="xs:date" name="change-date"/>
+            <xs:element type="xs:string" name="change-affected-part"/>
+            <xs:element type="xs:string" name="change-type" minOccurs="0"/>
+            <xs:element type="change-descriptionType" name="change-description" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="territory-nameType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="lang3code" use="optional"/>
+                <xs:attribute ref="xml:lang"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="territoryType">
+        <xs:sequence>
+            <xs:element type="territory-nameType" name="territory-name" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute type="xs:short" name="id" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="remark-part-1Type">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="lang3code" use="optional"/>
+                <xs:attribute ref="xml:lang"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="remark-part-2Type">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="lang3code" use="optional"/>
+                <xs:attribute ref="xml:lang"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="country-codesType">
+        <xs:sequence>
+            <xs:element type="countryType" name="country" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute type="xs:dateTime" name="generated"/>
+    </xs:complexType>
+</xs:schema>

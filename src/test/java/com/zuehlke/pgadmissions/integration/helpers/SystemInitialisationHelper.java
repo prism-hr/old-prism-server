@@ -166,7 +166,7 @@ public class SystemInitialisationHelper {
 
     public void verifySystemCreation() {
         System system = systemService.getSystem();
-        assertEquals(system.getName(), systemName);
+        assertEquals(system.getCode(), systemName);
         assertEquals(system.getState().getId(), PrismState.SYSTEM_APPROVED);
     }
 

@@ -84,6 +84,16 @@ public class System extends Resource {
         return this;
     }
     
+    public System withCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+        return this;
+    }
+    
+    public System withUpdatedTimestamp(DateTime updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
+        return this;
+    }
+    
     @Override
     public State getState() {
         return state;

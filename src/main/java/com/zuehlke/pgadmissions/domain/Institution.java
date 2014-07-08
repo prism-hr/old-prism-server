@@ -1,48 +1,24 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
-import org.apache.solr.analysis.LowerCaseFilterFactory;
-import org.apache.solr.analysis.SnowballPorterFilterFactory;
-import org.apache.solr.analysis.StandardTokenizerFactory;
-import org.apache.solr.analysis.StopFilterFactory;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import org.apache.solr.analysis.*;
 import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.AnalyzerDef;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.*;
 import org.hibernate.search.annotations.Parameter;
-import org.hibernate.search.annotations.Store;
-import org.hibernate.search.annotations.TokenFilterDef;
-import org.hibernate.search.annotations.TokenizerDef;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import javax.persistence.*;
+import java.util.HashMap;
+import java.util.List;
 
 @AnalyzerDef(name = "institutionNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
         @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
         @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class)})
 @Entity
-@Table(name = "INSTITUTION", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_domicile_id", "name"})})
+@Table(name = "INSTITUTION")
 @Indexed
 public class Institution extends ResourceDynamic {
 
@@ -58,20 +34,16 @@ public class Institution extends ResourceDynamic {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "institution_domicile_id", nullable = false)
-    private InstitutionDomicile domicile;
-
     @Column(name = "code", unique = true)
     private String code;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     @Field(analyzer = @Analyzer(definition = "institutionNameAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String name;
 
     @Column(name = "homepage", nullable = false)
     private String homepage;
-    
+
     @JoinColumn(name = "institution_address_id")
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private InstitutionAddress address;
@@ -122,14 +94,6 @@ public class Institution extends ResourceDynamic {
         this.code = code;
     }
 
-    public InstitutionDomicile getDomicile() {
-        return domicile;
-    }
-
-    public void setDomicile(InstitutionDomicile domicile) {
-        this.domicile = domicile;
-    }
-
     public String getHomepage() {
         return homepage;
     }
@@ -163,11 +127,6 @@ public class Institution extends ResourceDynamic {
 
     public Institution withUser(User user) {
         this.user = user;
-        return this;
-    }
-
-    public Institution withDomicile(InstitutionDomicile domicile) {
-        this.domicile = domicile;
         return this;
     }
 
@@ -285,7 +244,7 @@ public class Institution extends ResourceDynamic {
 
     @Override
     public String generateCode() {
-        return domicile.getId() + "-" + String.format("%010d", id);
+        return getAddress().getCountry().getId() + "-" + String.format("%010d", id);
     }
 
     @Override

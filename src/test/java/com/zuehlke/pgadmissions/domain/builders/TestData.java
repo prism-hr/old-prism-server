@@ -1,24 +1,10 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.System;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.Address;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationType;
-import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.System;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.DocumentType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -30,8 +16,9 @@ public class TestData {
     }
 
     public static Institution aInstitution(User user, System system, InstitutionDomicile domicile) {
-        return new Institution().withUser(user).withSystem(system).withName("Akademia G\u00F3rniczo-Hutnicza").withDomicile(domicile)
-                .withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withHomepage("www.agh.edu.pl");
+        return new Institution().withUser(user).withSystem(system).withName("Akademia G\u00F3rniczo-Hutnicza")
+                .withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withHomepage("www.agh.edu.pl")
+                .withAddress(new InstitutionAddress().withCountry(domicile));
     }
 
     public static User aUser(UserAccount account) {

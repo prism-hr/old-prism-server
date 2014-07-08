@@ -130,7 +130,7 @@ public class ProgramConfigurationController {
         Map<String, Object> dataMap = Maps.newHashMap();
         dataMap.put("advertId", program.getId());
 
-        InstitutionDomicile institutionCountry = program.getInstitution().getDomicile();
+        InstitutionDomicile institutionCountry = program.getInstitution().getAddress().getCountry();
 
         result.put("programId", program.getId());
         result.put("programTitle", program.getTitle());

@@ -38,7 +38,7 @@ public class ResourceService {
         InstitutionDomicile domicile = entityService.getByProperty(InstitutionDomicile.class, "id", institutionDTO.getDomicileId());
         InstitutionAddressDTO addressDTO = institutionDTO.getAddress();
         InstitutionAddress address = new InstitutionAddress().withCountry(domicile).withAddressLine1(addressDTO.getAddressLine1()).withAddressLine2(addressDTO.getAddressLine2()).withAddressTown(addressDTO.getAddressTown()).withAddressCode(addressDTO.getAddressCode());
-        return new Institution().withSystem(system).withUser(user).withDomicile(domicile).withName(institutionDTO.getName()).withHomepage(institutionDTO.getHomepage())
+        return new Institution().withSystem(system).withUser(user).withName(institutionDTO.getName()).withHomepage(institutionDTO.getHomepage())
                 .withAddress(address);
     }
 }

@@ -86,7 +86,8 @@ public class IT2SystemReferenceDataImport {
 
         InstitutionDomicile poland = entityService.getByProperty(InstitutionDomicile.class, "id", "PL");
         User user = new User().withEmail("jerzy@urban.pl").withFirstName("Jerzy").withLastName("Urban").withActivationCode("jurekjurektrzymajsie");
-        Institution institution = new Institution().withDomicile(poland).withName("Akademia Gorniczo-Hutnicza").withState(institutionState).withCode("AGH").withHomepage("www.agh.edu.pl").withSystem(system).withUser(user).withCreatedTimestamp(new DateTime()).withUpdatedTimestamp(new DateTime());
+        Institution institution = new Institution().withName("Akademia Gorniczo-Hutnicza").withState(institutionState).withCode("AGH").withHomepage("www.agh.edu.pl").withSystem(system).withUser(user).withCreatedTimestamp(new DateTime()).withUpdatedTimestamp(new DateTime())
+                .withAddress(new InstitutionAddress().withCountry(poland));
         entityService.getOrCreate(user);
         return entityService.getOrCreate(institution);
     }

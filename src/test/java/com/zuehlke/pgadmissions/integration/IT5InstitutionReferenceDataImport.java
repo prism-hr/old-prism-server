@@ -60,7 +60,8 @@ public class IT5InstitutionReferenceDataImport {
 
         InstitutionDomicile institutionDomicile = new InstitutionDomicile().withName("Poland").withEnabled(true);
         User user = new User().withEmail("jerzy@urban.pl").withFirstName("Jerzy").withLastName("Urban").withActivationCode("jurekjurektrzymajsie");
-        Institution institution = new Institution().withDomicile(institutionDomicile).withName("Akademia Gorniczo-Hutnicza").withState(institutionState).withCode("AGH").withHomepage("www.agh.edu.pl").withSystem(system).withUser(user);
+        Institution institution = new Institution().withName("Akademia Gorniczo-Hutnicza").withState(institutionState).withCode("AGH").withHomepage("www.agh.edu.pl").withSystem(system).withUser(user)
+                .withAddress(new InstitutionAddress().withCountry(institutionDomicile));
         entityService.save(institutionDomicile, user, institution);
 
         return institution;

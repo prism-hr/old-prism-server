@@ -77,7 +77,7 @@ public class ProgramConfigurationControllerTest {
     @SuppressWarnings("unchecked")
     public void shouldGetOpportunityData() {
         InstitutionDomicile domicile = new InstitutionDomicile();
-        Program program = new Program().withCode("07").withInstitution(new Institution().withDomicile(domicile)).withId(999)
+        Program program = new Program().withCode("07").withInstitution(new Institution().withId(999))
                 .withTitle("Dlaczego w pizdzie nie ma krzesel?").withDescription("Zeby chuj stal")
                 .withState(new State().withId(PrismState.PROGRAM_APPROVED)).withRequireProjectDefinition(false);
 

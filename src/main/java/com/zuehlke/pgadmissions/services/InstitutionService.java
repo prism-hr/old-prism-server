@@ -32,23 +32,6 @@ public class InstitutionService {
         return institutionDAO.getEnabledImportedInstitutionsByDomicile(domicile);
     }
     
-    public Institution getOrCreate(String institutionCode, InstitutionDomicile domicile, String institutionName) {
-        Institution persistentInstitution;
-        if ("OTHER".equals(institutionCode)) {
-            persistentInstitution = institutionDAO.getByDomicileAndName(domicile, institutionName);
-            if (persistentInstitution == null) {
-                persistentInstitution = new Institution();
-                persistentInstitution.setDomicile(domicile);
-                persistentInstitution.setState(stateService.getById(PrismState.INSTITUTION_APPROVED));
-                persistentInstitution.setName(institutionName);
-                institutionDAO.save(persistentInstitution);
-            }
-        } else {
-            persistentInstitution = getByCode(institutionCode);
-        }
-        return persistentInstitution;
-    }
-
     public List<InstitutionDomicileRegion> getTopLevelRegions(InstitutionDomicile domicile) {
         return institutionDAO.getTopLevelRegions(domicile);
     }

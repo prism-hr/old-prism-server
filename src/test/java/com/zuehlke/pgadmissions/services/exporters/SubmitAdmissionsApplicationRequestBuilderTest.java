@@ -107,7 +107,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldThrowExceptionIfNoActiveProgramFound() {
-        StudyOption studyOption = new StudyOption().withInstitution(new Institution().withDomicile(new InstitutionDomicile().withId("test")))
+        StudyOption studyOption = new StudyOption().withInstitution(new Institution())
                 .withCode("F+++++").withName("Full-time").withEnabled(true);
         applicationForm.getProgramDetails().setStudyOption(studyOption);
         exception.expect(IllegalArgumentException.class);

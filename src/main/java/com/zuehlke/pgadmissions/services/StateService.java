@@ -95,12 +95,12 @@ public class StateService {
         if (action.isSaveComment()) {
             entityService.save(comment);
         }
-        
+
         StateTransition stateTransition = getStateTransition(resource, action, comment);
         if (stateTransition != null) {
             commitResourceTransition(resource, comment, stateTransition);
         }
-        
+
         return stateTransition;
     }
     
@@ -122,6 +122,7 @@ public class StateService {
 
     private void commitResourceCreation(Resource resource, Action action, Comment comment) {
         resource.setCreatedTimestamp(new DateTime());
+        resource.setUpdatedTimestamp(new DateTime());
         entityService.save(resource);
         resource.setCode(resource.generateCode());
         comment.setRole(roleService.getResourceCreatorRole(resource.getParentResource(), action).getAuthority().toString());

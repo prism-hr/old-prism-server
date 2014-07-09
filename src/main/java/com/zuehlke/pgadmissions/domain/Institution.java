@@ -77,7 +77,7 @@ public class Institution extends Resource {
     private InstitutionAddress address;
 
     @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
+    @JoinColumn(name = "state_id")
     private State state;
 
     @ManyToOne(fetch = FetchType.LAZY)

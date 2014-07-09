@@ -9,12 +9,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.mail.MailDescriptor;
 import com.zuehlke.pgadmissions.mail.MailSender;
+import com.zuehlke.pgadmissions.mail.MailService;
 
 @Service
 @Transactional
@@ -38,6 +42,9 @@ public class NotificationService {
 
     @Autowired
     private MailSender mailSender;
+    
+    @Autowired
+    private MailService mailService;
     
     @Autowired
     private EntityService entityService;
@@ -93,6 +100,12 @@ public class NotificationService {
     
     public void deleteObseleteNotificationConfigurations() {
         notificationDAO.deleteObseleteNotificationConfigurations();
+    }
+    
+    public void sentUpdateNotifications(Resource resource, Comment comment, StateTransition stateTransition) {
+        for (MailDescriptor notification : userService.getUserStateTransitionNotifications(stateTransition)) {
+            mailService.sendEmailNotification(notification.getRecipient(), resource, notification.getNotificationTemplate(), comment);
+        }
     }
     
 }

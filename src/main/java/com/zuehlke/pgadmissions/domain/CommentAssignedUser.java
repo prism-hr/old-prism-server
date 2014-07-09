@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -12,12 +13,13 @@ import javax.persistence.UniqueConstraint;
 public class CommentAssignedUser {
 
     @Id
+    @GeneratedValue
     private Integer id;
-
+    
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
+    
     @ManyToOne
     @JoinColumn(name = "comment_id", nullable = false)
     private Comment comment;

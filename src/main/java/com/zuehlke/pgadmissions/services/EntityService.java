@@ -66,9 +66,9 @@ public class EntityService {
         } else {
             try {
                 Object persistentId = PropertyUtils.getSimpleProperty(persistentResource, "id");
-                PropertyUtils.setSimpleProperty(transientResource, "id", persistentId);   
-                merge(transientResource);
+                PropertyUtils.setSimpleProperty(transientResource, "id", persistentId);
                 evict(persistentResource);
+                update(transientResource);
             } catch (Exception e) {
                 throw new Error(e);
             }

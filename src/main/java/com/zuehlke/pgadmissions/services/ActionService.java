@@ -28,6 +28,9 @@ public class ActionService {
 
     @Autowired
     private StateService stateService;
+    
+    @Autowired
+    private ResourceService resourceService;
 
     @Autowired
     private RoleService roleService;
@@ -46,7 +49,7 @@ public class ActionService {
     }
 
     public void validateAction(Resource resource, Action action, User actionOwner, User delegateOwner) {
-        Resource operative = action.isCreationAction() ? resource.getParentResource() : resource;
+        Resource operative = resourceService.getOperativeResource(resource, action);
         if (delegateOwner == null && checkActionAvailable(operative, action, actionOwner)) {
             return;
         } else if (delegateOwner != null && checkActionAvailable(operative, action, delegateOwner)) {

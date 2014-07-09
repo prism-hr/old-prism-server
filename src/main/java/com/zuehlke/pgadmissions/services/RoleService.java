@@ -86,7 +86,7 @@ public class RoleService {
         entityService.delete(userRole);
     }
 
-    public void executeUserRoleTransitions(Resource resource, StateTransition stateTransition, Comment comment) {
+    public void executeRoleTransitions(Resource resource, Comment comment, StateTransition stateTransition) {
         HashMap<User, RoleTransition> userRoleTransitions = Maps.newHashMap();
         userRoleTransitions.putAll(getUserRoleUpdateTransitions(stateTransition, resource, comment.getUser()));
         userRoleTransitions.putAll(getUserRoleCreationTransitions(stateTransition, resource, comment.getUser(), comment));

@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Action;
@@ -25,10 +24,7 @@ import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.mail.MailDescriptor;
-import com.zuehlke.pgadmissions.mail.MailService;
 
 @Service
 @Transactional
@@ -41,6 +37,9 @@ public class StateService {
     private EntityService entityService;
 
     @Autowired
+    private NotificationService notificationService;
+    
+    @Autowired
     private ResourceService resourceService;
 
     @Autowired
@@ -48,9 +47,6 @@ public class StateService {
 
     @Autowired
     private SystemService systemService;
-
-    @Autowired
-    private MailService notificationService;
 
     @Autowired
     private UserService userService;
@@ -83,98 +79,6 @@ public class StateService {
 
     public StateDuration getCurrentStateDuration(Resource resource) {
         return stateDAO.getStateDuration(resource, resource.getState());
-    }
-
-    public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) {
-        if (action.isCreationAction()) {
-            commitResourceCreation(resource, action, comment);
-        } else {
-            commitResourceUpdate(resource, action, comment);
-        }
-
-        if (action.isSaveComment()) {
-            entityService.save(comment);
-        }
-
-        StateTransition stateTransition = getStateTransition(resource, action, comment);
-        if (stateTransition != null) {
-            commitResourceTransition(resource, comment, stateTransition);
-        }
-
-        return stateTransition;
-    }
-    
-    private StateTransition getStateTransition(Resource resource, Action action, Comment comment) {
-        Resource operative = action.isCreationAction() ? resource.getParentResource() : resource;
-        List<StateTransition> potentialStateTransitions = stateDAO.getStateTransitions(operative, action);
-        
-        if (potentialStateTransitions.size() > 1) {
-            try {
-                String method = potentialStateTransitions.get(0).getStateTransitionEvaluation().getMethodName();
-                return (StateTransition) MethodUtils.invokeExactMethod(this, method, new Object[] { operative, comment, potentialStateTransitions });
-            } catch (Exception e) {
-                throw new Error(e);
-            }
-        } else {
-            return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);
-        }
-    }
-
-    private void commitResourceCreation(Resource resource, Action action, Comment comment) {
-        resource.setCreatedTimestamp(new DateTime());
-        resource.setUpdatedTimestamp(new DateTime());
-        entityService.save(resource);
-        resource.setCode(resource.generateCode());
-        comment.setRole(roleService.getResourceCreatorRole(resource.getParentResource(), action).getAuthority().toString());
-    }
-
-    private void commitResourceUpdate(Resource resource, Action action, Comment comment) {
-        if (action.getActionType().isSystemAction()) {
-            comment.setRole(PrismRole.SYSTEM_ADMINISTRATOR.toString());
-        } else {
-            comment.setRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action)));
-            if (comment.getDelegateUser() != null) {
-                comment.setDelegateRole(Joiner.on(", ").join(roleService.getDelegateActionOwnerRoles(comment.getDelegateUser(), resource, action)));
-            }
-        }
-    }
-    
-    private void commitResourceTransition(Resource resource, Comment comment, StateTransition stateTransition) {
-        State transitionState = stateTransition.getTransitionState();
-        
-        resourceService.setTransitionState(resource, transitionState);
-        comment.setTransitionState(transitionState);
-        
-        resourceService.setDueDate(resource, comment, getStateDuration(resource, transitionState));
-        resource.setUpdatedTimestamp(new DateTime());
-        
-        roleService.executeUserRoleTransitions(resource, stateTransition, comment);
-
-        for (MailDescriptor notification : userService.getUserStateTransitionNotifications(stateTransition)) {
-            notificationService.sendEmailNotification(notification.getRecipient(), resource, notification.getNotificationTemplate(), comment);
-        }
-
-        if (stateTransition.getPropagatedActions().size() > 0) {
-            entityService.save(new StateTransitionPending().withResource(resource).withStateTransition(stateTransition));
-        }
-    }
-    
-    public void executePropagatedStateTransitions() {
-        Resource lastResource = null;
-        for (StateTransitionPending pendingStateTransition : getPendingStateTransitions()) {
-            Resource thisResource = pendingStateTransition.getResource();
-
-            if (thisResource != lastResource) {
-                HashMultimap<Action, Resource> propagations = stateDAO.getPropagatedStateTransitions(pendingStateTransition);
-                executeThreadedStateTransitions(propagations, systemService.getSystem().getUser());
-
-                if (propagations.isEmpty()) {
-                    entityService.delete(pendingStateTransition);
-                }
-            }
-
-            lastResource = thisResource;
-        }
     }
 
     public List<StateTransitionPending> getPendingStateTransitions() {
@@ -229,6 +133,69 @@ public class StateService {
         return stateDAO.getActionableStates(actions);
     }
 
+    public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) {
+        if (action.isCreationAction()) {
+            resourceService.commitResourceCreation(resource, action, comment);
+        } else {
+            resourceService.commitResourceUpdate(resource, action, comment);
+        }
+
+        if (action.isSaveComment()) {
+            entityService.save(comment);
+        }
+
+        StateTransition stateTransition = getStateTransition(resource, action, comment);
+        if (stateTransition != null) {
+            StateDuration transitionStateDuration = getStateDuration(resource, stateTransition.getTransitionState());
+            resourceService.transitionResourceState(resource, comment, stateTransition.getTransitionState(), transitionStateDuration);
+            roleService.executeRoleTransitions(resource, comment, stateTransition);
+            notificationService.sentUpdateNotifications(resource, comment, stateTransition);
+            queuePropagatedStateTransitions(resource, stateTransition);
+        }
+
+        return stateTransition;
+    }
+    
+    private StateTransition getStateTransition(Resource resource, Action action, Comment comment) {
+        Resource operative = resourceService.getOperativeResource(resource, action);
+        List<StateTransition> potentialStateTransitions = stateDAO.getStateTransitions(operative, action);
+        
+        if (potentialStateTransitions.size() > 1) {
+            try {
+                String method = potentialStateTransitions.get(0).getStateTransitionEvaluation().getMethodName();
+                return (StateTransition) MethodUtils.invokeExactMethod(this, method, new Object[] { operative, comment, potentialStateTransitions });
+            } catch (Exception e) {
+                throw new Error(e);
+            }
+        } else {
+            return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);
+        }
+    }
+    
+    public void executePropagatedStateTransitions() {
+        Resource lastResource = null;
+        for (StateTransitionPending pendingStateTransition : getPendingStateTransitions()) {
+            Resource thisResource = pendingStateTransition.getResource();
+
+            if (thisResource != lastResource) {
+                HashMultimap<Action, Resource> propagations = stateDAO.getPropagatedStateTransitions(pendingStateTransition);
+                executeThreadedStateTransitions(propagations, systemService.getSystem().getUser());
+
+                if (propagations.isEmpty()) {
+                    entityService.delete(pendingStateTransition);
+                }
+            }
+
+            lastResource = thisResource;
+        }
+    }
+    
+    private void queuePropagatedStateTransitions(Resource resource, StateTransition stateTransition) {
+        if (stateTransition.getPropagatedActions().size() > 0) {
+            entityService.save(new StateTransitionPending().withResource(resource).withStateTransition(stateTransition));
+        }
+    }
+     
     private void executeThreadedStateTransitions(final HashMultimap<Action, Resource> threadedStateTransitions, final User invoker) {
         for (final Action action : threadedStateTransitions.keySet()) {
             for (final Resource resource : threadedStateTransitions.get(action)) {

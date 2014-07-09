@@ -48,7 +48,7 @@ public enum PrismAction {
             new PrismActionRedaction().withRole(PrismRole.APPLICATION_REFEREE).withRedactionType(PrismRedactionType.ALL_CONTENT))), //
     APPLICATION_CORRECT(PrismActionType.USER_INVOCATION, true, PrismScope.APPLICATION, null, null), //
     APPLICATION_EMAIL_CREATOR(PrismActionType.USER_INVOCATION, false, PrismScope.APPLICATION, null, null), //
-    APPLICATION_ESCALATE(PrismActionType.SYSTEM_ESCALATION, false, PrismScope.APPLICATION, null, null), //
+    APPLICATION_ESCALATE(PrismActionType.SYSTEM_ESCALATION, true, PrismScope.APPLICATION, null, null), //
     APPLICATION_EXPORT(PrismActionType.SYSTEM_ESCALATION, true, PrismScope.APPLICATION, null, null), //
     APPLICATION_MOVE_TO_DIFFERENT_STAGE(PrismActionType.USER_INVOCATION, true, PrismScope.APPLICATION, null, Arrays.asList( //
             new PrismActionRedaction().withRole(PrismRole.APPLICATION_CREATOR).withRedactionType(PrismRedactionType.ALL_CONTENT), //
@@ -74,11 +74,11 @@ public enum PrismAction {
             new PrismActionRedaction().withRole(PrismRole.APPLICATION_REFEREE).withRedactionType(PrismRedactionType.ALL_CONTENT))), //
     APPLICATION_WITHDRAW(PrismActionType.USER_INVOCATION, true, PrismScope.APPLICATION, null, null), //
     INSTITUTION_COMPLETE_APPROVAL_STAGE(PrismActionType.USER_INVOCATION, true, PrismScope.INSTITUTION, null, null), //
-    INSTITUTION_CONFIGURE(PrismActionType.USER_INVOCATION, false, PrismScope.INSTITUTION, null, null), //
+    INSTITUTION_CONFIGURE(PrismActionType.USER_INVOCATION, true, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_CORRECT(PrismActionType.USER_INVOCATION, true, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_CREATE_PROGRAM(PrismActionType.USER_INVOCATION, true, PrismScope.INSTITUTION, PrismScope.PROGRAM, null), //
     INSTITUTION_EMAIL_CREATOR(PrismActionType.USER_INVOCATION, false, PrismScope.INSTITUTION, null, null), //
-    INSTITUTION_ESCALATE(PrismActionType.SYSTEM_ESCALATION, false, PrismScope.INSTITUTION, null, null), //
+    INSTITUTION_ESCALATE(PrismActionType.SYSTEM_ESCALATION, true, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_IMPORT_PROGRAM(PrismActionType.USER_INVOCATION, true, PrismScope.INSTITUTION, PrismScope.PROGRAM, null), //
     INSTITUTION_VIEW(PrismActionType.USER_INVOCATION, false, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_VIEW_APPLICATION_LIST(PrismActionType.USER_INVOCATION, false, PrismScope.INSTITUTION, null, null), //
@@ -139,9 +139,9 @@ public enum PrismAction {
         }
     }
 
-    private PrismAction(PrismActionType actionType, boolean displayComment, PrismScope scope, PrismScope creationScope, List<PrismActionRedaction> redactions) {
+    private PrismAction(PrismActionType actionType, boolean saveComment, PrismScope scope, PrismScope creationScope, List<PrismActionRedaction> redactions) {
         this.actionType = actionType;
-        this.saveComment = displayComment;
+        this.saveComment = saveComment;
         this.scope = scope;
         this.creationScope = creationScope;
         this.redactions = redactions == null ? this.redactions : redactions;

@@ -9,7 +9,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -35,7 +34,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Program extends Advert {
 
-    @Column(name = "code", nullable = true)
+    @Column(name = "code")
     private String code;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
@@ -45,42 +44,29 @@ public class Program extends Advert {
     @Column(name = "require_project_definition")
     private Boolean requireProjectDefinition;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
-
-    @OneToMany(mappedBy = "program")
-    private Set<Project> projects = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "project")
-    private Set<Application> applications = Sets.newHashSet();
-
-    @Column(name = "is_imported", nullable = false)
-    private boolean imported;
-
-    @OneToMany(mappedBy = "program")
-    @OrderBy("applicationStartDate")
-    private Set<ProgramInstance> programInstances = Sets.newHashSet();
 
     @Column(name = "program_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismProgramType programType;
 
+    @ManyToOne
+    @JoinColumn(name = "state_id")
+    private State state;
+
+    @ManyToOne
+    @JoinColumn(name = "previous_state_id")
+    private State previousState;
+    
     @Column(name = "due_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dueDate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "state_id", nullable = false)
-    private State state;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "previous_state_id", nullable = true)
-    private State previousState;
 
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -89,18 +75,31 @@ public class Program extends Advert {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
+    
+    @OneToMany(mappedBy = "program")
+    private Set<Project> projects = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "project")
+    private Set<Application> applications = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "program")
+    @OrderBy("applicationStartDate")
+    private Set<ProgramInstance> programInstances = Sets.newHashSet();
 
     @OneToMany(mappedBy = "program")
     private Set<Comment> comments = Sets.newHashSet();
 
     @Override
+    public String getCode() {
+        return code == null ? super.getCode() : code;
+    }
+    
     public void setCode(final String code) {
         this.code = code;
     }
-
-    @Override
-    public String getCode() {
-        return code;
+    
+    public boolean isImported() {
+        return code != null;
     }
 
     @Override
@@ -123,14 +122,6 @@ public class Program extends Advert {
 
     public void setRequireProjectDefinition(Boolean requireProjectDefinition) {
         this.requireProjectDefinition = requireProjectDefinition;
-    }
-
-    public boolean isImported() {
-        return imported;
-    }
-
-    public void setImported(boolean imported) {
-        this.imported = imported;
     }
 
     public Set<Project> getProjects() {
@@ -206,11 +197,6 @@ public class Program extends Advert {
 
     public Program withInstitution(Institution institution) {
         this.institution = institution;
-        return this;
-    }
-
-    public Program withImported(boolean imported) {
-        this.imported = imported;
         return this;
     }
 
@@ -332,26 +318,19 @@ public class Program extends Advert {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
         HashMap<String, Object> properties1 = Maps.newHashMap();
         properties1.put("institution", institution);
-        properties1.put("code", code);
-        HashMap<String, Object> properties2 = Maps.newHashMap();
-        properties2.put("institution", institution);
-        properties2.put("title", title);
+        properties1.put("title", title);
         propertiesWrapper.add(properties1);
-        propertiesWrapper.add(properties2);
+        if (code != null) {
+            HashMap<String, Object> properties2 = Maps.newHashMap();
+            properties2.put("institution", institution);
+            properties2.put("code", code);
+            propertiesWrapper.add(properties2);
+        }
         HashMultimap<String, Object> exclusions = HashMultimap.create();
         exclusions.put("state.id", PrismState.PROGRAM_DISABLED_COMPLETED);
         exclusions.put("state.id", PrismState.PROGRAM_REJECTED);
         exclusions.put("state.id", PrismState.PROGRAM_WITHDRAWN);
         return new ResourceSignature(propertiesWrapper, exclusions);
-    }
-
-    @Override
-    public String generateCode() {
-        String postfix = code;
-        if (!imported) {
-            postfix = String.format("%010d", getId());
-        }
-        return institution.getCode() + "-" + postfix;
     }
 
 }

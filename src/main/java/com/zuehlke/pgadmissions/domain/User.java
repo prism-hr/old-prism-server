@@ -84,7 +84,7 @@ public class User implements UserDetails, Comparable<User>, IUniqueEntity {
     @OneToMany(mappedBy = "parentUser")
     private Set<User> linkedAccounts = Sets.newHashSet();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "parent_user_id")
     private User parentUser;
 

@@ -40,12 +40,6 @@ public class ApplicationFormBuilder {
     private List<ApplicationFunding> fundings = new ArrayList<ApplicationFunding>();
     private ApplicationDocument applicationFormDocument;
     private ApplicationAdditionalInformation info;
-    private String applicationNumber;
-
-    public ApplicationFormBuilder applicationNumber(String applicationNumber) {
-        this.applicationNumber = applicationNumber;
-        return this;
-    }
 
     public ApplicationFormBuilder status(State status) {
         this.status = status;
@@ -175,7 +169,6 @@ public class ApplicationFormBuilder {
         application.setState(status);
         application.setAdditionalInformation(info);
         application.setAcceptedTerms(acceptedTerms);
-        application.setCode(applicationNumber);
         application.setClosingDate(closingDate);
         application.getEmploymentPositions().addAll(employmentPositions);
         return application;

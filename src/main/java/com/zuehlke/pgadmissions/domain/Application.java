@@ -40,9 +40,6 @@ public class Application extends Resource {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "code", unique = true)
-    private String code;
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -116,7 +113,7 @@ public class Application extends Resource {
     private DateTime submittedTimestamp;
 
     @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
+    @JoinColumn(name = "state_id")
     private State state;
 
     @ManyToOne
@@ -146,16 +143,6 @@ public class Application extends Resource {
     @Override
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public ApplicationAddress getAddress() {
@@ -264,11 +251,6 @@ public class Application extends Resource {
 
     public Application withId(Integer id) {
         this.id = id;
-        return this;
-    }
-
-    public Application withCode(String code) {
-        this.code = code;
         return this;
     }
 
@@ -463,11 +445,6 @@ public class Application extends Resource {
         exclusions.put("state.id", PrismState.APPLICATION_REJECTED_COMPLETED);
         exclusions.put("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED);
         return new ResourceSignature(propertiesWrapper, exclusions);
-    }
-
-    @Override
-    public String generateCode() {
-        return program.getCode() + "-" + getCreatedTimestamp().getYear() + "-" + String.format("%010d", getId());
     }
 
     @Override

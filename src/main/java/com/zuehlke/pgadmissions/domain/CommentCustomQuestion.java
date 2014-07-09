@@ -34,7 +34,7 @@ public class CommentCustomQuestion implements IUniqueEntity {
     private Action action;
 
     @OneToOne
-    @JoinColumn(name = "comment_custom_question_version_id", nullable = true)
+    @JoinColumn(name = "comment_custom_question_version_id")
     private CommentCustomQuestionVersion version;
     
     @Column(name = "is_enabled")

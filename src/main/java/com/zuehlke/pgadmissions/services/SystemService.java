@@ -105,13 +105,13 @@ public class SystemService {
     private UserService userService;
 
     public System getSystem() {
-        return entityService.getByProperty(System.class, "code", systemName);
+        return entityService.getByProperty(System.class, "name", systemName);
     }
 
     public System getOrCreateSystem(User systemUser) {
         State systemRunning = stateService.getById(PrismState.SYSTEM_APPROVED);
         DateTime startupTimestamp = new DateTime();
-        System transientSystem = new System().withCode(systemName).withUser(systemUser).withState(systemRunning).withCreatedTimestamp(startupTimestamp)
+        System transientSystem = new System().withName(systemName).withUser(systemUser).withState(systemRunning).withCreatedTimestamp(startupTimestamp)
                 .withUpdatedTimestamp(startupTimestamp);
         return entityService.createOrUpdate(transientSystem);
     }
@@ -157,7 +157,7 @@ public class SystemService {
 
     private void initialiseScopes() {
         for (PrismScope prismScope : PrismScope.values()) {
-            Scope transientScope = new Scope().withId(prismScope).withPrecedence(prismScope.getPrecedence());
+            Scope transientScope = new Scope().withId(prismScope).withPrecedence(prismScope.getPrecedence()).withShortCode(prismScope.getShortCode());
             entityService.createOrUpdate(transientScope);
         }
     }

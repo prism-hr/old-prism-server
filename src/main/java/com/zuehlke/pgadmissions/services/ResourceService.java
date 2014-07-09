@@ -55,7 +55,7 @@ public class ResourceService {
     }
 
     public Resource createNewInstitution(System system, User user, InstitutionDTO institutionDTO) {
-        InstitutionDomicile domicile = entityService.getByProperty(InstitutionDomicile.class, "id", institutionDTO.getDomicileId());
+        InstitutionDomicile domicile = entityService.getByProperty(InstitutionDomicile.class, "id", institutionDTO.getDomicile());
         InstitutionAddressDTO addressDTO = institutionDTO.getAddress();
         InstitutionAddress address = new InstitutionAddress().withCountry(domicile).withAddressLine1(addressDTO.getAddressLine1())
                 .withAddressLine2(addressDTO.getAddressLine2()).withAddressTown(addressDTO.getAddressTown()).withAddressCode(addressDTO.getAddressCode());

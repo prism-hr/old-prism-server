@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -36,15 +35,15 @@ public class System extends Resource {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "code", nullable = false, unique = true)
-    private String code;
+    @Column(name = "name", unique = true)
+    private String name;
 
     @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
+    @JoinColumn(name = "state_id")
     private State state;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "previous_state_id", nullable = true)
+    @ManyToOne
+    @JoinColumn(name = "previous_state_id")
     private State previousState;
 
     @Column(name = "due_date")
@@ -69,8 +68,16 @@ public class System extends Resource {
         this.id = id;
     }
 
-    public System withCode(String code) {
-        this.code = code;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public System withName(String name) {
+        this.name = name;
         return this;
     }
     
@@ -176,21 +183,6 @@ public class System extends Resource {
     }
 
     @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    @Override
-    public String generateCode() {
-        return "PRiSM";
-    }
-
-    @Override
     public DateTime getCreatedTimestamp() {
         return createdTimestamp;
     }
@@ -214,7 +206,7 @@ public class System extends Resource {
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
         HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("code", code);
+        properties.put("name", name);
         propertiesWrapper.add(properties);
         return new ResourceSignature(propertiesWrapper);
     }

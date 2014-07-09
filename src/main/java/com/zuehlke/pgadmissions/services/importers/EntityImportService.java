@@ -227,12 +227,12 @@ public class EntityImportService {
     // TODO: integrate with workflow engine when finished
     @Transactional
     public Program getOrCreateProgram(Programme programme, Institution institution) {
-        String prefixedProgramCode = institution.getCode() + "-" + programme.getCode();
+        String prefixedProgramCode = String.format("%010d", institution.getId().toString()) + "-" + programme.getCode();
         Program program = programService.getProgramByCode(prefixedProgramCode);
         if (program == null) {
             PrismProgramType programType = PrismProgramType.findValueFromString(programme.getName());
             program = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withCode(prefixedProgramCode)
-                    .withTitle(programme.getName()).withState(new State().withId(PrismState.PROGRAM_APPROVED)).withImported(true).withProgramType(programType).withCreatedTimestamp(new DateTime()).withUpdatedTimestamp(new DateTime());
+                    .withTitle(programme.getName()).withState(new State().withId(PrismState.PROGRAM_APPROVED)).withProgramType(programType).withCreatedTimestamp(new DateTime()).withUpdatedTimestamp(new DateTime());
             entityService.save(program);
         }
 

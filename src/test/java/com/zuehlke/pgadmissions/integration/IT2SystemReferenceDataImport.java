@@ -103,16 +103,16 @@ public class IT2SystemReferenceDataImport {
 
         InstitutionDomicile poland = entityService.getByProperty(InstitutionDomicile.class, "id", "PL");
         User user = new User().withEmail("jerzy@urban.pl").withFirstName("Jerzy").withLastName("Urban").withActivationCode("jurekjurektrzymajsie");
-        Institution institution = new Institution().withName("Akademia Gorniczo-Hutnicza").withState(institutionState).withCode("AGH").withHomepage("www.agh.edu.pl").withSystem(system).withUser(user).withCreatedTimestamp(new DateTime()).withUpdatedTimestamp(new DateTime())
+        Institution institution = new Institution().withName("Akademia Gorniczo-Hutnicza").withState(institutionState).withHomepage("www.agh.edu.pl")
+                .withSystem(system).withUser(user).withCreatedTimestamp(new DateTime()).withUpdatedTimestamp(new DateTime())
                 .withAddress(new InstitutionAddress().withCountry(poland));
         entityService.getOrCreate(user);
         return entityService.getOrCreate(institution);
     }
 
-
     public void testImportDisabilities(Institution institution) throws Exception {
         // clean-up imported disabilities
-        for (String code : new String[]{"1", "99"}) {
+        for (String code : new String[] { "1", "99" }) {
             Disability disability = entityService.getByCode(Disability.class, code);
             if (disability != null) {
                 entityService.delete(disability);
@@ -160,7 +160,7 @@ public class IT2SystemReferenceDataImport {
     public void testConflictsInProgramImport(Institution institution) throws Exception {
 
         // clean-up imported programs
-        for (String code : new String[]{"AGH-1", "AGH-99"}) {
+        for (String code : new String[] { "AGH-1", "AGH-99" }) {
             Program program = programService.getProgramByCode(code);
             if (program != null) {
                 for (ProgramInstance programInstance : program.getProgramInstances()) {
@@ -190,15 +190,13 @@ public class IT2SystemReferenceDataImport {
                 program1.getProgramInstances(),
                 contains(equalTo(new ProgramInstance().withIdentifier("0009").withAcademicYear("2013")
                         .withStudyOption(new StudyOption().withInstitution(institution).withCode("F+++++").withName("Full-time").withEnabled(true))
-                        .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15))
-                        .withEnabled(true))));
+                        .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(true))));
 
         assertThat(
                 otherProgram.getProgramInstances(),
                 contains(equalTo(new ProgramInstance().withIdentifier("0014").withAcademicYear("2013")
                         .withStudyOption(new StudyOption().withInstitution(institution).withCode("F+++++").withName("Full-time").withEnabled(true))
-                        .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15))
-                        .withEnabled(true))));
+                        .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(true))));
 
         importedEntityFeed.setLocation("reference_data/conflicts/programs/updatedPrograms.xml");
         entityImportService.importEntities(importedEntityFeed);
@@ -209,8 +207,8 @@ public class IT2SystemReferenceDataImport {
         assertSame(PrismProgramType.MRES, program1.getProgramType());
         assertEquals("Internship otherProgram", otherProgram.getTitle());
         assertSame(PrismProgramType.INTERNSHIP, otherProgram.getProgramType());
-//        assertTrue(program1.isEnabled());
-//        assertFalse(otherProgram.isEnabled());
+        // assertTrue(program1.isEnabled());
+        // assertFalse(otherProgram.isEnabled());
         assertFalse(program1.getRequireProjectDefinition());
         assertTrue(otherProgram.getRequireProjectDefinition());
 
@@ -219,17 +217,16 @@ public class IT2SystemReferenceDataImport {
                 containsInAnyOrder(
                         equalTo(new ProgramInstance().withIdentifier("0009").withAcademicYear("2013")
                                 .withStudyOption(new StudyOption().withInstitution(institution).withCode("F+++++").withName("Full-time").withEnabled(true))
-                                .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15))
-                                .withEnabled(true)),
+                                .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(true)),
                         equalTo(new ProgramInstance().withIdentifier("0008").withAcademicYear("2014")
                                 .withStudyOption(new StudyOption().withInstitution(institution).withCode("P+++++").withName("Fart-time").withEnabled(true))
-                                .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15))
-                                .withEnabled(true))));
+                                .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(true))));
 
-        assertThat(otherProgram.getProgramInstances(), contains(equalTo(new ProgramInstance().withIdentifier("0014").withAcademicYear("2013")
-                .withStudyOption(new StudyOption().withInstitution(institution).withCode("F+++++").withName("Full-time").withEnabled(true))
-                .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15))
-                .withEnabled(false))));
+        assertThat(
+                otherProgram.getProgramInstances(),
+                contains(equalTo(new ProgramInstance().withIdentifier("0014").withAcademicYear("2013")
+                        .withStudyOption(new StudyOption().withInstitution(institution).withCode("F+++++").withName("Full-time").withEnabled(true))
+                        .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(false))));
 
     }
 

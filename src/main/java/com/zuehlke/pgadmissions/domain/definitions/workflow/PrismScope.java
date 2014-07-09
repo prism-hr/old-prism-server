@@ -14,15 +14,17 @@ import com.zuehlke.pgadmissions.domain.System;
 
 public enum PrismScope {
     
-    SYSTEM(System.class, 1), //
-    INSTITUTION(Institution.class, 2), //
-    PROGRAM(Program.class, 3), //
-    PROJECT(Project.class, 4), //
-    APPLICATION(Application.class, 5);
+    SYSTEM(System.class, 1, "SM"), //
+    INSTITUTION(Institution.class, 2, "IN"), //
+    PROGRAM(Program.class, 3, "PM"), //
+    PROJECT(Project.class, 4, "PT"), //
+    APPLICATION(Application.class, 5, "AN");
     
     private Class<? extends Resource> resourceClass;
     
     private Integer precedence;
+    
+    private String shortCode;
     
     private static HashMap<Class<? extends Resource>, PrismScope> resourceScopes = Maps.newHashMap();
     
@@ -44,9 +46,10 @@ public enum PrismScope {
         }
     }
     
-    private PrismScope(Class<? extends Resource> resourceClass, int precedence) {
+    private PrismScope(Class<? extends Resource> resourceClass, int precedence, String shortCode) {
         this.resourceClass = resourceClass;
         this.precedence = precedence;
+        this.shortCode = shortCode;
     }
     
     public  Class<? extends Resource> getResourceClass() {
@@ -57,6 +60,10 @@ public enum PrismScope {
         return precedence;
     }
     
+    public String getShortCode() {
+        return shortCode;
+    }
+
     public static PrismScope getResourceScope(Class<? extends Resource> resourceClass) {
         return resourceScopes.get(resourceClass);
     }

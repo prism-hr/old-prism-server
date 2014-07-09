@@ -6,7 +6,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -62,9 +61,6 @@ public class Institution extends Resource {
     @JoinColumn(name = "institution_domicile_id", nullable = false)
     private InstitutionDomicile domicile;
 
-    @Column(name = "code", unique = true)
-    private String code;
-
     @Column(name = "name", nullable = false, unique = true)
     @Field(analyzer = @Analyzer(definition = "institutionNameAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String name;
@@ -80,8 +76,8 @@ public class Institution extends Resource {
     @JoinColumn(name = "state_id")
     private State state;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "previous_state_id", nullable = true)
+    @ManyToOne
+    @JoinColumn(name = "previous_state_id")
     private State previousState;
 
     @Column(name = "due_date")
@@ -121,14 +117,6 @@ public class Institution extends Resource {
     public void setDomicile(InstitutionDomicile domicile) {
         this.domicile = domicile;
     }
-    
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public String getHomepage() {
         return homepage;
@@ -163,11 +151,6 @@ public class Institution extends Resource {
     
     public Institution withDomicile(InstitutionDomicile domicile) {
         this.domicile = domicile;
-        return this;
-    }
-    
-    public Institution withCode(String code) {
-        this.code = code;
         return this;
     }
 
@@ -282,11 +265,6 @@ public class Institution extends Resource {
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
-
-    @Override
-    public String generateCode() {
-        return getAddress().getCountry().getId() + "-" + String.format("%010d", id);
-    }
     
     @Override
     public DateTime getCreatedTimestamp() {
@@ -315,9 +293,6 @@ public class Institution extends Resource {
         HashMap<String, Object> properties1 = Maps.newHashMap();
         properties1.put("name", name);
         propertiesWrapper.add(properties1);
-        HashMap<String, Object> properties2 = Maps.newHashMap();
-        properties2.put("code", code);
-        propertiesWrapper.add(properties2);
         return new ResourceSignature(propertiesWrapper);
     }
 

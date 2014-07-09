@@ -186,7 +186,7 @@ public class ValidApplicationFormBuilder {
         funding = new ApplicationFunding().withAwardDate(new LocalDate().minusYears(1)).withDescription("Received a funding").withDocument(fundingDocument)
                 .withType(new FundingSource().withName("test").withCode("test")).withValue("5");
         applicationFormBuilder = new ApplicationFormBuilder().applicant(user).acceptedTerms(true).additionalInformation(additionalInformation)
-                .createdTimestamp(new DateTime()).applicant(user).applicationNumber("TMRMBISING01-2012-999999").closingDate(new LocalDate().plusMonths(1))
+                .createdTimestamp(new DateTime()).applicant(user).closingDate(new LocalDate().plusMonths(1))
                 .applicationFormAddress(new ApplicationAddress().withCurrentAddress(address).withContactAddress(address))
                 .dueDate(new LocalDate().plusMonths(1)).employmentPositions(employmentPosition).fundings(funding).personalDetails(personalDetails)
                 .program(program).programmeDetails(programDetails).qualification(qualification1, qualification2)

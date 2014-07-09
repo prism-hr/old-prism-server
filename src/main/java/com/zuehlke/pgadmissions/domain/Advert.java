@@ -10,7 +10,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -70,7 +69,7 @@ public abstract class Advert extends Resource {
     @Column(name = "pay_annualised")
     private BigDecimal payAnnualised;
     
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "advert_closing_date_id", unique = true)
     private AdvertClosingDate closingDate;
     

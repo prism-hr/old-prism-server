@@ -7,7 +7,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -31,29 +30,23 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Project extends Advert {
 
-    @Column(name = "code", nullable = true, unique = true)
-    private String code;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
-    private Set<Application> applications = Sets.newHashSet();
-
+    
     @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
+    @JoinColumn(name = "state_id")
     private State state;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "previous_state_id")
     private State previousState;
 
@@ -73,18 +66,11 @@ public class Project extends Advert {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
     
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
+    private Set<Application> applications = Sets.newHashSet();
+    
     @OneToMany(mappedBy = "project")
     private Set<Comment> comments = Sets.newHashSet();
-
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public State getState() {
         return state;
@@ -214,11 +200,6 @@ public class Project extends Advert {
         exclusions.put("state.id", PrismState.PROJECT_REJECTED);
         exclusions.put("state.id", PrismState.PROJECT_WITHDRAWN);
         return new ResourceSignature(propertiesWrapper, exclusions);
-    }
-
-    @Override
-    public String generateCode() {
-        return program.getCode() + "-" + createdTimestamp.getYear() + "-" + String.format("%010d", getId());
     }
 
     @Override

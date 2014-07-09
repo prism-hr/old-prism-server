@@ -108,6 +108,7 @@ public class SystemInitialisationHelper {
     public void verifyScopeCreation() {
         for (Scope scope : scopeService.getScopesDescending()) {
             assertEquals(scope.getId().getPrecedence(), scope.getPrecedence());
+            assertEquals(scope.getId().getShortCode(), scope.getShortCode());
         }
     }
 
@@ -166,7 +167,7 @@ public class SystemInitialisationHelper {
 
     public void verifySystemCreation() {
         System system = systemService.getSystem();
-        assertEquals(system.getCode(), systemName);
+        assertEquals(system.getName(), systemName);
         assertEquals(system.getState().getId(), PrismState.SYSTEM_APPROVED);
     }
 

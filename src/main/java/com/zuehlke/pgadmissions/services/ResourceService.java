@@ -93,7 +93,6 @@ public class ResourceService {
         resource.setCreatedTimestamp(new DateTime());
         resource.setUpdatedTimestamp(new DateTime());
         entityService.save(resource);
-        resource.setCode(resource.generateCode());
         comment.setRole(roleService.getResourceCreatorRole(resource.getParentResource(), action).getAuthority().toString());
     }
 

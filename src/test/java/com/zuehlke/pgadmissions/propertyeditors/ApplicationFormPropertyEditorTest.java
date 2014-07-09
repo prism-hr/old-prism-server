@@ -44,7 +44,7 @@ public class ApplicationFormPropertyEditorTest {
 	
 	@Test	
 	public void shouldReturnApplicationNumbersAsString(){			
-		editor.setValue(new ApplicationFormBuilder().applicationNumber("5").build());
+		editor.setValue(new ApplicationFormBuilder().build());
 		assertEquals("5", editor.getAsText());
 	}
 	

@@ -37,33 +37,27 @@ public abstract class Resource implements IUniqueEntity {
     public abstract User getUser();
 
     public abstract void setUser(User user);
-    
+
     public abstract State getPreviousState();
 
     public abstract void setPreviousState(State previousState);
-    
+
     public abstract LocalDate getDueDate();
 
     public abstract void setDueDate(LocalDate dueDate);
-    
-    public abstract String getCode();
-    
-    public abstract void setCode(String code);
-    
-    public abstract String generateCode();
-    
+
     public abstract DateTime getCreatedTimestamp();
 
     public abstract void setCreatedTimestamp(DateTime createdTimestamp);
-    
+
     public abstract DateTime getUpdatedTimestamp();
 
     public abstract void setUpdatedTimestamp(DateTime updatedTimestamp);
-    
+
     public LocalDate getDueDateBaseline() {
         return new LocalDate();
     }
-    
+
     public Resource getParentResource() {
         PrismScope resourceScope = PrismScope.getResourceScope(this.getClass());
         switch (resourceScope) {
@@ -90,7 +84,7 @@ public abstract class Resource implements IUniqueEntity {
             setSystem(parentResource.getSystem());
         }
     }
-    
+
     public PrismScope getResourceScope() {
         return PrismScope.getResourceScope(this.getClass());
     }
@@ -105,6 +99,10 @@ public abstract class Resource implements IUniqueEntity {
                 throw new Error(e);
             }
         }
+    }
+
+    public String getCode() {
+        return "PRiSM-" + PrismScope.getResourceScope(this.getClass()).getShortCode() + "-" + String.format("%010d", getId());
     }
     
 }

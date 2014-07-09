@@ -25,6 +25,9 @@ public class Scope extends WorkflowResource {
     @Column(name = "precedence", nullable = false, unique = true)
     private Integer precedence;
     
+    @Column(name = "short_code", nullable = false, unique = true)
+    private String shortCode;
+    
     public PrismScope getId() {
         return id;
     }
@@ -35,6 +38,14 @@ public class Scope extends WorkflowResource {
     
     public Integer getPrecedence() {
         return precedence;
+    }
+
+    public String getShortCode() {
+        return shortCode;
+    }
+
+    public void setShortCode(String shortCode) {
+        this.shortCode = shortCode;
     }
 
     public void setPrecedence(Integer precedence) {
@@ -48,6 +59,11 @@ public class Scope extends WorkflowResource {
     
     public Scope withPrecedence(Integer precedence) {
         this.precedence = precedence;
+        return this;
+    }
+    
+    public Scope withShortCode(String shortCode) {
+        this.shortCode = shortCode;
         return this;
     }
     

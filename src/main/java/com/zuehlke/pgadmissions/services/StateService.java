@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.exceptions.StateTransitionException;
 
 @Service
 @Transactional
@@ -148,7 +149,13 @@ public class StateService {
         if (stateTransition != null) {
             StateDuration transitionStateDuration = getStateDuration(resource, stateTransition.getTransitionState());
             resourceService.transitionResourceState(resource, comment, stateTransition.getTransitionState(), transitionStateDuration);
-            roleService.executeRoleTransitions(resource, comment, stateTransition);
+            
+            try {
+                roleService.executeRoleTransitions(stateTransition, comment);
+            } catch (StateTransitionException e) {
+                throw new Error(e);
+            }
+            
             notificationService.sentUpdateNotifications(resource, comment, stateTransition);
             queuePropagatedStateTransitions(resource, stateTransition);
         }

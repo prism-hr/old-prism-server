@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
 
 @Service
@@ -62,10 +61,6 @@ public class CommentService {
         return commentDAO.getLastCommentOfType(resource, clazz, author);
     }
 
-    public List<User> getAssignedUsers(Comment comment, Role role, User invoker) {
-        return commentDAO.getAssignedUsers(comment, role, invoker);
-    }
-
     public List<Comment> getVisibleComments(Resource resource, User user) {
         List<Comment> comments = Lists.newArrayList();
         if (!actionService.getPermittedActions(resource, user).isEmpty()) {
@@ -74,7 +69,7 @@ public class CommentService {
         return comments;
     }
 
-    public CommentAssignedUser assignUser(Comment approvalComment, User user, boolean isPrimary) {
+    public CommentAssignedUser assignUser(Comment approvalComment, User user) {
         CommentAssignedUser assignedUser = new CommentAssignedUser();
         assignedUser.setUser(user);
         approvalComment.getCommentAssignedUsers().add(assignedUser);

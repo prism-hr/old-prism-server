@@ -17,12 +17,12 @@ public class CommentAssignedUser {
     private Integer id;
     
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-    
-    @ManyToOne
     @JoinColumn(name = "comment_id", nullable = false)
     private Comment comment;
+    
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)

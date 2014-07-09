@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -13,8 +12,9 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
@@ -28,20 +28,12 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionT
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class RoleDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
 
-    public Role getById(final PrismRole id) {
-        return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("id", id)).uniqueResult();
-    }
-
-    public int save(UserRole userRole) {
-        return (Integer) sessionFactory.getCurrentSession().save(userRole);
-    }
-
-    @SuppressWarnings("unchecked")
     public List<User> getUsersByRole(Resource resource, PrismRole[] authorities) {
         return sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .createAlias("userRoles", "userRole") //
@@ -57,21 +49,6 @@ public class RoleDAO {
                 .uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
-    public List<UserRole> getExcludingUserRole(User user, Resource resource, Set<Role> excludedRoles) {
-        return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.in("role", excludedRoles)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
-                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
-                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
-                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
-                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
-                .list();
-    }
-
-    @SuppressWarnings("unchecked")
     public List<UserRole> getUserRoles(Resource resource, User user, PrismRole... authorities) {
         return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .add(Restrictions.eq("user", user)) //
@@ -80,7 +57,28 @@ public class RoleDAO {
                 .list();
     }
 
-    @SuppressWarnings("unchecked")
+    public List<Role> getExcludingRoles(UserRole transientRole, Comment comment) {
+        return (List<Role>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
+                .add(Restrictions.eq("comment", comment)) //
+                .add(Restrictions.eq("user", transientRole.getUser())) //
+                .add(Restrictions.in("role", transientRole.getRole().getExcludedRoles())) //
+                .list();
+    }
+    
+    public List<UserRole> getExcludingUserRoles(UserRole userRole) {
+        Resource resource = userRole.getResource();
+        return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
+                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
+                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
+                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
+                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
+                .add(Restrictions.eq("user", userRole.getUser())) //
+                .add(Restrictions.in("role", userRole.getRole().getExcludedRoles())) //
+                .list();
+    }
+
     public List<RoleTransition> getRoleTransitions(StateTransition stateTransition, List<Role> invokerRoles) {
         Criterion restrictToInvokerCriterion = invokerRoles.isEmpty() ? //
                 Restrictions.eq("roleTransitionType", PrismRoleTransitionType.CREATE)
@@ -110,7 +108,6 @@ public class RoleDAO {
                 .uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Role> getActionRoles(Resource resource, Action action) {
         return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("stateActionAssignment.role")) //
@@ -122,7 +119,6 @@ public class RoleDAO {
                 .list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Role> getActionOwnerRoles(User user, Resource resource, Action action) {
         return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("stateActionAssignment.role")) //
@@ -145,7 +141,6 @@ public class RoleDAO {
                 .list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Role> getDelegateActionOwnerRoles(User user, Resource resource, Action action) {
         return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("stateActionAssignment.role")) //
@@ -168,50 +163,45 @@ public class RoleDAO {
                 .list();
     }
 
-    @SuppressWarnings("unchecked")
-    public HashMultimap<RoleTransition, User> getRoleUpdateUsers(StateTransition stateTransition, Resource resource, User invoker) {
-        List<RoleTransition> roleTransitions = (List<RoleTransition>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
+    public List<RoleTransition> getRoleUpdateTransitions(StateTransition stateTransition) {
+        return (List<RoleTransition>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
                 .add(Restrictions.eq("stateTransition", stateTransition)) //
                 .add(Restrictions.ne("roleTransitionType", PrismRoleTransitionType.CREATE)) //
                 .list();
-
-        HashMultimap<RoleTransition, User> userRoleTransitions = HashMultimap.create();
-        for (RoleTransition roleTransition : roleTransitions) {
-            List<User> users = sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
-                    .setProjection(Projections.property("userRole.user"))
-                    .createAlias("role", "role", JoinType.INNER_JOIN) //
-                    .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                    .add(Restrictions.eq("id", roleTransition.getId())) //
-                    .add(Restrictions.eq("userRole." + resource.getClass().getSimpleName().toLowerCase(), resource)) //
-                    .add(Restrictions.disjunction() //
-                            .add(Restrictions.conjunction() //
-                                    .add(Restrictions.eq("restrictToInvoker", true)) //
-                                    .add(Restrictions.eq("userRole.user", invoker))) //
-                            .add(Restrictions.eq("restrictToInvoker", false))) //
-                    .list();
-
-            for (User user : users) {
-                userRoleTransitions.put(roleTransition, user);
-            }
-        }
-
-        return userRoleTransitions;
-
     }
-
-    @SuppressWarnings("unchecked")
-    public HashMultimap<Role, RoleTransition> getRoleCreationTransitions(StateTransition stateTransition) {
-        List<RoleTransition> roleTransitions = (List<RoleTransition>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
+    
+    public List<User> getRoleUpdateTransitionUsers(Resource resource, RoleTransition roleTransition, User actionOwner) {
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
+                .setProjection(Projections.property("userRole.user")) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("id", roleTransition.getId())) //
+                .add(Restrictions.eq("userRole." + PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("restrictToInvoker", true)) //
+                                .add(Restrictions.eq("userRole.user", actionOwner))) //
+                        .add(Restrictions.eq("restrictToInvoker", false))) //
+                .list();
+    }
+    
+    public List<RoleTransition> getRoleCreationTransitions(StateTransition stateTransition) {
+        return (List<RoleTransition>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
                 .add(Restrictions.eq("stateTransition", stateTransition)) //
                 .add(Restrictions.eq("roleTransitionType", PrismRoleTransitionType.CREATE)) //
                 .list();
-
-        HashMultimap<Role, RoleTransition> instructions = HashMultimap.create();
-        for (RoleTransition roleTransition : roleTransitions) {
-            instructions.put(roleTransition.getRole(), roleTransition);
+    }
+    
+    public List<User> getRoleCreationTransitionUsers(Comment comment, Role role, User actionOwner) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
+                .setProjection(Projections.property("user")) //
+                .add(Restrictions.eq("comment", comment));
+        
+        if (actionOwner != null) {
+            criteria.add(Restrictions.eq("user", actionOwner));
         }
-
-        return instructions;
+                
+        return (List<User>) criteria.add(Restrictions.eq("role", role)).list();
     }
 
     public UserRole getUserRole(User user, PrismRole authority) {
@@ -221,7 +211,6 @@ public class RoleDAO {
                 .uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
     public List<User> getUsers(Resource resource) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user"))
@@ -229,8 +218,7 @@ public class RoleDAO {
                 .list();
     }
 
-    @SuppressWarnings("unchecked")
-    public List<PrismRole> getRoles(Resource resource, User user) {
+    public List<PrismRole> getUserRoles(Resource resource, User user) {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("role.id"))
                 .add(Restrictions.eq("user", user))
@@ -238,7 +226,6 @@ public class RoleDAO {
                 .list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<PrismRole> getRoles(Class<? extends Resource> resourceType) {
         return sessionFactory.getCurrentSession().createCriteria(Role.class)
                 .setProjection(Projections.property("id"))

@@ -36,6 +36,14 @@ public class Comment {
     private Integer id;
 
     @ManyToOne
+    @JoinColumn(name = "system_id")
+    private System system;
+
+    @ManyToOne
+    @JoinColumn(name = "institution_id")
+    private Institution institution;
+    
+    @ManyToOne
     @JoinColumn(name = "program_id")
     private Program program;
 
@@ -202,12 +210,20 @@ public class Comment {
         this.id = id;
     }
 
-    public void setResource(Resource resource) {
-        try {
-            PropertyUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
+    public System getSystem() {
+        return system;
+    }
+
+    public void setSystem(System system) {
+        this.system = system;
+    }
+
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
     }
     
     public Program getProgram() {
@@ -233,7 +249,7 @@ public class Comment {
     public void setApplication(Application application) {
         this.application = application;
     }
-
+    
     public User getUser() {
         return user;
     }
@@ -581,14 +597,40 @@ public class Comment {
             addDocument(document);
         }
     }
+    
+    public Resource getResource() {
+        if (system != null) {
+            return system;
+        } else if (institution != null) {
+            return institution;
+        } else if (program != null) {
+            return program;
+        } else if (project != null) {
+            return project;
+        }
+        return application;
+    }
+    
+    public void setResource(Resource resource) {
+        try {
+            PropertyUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
+    }
 
     public Comment withId(Integer id) {
         this.id = id;
         return this;
     }
-
-    public Comment withResource(Resource resource) {
-        setResource(resource);
+    
+    public Comment withSystem(System system) {
+        this.system = system;
+        return this;
+    }
+    
+    public Comment withInstitution(Institution institution) {
+        this.institution = institution;
         return this;
     }
 
@@ -604,6 +646,11 @@ public class Comment {
 
     public Comment withApplication(Application application) {
         this.application = application;
+        return this;
+    }
+    
+    public Comment withResource(Resource resource) {
+        setResource(resource);
         return this;
     }
 

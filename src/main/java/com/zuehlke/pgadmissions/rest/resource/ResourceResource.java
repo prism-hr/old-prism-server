@@ -86,11 +86,11 @@ public class ResourceResource {
         representation.setActions(permittedActions);
 
         // set list of user to roles mappings
-        List<User> users = roleService.getUsers(resource);
+        List<User> users = roleService.getResourceUsers(resource);
         List<ResourceRepresentation.UserRolesRepresentation> userRolesRepresentations = Lists.newArrayListWithCapacity(users.size());
         for (User user : users) {
             List<PrismRole> availableRoles = roleService.getRoles(resourceDescriptor.getType());
-            Set<PrismRole> roles = Sets.newHashSet(roleService.getRoles(resource, user));
+            Set<PrismRole> roles = Sets.newHashSet(roleService.getResourceUserRoles(resource, user));
             List<ResourceRepresentation.RoleRepresentation> userRoles = Lists.newArrayListWithCapacity(availableRoles.size());
             for (PrismRole availableRole : availableRoles) {
                 userRoles.add(new ResourceRepresentation.RoleRepresentation(availableRole, roles.contains(availableRole)));

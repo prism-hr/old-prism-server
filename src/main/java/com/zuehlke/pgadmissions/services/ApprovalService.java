@@ -72,9 +72,9 @@ public class ApprovalService {
         } else if (project != null) {
             User primarySupervisor = roleService.getUserInRole(project, PrismRole.PROJECT_PRIMARY_SUPERVISOR);
             User secondarySupervisor = roleService.getUserInRole(project, PrismRole.PROJECT_SECONDARY_SUPERVISOR);
-            commentService.assignUser(approvalComment, primarySupervisor, true);
+            commentService.assignUser(approvalComment, primarySupervisor);
             if (secondarySupervisor != null) {
-                commentService.assignUser(approvalComment, secondarySupervisor, false);
+                commentService.assignUser(approvalComment, secondarySupervisor);
             }
             approvalComment.setPositionTitle(project.getTitle());
         }

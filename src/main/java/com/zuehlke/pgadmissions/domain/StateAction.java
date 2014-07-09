@@ -56,7 +56,7 @@ public class StateAction implements IUniqueEntity {
 
     @OneToMany(mappedBy = "stateAction")
     private Set<StateTransition> stateTransitions = Sets.newHashSet();
-
+    
     public Integer getId() {
         return id;
     }
@@ -111,10 +111,6 @@ public class StateAction implements IUniqueEntity {
 
     public Set<StateActionNotification> getStateActionNotifications() {
         return stateActionNotifications;
-    }
-
-    public void setStateActionNotifications(Set<StateActionNotification> stateActionNotifications) {
-        this.stateActionNotifications = stateActionNotifications;
     }
 
     public Set<StateTransition> getStateTransitions() {

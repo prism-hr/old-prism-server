@@ -292,9 +292,15 @@ public class WorkflowConfigurationHelper {
         Set<PrismRole> actualOwnerRoles = Sets.newHashSet();
         Set<PrismRole> actualProcessedRoles = Sets.newHashSet();
 
+        Action action = stateTransition.getStateAction().getAction();
         State transitionState = stateTransition.getTransitionState();
-
-        for (RoleTransition roleTransition : stateTransition.getRoleTransitions()) {
+        
+        Set<RoleTransition> roleTransitions = stateTransition.getRoleTransitions();
+        if (!roleTransitions.isEmpty()) {
+            assertTrue(action.isSaveComment());
+        }
+        
+        for (RoleTransition roleTransition : roleTransitions) {
             Role transitionRole = roleTransition.getTransitionRole();
             PrismRole transitionRoleId = transitionRole.getId();
 
@@ -316,7 +322,6 @@ public class WorkflowConfigurationHelper {
 
         assertTrue(actualRolesCreated.containsAll(actualProcessedRoles));
 
-        Action action = stateTransition.getStateAction().getAction();
         if (action.isCreationAction()) {
             Set<PrismRole> expectedOwnerRoles = PrismRole.getScopeOwners(action.getCreationScope().getId());
             assertCollectionEquals(expectedOwnerRoles, actualOwnerRoles);

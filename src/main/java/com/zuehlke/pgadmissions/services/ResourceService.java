@@ -2,12 +2,15 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
+import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -21,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
@@ -32,6 +36,9 @@ public class ResourceService {
 
     @Autowired
     private ResourceDAO resourceDAO;
+    
+    @Autowired 
+    private RoleService roleService;
 
     @Autowired
     private EntityService entityService;
@@ -76,6 +83,36 @@ public class ResourceService {
             dueDate = dueDateBaseline.plusDays(stateDuration == null ? 0 : stateDuration.getDuration());
         }
         resource.setDueDate(dueDate);
+    }
+    
+    public Resource getOperativeResource(Resource resource, Action action) {
+        return action.isCreationAction() ? resource.getParentResource() : resource;
+    }
+    
+    public void commitResourceCreation(Resource resource, Action action, Comment comment) {
+        resource.setCreatedTimestamp(new DateTime());
+        resource.setUpdatedTimestamp(new DateTime());
+        entityService.save(resource);
+        resource.setCode(resource.generateCode());
+        comment.setRole(roleService.getResourceCreatorRole(resource.getParentResource(), action).getAuthority().toString());
+    }
+
+    public void commitResourceUpdate(Resource resource, Action action, Comment comment) {
+        if (action.getActionType().isSystemAction()) {
+            comment.setRole(PrismRole.SYSTEM_ADMINISTRATOR.toString());
+        } else {
+            comment.setRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action)));
+            if (comment.getDelegateUser() != null) {
+                comment.setDelegateRole(Joiner.on(", ").join(roleService.getDelegateActionOwnerRoles(comment.getDelegateUser(), resource, action)));
+            }
+        }
+    }
+    
+    public void transitionResourceState(Resource resource, Comment comment, State transitionState, StateDuration transitionStateDuration) {
+        setTransitionState(resource, transitionState);
+        comment.setTransitionState(transitionState);
+        setDueDate(resource, comment, transitionStateDuration);
+        resource.setUpdatedTimestamp(new DateTime());
     }
     
 }

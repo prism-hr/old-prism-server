@@ -206,7 +206,7 @@ public class Comment {
         try {
             PropertyUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
         } catch (Exception e) {
-            new Error("Tried to post comment for invalid prism resource", e);
+            throw new Error(e);
         }
     }
     

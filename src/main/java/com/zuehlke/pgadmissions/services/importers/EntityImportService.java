@@ -78,7 +78,7 @@ public class EntityImportService {
     @Autowired
     private RoleService roleService;
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void importEntities(ImportedEntityFeed importedEntityFeed) throws XMLDataImportException {
         EntityImportService thisBean = applicationContext.getBean(EntityImportService.class);
         String fileLocation = importedEntityFeed.getLocation();
@@ -227,12 +227,13 @@ public class EntityImportService {
     // TODO: integrate with workflow engine when finished
     @Transactional
     public Program getOrCreateProgram(Programme programme, Institution institution) {
-        String prefixedProgramCode = String.format("%010d", institution.getId().toString()) + "-" + programme.getCode();
+        String prefixedProgramCode = String.format("%010d", institution.getId()) + "-" + programme.getCode();
         Program program = programService.getProgramByCode(prefixedProgramCode);
         if (program == null) {
             PrismProgramType programType = PrismProgramType.findValueFromString(programme.getName());
             program = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withCode(prefixedProgramCode)
-                    .withTitle(programme.getName()).withState(new State().withId(PrismState.PROGRAM_APPROVED)).withProgramType(programType).withCreatedTimestamp(new DateTime()).withUpdatedTimestamp(new DateTime());
+                    .withTitle(programme.getName()).withState(new State().withId(PrismState.PROGRAM_APPROVED)).withProgramType(programType)
+                    .withCreatedTimestamp(new DateTime()).withUpdatedTimestamp(new DateTime());
             entityService.save(program);
         }
 
@@ -245,7 +246,8 @@ public class EntityImportService {
     public StudyOption getOrCreateStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) {
         StudyOption studyOption = entityService.getByProperty(StudyOption.class, "code", modeOfAttendance.getCode());
         if (studyOption == null) {
-            studyOption = new StudyOption().withInstitution(institution).withCode(modeOfAttendance.getCode()).withName(modeOfAttendance.getName()).withEnabled(true);
+            studyOption = new StudyOption().withInstitution(institution).withCode(modeOfAttendance.getCode()).withName(modeOfAttendance.getName())
+                    .withEnabled(true);
             entityService.save(studyOption);
         }
         return studyOption;

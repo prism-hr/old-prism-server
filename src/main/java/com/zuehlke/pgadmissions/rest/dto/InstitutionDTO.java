@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class InstitutionDTO {
 
     @NotEmpty
-    private String domicileId;
+    private String domicile;
 
     @NotEmpty
     private String name;
@@ -18,12 +18,12 @@ public class InstitutionDTO {
     @NotNull
     private InstitutionAddressDTO address;
 
-    public String getDomicileId() {
-        return domicileId;
+    public String getDomicile() {
+        return domicile;
     }
 
-    public void setDomicileId(String domicileId) {
-        this.domicileId = domicileId;
+    public void setDomicile(String domicile) {
+        this.domicile = domicile;
     }
 
     public String getName() {

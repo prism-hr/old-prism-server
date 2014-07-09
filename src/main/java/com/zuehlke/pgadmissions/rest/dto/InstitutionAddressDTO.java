@@ -7,7 +7,7 @@ public class InstitutionAddressDTO {
     @NotEmpty
     private String countryId;
 
-    private String regionId;
+    private String region;
 
     @NotEmpty
     private String addressLine1;
@@ -29,12 +29,12 @@ public class InstitutionAddressDTO {
         this.countryId = countryId;
     }
 
-    public String getRegionId() {
-        return regionId;
+    public String getRegion() {
+        return region;
     }
 
-    public void setRegionId(String regionId) {
-        this.regionId = regionId;
+    public void setRegion(String region) {
+        this.region = region;
     }
 
     public String getAddressLine1() {

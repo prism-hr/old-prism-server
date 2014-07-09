@@ -17,6 +17,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 
 @Entity
@@ -32,6 +33,10 @@ public class Action extends WorkflowResource {
     @Column(name = "action_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismActionType actionType;
+    
+    @Column(name = "action_category", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismActionCategory actionCategory;
     
     @Column(name = "do_save_comment", nullable = false)
     private boolean saveComment;
@@ -65,6 +70,14 @@ public class Action extends WorkflowResource {
         this.actionType = actionType;
     }
     
+    public PrismActionCategory getActionCategory() {
+        return actionCategory;
+    }
+
+    public void setActionCategory(PrismActionCategory actionCategory) {
+        this.actionCategory = actionCategory;
+    }
+
     public boolean isSaveComment() {
         return saveComment;
     }
@@ -108,6 +121,11 @@ public class Action extends WorkflowResource {
     
     public Action withActionType(PrismActionType actionType) {
         this.actionType = actionType;
+        return this;
+    }
+    
+    public Action withActionCategory(PrismActionCategory actionCategory) {
+        this.actionCategory = actionCategory;
         return this;
     }
     

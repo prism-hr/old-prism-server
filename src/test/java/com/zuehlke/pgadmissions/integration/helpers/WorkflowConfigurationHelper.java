@@ -230,9 +230,11 @@ public class WorkflowConfigurationHelper {
                 assertFalse(stateAction.isRaisesUrgentFlag());
                 assertNull(stateAction.getNotificationTemplate());
                 
-                if (action.getActionType() == PrismActionType.SYSTEM_ESCALATION) {
+                PrismActionType actionType = action.getActionType();
+                
+                if (actionType == PrismActionType.SYSTEM_ESCALATION) {
                     escalationActions.add(action.getId());
-                } else {
+                } else if (actionType == PrismActionType.SYSTEM_PROPAGATION){
                     actualPropagationActions.add(action.getId());
                 }
             }

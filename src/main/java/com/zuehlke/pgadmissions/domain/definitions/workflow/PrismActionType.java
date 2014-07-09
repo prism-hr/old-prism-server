@@ -4,6 +4,7 @@ public enum PrismActionType {
     
     USER_INVOCATION(false), //
     SYSTEM_ESCALATION(true), //
+    SYSTEM_IMPORT(true), //
     SYSTEM_PROPAGATION(true);
 
     private boolean systemAction;

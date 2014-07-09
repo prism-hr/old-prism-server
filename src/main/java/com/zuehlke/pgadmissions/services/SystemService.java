@@ -188,8 +188,9 @@ public class SystemService {
         for (PrismAction prismAction : PrismAction.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismAction.getScope());
             Scope creationScope = entityService.getByProperty(Scope.class, "id", prismAction.getCreationScope());
-            Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType()).withSaveComment(prismAction.isSaveComment())
-                    .withScope(scope).withCreationScope(creationScope);
+            Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType())
+                    .withActionCategory(prismAction.getActionCategory()).withSaveComment(prismAction.isSaveComment()).withScope(scope)
+                    .withCreationScope(creationScope);
             Action action = entityService.createOrUpdate(transientAction);
             action.getRedactions().clear();
 

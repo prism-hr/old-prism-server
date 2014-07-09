@@ -1,0 +1,1 @@
+ALTER TABLE COMMENT MODIFY COLUMN comment_type varchar(50) NOT NULL;

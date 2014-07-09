@@ -1,0 +1,1 @@
+REMINDER: Application ${resource.code} for UCL ${projectOrProgramTitle} - Pending Completion

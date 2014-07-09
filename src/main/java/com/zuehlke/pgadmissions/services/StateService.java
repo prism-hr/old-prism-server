@@ -218,16 +218,6 @@ public class StateService {
     }
 
     @SuppressWarnings("unused")
-    private StateTransition getApplicationCompletedOutcome(Resource resource, Comment comment, List<StateTransition> stateTransitions) {
-        State transitionState = resource.getState();
-        Application application = (Application) resource;
-        if (application.getSubmittedTimestamp() != null) {
-            transitionState = getById(PrismState.APPLICATION_VALIDATION_PENDING_FEEDBACK);
-        }
-        return stateDAO.getStateTransition(stateTransitions, transitionState);
-    }
-
-    @SuppressWarnings("unused")
     private StateTransition getApplicationEligibilityAssessedOutcome(Resource resource, Comment comment, List<StateTransition> stateTransitions) {
         PrismState transitionState = PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION;
         if (comment.isAtLeastOneAnswerUnsure()) {

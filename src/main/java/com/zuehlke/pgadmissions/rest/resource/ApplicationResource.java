@@ -30,27 +30,13 @@ public class ApplicationResource {
     private EntityService entityService;
 
     @Autowired
-    private ResourceService resourceService;
-
-    @Autowired
-    private CommentService commentService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private ActionService actionService;
-
-    @Autowired
-    private DozerBeanMapper dozerBeanMapper;
-
-    @Autowired
-    private RoleService roleService;
+    private ApplicationService applicationService;
 
     @RequestMapping(value = "/{applicationId}/programDetails", method = RequestMethod.PUT)
     @Transactional
-    public void updateProgramDetails(@PathVariable Integer applicationId, @RequestBody ApplicationProgramDetailsDTO programDetailsDTO) {
-        Application application = entityService.getById(Application.class, applicationId);
+    public void saveProgramDetails(@PathVariable Integer applicationId, @RequestBody ApplicationProgramDetailsDTO programDetailsDTO) {
+        applicationService.saveProgramDetails(applicationId, programDetailsDTO);
+
     }
 
 }

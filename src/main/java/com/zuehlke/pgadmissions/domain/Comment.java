@@ -187,7 +187,7 @@ public class Comment {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "comment")
+    @OneToMany(mappedBy = "comment")
     private Set<CommentAssignedUser> commentAssignedUsers = Sets.newHashSet();
 
     @OneToMany

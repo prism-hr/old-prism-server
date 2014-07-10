@@ -174,7 +174,7 @@ public class ValidApplicationFormBuilder {
         program = new Program().withUser(approverUser).withCode("TMRMBISING99").withState(state).withInstances(instance)
                 .withTitle("MRes Medical and Biomedical Imaging").withInstitution(institution);
         interest = new ReferralSource().withCode("BRIT_COUN").withName("British Council");
-        programDetails = new ApplicationProgramDetails().withSourceOfInterest(interest).withStartDate(new LocalDate().plusDays(1))
+        programDetails = new ApplicationProgramDetails().withReferralSource(interest).withStartDate(new LocalDate().plusDays(1))
                 .withStudyOption(new StudyOption().withInstitution(institution).withCode("F+++++").withName("Full-time").withEnabled(true));
         qualificationType = new QualificationType().withCode("DEGTRE").withName("Bachelors Degree - France");
         qualification1 = new ApplicationQualification().withId(Integer.MAX_VALUE - 1).withAwardDate(new LocalDate()).withGrade("6")

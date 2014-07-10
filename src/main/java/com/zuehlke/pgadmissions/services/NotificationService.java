@@ -116,32 +116,38 @@ public class NotificationService {
         notificationDAO.deleteObseleteNotificationConfigurations(getActiveNotificationTemplates());
     }
 
-    public void queueUpdateNotifications(StateAction stateAction, Resource resource) {
-        DateTime individualBaseline = new DateTime();
+    public void sendUpdateNotifications(StateAction stateAction, Resource resource) {
+        DateTime baseline = new DateTime();
         List<UserNotificationDefinition> definitions = notificationDAO.getUpdateNotifications(stateAction, resource);
         for (UserNotificationDefinition definition : definitions) {
+            UserRole userRole = definition.getUserRole();
             NotificationTemplate template = definition.getNotificationTemplate();
-            UserNotification transientNotification = new UserNotification().withUserRole(definition.getUserRole())
-                    .withNotificationTemplate(definition.getNotificationTemplate())
-                    .withCreatedTimestamp(template.getNotificationType() == PrismNotificationType.INDIVIDUAL ? individualBaseline : null);
-            entityService.getOrCreate(transientNotification);
+
+            if (template.getNotificationType() == PrismNotificationType.INDIVIDUAL) {
+                sendNotification(userRole.getUser(), userRole.getResource(), template);
+            } else {
+                UserNotification transientNotification = new UserNotification().withUserRole(definition.getUserRole())
+                        .withNotificationTemplate(definition.getNotificationTemplate()).withCreatedTimestamp(baseline);
+                entityService.getOrCreate(transientNotification);
+            }
         }
     }
 
-    public void sendPendingUpdateNotifications(PrismNotificationType notificationType) {
+    @Transactional(timeout = 600)
+    public void sendPendingUpdateNotifications() {
         for (Scope scope : scopeService.getScopesAscending()) {
-            for (MailDescriptor mailDescriptor : notificationDAO.getPendingUpdateNotifications(scope, notificationType)) {
+            for (MailDescriptor mailDescriptor : notificationDAO.getPendingUpdateNotifications(scope)) {
                 User user = mailDescriptor.getUser();
                 Resource resource = mailDescriptor.getResource();
                 NotificationTemplate template = mailDescriptor.getNotificationTemplate();
-                
+
                 sendNotification(user, resource, template);
                 deleteSentUpdateNotifications(user, resource, template);
             }
         }
-        
+
     }
-    
+
     public void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate) {
         sendNotification(user, resource, notificationTemplate, Collections.<String, String> emptyMap());
     }
@@ -153,28 +159,28 @@ public class NotificationService {
         message.setTo(Collections.singletonList(user));
         message.setModel(createNotificationModel(user, resource, templateVersion));
         message.setTemplate(templateVersion);
-        message.setAttachments(Lists.<PdfAttachmentInputSource>newArrayList());
+        message.setAttachments(Lists.<PdfAttachmentInputSource> newArrayList());
 
         mailSender.sendEmail(message);
     }
-    
+
     public void sendNotification(User user, Resource resource, PrismNotificationTemplate notificationTemplateId) {
         NotificationTemplate notificationTemplate = getById(notificationTemplateId);
         sendNotification(user, resource, notificationTemplate, Collections.<String, String> emptyMap());
     }
-    
+
     public void sendNotification(User user, Resource resource, PrismNotificationTemplate notificationTemplateId, Map<String, String> extraModelParams) {
         NotificationTemplate notificationTemplate = getById(notificationTemplateId);
         sendNotification(user, resource, notificationTemplate, extraModelParams);
     }
-    
+
     private void deleteSentUpdateNotifications(User user, Resource resource, NotificationTemplate template) {
         List<UserRole> userRoles = roleService.getUpdateNotificationRoles(user, resource, template);
         if (!userRoles.isEmpty()) {
             notificationDAO.deleteSentUpdateNotifications(userRoles);
         }
     }
-    
+
     private Map<String, Object> createNotificationModel(User user, Resource resource, NotificationTemplateVersion notificationTemplate) {
         Map<String, Object> model = Maps.newHashMap();
         model.put("user", user);
@@ -183,7 +189,7 @@ public class NotificationService {
         Project project = resource.getProject();
         Application application = resource.getApplication();
         Institution institution = resource.getInstitution();
-        
+
         if (application != null) {
             model.put("applicant", application.getUser().getDisplayName());
         }
@@ -191,16 +197,15 @@ public class NotificationService {
         if (program != null) {
             model.put("projectOrProgramTitle", project != null ? project.getTitle() : program.getTitle());
         }
-        
+
         if (institution != null) {
             model.put("institutionName", institution.getName());
         }
-        
 
         model.put("systemName", resource.getSystem().getCode());
 
         model.put("host", host);
         return model;
     }
-    
+
 }

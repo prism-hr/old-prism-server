@@ -124,7 +124,7 @@ public class NotificationDAO {
                 .list();
     }
     
-    public List<MailDescriptor> getPendingUpdateNotifications(Scope scope, PrismNotificationType notificationType) {
+    public List<MailDescriptor> getPendingUpdateNotifications(Scope scope) {
         String scopeName = scope.toString().toLowerCase();
         return (List<MailDescriptor>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.projectionList() //
@@ -134,7 +134,7 @@ public class NotificationDAO {
                 .createAlias("userNotifications", "userNotification", JoinType.INNER_JOIN) //
                 .createAlias("userNotification.notificationTemplate", "notificationTemplate", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNotNull(scopeName)) //
-                .add(Restrictions.eq("notificationTemplate.notificationType", notificationType)) //
+                .add(Restrictions.eq("notificationTemplate.notificationType", PrismNotificationType.SYNDICATED)) //
                 .list();
     }
 

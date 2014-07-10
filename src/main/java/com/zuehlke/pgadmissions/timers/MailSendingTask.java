@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -20,15 +19,6 @@ public class MailSendingTask {
 
     @Autowired
     private UserService userService;
-    
-    @Scheduled(cron = "${email.individual.cron}")
-    public void sendIndividualMessages() {
-        log.trace("Sending task requests");
-        // TODO : reimplement
-
-        log.trace("Sending update notifications");
-        notificationService.sendPendingUpdateNotifications(PrismNotificationType.INDIVIDUAL);
-    }
 
     @Scheduled(cron = "${email.syndicated.cron}")
     public void sendSyndicatedMessages() {
@@ -36,7 +26,7 @@ public class MailSendingTask {
         // TODO : reimplement
 
         log.trace("Sending update notifications");
-        notificationService.sendPendingUpdateNotifications(PrismNotificationType.SYNDICATED);
+        notificationService.sendPendingUpdateNotifications();
     }
 
 }

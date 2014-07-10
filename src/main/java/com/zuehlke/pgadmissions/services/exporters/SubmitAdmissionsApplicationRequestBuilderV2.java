@@ -523,7 +523,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private SourceOfInterestTp buildSourcesOfInterest(CourseApplicationTp applicationTp) {
         ApplicationProgramDetails programmeDetails = applicationForm.getProgramDetails();
         SourceOfInterestTp interestTp = xmlFactory.createSourceOfInterestTp();
-        ReferralSource sourcesOfInterest = programmeDetails.getSourceOfInterest();
+        ReferralSource sourcesOfInterest = programmeDetails.getReferralSource();
         if (sourcesOfInterest == null) {
             return null;
         }

@@ -202,6 +202,16 @@ public class Project extends Advert {
         return null;
     }
 
+
+    @Override
+    public LocalDate getDueDateBaseline() {
+        AdvertClosingDate closingDate = getClosingDate();
+        if (closingDate != null) {
+            return closingDate.getClosingDate();
+        }
+        return new LocalDate();
+    }
+    
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
@@ -215,15 +225,6 @@ public class Project extends Advert {
         exclusions.put("state.id", PrismState.PROJECT_REJECTED);
         exclusions.put("state.id", PrismState.PROJECT_WITHDRAWN);
         return new ResourceSignature(propertiesWrapper, exclusions);
-    }
-
-    @Override
-    public LocalDate getDueDateBaseline() {
-        AdvertClosingDate closingDate = getClosingDate();
-        if (closingDate != null) {
-            return closingDate.getClosingDate();
-        }
-        return new LocalDate();
     }
 
 }

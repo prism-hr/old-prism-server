@@ -1,22 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.System;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -26,6 +11,14 @@ import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 @Service
 @Transactional
@@ -91,16 +84,16 @@ public class RegistrationService {
 
     private Resource createResource(Resource parentResource, User user, PrismScope creationScope, RegistrationDetails registrationDetails) {
         switch (creationScope) {
-        case INSTITUTION:
-            InstitutionDTO institutionDTO = registrationDetails.getNewInstitution();
-            return resourceService.createNewInstitution((System) parentResource, user, institutionDTO);
-        case PROGRAM:
-            ProgramDTO programDTO = registrationDetails.getNewProgram();
-            return resourceService.createNewProgram((Institution) parentResource, user, programDTO);
-        case APPLICATION:
-            return resourceService.createNewApplication((Advert) parentResource, user);
-        default:
-            throw new IllegalArgumentException(creationScope.name());
+            case INSTITUTION:
+                InstitutionDTO institutionDTO = registrationDetails.getNewInstitution();
+                return resourceService.createNewInstitution((System) parentResource, user, institutionDTO);
+            case PROGRAM:
+                ProgramDTO programDTO = registrationDetails.getNewProgram();
+                return resourceService.createNewProgram((Institution) parentResource, user, programDTO);
+            case APPLICATION:
+                return resourceService.createNewApplication((Advert) parentResource, user);
+            default:
+                throw new IllegalArgumentException(creationScope.name());
         }
     }
 

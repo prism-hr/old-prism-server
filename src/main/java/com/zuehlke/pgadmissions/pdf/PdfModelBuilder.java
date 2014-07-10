@@ -274,8 +274,8 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
 
         table.addCell(newTableCell("How did you find us?", SMALL_BOLD_FONT));
-        if (form.getProgramDetails().getSourceOfInterest() != null) {
-            table.addCell(newTableCell(form.getProgramDetails().getSourceOfInterest().getName(), SMALL_FONT));
+        if (form.getProgramDetails().getReferralSource() != null) {
+            table.addCell(newTableCell(form.getProgramDetails().getReferralSource().getName(), SMALL_FONT));
         } else {
             table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
         }

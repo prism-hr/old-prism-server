@@ -89,7 +89,7 @@ public class ApplicationCopyHelper {
     public void copyProgramDetails(ApplicationProgramDetails to, ApplicationProgramDetails from) {
         to.setStudyOption(from.getStudyOption());
         to.setStartDate(from.getStartDate());
-        to.setSourceOfInterest(from.getSourceOfInterest());
+        to.setReferralSource(from.getReferralSource());
         to.setSourceOfInterestText(from.getSourceOfInterestText());
         to.getSuggestedSupervisors().addAll(from.getSuggestedSupervisors());
     }

@@ -193,13 +193,13 @@ public class RoleDAO {
                 .list();
     }
     
-    public List<User> getRoleCreationTransitionUsers(Comment comment, Role role, User actionOwner) {
+    public List<User> getRoleCreationTransitionUsers(Comment comment, Role role, User user) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .setProjection(Projections.property("user")) //
                 .add(Restrictions.eq("comment", comment));
         
-        if (actionOwner != null) {
-            criteria.add(Restrictions.eq("user", actionOwner));
+        if (user != null) {
+            criteria.add(Restrictions.eq("user", user));
         }
                 
         return (List<User>) criteria.add(Restrictions.eq("role", role)).list();

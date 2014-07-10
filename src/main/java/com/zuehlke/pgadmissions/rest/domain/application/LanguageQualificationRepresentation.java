@@ -4,7 +4,7 @@ import org.joda.time.LocalDate;
 
 public class LanguageQualificationRepresentation {
 
-    private ImportedEntityRepresentation languageQualificationType;
+    private String languageQualificationType;
 
     private LocalDate examDate;
 
@@ -20,11 +20,11 @@ public class LanguageQualificationRepresentation {
 
     private DocumentRepresentation proofOfAward;
 
-    public ImportedEntityRepresentation getLanguageQualificationType() {
+    public String getLanguageQualificationType() {
         return languageQualificationType;
     }
 
-    public void setLanguageQualificationType(ImportedEntityRepresentation languageQualificationType) {
+    public void setLanguageQualificationType(String languageQualificationType) {
         this.languageQualificationType = languageQualificationType;
     }
 

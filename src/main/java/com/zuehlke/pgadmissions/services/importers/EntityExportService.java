@@ -13,6 +13,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import com.zuehlke.pgadmissions.utils.WordUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -92,10 +93,10 @@ public class EntityExportService {
     private String pluralize(String entityName) {
         if (entityName.equals("sourceOfInterest")) {
             return "sourcesOfInterest";
-        } else if (entityName.endsWith("y")) {
-            return entityName.substring(0, entityName.length() - 1) + "ies";
         }
-        return entityName + "s";
+        return WordUtils.pluralize(entityName);
     }
+
+
 
 }

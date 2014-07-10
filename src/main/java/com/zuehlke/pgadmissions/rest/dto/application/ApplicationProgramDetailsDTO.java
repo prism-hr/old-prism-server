@@ -2,9 +2,7 @@ package com.zuehlke.pgadmissions.rest.dto.application;
 
 import org.joda.time.LocalDate;
 
-public class ApplicationPersonalDetailsDTO {
-
-    private Integer applicationId;
+public class ApplicationProgramDetailsDTO {
 
     private String studyOption;
 
@@ -13,14 +11,6 @@ public class ApplicationPersonalDetailsDTO {
     private String referralSource;
 
     private ApplicationSupervisorDTO[] suggestedSupervisors;
-
-    public Integer getApplicationId() {
-        return applicationId;
-    }
-
-    public void setApplicationId(Integer applicationId) {
-        this.applicationId = applicationId;
-    }
 
     public String getStudyOption() {
         return studyOption;

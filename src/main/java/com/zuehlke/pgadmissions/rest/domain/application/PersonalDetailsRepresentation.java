@@ -18,23 +18,23 @@ public class PersonalDetailsRepresentation {
 
     private PassportRepresentation passport;
 
-    private ImportedEntityRepresentation firstNationality;
+    private String firstNationality;
 
-    private ImportedEntityRepresentation secondNationality;
+    private String secondNationality;
 
-    private ImportedEntityRepresentation title;
+    private String title;
 
     private Gender gender;
 
     private LocalDate dateOfBirth;
 
-    private ImportedEntityRepresentation country;
+    private String country;
 
-    private ImportedEntityRepresentation ethnicity;
+    private String ethnicity;
 
-    private ImportedEntityRepresentation disability;
+    private String disability;
 
-    private ImportedEntityRepresentation residenceCountry;
+    private String residenceCountry;
 
     public String getMessenger() {
         return messenger;
@@ -84,27 +84,27 @@ public class PersonalDetailsRepresentation {
         this.passport = passport;
     }
 
-    public ImportedEntityRepresentation getFirstNationality() {
+    public String getFirstNationality() {
         return firstNationality;
     }
 
-    public void setFirstNationality(ImportedEntityRepresentation firstNationality) {
+    public void setFirstNationality(String firstNationality) {
         this.firstNationality = firstNationality;
     }
 
-    public ImportedEntityRepresentation getSecondNationality() {
+    public String getSecondNationality() {
         return secondNationality;
     }
 
-    public void setSecondNationality(ImportedEntityRepresentation secondNationality) {
+    public void setSecondNationality(String secondNationality) {
         this.secondNationality = secondNationality;
     }
 
-    public ImportedEntityRepresentation getTitle() {
+    public String getTitle() {
         return title;
     }
 
-    public void setTitle(ImportedEntityRepresentation title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
@@ -124,35 +124,35 @@ public class PersonalDetailsRepresentation {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public ImportedEntityRepresentation getCountry() {
+    public String getCountry() {
         return country;
     }
 
-    public void setCountry(ImportedEntityRepresentation country) {
+    public void setCountry(String country) {
         this.country = country;
     }
 
-    public ImportedEntityRepresentation getEthnicity() {
+    public String getEthnicity() {
         return ethnicity;
     }
 
-    public void setEthnicity(ImportedEntityRepresentation ethnicity) {
+    public void setEthnicity(String ethnicity) {
         this.ethnicity = ethnicity;
     }
 
-    public ImportedEntityRepresentation getDisability() {
+    public String getDisability() {
         return disability;
     }
 
-    public void setDisability(ImportedEntityRepresentation disability) {
+    public void setDisability(String disability) {
         this.disability = disability;
     }
 
-    public ImportedEntityRepresentation getResidenceCountry() {
+    public String getResidenceCountry() {
         return residenceCountry;
     }
 
-    public void setResidenceCountry(ImportedEntityRepresentation residenceCountry) {
+    public void setResidenceCountry(String residenceCountry) {
         this.residenceCountry = residenceCountry;
     }
 }

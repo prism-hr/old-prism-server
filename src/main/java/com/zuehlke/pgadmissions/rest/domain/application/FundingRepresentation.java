@@ -4,7 +4,7 @@ import org.joda.time.LocalDate;
 
 public class FundingRepresentation {
 
-    private ImportedEntityRepresentation fundingSource;
+    private String fundingSource;
 
     private DocumentRepresentation document;
 
@@ -14,11 +14,11 @@ public class FundingRepresentation {
 
     private LocalDate awardDate;
 
-    public ImportedEntityRepresentation getFundingSource() {
+    public String getFundingSource() {
         return fundingSource;
     }
 
-    public void setFundingSource(ImportedEntityRepresentation fundingSource) {
+    public void setFundingSource(String fundingSource) {
         this.fundingSource = fundingSource;
     }
 

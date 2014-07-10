@@ -14,13 +14,13 @@ public class QualificationRepresentation {
 
     private String language;
 
-    private ImportedEntityRepresentation type;
+    private String type;
 
     private String grade;
 
     private DocumentRepresentation document;
 
-    private ImportedEntityRepresentation institution;
+    private String institution;
 
     private Boolean completed;
 
@@ -66,11 +66,11 @@ public class QualificationRepresentation {
         this.language = language;
     }
 
-    public ImportedEntityRepresentation getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(ImportedEntityRepresentation type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -90,11 +90,11 @@ public class QualificationRepresentation {
         this.document = document;
     }
 
-    public ImportedEntityRepresentation getInstitution() {
+    public String getInstitution() {
         return institution;
     }
 
-    public void setInstitution(ImportedEntityRepresentation institution) {
+    public void setInstitution(String institution) {
         this.institution = institution;
     }
 

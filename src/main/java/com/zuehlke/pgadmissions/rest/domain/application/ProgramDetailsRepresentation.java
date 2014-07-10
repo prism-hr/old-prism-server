@@ -6,19 +6,19 @@ import org.joda.time.LocalDate;
 
 public class ProgramDetailsRepresentation {
 
-    private ImportedEntityRepresentation studyOption;
+    private String studyOption;
 
     private LocalDate startDate;
 
-    private ImportedEntityRepresentation sourceOfInterest;
+    private String referralSource;
 
     private List<SupervisorRepresentation> suggestedSupervisors;
 
-    public ImportedEntityRepresentation getStudyOption() {
+    public String getStudyOption() {
         return studyOption;
     }
 
-    public void setStudyOption(ImportedEntityRepresentation studyOption) {
+    public void setStudyOption(String studyOption) {
         this.studyOption = studyOption;
     }
 
@@ -30,12 +30,12 @@ public class ProgramDetailsRepresentation {
         this.startDate = startDate;
     }
 
-    public ImportedEntityRepresentation getSourceOfInterest() {
-        return sourceOfInterest;
+    public String getReferralSource() {
+        return referralSource;
     }
 
-    public void setSourceOfInterest(ImportedEntityRepresentation sourceOfInterest) {
-        this.sourceOfInterest = sourceOfInterest;
+    public void setReferralSource(String referralSource) {
+        this.referralSource = referralSource;
     }
 
     public List<SupervisorRepresentation> getSuggestedSupervisors() {

@@ -1,9 +1,15 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.Gender;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.rest.domain.application.ImportedEntityRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.workflow.RoleRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.workflow.StateActionRepresentation;
+import com.zuehlke.pgadmissions.rest.domain.workflow.StateRepresentation;
+import com.zuehlke.pgadmissions.services.EntityService;
 import org.apache.commons.lang.WordUtils;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.Gender;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.rest.domain.application.ImportedEntityRepresentation;
-import com.zuehlke.pgadmissions.rest.domain.workflow.RoleRepresentation;
-import com.zuehlke.pgadmissions.rest.domain.workflow.StateActionRepresentation;
-import com.zuehlke.pgadmissions.rest.domain.workflow.StateRepresentation;
-import com.zuehlke.pgadmissions.services.EntityService;
+import java.util.List;
+import java.util.Map;
+
+import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 @RestController
 @RequestMapping("/api/static")
@@ -71,7 +72,7 @@ public class StaticDataResource {
         staticData.put("institutionDomiciles", institutionDomiciles);
 
 
-        for(Class<Object> importedEntityType : new Class[]{StudyOption.class, ReferralSource.class}) {
+        for (Class<Object> importedEntityType : new Class[]{StudyOption.class, ReferralSource.class, Title.class, Country.class, ReferralSource.class, Language.class}) {
             String simpleName = importedEntityType.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);
             List<Object> entities = entityService.list(importedEntityType);
@@ -79,22 +80,22 @@ public class StaticDataResource {
             for (Object studyOption : entities) {
                 entityRepresentations.add(dozerBeanMapper.map(studyOption, ImportedEntityRepresentation.class));
             }
-            staticData.put(simpleName + "s", entityRepresentations);
+            staticData.put(pluralize(simpleName), entityRepresentations);
         }
 
         // Display names for enum classes
         for (Class<?> enumClass : new Class[]{Gender.class, PrismProgramType.class}) {
             List<EnumDefinition> definitions = Lists.newArrayListWithExpectedSize(enumClass.getEnumConstants().length);
             String simpleName = enumClass.getSimpleName();
-            if(simpleName.startsWith("Prism")) {
-                simpleName =  simpleName.replaceFirst("Prism", "");
+            if (simpleName.startsWith("Prism")) {
+                simpleName = simpleName.replaceFirst("Prism", "");
             }
             simpleName = WordUtils.uncapitalize(simpleName);
             for (java.lang.Object key : enumClass.getEnumConstants()) {
                 String message = applicationContext.getMessage(simpleName + "." + key, null, LocaleContextHolder.getLocale());
                 definitions.add(new EnumDefinition(key.toString(), message));
             }
-            staticData.put(simpleName + "s", definitions);
+            staticData.put(pluralize(simpleName), definitions);
         }
 
         return staticData;

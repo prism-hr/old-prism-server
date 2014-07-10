@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.domain.application;
 
 public class AddressRepresentation {
 
-    private ImportedEntityRepresentation domicile;
+    private String domicile;
 
     private String addressLine1;
 
@@ -14,11 +14,11 @@ public class AddressRepresentation {
 
     private String addressCode;
 
-    public ImportedEntityRepresentation getDomicile() {
+    public String getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(ImportedEntityRepresentation domicile) {
+    public void setDomicile(String domicile) {
         this.domicile = domicile;
     }
 

@@ -207,7 +207,7 @@ public class ApplicationsReportService {
 //                    row.addCell(program.getTitle());
 //                    row.addCell(getProjectTitle(app));
 //                    row.addCell(programmeDetails.getStudyOption() != null ? programmeDetails.getStudyOption().getDisplayName() : StringUtils.EMPTY);
-//                    row.addCell(programmeDetails.getSourceOfInterest() != null ? StringUtils.trimToEmpty(programmeDetails.getSourceOfInterest().getName()) : StringUtils.EMPTY);
+//                    row.addCell(programmeDetails.getReferralSource() != null ? StringUtils.trimToEmpty(programmeDetails.getReferralSource().getName()) : StringUtils.EMPTY);
 //                    row.addCell(StringUtils.trimToEmpty(programmeDetails.getSourceOfInterestText()));
 //                    row.addCell(getSuggestedSupervisors(programmeDetails));
 //                    row.addCell(getAcademicYear(app));

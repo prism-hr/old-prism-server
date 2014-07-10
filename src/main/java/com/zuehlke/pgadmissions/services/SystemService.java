@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.WorkflowResource;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismConfiguration;
@@ -50,11 +51,13 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionEnha
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
-import com.zuehlke.pgadmissions.mail.MailService;
+import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 
 @Service
 @Transactional(timeout = 120)
 public class SystemService {
+
+    private static final String WORKFLOW_CONFIGURATION_FAILURE = "workflow.configuration.failure";
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -79,9 +82,6 @@ public class SystemService {
 
     @Autowired
     private EntityService entityService;
-
-    @Autowired
-    private MailService mailService;
 
     @Autowired
     private NotificationService notificationService;
@@ -116,18 +116,22 @@ public class SystemService {
         return entityService.createOrUpdate(transientSystem);
     }
 
-    public void initialiseSystem() {
+    public void initialiseSystem() throws WorkflowConfigurationException {
         logger.info("Initialising scope definitions");
         initialiseScopes();
+        verifyBackwardCompatibility(Scope.class);
 
         logger.info("Initialising role definitions");
         initialiseRoles();
+        verifyBackwardCompatibility(Role.class);
 
         logger.info("Initialising action definitions");
         initialiseActions();
+        verifyBackwardCompatibility(Action.class);
 
         logger.info("Initialising state definitions");
         initialiseStates();
+        verifyBackwardCompatibility(State.class);
 
         logger.info("Initialising system");
         User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail);
@@ -148,7 +152,7 @@ public class SystemService {
 
         if (systemUser.getUserAccount() == null || !systemUser.isEnabled()) {
             logger.info("Initialising system user");
-            mailService.sendEmailNotification(systemUser, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+            notificationService.sendNotification(systemUser, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
         }
 
         entityService.flush();
@@ -276,6 +280,14 @@ public class SystemService {
         }
     }
 
+    private <T extends WorkflowResource> void verifyBackwardCompatibility(Class<T> workflowResourceClass) throws WorkflowConfigurationException {
+        try {
+            entityService.list(workflowResourceClass);
+        } catch (IllegalArgumentException e) {
+            throw new WorkflowConfigurationException(WORKFLOW_CONFIGURATION_FAILURE, e);
+        }
+    }
+
     private void initialiseStateActions() {
         if (stateService.getPendingStateTransitions().size() == 0) {
             stateService.deleteStateActions();
@@ -297,6 +309,7 @@ public class SystemService {
 
             stateService.deleteObseleteStateDurations();
             notificationService.deleteObseleteNotificationConfigurations();
+            roleService.deleteInactiveRoles();
 
             reassignResourceStates();
         } else {

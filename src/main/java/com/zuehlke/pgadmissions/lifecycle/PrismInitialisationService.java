@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.importers.InstitutionDomicileImportService;
@@ -46,7 +47,7 @@ public class PrismInitialisationService implements InitializingBean {
     }
 
     @Transactional
-    private void initializeWorkflow() {
+    private void initializeWorkflow() throws WorkflowConfigurationException {
         systemService.initialiseSystem();
     }
 

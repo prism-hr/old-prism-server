@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTem
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.MailDescriptor;
-import com.zuehlke.pgadmissions.mail.MailService;
 import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
@@ -47,7 +46,7 @@ public class UserService {
     private EncryptionUtils encryptionUtils;
 
     @Autowired
-    private MailService notifiationService;
+    private NotificationService notificationService;
 
     @Autowired
     private EntityService entityService;
@@ -102,12 +101,13 @@ public class UserService {
         }
         return user;
     }
-    
-    public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource, List<ResourceRepresentation.RoleRepresentation> roles) {
+
+    public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource,
+            List<ResourceRepresentation.RoleRepresentation> roles) {
         User user = getOrCreateUser(firstName, lastName, email);
 
         roleService.updateRoles(resource, user, roles);
-        
+
         return user;
     }
 
@@ -140,8 +140,7 @@ public class UserService {
         }
         try {
             String newPassword = encryptionUtils.generateUserPassword();
-
-            notifiationService.sendEmailNotification(storedUser, null, PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION, null,
+            notificationService.sendNotification(storedUser, null, PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION,
                     ImmutableMap.of("newPassword", newPassword));
 
             String hashPassword = encryptionUtils.getMD5Hash(newPassword);

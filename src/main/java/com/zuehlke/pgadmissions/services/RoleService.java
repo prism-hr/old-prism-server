@@ -8,25 +8,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserNotification;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.exceptions.StateTransitionException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
 
 @Service
 @Transactional
 public class RoleService {
 
-    private static final String ROLE_TRANSITION_ERROR = "role.transition.error";
+    private static final String WORKFLOW_ENGINE_FAILURE = "workflow.engine.failure";
 
     @Autowired
     private RoleDAO roleDAO;
@@ -71,6 +74,9 @@ public class RoleService {
 
     public void removeUserRoles(Resource resource, User user, PrismRole... rolesToRemove) {
         for (UserRole roleToRemove : roleDAO.getUserRoles(resource, user, rolesToRemove)) {
+            for (UserNotification notificationToRemove : roleToRemove.getUserNotifications()) {
+                entityService.delete(notificationToRemove);
+            }
             entityService.delete(roleToRemove);
         }
     }
@@ -116,8 +122,8 @@ public class RoleService {
         return (Role) roleDAO.getResourceCreatorRole(resource, createAction);
     }
 
-    public void executeRoleTransitions(StateTransition stateTransition, Comment comment) throws StateTransitionException {
-        HashMultimap<User, RoleTransition> userRoleTransitions = HashMultimap.create();
+    public void executeRoleTransitions(StateTransition stateTransition, Comment comment) throws WorkflowEngineException {
+        LinkedHashMultimap<User, RoleTransition> userRoleTransitions = LinkedHashMultimap.create();
         userRoleTransitions.putAll(getUserRoleUpdateTransitions(stateTransition, comment));
         userRoleTransitions.putAll(getUserRoleCreationTransitions(stateTransition, comment));
 
@@ -128,7 +134,7 @@ public class RoleService {
         }
     }
 
-    public void executeRoleTransition(Comment comment, User user, RoleTransition roleTransition) throws StateTransitionException {
+    public void executeRoleTransition(Comment comment, User user, RoleTransition roleTransition) throws WorkflowEngineException {
         DateTime baseline = new DateTime();
         Resource resource = comment.getResource();
         UserRole transientRole = new UserRole().withResource(resource).withUser(user).withRole(roleTransition.getRole()).withAssignedTimestamp(baseline);
@@ -149,19 +155,19 @@ public class RoleService {
         }
     }
 
-    private void executeBranchUserRole(UserRole transientRole, UserRole transientTransitionRole, Comment comment) throws StateTransitionException {
+    private void executeBranchUserRole(UserRole transientRole, UserRole transientTransitionRole, Comment comment) throws WorkflowEngineException {
         UserRole persistentRole = entityService.getDuplicateEntity(transientRole);
         if (persistentRole != null && isRoleAssignmentPermitted(transientRole, comment)) {
             entityService.getOrCreate(transientTransitionRole);
         }
-        throw new StateTransitionException(ROLE_TRANSITION_ERROR);
+        throw new WorkflowEngineException(WORKFLOW_ENGINE_FAILURE);
     }
 
-    private void executeCreateUserRole(UserRole transientRole, Comment comment) throws StateTransitionException {
+    private void executeCreateUserRole(UserRole transientRole, Comment comment) throws WorkflowEngineException {
         if (isRoleAssignmentPermitted(transientRole, comment)) {
             entityService.getOrCreate(transientRole);
         }
-        throw new StateTransitionException(ROLE_TRANSITION_ERROR);
+        throw new WorkflowEngineException(WORKFLOW_ENGINE_FAILURE);
     }
 
     private void executeRemoveUserRole(UserRole transientRole) {
@@ -177,13 +183,13 @@ public class RoleService {
         return excludingRoles.isEmpty() && excludingUserRoles.isEmpty();
     }
 
-    private void executeUpdateUserRole(UserRole transientRole, UserRole transientTransitionRole) throws StateTransitionException {
+    private void executeUpdateUserRole(UserRole transientRole, UserRole transientTransitionRole) throws WorkflowEngineException {
         UserRole persistentRole = entityService.getDuplicateEntity(transientRole);
         if (persistentRole != null) {
             entityService.delete(persistentRole);
             entityService.getOrCreate(transientTransitionRole);
         }
-        throw new StateTransitionException(ROLE_TRANSITION_ERROR);
+        throw new WorkflowEngineException(WORKFLOW_ENGINE_FAILURE);
     }
 
     private HashMultimap<User, RoleTransition> getUserRoleUpdateTransitions(StateTransition stateTransition, Comment comment) {
@@ -202,7 +208,7 @@ public class RoleService {
         return userRoleTransitions;
     }
 
-    private HashMultimap<User, RoleTransition> getUserRoleCreationTransitions(StateTransition stateTransition, Comment comment) throws StateTransitionException {
+    private HashMultimap<User, RoleTransition> getUserRoleCreationTransitions(StateTransition stateTransition, Comment comment) throws WorkflowEngineException {
         HashMultimap<User, RoleTransition> userRoleTransitions = HashMultimap.create();
 
         List<RoleTransition> roleTransitions = roleDAO.getRoleCreationTransitions(stateTransition);
@@ -218,7 +224,7 @@ public class RoleService {
                     userRoleTransitions.put(user, roleTransition);
                 }
             } else {
-                throw new StateTransitionException(ROLE_TRANSITION_ERROR);
+                throw new WorkflowEngineException(WORKFLOW_ENGINE_FAILURE);
             }
         }
 
@@ -246,4 +252,17 @@ public class RoleService {
     public List<PrismRole> getRoles(Class<? extends Resource> resourceClass, PrismRole... rolesToCreate) {
         return roleDAO.getRoles(resourceClass);
     }
+    
+    public List<Role> getActiveRoles() {
+        return roleDAO.getActiveRoles();
+    }
+    
+    public void deleteInactiveRoles() {
+        roleDAO.deleteObseleteUserRoles(getActiveRoles());
+    }
+    
+    public List<UserRole> getUpdateNotificationRoles(User user, Resource resource, NotificationTemplate template) {
+        return roleDAO.getUpdateNotificationRoles(user, resource, template);
+    }
+    
 }

@@ -48,6 +48,9 @@ public class Institution extends Resource {
     @Id
     @GeneratedValue
     private Integer id;
+    
+    @Column(name = "code")
+    private String code;
 
     @ManyToOne
     @JoinColumn(name = "system_id", nullable = false)
@@ -100,6 +103,16 @@ public class Institution extends Resource {
     @Override
     public void setId(Integer id) {
         this.id = id;
+    }
+    
+    @Override
+    public String getCode() {
+        return code;
+    }
+    
+    @Override
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public String getName() {

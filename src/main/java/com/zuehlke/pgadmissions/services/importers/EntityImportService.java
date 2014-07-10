@@ -37,7 +37,6 @@ import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
-import com.zuehlke.pgadmissions.mail.MailService;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
@@ -71,9 +70,6 @@ public class EntityImportService {
 
     @Autowired
     private ApplicationContext applicationContext;
-
-    @Autowired
-    private MailService mailSendingService;
 
     @Autowired
     private RoleService roleService;
@@ -233,13 +229,10 @@ public class EntityImportService {
             PrismProgramType programType = PrismProgramType.findValueFromString(programme.getName());
             program = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withCode(prefixedProgramCode)
                     .withTitle(programme.getName()).withState(new State().withId(PrismState.PROGRAM_APPROVED)).withProgramType(programType)
-                    .withCreatedTimestamp(new DateTime()).withUpdatedTimestamp(new DateTime());
+                    .withImported(true).withCreatedTimestamp(new DateTime()).withUpdatedTimestamp(new DateTime());
             entityService.save(program);
         }
-
-        program.setTitle(programme.getName());
-        program.setRequireProjectDefinition(programme.isAtasRegistered());
-        return program;
+        return program.withTitle(programme.getName()).withRequireProjectDefinition(programme.isAtasRegistered());
     }
 
     @Transactional

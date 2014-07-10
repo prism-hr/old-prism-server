@@ -101,7 +101,7 @@ public class UserResource {
             throw new InvalidRequestException("Invalid registration details", result);
         }
 
-        User user = registrationService.submitRegistration(registrationDetails);
+        registrationService.submitRegistration(registrationDetails);
         return "OK";
     }
 

@@ -11,6 +11,10 @@ public abstract class Resource implements IUniqueEntity {
     public abstract Integer getId();
 
     public abstract void setId(Integer id);
+    
+    public abstract String getCode();
+    
+    public abstract void setCode(String code);
 
     public abstract System getSystem();
 
@@ -101,8 +105,8 @@ public abstract class Resource implements IUniqueEntity {
         }
     }
 
-    public String getCode() {
-        return "PRiSM-" + PrismScope.getResourceScope(this.getClass()).getShortCode() + "-" + String.format("%010d", getId());
+    public void generateCode() {
+        setCode("PRiSM-" + PrismScope.getResourceScope(this.getClass()).getShortCode() + "-" + String.format("%010d", getId()));
     }
     
 }

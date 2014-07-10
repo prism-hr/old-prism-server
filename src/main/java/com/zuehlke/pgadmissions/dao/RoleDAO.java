@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
@@ -230,6 +231,42 @@ public class RoleDAO {
         return sessionFactory.getCurrentSession().createCriteria(Role.class)
                 .setProjection(Projections.property("id"))
                 .add(Restrictions.eq("scope.id", PrismScope.getResourceScope(resourceType)))
+                .list();
+    }
+    
+    public List<Role> getActiveRoles() {
+        return sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
+                .setProjection(Projections.groupProperty("role"))
+                .list();
+    }
+    
+    public void deleteObseleteUserRoles(List<Role> activeRoles) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete UserNotification " //
+                        + "where userRole not in ( "
+                                + "from UserRole " //
+                                + "where role not in (:activeRoles))") //
+                .setParameterList("activeRoles", activeRoles) //
+                .executeUpdate(); //
+         
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete UserRole " //
+                        + "where role not in (:activeRoles)") //
+                .setParameterList("activeRoles", activeRoles) //
+                .executeUpdate();
+    }
+
+    public List<UserRole> getUpdateNotificationRoles(User user, Resource resource, NotificationTemplate template) {
+        return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .createAlias("userNotifications", "userNotification", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
+                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
+                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
+                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
+                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
+                .add(Restrictions.eq("userNotification.notificationTemplate", template)) //
                 .list();
     }
 

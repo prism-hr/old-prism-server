@@ -90,6 +90,7 @@ public class ResourceService {
     }
     
     public void commitResourceCreation(Resource resource, Action action, Comment comment) {
+        resource.generateCode();
         resource.setCreatedTimestamp(new DateTime());
         resource.setUpdatedTimestamp(new DateTime());
         entityService.save(resource);

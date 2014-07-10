@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.State;
@@ -25,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.exceptions.StateTransitionException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 
 @Service
 @Transactional
@@ -62,8 +61,8 @@ public class StateService {
         entityService.save(state);
     }
 
-    public List<State> getConfigurableStates() {
-        return stateDAO.getConfigurableStates();
+    public List<State> getActiveStates() {
+        return stateDAO.getActiveStates();
     }
 
     public List<State> getStates() {
@@ -95,7 +94,7 @@ public class StateService {
     }
 
     public void deleteObseleteStateDurations() {
-        stateDAO.deleteObseleteStateDurations();
+        stateDAO.deleteObseleteStateDurations(getActiveStates());
     }
 
     public <T extends Resource> List<State> getDeprecatedStates(Class<T> resourceClass) {
@@ -147,17 +146,18 @@ public class StateService {
 
         StateTransition stateTransition = getStateTransition(resource, action, comment);
         if (stateTransition != null) {
-            StateDuration transitionStateDuration = getStateDuration(resource, stateTransition.getTransitionState());
-            resourceService.transitionResourceState(resource, comment, stateTransition.getTransitionState(), transitionStateDuration);
+            State transitionState = stateTransition.getTransitionState();
+            StateDuration transitionStateDuration = getStateDuration(resource, transitionState);
+            resourceService.transitionResourceState(resource, comment, transitionState, transitionStateDuration);
             
             try {
                 roleService.executeRoleTransitions(stateTransition, comment);
-            } catch (StateTransitionException e) {
+            } catch (WorkflowEngineException e) {
                 throw new Error(e);
             }
             
-            notificationService.sentUpdateNotifications(resource, comment, stateTransition);
-            queuePropagatedStateTransitions(resource, stateTransition);
+            notificationService.queueUpdateNotifications(stateTransition.getStateAction(), resource);
+            queuePropagatedStateTransitions(stateTransition, resource);
         }
 
         return stateTransition;
@@ -197,7 +197,7 @@ public class StateService {
         }
     }
     
-    private void queuePropagatedStateTransitions(Resource resource, StateTransition stateTransition) {
+    private void queuePropagatedStateTransitions(StateTransition stateTransition, Resource resource) {
         if (stateTransition.getPropagatedActions().size() > 0) {
             entityService.save(new StateTransitionPending().withResource(resource).withStateTransition(stateTransition));
         }

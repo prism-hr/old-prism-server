@@ -209,7 +209,7 @@ public class ConfigurationController {
 
     @ModelAttribute("states")
     public List<State> getConfigurableStates() {
-        return stateService.getConfigurableStates();
+        return stateService.getActiveStates();
     }
 
     @ModelAttribute("user")

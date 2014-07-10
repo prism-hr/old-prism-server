@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTem
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.mail.MailService;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
@@ -47,14 +46,14 @@ public class RegistrationService {
     private ResourceService resourceService;
 
     @Autowired
-    private MailService notificationService;
+    private NotificationService notificationService;
 
     @Autowired
     private EntityService entityService;
-    
+
     @Autowired
     private SystemService systemService;
-    
+
     public User submitRegistration(RegistrationDetails registrationDetails) {
         User user = userService.getOrCreateUser(registrationDetails.getFirstName(), registrationDetails.getLastName(), registrationDetails.getEmail());
         if (registrationDetails.getActivationCode() != null && !user.getActivationCode().equals(registrationDetails.getActivationCode())) {
@@ -92,16 +91,16 @@ public class RegistrationService {
 
     private Resource createResource(Resource parentResource, User user, PrismScope creationScope, RegistrationDetails registrationDetails) {
         switch (creationScope) {
-            case INSTITUTION:
-                InstitutionDTO institutionDTO = registrationDetails.getNewInstitution();
-                return resourceService.createNewInstitution((System)parentResource, user, institutionDTO);
-            case PROGRAM:
-                ProgramDTO programDTO = registrationDetails.getNewProgram();
-                return resourceService.createNewProgram((Institution)parentResource, user, programDTO);
-            case APPLICATION:
-                return resourceService.createNewApplication((Advert)parentResource, user);
-            default:
-                throw new IllegalArgumentException(creationScope.name());
+        case INSTITUTION:
+            InstitutionDTO institutionDTO = registrationDetails.getNewInstitution();
+            return resourceService.createNewInstitution((System) parentResource, user, institutionDTO);
+        case PROGRAM:
+            ProgramDTO programDTO = registrationDetails.getNewProgram();
+            return resourceService.createNewProgram((Institution) parentResource, user, programDTO);
+        case APPLICATION:
+            return resourceService.createNewApplication((Advert) parentResource, user);
+        default:
+            throw new IllegalArgumentException(creationScope.name());
         }
     }
 
@@ -112,7 +111,7 @@ public class RegistrationService {
     }
 
     public void sendConfirmationEmail(User newUser, Resource resource) {
-        notificationService.sendEmailNotification(newUser, resource, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST, null);
+        notificationService.sendNotification(newUser, resource, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
     }
 
     public User findUserForActivationCode(String activationCode) {

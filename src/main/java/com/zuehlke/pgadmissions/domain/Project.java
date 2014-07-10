@@ -30,6 +30,9 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Project extends Advert {
 
+    @Column(name = "code")
+    private String code;
+    
     @ManyToOne
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
@@ -72,12 +75,14 @@ public class Project extends Advert {
     @OneToMany(mappedBy = "project")
     private Set<Comment> comments = Sets.newHashSet();
 
-    public State getState() {
-        return state;
+    @Override
+    public String getCode() {
+        return code;
     }
-
-    public void setState(State state) {
-        this.state = state;
+    
+    @Override
+    public void setCode(String code) {
+        this.code = code;
     }
 
     @Override
@@ -90,6 +95,16 @@ public class Project extends Advert {
         this.title = title;
     }
 
+    @Override
+    public State getState() {
+        return state;
+    }
+
+    @Override
+    public void setState(State state) {
+        this.state = state;
+    }
+    
     public Set<Application> getApplications() {
         return applications;
     }

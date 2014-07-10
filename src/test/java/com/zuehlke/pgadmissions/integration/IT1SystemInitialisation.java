@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 import com.zuehlke.pgadmissions.integration.helpers.SystemInitialisationHelper;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
 import com.zuehlke.pgadmissions.services.SystemService;
@@ -26,7 +27,7 @@ public class IT1SystemInitialisation {
     private SystemInitialisationHelper systemInitialisationHelper;
 
     @Test
-    public void testSystemInitialisation() {
+    public void testSystemInitialisation() throws WorkflowConfigurationException {
         for (int i = 0; i < 2; i++) {
             systemService.initialiseSystem();
 

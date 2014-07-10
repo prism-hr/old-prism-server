@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
-import com.zuehlke.pgadmissions.mail.MailService;
+import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.importers.EntityImportService;
@@ -27,14 +27,14 @@ public class XMLDataImportTask {
 
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private EntityImportService entityImportService;
 
     @Autowired
-    private MailService notificationService;
-    
-    @Autowired 
+    private NotificationService notificationService;
+
+    @Autowired
     private SystemService systemService;
 
     @Scheduled(cron = "${xml.data.import.cron}")
@@ -54,8 +54,9 @@ public class XMLDataImportTask {
                     message += "\n" + cause.toString();
                 }
 
-                for (User recipient : userService.getUsersForResourceAndRole(systemService.getSystem(), PrismRole.SYSTEM_ADMINISTRATOR)) {
-                     notificationService.sendEmailNotification(recipient, null, SYSTEM_IMPORT_ERROR_NOTIFICATION, null, ImmutableMap.of("errorMessage", message));
+                com.zuehlke.pgadmissions.domain.System system = systemService.getSystem();
+                for (User user : userService.getUsersForResourceAndRole(system, PrismRole.SYSTEM_ADMINISTRATOR)) {
+                    notificationService.sendNotification(user, system, SYSTEM_IMPORT_ERROR_NOTIFICATION, ImmutableMap.of("errorMessage", message));
                 }
 
             } finally {
@@ -69,5 +70,5 @@ public class XMLDataImportTask {
 
         }
     }
-    
+
 }

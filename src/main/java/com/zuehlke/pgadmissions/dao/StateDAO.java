@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 public class StateDAO {
 
     private static final Set<Class<? extends IUniqueEntity>> workflowConfigurationClasses = Sets.newLinkedHashSet();
-    
+
     static {
         workflowConfigurationClasses.add(RoleTransition.class);
         workflowConfigurationClasses.add(StateTransition.class);
@@ -48,14 +48,14 @@ public class StateDAO {
         workflowConfigurationClasses.add(StateActionNotification.class);
         workflowConfigurationClasses.add(StateAction.class);
     }
-    
+
     @Autowired
     private ScopeDAO scopeDAO;
-    
+
     @Autowired
     private SessionFactory sessionFactory;
 
-    public List<State> getConfigurableStates() {
+    public List<State> getActiveStates() {
         return (List<State>) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
                 .setProjection(Projections.property("state")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
@@ -82,11 +82,10 @@ public class StateDAO {
     public StateDuration getStateDuration(Resource resource, State state) {
         return (StateDuration) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
                 .add(Restrictions.eq("state", state)) //
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("system", resource.getSystem())) //
-                                .add(Restrictions.isNull("institution")) //
-                                .add(Restrictions.isNull("program"))) //
+                .add(Restrictions.disjunction().add(Restrictions.conjunction() //
+                        .add(Restrictions.eq("system", resource.getSystem())) //
+                        .add(Restrictions.isNull("institution")) //
+                        .add(Restrictions.isNull("program"))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.eq("institution", resource.getInstitution())) //
                                 .add(Restrictions.isNull("program"))) //
@@ -97,34 +96,34 @@ public class StateDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-    
+
     public List<StateTransitionPending> getPendingStateTransitions() {
         List<Scope> scopes = scopeDAO.getScopesDescending();
-        
+
         List<StateTransitionPending> pendingStateTransitions = Lists.newArrayList();
         for (Scope scope : scopes) {
             String scopeName = scope.getId().getLowerCaseName();
-            
+
             pendingStateTransitions.addAll(sessionFactory.getCurrentSession().createCriteria(StateTransitionPending.class) //
                     .add(Restrictions.isNotNull(scopeName)) //
                     .addOrder(Order.asc(scopeName + ".id")) //
                     .addOrder(Order.asc("id")) //
                     .list());
         }
-        
+
         return pendingStateTransitions;
     }
-    
+
     public HashMultimap<Action, Resource> getPropagatedStateTransitions(StateTransitionPending pendingStateTransition) {
         HashMultimap<Action, Resource> propagations = HashMultimap.create();
         for (Action propagateAction : pendingStateTransition.getStateTransition().getPropagatedActions()) {
             String propagateResourceName = propagateAction.getScope().getId().getLowerCaseName();
             String propagateResourceReference = propagateResourceName;
-            
+
             if (pendingStateTransition.getStateTransition().getStateAction().getState().getScope().getPrecedence() > propagateAction.getScope().getPrecedence()) {
                 propagateResourceReference = propagateResourceName + "s";
             }
-            
+
             propagations.putAll(propagateAction, sessionFactory.getCurrentSession() //
                     .createCriteria(propagateAction.getScope().getClass()) //
                     .createAlias(propagateResourceReference, propagateResourceName, JoinType.INNER_JOIN) //
@@ -133,7 +132,7 @@ public class StateDAO {
                     .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                     .add(Restrictions.eq("action", propagateAction)).list());
         }
-        
+
         return propagations;
     }
 
@@ -148,7 +147,7 @@ public class StateDAO {
 
         HashMultimap<Action, Resource> escalations = HashMultimap.create();
         for (Action escalateAction : escalateActions) {
-            
+
             escalations.putAll(escalateAction, sessionFactory.getCurrentSession() //
                     .createCriteria(escalateAction.getScope().getId().getClass()) //
                     .createAlias("state", "state", JoinType.INNER_JOIN) //
@@ -168,15 +167,15 @@ public class StateDAO {
                     .executeUpdate();
         }
     }
-    
-    public void deleteObseleteStateDurations() {
+
+    public void deleteObseleteStateDurations(List<State> activeStates) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete StateDuration " //
-                    + "where state not in (:configurableStates)") //
-                .setParameterList("configurableStates", getConfigurableStates()) //
+                        + "where state not in (:configurableStates)") //
+                .setParameterList("configurableStates", activeStates) //
                 .executeUpdate();
     }
-    
+
     public <T extends Resource> List<State> getDeprecatedStates(Class<T> resourceClass) {
         return (List<State>) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
                 .setProjection(Projections.groupProperty("state")) //
@@ -192,7 +191,7 @@ public class StateDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-    
+
     public List<State> getOrderedTransitionStates(State state, State... excludedTransitionStates) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("stateTransition.transitionState")) //
@@ -203,11 +202,11 @@ public class StateDAO {
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("action.creationScope", "creationScope", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("state", state));
-        
+
         for (State excludedTransitionState : excludedTransitionStates) {
             criteria.add(Restrictions.ne("stateTransition.transitionState", excludedTransitionState));
         }
-        
+
         return (List<State>) criteria //
                 .addOrder(Order.asc("creationScope.precedence")) //
                 .addOrder(Order.asc("scope.precedence")) //
@@ -220,45 +219,42 @@ public class StateDAO {
                 .setProjection(Projections.groupProperty("state")) //
                 .list();
     }
-    
+
     public List<State> getRootState() {
         return (List<State>) sessionFactory.getCurrentSession().createCriteria(State.class) //
-                .add(Restrictions.eq("initialState", true))
-                .add(Restrictions.eq("finalState", true)) //
+                .add(Restrictions.eq("initialState", true)).add(Restrictions.eq("finalState", true)) //
                 .list();
     }
-    
+
     public List<State> getUpstreamStates(State state) {
         return (List<State>) sessionFactory.getCurrentSession().createCriteria(State.class) //
                 .setProjection(Projections.groupProperty("stateAction.state")) //
                 .createAlias("inverseStateTransitions", "stateTransition", JoinType.INNER_JOIN) //
                 .createAlias("stateTransition.stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("id", state.getId()))
-                .list();
+                .add(Restrictions.eq("id", state.getId())).list();
     }
-    
+
     public List<State> getDownstreamStates(State state) {
         return (List<State>) sessionFactory.getCurrentSession().createCriteria(State.class) //
                 .setProjection(Projections.groupProperty("stateTransition.transitionState")) //
                 .createAlias("stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("id", state.getId()))
-                .list();
+                .add(Restrictions.eq("id", state.getId())).list();
     }
-    
+
     public List<PrismState> getActionableStates(Collection<PrismAction> actions) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("state.id")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("action", "action", JoinType.INNER_JOIN);
-        
+
         Disjunction disjunction = Restrictions.disjunction();
-        
+
         for (PrismAction action : actions) {
             disjunction.add(Restrictions.eq("action.id", action));
         }
-        
+
         return criteria.add(disjunction).list();
     }
-    
+
 }

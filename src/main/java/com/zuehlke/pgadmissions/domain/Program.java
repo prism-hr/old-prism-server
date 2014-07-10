@@ -41,9 +41,6 @@ public class Program extends Advert {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "require_project_definition")
-    private Boolean requireProjectDefinition;
-
     @ManyToOne
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
@@ -56,6 +53,12 @@ public class Program extends Advert {
     @Enumerated(EnumType.STRING)
     private PrismProgramType programType;
 
+    @Column(name = "require_project_definition", nullable = false)
+    private boolean requireProjectDefinition;
+    
+    @Column(name = "is_imported", nullable = false)
+    private boolean imported;
+    
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
@@ -91,17 +94,14 @@ public class Program extends Advert {
 
     @Override
     public String getCode() {
-        return code == null ? super.getCode() : code;
+        return code;
     }
     
-    public void setCode(final String code) {
+    @Override
+    public void setCode(String code) {
         this.code = code;
     }
     
-    public boolean isImported() {
-        return code != null;
-    }
-
     @Override
     public String getTitle() {
         return title;
@@ -119,9 +119,17 @@ public class Program extends Advert {
     public Boolean getRequireProjectDefinition() {
         return requireProjectDefinition;
     }
-
+    
     public void setRequireProjectDefinition(Boolean requireProjectDefinition) {
         this.requireProjectDefinition = requireProjectDefinition;
+    }
+
+    public boolean isImported() {
+        return imported;
+    }
+
+    public void setImported(boolean imported) {
+        this.imported = imported;
     }
 
     public Set<Project> getProjects() {
@@ -142,6 +150,11 @@ public class Program extends Advert {
 
     public Program withId(Integer id) {
         setId(id);
+        return this;
+    }
+    
+    public Program withCode(String code) {
+        this.code = code;
         return this;
     }
 
@@ -165,18 +178,18 @@ public class Program extends Advert {
         return this;
     }
 
-    public Program withRequireProjectDefinition(boolean flag) {
-        requireProjectDefinition = flag;
+    public Program withRequireProjectDefinition(boolean requireProjectDefinition) {
+        this.requireProjectDefinition = requireProjectDefinition;
+        return this;
+    }
+    
+    public Program withImported(boolean imported) {
+        this.imported = imported;
         return this;
     }
 
     public Program withInstances(ProgramInstance... instances) {
         this.programInstances.addAll(Arrays.asList(instances));
-        return this;
-    }
-
-    public Program withCode(String code) {
-        this.code = code;
         return this;
     }
 

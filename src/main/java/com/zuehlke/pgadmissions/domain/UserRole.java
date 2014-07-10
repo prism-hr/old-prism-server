@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -18,6 +20,7 @@ import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "USER_ROLE", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_id", "role_id" }),
@@ -60,6 +63,9 @@ public class UserRole implements IUniqueEntity {
     @Column(name = "assigned_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime assignedTimestamp;
+    
+    @OneToMany(mappedBy = "userRole")
+    private Set<UserNotification> userNotifications = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -131,6 +137,10 @@ public class UserRole implements IUniqueEntity {
 
     public void setAssignedTimestamp(DateTime assignedTimestamp) {
         this.assignedTimestamp = assignedTimestamp;
+    }
+
+    public Set<UserNotification> getUserNotifications() {
+        return userNotifications;
     }
 
     public UserRole withSystem(System system) {

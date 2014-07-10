@@ -206,7 +206,7 @@ public class SystemInitialisationHelper {
 
     public void verifyStateDurationCreation() {
         System system = systemService.getSystem();
-        for (State state : stateService.getConfigurableStates()) {
+        for (State state : stateService.getActiveStates()) {
             assertEquals(state.getId().getDuration(), stateService.getStateDuration(system, state).getDuration());
         }
     }

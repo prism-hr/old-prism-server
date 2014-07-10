@@ -133,19 +133,22 @@ public class NotificationService {
         }
     }
 
-    @Transactional(timeout = 600)
-    public void sendPendingUpdateNotifications() {
+    public List<MailDescriptor> getPendingUpdateNotifications() {
+        List<MailDescriptor> descriptors = Lists.newArrayList();
         for (Scope scope : scopeService.getScopesAscending()) {
             for (MailDescriptor mailDescriptor : notificationDAO.getPendingUpdateNotifications(scope)) {
-                User user = mailDescriptor.getUser();
-                Resource resource = mailDescriptor.getResource();
-                NotificationTemplate template = mailDescriptor.getNotificationTemplate();
-
-                sendNotification(user, resource, template);
-                deleteSentUpdateNotifications(user, resource, template);
+                descriptors.add(mailDescriptor);
             }
         }
+        return descriptors;
+    }
 
+    public void sendPendingNotification(MailDescriptor mailDescriptor) {
+        User user = entityService.getById(User.class, mailDescriptor.getUser().getId());
+        Resource resource = entityService.getById(mailDescriptor.getResource().getClass(), mailDescriptor.getResource().getId());
+        NotificationTemplate template = entityService.getByProperty(NotificationTemplate.class, "id", mailDescriptor.getNotificationTemplate().getId());
+        sendNotification(user, resource, template);
+        deleteSentUpdateNotifications(user, resource, template);
     }
 
     public void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate) {

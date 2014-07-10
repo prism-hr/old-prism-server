@@ -326,6 +326,17 @@ public class Program extends Advert {
         return null;
     }
 
+
+    @Override
+    public LocalDate getDueDateBaseline() {
+        LocalDate baseline = new LocalDate();
+        for (ProgramInstance programInstance : programInstances) {
+            LocalDate instanceExpiry = programInstance.getApplicationDeadline();
+            baseline = instanceExpiry.isAfter(baseline) ? instanceExpiry : baseline;
+        }
+        return baseline;
+    }
+    
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();

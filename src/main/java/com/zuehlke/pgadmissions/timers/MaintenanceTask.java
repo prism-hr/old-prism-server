@@ -59,10 +59,6 @@ public class MaintenanceTask {
         log.trace("Deleting unused documents");
         documentService.deleteOrphanDocuments();
         
-        // TODO: Workflow integration
-        log.trace("Disabling unused adverts");
-        programService.deleteInactiveAdverts();
-        
         log.trace("Escalating workflow transitions");
         stateService.executeEscalatedStateTransitions();
         

@@ -11,6 +11,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -144,8 +145,10 @@ public class StateDAO {
                 .add(Restrictions.eq("action.actionType", PrismActionType.SYSTEM_ESCALATION)) //
                 .addOrder(Order.desc("scope.precedence")) //
                 .list();
-
+        
+        LocalDate baseline = new LocalDate();
         HashMultimap<Action, Resource> escalations = HashMultimap.create();
+        
         for (Action escalateAction : escalateActions) {
 
             escalations.putAll(escalateAction, sessionFactory.getCurrentSession() //
@@ -154,6 +157,7 @@ public class StateDAO {
                     .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                     .createAlias("stateAction.action", "action") //
                     .add(Restrictions.eq("action", escalateAction)) //
+                    .add(Restrictions.le("dueDate", baseline)) //
                     .list());
         }
 

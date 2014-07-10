@@ -56,11 +56,10 @@ public class MaintenanceTask {
         log.trace("Importing reference data");
         importReferenceData();
         
-        // TODO: implement as HQL
         log.trace("Deleting unused documents");
         documentService.deleteOrphanDocuments();
         
-        // TODO: implement as HQL
+        // TODO: Workflow integration
         log.trace("Disabling unused adverts");
         programService.deleteInactiveAdverts();
         
@@ -82,7 +81,7 @@ public class MaintenanceTask {
     }
     
     
-    private void importReferenceData() {
+    public void importReferenceData() {
         for (ImportedEntityFeed importedEntityFeed : entityImportService.getImportedEntityFeeds()) {
             String maxRedirects = null;
             try {
@@ -114,7 +113,7 @@ public class MaintenanceTask {
         }
     }
     
-    private void sendPendingUpdateNotifications() {
+    public void sendPendingUpdateNotifications() {
         List<MailDescriptor> descriptors = notificationService.getPendingUpdateNotifications();
         for (MailDescriptor descriptor : descriptors) {
             notificationService.sendPendingNotification(descriptor);

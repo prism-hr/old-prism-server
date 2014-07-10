@@ -38,7 +38,7 @@ import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.importers.EntityImportService;
-import com.zuehlke.pgadmissions.timers.XMLDataImportTask;
+import com.zuehlke.pgadmissions.timers.MaintenanceTask;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
@@ -48,7 +48,7 @@ public class PrismWorkflowIT {
     private EntityImportService entityImportService;
 
     @Autowired
-    private XMLDataImportTask xmlDataImportTask;
+    private MaintenanceTask maintenanceTask;
 
     @Autowired
     private EntityService entityService;
@@ -136,7 +136,7 @@ public class PrismWorkflowIT {
             feed.setLocation(url);
             entityService.update(feed);
         }
-        xmlDataImportTask.importData();
+        maintenanceTask.importReferenceData();
     }
 
 }

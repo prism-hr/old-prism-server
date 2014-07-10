@@ -13,7 +13,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import com.zuehlke.pgadmissions.utils.WordUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
 import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.utils.WordUtils;
 
 @Service
 public class EntityExportService {

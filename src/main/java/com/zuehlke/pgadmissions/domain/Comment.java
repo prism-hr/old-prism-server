@@ -587,7 +587,7 @@ public class Comment {
     }
 
     public void addDocument(Document document) {
-        document.setIsReferenced(true);
+        document.setReferenced(true);
         this.documents.add(document);
     }
 

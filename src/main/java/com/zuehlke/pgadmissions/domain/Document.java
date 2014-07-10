@@ -43,7 +43,7 @@ public class Document {
     private byte[] content;
 
     @Column(name = "is_referenced", nullable = false)
-    private boolean isReferenced = false;
+    private boolean referenced = false;
 
     @Transient
     private MultipartFile fileData;
@@ -106,12 +106,12 @@ public class Document {
         this.fileData = fileData;
     }
 
-    public boolean getIsReferenced() {
-        return isReferenced;
+    public boolean isReferenced() {
+        return referenced;
     }
 
-    public void setIsReferenced(boolean isReferenced) {
-        this.isReferenced = isReferenced;
+    public void setReferenced(boolean referenced) {
+        this.referenced = referenced;
     }
 
     public Document withId(Integer id) {
@@ -144,8 +144,8 @@ public class Document {
         return this;
     }
     
-    public Document withIsReferenced(boolean isReferenced) {
-        this.isReferenced = isReferenced;
+    public Document withReferenced(boolean referenced) {
+        this.referenced = referenced;
         return this;
     }
     

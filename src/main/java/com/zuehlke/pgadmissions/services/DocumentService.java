@@ -50,10 +50,10 @@ public class DocumentService {
 
     public void replaceDocument(Document oldDocument, Document newDocument) {
         if (oldDocument != null) {
-            oldDocument.setIsReferenced(false);
+            oldDocument.setReferenced(false);
         }
         if (newDocument != null) {
-            newDocument.setIsReferenced(true);
+            newDocument.setReferenced(true);
         }
     }
 

@@ -67,7 +67,7 @@ public class TestData {
     }
 
     public static Document aDocument() {
-        return new Document().withFileName("dupa").withContent(new byte[0]).withContentType("application/pdf").withIsReferenced(false)
+        return new Document().withFileName("dupa").withContent(new byte[0]).withContentType("application/pdf").withReferenced(false)
                 .withType(DocumentType.CV);
     }
 

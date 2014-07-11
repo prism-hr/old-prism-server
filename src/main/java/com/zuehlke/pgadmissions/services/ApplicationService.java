@@ -1,32 +1,23 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Date;
-import java.util.List;
-
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
-import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
-import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Filter;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.definitions.ReportFormat;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailsDTO;
+import org.dozer.Mapper;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional
@@ -39,7 +30,7 @@ public class ApplicationService {
 
     @Autowired
     private ApplicationFormListDAO applicationFormListDAO;
-    
+
     @Autowired
     private EntityService entityService;
 
@@ -63,12 +54,15 @@ public class ApplicationService {
 
     @Autowired
     private RoleService roleService;
-    
+
     @Autowired
     private SystemService systemService;
-    
+
     @Autowired
     private ResourceService resourceService;
+
+    @Autowired
+    private Mapper mapper;
 
     public Application create(User user, Advert advert) {
         Application application = new Application();
@@ -81,20 +75,20 @@ public class ApplicationService {
         }
         return application;
     }
-    
-    public Application getOrCreate(final User user, final Integer advertId) throws Exception { 
+
+    public Application getOrCreate(final User user, final Integer advertId) throws Exception {
         return getOrCreate(user, programService.getValidProgramProjectAdvert(advertId));
     }
-    
+
     public Application getOrCreate(final User user, final Advert advert) {
         Application transientApplication = create(user, advert);
         return entityService.getOrCreate(transientApplication);
     }
-    
+
     public void save(Application application) {
         entityService.save(application);
     }
-    
+
     // TODO: Rewrite/remove the following
 
     public Application getById(int id) {
@@ -182,8 +176,11 @@ public class ApplicationService {
     public void saveProgramDetails(Integer applicationId, ApplicationProgramDetailsDTO programDetailsDTO) {
         Application application = entityService.getById(Application.class, applicationId);
         ApplicationProgramDetails programDetails = application.getProgramDetails();
-        StudyOption id = entityService.getByProperty(StudyOption.class, "code", programDetailsDTO.getStudyOption());
-        programDetails.setStudyOption(id);
 
+        StudyOption studyOption = entityService.getByProperty(StudyOption.class, "code", programDetailsDTO.getStudyOption());
+        ReferralSource referralSource = entityService.getByProperty(ReferralSource.class, "code", programDetailsDTO.getReferralSource());
+        programDetails.setStudyOption(studyOption);
+        programDetails.setStartDate(programDetailsDTO.getStartDate());
+        programDetails.setReferralSource(referralSource);
     }
 }

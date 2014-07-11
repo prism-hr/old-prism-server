@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.rest.domain.workflow.StateRepresentation;
 import com.zuehlke.pgadmissions.services.EntityService;
 import org.apache.commons.lang.WordUtils;
 import org.dozer.DozerBeanMapper;
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -32,7 +33,7 @@ public class StaticDataResource {
     private EntityService entityService;
 
     @Autowired
-    private DozerBeanMapper dozerBeanMapper;
+    private Mapper dozerBeanMapper;
 
     @Autowired
     private ApplicationContext applicationContext;

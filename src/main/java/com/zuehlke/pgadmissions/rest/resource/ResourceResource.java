@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.dozer.DozerBeanMapper;
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -57,7 +58,7 @@ public class ResourceResource {
     private ActionService actionService;
 
     @Autowired
-    private DozerBeanMapper dozerBeanMapper;
+    private Mapper dozerBeanMapper;
 
     @Autowired
     private RoleService roleService;

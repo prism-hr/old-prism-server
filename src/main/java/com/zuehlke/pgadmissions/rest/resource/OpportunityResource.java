@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.rest.resource;
 import java.util.List;
 
 import org.dozer.DozerBeanMapper;
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,7 +23,7 @@ public class OpportunityResource {
     private AdvertService advertService;
 
     @Autowired
-    private DozerBeanMapper dozerBeanMapper;
+    private Mapper dozerBeanMapper;
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     public List<OpportunityRepresentation> getOpportunities() {

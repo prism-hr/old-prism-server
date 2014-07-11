@@ -10,7 +10,7 @@
         <bean class="com.zuehlke.pgadmissions.interceptors.EncryptionKeyInterceptor"/>
         <bean class="com.zuehlke.pgadmissions.interceptors.ErrorLogHandlerInterceptor"/>
         <bean class="org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor">
-            <property name="sessionFactory" ref="sessionFactory" />
+            <property name="sessionFactory" ref="sessionFactory"/>
         </bean>
     </mvc:interceptors>
 
@@ -32,7 +32,7 @@
         <property name="modules">
             <array>
                 <bean class="com.fasterxml.jackson.datatype.joda.JodaModule"/>
-                <bean class="com.zuehlke.pgadmissions.rest.PrismJacksonModule" />
+                <bean class="com.zuehlke.pgadmissions.rest.PrismJacksonModule"/>
             </array>
         </property>
     </bean>
@@ -42,10 +42,10 @@
         <property name="objectMapper" ref="jacksonObjectMapper"/>
     </bean>
 
-    <bean class="org.dozer.DozerBeanMapper">
+    <bean class="org.dozer.spring.DozerBeanMapperFactoryBean">
         <property name="mappingFiles">
             <list>
-                <value>dozerMappings.xml</value>
+                <value>classpath:dozerMappings.xml</value>
             </list>
         </property>
     </bean>

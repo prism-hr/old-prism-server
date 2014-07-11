@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 
 import org.dozer.DozerBeanMapper;
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -54,7 +55,7 @@ public class UserResource {
     private RegistrationService registrationService;
 
     @Autowired
-    private DozerBeanMapper dozerBeanMapper;
+    private Mapper dozerBeanMapper;
 
     /**
      * Retrieves the currently logged in user.

@@ -94,4 +94,13 @@
         </field>
     </mapping>
 
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailsDTO</class-a>
+        <class-b>com.zuehlke.pgadmissions.domain.ApplicationProgramDetails</class-b>
+        <field custom-converter-id="importedEntityConverter">
+            <a>studyOption</a>
+            <b>studyOption</b>
+        </field>
+    </mapping>
+
 </mappings>

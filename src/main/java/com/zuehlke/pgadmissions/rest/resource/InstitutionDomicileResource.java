@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.rest.resource;
 import java.util.List;
 
 import org.dozer.DozerBeanMapper;
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +31,7 @@ public class InstitutionDomicileResource {
     private InstitutionService institutionService;
 
     @Autowired
-    private DozerBeanMapper dozerBeanMapper;
+    private Mapper dozerBeanMapper;
 
     @RequestMapping(value = "institutions", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody

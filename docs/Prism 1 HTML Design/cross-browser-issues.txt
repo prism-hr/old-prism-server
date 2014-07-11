@@ -1,0 +1,7 @@
+IE7 issues
+---------------------------------------------------
+- BUTTONs have a nasty black border around them.
+
+IE9 issues
+---------------------------------------------------
+- With TABLEs the background appears to overlap the left border (see list of applications).

@@ -175,50 +175,51 @@ public class RoleService {
         UserRole transientTransitionRole = new UserRole().withResource(resource).withRole(roleTransition.getTransitionRole()).withAssignedTimestamp(baseline);
 
         switch (roleTransition.getRoleTransitionType()) {
-            case BRANCH:
-                executeBranchUserRole(transientRole, transientTransitionRole, comment);
-                break;
-            case CREATE:
-                executeCreateUserRole(transientRole, comment);
-                break;
-            case REMOVE:
-                executeRemoveUserRole(transientRole);
-                break;
-            case UPDATE:
-                executeUpdateUserRole(transientRole, transientTransitionRole);
+        case BRANCH:
+            executeBranchUserRole(transientRole, transientTransitionRole, comment);
+            break;
+        case CREATE:
+            executeCreateUserRole(transientRole, comment);
+            break;
+        case REMOVE:
+            executeRemoveUserRole(transientRole);
+            break;
+        case UPDATE:
+            executeUpdateUserRole(transientRole, transientTransitionRole);
         }
     }
 
-    private void executeBranchUserRole(UserRole transientRole, UserRole transientTransitionRole, Comment comment) throws WorkflowEngineException {
-        UserRole persistentRole = entityService.getDuplicateEntity(transientRole);
-        if (persistentRole == null || !isRoleAssignmentPermitted(transientRole, comment)) {
+    private void executeBranchUserRole(UserRole userRole, UserRole transitionRole, Comment comment) throws WorkflowEngineException {
+        UserRole persistentRole = entityService.getDuplicateEntity(userRole);
+        if (persistentRole == null || !isRoleAssignmentPermitted(userRole, comment)) {
             throw new WorkflowEngineException(WORKFLOW_ENGINE_FAILURE);
         }
-        entityService.getOrCreate(transientTransitionRole);
+        entityService.getOrCreate(transitionRole);
     }
 
-    private void executeCreateUserRole(UserRole transientRole, Comment comment) throws WorkflowEngineException {
-        if (!isRoleAssignmentPermitted(transientRole, comment)) {
+    private void executeCreateUserRole(UserRole userRole, Comment comment) throws WorkflowEngineException {
+        if (!isRoleAssignmentPermitted(userRole, comment)) {
             throw new WorkflowEngineException(WORKFLOW_ENGINE_FAILURE);
         }
-        entityService.getOrCreate(transientRole);
+        entityService.getOrCreate(userRole);
     }
 
-    private void executeRemoveUserRole(UserRole transientRole) {
-        UserRole persistentRole = entityService.getDuplicateEntity(transientRole);
+    private void executeRemoveUserRole(UserRole userRole) {
+        UserRole persistentRole = entityService.getDuplicateEntity(userRole);
         if (persistentRole != null) {
             entityService.delete(persistentRole);
         }
     }
 
-    private boolean isRoleAssignmentPermitted(UserRole transientRole, Comment comment) {
-        List<Role> excludingRoles = roleDAO.getExcludingRoles(transientRole, comment);
-        List<UserRole> excludingUserRoles = roleDAO.getExcludingUserRoles(transientRole);
-        return excludingRoles.isEmpty() && excludingUserRoles.isEmpty();
+    private boolean isRoleAssignmentPermitted(UserRole userRole, Comment comment) {
+        if (userRole.getRole().getExcludedRoles().isEmpty()) {
+            return true;
+        }
+        return roleDAO.getExcludingRoles(userRole, comment).isEmpty() && roleDAO.getExcludingUserRoles(userRole).isEmpty();
     }
 
-    private void executeUpdateUserRole(UserRole transientRole, UserRole transientTransitionRole) throws WorkflowEngineException {
-        UserRole persistentRole = entityService.getDuplicateEntity(transientRole);
+    private void executeUpdateUserRole(UserRole userRole, UserRole transientTransitionRole) throws WorkflowEngineException {
+        UserRole persistentRole = entityService.getDuplicateEntity(userRole);
         if (persistentRole == null) {
             throw new WorkflowEngineException(WORKFLOW_ENGINE_FAILURE);
         }

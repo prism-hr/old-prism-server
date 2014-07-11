@@ -1,12 +1,13 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 public class ApplicationProgramDetailsDTO {
 
     private String studyOption;
 
-    private LocalDate startDate;
+    private DateTime startDate;
 
     private String referralSource;
 
@@ -20,11 +21,11 @@ public class ApplicationProgramDetailsDTO {
         this.studyOption = studyOption;
     }
 
-    public LocalDate getStartDate() {
+    public DateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(DateTime startDate) {
         this.startDate = startDate;
     }
 

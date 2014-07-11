@@ -38,7 +38,6 @@ import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 @Transactional
 public class NotificationService {
 
-    @Autowired
     @Value("${application.host}")
     private String host;
 
@@ -198,7 +197,7 @@ public class NotificationService {
         }
 
         if (program != null) {
-            model.put("projectOrProgramTitle", project != null ? project.getTitle() : program.getTitle());
+            model.put("projectOrProgramTitle", project == null ? program.getTitle() : project.getTitle());
         }
 
         if (institution != null) {

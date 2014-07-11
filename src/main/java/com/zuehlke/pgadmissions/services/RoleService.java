@@ -7,8 +7,10 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
+
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,8 +20,9 @@ import java.util.List;
 @Transactional
 public class RoleService {
 
-    private static final String WORKFLOW_ENGINE_FAILURE = "workflow.engine.failure";
-
+    @Value("${workflow.engine.failure}")
+    private String workflowEngineFailure;
+    
     @Autowired
     private RoleDAO roleDAO;
 
@@ -195,7 +198,7 @@ public class RoleService {
                     userRoleTransitions.put(user, roleTransition);
                 }
             } else {
-                throw new WorkflowEngineException(WORKFLOW_ENGINE_FAILURE);
+                throw new WorkflowEngineException(workflowEngineFailure);
             }
         }
 
@@ -226,14 +229,14 @@ public class RoleService {
     private void executeBranchUserRole(UserRole userRole, UserRole transitionRole, Comment comment) throws WorkflowEngineException {
         UserRole persistentRole = entityService.getDuplicateEntity(userRole);
         if (persistentRole == null || !isRoleAssignmentPermitted(userRole, comment)) {
-            throw new WorkflowEngineException(WORKFLOW_ENGINE_FAILURE);
+            throw new WorkflowEngineException(workflowEngineFailure);
         }
         entityService.getOrCreate(transitionRole);
     }
 
     private void executeCreateUserRole(UserRole userRole, Comment comment) throws WorkflowEngineException {
         if (!isRoleAssignmentPermitted(userRole, comment)) {
-            throw new WorkflowEngineException(WORKFLOW_ENGINE_FAILURE);
+            throw new WorkflowEngineException(workflowEngineFailure);
         }
         entityService.getOrCreate(userRole);
     }
@@ -252,7 +255,7 @@ public class RoleService {
     private void executeUpdateUserRole(UserRole userRole, UserRole transientTransitionRole) throws WorkflowEngineException {
         UserRole persistentRole = entityService.getDuplicateEntity(userRole);
         if (persistentRole == null) {
-            throw new WorkflowEngineException(WORKFLOW_ENGINE_FAILURE);
+            throw new WorkflowEngineException(workflowEngineFailure);
         }
         entityService.delete(persistentRole);
         entityService.getOrCreate(transientTransitionRole);

@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.rest.resource;
 
 import java.util.List;
 
-import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,8 +14,8 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
-import com.zuehlke.pgadmissions.rest.domain.InstitutionDomicileRegionRepresentation;
-import com.zuehlke.pgadmissions.rest.domain.InstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRegionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 

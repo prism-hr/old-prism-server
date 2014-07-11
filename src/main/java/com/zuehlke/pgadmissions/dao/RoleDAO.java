@@ -62,6 +62,7 @@ public class RoleDAO {
 
     public List<Role> getExcludingRoles(UserRole userRole, Comment comment) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
+                .setProjection(Projections.property("role"))
                 .add(Restrictions.eq("comment", comment)) //
                 .add(Restrictions.eq("user", userRole.getUser())) //
                 .add(Restrictions.ne("role", userRole.getRole()));

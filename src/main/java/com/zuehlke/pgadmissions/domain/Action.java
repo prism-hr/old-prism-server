@@ -102,12 +102,16 @@ public class Action extends WorkflowResource {
         this.creationScope = creationScope;
     }
     
+    public boolean isSystemInvokedAction() {
+        return actionType.isSystemAction();
+    }
+    
     public boolean isCreationAction() {
         return creationScope != null;
     }
     
-    public boolean isSystemAction() {
-        return actionType.isSystemAction();
+    public boolean isUserInvokedCreationAction() {
+        return isCreationAction() && !isSystemInvokedAction();
     }
 
     public Set<ActionRedaction> getRedactions() {

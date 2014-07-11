@@ -355,7 +355,7 @@ public class WorkflowConfigurationHelper {
         for (StateAction stateAction : state.getStateActions()) {
             Set<StateActionAssignment> assignments = stateAction.getStateActionAssignments();
 
-            if (stateAction.getAction().isSystemAction()) {
+            if (stateAction.getAction().isSystemInvokedAction()) {
                 assertTrue(assignments.size() == 0);
             }
 

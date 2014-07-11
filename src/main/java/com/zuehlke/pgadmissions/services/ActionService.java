@@ -93,7 +93,7 @@ public class ActionService {
         validateAction(resource, action, comment.getUser(), comment.getDelegateUser());
         User actionOwner = comment.getUser();
 
-        if (action.getCreationScope() != null) {
+        if (action.isUserInvokedCreationAction()) {
             Resource duplicateResource = entityService.getDuplicateEntity(resource);
             if (duplicateResource != null) {
                 Action redirectAction = actionDAO.getRedirectAction(duplicateResource, actionOwner);

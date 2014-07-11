@@ -62,9 +62,6 @@ public class SystemService {
     private final String EMAIL_DEFAULT_SUBJECT_DIRECTORY = "email/subject/";
 
     private final String EMAIL_DEFAULT_CONTENT_DIRECTORY = "email/content/";
-
-    @Value("${workflow.configuration.failure}")
-    private String workflowConfigurationFailure;
     
     @Value("${system.name}")
     private String systemName;
@@ -285,7 +282,7 @@ public class SystemService {
         try {
             entityService.list(workflowResourceClass);
         } catch (IllegalArgumentException e) {
-            throw new WorkflowConfigurationException(workflowConfigurationFailure, e);
+            throw new WorkflowConfigurationException(e);
         }
     }
 

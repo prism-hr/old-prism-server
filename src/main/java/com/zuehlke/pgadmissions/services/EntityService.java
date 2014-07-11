@@ -18,7 +18,7 @@ public class EntityService {
     @Autowired
     private EntityDAO entityDAO;
 
-    public <T> T getById(Class<T> klass, int id) {
+    public <T> T getById(Class<T> klass, Object id) {
         return entityDAO.getById(klass, id);
     }
 

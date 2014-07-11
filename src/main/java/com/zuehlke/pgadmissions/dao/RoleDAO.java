@@ -63,7 +63,7 @@ public class RoleDAO {
     public List<Role> getExcludingRoles(UserRole userRole, Comment comment) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .add(Restrictions.eq("comment", comment)) //
-                .add(Restrictions.eq("user", userRole.getUser()))
+                .add(Restrictions.eq("user", userRole.getUser())) //
                 .add(Restrictions.ne("role", userRole.getRole()));
         
         getExcludedRoleDisjunction(userRole, criteria);
@@ -80,22 +80,12 @@ public class RoleDAO {
                         .add(Restrictions.eq("program", resource.getProgram())) //
                         .add(Restrictions.eq("institution", resource.getInstitution())) //
                         .add(Restrictions.eq("system", resource.getSystem()))) //
-                .add(Restrictions.eq("user", userRole.getUser()));
+                .add(Restrictions.eq("user", userRole.getUser())) //
+                .add(Restrictions.ne("role", userRole.getRole()));
         
         getExcludedRoleDisjunction(userRole, criteria);
                 
         return criteria.list();
-    }
-
-    private void getExcludedRoleDisjunction(UserRole userRole, Criteria criteria) {
-        Set<Role> exclusions = userRole.getRole().getExcludedRoles();
-        if (!exclusions.isEmpty()) {
-            Disjunction disjunction = Restrictions.disjunction();
-            for (Role excludedRole : exclusions) {
-                disjunction.add(Restrictions.eq("role", excludedRole));
-            }
-            criteria.add(disjunction);
-        }
     }
 
     public List<RoleTransition> getRoleTransitions(StateTransition stateTransition, List<Role> invokerRoles) {
@@ -279,6 +269,17 @@ public class RoleDAO {
                         .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
                 .add(Restrictions.eq("userNotification.notificationTemplate", template)) //
                 .list();
+    }
+    
+    private void getExcludedRoleDisjunction(UserRole userRole, Criteria criteria) {
+        Set<Role> exclusions = userRole.getRole().getExcludedRoles();
+        if (!exclusions.isEmpty()) {
+            Disjunction disjunction = Restrictions.disjunction();
+            for (Role excludedRole : exclusions) {
+                disjunction.add(Restrictions.eq("role", excludedRole));
+            }
+            criteria.add(disjunction);
+        }
     }
 
 }

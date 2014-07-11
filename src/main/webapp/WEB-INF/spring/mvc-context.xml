@@ -35,6 +35,9 @@
                 <bean class="com.zuehlke.pgadmissions.rest.PrismJacksonModule"/>
             </array>
         </property>
+        <property name="dateFormat">
+            <bean class="com.fasterxml.jackson.databind.util.ISO8601DateFormat"/>
+        </property>
     </bean>
 
     <bean id="jacksonMessageConverter"

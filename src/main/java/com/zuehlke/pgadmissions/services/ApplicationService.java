@@ -181,7 +181,7 @@ public class ApplicationService {
         StudyOption studyOption = entityService.getByProperty(StudyOption.class, "code", programDetailsDTO.getStudyOption());
         ReferralSource referralSource = entityService.getByProperty(ReferralSource.class, "code", programDetailsDTO.getReferralSource());
         programDetails.setStudyOption(studyOption);
-        programDetails.setStartDate(programDetailsDTO.getStartDate());
+        programDetails.setStartDate(programDetailsDTO.getStartDate().toLocalDate());
         programDetails.setReferralSource(referralSource);
 
         programDetails.getSuggestedSupervisors().clear();

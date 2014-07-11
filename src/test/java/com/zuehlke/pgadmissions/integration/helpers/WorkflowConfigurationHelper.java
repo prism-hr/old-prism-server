@@ -94,14 +94,14 @@ public class WorkflowConfigurationHelper {
 
         List<PrismState> escalatableStates = stateService.getActionableStates(actualEscalationActions);
         List<PrismState> propagatableStates = stateService.getActionableStates(actualPropagationActions);
-        
+
         Set<PrismState> actualTransitionStates = Sets.newHashSet(escalatableStates);
         actualTransitionStates.addAll(propagatableStates);
-        
+
         Integer totalWorkflowStates = workflowStates.size();
         Integer totalWorkflowTransitionStates = actualTransitionStates.size();
         Integer totalWorkflowFinalStates = actualFinalStates.size();
-        
+
         logger.info("Total workflow states: " + totalWorkflowStates.toString());
         logger.info("Total workflow transition states: " + totalWorkflowTransitionStates.toString());
         logger.info("Total workflow final states: " + totalWorkflowFinalStates.toString());
@@ -132,11 +132,11 @@ public class WorkflowConfigurationHelper {
 
         verifyAsInitialState(state);
         verifyAsFinalState(state);
-        
+
         State parentState = state.getParentState();
         assertTrue(state.getSequenceOrder() == null || state == parentState);
         verifyAsParentState(state);
-        
+
         verifyStateActions(state);
         verifyStateActionAssignments(state);
         verifyStateActionNotifications(state);
@@ -201,13 +201,13 @@ public class WorkflowConfigurationHelper {
 
     private void verifyAsParentState(State state) {
         State parentState = state.getParentState();
-        
+
         if (state == parentState) {
             Integer sequenceIndex = 0;
-            
+
             for (State childState : parentState.getChildStates()) {
                 Integer sequenceOrder = childState.getSequenceOrder();
-                
+
                 if (sequenceOrder != null) {
                     assertNotSame(sequenceIndex, sequenceOrder);
                     sequenceIndex = sequenceOrder;
@@ -215,7 +215,7 @@ public class WorkflowConfigurationHelper {
             }
         }
     }
-    
+
     private void verifyStateActions(State state) {
         Set<PrismAction> escalationActions = Sets.newHashSet();
 
@@ -229,12 +229,12 @@ public class WorkflowConfigurationHelper {
                 assertNotSame(stateAction.getState(), stateAction.getStateTransitions().iterator().next());
                 assertFalse(stateAction.isRaisesUrgentFlag());
                 assertNull(stateAction.getNotificationTemplate());
-                
+
                 PrismActionType actionType = action.getActionType();
-                
+
                 if (actionType == PrismActionType.SYSTEM_ESCALATION) {
                     escalationActions.add(action.getId());
-                } else if (actionType == PrismActionType.SYSTEM_PROPAGATION){
+                } else if (actionType == PrismActionType.SYSTEM_PROPAGATION) {
                     actualPropagationActions.add(action.getId());
                 }
             }
@@ -294,21 +294,22 @@ public class WorkflowConfigurationHelper {
         Set<PrismRole> actualOwnerRoles = Sets.newHashSet();
         Set<PrismRole> actualProcessedRoles = Sets.newHashSet();
 
+        State state = stateTransition.getStateAction().getState();
         Action action = stateTransition.getStateAction().getAction();
         State transitionState = stateTransition.getTransitionState();
-        
+
         Set<RoleTransition> roleTransitions = stateTransition.getRoleTransitions();
         if (!roleTransitions.isEmpty()) {
             assertTrue(action.isSaveComment());
         }
-        
+
         for (RoleTransition roleTransition : roleTransitions) {
+            Role role = roleTransition.getRole();
             Role transitionRole = roleTransition.getTransitionRole();
             PrismRole transitionRoleId = transitionRole.getId();
 
             PrismRoleTransitionType roleTransitionType = roleTransition.getRoleTransitionType();
-            logger.info("Verifying role transition: " + roleTransition.getRole().getId().toString() + " " + roleTransitionType + " "
-                    + transitionRoleId.toString());
+            logger.info("Verifying role transition: " + role.getId().toString() + " " + roleTransitionType + " " + transitionRoleId.toString());
 
             actualProcessedRoles.add(transitionRoleId);
 
@@ -318,6 +319,17 @@ public class WorkflowConfigurationHelper {
                 if (transitionRole.isScopeOwner() && roleTransitionType == PrismRoleTransitionType.CREATE) {
                     assertEquals(transitionState.getScope(), transitionRole.getScope());
                     actualOwnerRoles.add(transitionRoleId);
+                }
+
+                if (roleTransitionType == PrismRoleTransitionType.CREATE || roleTransitionType == PrismRoleTransitionType.BRANCH) {
+                    for (Role excludedRole : transitionRole.getExcludedRoles()) {
+                        logger.info("Verifying role transition exclusion: " + transitionRole.getId() + " " + excludedRole.getId());
+                        assertNotSame(transitionRole, excludedRole);
+                        // TODO: verify that the excluded roles could have been assigned
+                    }
+                } else {
+                    assertEquals(state.getScope(), role.getScope());
+                    assertEquals(state.getScope(), transitionRole.getScope());
                 }
             }
         }
@@ -333,7 +345,7 @@ public class WorkflowConfigurationHelper {
     private void verifyPropagatedActions() {
         for (StateTransition stateTransition : propagatingStateTransitions) {
             Scope propagatingScope = stateTransition.getStateAction().getState().getScope();
-            
+
             Set<PrismScope> parentScopes = actualParentScopes.get(propagatingScope.getId());
             Set<PrismScope> childScopes = actualChildScopes.get(propagatingScope.getId());
 
@@ -371,7 +383,7 @@ public class WorkflowConfigurationHelper {
 
     private void verifyStateActionNotifications(State state) {
         for (StateAction stateAction : state.getStateActions()) {
-            
+
             for (StateActionNotification notification : stateAction.getStateActionNotifications()) {
                 NotificationTemplate template = notification.getNotificationTemplate();
                 Scope templateScope = template.getScope();

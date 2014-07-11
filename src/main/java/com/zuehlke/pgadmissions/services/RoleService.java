@@ -110,6 +110,40 @@ public class RoleService {
     public Role getResourceCreatorRole(Resource resource, Action createAction) {
         return (Role) roleDAO.getResourceCreatorRole(resource, createAction);
     }
+    
+    public List<User> getResourceUsers(Resource resource) {
+        return roleDAO.getUsers(resource);
+    }
+
+    public List<PrismRole> getResourceUserRoles(Resource resource, User user) {
+        return roleDAO.getUserRoles(resource, user);
+    }
+
+    public void updateRoles(Resource resource, User user, List<ResourceRepresentation.RoleRepresentation> roles) {
+        for (ResourceRepresentation.RoleRepresentation role : roles) {
+            if (role.getValue()) {
+                getOrCreateUserRole(resource, user, role.getId());
+            } else {
+                removeUserRoles(resource, user, role.getId());
+            }
+        }
+    }
+
+    public List<PrismRole> getRoles(Class<? extends Resource> resourceClass, PrismRole... rolesToCreate) {
+        return roleDAO.getRoles(resourceClass);
+    }
+
+    public List<Role> getActiveRoles() {
+        return roleDAO.getActiveRoles();
+    }
+
+    public void deleteInactiveRoles() {
+        roleDAO.deleteObseleteUserRoles(getActiveRoles());
+    }
+
+    public List<UserRole> getUpdateNotificationRoles(User user, Resource resource, NotificationTemplate template) {
+        return roleDAO.getUpdateNotificationRoles(user, resource, template);
+    }
 
     public void executeRoleTransitions(StateTransition stateTransition, Comment comment) throws WorkflowEngineException {
         for (PrismRoleTransitionType transitionType : PrismRoleTransitionType.values()) {
@@ -168,7 +202,7 @@ public class RoleService {
         return userRoleTransitions;
     }
 
-    public void executeRoleTransition(Comment comment, User user, RoleTransition roleTransition) throws WorkflowEngineException {
+    private void executeRoleTransition(Comment comment, User user, RoleTransition roleTransition) throws WorkflowEngineException {
         DateTime baseline = new DateTime();
         Resource resource = comment.getResource();
         UserRole transientRole = new UserRole().withResource(resource).withUser(user).withRole(roleTransition.getRole()).withAssignedTimestamp(baseline);
@@ -222,40 +256,6 @@ public class RoleService {
         }
         entityService.delete(persistentRole);
         entityService.getOrCreate(transientTransitionRole);
-    }
-
-    public List<User> getResourceUsers(Resource resource) {
-        return roleDAO.getUsers(resource);
-    }
-
-    public List<PrismRole> getResourceUserRoles(Resource resource, User user) {
-        return roleDAO.getUserRoles(resource, user);
-    }
-
-    public void updateRoles(Resource resource, User user, List<ResourceRepresentation.RoleRepresentation> roles) {
-        for (ResourceRepresentation.RoleRepresentation role : roles) {
-            if (role.getValue()) {
-                getOrCreateUserRole(resource, user, role.getId());
-            } else {
-                removeUserRoles(resource, user, role.getId());
-            }
-        }
-    }
-
-    public List<PrismRole> getRoles(Class<? extends Resource> resourceClass, PrismRole... rolesToCreate) {
-        return roleDAO.getRoles(resourceClass);
-    }
-
-    public List<Role> getActiveRoles() {
-        return roleDAO.getActiveRoles();
-    }
-
-    public void deleteInactiveRoles() {
-        roleDAO.deleteObseleteUserRoles(getActiveRoles());
-    }
-
-    public List<UserRole> getUpdateNotificationRoles(User user, Resource resource, NotificationTemplate template) {
-        return roleDAO.getUpdateNotificationRoles(user, resource, template);
     }
 
 }

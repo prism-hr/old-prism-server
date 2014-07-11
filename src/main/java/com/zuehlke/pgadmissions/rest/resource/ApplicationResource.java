@@ -33,7 +33,6 @@ public class ApplicationResource {
     private ApplicationService applicationService;
 
     @RequestMapping(value = "/{applicationId}/programDetails", method = RequestMethod.PUT)
-    @Transactional
     public void saveProgramDetails(@PathVariable Integer applicationId, @RequestBody ApplicationProgramDetailsDTO programDetailsDTO) {
         applicationService.saveProgramDetails(applicationId, programDetailsDTO);
 

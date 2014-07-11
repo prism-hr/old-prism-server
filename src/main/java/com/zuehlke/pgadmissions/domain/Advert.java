@@ -81,6 +81,10 @@ public abstract class Advert extends Resource {
     @JoinTable(name = "OPPORTUNITY_CATEGORY", joinColumns = @JoinColumn(name = "advert_id"), inverseJoinColumns = @JoinColumn(name = "advert_opportunity_category_id"))
     private Set<OpportunityCategory> categories = Sets.newHashSet();
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "ACTION_PREFERRED_RECRUITER", joinColumns = { @JoinColumn(name = "advert_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "institution_id", nullable = false) })
+    private Set<Institution> preferredRecruiters = Sets.newHashSet();
+    
     @Override
     public Integer getId() {
         return id;
@@ -185,6 +189,10 @@ public abstract class Advert extends Resource {
     
     public Set<OpportunityCategory> getCategories() {
         return categories;
+    }
+
+    public Set<Institution> getPreferredRecruiters() {
+        return preferredRecruiters;
     }
 
     @Override

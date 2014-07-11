@@ -137,6 +137,8 @@ public class StateService {
     }
 
     public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) {
+        comment.setResource(resourceService.getOperativeResource(resource, action));
+        
         if (action.isCreationAction()) {
             resourceService.commitResourceCreation(resource, action, comment);
         } else {

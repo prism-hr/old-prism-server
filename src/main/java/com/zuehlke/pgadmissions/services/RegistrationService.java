@@ -4,6 +4,7 @@ import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -73,13 +74,25 @@ public class RegistrationService {
                 resource = createResource(resource, user, registrationAction.getCreationScope(), registrationDetails);
             }
             Action action = entityService.getByProperty(Action.class, "id", registrationAction);
-            Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false);
+            Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)                    ;
+            comment.getCommentAssignedUsers().add(new CommentAssignedUser().withUser(user).withRole(getCreatorRole(registrationAction)));
             ActionOutcome actionOutcome = actionService.executeAction((Resource) resource, registrationAction, comment);
             resource = actionOutcome.getResource();
         } else {
             resource = systemService.getSystem();
         }
         return resource;
+    }
+
+    private Role getCreatorRole(PrismAction registrationAction) {
+        switch (registrationAction) {
+            case SYSTEM_CREATE_INSTITUTION:
+                return entityService.getById(Role.class, PrismRole.INSTITUTION_ADMINISTRATOR);
+            case INSTITUTION_CREATE_PROGRAM:
+                return entityService.getById(Role.class, PrismRole.PROGRAM_ADMINISTRATOR);
+            default:
+                return null;
+        }
     }
 
     private Resource createResource(Resource parentResource, User user, PrismScope creationScope, RegistrationDetails registrationDetails) {

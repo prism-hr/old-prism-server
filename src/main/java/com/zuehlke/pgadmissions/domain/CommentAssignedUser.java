@@ -65,4 +65,9 @@ public class CommentAssignedUser {
         return this;
     }
 
+    public CommentAssignedUser withRole(final Role role) {
+        this.role = role;
+        return this;
+    }
+
 }

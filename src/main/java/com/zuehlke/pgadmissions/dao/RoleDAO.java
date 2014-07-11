@@ -1,19 +1,34 @@
 package com.zuehlke.pgadmissions.dao;
 
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import java.util.List;
+import java.util.Set;
+
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.*;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Set;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.RoleTransition;
+import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.StateTransition;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -45,37 +60,41 @@ public class RoleDAO {
                 .list();
     }
 
-    public List<Role> getExcludingRoles(UserRole transientRole, Comment comment) {
-        Disjunction excludedRoleDisjunction = createExcludedRoleDisjunction(transientRole.getRole().getExcludedRoles());
-        return sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
+    public List<Role> getExcludingRoles(UserRole userRole, Comment comment) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .add(Restrictions.eq("comment", comment)) //
-                .add(Restrictions.eq("user", transientRole.getUser()))
-                .add(excludedRoleDisjunction)
-                .list();
+                .add(Restrictions.eq("user", userRole.getUser()));
+        
+        getExcludedRoleDisjunction(userRole, criteria);
+                
+        return criteria.list();
     }
-
 
     public List<UserRole> getExcludingUserRoles(UserRole userRole) {
         Resource resource = userRole.getResource();
-        Disjunction excludedRoleDisjunction = createExcludedRoleDisjunction(userRole.getRole().getExcludedRoles());
-        return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("application", resource.getApplication())) //
                         .add(Restrictions.eq("project", resource.getProject())) //
                         .add(Restrictions.eq("program", resource.getProgram())) //
                         .add(Restrictions.eq("institution", resource.getInstitution())) //
                         .add(Restrictions.eq("system", resource.getSystem()))) //
-                .add(Restrictions.eq("user", userRole.getUser())) //
-                .add(excludedRoleDisjunction)
-                .list();
+                .add(Restrictions.eq("user", userRole.getUser()));
+        
+        getExcludedRoleDisjunction(userRole, criteria);
+                
+        return criteria.list();
     }
 
-    private Disjunction createExcludedRoleDisjunction(Set<Role> excludedRoles) {
-        Disjunction disjunction = Restrictions.disjunction();
-        for (Role excludedRole : excludedRoles) {
-            disjunction.add(Restrictions.eq("role", excludedRole));
+    private void getExcludedRoleDisjunction(UserRole userRole, Criteria criteria) {
+        Set<Role> exclusions = userRole.getRole().getExcludedRoles();
+        if (!exclusions.isEmpty()) {
+            Disjunction disjunction = Restrictions.disjunction();
+            for (Role excludedRole : exclusions) {
+                disjunction.add(Restrictions.eq("role", excludedRole));
+            }
+            criteria.add(disjunction);
         }
-        return disjunction;
     }
 
     public List<RoleTransition> getRoleTransitions(StateTransition stateTransition, List<Role> invokerRoles) {

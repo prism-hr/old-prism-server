@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.LinkedHashMultimap;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -22,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserNotification;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.domain.ResourceRepresentation;
 
@@ -123,15 +123,60 @@ public class RoleService {
     }
 
     public void executeRoleTransitions(StateTransition stateTransition, Comment comment) throws WorkflowEngineException {
-        LinkedHashMultimap<User, RoleTransition> userRoleTransitions = LinkedHashMultimap.create();
-        userRoleTransitions.putAll(getUserRoleUpdateTransitions(stateTransition, comment));
-        userRoleTransitions.putAll(getUserRoleCreationTransitions(stateTransition, comment));
+        for (PrismRoleTransitionType transitionType : PrismRoleTransitionType.values()) {
+            HashMultimap<User, RoleTransition> userRoleTransitions = null;
+            List<RoleTransition> roleTransitions = roleDAO.getRoleTransitions(stateTransition, transitionType);
 
-        for (User user : userRoleTransitions.keySet()) {
-            for (RoleTransition roleTransition : userRoleTransitions.get(user)) {
-                executeRoleTransition(comment, user, roleTransition);
+            if (transitionType == PrismRoleTransitionType.CREATE) {
+                userRoleTransitions = getRoleCreateTransitions(stateTransition, comment, roleTransitions);
+            } else {
+                userRoleTransitions = getRoleUpdateTransitions(stateTransition, comment, roleTransitions);
+            }
+
+            for (User user : userRoleTransitions.keySet()) {
+                for (RoleTransition roleTransition : userRoleTransitions.get(user)) {
+                    executeRoleTransition(comment, user, roleTransition);
+                }
             }
         }
+    }
+
+    private HashMultimap<User, RoleTransition> getRoleUpdateTransitions(StateTransition stateTransition, Comment comment, List<RoleTransition> roleTransitions) {
+        HashMultimap<User, RoleTransition> userRoleTransitions = HashMultimap.create();
+
+        for (RoleTransition roleTransition : roleTransitions) {
+            User restrictedToUser = roleTransition.isRestrictToActionOwner() ? comment.getUser() : null;
+            List<User> users = roleDAO.getRoleTransitionUsers(comment.getResource(), roleTransition, restrictedToUser);
+
+            for (User user : users) {
+                userRoleTransitions.put(user, roleTransition);
+            }
+        }
+
+        return userRoleTransitions;
+    }
+
+    private HashMultimap<User, RoleTransition> getRoleCreateTransitions(StateTransition stateTransition, Comment comment, List<RoleTransition> roleTransitions)
+            throws WorkflowEngineException {
+        HashMultimap<User, RoleTransition> userRoleTransitions = HashMultimap.create();
+
+        for (RoleTransition roleTransition : roleTransitions) {
+            User restrictedToUser = roleTransition.isRestrictToActionOwner() ? comment.getUser() : null;
+            List<User> users = roleDAO.getRoleCreateTransitionUsers(comment, roleTransition.getRole(), restrictedToUser);
+
+            Integer minimumPermitted = roleTransition.getMinimumPermitted();
+            Integer maximumPermitted = roleTransition.getMinimumPermitted();
+
+            if ((minimumPermitted == null || users.size() >= minimumPermitted) && (maximumPermitted == null || users.size() <= maximumPermitted)) {
+                for (User user : users) {
+                    userRoleTransitions.put(user, roleTransition);
+                }
+            } else {
+                throw new WorkflowEngineException(WORKFLOW_ENGINE_FAILURE);
+            }
+        }
+
+        return userRoleTransitions;
     }
 
     public void executeRoleTransition(Comment comment, User user, RoleTransition roleTransition) throws WorkflowEngineException {
@@ -192,45 +237,6 @@ public class RoleService {
         throw new WorkflowEngineException(WORKFLOW_ENGINE_FAILURE);
     }
 
-    private HashMultimap<User, RoleTransition> getUserRoleUpdateTransitions(StateTransition stateTransition, Comment comment) {
-        HashMultimap<User, RoleTransition> userRoleTransitions = HashMultimap.create();
-
-        List<RoleTransition> roleTransitions = roleDAO.getRoleUpdateTransitions(stateTransition);
-        for (RoleTransition roleTransition : roleTransitions) {
-            User restrictedToUser = roleTransition.isRestrictToActionOwner() ? comment.getUser() : null;
-            List<User> users = roleDAO.getRoleUpdateTransitionUsers(comment.getResource(), roleTransition, restrictedToUser);
-
-            for (User user : users) {
-                userRoleTransitions.put(user, roleTransition);
-            }
-        }
-
-        return userRoleTransitions;
-    }
-
-    private HashMultimap<User, RoleTransition> getUserRoleCreationTransitions(StateTransition stateTransition, Comment comment) throws WorkflowEngineException {
-        HashMultimap<User, RoleTransition> userRoleTransitions = HashMultimap.create();
-
-        List<RoleTransition> roleTransitions = roleDAO.getRoleCreationTransitions(stateTransition);
-        for (RoleTransition roleTransition : roleTransitions) {
-            User restrictedToUser = roleTransition.isRestrictToActionOwner() ? comment.getUser() : null;
-            List<User> users = roleDAO.getRoleCreationTransitionUsers(comment, roleTransition.getRole(), restrictedToUser);
-
-            Integer minimumPermitted = roleTransition.getMinimumPermitted();
-            Integer maximumPermitted = roleTransition.getMinimumPermitted();
-
-            if ((minimumPermitted == null || users.size() >= minimumPermitted) && (maximumPermitted == null || users.size() <= maximumPermitted)) {
-                for (User user : users) {
-                    userRoleTransitions.put(user, roleTransition);
-                }
-            } else {
-                throw new WorkflowEngineException(WORKFLOW_ENGINE_FAILURE);
-            }
-        }
-
-        return userRoleTransitions;
-    }
-
     public List<User> getResourceUsers(Resource resource) {
         return roleDAO.getUsers(resource);
     }
@@ -252,17 +258,17 @@ public class RoleService {
     public List<PrismRole> getRoles(Class<? extends Resource> resourceClass, PrismRole... rolesToCreate) {
         return roleDAO.getRoles(resourceClass);
     }
-    
+
     public List<Role> getActiveRoles() {
         return roleDAO.getActiveRoles();
     }
-    
+
     public void deleteInactiveRoles() {
         roleDAO.deleteObseleteUserRoles(getActiveRoles());
     }
-    
+
     public List<UserRole> getUpdateNotificationRoles(User user, Resource resource, NotificationTemplate template) {
         return roleDAO.getUpdateNotificationRoles(user, resource, template);
     }
-    
+
 }

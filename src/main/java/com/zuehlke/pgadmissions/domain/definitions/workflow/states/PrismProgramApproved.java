@@ -32,7 +32,7 @@ public class PrismProgramApproved extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DISABLED_COMPLETED) // 
                         .withTransitionAction(PrismAction.PROGRAM_CONCLUDE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)// 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME) // 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.APPLICATION_TERMINATE,  //
                                 PrismAction.PROJECT_TERMINATE))))); //

@@ -82,7 +82,7 @@ public abstract class Advert extends Resource {
     private Set<OpportunityCategory> categories = Sets.newHashSet();
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "ACTION_PREFERRED_RECRUITER", joinColumns = { @JoinColumn(name = "advert_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "institution_id", nullable = false) })
+    @JoinTable(name = "ADVERT_PREFERRED_RECRUITER", joinColumns = { @JoinColumn(name = "advert_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "institution_id", nullable = false) })
     private Set<Institution> preferredRecruiters = Sets.newHashSet();
     
     @Override

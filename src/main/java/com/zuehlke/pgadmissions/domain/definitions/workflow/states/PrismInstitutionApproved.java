@@ -97,7 +97,7 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.PROGRAM_ADMINISTRATOR) //
                                 .withRestrictToOwner(true) //
-                                .withMinimumPermitted(1) //
+                                .withMinimumPermitted(0) //
                                 .withMaximumPermitted(1))))));
     
         stateActions.add(new PrismStateAction() //

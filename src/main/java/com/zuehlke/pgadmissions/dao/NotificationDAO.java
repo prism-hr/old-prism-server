@@ -112,7 +112,7 @@ public class NotificationDAO {
                         .add(Projections.property("role.userRoles"), "userRole") //
                         .add(Projections.property("notificationTemplate"), "notificationTemplate")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
-                .createAlias("userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction", stateAction)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //

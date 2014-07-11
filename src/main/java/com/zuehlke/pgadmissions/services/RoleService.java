@@ -212,9 +212,6 @@ public class RoleService {
     }
 
     private boolean isRoleAssignmentPermitted(UserRole userRole, Comment comment) {
-        if (userRole.getRole().getExcludedRoles().isEmpty()) {
-            return true;
-        }
         return roleDAO.getExcludingRoles(userRole, comment).isEmpty() && roleDAO.getExcludingUserRoles(userRole).isEmpty();
     }
 

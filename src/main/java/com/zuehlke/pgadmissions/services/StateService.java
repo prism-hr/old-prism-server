@@ -34,6 +34,9 @@ public class StateService {
     private StateDAO stateDAO;
 
     @Autowired
+    private CommentService commentService;
+    
+    @Autowired
     private EntityService entityService;
 
     @Autowired
@@ -141,7 +144,7 @@ public class StateService {
         }
 
         if (action.isSaveComment()) {
-            entityService.save(comment);
+            commentService.save(comment);
         }
 
         StateTransition stateTransition = getStateTransition(resource, action, comment);

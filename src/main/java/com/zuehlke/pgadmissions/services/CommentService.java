@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
-import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -39,14 +38,23 @@ public class CommentService {
     private SystemService systemService;
 
     @Autowired
-    private EntityDAO entityDAO;
+    private EntityService entityService;
 
     public Comment getById(int id) {
-        return entityDAO.getById(Comment.class, id);
+        return entityService.getById(Comment.class, id);
     }
 
     public void save(Comment comment) {
-        entityDAO.save(comment);
+        List<CommentAssignedUser> assignedUsers = Lists.newArrayList(comment.getCommentAssignedUsers());
+        comment.getCommentAssignedUsers().clear();
+        
+        entityService.save(comment);
+        
+        for (CommentAssignedUser assignedUser : assignedUsers) {
+            assignedUser.setComment(comment);
+            entityService.save(assignedUser);
+            comment.getCommentAssignedUsers().add(assignedUser);
+        }
     }
 
     public Comment getLastComment(Resource resource) {

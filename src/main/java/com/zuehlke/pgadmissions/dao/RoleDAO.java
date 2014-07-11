@@ -164,14 +164,14 @@ public class RoleDAO {
                 .list();
     }
 
-    public List<RoleTransition> getRoleUpdateTransitions(StateTransition stateTransition) {
+    public List<RoleTransition> getRoleTransitions(StateTransition stateTransition, PrismRoleTransitionType transitionType) {
         return (List<RoleTransition>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
                 .add(Restrictions.eq("stateTransition", stateTransition)) //
-                .add(Restrictions.ne("roleTransitionType", PrismRoleTransitionType.CREATE)) //
+                .add(Restrictions.eq("roleTransitionType", transitionType)) //
                 .list();
     }
     
-    public List<User> getRoleUpdateTransitionUsers(Resource resource, RoleTransition roleTransition, User actionOwner) {
+    public List<User> getRoleTransitionUsers(Resource resource, RoleTransition roleTransition, User actionOwner) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
                 .setProjection(Projections.property("userRole.user")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
@@ -186,14 +186,7 @@ public class RoleDAO {
                 .list();
     }
     
-    public List<RoleTransition> getRoleCreationTransitions(StateTransition stateTransition) {
-        return (List<RoleTransition>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
-                .add(Restrictions.eq("stateTransition", stateTransition)) //
-                .add(Restrictions.eq("roleTransitionType", PrismRoleTransitionType.CREATE)) //
-                .list();
-    }
-    
-    public List<User> getRoleCreationTransitionUsers(Comment comment, Role role, User user) {
+    public List<User> getRoleCreateTransitionUsers(Comment comment, Role role, User user) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .setProjection(Projections.property("user")) //
                 .add(Restrictions.eq("comment", comment));

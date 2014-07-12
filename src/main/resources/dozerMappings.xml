@@ -6,9 +6,9 @@
 
     <configuration>
         <custom-converters>
-            <converter type="com.zuehlke.pgadmissions.rest.converter.JodaTimeConverter">
-                <class-a>java.util.Date</class-a>
-                <class-b>org.joda.time.DateTime</class-b>
+            <converter type="com.zuehlke.pgadmissions.rest.converter.LocalDateConverter">
+                <class-a>org.joda.time.LocalDate</class-a>
+                <class-b>org.joda.time.LocalDate</class-b>
             </converter>
             <converter type="com.zuehlke.pgadmissions.rest.converter.ImportedEntityConverter">
                 <class-a>com.zuehlke.pgadmissions.domain.ImportedEntity</class-a>

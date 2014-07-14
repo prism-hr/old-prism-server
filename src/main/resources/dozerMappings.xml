@@ -62,8 +62,8 @@
             <b>state</b>
         </field>
         <field>
-            <a>action.id</a>
-            <b>action</b>
+            <a>action.actionCategory</a>
+            <b>action.category</b>
         </field>
     </mapping>
 

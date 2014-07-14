@@ -4,7 +4,7 @@ public class StateActionRepresentation {
 
     private String state;
 
-    private String action;
+    private ActionRepresentation action;
 
     private boolean raisesUrgentFlag;
 
@@ -18,11 +18,11 @@ public class StateActionRepresentation {
         this.state = state;
     }
 
-    public String getAction() {
+    public ActionRepresentation getAction() {
         return action;
     }
 
-    public void setAction(String action) {
+    public void setAction(ActionRepresentation action) {
         this.action = action;
     }
 
@@ -41,4 +41,5 @@ public class StateActionRepresentation {
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
+
 }

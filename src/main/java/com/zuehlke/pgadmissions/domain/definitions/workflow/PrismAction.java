@@ -22,7 +22,7 @@ public enum PrismAction {
     APPLICATION_COMMENT(PrismActionType.USER_INVOCATION, PrismActionCategory.PROCESS_RESOURCE, true, PrismScope.APPLICATION, null, //
             Arrays.asList(new PrismActionRedaction().withRole(PrismRole.APPLICATION_CREATOR).withRedactionType(PrismRedactionType.ALL_CONTENT), //
                     new PrismActionRedaction().withRole(PrismRole.APPLICATION_REFEREE).withRedactionType(PrismRedactionType.ALL_CONTENT))), //
-    APPLICATION_COMPLETE(PrismActionType.USER_INVOCATION, PrismActionCategory.PROCESS_RESOURCE, true, PrismScope.APPLICATION, null, null), //
+    APPLICATION_COMPLETE(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE, true, PrismScope.APPLICATION, null, null), //
     APPLICATION_COMPLETE_APPROVAL_STAGE(PrismActionType.USER_INVOCATION, PrismActionCategory.PROCESS_RESOURCE, true, PrismScope.APPLICATION, null, //
             Arrays.asList(new PrismActionRedaction().withRole(PrismRole.APPLICATION_CREATOR).withRedactionType(PrismRedactionType.ALL_CONTENT), //
                     new PrismActionRedaction().withRole(PrismRole.APPLICATION_REFEREE).withRedactionType(PrismRedactionType.ALL_CONTENT))), //
@@ -46,7 +46,7 @@ public enum PrismAction {
     APPLICATION_CONFIRM_SUPERVISION(PrismActionType.USER_INVOCATION, PrismActionCategory.PROCESS_RESOURCE, true, PrismScope.APPLICATION, null, //
             Arrays.asList(new PrismActionRedaction().withRole(PrismRole.APPLICATION_CREATOR).withRedactionType(PrismRedactionType.ALL_CONTENT), //
                     new PrismActionRedaction().withRole(PrismRole.APPLICATION_REFEREE).withRedactionType(PrismRedactionType.ALL_CONTENT))), //
-    APPLICATION_CORRECT(PrismActionType.USER_INVOCATION, PrismActionCategory.PROCESS_RESOURCE, true, PrismScope.APPLICATION, null, null), //
+    APPLICATION_CORRECT(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE, true, PrismScope.APPLICATION, null, null), //
     APPLICATION_EMAIL_CREATOR(PrismActionType.USER_INVOCATION, PrismActionCategory.EMAIL_RESOURCE_CREATOR, false, PrismScope.APPLICATION, null, null), //
     APPLICATION_ESCALATE(PrismActionType.SYSTEM_ESCALATION, PrismActionCategory.EXPEDITE_RESOURCE, true, PrismScope.APPLICATION, null, null), //
     APPLICATION_EXPORT(PrismActionType.SYSTEM_ESCALATION, PrismActionCategory.EXPEDITE_RESOURCE, true, PrismScope.APPLICATION, null, null), //

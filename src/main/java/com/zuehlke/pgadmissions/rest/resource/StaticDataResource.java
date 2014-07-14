@@ -45,7 +45,7 @@ public class StaticDataResource {
         List<StateActionRepresentation> stateActionRepresentations = Lists.newArrayListWithExpectedSize(stateActions.size());
         for (StateAction stateAction : stateActions) {
             StateActionRepresentation actionRepresentation = dozerBeanMapper.map(stateAction, StateActionRepresentation.class);
-            actionRepresentation.setDisplayName(applicationContext.getMessage("action." + actionRepresentation.getAction(), null, LocaleContextHolder.getLocale()));
+            actionRepresentation.setDisplayName(applicationContext.getMessage("action." + actionRepresentation.getAction().getId().toString(), null, LocaleContextHolder.getLocale()));
             stateActionRepresentations.add(actionRepresentation);
         }
         staticData.put("stateActions", stateActionRepresentations);

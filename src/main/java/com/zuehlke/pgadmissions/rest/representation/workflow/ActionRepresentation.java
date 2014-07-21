@@ -6,6 +6,8 @@ public class ActionRepresentation {
 
     private String category;
 
+    private String displayName;
+
     public String getId() {
         return id;
     }
@@ -20,5 +22,13 @@ public class ActionRepresentation {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }

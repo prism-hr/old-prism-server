@@ -10,5 +10,5 @@ public enum PrismActionCategory {
     PROCESS_RESOURCE, //
     VIEW_RESOURCE, //
     VIEW_RESOURCE_LIST, //
-    WITHDRAW_RESOURCE;
+    WITHDRAW_RESOURCE
 }

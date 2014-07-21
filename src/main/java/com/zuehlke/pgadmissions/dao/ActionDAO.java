@@ -79,7 +79,7 @@ public class ActionDAO {
     
     public Action getPermittedAction(Resource resource, Action action, User user) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.property("action.id")) //
+                .setProjection(Projections.property("action")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //

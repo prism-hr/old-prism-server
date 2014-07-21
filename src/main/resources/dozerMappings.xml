@@ -62,8 +62,17 @@
             <b>state</b>
         </field>
         <field>
-            <a>action.actionCategory</a>
-            <b>action.category</b>
+            <a>action.id</a>
+            <b>action</b>
+        </field>
+    </mapping>
+
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.Action</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation</class-b>
+        <field>
+            <a>actionCategory</a>
+            <b>category</b>
         </field>
     </mapping>
 

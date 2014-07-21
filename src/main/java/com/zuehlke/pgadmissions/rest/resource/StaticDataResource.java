@@ -6,6 +6,7 @@ import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.definitions.Gender;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.rest.representation.application.ImportedEntityRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.RoleRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.StateActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.StateRepresentation;
@@ -45,10 +46,18 @@ public class StaticDataResource {
         List<StateActionRepresentation> stateActionRepresentations = Lists.newArrayListWithExpectedSize(stateActions.size());
         for (StateAction stateAction : stateActions) {
             StateActionRepresentation actionRepresentation = dozerBeanMapper.map(stateAction, StateActionRepresentation.class);
-            actionRepresentation.setDisplayName(applicationContext.getMessage("action." + actionRepresentation.getAction().getId().toString(), null, LocaleContextHolder.getLocale()));
             stateActionRepresentations.add(actionRepresentation);
         }
         staticData.put("stateActions", stateActionRepresentations);
+
+        List<Action> actions = entityService.list(Action.class);
+        List<ActionRepresentation> actionRepresentations = Lists.newArrayListWithExpectedSize(actions.size());
+        for (Action action : actions) {
+            ActionRepresentation actionRepresentation = dozerBeanMapper.map(action, ActionRepresentation.class);
+            actionRepresentation.setDisplayName(applicationContext.getMessage("action." + actionRepresentation.getId().toString(), null, LocaleContextHolder.getLocale()));
+            actionRepresentations.add(actionRepresentation);
+        }
+        staticData.put("actions", actionRepresentations);
 
         List<State> states = entityService.list(State.class);
         List<StateRepresentation> stateRepresentations = Lists.newArrayListWithExpectedSize(states.size());

@@ -156,7 +156,8 @@ public class RoleService {
     }
     
     public List<Role> getAssignedRoles(StateAction stateAction) {
-        return roleDAO.getAssignedRoles(stateAction);
+        List<Role> assignedRoles = roleDAO.getAssignedRoles(stateAction);
+        return assignedRoles.isEmpty() ? getRoles() : assignedRoles;
     }
 
     public void executeRoleTransitions(StateTransition stateTransition, Comment comment) throws WorkflowEngineException {

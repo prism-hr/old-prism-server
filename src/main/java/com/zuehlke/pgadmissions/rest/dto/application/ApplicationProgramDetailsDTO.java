@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 public class ApplicationProgramDetailsDTO {
 

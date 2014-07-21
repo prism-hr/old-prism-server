@@ -38,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.SystemService;
@@ -75,6 +76,9 @@ public class WorkflowConfigurationHelper {
     @Autowired
     private ActionService actionService;
 
+    @Autowired
+    private RoleService roleService;
+    
     @Autowired
     private ScopeService scopeService;
 
@@ -225,6 +229,7 @@ public class WorkflowConfigurationHelper {
     private void verifyStateActions(State state) {
         Set<PrismAction> escalationActions = Sets.newHashSet();
 
+        int defaultActionCount = 0;
         for (StateAction stateAction : state.getStateActions()) {
             Action action = stateAction.getAction();
 
@@ -245,6 +250,11 @@ public class WorkflowConfigurationHelper {
                 }
             }
 
+            if (stateAction.isDefaultAction()) {
+                assertEquals(action.getActionType(), PrismActionType.USER_INVOCATION);
+                defaultActionCount = defaultActionCount + 1;
+            }
+            
             if (stateAction.isRaisesUrgentFlag()) {
                 assertNotNull(stateAction.getNotificationTemplate());
             }
@@ -260,6 +270,8 @@ public class WorkflowConfigurationHelper {
             assertFalse(escalationActions.isEmpty());
         }
 
+        assertEquals(1, defaultActionCount);
+        
         actualEscalationActions.addAll(escalationActions);
     }
 
@@ -368,9 +380,16 @@ public class WorkflowConfigurationHelper {
     }
 
     private void verifyStateActionAssignments(State state) {
+        StateAction defaultStateAction = null;
+        Set<Role> assignedRoles = Sets.newHashSet();
+        
         for (StateAction stateAction : state.getStateActions()) {
             Set<StateActionAssignment> assignments = stateAction.getStateActionAssignments();
 
+            if (stateAction.isDefaultAction()) {
+                defaultStateAction = stateAction;
+            }
+            
             if (stateAction.getAction().isSystemInvokedAction()) {
                 assertTrue(assignments.size() == 0);
             }
@@ -381,8 +400,12 @@ public class WorkflowConfigurationHelper {
 
                 assertTrue(assignedRole.getScope().getPrecedence() <= state.getScope().getPrecedence());
                 assertTrue(actualRolesCreated.contains(assignedRole.getId()));
+                
+                assignedRoles.add(assignedRole);
             }
         }
+        
+        assertCollectionEquals(roleService.getAssignedRoles(defaultStateAction), assignedRoles);
     }
 
     private void verifyStateActionNotifications(State state) {

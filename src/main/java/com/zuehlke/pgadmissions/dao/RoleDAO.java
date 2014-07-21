@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
@@ -274,6 +275,13 @@ public class RoleDAO {
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                         .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
                 .add(Restrictions.eq("userNotification.notificationTemplate", template)) //
+                .list();
+    }
+    
+    public List<Role> getAssignedRoles(StateAction stateAction) {
+        return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateActionAssignment.class) //
+                .setProjection(Projections.property("role")) //
+                .add(Restrictions.eq("stateAction", stateAction)) //
                 .list();
     }
     

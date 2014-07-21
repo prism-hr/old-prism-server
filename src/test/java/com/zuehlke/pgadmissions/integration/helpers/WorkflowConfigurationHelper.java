@@ -386,9 +386,7 @@ public class WorkflowConfigurationHelper {
         for (StateAction stateAction : state.getStateActions()) {
             Set<StateActionAssignment> assignments = stateAction.getStateActionAssignments();
 
-            if (stateAction.isDefaultAction()) {
-                defaultStateAction = stateAction;
-            }
+            defaultStateAction = stateAction.isDefaultAction() ? stateAction : null;
             
             if (stateAction.getAction().isSystemInvokedAction()) {
                 assertTrue(assignments.size() == 0);
@@ -405,7 +403,7 @@ public class WorkflowConfigurationHelper {
             }
         }
         
-        assertCollectionEquals(roleService.getAssignedRoles(defaultStateAction), assignedRoles);
+        assertTrue(roleService.getAssignedRoles(defaultStateAction).contains(assignedRoles));
     }
 
     private void verifyStateActionNotifications(State state) {

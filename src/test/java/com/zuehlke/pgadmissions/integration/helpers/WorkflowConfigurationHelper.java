@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -68,6 +69,8 @@ public class WorkflowConfigurationHelper {
     private final Set<PrismAction> actualPropagationActions = Sets.newHashSet();
 
     private final Set<StateTransition> propagatingStateTransitions = Sets.newHashSet();
+    
+    private final HashMultimap<PrismState, AbstractMap.SimpleEntry<PrismRole, PrismRole>> actualRoleExclusions = HashMultimap.create();
 
     @Autowired
     private ActionService actionService;
@@ -119,6 +122,7 @@ public class WorkflowConfigurationHelper {
         actualEscalationActions.clear();
         actualPropagationActions.clear();
         propagatingStateTransitions.clear();
+        actualRoleExclusions.clear();
     }
 
     private void verifyState(State state) {
@@ -144,6 +148,8 @@ public class WorkflowConfigurationHelper {
         for (State transitionState : stateService.getOrderedTransitionStates(state, statesVisited.toArray(new State[0]))) {
             verifyState(transitionState);
         }
+        
+        verifyRoleTransitionExclusions(state);
     }
 
     private State verifyRootState() {
@@ -323,9 +329,7 @@ public class WorkflowConfigurationHelper {
 
                 if (roleTransitionType == PrismRoleTransitionType.CREATE || roleTransitionType == PrismRoleTransitionType.BRANCH) {
                     for (Role excludedRole : transitionRole.getExcludedRoles()) {
-                        logger.info("Verifying role transition exclusion: " + transitionRole.getId() + " " + excludedRole.getId());
-                        assertNotSame(transitionRole, excludedRole);
-                        // TODO: verify that the excluded roles could have been assigned
+                        actualRoleExclusions.put(state.getId(), new AbstractMap.SimpleEntry<PrismRole, PrismRole>(role.getId(), excludedRole.getId()));
                     }
                 } else {
                     assertEquals(state.getScope(), role.getScope());
@@ -392,6 +396,17 @@ public class WorkflowConfigurationHelper {
                 assertTrue(state.getScope() == templateScope || stateAction.getAction().getCreationScope() == templateScope);
                 assertTrue(actualRolesCreated.contains(notification.getRole().getId()));
             }
+        }
+    }
+    
+    private void verifyRoleTransitionExclusions(State state) {
+        for (AbstractMap.SimpleEntry<PrismRole, PrismRole> roleExclusion : actualRoleExclusions.get(state.getId())) {
+            PrismRole role = roleExclusion.getKey();
+            PrismRole excludedRole = roleExclusion.getValue();
+            
+            logger.info("Verifying role transition exclusion: " + role + " " + excludedRole);
+            assertNotSame(role, excludedRole);
+            assertTrue(actualRolesCreated.contains(excludedRole));
         }
     }
 

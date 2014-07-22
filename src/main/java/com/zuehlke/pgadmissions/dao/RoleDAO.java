@@ -268,13 +268,13 @@ public class RoleDAO {
         return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .createAlias("userNotifications", "userNotification", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.eq("userNotification.notificationTemplate", template)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                         .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
-                .add(Restrictions.eq("userNotification.notificationTemplate", template)) //
                 .list();
     }
     

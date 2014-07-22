@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserNotification;
@@ -29,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinition;
-import com.zuehlke.pgadmissions.mail.MailDescriptor;
 import com.zuehlke.pgadmissions.mail.MailMessageDTO;
 import com.zuehlke.pgadmissions.mail.MailSender;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
@@ -119,35 +117,32 @@ public class NotificationService {
         DateTime baseline = new DateTime();
         List<UserNotificationDefinition> definitions = notificationDAO.getUpdateNotifications(stateAction, resource);
         for (UserNotificationDefinition definition : definitions) {
-            UserRole userRole = definition.getUserRole();
-            NotificationTemplate template = definition.getNotificationTemplate();
+            UserRole userRole = entityService.getById(UserRole.class, definition.getUserRoleId());
+            NotificationTemplate notificationTemplate = entityService.getByProperty(NotificationTemplate.class, "id", definition.getNotificationTemplateId());
 
-            if (template.getNotificationType() == PrismNotificationType.INDIVIDUAL) {
-                sendNotification(userRole.getUser(), userRole.getResource(), template);
+            if (notificationTemplate.getNotificationType() == PrismNotificationType.INDIVIDUAL) {
+                sendNotification(userRole.getUser(), userRole.getResource(), notificationTemplate);
             } else {
-                UserNotification transientNotification = new UserNotification().withUserRole(definition.getUserRole())
-                        .withNotificationTemplate(definition.getNotificationTemplate()).withCreatedTimestamp(baseline);
+                UserNotification transientNotification = new UserNotification().withUserRole(userRole).withNotificationTemplate(notificationTemplate)
+                        .withCreatedTimestamp(baseline);
                 entityService.getOrCreate(transientNotification);
             }
         }
     }
 
-    public List<MailDescriptor> getPendingUpdateNotifications() {
-        List<MailDescriptor> descriptors = Lists.newArrayList();
-        for (Scope scope : scopeService.getScopesAscending()) {
-            for (MailDescriptor mailDescriptor : notificationDAO.getPendingUpdateNotifications(scope)) {
-                descriptors.add(mailDescriptor);
-            }
-        }
-        return descriptors;
+    public List<UserNotificationDefinition> getPendingUpdateNotifications() {
+        return notificationDAO.getPendingUpdateNotifications();
     }
 
-    public void sendPendingNotification(MailDescriptor mailDescriptor) {
-        User user = entityService.getById(User.class, mailDescriptor.getUser().getId());
-        Resource resource = entityService.getById(mailDescriptor.getResource().getClass(), mailDescriptor.getResource().getId());
-        NotificationTemplate template = entityService.getByProperty(NotificationTemplate.class, "id", mailDescriptor.getNotificationTemplate().getId());
+    public void sendPendingNotification(UserNotificationDefinition definition) {
+        UserRole userRole = entityService.getById(UserRole.class, definition.getUserRoleId());
+        NotificationTemplate template = entityService.getByProperty(NotificationTemplate.class, "id", definition.getNotificationTemplateId());
+        
+        User user = userRole.getUser();
+        Resource resource = userRole.getResource();
+        
         sendNotification(user, resource, template);
-        deleteSentUpdateNotifications(user, resource, template);
+        deletePendingUpdateNotification(user, resource, template);
     }
 
     public void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate) {
@@ -176,10 +171,10 @@ public class NotificationService {
         sendNotification(user, resource, notificationTemplate, extraModelParams);
     }
 
-    private void deleteSentUpdateNotifications(User user, Resource resource, NotificationTemplate template) {
+    private void deletePendingUpdateNotification(User user, Resource resource, NotificationTemplate template) {
         List<UserRole> userRoles = roleService.getUpdateNotificationRoles(user, resource, template);
         if (!userRoles.isEmpty()) {
-            notificationDAO.deleteSentUpdateNotifications(userRoles);
+            notificationDAO.deletePendingUpdateNotification(userRoles);
         }
     }
 

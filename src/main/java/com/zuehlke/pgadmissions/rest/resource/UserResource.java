@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
+import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.InvalidRequestException;
 import com.zuehlke.pgadmissions.rest.validation.validator.RegistrationDetailsValidator;
 import com.zuehlke.pgadmissions.security.TokenUtils;

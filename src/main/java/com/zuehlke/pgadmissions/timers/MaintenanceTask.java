@@ -15,8 +15,8 @@ import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.dto.UserNotificationDefinition;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
-import com.zuehlke.pgadmissions.mail.MailDescriptor;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -110,9 +110,9 @@ public class MaintenanceTask {
     }
     
     public void sendPendingUpdateNotifications() {
-        List<MailDescriptor> descriptors = notificationService.getPendingUpdateNotifications();
-        for (MailDescriptor descriptor : descriptors) {
-            notificationService.sendPendingNotification(descriptor);
+        List<UserNotificationDefinition> definitions = notificationService.getPendingUpdateNotifications();
+        for (UserNotificationDefinition definition : definitions) {
+            notificationService.sendPendingNotification(definition);
         }
     }
 

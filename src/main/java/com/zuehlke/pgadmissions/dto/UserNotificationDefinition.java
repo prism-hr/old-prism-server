@@ -1,28 +1,27 @@
 package com.zuehlke.pgadmissions.dto;
 
-import com.zuehlke.pgadmissions.domain.NotificationTemplate;
-import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 
 public class UserNotificationDefinition {
 
-    private UserRole userRole;
+    private Integer userRoleId;
     
-    private NotificationTemplate notificationTemplate;
+    private PrismNotificationTemplate notificationTemplateId;
 
-    public UserRole getUserRole() {
-        return userRole;
+    public Integer getUserRoleId() {
+        return userRoleId;
     }
 
-    public void setUserRole(UserRole userRole) {
-        this.userRole = userRole;
+    public void setUserRoleId(Integer userRoleId) {
+        this.userRoleId = userRoleId;
     }
 
-    public NotificationTemplate getNotificationTemplate() {
-        return notificationTemplate;
+    public PrismNotificationTemplate getNotificationTemplateId() {
+        return notificationTemplateId;
     }
 
-    public void setNotificationTemplate(NotificationTemplate notificationTemplate) {
-        this.notificationTemplate = notificationTemplate;
+    public void setNotificationTemplateId(PrismNotificationTemplate notificationTemplateId) {
+        this.notificationTemplateId = notificationTemplateId;
     }
     
 }

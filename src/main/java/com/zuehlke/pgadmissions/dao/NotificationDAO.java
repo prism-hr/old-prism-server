@@ -107,10 +107,10 @@ public class NotificationDAO {
     }
     
     public List<UserNotificationDefinition> getUpdateNotifications(StateAction stateAction, Resource resource) {
-        return (List<UserNotificationDefinition>) sessionFactory.getCurrentSession().createCriteria(StateActionNotification.class) //
+        return (List<UserNotificationDefinition>) sessionFactory.getCurrentSession().createCriteria(StateActionNotification.class, "stateActionNotification") //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("role.userRoles"), "userRole") //
-                        .add(Projections.property("notificationTemplate"), "notificationTemplate")) //
+                        .add(Projections.property("stateActionNotification.notificationTemplate"), "notificationTemplate")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction", stateAction)) //

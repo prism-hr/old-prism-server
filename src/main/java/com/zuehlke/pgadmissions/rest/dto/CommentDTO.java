@@ -8,6 +8,8 @@ public class CommentDTO {
 
     private List<Integer> documents;
 
+    private Boolean declinedResponse;
+
     public String getContent() {
         return content;
     }
@@ -22,5 +24,13 @@ public class CommentDTO {
 
     public void setDocuments(List<Integer> documents) {
         this.documents = documents;
+    }
+
+    public Boolean getDeclinedResponse() {
+        return declinedResponse;
+    }
+
+    public void setDeclinedResponse(Boolean declinedResponse) {
+        this.declinedResponse = declinedResponse;
     }
 }

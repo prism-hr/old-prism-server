@@ -10,6 +10,7 @@ import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.UserService;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +38,9 @@ public class ApplicationResource {
     @RequestMapping(value = "/{applicationId}/comments", method = RequestMethod.POST)
     public void performAction(@PathVariable Integer applicationId, @RequestParam PrismAction action, @RequestBody CommentDTO commentDTO) {
         Application application = entityService.getById(Application.class, applicationId);
-        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(userService.getCurrentUser()).withAction(entityService.getById(Action.class, action));
+        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(userService.getCurrentUser())
+                .withAction(entityService.getById(Action.class, action)).withCreatedTimestamp(new DateTime())
+                .withDeclinedResponse(commentDTO.getDeclinedResponse());
         actionService.executeAction(application, action, comment);
     }
 

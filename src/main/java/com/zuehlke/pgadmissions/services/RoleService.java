@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
+import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserNotification;
@@ -152,6 +153,11 @@ public class RoleService {
 
     public List<UserRole> getUpdateNotificationRoles(User user, Resource resource, NotificationTemplate template) {
         return roleDAO.getUpdateNotificationRoles(user, resource, template);
+    }
+    
+    public List<Role> getAssignedRoles(StateAction stateAction) {
+        List<Role> assignedRoles = roleDAO.getAssignedRoles(stateAction);
+        return assignedRoles.isEmpty() ? getRoles() : assignedRoles;
     }
 
     public void executeRoleTransitions(StateTransition stateTransition, Comment comment) throws WorkflowEngineException {

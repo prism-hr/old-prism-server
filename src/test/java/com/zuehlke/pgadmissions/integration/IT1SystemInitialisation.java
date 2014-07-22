@@ -16,13 +16,13 @@ import com.zuehlke.pgadmissions.services.SystemService;
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
 public class IT1SystemInitialisation {
-
+    
     @Autowired
     private SystemService systemService;
 
     @Autowired
     private MailSenderMock mailSenderMock;
-
+    
     @Autowired
     private SystemInitialisationHelper systemInitialisationHelper;
 

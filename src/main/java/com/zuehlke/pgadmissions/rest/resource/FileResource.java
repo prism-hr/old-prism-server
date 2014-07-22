@@ -1,19 +1,25 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
-import com.google.common.collect.ImmutableMap;
-import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.definitions.DocumentType;
-import com.zuehlke.pgadmissions.services.EntityService;
-import org.bouncycastle.util.io.Streams;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import java.io.IOException;
-import java.util.Map;
+
+import org.bouncycastle.util.io.Streams;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.google.common.collect.ImmutableMap;
+import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.definitions.DocumentType;
+import com.zuehlke.pgadmissions.services.EntityService;
 
 @RestController
 @RequestMapping("/api/files")

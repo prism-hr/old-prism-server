@@ -1,13 +1,10 @@
 package com.zuehlke.pgadmissions.rest.converter;
 
-import com.zuehlke.pgadmissions.domain.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.services.EntityService;
 import org.dozer.DozerConverter;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
+import com.zuehlke.pgadmissions.domain.ImportedEntity;
+import com.zuehlke.pgadmissions.services.EntityService;
 
 public class ImportedEntityConverter extends DozerConverter<ImportedEntity, String> {
 

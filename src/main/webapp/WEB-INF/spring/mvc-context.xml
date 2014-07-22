@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <mvc:interceptors>
+        <bean class="com.zuehlke.pgadmissions.interceptors.Utf8Interceptor"/>
+        <bean class="com.zuehlke.pgadmissions.interceptors.EncryptionKeyInterceptor"/>
+        <bean class="com.zuehlke.pgadmissions.interceptors.ErrorLogHandlerInterceptor"/>
+        <bean class="org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor">
+            <property name="sessionFactory" ref="sessionFactory"/>
+        </bean>
+    </mvc:interceptors>
+
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <ref bean="jacksonMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.support.StandardServletMultipartResolver">
+    </bean>
+
+    <!-- custom exception resolver -->
+    <bean class="com.zuehlke.pgadmissions.interceptors.PgadmissionsExceptionResolver">
+    </bean>
+
+    <bean id="jacksonObjectMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
+        <property name="modules">
+            <array>
+                <bean class="com.fasterxml.jackson.datatype.joda.JodaModule"/>
+                <bean class="com.zuehlke.pgadmissions.rest.PrismJacksonModule"/>
+            </array>
+        </property>
+        <property name="dateFormat">
+            <bean class="com.fasterxml.jackson.databind.util.ISO8601DateFormat"/>
+        </property>
+    </bean>
+
+    <bean id="jacksonMessageConverter"
+          class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="objectMapper" ref="jacksonObjectMapper"/>
+    </bean>
+
+    <bean class="org.dozer.spring.DozerBeanMapperFactoryBean">
+        <property name="mappingFiles">
+            <list>
+                <value>classpath:dozerMappings.xml</value>
+            </list>
+        </property>
+    </bean>
+
+</beans>

@@ -18,7 +18,7 @@ public class PrismSystemApproved extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.SYSTEM_CONFIGURE) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) // //
+            .withDefaultAction(true) // //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))

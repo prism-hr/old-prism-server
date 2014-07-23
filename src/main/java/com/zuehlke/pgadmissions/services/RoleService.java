@@ -105,10 +105,6 @@ public class RoleService {
         return null;
     }
 
-    public List<Role> getActionRoles(Resource resource, Action action) {
-        return roleDAO.getActionRoles(resource, action);
-    }
-
     public List<Role> getActionOwnerRoles(User user, Resource resource, Action action) {
         return roleDAO.getActionOwnerRoles(user, resource, action);
     }

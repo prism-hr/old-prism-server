@@ -103,7 +103,7 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.INSTITUTION_VIEW) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false)); //
+            .withDefaultAction(true)); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.INSTITUTION_VIEW_APPLICATION_LIST) //

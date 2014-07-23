@@ -66,7 +66,7 @@ public class ActionService {
     }
 
     public boolean checkActionAvailable(Resource resource, Action action, User invoker) {
-        return roleService.getActionRoles(resource, action).size() == 0 || actionDAO.getPermittedAction(resource, action, invoker) != null;
+        return actionDAO.getPermittedAction(resource, action, invoker) != null;
     }
 
     public boolean checkDelegateActionAvailable(Resource resource, Action action, User invoker) {

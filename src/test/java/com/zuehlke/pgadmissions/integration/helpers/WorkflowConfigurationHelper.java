@@ -224,6 +224,7 @@ public class WorkflowConfigurationHelper {
 
     private void verifyStateActions(State state) {
         Set<PrismAction> escalationActions = Sets.newHashSet();
+        Set<Action> defaultActions = Sets.newHashSet();
 
         for (StateAction stateAction : state.getStateActions()) {
             Action action = stateAction.getAction();
@@ -249,6 +250,10 @@ public class WorkflowConfigurationHelper {
                 assertNotNull(stateAction.getNotificationTemplate());
             }
 
+            if (stateAction.isDefaultAction()) {
+                defaultActions.add(action);
+            }
+            
             if (action.isCreationAction()) {
                 actualCreationActions.add(action.getId());
             }
@@ -256,10 +261,12 @@ public class WorkflowConfigurationHelper {
             verifyStateTransitions(stateAction);
         }
 
+        assertEquals(1, defaultActions.size());
+        
         if (stateService.getStateDuration(systemService.getSystem(), state) != null) {
             assertFalse(escalationActions.isEmpty());
         }
-
+        
         actualEscalationActions.addAll(escalationActions);
     }
 

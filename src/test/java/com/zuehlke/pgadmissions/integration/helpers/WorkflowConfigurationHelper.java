@@ -251,6 +251,7 @@ public class WorkflowConfigurationHelper {
             }
 
             if (stateAction.isDefaultAction()) {
+                assertEquals(PrismActionType.USER_INVOCATION, action.getActionType());
                 defaultActions.add(action);
             }
             

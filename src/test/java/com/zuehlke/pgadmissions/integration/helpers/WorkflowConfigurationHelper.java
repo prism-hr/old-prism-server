@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
@@ -69,7 +70,7 @@ public class WorkflowConfigurationHelper {
     private final Set<PrismAction> actualPropagationActions = Sets.newHashSet();
 
     private final Set<StateTransition> propagatingStateTransitions = Sets.newHashSet();
-    
+
     private final HashMultimap<PrismState, AbstractMap.SimpleEntry<PrismRole, PrismRole>> actualRoleExclusions = HashMultimap.create();
 
     @Autowired
@@ -148,7 +149,7 @@ public class WorkflowConfigurationHelper {
         for (State transitionState : stateService.getOrderedTransitionStates(state, statesVisited.toArray(new State[0]))) {
             verifyState(transitionState);
         }
-        
+
         verifyRoleTransitionExclusions(state);
     }
 
@@ -254,7 +255,7 @@ public class WorkflowConfigurationHelper {
                 assertEquals(PrismActionType.USER_INVOCATION, action.getActionType());
                 defaultActions.add(action);
             }
-            
+
             if (action.isCreationAction()) {
                 actualCreationActions.add(action.getId());
             }
@@ -263,11 +264,11 @@ public class WorkflowConfigurationHelper {
         }
 
         assertEquals(1, defaultActions.size());
-        
+
         if (stateService.getStateDuration(systemService.getSystem(), state) != null) {
             assertFalse(escalationActions.isEmpty());
         }
-        
+
         actualEscalationActions.addAll(escalationActions);
     }
 
@@ -406,12 +407,12 @@ public class WorkflowConfigurationHelper {
             }
         }
     }
-    
+
     private void verifyRoleTransitionExclusions(State state) {
         for (AbstractMap.SimpleEntry<PrismRole, PrismRole> roleExclusion : actualRoleExclusions.get(state.getId())) {
             PrismRole role = roleExclusion.getKey();
             PrismRole excludedRole = roleExclusion.getValue();
-            
+
             logger.info("Verifying role transition exclusion: " + role + " " + excludedRole);
             assertNotSame(role, excludedRole);
             assertTrue(actualRolesCreated.contains(excludedRole));

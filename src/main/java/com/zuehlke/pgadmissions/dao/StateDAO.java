@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Repository
@@ -142,7 +142,7 @@ public class StateDAO {
                 .setProjection(Projections.property("action")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("action.actionType", PrismActionType.SYSTEM_ESCALATION)) //
+                .add(Restrictions.eq("action.actionCategory", PrismActionCategory.ESCALATE_RESOURCE)) //
                 .addOrder(Order.desc("scope.precedence")) //
                 .list();
         
@@ -224,10 +224,11 @@ public class StateDAO {
                 .list();
     }
 
-    public List<State> getRootState() {
-        return (List<State>) sessionFactory.getCurrentSession().createCriteria(State.class) //
-                .add(Restrictions.eq("initialState", true)).add(Restrictions.eq("finalState", true)) //
-                .list();
+    public State getRootState() {
+        return (State) sessionFactory.getCurrentSession().createCriteria(State.class) //
+                .add(Restrictions.eq("initialState", true)) //
+                .add(Restrictions.eq("finalState", true)) //
+                .uniqueResult();
     }
 
     public List<State> getUpstreamStates(State state) {

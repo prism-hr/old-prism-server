@@ -36,7 +36,7 @@ public class PrismProgramDeactivated extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_CONFIGURE) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(true) //
+            .withDefaultAction(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 

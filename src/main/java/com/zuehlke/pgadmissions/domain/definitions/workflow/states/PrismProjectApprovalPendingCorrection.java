@@ -18,7 +18,7 @@ public class PrismProjectApprovalPendingCorrection extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_CORRECT) //
             .withRaisesUrgentFlag(true) //
-            .withDefaultAction(true) //
+            .withDefaultAction(false) //
             .withNotificationTemplate(PrismNotificationTemplate.PROJECT_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 

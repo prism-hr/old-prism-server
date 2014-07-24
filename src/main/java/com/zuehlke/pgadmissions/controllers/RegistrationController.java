@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -100,8 +98,9 @@ public class RegistrationController {
             return TemplateLocation.REGISTRATION_FAILURE_CONFIRMATION;
         }
 
-        ActionOutcome actionOutcome = actionService.executeAction(resourceId, action, new Comment());
-        return actionOutcome.createRedirectionUrl();
+//    ActionOutcome actionOutcome = actionService.executeAction(resourceId, action, new Comment());
+//        return actionOutcome.createRedirectionUrl();
+        return null;
     }
 
     @RequestMapping(value = "/activateAccount", method = RequestMethod.GET)

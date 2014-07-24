@@ -107,27 +107,11 @@ public class RoleDAO {
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public Role getResourceCreatorRole(Resource resource, Action createAction) {
-        return (Role) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
-                .setProjection(Projections.groupProperty("role")) //
-                .createAlias("stateTransition", "stateTransition", JoinType.INNER_JOIN) //
-                .createAlias("stateTransition.stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("stateAction.action", createAction)) //
-                .add(Restrictions.eq("stateAction.state", resource.getState())) //
-                .add(Restrictions.eq("roleTransitionType", PrismRoleTransitionType.CREATE)) //
-                .add(Restrictions.eq("restrictToActionOwner", true)) //
+    public Role getCreatorRole(Resource resource) {
+        return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class) //
+                .add(Restrictions.eq("scope.id", PrismScope.getResourceScope(resource.getClass()))) //
+                .add(Restrictions.eq("scopeCreator", true)) //
                 .uniqueResult();
-    }
-
-    public List<Role> getActionRoles(Resource resource, Action action) {
-        return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.property("stateActionAssignment.role")) //
-                .createAlias("action", "action", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("state", resource.getState())) //
-                .add(Restrictions.eq("action", action)) //
-                .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
-                .list();
     }
 
     public List<Role> getActionOwnerRoles(User user, Resource resource, Action action) {

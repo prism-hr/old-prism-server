@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -58,6 +60,8 @@ public class WorkflowConfigurationHelper {
 
     private final Set<PrismRole> actualRolesCreated = Sets.newHashSet();
 
+    private final HashMultimap<PrismScope, PrismRole> actualCreatorRoles = HashMultimap.create();
+
     private final Set<PrismState> actualInitialStates = Sets.newHashSet();
 
     private final Set<PrismState> actualFinalStates = Sets.newHashSet();
@@ -69,7 +73,7 @@ public class WorkflowConfigurationHelper {
     private final Set<PrismAction> actualPropagationActions = Sets.newHashSet();
 
     private final Set<StateTransition> propagatingStateTransitions = Sets.newHashSet();
-    
+
     private final HashMultimap<PrismState, AbstractMap.SimpleEntry<PrismRole, PrismRole>> actualRoleExclusions = HashMultimap.create();
 
     @Autowired
@@ -94,6 +98,9 @@ public class WorkflowConfigurationHelper {
         assertCollectionEquals(PrismAction.getCreationActions(), actualCreationActions);
         assertCollectionEquals(PrismState.getInitialStates(), actualInitialStates);
         assertCollectionEquals(PrismState.getFinalStates(), actualFinalStates);
+        
+        assertTrue(actualCreationActions.contains(PrismAction.SYSTEM_STARTUP));
+        verifyCreatorRoles();
 
         List<PrismState> escalatableStates = stateService.getActionableStates(actualEscalationActions);
         List<PrismState> propagatableStates = stateService.getActionableStates(actualPropagationActions);
@@ -110,19 +117,7 @@ public class WorkflowConfigurationHelper {
         logger.info("Total workflow final states: " + totalWorkflowFinalStates.toString());
 
         assertTrue(totalWorkflowStates == totalWorkflowTransitionStates + totalWorkflowFinalStates);
-
-        rootState = null;
-        statesVisited.clear();
-        actualChildScopes.clear();
-        actualParentScopes.clear();
-        actualRolesCreated.clear();
-        actualInitialStates.clear();
-        actualFinalStates.clear();
-        actualCreationActions.clear();
-        actualEscalationActions.clear();
-        actualPropagationActions.clear();
-        propagatingStateTransitions.clear();
-        actualRoleExclusions.clear();
+        cleanUp();
     }
 
     private void verifyState(State state) {
@@ -144,29 +139,25 @@ public class WorkflowConfigurationHelper {
         verifyStateActions(state);
         verifyStateActionAssignments(state);
         verifyStateActionNotifications(state);
+        verifyRoleTransitionExclusions(state);
 
         for (State transitionState : stateService.getOrderedTransitionStates(state, statesVisited.toArray(new State[0]))) {
             verifyState(transitionState);
         }
-        
-        verifyRoleTransitionExclusions(state);
     }
 
     private State verifyRootState() {
-        List<State> potentialRootStates = stateService.getRootState();
-        assertTrue(potentialRootStates.size() == 1);
+        State prospectiveRootState = stateService.getRootState();
+        assertTrue(prospectiveRootState.getScope().getPrecedence() == 1);
 
-        State rootState = potentialRootStates.get(0);
-        assertTrue(rootState.getScope().getPrecedence() == 1);
-
-        List<State> upstreamStates = stateService.getUpstreamStates(rootState);
+        List<State> upstreamStates = stateService.getUpstreamStates(prospectiveRootState);
         assertTrue(upstreamStates.size() <= 1);
 
         if (upstreamStates.size() == 1) {
-            assertEquals(rootState.getId(), upstreamStates.get(0).getId());
+            assertEquals(prospectiveRootState.getId(), upstreamStates.get(0).getId());
         }
 
-        return rootState;
+        return prospectiveRootState;
     }
 
     private void verifyAsInitialState(State state) {
@@ -222,8 +213,18 @@ public class WorkflowConfigurationHelper {
         }
     }
 
+    private void verifyCreatorRoles() {
+        Set<PrismScope> actualScopes = actualCreatorRoles.keySet();
+        assertCollectionEquals(Arrays.asList(PrismScope.values()), actualScopes);
+
+        for (PrismScope scope : actualScopes) {
+            assertEquals(1, actualCreatorRoles.get(scope).size());
+        }
+    }
+
     private void verifyStateActions(State state) {
         Set<PrismAction> escalationActions = Sets.newHashSet();
+        Set<Action> defaultActions = Sets.newHashSet();
 
         for (StateAction stateAction : state.getStateActions()) {
             Action action = stateAction.getAction();
@@ -231,16 +232,17 @@ public class WorkflowConfigurationHelper {
             logger.info("Verifying action: " + action.getId().toString());
             assertEquals(state.getScope(), action.getScope());
 
-            if (action.getActionType().isSystemAction()) {
+            if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
                 assertNotSame(stateAction.getState(), stateAction.getStateTransitions().iterator().next());
                 assertFalse(stateAction.isRaisesUrgentFlag());
                 assertNull(stateAction.getNotificationTemplate());
+                assertTrue(stateAction.getStateActionAssignments().isEmpty());
 
-                PrismActionType actionType = action.getActionType();
+                PrismActionCategory actionCategory = action.getActionCategory();
 
-                if (actionType == PrismActionType.SYSTEM_ESCALATION) {
+                if (actionCategory == PrismActionCategory.ESCALATE_RESOURCE) {
                     escalationActions.add(action.getId());
-                } else if (actionType == PrismActionType.SYSTEM_PROPAGATION) {
+                } else if (actionCategory == PrismActionCategory.PROPAGATE_RESOURCE) {
                     actualPropagationActions.add(action.getId());
                 }
             }
@@ -249,12 +251,19 @@ public class WorkflowConfigurationHelper {
                 assertNotNull(stateAction.getNotificationTemplate());
             }
 
-            if (action.isCreationAction()) {
+            if (stateAction.isDefaultAction()) {
+                assertEquals(PrismActionType.USER_INVOCATION, action.getActionType());
+                defaultActions.add(action);
+            }
+
+            if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
                 actualCreationActions.add(action.getId());
             }
 
             verifyStateTransitions(stateAction);
         }
+
+        assertEquals(1, defaultActions.size());
 
         if (stateService.getStateDuration(systemService.getSystem(), state) != null) {
             assertFalse(escalationActions.isEmpty());
@@ -290,14 +299,13 @@ public class WorkflowConfigurationHelper {
             verifyRoleTransitions(stateTransition);
 
             if (!stateTransition.getPropagatedActions().isEmpty()) {
-                assertFalse(action.isCreationAction());
+                assertFalse(action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE);
                 propagatingStateTransitions.add(stateTransition);
             }
         }
     }
 
     private void verifyRoleTransitions(StateTransition stateTransition) {
-        Set<PrismRole> actualOwnerRoles = Sets.newHashSet();
         Set<PrismRole> actualProcessedRoles = Sets.newHashSet();
 
         State state = stateTransition.getStateAction().getState();
@@ -322,9 +330,12 @@ public class WorkflowConfigurationHelper {
             if (roleTransitionType != PrismRoleTransitionType.REMOVE) {
                 actualRolesCreated.add(transitionRoleId);
 
-                if (transitionRole.isScopeOwner() && roleTransitionType == PrismRoleTransitionType.CREATE) {
+                if (transitionRole.isScopeCreator() && roleTransitionType == PrismRoleTransitionType.CREATE
+                        && action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
                     assertEquals(transitionState.getScope(), transitionRole.getScope());
-                    actualOwnerRoles.add(transitionRoleId);
+                    assertTrue(roleTransition.getMinimumPermitted() == 1);
+                    assertTrue(roleTransition.getMaximumPermitted() == 1);
+                    actualCreatorRoles.put(transitionState.getScope().getId(), transitionRoleId);
                 }
 
                 if (roleTransitionType == PrismRoleTransitionType.CREATE || roleTransitionType == PrismRoleTransitionType.BRANCH) {
@@ -339,11 +350,6 @@ public class WorkflowConfigurationHelper {
         }
 
         assertTrue(actualRolesCreated.containsAll(actualProcessedRoles));
-
-        if (action.isCreationAction()) {
-            Set<PrismRole> expectedOwnerRoles = PrismRole.getScopeOwners(action.getCreationScope().getId());
-            assertCollectionEquals(expectedOwnerRoles, actualOwnerRoles);
-        }
     }
 
     private void verifyPropagatedActions() {
@@ -371,7 +377,7 @@ public class WorkflowConfigurationHelper {
         for (StateAction stateAction : state.getStateActions()) {
             Set<StateActionAssignment> assignments = stateAction.getStateActionAssignments();
 
-            if (stateAction.getAction().isSystemInvokedAction()) {
+            if (stateAction.getAction().getActionType() == PrismActionType.SYSTEM_INVOCATION) {
                 assertTrue(assignments.size() == 0);
             }
 
@@ -398,12 +404,12 @@ public class WorkflowConfigurationHelper {
             }
         }
     }
-    
+
     private void verifyRoleTransitionExclusions(State state) {
         for (AbstractMap.SimpleEntry<PrismRole, PrismRole> roleExclusion : actualRoleExclusions.get(state.getId())) {
             PrismRole role = roleExclusion.getKey();
             PrismRole excludedRole = roleExclusion.getValue();
-            
+
             logger.info("Verifying role transition exclusion: " + role + " " + excludedRole);
             assertNotSame(role, excludedRole);
             assertTrue(actualRolesCreated.contains(excludedRole));
@@ -413,6 +419,22 @@ public class WorkflowConfigurationHelper {
     private <T> void assertCollectionEquals(Collection<T> expectedCollection, Collection<T> actualCollection) {
         assertEquals(expectedCollection.size(), actualCollection.size());
         assertTrue(actualCollection.containsAll(expectedCollection));
+    }
+
+    private void cleanUp() {
+        rootState = null;
+        statesVisited.clear();
+        actualChildScopes.clear();
+        actualParentScopes.clear();
+        actualRolesCreated.clear();
+        actualCreatorRoles.clear();
+        actualInitialStates.clear();
+        actualFinalStates.clear();
+        actualCreationActions.clear();
+        actualEscalationActions.clear();
+        actualPropagationActions.clear();
+        propagatingStateTransitions.clear();
+        actualRoleExclusions.clear();
     }
 
 }

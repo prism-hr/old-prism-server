@@ -130,7 +130,7 @@ public class PrismApplicationApprovedPendingCorrection extends PrismWorkflowStat
                         .withRole(PrismRole.APPLICATION_CREATOR) // 
                         .withEnhancements(Arrays.asList( // 
                             new PrismStateActionEnhancement() //
-                                .withEnhancement(PrismEnhancementType.APPLICATION_VIEW_CREATOR_DATA))), // 
+                                .withEnhancement(PrismEnhancementType.APPLICATION_VIEW_ALL_DATA))), // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR) // 
                         .withEnhancements(Arrays.asList( // 
@@ -158,7 +158,7 @@ public class PrismApplicationApprovedPendingCorrection extends PrismWorkflowStat
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
                         .withEnhancements(Arrays.asList( // 
                             new PrismStateActionEnhancement() //
-                                .withEnhancement(PrismEnhancementType.APPLICATION_VIEW_CREATOR_DATA), // 
+                                .withEnhancement(PrismEnhancementType.APPLICATION_VIEW_ALL_DATA), // 
                             new PrismStateActionEnhancement() //
                                 .withEnhancement(PrismEnhancementType.APPLICATION_VIEW_EXPORT_DATA), // 
                             new PrismStateActionEnhancement() //
@@ -167,7 +167,7 @@ public class PrismApplicationApprovedPendingCorrection extends PrismWorkflowStat
                         .withRole(PrismRole.INSTITUTION_ADMITTER) // 
                         .withEnhancements(Arrays.asList( // 
                             new PrismStateActionEnhancement() //
-                                .withEnhancement(PrismEnhancementType.APPLICATION_VIEW_CREATOR_DATA), // 
+                                .withEnhancement(PrismEnhancementType.APPLICATION_VIEW_ALL_DATA), // 
                             new PrismStateActionEnhancement() //
                                 .withEnhancement(PrismEnhancementType.APPLICATION_VIEW_EXPORT_DATA), // 
                             new PrismStateActionEnhancement() //

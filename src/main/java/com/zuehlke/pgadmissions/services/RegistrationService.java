@@ -9,23 +9,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -76,6 +71,7 @@ public class RegistrationService {
     private Resource performRegistrationAction(User user, RegistrationDetails registrationDetails) {
         Resource resource = null;
         PrismAction actionId = registrationDetails.getAction();
+        
         if (actionId != null) {
             Action action = entityService.getByProperty(Action.class, "id", actionId);
             Class<? extends Resource> resourceClass = actionId.getScope().getResourceClass();
@@ -84,32 +80,22 @@ public class RegistrationService {
             Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false);
 
             if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
-                resource = createResource(resource, user, actionId.getCreationScope(), registrationDetails);
+                resource = resourceService.createResource(resource, user, actionId.getCreationScope(), registrationDetails);
                 Role creatorRole = roleService.getCreatorRole(resource);
                 comment.getCommentAssignedUsers().add(new CommentAssignedUser().withUser(user).withRole(creatorRole));
             }
-
-            ActionOutcome actionOutcome = actionService.executeAction((Resource) resource, action, comment);
+            
+            ActionOutcome actionOutcome = null;
+            if (action.getActionType() == PrismActionType.USER_INVOCATION) {
+                actionOutcome = actionService.executeUserAction(resource, action, comment);
+            } else {
+                actionOutcome = actionService.executeSystemAction(resource, action, comment);
+            }
+            
             resource = actionOutcome.getResource();
         }
+        
         return resource;
-    }
-
-    private Resource createResource(Resource parentResource, User user, PrismScope creationScope, RegistrationDetails registrationDetails) {
-        switch (creationScope) {
-        case SYSTEM:
-            return entityService.getById(System.class, registrationDetails.getResourceId());
-        case INSTITUTION:
-            InstitutionDTO institutionDTO = registrationDetails.getNewInstitution();
-            return resourceService.createNewInstitution((System) parentResource, user, institutionDTO);
-        case PROGRAM:
-            ProgramDTO programDTO = registrationDetails.getNewProgram();
-            return resourceService.createNewProgram((Institution) parentResource, user, programDTO);
-        case APPLICATION:
-            return resourceService.createNewApplication((Advert) parentResource, user);
-        default:
-            throw new IllegalArgumentException(creationScope.name());
-        }
     }
 
     public User activateAccount(String activationCode) {

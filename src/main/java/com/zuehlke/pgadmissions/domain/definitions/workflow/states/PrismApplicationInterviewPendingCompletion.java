@@ -393,7 +393,7 @@ public class PrismApplicationInterviewPendingCompletion extends PrismWorkflowSta
                         .withRole(PrismRole.INSTITUTION_ADMITTER) // 
                         .withEnhancements(Arrays.asList( // 
                             new PrismStateActionEnhancement() //
-                                .withEnhancement(PrismEnhancementType.APPLICATION_VIEW_CREATOR_DATA), // 
+                                .withEnhancement(PrismEnhancementType.APPLICATION_VIEW_ALL_DATA), // 
                             new PrismStateActionEnhancement() //
                                 .withEnhancement(PrismEnhancementType.APPLICATION_VIEW_EXPORT_DATA), // 
                             new PrismStateActionEnhancement() //

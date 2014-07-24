@@ -62,7 +62,7 @@ public class SystemService {
     private final String EMAIL_DEFAULT_SUBJECT_DIRECTORY = "email/subject/";
 
     private final String EMAIL_DEFAULT_CONTENT_DIRECTORY = "email/content/";
-    
+
     @Value("${system.name}")
     private String systemName;
 
@@ -74,6 +74,9 @@ public class SystemService {
 
     @Value("${system.user.email}")
     private String systemUserEmail;
+    
+    @Value("${system.user.password}")
+    private String systemUserPassword;
 
     @Autowired
     private ConfigurationService configurationService;
@@ -86,6 +89,9 @@ public class SystemService {
 
     @Autowired
     private ActionService actionService;
+
+    @Autowired
+    private RegistrationService registrationService;
 
     @Autowired
     private ResourceService resourceService;
@@ -286,7 +292,7 @@ public class SystemService {
         }
     }
 
-    private void initialiseStateActions() {
+    private void initialiseStateActions() throws WorkflowConfigurationException {
         if (stateService.getPendingStateTransitions().size() == 0) {
             stateService.deleteStateActions();
 
@@ -309,7 +315,7 @@ public class SystemService {
             notificationService.deleteObseleteNotificationConfigurations();
             roleService.deleteInactiveRoles();
 
-            reassignResourceStates();
+            verifyBackwardResourceCompatibility();
         } else {
             try {
                 stateService.executePropagatedStateTransitions();
@@ -383,12 +389,11 @@ public class SystemService {
         }
     }
 
-    private void reassignResourceStates() {
+    private void verifyBackwardResourceCompatibility() throws WorkflowConfigurationException {
         for (Scope scope : scopeService.getScopesDescending()) {
             Class<? extends Resource> resourceClass = scope.getId().getResourceClass();
-            for (State state : stateService.getDeprecatedStates(resourceClass)) {
-                State degradationState = stateService.getDegradationState(state);
-                resourceService.reassignState(resourceClass, state, degradationState);
+            if (!stateService.getDeprecatedStates(resourceClass).isEmpty()) {
+                throw new WorkflowConfigurationException();
             }
         }
     }

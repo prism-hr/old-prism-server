@@ -248,7 +248,8 @@ public class SystemInitialisationHelper {
 
     public void verifySystemUserRegistration() {
         System system = systemService.getSystem();
-        userHelper.registerAndActivateUser(null, system.getId(), system.getUser(), PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+        userHelper.registerAndActivateUser(PrismAction.SYSTEM_CONFIGURE, system.getId(), system.getUser(),
+                PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
     }
 
     private void verifyStateActionAssignmentCreation(StateAction stateAction, PrismStateAction prismStateAction) {

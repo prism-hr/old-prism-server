@@ -78,17 +78,6 @@ public class ActionService {
         return actionDAO.getPermittedActions(resource, user);
     }
 
-    public ActionOutcome executeAction(Integer resourceId, PrismAction actionId, Comment comment) {
-        Resource resource = (Resource) entityService.getById(actionId.getScope().getResourceClass(), resourceId);
-        Action action = getById(actionId);
-        return executeAction(resource, action, comment);
-    }
-
-    public ActionOutcome executeAction(Resource resource, PrismAction actionId, Comment comment) {
-        Action action = getById(actionId);
-        return executeAction(resource, action, comment);
-    }
-
     public ActionOutcome executeAction(Resource resource, Action action, Comment comment) {
         validateAction(resource, action, comment.getUser(), comment.getDelegateUser());
         User actionOwner = comment.getUser();

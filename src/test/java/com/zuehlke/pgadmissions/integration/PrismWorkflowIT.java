@@ -14,6 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
@@ -25,8 +26,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.integration.providers.ApplicationTestDataProvider;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
-import com.zuehlke.pgadmissions.rest.representation.ResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
+import com.zuehlke.pgadmissions.rest.representation.ResourceRepresentation;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -99,7 +100,8 @@ public class PrismWorkflowIT {
 
         Comment createApplicationComment = new Comment().withCreatedTimestamp(new DateTime()).withUser(applicant);
         Application application = new Application().withInitialData(applicant, program, null);
-        ActionOutcome actionOutcome = actionService.executeAction(application, PrismAction.PROGRAM_CREATE_APPLICATION, createApplicationComment);
+        Action action = entityService.getByProperty(Action.class, "id", PrismAction.PROGRAM_CREATE_APPLICATION);
+        ActionOutcome actionOutcome = actionService.executeAction(application, action, createApplicationComment);
         Application createdApplication = (Application) actionOutcome.getResource();
         assertEquals(PrismAction.APPLICATION_COMPLETE, actionOutcome.getNextAction());
 
@@ -107,12 +109,14 @@ public class PrismWorkflowIT {
         applicationTestDataProvider.fillWithData(createdApplication);
 
         Comment completeApplicationComment = null;
-        actionOutcome = actionService.executeAction(createdApplication.getId(), PrismAction.APPLICATION_COMPLETE, completeApplicationComment);
+        action = entityService.getByProperty(Action.class, "id", PrismAction.APPLICATION_COMPLETE);
+        actionOutcome = actionService.executeAction(createdApplication, action, completeApplicationComment);
         assertEquals(PrismAction.SYSTEM_VIEW_APPLICATION_LIST, actionOutcome.getNextAction());
         assertEquals(systemService.getSystem().getId(), actionOutcome.getResource().getId());
 
         Comment assignReviewerComment = new Comment().withUser(programAdministrator);
-        actionService.executeAction(1, PrismAction.APPLICATION_ASSIGN_REVIEWERS, assignReviewerComment);
+        action = entityService.getByProperty(Action.class, "id", PrismAction.APPLICATION_ASSIGN_REVIEWERS);
+        actionService.executeAction(createdApplication, action, assignReviewerComment);
 
         mailSenderMock.verify();
 
@@ -120,7 +124,7 @@ public class PrismWorkflowIT {
 
     private User registerAndActivateUser(PrismAction createAction, int resourceId, String firstName, String lastName, String email) {
         User applicant = registrationService.submitRegistration(
-                new RegistrationDetails().withFirstName(firstName).withLastName(lastName).withEmail(email).withPassword("password").withCreateAction(createAction).withResourceId(resourceId));
+                new RegistrationDetails().withFirstName(firstName).withLastName(lastName).withEmail(email).withPassword("password").withAction(createAction).withResourceId(resourceId));
         mailSenderMock.assertEmailSent(applicant, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
         applicant = registrationService.activateAccount(applicant.getActivationCode());
         return applicant;

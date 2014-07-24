@@ -11,6 +11,7 @@ import com.zuehlke.pgadmissions.rest.representation.workflow.RoleRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.StateActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.StateRepresentation;
 import com.zuehlke.pgadmissions.services.EntityService;
+
 import org.apache.commons.lang.WordUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,7 @@ public class StaticDataResource {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET)
     public Map<String, Object> getStaticData() {
         Map<String, Object> staticData = Maps.newHashMap();

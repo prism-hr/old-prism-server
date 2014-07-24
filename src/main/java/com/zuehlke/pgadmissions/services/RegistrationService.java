@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +32,6 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 @Service
 @Transactional
 public class RegistrationService {
-
-    private static final Pattern createActionPattern = Pattern.compile("(\\w+)_CREATE_(\\w+)");
 
     @Autowired
     private EncryptionUtils encryptionUtils;
@@ -75,20 +72,20 @@ public class RegistrationService {
 
     private Resource performRegistrationAction(User user, RegistrationDetails registrationDetails) {
         Resource resource = null;
-        PrismAction registrationAction = registrationDetails.getRegistrationAction();
-        if (registrationAction != null) {
-            Class<? extends Resource> resourceClass = registrationAction.getScope().getResourceClass();
+        PrismAction actionId = registrationDetails.getRegistrationAction();
+        if (actionId != null) {
+            Action action = entityService.getByProperty(Action.class, "id", actionId);
+            Class<? extends Resource> resourceClass = actionId.getScope().getResourceClass();
             resource = entityService.getById(resourceClass, registrationDetails.getResourceId());
-            if (createActionPattern.matcher(registrationAction.name()).matches()) {
-                resource = createResource(resource, user, registrationAction.getCreationScope(), registrationDetails);
+            
+            if (action.isCreationAction()) {
+                resource = createResource(resource, user, actionId.getCreationScope(), registrationDetails);
             }
-            Action action = entityService.getByProperty(Action.class, "id", registrationAction);
+            
             Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)                    ;
-            comment.getCommentAssignedUsers().add(new CommentAssignedUser().withUser(user).withRole(getCreatorRole(registrationAction)));
-            ActionOutcome actionOutcome = actionService.executeAction((Resource) resource, registrationAction, comment);
+            comment.getCommentAssignedUsers().add(new CommentAssignedUser().withUser(user).withRole(getCreatorRole(actionId)));
+            ActionOutcome actionOutcome = actionService.executeAction((Resource) resource, action, comment);
             resource = actionOutcome.getResource();
-        } else {
-            resource = systemService.getSystem();
         }
         return resource;
     }

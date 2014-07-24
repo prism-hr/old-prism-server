@@ -98,7 +98,7 @@ public class RegistrationService {
     private Resource createResource(Resource parentResource, User user, PrismScope creationScope, RegistrationDetails registrationDetails) {
         switch (creationScope) {
         case SYSTEM:
-            return systemService.getSystem();
+            return entityService.getById(System.class, registrationDetails.getResourceId());
         case INSTITUTION:
             InstitutionDTO institutionDTO = registrationDetails.getNewInstitution();
             return resourceService.createNewInstitution((System) parentResource, user, institutionDTO);

@@ -99,7 +99,7 @@ public class ApplicationTestDataProvider {
         personalDetails.setSecondNationality(testObjectProvider.get(Language.class));
         personalDetails.setLanguageQualificationAvailable(true);
         ApplicationLanguageQualification languageQualification = new ApplicationLanguageQualification();
-        languageQualification.setLanguageQualificationType(entityService.getByProperty(LanguageQualificationType.class, "code", "IELTS_ACADEMIC"));
+        languageQualification.setType(entityService.getByProperty(LanguageQualificationType.class, "code", "IELTS_ACADEMIC"));
         languageQualification.setExamDate(new LocalDate(1967, 9, 14));
         languageQualification.setOverallScore("6");
         languageQualification.setReadingScore("6");

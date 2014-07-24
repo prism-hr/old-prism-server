@@ -1,41 +1,21 @@
 package com.zuehlke.pgadmissions.domain;
 
+import org.apache.solr.analysis.*;
+import org.hibernate.search.annotations.*;
+import org.hibernate.search.annotations.Parameter;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
-import org.apache.solr.analysis.LowerCaseFilterFactory;
-import org.apache.solr.analysis.SnowballPorterFilterFactory;
-import org.apache.solr.analysis.StandardTokenizerFactory;
-import org.apache.solr.analysis.StopFilterFactory;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.AnalyzerDef;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Parameter;
-import org.hibernate.search.annotations.Store;
-import org.hibernate.search.annotations.TokenFilterDef;
-import org.hibernate.search.annotations.TokenizerDef;
-
 @AnalyzerDef(name = "importedLanguageQualificationTypeNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
-    @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
-    @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
-    @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class) })
+        @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
+        @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
+        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class)})
 @Entity
-@Table(name = "IMPORTED_LANGUAGE_QUALIFICATION_TYPE", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "code" }),
-        @UniqueConstraint(columnNames = { "institution_id", "name" }) })
+@Table(name = "IMPORTED_LANGUAGE_QUALIFICATION_TYPE", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_id", "code"}),
+        @UniqueConstraint(columnNames = {"institution_id", "name"})})
 @Indexed
-public class LanguageQualificationType implements ImportedEntity{
+public class LanguageQualificationType implements ImportedEntity {
 
     @Id
     @GeneratedValue
@@ -54,34 +34,34 @@ public class LanguageQualificationType implements ImportedEntity{
 
     @Column(name = "minimum_overall_score")
     private BigDecimal minimumOverallScore;
-    
+
     @Column(name = "maximum_overall_score")
     private BigDecimal maximumOverallScore;
-    
+
     @Column(name = "minimum_reading_score")
     private BigDecimal minimumReadingScore;
-    
+
     @Column(name = "maximum_reading_score")
     private BigDecimal maximumReadingScore;
-    
+
     @Column(name = "minimum_writing_score")
     private BigDecimal minimumWritingScore;
-    
+
     @Column(name = "maximum_writing_score")
     private BigDecimal maximumWritingScore;
-    
+
     @Column(name = "minimum_speaking_score")
     private BigDecimal minimumSpeakingScore;
-    
+
     @Column(name = "maximum_speaking_score")
     private BigDecimal maximumSpeakingScore;
-    
+
     @Column(name = "minimum_listening_score")
     private BigDecimal minimumListeningScore;
-    
+
     @Column(name = "maximum_listening_score")
     private BigDecimal maximumListeningScore;
-    
+
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
 
@@ -204,24 +184,24 @@ public class LanguageQualificationType implements ImportedEntity{
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-    
+
     public LanguageQualificationType withInitialData(Institution institution, String code, String name) {
         this.institution = institution;
         this.code = code;
         this.name = name;
         return this;
     }
-    
+
     public LanguageQualificationType withInstitution(Institution institution) {
         this.institution = institution;
         return this;
     }
-    
+
     public LanguageQualificationType withCode(String code) {
         this.code = code;
         return this;
     }
-    
+
     public LanguageQualificationType withName(String name) {
         this.name = name;
         return this;

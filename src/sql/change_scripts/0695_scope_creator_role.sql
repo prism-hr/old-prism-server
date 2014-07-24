@@ -8,8 +8,8 @@ WHERE action_type = "SYSTEM_PROPAGATION"
 ;
 
 UPDATE ACTION
-SET action_category = "EXPEDITE_RESOURCE"
-WHERE action_category = "ESCALATE_RESOURCE"
+SET action_category = "ESCALATE_RESOURCE"
+WHERE action_category = "EXPEDITE_RESOURCE"
 ;
 
 UPDATE ACTION

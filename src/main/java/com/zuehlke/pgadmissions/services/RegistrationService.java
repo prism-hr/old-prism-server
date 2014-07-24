@@ -75,7 +75,7 @@ public class RegistrationService {
 
     private Resource performRegistrationAction(User user, RegistrationDetails registrationDetails) {
         Resource resource = null;
-        PrismAction actionId = registrationDetails.getRegistrationAction();
+        PrismAction actionId = registrationDetails.getAction();
         if (actionId != null) {
             Action action = entityService.getByProperty(Action.class, "id", actionId);
             Class<? extends Resource> resourceClass = actionId.getScope().getResourceClass();
@@ -89,7 +89,7 @@ public class RegistrationService {
                 comment.getCommentAssignedUsers().add(new CommentAssignedUser().withUser(user).withRole(creatorRole));
             }
 
-            ActionOutcome actionOutcome = actionService.executeAction((Resource) resource, action, comment, actionId != PrismAction.SYSTEM_STARTUP);
+            ActionOutcome actionOutcome = actionService.executeAction((Resource) resource, action, comment);
             resource = actionOutcome.getResource();
         }
         return resource;

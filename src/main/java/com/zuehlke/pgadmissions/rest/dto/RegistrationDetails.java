@@ -30,8 +30,8 @@ public class RegistrationDetails {
     private Integer resourceId;
 
     @NotNull
-    private PrismAction registrationAction;
-
+    private PrismAction actionId;
+    
     private InstitutionDTO newInstitution;
 
     private ProgramDTO newProgram;
@@ -84,14 +84,14 @@ public class RegistrationDetails {
         this.resourceId = resourceId;
     }
 
-    public PrismAction getRegistrationAction() {
-        return registrationAction;
+    public PrismAction getAction() {
+        return actionId;
     }
 
-    public void setRegistrationAction(PrismAction registrationAction) {
-        this.registrationAction = registrationAction;
+    public void setAction(PrismAction action) {
+        this.actionId = action;
     }
-
+    
     public InstitutionDTO getNewInstitution() {
         return newInstitution;
     }
@@ -137,11 +137,10 @@ public class RegistrationDetails {
         this.resourceId = resourceId;
         return this;
     }
-
+    
     public RegistrationDetails withAction(final PrismAction actionId) {
-        this.registrationAction = actionId;
+        this.actionId = actionId;
         return this;
     }
-
 
 }

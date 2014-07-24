@@ -34,7 +34,7 @@ public class UserHelper {
     private RoleService roleService;
 
     public void registerAndActivateUser(PrismAction actionId, Integer resourceId, User user, PrismNotificationTemplate activationTemplate) {
-        if (user.getUserAccount() != null) {
+        if (user.getUserAccount() != null && user.getUserAccount().getPassword() == null) {
             throw new IllegalStateException("User already registered");
         }
 

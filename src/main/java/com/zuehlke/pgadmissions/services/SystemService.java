@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.WorkflowResource;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
@@ -52,6 +53,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNoti
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
 @Transactional(timeout = 120)
@@ -81,6 +83,9 @@ public class SystemService {
     @Autowired
     private ConfigurationService configurationService;
 
+    @Autowired
+    private EncryptionUtils encryptionUtils;
+    
     @Autowired
     private EntityService entityService;
 
@@ -112,14 +117,6 @@ public class SystemService {
         return entityService.getByProperty(System.class, "name", systemName);
     }
 
-    public System getOrCreateSystem(User systemUser) {
-        State systemRunning = stateService.getById(PrismState.SYSTEM_APPROVED);
-        DateTime startupTimestamp = new DateTime();
-        System transientSystem = new System().withName(systemName).withUser(systemUser).withState(systemRunning).withCreatedTimestamp(startupTimestamp)
-                .withUpdatedTimestamp(startupTimestamp);
-        return entityService.createOrUpdate(transientSystem);
-    }
-
     public void initialiseSystem() throws WorkflowConfigurationException {
         logger.info("Initialising scope definitions");
         initialiseScopes();
@@ -138,9 +135,7 @@ public class SystemService {
         verifyBackwardCompatibility(State.class);
 
         logger.info("Initialising system");
-        User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail);
-        System system = getOrCreateSystem(systemUser);
-        roleService.getOrCreateUserRole(system, systemUser, PrismRole.SYSTEM_ADMINISTRATOR);
+        System system = initialiseSystemResource();
 
         logger.info("Initialising configuration definitions");
         initialiseConfigurations(system);
@@ -154,11 +149,8 @@ public class SystemService {
         logger.info("Initialising workflow definitions");
         initialiseStateActions();
 
-        if (systemUser.getUserAccount() == null || !systemUser.isEnabled()) {
-            logger.info("Initialising system user");
-            NotificationTemplate registrationTemplate = notificationService.getById(PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
-            notificationService.sendNotification(systemUser, system, registrationTemplate);
-        }
+        logger.info("Initialising system user");
+        initialiseSystemUser(system);
 
         entityService.flush();
         entityService.clear();
@@ -228,6 +220,15 @@ public class SystemService {
         }
     }
 
+    private System initialiseSystemResource() {
+        User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail);
+        State systemRunning = stateService.getById(PrismState.SYSTEM_APPROVED);
+        DateTime startupTimestamp = new DateTime();
+        System transientSystem = new System().withName(systemName).withUser(systemUser).withState(systemRunning).withCreatedTimestamp(startupTimestamp)
+                .withUpdatedTimestamp(startupTimestamp);
+        return entityService.createOrUpdate(transientSystem);
+    }
+    
     private void initialiseConfigurations(System system) {
         for (PrismConfiguration prismConfiguration : PrismConfiguration.values()) {
             Configuration transientConfiguration = new Configuration().withSystem(system).withParameter(prismConfiguration)
@@ -390,6 +391,18 @@ public class SystemService {
         }
     }
 
+    private void initialiseSystemUser(System system) {
+        User systemUser = system.getUser();
+        if (systemUser.getUserAccount() == null) {
+            systemUser.withAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(systemUserPassword)));
+            NotificationTemplate registrationTemplate = notificationService.getById(PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+            notificationService.sendNotification(systemUser, system, registrationTemplate);
+        } else {
+            systemUser.getUserAccount().setEnabled(true);
+        }
+        roleService.getOrCreateUserRole(system, systemUser, PrismRole.SYSTEM_ADMINISTRATOR);
+    }
+    
     private void verifyBackwardResourceCompatibility() throws WorkflowConfigurationException {
         for (Scope scope : scopeService.getScopesDescending()) {
             Class<? extends Resource> resourceClass = scope.getId().getResourceClass();

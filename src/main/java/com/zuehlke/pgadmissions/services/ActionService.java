@@ -29,7 +29,7 @@ public class ActionService {
 
     @Autowired
     private StateService stateService;
-    
+
     @Autowired
     private ResourceService resourceService;
 
@@ -50,7 +50,12 @@ public class ActionService {
     }
 
     public void validateAction(Resource resource, Action action, User actionOwner, User delegateOwner) {
+        if (action.getId() == PrismAction.SYSTEM_STARTUP) {
+            return;
+        }
+        
         Resource operative = resourceService.getOperativeResource(resource, action);
+        
         if (delegateOwner == null && checkActionAvailable(operative, action, actionOwner)) {
             return;
         } else if (delegateOwner != null && checkActionAvailable(operative, action, delegateOwner)) {
@@ -58,9 +63,10 @@ public class ActionService {
         } else if (delegateOwner != null && checkDelegateActionAvailable(operative, action, delegateOwner)) {
             return;
         }
+        
         throw new CannotExecuteActionException(operative, action);
     }
-    
+
     public void validateAction(Resource resource, PrismAction actionId, User actionOwner) {
         Action action = getById(actionId);
         validateAction(resource, action, actionOwner, null);
@@ -78,15 +84,12 @@ public class ActionService {
     public List<PrismAction> getPermittedActions(Resource resource, User user) {
         return actionDAO.getPermittedActions(resource, user);
     }
-    
-    public ActionOutcome executeAction(Resource resource, Action action, Comment comment, boolean validateAction) {
-        if (validateAction) {
-            validateAction(resource, action, comment.getUser(), comment.getDelegateUser());
-        }
-        
+
+    public ActionOutcome executeAction(Resource resource, Action action, Comment comment) {
+        validateAction(resource, action, comment.getUser(), comment.getDelegateUser());
         User actionOwner = comment.getUser();
 
-        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
+        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE && action.getId() != PrismAction.SYSTEM_STARTUP) {
             Resource duplicateResource = entityService.getDuplicateEntity(resource);
             if (duplicateResource != null) {
                 Action redirectAction = actionDAO.getRedirectAction(duplicateResource, actionOwner);
@@ -100,10 +103,6 @@ public class ActionService {
         Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
         return new ActionOutcome(actionOwner, transitionResource, transitionAction);
-    }
-    
-    public ActionOutcome executeAction(Resource resource, Action action, Comment comment) {
-        return executeAction(resource, action, comment, true);
     }
 
     public List<PrismRedactionType> getRedactions(User user, Resource resource, Action action) {

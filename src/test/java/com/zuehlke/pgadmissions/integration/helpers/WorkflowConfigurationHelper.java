@@ -98,7 +98,8 @@ public class WorkflowConfigurationHelper {
         assertCollectionEquals(PrismAction.getCreationActions(), actualCreationActions);
         assertCollectionEquals(PrismState.getInitialStates(), actualInitialStates);
         assertCollectionEquals(PrismState.getFinalStates(), actualFinalStates);
-
+        
+        assertTrue(actualCreationActions.contains(PrismAction.SYSTEM_STARTUP));
         verifyCreatorRoles();
 
         List<PrismState> escalatableStates = stateService.getActionableStates(actualEscalationActions);

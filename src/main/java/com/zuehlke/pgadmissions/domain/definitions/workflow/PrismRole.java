@@ -26,7 +26,7 @@ public enum PrismRole {
     PROGRAM_ADMINISTRATOR(PrismScope.PROGRAM, true), //
     PROGRAM_APPROVER(PrismScope.PROGRAM, false), //
     PROGRAM_VIEWER(PrismScope.PROGRAM, false), //
-    PROJECT_ADMINISTRATOR(PrismScope.PROJECT, true), //
+    PROJECT_ADMINISTRATOR(PrismScope.PROJECT, false), //
     PROJECT_PRIMARY_SUPERVISOR(PrismScope.PROJECT, true), //
     PROJECT_SECONDARY_SUPERVISOR(PrismScope.PROJECT, false), //
     SYSTEM_ADMINISTRATOR(PrismScope.SYSTEM, true);

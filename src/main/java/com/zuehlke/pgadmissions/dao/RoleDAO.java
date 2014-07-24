@@ -107,15 +107,10 @@ public class RoleDAO {
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public Role getResourceCreatorRole(Resource resource, Action createAction) {
-        return (Role) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
-                .setProjection(Projections.groupProperty("role")) //
-                .createAlias("stateTransition", "stateTransition", JoinType.INNER_JOIN) //
-                .createAlias("stateTransition.stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("stateAction.action", createAction)) //
-                .add(Restrictions.eq("stateAction.state", resource.getState())) //
-                .add(Restrictions.eq("roleTransitionType", PrismRoleTransitionType.CREATE)) //
-                .add(Restrictions.eq("restrictToActionOwner", true)) //
+    public Role getCreatorRole(Resource resource) {
+        return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class) //
+                .add(Restrictions.eq("scope.id", PrismScope.getResourceScope(resource.getClass()))) //
+                .add(Restrictions.eq("scopeCreator", true)) //
                 .uniqueResult();
     }
 

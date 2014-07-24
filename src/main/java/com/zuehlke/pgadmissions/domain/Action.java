@@ -29,26 +29,26 @@ public class Action extends WorkflowResource {
     @Column(name = "id", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismAction id;
-    
+
     @Column(name = "action_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismActionType actionType;
-    
+
     @Column(name = "action_category", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismActionCategory actionCategory;
-    
+
     @Column(name = "do_save_comment", nullable = false)
     private boolean saveComment;
-    
+
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
-    
+
     @ManyToOne
     @JoinColumn(name = "creation_scope_id")
     private Scope creationScope;
-    
+
     @OneToMany(mappedBy = "action")
     private Set<ActionRedaction> redactions = Sets.newHashSet();
 
@@ -69,7 +69,7 @@ public class Action extends WorkflowResource {
     public void setActionType(PrismActionType actionType) {
         this.actionType = actionType;
     }
-    
+
     public PrismActionCategory getActionCategory() {
         return actionCategory;
     }
@@ -101,18 +101,6 @@ public class Action extends WorkflowResource {
     public void setCreationScope(Scope creationScope) {
         this.creationScope = creationScope;
     }
-    
-    public boolean isSystemInvokedAction() {
-        return actionType.isSystemAction();
-    }
-    
-    public boolean isCreationAction() {
-        return creationScope != null;
-    }
-    
-    public boolean isUserInvokedCreationAction() {
-        return isCreationAction() && !isSystemInvokedAction();
-    }
 
     public Set<ActionRedaction> getRedactions() {
         return redactions;
@@ -122,30 +110,34 @@ public class Action extends WorkflowResource {
         this.id = id;
         return this;
     }
-    
+
     public Action withActionType(PrismActionType actionType) {
         this.actionType = actionType;
         return this;
     }
-    
+
     public Action withActionCategory(PrismActionCategory actionCategory) {
         this.actionCategory = actionCategory;
         return this;
     }
-    
+
     public Action withSaveComment(boolean saveComment) {
         this.saveComment = saveComment;
         return this;
     }
-    
+
     public Action withScope(Scope scope) {
         this.scope = scope;
         return this;
     }
-    
+
     public Action withCreationScope(Scope creationScope) {
         this.creationScope = creationScope;
         return this;
+    }
+
+    public boolean isCreationAction() {
+        return actionCategory == PrismActionCategory.CREATE_RESOURCE || actionCategory == PrismActionCategory.IMPORT_RESOURCE;
     }
 
 }

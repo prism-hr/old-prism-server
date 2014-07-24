@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
@@ -36,8 +37,8 @@ public class ResourceService {
 
     @Autowired
     private ResourceDAO resourceDAO;
-    
-    @Autowired 
+
+    @Autowired
     private RoleService roleService;
 
     @Autowired
@@ -62,7 +63,7 @@ public class ResourceService {
         return new Institution().withSystem(system).withUser(user).withDomicile(domicile).withName(institutionDTO.getName())
                 .withHomepage(institutionDTO.getHomepage()).withAddress(address);
     }
-    
+
     public Resource createNewProgram(Institution institution, User user, ProgramDTO programDTO) {
         return new Program().withInstitution(institution).withUser(user);
     }
@@ -70,35 +71,35 @@ public class ResourceService {
     public Resource createNewApplication(Advert advert, User user) {
         return new Application().withProgram(advert.getProgram()).withProject(advert.getProject()).withUser(user);
     }
-    
+
     public void setTransitionState(Resource resource, State transitionState) {
         resource.setPreviousState(resource.getState());
         resource.setState(transitionState);
     }
-    
+
     public void setDueDate(Resource resource, Comment comment, StateDuration stateDuration) {
         LocalDate dueDate = comment.getUserSpecifiedDueDate();
-        if (dueDate == null && comment.getAction().getActionType() == PrismActionType.SYSTEM_ESCALATION) {
+        if (dueDate == null && comment.getAction().getActionCategory() == PrismActionCategory.ESCALATE_RESOURCE) {
             LocalDate dueDateBaseline = resource.getDueDateBaseline();
             dueDate = dueDateBaseline.plusDays(stateDuration == null ? 0 : stateDuration.getDuration());
         }
         resource.setDueDate(dueDate);
     }
-    
+
     public Resource getOperativeResource(Resource resource, Action action) {
         return action.isCreationAction() ? resource.getParentResource() : resource;
     }
-    
+
     public void commitResourceCreation(Resource resource, Action action, Comment comment) {
         resource.generateCode();
         resource.setCreatedTimestamp(new DateTime());
         resource.setUpdatedTimestamp(new DateTime());
         entityService.save(resource);
-        comment.setRole(roleService.getResourceCreatorRole(resource.getParentResource(), action).getAuthority().toString());
+        comment.setRole(roleService.getCreatorRole(resource).toString());
     }
 
     public void commitResourceUpdate(Resource resource, Action action, Comment comment) {
-        if (action.getActionType().isSystemAction()) {
+        if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
             comment.setRole(PrismRole.SYSTEM_ADMINISTRATOR.toString());
         } else {
             comment.setRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action)));
@@ -107,12 +108,12 @@ public class ResourceService {
             }
         }
     }
-    
+
     public void transitionResourceState(Resource resource, Comment comment, State transitionState, StateDuration transitionStateDuration) {
         setTransitionState(resource, transitionState);
         comment.setTransitionState(transitionState);
         setDueDate(resource, comment, transitionStateDuration);
         resource.setUpdatedTimestamp(new DateTime());
     }
-    
+
 }

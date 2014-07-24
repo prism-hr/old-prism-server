@@ -19,8 +19,8 @@ import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -54,6 +54,9 @@ public class RegistrationService {
     @Autowired
     private SystemService systemService;
 
+    @Autowired
+    private RoleService roleService;
+
     public User submitRegistration(RegistrationDetails registrationDetails) {
         User user = userService.getOrCreateUser(registrationDetails.getFirstName(), registrationDetails.getLastName(), registrationDetails.getEmail());
         if (registrationDetails.getActivationCode() != null && !user.getActivationCode().equals(registrationDetails.getActivationCode())) {
@@ -77,42 +80,33 @@ public class RegistrationService {
             Action action = entityService.getByProperty(Action.class, "id", actionId);
             Class<? extends Resource> resourceClass = actionId.getScope().getResourceClass();
             resource = entityService.getById(resourceClass, registrationDetails.getResourceId());
-            
-            if (action.isCreationAction()) {
+
+            Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false);
+
+            if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
                 resource = createResource(resource, user, actionId.getCreationScope(), registrationDetails);
+                Role creatorRole = roleService.getCreatorRole(resource);
+                comment.getCommentAssignedUsers().add(new CommentAssignedUser().withUser(user).withRole(creatorRole));
             }
-            
-            Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)                    ;
-            comment.getCommentAssignedUsers().add(new CommentAssignedUser().withUser(user).withRole(getCreatorRole(actionId)));
-            ActionOutcome actionOutcome = actionService.executeAction((Resource) resource, action, comment);
+
+            ActionOutcome actionOutcome = actionService.executeAction((Resource) resource, action, comment, actionId != PrismAction.SYSTEM_STARTUP);
             resource = actionOutcome.getResource();
         }
         return resource;
     }
 
-    private Role getCreatorRole(PrismAction registrationAction) {
-        switch (registrationAction) {
-            case SYSTEM_CREATE_INSTITUTION:
-                return entityService.getById(Role.class, PrismRole.INSTITUTION_ADMINISTRATOR);
-            case INSTITUTION_CREATE_PROGRAM:
-                return entityService.getById(Role.class, PrismRole.PROGRAM_ADMINISTRATOR);
-            default:
-                return null;
-        }
-    }
-
     private Resource createResource(Resource parentResource, User user, PrismScope creationScope, RegistrationDetails registrationDetails) {
         switch (creationScope) {
-            case INSTITUTION:
-                InstitutionDTO institutionDTO = registrationDetails.getNewInstitution();
-                return resourceService.createNewInstitution((System) parentResource, user, institutionDTO);
-            case PROGRAM:
-                ProgramDTO programDTO = registrationDetails.getNewProgram();
-                return resourceService.createNewProgram((Institution) parentResource, user, programDTO);
-            case APPLICATION:
-                return resourceService.createNewApplication((Advert) parentResource, user);
-            default:
-                throw new IllegalArgumentException(creationScope.name());
+        case INSTITUTION:
+            InstitutionDTO institutionDTO = registrationDetails.getNewInstitution();
+            return resourceService.createNewInstitution((System) parentResource, user, institutionDTO);
+        case PROGRAM:
+            ProgramDTO programDTO = registrationDetails.getNewProgram();
+            return resourceService.createNewProgram((Institution) parentResource, user, programDTO);
+        case APPLICATION:
+            return resourceService.createNewApplication((Advert) parentResource, user);
+        default:
+            throw new IllegalArgumentException(creationScope.name());
         }
     }
 

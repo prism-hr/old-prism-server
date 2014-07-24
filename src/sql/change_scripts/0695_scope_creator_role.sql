@@ -13,7 +13,7 @@ WHERE action_category = "ESCALATE_RESOURCE"
 ;
 
 UPDATE ACTION
-SET action_category = "IMPORT_RESOURCE"
+SET action_category = "CREATE_RESOURCE"
 WHERE action_type = "SYSTEM_IMPORT"
 ;
 

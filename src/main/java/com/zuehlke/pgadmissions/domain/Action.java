@@ -136,8 +136,4 @@ public class Action extends WorkflowResource {
         return this;
     }
 
-    public boolean isCreationAction() {
-        return actionCategory == PrismActionCategory.CREATE_RESOURCE || actionCategory == PrismActionCategory.IMPORT_RESOURCE;
-    }
-
 }

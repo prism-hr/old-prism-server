@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 
@@ -139,7 +140,7 @@ public class StateService {
     public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) {
         comment.setResource(resourceService.getOperativeResource(resource, action));
         
-        if (action.isCreationAction()) {
+        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             resourceService.commitResourceCreation(resource, action, comment);
         } else {
             resourceService.commitResourceUpdate(resource, action, comment);

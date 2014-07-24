@@ -115,7 +115,7 @@ public class SystemInitialisationHelper {
     public void verifyRoleCreation() {
         for (Role role : roleService.getRoles()) {
             assertEquals(role.getId().getScope(), role.getScope().getId());
-            assertEquals(role.getId().isScopeOwner(), role.isScopeOwner());
+            assertEquals(role.getId().isScopeOwner(), role.isScopeCreator());
 
             Set<Role> excludedRoles = role.getExcludedRoles();
             Set<PrismRole> prismExcludedRoles = PrismRole.getExcludedRoles(role.getId());
@@ -248,7 +248,7 @@ public class SystemInitialisationHelper {
 
     public void verifySystemUserRegistration() {
         System system = systemService.getSystem();
-        userHelper.registerAndActivateUser(PrismAction.SYSTEM_CONFIGURE, system.getId(), system.getUser(),
+        userHelper.registerAndActivateUser(PrismAction.SYSTEM_STARTUP, system.getId(), system.getUser(),
                 PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
     }
 

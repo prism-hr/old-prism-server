@@ -169,7 +169,7 @@ public class SystemService {
 
         for (PrismRole prismRole : PrismRole.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismRole.getScope());
-            Role transientRole = new Role().withId(prismRole).withScopeOwner(prismRole.isScopeOwner()).withScope(scope);
+            Role transientRole = new Role().withId(prismRole).withScopeCreator(prismRole.isScopeOwner()).withScope(scope);
             Role role = entityService.createOrUpdate(transientRole);
             role.getExcludedRoles().clear();
 

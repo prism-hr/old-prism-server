@@ -77,12 +77,15 @@ public class ActionService {
     public List<PrismAction> getPermittedActions(Resource resource, User user) {
         return actionDAO.getPermittedActions(resource, user);
     }
-
-    public ActionOutcome executeAction(Resource resource, Action action, Comment comment) {
-        validateAction(resource, action, comment.getUser(), comment.getDelegateUser());
+    
+    public ActionOutcome executeAction(Resource resource, Action action, Comment comment, boolean validateAction) {
+        if (validateAction) {
+            validateAction(resource, action, comment.getUser(), comment.getDelegateUser());
+        }
+        
         User actionOwner = comment.getUser();
 
-        if (action.isUserInvokedCreationAction()) {
+        if (action.isCreationAction()) {
             Resource duplicateResource = entityService.getDuplicateEntity(resource);
             if (duplicateResource != null) {
                 Action redirectAction = actionDAO.getRedirectAction(duplicateResource, actionOwner);
@@ -96,6 +99,10 @@ public class ActionService {
         Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
         return new ActionOutcome(actionOwner, transitionResource, transitionAction);
+    }
+    
+    public ActionOutcome executeAction(Resource resource, Action action, Comment comment) {
+        return executeAction(resource, action, comment, true);
     }
 
     public List<PrismRedactionType> getRedactions(User user, Resource resource, Action action) {

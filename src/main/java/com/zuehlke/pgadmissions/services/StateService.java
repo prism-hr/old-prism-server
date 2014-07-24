@@ -120,7 +120,7 @@ public class StateService {
         return stateDAO.getOrderedTransitionStates(state, excludedTransitionStates);
     }
 
-    public List<State> getRootState() {
+    public State getRootState() {
         return stateDAO.getRootState();
     }
 

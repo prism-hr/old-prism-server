@@ -81,7 +81,7 @@ public class StaticDataResource {
         staticData.put("institutionDomiciles", institutionDomiciles);
 
 
-        for (Class<Object> importedEntityType : new Class[]{StudyOption.class, ReferralSource.class, Title.class, Country.class, ReferralSource.class, Language.class}) {
+        for (Class<Object> importedEntityType : new Class[]{StudyOption.class, ReferralSource.class, Title.class, Country.class, ReferralSource.class, Language.class, QualificationType.class, LanguageQualificationType.class}) {
             String simpleName = importedEntityType.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);
             List<Object> entities = entityService.list(importedEntityType);

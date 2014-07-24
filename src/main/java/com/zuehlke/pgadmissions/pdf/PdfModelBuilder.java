@@ -489,7 +489,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             table.addCell(headerCell);
 
             table.addCell(newTableCell("Qualification Type", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(qualification.getLanguageQualificationType().getName(), SMALL_FONT));
+            table.addCell(newTableCell(qualification.getType().getName(), SMALL_FONT));
 
             table.addCell(newTableCell("Date of Examination", SMALL_BOLD_FONT));
             table.addCell(newTableCell(dateFormat.format(qualification.getExamDate()), SMALL_FONT));

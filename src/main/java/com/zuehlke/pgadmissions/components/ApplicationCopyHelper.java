@@ -247,7 +247,7 @@ public class ApplicationCopyHelper {
             return null;
         }
         ApplicationLanguageQualification to = new ApplicationLanguageQualification();
-        to.setLanguageQualificationType(from.getLanguageQualificationType());
+        to.setType(from.getType());
         to.setExamDate(from.getExamDate());
         to.setOverallScore(from.getOverallScore());
         to.setReadingScore(from.getReadingScore());

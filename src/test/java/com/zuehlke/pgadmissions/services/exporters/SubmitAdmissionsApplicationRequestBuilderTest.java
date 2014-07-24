@@ -197,7 +197,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         applicationForm
                 .getPersonalDetails()
                 .getLanguageQualification()
-                .setLanguageQualificationType(
+                .setType(
                         new LanguageQualificationType().withInitialData(new Institution().withName("test"), "test", "test"));
 
         SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(applicationForm).build();

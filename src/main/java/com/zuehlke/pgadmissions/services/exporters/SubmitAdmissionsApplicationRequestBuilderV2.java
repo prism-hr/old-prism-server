@@ -678,12 +678,12 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             EnglishLanguageTp englishLanguageTp = xmlFactory.createEnglishLanguageTp();
             englishLanguageTp.setDateTaken(buildXmlDate(languageQualification.getExamDate()));
 
-            if (languageQualification.getLanguageQualificationType().getCode().startsWith("CUST")) {
+            if (languageQualification.getType().getCode().startsWith("CUST")) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.OTHER);
-                englishLanguageTp.setOtherLanguageExam(languageQualification.getLanguageQualificationType().getName());
-            } else if (languageQualification.getLanguageQualificationType().getCode().startsWith("TOEFL")) {
+                englishLanguageTp.setOtherLanguageExam(languageQualification.getType().getName());
+            } else if (languageQualification.getType().getCode().startsWith("TOEFL")) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.TOEFL);
-                englishLanguageTp.setMethod(languageQualification.getLanguageQualificationType().getCode());
+                englishLanguageTp.setMethod(languageQualification.getType().getCode());
             } else {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.IELTS);
             }

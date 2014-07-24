@@ -68,12 +68,12 @@ public class NotificationService {
         return entityService.getById(NotificationTemplateVersion.class, id);
     }
 
-    public NotificationTemplateVersion getActiveVersion(Resource resource, NotificationTemplate template) {
-        return notificationDAO.getActiveVersion(resource, template);
+    public NotificationTemplateVersion getActiveVersionToEdit(Resource resource, NotificationTemplate template) {
+        return notificationDAO.getActiveVersionToEdit(resource, template);
     }
 
-    public NotificationTemplateVersion getActiveVersion(Resource resource, PrismNotificationTemplate templateId) {
-        return notificationDAO.getActiveVersion(resource, templateId);
+    public NotificationTemplateVersion getActiveVersionToSend(Resource resource, NotificationTemplate template) {
+        return notificationDAO.getActiveVersionToSend(resource, template);
     }
 
     public NotificationTemplateVersion getLatestVersion(Resource resource, NotificationTemplate template) {
@@ -105,12 +105,12 @@ public class NotificationService {
         return notificationDAO.getConfiguration(resource, template);
     }
 
-    public List<NotificationTemplate> getActiveNotificationTemplates() {
-        return notificationDAO.getActiveNotificationTemplates();
+    public List<NotificationTemplate> getActionTemplatesToManage() {
+        return notificationDAO.getActiveTemplatesToManage();
     }
 
     public void deleteObseleteNotificationConfigurations() {
-        notificationDAO.deleteObseleteNotificationConfigurations(getActiveNotificationTemplates());
+        notificationDAO.deleteObseleteNotificationConfigurations(getActionTemplatesToManage());
     }
 
     public void sendUpdateNotifications(StateAction stateAction, Resource resource) {
@@ -130,6 +130,22 @@ public class NotificationService {
         }
     }
 
+    public void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate) {
+        sendNotification(user, resource, notificationTemplate, Collections.<String, String> emptyMap());
+    }
+
+    public void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate, Map<String, String> extraModelParams) {
+        NotificationTemplateVersion templateVersion = getActiveVersionToSend(resource, notificationTemplate);
+        MailMessageDTO message = new MailMessageDTO();
+
+        message.setTo(Collections.singletonList(user));
+        message.setModel(createNotificationModel(user, resource, templateVersion));
+        message.setTemplate(templateVersion);
+        message.setAttachments(Lists.<PdfAttachmentInputSource> newArrayList());
+
+        mailSender.sendEmail(message);
+    }
+    
     public List<UserNotificationDefinition> getPendingUpdateNotifications() {
         return notificationDAO.getPendingUpdateNotifications();
     }
@@ -143,32 +159,6 @@ public class NotificationService {
         
         sendNotification(user, resource, template);
         deletePendingUpdateNotification(user, resource, template);
-    }
-
-    public void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate) {
-        sendNotification(user, resource, notificationTemplate, Collections.<String, String> emptyMap());
-    }
-
-    public void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate, Map<String, String> extraModelParams) {
-        NotificationTemplateVersion templateVersion = getActiveVersion(resource, notificationTemplate);
-        MailMessageDTO message = new MailMessageDTO();
-
-        message.setTo(Collections.singletonList(user));
-        message.setModel(createNotificationModel(user, resource, templateVersion));
-        message.setTemplate(templateVersion);
-        message.setAttachments(Lists.<PdfAttachmentInputSource> newArrayList());
-
-        mailSender.sendEmail(message);
-    }
-
-    public void sendNotification(User user, Resource resource, PrismNotificationTemplate notificationTemplateId) {
-        NotificationTemplate notificationTemplate = getById(notificationTemplateId);
-        sendNotification(user, resource, notificationTemplate, Collections.<String, String> emptyMap());
-    }
-
-    public void sendNotification(User user, Resource resource, PrismNotificationTemplate notificationTemplateId, Map<String, String> extraModelParams) {
-        NotificationTemplate notificationTemplate = getById(notificationTemplateId);
-        sendNotification(user, resource, notificationTemplate, extraModelParams);
     }
 
     private void deletePendingUpdateNotification(User user, Resource resource, NotificationTemplate template) {

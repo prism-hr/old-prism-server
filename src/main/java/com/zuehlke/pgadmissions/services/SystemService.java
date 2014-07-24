@@ -156,7 +156,8 @@ public class SystemService {
 
         if (systemUser.getUserAccount() == null || !systemUser.isEnabled()) {
             logger.info("Initialising system user");
-            notificationService.sendNotification(systemUser, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+            NotificationTemplate registrationTemplate = notificationService.getById(PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+            notificationService.sendNotification(systemUser, system, registrationTemplate);
         }
 
         entityService.flush();
@@ -256,7 +257,7 @@ public class SystemService {
                 entityService.save(version);
             } else {
                 template = duplicateTemplate;
-                version = notificationService.getActiveVersion(system, template);
+                version = notificationService.getActiveVersionToSend(system, template);
                 if (version == null) {
                     version = notificationService.getLatestVersion(system, template);
                 }

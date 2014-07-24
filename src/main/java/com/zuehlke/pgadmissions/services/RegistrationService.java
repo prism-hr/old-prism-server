@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
@@ -105,7 +106,8 @@ public class RegistrationService {
     }
 
     public void sendConfirmationEmail(User newUser, Resource resource) {
-        notificationService.sendNotification(newUser, resource, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+        NotificationTemplate confirmationTemplate = notificationService.getById(PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+        notificationService.sendNotification(newUser, resource, confirmationTemplate);
     }
 
     public User findUserForActivationCode(String activationCode) {

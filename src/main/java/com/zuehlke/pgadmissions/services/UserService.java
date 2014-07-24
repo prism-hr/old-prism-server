@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.Filter;
+import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
@@ -140,8 +141,9 @@ public class UserService {
         }
         try {
             String newPassword = encryptionUtils.generateUserPassword();
-            notificationService.sendNotification(storedUser, null, PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION,
-                    ImmutableMap.of("newPassword", newPassword));
+
+            NotificationTemplate passwordTemplate = notificationService.getById(PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION);
+            notificationService.sendNotification(storedUser, null, passwordTemplate, ImmutableMap.of("newPassword", newPassword));
 
             String hashPassword = encryptionUtils.getMD5Hash(newPassword);
             storedUser.getUserAccount().setPassword(hashPassword);

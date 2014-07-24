@@ -22,9 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
+import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.services.NotificationService;
 
@@ -76,8 +76,8 @@ public class MailSender {
         }
     }
 
-    protected String resolveSubject(final Resource resource, final PrismNotificationTemplate templateId, final Object... args) {
-        String subjectFormat = NotificationTemplateService.getActiveVersion(resource, templateId).getSubject();
+    protected String resolveSubject(final Resource resource, final NotificationTemplate template, final Object... args) {
+        String subjectFormat = NotificationTemplateService.getActiveVersionToSend(resource, template).getSubject();
         return args == null ? subjectFormat : String.format(subjectFormat, args);
     }
 

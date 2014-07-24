@@ -190,7 +190,7 @@ public class ConfigurationController {
         NotificationTemplate template = templateService.getById(PrismNotificationTemplate.valueOf(templateId));
         List<NotificationTemplateVersion> versions = notificationService.getVersions(resource, template);
         Map<Object, Object> result = new HashMap<Object, Object>();
-        result.put("activeVersion", notificationService.getActiveVersion(resource, template));
+        result.put("activeVersion", notificationService.getActiveVersionToEdit(resource, template));
         result.put("versions", versions);
         return result;
     }

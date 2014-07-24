@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.UserNotification;
 import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinition;
 
@@ -33,21 +32,15 @@ public class NotificationDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public NotificationTemplateVersion getActiveVersion(Resource resource, NotificationTemplate template) {
+    public NotificationTemplateVersion getActiveVersionToSend(Resource resource, NotificationTemplate template) {
         return (NotificationTemplateVersion) sessionFactory.getCurrentSession().createCriteria(NotificationConfiguration.class) //
                 .setProjection(Projections.property("notificationTemplateVersion")) //
-                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
                 .add(Restrictions.eq("notificationTemplate", template)) //
-                .uniqueResult();
-    }
-
-    public NotificationTemplateVersion getActiveVersion(Resource resource, PrismNotificationTemplate templateId) {
-        return (NotificationTemplateVersion) sessionFactory.getCurrentSession().createCriteria(NotificationConfiguration.class) //
-                .setProjection(Projections.property("notificationTemplateVersion")) //
-                .add(Restrictions.eq("notificationTemplate.id", templateId)).add(Restrictions.disjunction().add(Restrictions.conjunction() //
-                        .add(Restrictions.eq("system", resource.getSystem())) //
-                        .add(Restrictions.isNull("institution")) //
-                        .add(Restrictions.isNull("program"))) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("system", resource.getSystem())) //
+                                .add(Restrictions.isNull("institution")) //
+                                .add(Restrictions.isNull("program"))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.eq("institution", resource.getInstitution())) //
                                 .add(Restrictions.isNull("program"))) //
@@ -59,6 +52,14 @@ public class NotificationDAO {
                 .uniqueResult();
     }
 
+    public NotificationTemplateVersion getActiveVersionToEdit(Resource resource, NotificationTemplate template) {
+        return (NotificationTemplateVersion) sessionFactory.getCurrentSession().createCriteria(NotificationConfiguration.class) //
+                .setProjection(Projections.property("notificationTemplateVersion")) //
+                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
+                .add(Restrictions.eq("notificationTemplate", template)) //
+                .uniqueResult();
+    }
+    
     public NotificationTemplateVersion getLatestVersion(Resource resource, NotificationTemplate template) {
         return (NotificationTemplateVersion) sessionFactory.getCurrentSession().createCriteria(NotificationTemplateVersion.class) //
                 .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
@@ -84,7 +85,7 @@ public class NotificationDAO {
                 .uniqueResult();
     }
 
-    public List<NotificationTemplate> getActiveNotificationTemplates() {
+    public List<NotificationTemplate> getActiveTemplatesToManage() {
         Set<NotificationTemplate> templates = Sets.newHashSet(sessionFactory.getCurrentSession().createCriteria(StateAction.class)
                 .setProjection(Projections.groupProperty("notificationTemplate")) //
                 .list());
@@ -96,11 +97,11 @@ public class NotificationDAO {
         return Lists.newArrayList(templates);
     }
 
-    public void deleteObseleteNotificationConfigurations(List<NotificationTemplate> activeNotificationTemplates) {
+    public void deleteObseleteNotificationConfigurations(List<NotificationTemplate> activeNotificationWorkflowTemplates) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete NotificationConfiguration " //
                         + "where notificationTemplate not in (:configurableTemplates)") //
-                .setParameterList("configurableTemplates", activeNotificationTemplates) //
+                .setParameterList("configurableTemplates", activeNotificationWorkflowTemplates) //
                 .executeUpdate();
     }
 

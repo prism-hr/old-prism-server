@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
+import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinition;
@@ -95,7 +96,8 @@ public class MaintenanceTask {
 
                 com.zuehlke.pgadmissions.domain.System system = systemService.getSystem();
                 for (User user : userService.getUsersForResourceAndRole(system, PrismRole.SYSTEM_ADMINISTRATOR)) {
-                    notificationService.sendNotification(user, system, SYSTEM_IMPORT_ERROR_NOTIFICATION, ImmutableMap.of("errorMessage", message));
+                    NotificationTemplate importError = notificationService.getById(SYSTEM_IMPORT_ERROR_NOTIFICATION);
+                    notificationService.sendNotification(user, system, importError, ImmutableMap.of("errorMessage", message));
                 }
 
             } finally {

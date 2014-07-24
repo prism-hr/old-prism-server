@@ -105,20 +105,12 @@ public class RoleService {
         return null;
     }
 
-    public List<Role> getActionRoles(Resource resource, Action action) {
-        return roleDAO.getActionRoles(resource, action);
-    }
-
     public List<Role> getActionOwnerRoles(User user, Resource resource, Action action) {
         return roleDAO.getActionOwnerRoles(user, resource, action);
     }
 
     public List<Role> getDelegateActionOwnerRoles(User user, Resource resource, Action action) {
         return roleDAO.getActionOwnerRoles(user, resource, action);
-    }
-
-    public Role getResourceCreatorRole(Resource resource, Action createAction) {
-        return (Role) roleDAO.getResourceCreatorRole(resource, createAction);
     }
     
     public List<User> getResourceUsers(Resource resource) {
@@ -160,6 +152,10 @@ public class RoleService {
         return assignedRoles.isEmpty() ? getRoles() : assignedRoles;
     }
 
+    public Role getCreatorRole(Resource resource) {
+        return roleDAO.getCreatorRole(resource);
+    }
+    
     public void executeRoleTransitions(StateTransition stateTransition, Comment comment) throws WorkflowEngineException {
         for (PrismRoleTransitionType transitionType : PrismRoleTransitionType.values()) {
             HashMultimap<User, RoleTransition> userRoleTransitions = null;

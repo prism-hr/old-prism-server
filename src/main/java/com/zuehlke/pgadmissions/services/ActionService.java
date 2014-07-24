@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
@@ -28,7 +29,7 @@ public class ActionService {
 
     @Autowired
     private StateService stateService;
-    
+
     @Autowired
     private ResourceService resourceService;
 
@@ -49,7 +50,12 @@ public class ActionService {
     }
 
     public void validateAction(Resource resource, Action action, User actionOwner, User delegateOwner) {
+        if (action.getId() == PrismAction.SYSTEM_STARTUP) {
+            return;
+        }
+        
         Resource operative = resourceService.getOperativeResource(resource, action);
+        
         if (delegateOwner == null && checkActionAvailable(operative, action, actionOwner)) {
             return;
         } else if (delegateOwner != null && checkActionAvailable(operative, action, delegateOwner)) {
@@ -57,16 +63,17 @@ public class ActionService {
         } else if (delegateOwner != null && checkDelegateActionAvailable(operative, action, delegateOwner)) {
             return;
         }
+        
         throw new CannotExecuteActionException(operative, action);
     }
-    
+
     public void validateAction(Resource resource, PrismAction actionId, User actionOwner) {
         Action action = getById(actionId);
         validateAction(resource, action, actionOwner, null);
     }
 
     public boolean checkActionAvailable(Resource resource, Action action, User invoker) {
-        return roleService.getActionRoles(resource, action).size() == 0 || actionDAO.getPermittedAction(resource, action, invoker) != null;
+        return actionDAO.getPermittedAction(resource, action, invoker) != null;
     }
 
     public boolean checkDelegateActionAvailable(Resource resource, Action action, User invoker) {
@@ -78,22 +85,11 @@ public class ActionService {
         return actionDAO.getPermittedActions(resource, user);
     }
 
-    public ActionOutcome executeAction(Integer resourceId, PrismAction actionId, Comment comment) {
-        Resource resource = (Resource) entityService.getById(actionId.getScope().getResourceClass(), resourceId);
-        Action action = getById(actionId);
-        return executeAction(resource, action, comment);
-    }
-
-    public ActionOutcome executeAction(Resource resource, PrismAction actionId, Comment comment) {
-        Action action = getById(actionId);
-        return executeAction(resource, action, comment);
-    }
-
     public ActionOutcome executeAction(Resource resource, Action action, Comment comment) {
         validateAction(resource, action, comment.getUser(), comment.getDelegateUser());
         User actionOwner = comment.getUser();
 
-        if (action.isUserInvokedCreationAction()) {
+        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE && action.getId() != PrismAction.SYSTEM_STARTUP) {
             Resource duplicateResource = entityService.getDuplicateEntity(resource);
             if (duplicateResource != null) {
                 Action redirectAction = actionDAO.getRedirectAction(duplicateResource, actionOwner);

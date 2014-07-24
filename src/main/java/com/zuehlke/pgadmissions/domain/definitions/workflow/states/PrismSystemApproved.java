@@ -18,7 +18,7 @@ public class PrismSystemApproved extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.SYSTEM_CONFIGURE) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) // //
+            .withDefaultAction(true) // //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))
@@ -59,6 +59,23 @@ public class PrismSystemApproved extends PrismWorkflowState {
             .withAction(PrismAction.SYSTEM_MANAGE_ACCOUNT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false)); //
+        
+        stateActions.add(new PrismStateAction() //
+             .withAction(PrismAction.SYSTEM_STARTUP) //
+             .withRaisesUrgentFlag(false) //
+             .withDefaultAction(false) //
+             .withTransitions(Arrays.asList( // 
+                 new PrismStateTransition() // 
+                     .withTransitionState(PrismState.SYSTEM_APPROVED) // 
+                     .withTransitionAction(PrismAction.SYSTEM_CONFIGURE)
+                     .withRoleTransitions(Arrays.asList( // 
+                         new PrismRoleTransition() //
+                             .withRole(PrismRole.SYSTEM_ADMINISTRATOR) //
+                             .withTransitionType(PrismRoleTransitionType.CREATE) //
+                             .withTransitionRole(PrismRole.SYSTEM_ADMINISTRATOR) //
+                             .withRestrictToOwner(true) //
+                             .withMinimumPermitted(1) //
+                             .withMaximumPermitted(1))))));
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) //

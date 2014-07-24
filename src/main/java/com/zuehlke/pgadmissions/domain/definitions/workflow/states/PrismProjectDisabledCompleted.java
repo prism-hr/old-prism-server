@@ -10,7 +10,7 @@ public class PrismProjectDisabledCompleted extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_VIEW) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false)); //
+            .withDefaultAction(true)); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_VIEW_APPLICATION_LIST) //

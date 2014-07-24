@@ -138,8 +138,8 @@ public class RegistrationDetails {
         return this;
     }
 
-    public RegistrationDetails withCreateAction(final PrismAction createAction) {
-        this.registrationAction = createAction;
+    public RegistrationDetails withAction(final PrismAction actionId) {
+        this.registrationAction = actionId;
         return this;
     }
 

@@ -112,6 +112,7 @@ public class ActionDAO {
             permittedAction = (Action) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                     .setProjection(Projections.property("action")) //
                     .add(Restrictions.isEmpty("stateActionAssignments")) //
+                    .add(Restrictions.eq("action", action))
                     .uniqueResult();
         }
         

@@ -33,7 +33,7 @@ public class UserHelper {
     @Autowired
     private RoleService roleService;
 
-    public void registerAndActivateUser(PrismAction createAction, Integer resourceId, User user, PrismNotificationTemplate activationTemplate) {
+    public void registerAndActivateUser(PrismAction actionId, Integer resourceId, User user, PrismNotificationTemplate activationTemplate) {
         if (user.getUserAccount() != null) {
             throw new IllegalStateException("User already registered");
         }
@@ -42,7 +42,7 @@ public class UserHelper {
 
         registrationService.submitRegistration(new RegistrationDetails().withFirstName(user.getFirstName())
                 .withLastName(user.getLastName()).withEmail(user.getEmail()).withActivationCode(user.getActivationCode())
-                .withPassword("password").withCreateAction(createAction).withResourceId(resourceId));
+                .withPassword("password").withAction(actionId).withResourceId(resourceId));
 
         mailSenderMock.assertEmailSent(user, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
 

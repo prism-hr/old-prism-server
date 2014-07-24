@@ -87,7 +87,7 @@ public class ResourceService {
     }
 
     public Resource getOperativeResource(Resource resource, Action action) {
-        return action.isCreationAction() ? resource.getParentResource() : resource;
+        return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
     }
 
     public void commitResourceCreation(Resource resource, Action action, Comment comment) {

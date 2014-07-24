@@ -79,7 +79,7 @@ public enum PrismAction {
     INSTITUTION_CREATE_PROGRAM(PrismActionType.USER_INVOCATION, PrismActionCategory.CREATE_RESOURCE, true, PrismScope.INSTITUTION, PrismScope.PROGRAM, null), //
     INSTITUTION_EMAIL_CREATOR(PrismActionType.USER_INVOCATION, PrismActionCategory.EMAIL_RESOURCE_CREATOR, false, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_ESCALATE(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.ESCALATE_RESOURCE, true, PrismScope.INSTITUTION, null, null), //
-    INSTITUTION_IMPORT_PROGRAM(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.IMPORT_RESOURCE, true, PrismScope.INSTITUTION, PrismScope.PROGRAM, null), //
+    INSTITUTION_IMPORT_PROGRAM(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.CREATE_RESOURCE, true, PrismScope.INSTITUTION, PrismScope.PROGRAM, null), //
     INSTITUTION_VIEW(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE, false, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_VIEW_APPLICATION_LIST(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE_LIST, false, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_VIEW_PROGRAM_LIST(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE_LIST, false, PrismScope.INSTITUTION, null, null), //
@@ -114,7 +114,7 @@ public enum PrismAction {
     SYSTEM_CONFIGURE(PrismActionType.USER_INVOCATION, PrismActionCategory.CONFIGURE_RESOURCE, true, PrismScope.SYSTEM, null, null), //
     SYSTEM_CREATE_INSTITUTION(PrismActionType.USER_INVOCATION, PrismActionCategory.CREATE_RESOURCE, true, PrismScope.SYSTEM, PrismScope.INSTITUTION, null), //
     SYSTEM_MANAGE_ACCOUNT(PrismActionType.USER_INVOCATION, PrismActionCategory.CONFIGURE_ACCOUNT, true, PrismScope.SYSTEM, null, null), //
-    SYSTEM_STARTUP(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.PROCESS_RESOURCE, true, PrismScope.SYSTEM, null, null), //
+    SYSTEM_STARTUP(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.CREATE_RESOURCE, true, PrismScope.SYSTEM, PrismScope.SYSTEM, null), //
     SYSTEM_VIEW_APPLICATION_LIST(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE_LIST, true, PrismScope.SYSTEM, null, null), //
     SYSTEM_VIEW_INSTITUTION_LIST(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE_LIST, true, PrismScope.SYSTEM, null, null), //
     SYSTEM_VIEW_PROGRAM_LIST(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE_LIST, true, PrismScope.SYSTEM, null, null), //

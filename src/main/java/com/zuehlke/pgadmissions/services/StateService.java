@@ -105,10 +105,6 @@ public class StateService {
         return stateDAO.getDeprecatedStates(resourceClass);
     }
 
-    public State getDegradationState(State state) {
-        return stateDAO.getDegradationState(state);
-    }
-
     public ThreadPoolExecutor getThreadedStateTransitionPool() {
         return threadedStateTransitionPool;
     }

@@ -50,12 +50,7 @@ public class ActionService {
     }
 
     public void validateAction(Resource resource, Action action, User actionOwner, User delegateOwner) {
-        if (action.getId() == PrismAction.SYSTEM_STARTUP) {
-            return;
-        }
-        
         Resource operative = resourceService.getOperativeResource(resource, action);
-        
         if (delegateOwner == null && checkActionAvailable(operative, action, actionOwner)) {
             return;
         } else if (delegateOwner != null && checkActionAvailable(operative, action, delegateOwner)) {
@@ -63,7 +58,6 @@ public class ActionService {
         } else if (delegateOwner != null && checkDelegateActionAvailable(operative, action, delegateOwner)) {
             return;
         }
-        
         throw new CannotExecuteActionException(operative, action);
     }
 
@@ -84,9 +78,13 @@ public class ActionService {
     public List<PrismAction> getPermittedActions(Resource resource, User user) {
         return actionDAO.getPermittedActions(resource, user);
     }
-
-    public ActionOutcome executeAction(Resource resource, Action action, Comment comment) {
+    
+    public ActionOutcome executeUserAction(Resource resource, Action action, Comment comment) {
         validateAction(resource, action, comment.getUser(), comment.getDelegateUser());
+        return executeSystemAction(resource, action, comment);
+    }
+
+    public ActionOutcome executeSystemAction(Resource resource, Action action, Comment comment) {
         User actionOwner = comment.getUser();
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE && action.getId() != PrismAction.SYSTEM_STARTUP) {
@@ -94,7 +92,7 @@ public class ActionService {
             if (duplicateResource != null) {
                 Action redirectAction = actionDAO.getRedirectAction(duplicateResource, actionOwner);
                 comment = new Comment().withResource(duplicateResource).withUser(actionOwner).withAction(redirectAction);
-                executeAction(duplicateResource, redirectAction, comment);
+                executeUserAction(duplicateResource, redirectAction, comment);
             }
         }
 

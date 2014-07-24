@@ -84,7 +84,7 @@ public class ResourceResource {
         // set list of available actions
         List<PrismAction> permittedActions = actionService.getPermittedActions(resource, currentUser);
         representation.setActions(permittedActions);
-        
+
         // TODO: supply list of enhancements
 
         // set list of user to roles mappings

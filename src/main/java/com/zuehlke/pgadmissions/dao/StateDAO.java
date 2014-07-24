@@ -188,14 +188,6 @@ public class StateDAO {
                 .list();
     }
 
-    public State getDegradationState(State state) {
-        return (State) sessionFactory.getCurrentSession().createCriteria(State.class) //
-                .add(Restrictions.le("sequenceOrder", state.getParentState().getSequenceOrder())) //
-                .addOrder(Order.desc("sequenceOrder")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
     public List<State> getOrderedTransitionStates(State state, State... excludedTransitionStates) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("stateTransition.transitionState")) //

@@ -26,10 +26,12 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
+import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
 
 @Service
 @Transactional
@@ -49,27 +51,6 @@ public class ResourceService {
 
     public <T extends Resource> List<ResourceConsoleListRowDTO> getConsoleListBlock(Class<T> resourceType, int page, int perPage) {
         return resourceDAO.getConsoleListBlock(userService.getCurrentUser(), resourceType, page, perPage);
-    }
-
-    public <T extends Resource> void reassignState(Class<T> resourceClass, State state, State degradationState) {
-        resourceDAO.reassignState(resourceClass, state, degradationState);
-    }
-
-    public Resource createNewInstitution(System system, User user, InstitutionDTO institutionDTO) {
-        InstitutionDomicile domicile = entityService.getByProperty(InstitutionDomicile.class, "id", institutionDTO.getDomicile());
-        InstitutionAddressDTO addressDTO = institutionDTO.getAddress();
-        InstitutionAddress address = new InstitutionAddress().withCountry(domicile).withAddressLine1(addressDTO.getAddressLine1())
-                .withAddressLine2(addressDTO.getAddressLine2()).withAddressTown(addressDTO.getAddressTown()).withAddressCode(addressDTO.getAddressCode());
-        return new Institution().withSystem(system).withUser(user).withDomicile(domicile).withName(institutionDTO.getName())
-                .withHomepage(institutionDTO.getHomepage()).withAddress(address);
-    }
-
-    public Resource createNewProgram(Institution institution, User user, ProgramDTO programDTO) {
-        return new Program().withInstitution(institution).withUser(user);
-    }
-
-    public Resource createNewApplication(Advert advert, User user) {
-        return new Application().withProgram(advert.getProgram()).withProject(advert.getProject()).withUser(user);
     }
 
     public void setTransitionState(Resource resource, State transitionState) {
@@ -114,6 +95,40 @@ public class ResourceService {
         comment.setTransitionState(transitionState);
         setDueDate(resource, comment, transitionStateDuration);
         resource.setUpdatedTimestamp(new DateTime());
+    }
+    
+    public Resource createResource(Resource parentResource, User user, PrismScope creationScope, RegistrationDetails registrationDetails) {
+        switch (creationScope) {
+        case SYSTEM:
+            return entityService.getById(System.class, registrationDetails.getResourceId());
+        case INSTITUTION:
+            InstitutionDTO institutionDTO = registrationDetails.getNewInstitution();
+            return createNewInstitution((System) parentResource, user, institutionDTO);
+        case PROGRAM:
+            ProgramDTO programDTO = registrationDetails.getNewProgram();
+            return createNewProgram((Institution) parentResource, user, programDTO);
+        case APPLICATION:
+            return createNewApplication((Advert) parentResource, user);
+        default:
+            throw new IllegalArgumentException(creationScope.name());
+        }
+    }
+    
+    private Resource createNewInstitution(System system, User user, InstitutionDTO institutionDTO) {
+        InstitutionDomicile domicile = entityService.getByProperty(InstitutionDomicile.class, "id", institutionDTO.getDomicile());
+        InstitutionAddressDTO addressDTO = institutionDTO.getAddress();
+        InstitutionAddress address = new InstitutionAddress().withCountry(domicile).withAddressLine1(addressDTO.getAddressLine1())
+                .withAddressLine2(addressDTO.getAddressLine2()).withAddressTown(addressDTO.getAddressTown()).withAddressCode(addressDTO.getAddressCode());
+        return new Institution().withSystem(system).withUser(user).withDomicile(domicile).withName(institutionDTO.getName())
+                .withHomepage(institutionDTO.getHomepage()).withAddress(address);
+    }
+
+    private Resource createNewProgram(Institution institution, User user, ProgramDTO programDTO) {
+        return new Program().withInstitution(institution).withUser(user);
+    }
+
+    private Resource createNewApplication(Advert advert, User user) {
+        return new Application().withProgram(advert.getProgram()).withProject(advert.getProject()).withUser(user);
     }
 
 }

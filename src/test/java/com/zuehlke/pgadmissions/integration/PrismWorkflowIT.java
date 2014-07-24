@@ -101,7 +101,7 @@ public class PrismWorkflowIT {
         Comment createApplicationComment = new Comment().withCreatedTimestamp(new DateTime()).withUser(applicant);
         Application application = new Application().withInitialData(applicant, program, null);
         Action action = entityService.getByProperty(Action.class, "id", PrismAction.PROGRAM_CREATE_APPLICATION);
-        ActionOutcome actionOutcome = actionService.executeAction(application, action, createApplicationComment);
+        ActionOutcome actionOutcome = actionService.executeUserAction(application, action, createApplicationComment);
         Application createdApplication = (Application) actionOutcome.getResource();
         assertEquals(PrismAction.APPLICATION_COMPLETE, actionOutcome.getNextAction());
 
@@ -110,13 +110,13 @@ public class PrismWorkflowIT {
 
         Comment completeApplicationComment = null;
         action = entityService.getByProperty(Action.class, "id", PrismAction.APPLICATION_COMPLETE);
-        actionOutcome = actionService.executeAction(createdApplication, action, completeApplicationComment);
+        actionOutcome = actionService.executeUserAction(createdApplication, action, completeApplicationComment);
         assertEquals(PrismAction.SYSTEM_VIEW_APPLICATION_LIST, actionOutcome.getNextAction());
         assertEquals(systemService.getSystem().getId(), actionOutcome.getResource().getId());
 
         Comment assignReviewerComment = new Comment().withUser(programAdministrator);
         action = entityService.getByProperty(Action.class, "id", PrismAction.APPLICATION_ASSIGN_REVIEWERS);
-        actionService.executeAction(createdApplication, action, assignReviewerComment);
+        actionService.executeUserAction(createdApplication, action, assignReviewerComment);
 
         mailSenderMock.verify();
 

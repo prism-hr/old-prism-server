@@ -17,10 +17,8 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 
 import freemarker.template.Template;
@@ -60,16 +58,6 @@ public class ResourceDAO {
                 .addScalar("averageRating", BigDecimalType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowDTO.class)) //
                 .list();
-    }
-    
-    public <T extends Resource> void reassignState(Class<T> resourceClass, State state, State degradationState) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update " + PrismScope.getResourceScope(resourceClass).getLowerCaseName() + " " //
-                    + "set state = :degradationState " //
-                    + "where state = : state") //
-                .setParameter("degradationState", degradationState) //
-                .setParameter("state", state) // 
-                .executeUpdate();
     }
 
     private <T extends Resource> String getResourceListBlockSelect(User user, Class<T> resourceType, int page, int perPage) {

@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
+import com.zuehlke.pgadmissions.domain.StateActionEnhancement;
 import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -225,6 +226,7 @@ public class WorkflowConfigurationHelper {
     private void verifyStateActions(State state) {
         Set<PrismAction> escalationActions = Sets.newHashSet();
         Set<Action> defaultActions = Sets.newHashSet();
+        Set<Action> viewEditActions = Sets.newHashSet();
 
         for (StateAction stateAction : state.getStateActions()) {
             Action action = stateAction.getAction();
@@ -232,13 +234,13 @@ public class WorkflowConfigurationHelper {
             logger.info("Verifying action: " + action.getId().toString());
             assertEquals(state.getScope(), action.getScope());
 
+            PrismActionCategory actionCategory = action.getActionCategory();
+            
             if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
                 assertNotSame(stateAction.getState(), stateAction.getStateTransitions().iterator().next());
                 assertFalse(stateAction.isRaisesUrgentFlag());
                 assertNull(stateAction.getNotificationTemplate());
                 assertTrue(stateAction.getStateActionAssignments().isEmpty());
-
-                PrismActionCategory actionCategory = action.getActionCategory();
 
                 if (actionCategory == PrismActionCategory.ESCALATE_RESOURCE) {
                     escalationActions.add(action.getId());
@@ -256,14 +258,19 @@ public class WorkflowConfigurationHelper {
                 defaultActions.add(action);
             }
 
-            if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
+            if (actionCategory == PrismActionCategory.CREATE_RESOURCE) {
                 actualCreationActions.add(action.getId());
+            }
+            
+            if (actionCategory == PrismActionCategory.VIEW_EDIT_RESOURCE) {
+                viewEditActions.add(action);
             }
 
             verifyStateTransitions(stateAction);
         }
 
         assertEquals(1, defaultActions.size());
+        assertTrue(viewEditActions.size() > 0);
 
         if (stateService.getStateDuration(systemService.getSystem(), state) != null) {
             assertFalse(escalationActions.isEmpty());
@@ -387,6 +394,15 @@ public class WorkflowConfigurationHelper {
 
                 assertTrue(assignedRole.getScope().getPrecedence() <= state.getScope().getPrecedence());
                 assertTrue(actualRolesCreated.contains(assignedRole.getId()));
+                
+                Set<StateActionEnhancement> enhancements = assignment.getEnhancements();
+                if (enhancements.size() > 0) {
+                    assertEquals(PrismActionCategory.VIEW_EDIT_RESOURCE, stateAction.getAction().getActionCategory());
+                    
+                    for (StateActionEnhancement enhancement : enhancements) {
+                        assertEquals(state.getScope().getId(), enhancement.getEnhancementType().getScope());
+                    }
+                }
             }
         }
     }

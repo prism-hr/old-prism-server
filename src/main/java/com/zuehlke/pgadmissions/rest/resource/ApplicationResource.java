@@ -36,12 +36,12 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/comments", method = RequestMethod.POST)
-    public void performAction(@PathVariable Integer applicationId, @RequestParam (value = "action") PrismAction actionId, @RequestBody CommentDTO commentDTO) {
+    public void performAction(@PathVariable Integer applicationId, @RequestParam PrismAction actionId, @RequestBody CommentDTO commentDTO) {
         Application application = entityService.getById(Application.class, applicationId);
-        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(userService.getCurrentUser())
-                .withAction(entityService.getById(Action.class, actionId)).withCreatedTimestamp(new DateTime())
-                .withDeclinedResponse(commentDTO.getDeclinedResponse());
         Action action = actionService.getById(actionId);
+        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(userService.getCurrentUser())
+                .withAction(entityService.getById(Action.class, action)).withCreatedTimestamp(new DateTime())
+                .withDeclinedResponse(commentDTO.getDeclinedResponse());
         actionService.executeUserAction(application, action, comment);
     }
 

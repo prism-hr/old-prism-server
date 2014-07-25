@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 import java.util.Arrays;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -18,7 +19,8 @@ public class PrismSystemApproved extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.SYSTEM_CONFIGURE) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(true) // //
+            .withDefaultAction(true) //
+            .withActionEnhancement(PrismActionEnhancement.SYSTEM_VIEW_EDIT_AS_USER)
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))

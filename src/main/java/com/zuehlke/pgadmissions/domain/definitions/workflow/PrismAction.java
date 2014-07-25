@@ -74,42 +74,33 @@ public enum PrismAction {
                     new PrismActionRedaction().withRole(PrismRole.APPLICATION_REFEREE).withRedactionType(PrismRedactionType.ALL_CONTENT))),
     APPLICATION_WITHDRAW(PrismActionType.USER_INVOCATION, PrismActionCategory.WITHDRAW_RESOURCE, true, PrismScope.APPLICATION, null, null), //
     INSTITUTION_COMPLETE_APPROVAL_STAGE(PrismActionType.USER_INVOCATION, PrismActionCategory.PROCESS_RESOURCE, true, PrismScope.INSTITUTION, null, null), //
-    INSTITUTION_CONFIGURE(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_EDIT_RESOURCE, true, PrismScope.INSTITUTION, null, null), //
+    INSTITUTION_VIEW_EDIT(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_EDIT_RESOURCE, true, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_CORRECT(PrismActionType.USER_INVOCATION, PrismActionCategory.PROCESS_RESOURCE, true, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_CREATE_PROGRAM(PrismActionType.USER_INVOCATION, PrismActionCategory.CREATE_RESOURCE, true, PrismScope.INSTITUTION, PrismScope.PROGRAM, null), //
     INSTITUTION_EMAIL_CREATOR(PrismActionType.USER_INVOCATION, PrismActionCategory.EMAIL_RESOURCE_CREATOR, false, PrismScope.INSTITUTION, null, null), //
     INSTITUTION_ESCALATE(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.ESCALATE_RESOURCE, true, PrismScope.INSTITUTION, null, null), //
-    INSTITUTION_IMPORT_PROGRAM(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.CREATE_RESOURCE, true, PrismScope.INSTITUTION, PrismScope.PROGRAM, null), //
-    INSTITUTION_VIEW(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_EDIT_RESOURCE, false, PrismScope.INSTITUTION, null, null), //
-    INSTITUTION_VIEW_APPLICATION_LIST(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE_LIST, false, PrismScope.INSTITUTION, null, null), //
-    INSTITUTION_VIEW_PROGRAM_LIST(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE_LIST, false, PrismScope.INSTITUTION, null, null), //
-    INSTITUTION_VIEW_PROJECT_LIST(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE_LIST, false, PrismScope.INSTITUTION, null, null), //
+    INSTITUTION_IMPORT_PROGRAM(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.CREATE_RESOURCE, true, PrismScope.INSTITUTION, PrismScope.PROGRAM, null),
     INSTITUTION_WITHDRAW(PrismActionType.USER_INVOCATION, PrismActionCategory.WITHDRAW_RESOURCE, true, PrismScope.INSTITUTION, null, null), //
     PROGRAM_COMPLETE_APPROVAL_STAGE(PrismActionType.USER_INVOCATION, PrismActionCategory.PROCESS_RESOURCE, true, PrismScope.PROGRAM, null, null), //
     PROGRAM_CONCLUDE(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.PROPAGATE_RESOURCE, true, PrismScope.PROGRAM, null, null), //
-    PROGRAM_CONFIGURE(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_EDIT_RESOURCE, true, PrismScope.PROGRAM, null, null), //
+    PROGRAM_VIEW_EDIT(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_EDIT_RESOURCE, true, PrismScope.PROGRAM, null, null), //
     PROGRAM_CORRECT(PrismActionType.USER_INVOCATION, PrismActionCategory.PROCESS_RESOURCE, true, PrismScope.PROGRAM, null, null), //
     PROGRAM_CREATE_APPLICATION(PrismActionType.USER_INVOCATION, PrismActionCategory.CREATE_RESOURCE, true, PrismScope.PROGRAM, PrismScope.APPLICATION, null), //
     PROGRAM_CREATE_PROJECT(PrismActionType.USER_INVOCATION, PrismActionCategory.CREATE_RESOURCE, true, PrismScope.PROGRAM, PrismScope.PROJECT, null), //
     PROGRAM_EMAIL_CREATOR(PrismActionType.USER_INVOCATION, PrismActionCategory.EMAIL_RESOURCE_CREATOR, true, PrismScope.PROGRAM, null, null), //
     PROGRAM_ESCALATE(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.ESCALATE_RESOURCE, true, PrismScope.PROGRAM, null, null), //
     PROGRAM_RESTORE(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.PROPAGATE_RESOURCE, true, PrismScope.PROGRAM, null, null), //
-    PROGRAM_VIEW(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_EDIT_RESOURCE, true, PrismScope.PROGRAM, null, null), //
-    PROGRAM_VIEW_APPLICATION_LIST(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE_LIST, true, PrismScope.PROGRAM, null, null), //
-    PROGRAM_VIEW_PROJECT_LIST(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE_LIST, true, PrismScope.PROGRAM, null, null), //
     PROGRAM_WITHDRAW(PrismActionType.USER_INVOCATION, PrismActionCategory.WITHDRAW_RESOURCE, true, PrismScope.PROGRAM, null, null), //
     PROJECT_COMPLETE_APPROVAL_STAGE(PrismActionType.USER_INVOCATION, PrismActionCategory.PROCESS_RESOURCE, true, PrismScope.PROJECT, null, null), //
     PROJECT_CONCLUDE(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.PROPAGATE_RESOURCE, true, PrismScope.PROJECT, null, null), //
-    PROJECT_CONFIGURE(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_EDIT_RESOURCE, true, PrismScope.PROJECT, null, null), //
+    PROJECT_VIEW_EDIT(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_EDIT_RESOURCE, true, PrismScope.PROJECT, null, null), //
     PROJECT_CORRECT(PrismActionType.USER_INVOCATION, PrismActionCategory.PROCESS_RESOURCE, true, PrismScope.PROJECT, null, null), //
     PROJECT_CREATE_APPLICATION(PrismActionType.USER_INVOCATION, PrismActionCategory.CREATE_RESOURCE, true, PrismScope.PROJECT, PrismScope.APPLICATION, null), //
     PROJECT_EMAIL_CREATOR(PrismActionType.USER_INVOCATION, PrismActionCategory.EMAIL_RESOURCE_CREATOR, true, PrismScope.PROJECT, null, null), //
     PROJECT_ESCALATE(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.ESCALATE_RESOURCE, true, PrismScope.PROJECT, null, null), //
     PROJECT_RESTORE(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.PROPAGATE_RESOURCE, true, PrismScope.PROJECT, null, null), //
     PROJECT_SUSPEND(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.PROPAGATE_RESOURCE, true, PrismScope.PROJECT, null, null), //
-    PROJECT_TERMINATE(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.PROPAGATE_RESOURCE, true, PrismScope.PROJECT, null, null), //
-    PROJECT_VIEW(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_EDIT_RESOURCE, true, PrismScope.PROJECT, null, null), //
-    PROJECT_VIEW_APPLICATION_LIST(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE_LIST, true, PrismScope.PROJECT, null, null), //
+    PROJECT_TERMINATE(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.PROPAGATE_RESOURCE, true, PrismScope.PROJECT, null, null), ///
     PROJECT_WITHDRAW(PrismActionType.USER_INVOCATION, PrismActionCategory.WITHDRAW_RESOURCE, true, PrismScope.PROJECT, null, null), //
     SYSTEM_CONFIGURE(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_EDIT_RESOURCE, true, PrismScope.SYSTEM, null, null), //
     SYSTEM_CREATE_INSTITUTION(PrismActionType.USER_INVOCATION, PrismActionCategory.CREATE_RESOURCE, true, PrismScope.SYSTEM, PrismScope.INSTITUTION, null), //

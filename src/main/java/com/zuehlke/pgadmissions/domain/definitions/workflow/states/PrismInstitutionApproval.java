@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 import java.util.Arrays;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -63,12 +64,11 @@ public class PrismInstitutionApproval extends PrismWorkflowState {
                         .withTransitionAction(PrismAction.INSTITUTION_ESCALATE)))); //
     
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.INSTITUTION_VIEW) //
+            .withAction(PrismAction.INSTITUTION_VIEW_EDIT) //
+            .withActionEnhancement(PrismActionEnhancement.INSTITUTION_VIEW_AS_USER)
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
-                .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR), // 
+                .withAssignments(Arrays.asList( //
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR)))); //
         

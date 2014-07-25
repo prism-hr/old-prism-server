@@ -84,7 +84,7 @@ public class StaticDataResource {
         staticData.put("institutionDomiciles", institutionDomiciles);
 
         // Display names for imported entities
-        for (Class<Object> importedEntityType : new Class[]{StudyOption.class, ReferralSource.class, Title.class, Country.class, ReferralSource.class, Language.class, QualificationType.class, LanguageQualificationType.class}) {
+        for (Class<Object> importedEntityType : new Class[]{StudyOption.class, ReferralSource.class, Title.class, Ethnicity.class, Disability.class, Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, LanguageQualificationType.class}) {
             String simpleName = importedEntityType.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);
             List<Object> entities = entityService.list(importedEntityType);

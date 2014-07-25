@@ -104,7 +104,7 @@ public class PrismProjectApproval extends PrismWorkflowState {
                         .withTransitionAction(PrismAction.PROJECT_TERMINATE)))); //
         
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROJECT_VIEW) //
+            .withAction(PrismAction.PROJECT_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
                 .withAssignments(Arrays.asList( // 

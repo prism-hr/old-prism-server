@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -12,12 +13,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.StateActionAssignment;
+import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
@@ -30,6 +36,16 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 @Service
 @Transactional
 public class StateService {
+    
+    private static final Set<Class<? extends IUniqueEntity>> workflowConfigurationClasses = Sets.newLinkedHashSet();
+
+    static {
+        workflowConfigurationClasses.add(RoleTransition.class);
+        workflowConfigurationClasses.add(StateTransition.class);
+        workflowConfigurationClasses.add(StateActionAssignment.class);
+        workflowConfigurationClasses.add(StateActionNotification.class);
+        workflowConfigurationClasses.add(StateAction.class);
+    }
 
     @Autowired
     private StateDAO stateDAO;
@@ -94,7 +110,9 @@ public class StateService {
     }
 
     public void deleteStateActions() {
-        stateDAO.deleteStateActions();
+        for (Class<? extends IUniqueEntity> workflowConfigurationClass : workflowConfigurationClasses) {
+            stateDAO.deleteStateActions(workflowConfigurationClass);
+        }
     }
 
     public void deleteObseleteStateDurations() {

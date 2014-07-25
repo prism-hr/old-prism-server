@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 import java.util.Arrays;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -17,7 +18,7 @@ public class PrismProgramApprovalPendingCorrection extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_CORRECT) //
             .withRaisesUrgentFlag(true) //
-            .withDefaultAction(false) //
+            .withDefaultAction(true) //
             .withNotificationTemplate(PrismNotificationTemplate.PROGRAM_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
@@ -45,14 +46,13 @@ public class PrismProgramApprovalPendingCorrection extends PrismWorkflowState {
                         .withTransitionAction(PrismAction.PROGRAM_ESCALATE)))); //
         
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROGRAM_VIEW) //
+            .withAction(PrismAction.PROGRAM_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(true)  //
+            .withDefaultAction(false) //
+            .withActionEnhancement(PrismActionEnhancement.PROGRAM_VIEW_AS_USER) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR)))); //
+                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_WITHDRAW) //

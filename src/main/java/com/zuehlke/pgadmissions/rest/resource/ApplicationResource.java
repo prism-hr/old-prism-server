@@ -5,6 +5,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailsDTO;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -33,6 +34,11 @@ public class ApplicationResource {
     @RequestMapping(value = "/{applicationId}/programDetails", method = RequestMethod.PUT)
     public void saveProgramDetails(@PathVariable Integer applicationId, @RequestBody ApplicationProgramDetailsDTO programDetailsDTO) {
         applicationService.saveProgramDetails(applicationId, programDetailsDTO);
+    }
+
+    @RequestMapping(value = "/{applicationId}/personalDetails", method = RequestMethod.PUT)
+    public void savePersonalDetails(@PathVariable Integer applicationId, @RequestBody ApplicationPersonalDetailsDTO personalDetailsDTO) {
+        applicationService.savePersonalDetails(applicationId, personalDetailsDTO);
     }
 
     @RequestMapping(value = "/{applicationId}/comments", method = RequestMethod.POST)

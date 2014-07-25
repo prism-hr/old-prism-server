@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.util.Date;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailsDTO;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -199,5 +200,9 @@ public class ApplicationService {
         for (ApplicationSupervisorDTO supervisorDTO : programDetailsDTO.getSuggestedSupervisors()) {
                 
         }
+    }
+
+    public void savePersonalDetails(Integer applicationId, ApplicationPersonalDetailsDTO personalDetailsDTO) {
+
     }
 }

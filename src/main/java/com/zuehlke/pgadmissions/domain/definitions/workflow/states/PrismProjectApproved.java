@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 import java.util.Arrays;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
@@ -39,9 +40,10 @@ public class PrismProjectApproved extends PrismWorkflowState {
                                 PrismAction.APPLICATION_TERMINATE))))); //
     
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROJECT_CONFIGURE) //
+            .withAction(PrismAction.PROJECT_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
+            .withActionEnhancement(PrismActionEnhancement.PROGRAM_VIEW_EDIT_AS_USER) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -54,7 +56,7 @@ public class PrismProjectApproved extends PrismWorkflowState {
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_APPROVED) // 
-                        .withTransitionAction(PrismAction.PROJECT_CONFIGURE) // 
+                        .withTransitionAction(PrismAction.PROJECT_VIEW_EDIT) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_CONFIGURED_OUTCOME)
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
@@ -93,7 +95,7 @@ public class PrismProjectApproved extends PrismWorkflowState {
                                 .withRestrictToOwner(false))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DEACTIVATED) // 
-                        .withTransitionAction(PrismAction.PROJECT_CONFIGURE) // 
+                        .withTransitionAction(PrismAction.PROJECT_VIEW_EDIT) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_CONFIGURED_OUTCOME)
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
@@ -132,7 +134,7 @@ public class PrismProjectApproved extends PrismWorkflowState {
                                 .withRestrictToOwner(false))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DISABLED_COMPLETED) // 
-                        .withTransitionAction(PrismAction.PROJECT_CONFIGURE) // 
+                        .withTransitionAction(PrismAction.PROJECT_VIEW_EDIT) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_CONFIGURED_OUTCOME)))); //
     
         stateActions.add(new PrismStateAction() //
@@ -203,16 +205,6 @@ public class PrismProjectApproved extends PrismWorkflowState {
                         .withTransitionAction(PrismAction.PROJECT_TERMINATE)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.APPLICATION_TERMINATE))))); //
-    
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROJECT_VIEW) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false)); //
-    
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROJECT_VIEW_APPLICATION_LIST) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false));
     }
 
 }

@@ -119,20 +119,20 @@ public class SystemService {
 
     public void initialiseSystem() throws WorkflowConfigurationException {
         logger.info("Initialising scope definitions");
-        initialiseScopes();
         verifyBackwardCompatibility(Scope.class);
-
+        initialiseScopes();
+        
         logger.info("Initialising role definitions");
-        initialiseRoles();
         verifyBackwardCompatibility(Role.class);
+        initialiseRoles();
 
         logger.info("Initialising action definitions");
-        initialiseActions();
         verifyBackwardCompatibility(Action.class);
+        initialiseActions();
 
         logger.info("Initialising state definitions");
-        initialiseStates();
         verifyBackwardCompatibility(State.class);
+        initialiseStates();
 
         logger.info("Initialising system");
         System system = initialiseSystemResource();

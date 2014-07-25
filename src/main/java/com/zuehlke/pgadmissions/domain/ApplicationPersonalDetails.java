@@ -13,6 +13,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
@@ -30,11 +32,11 @@ public class ApplicationPersonalDetails {
     private Integer id;
 
     @Column(name = "skype")
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
+    @Size(min = 6, max = 32)
     private String messenger;
 
     @Column(name = "phone", nullable = false)
-    @ESAPIConstraint(rule = "PhoneNumber", maxLength = 35, message = "{text.field.notphonenumber}")
+    @Size(max = 50)
     private String phoneNumber;
 
     @Column(name = "first_language_english", nullable = false)

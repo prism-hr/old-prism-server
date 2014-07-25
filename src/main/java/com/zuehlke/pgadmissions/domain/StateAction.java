@@ -6,6 +6,8 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -20,6 +22,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 
 @Entity
 @Table(name = "STATE_ACTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_id", "action_id" }) })
@@ -40,14 +43,18 @@ public class StateAction implements IUniqueEntity {
 
     @Column(name = "raises_urgent_flag", nullable = false)
     private boolean raisesUrgentFlag;
-    
+
     @Column(name = "is_default_action", nullable = false)
     private boolean defaultAction;
+
+    @Column(name = "action_enhancement")
+    @Enumerated(EnumType.STRING)
+    private PrismActionEnhancement actionEnhancement;
 
     @ManyToOne
     @JoinColumn(name = "notification_template_id")
     private NotificationTemplate notificationTemplate;
-    
+
     @OneToMany(mappedBy = "stateAction")
     private Set<StateActionAssignment> stateActionAssignments = Sets.newHashSet();
 
@@ -56,7 +63,7 @@ public class StateAction implements IUniqueEntity {
 
     @OneToMany(mappedBy = "stateAction")
     private Set<StateTransition> stateTransitions = Sets.newHashSet();
-    
+
     public Integer getId() {
         return id;
     }
@@ -96,13 +103,21 @@ public class StateAction implements IUniqueEntity {
     public void setDefaultAction(boolean defaultAction) {
         this.defaultAction = defaultAction;
     }
-    
+
     public NotificationTemplate getNotificationTemplate() {
         return notificationTemplate;
     }
 
     public void setNotificationTemplate(NotificationTemplate notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
+    }
+
+    public PrismActionEnhancement getActionEnhancement() {
+        return actionEnhancement;
+    }
+
+    public void setActionEnhancement(PrismActionEnhancement actionEnhancement) {
+        this.actionEnhancement = actionEnhancement;
     }
 
     public Set<StateActionAssignment> getStateActionAssignments() {
@@ -116,24 +131,29 @@ public class StateAction implements IUniqueEntity {
     public Set<StateTransition> getStateTransitions() {
         return stateTransitions;
     }
-    
+
     public StateAction withState(State state) {
         this.state = state;
         return this;
     }
-    
+
     public StateAction withAction(Action action) {
         this.action = action;
         return this;
     }
-    
+
     public StateAction withRaisesUrgentFlag(boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
         return this;
     }
-    
+
     public StateAction withDefaultAction(boolean defaultAction) {
         this.defaultAction = defaultAction;
+        return this;
+    }
+
+    public StateAction withActionEnhancement(PrismActionEnhancement actionEnhancement) {
+        this.actionEnhancement = actionEnhancement;
         return this;
     }
     

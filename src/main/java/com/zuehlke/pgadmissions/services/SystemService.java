@@ -30,7 +30,6 @@ import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
-import com.zuehlke.pgadmissions.domain.StateActionEnhancement;
 import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
@@ -48,7 +47,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
@@ -76,7 +74,7 @@ public class SystemService {
 
     @Value("${system.user.email}")
     private String systemUserEmail;
-    
+
     @Value("${system.user.password}")
     private String systemUserPassword;
 
@@ -85,7 +83,7 @@ public class SystemService {
 
     @Autowired
     private EncryptionUtils encryptionUtils;
-    
+
     @Autowired
     private EntityService entityService;
 
@@ -121,7 +119,7 @@ public class SystemService {
         logger.info("Initialising scope definitions");
         verifyBackwardCompatibility(Scope.class);
         initialiseScopes();
-        
+
         logger.info("Initialising role definitions");
         verifyBackwardCompatibility(Role.class);
         initialiseRoles();
@@ -228,7 +226,7 @@ public class SystemService {
                 .withUpdatedTimestamp(startupTimestamp);
         return entityService.createOrUpdate(transientSystem);
     }
-    
+
     private void initialiseConfigurations(System system) {
         for (PrismConfiguration prismConfiguration : PrismConfiguration.values()) {
             Configuration transientConfiguration = new Configuration().withSystem(system).withParameter(prismConfiguration)
@@ -299,11 +297,13 @@ public class SystemService {
             stateService.deleteStateActions();
 
             for (State state : stateService.getStates()) {
+                logger.info("Configuring " + state.getId().toString());
                 for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
                     Action action = actionService.getById(prismStateAction.getAction());
                     NotificationTemplate template = notificationService.getById(prismStateAction.getNotificationTemplate());
                     StateAction stateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag())
-                            .withDefaultAction(prismStateAction.isDefaultAction()).withNotificationTemplate(template);
+                            .withDefaultAction(prismStateAction.isDefaultAction()).withActionEnhancement(prismStateAction.getActionEnhancement())
+                            .withNotificationTemplate(template);
                     entityService.save(stateAction);
                     state.getStateActions().add(stateAction);
 
@@ -332,20 +332,11 @@ public class SystemService {
     private void initialiseStateActionAssignments(PrismStateAction prismStateAction, StateAction stateAction) {
         for (PrismStateActionAssignment prismAssignment : prismStateAction.getAssignments()) {
             Role role = roleService.getById(prismAssignment.getRole());
-            StateActionAssignment assignment = new StateActionAssignment().withStateAction(stateAction).withRole(role);
+            Action delegateAction = actionService.getById(prismAssignment.getDelegatedAction());
+            StateActionAssignment assignment = new StateActionAssignment().withStateAction(stateAction).withRole(role)
+                    .withActionEnhancement(prismAssignment.getActionEnhancement()).withDelegatedAction(delegateAction);
             entityService.save(assignment);
             stateAction.getStateActionAssignments().add(assignment);
-            initialiseStateActionEnhancements(prismAssignment, assignment);
-        }
-    }
-
-    private void initialiseStateActionEnhancements(PrismStateActionAssignment prismAssignment, StateActionAssignment assignment) {
-        for (PrismStateActionEnhancement prismEnhancement : prismAssignment.getEnhancements()) {
-            Action delegatedAction = actionService.getById(prismEnhancement.getDelegatedAction());
-            StateActionEnhancement enhancement = new StateActionEnhancement().withStateActionAssignment(assignment)
-                    .withEnhancementType(prismEnhancement.getEnhancement()).withDelegatedAction(delegatedAction);
-            entityService.save(enhancement);
-            assignment.getEnhancements().add(enhancement);
         }
     }
 
@@ -402,7 +393,7 @@ public class SystemService {
         }
         roleService.getOrCreateUserRole(system, systemUser, PrismRole.SYSTEM_ADMINISTRATOR);
     }
-    
+
     private void verifyBackwardResourceCompatibility() throws WorkflowConfigurationException {
         for (Scope scope : scopeService.getScopesDescending()) {
             Class<? extends Resource> resourceClass = scope.getId().getResourceClass();

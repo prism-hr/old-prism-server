@@ -1,9 +1,6 @@
 SELECT GROUP_CONCAT(DISTINCT 
 	STATE_ACTION.raises_urgent_flag, "|",
-	STATE_ACTION.action_id, 
-		IF(ACTION.superseding_action_id IS NOT NULL,
-			CONCAT("|", ACTION.superseding_action_id),
-			"")
+	STATE_ACTION.action_id
 	ORDER BY STATE_ACTION.raises_urgent_flag DESC,
 		STATE_ACTION.action_id)
 FROM USER INNER JOIN USER_ROLE

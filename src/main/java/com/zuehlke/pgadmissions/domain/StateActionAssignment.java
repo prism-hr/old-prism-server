@@ -2,14 +2,15 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -18,7 +19,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 
 @Entity
 @Table(name = "STATE_ACTION_ASSIGNMENT", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "role_id" }) })
@@ -37,9 +38,14 @@ public class StateActionAssignment implements IUniqueEntity {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
     
-    @OneToMany(mappedBy = "stateActionAssignment")
-    private Set<StateActionEnhancement> enhancements = Sets.newHashSet();
-
+    @Column(name = "action_enhancement")
+    @Enumerated(EnumType.STRING)
+    private PrismActionEnhancement actionEnhancement;
+    
+    @ManyToOne
+    @JoinColumn(name = "delegated_action_id")
+    private Action delegatedAction;
+    
     public Integer getId() {
         return id;
     }
@@ -64,10 +70,22 @@ public class StateActionAssignment implements IUniqueEntity {
         this.role = role;
     }
 
-    public Set<StateActionEnhancement> getEnhancements() {
-        return enhancements;
+    public PrismActionEnhancement getActionEnhancement() {
+        return actionEnhancement;
+    }
+
+    public void setActionEnhancement(PrismActionEnhancement actionEnhancement) {
+        this.actionEnhancement = actionEnhancement;
     }
     
+    public Action getDelegatedAction() {
+        return delegatedAction;
+    }
+
+    public void setDelegatedAction(Action delegatedAction) {
+        this.delegatedAction = delegatedAction;
+    }
+
     public StateActionAssignment withStateAction(StateAction stateAction) {
         this.stateAction = stateAction;
         return this;
@@ -75,6 +93,16 @@ public class StateActionAssignment implements IUniqueEntity {
     
     public StateActionAssignment withRole(Role role) {
         this.role = role;
+        return this;
+    }
+    
+    public StateActionAssignment withActionEnhancement(PrismActionEnhancement actionEnhancement) {
+        this.actionEnhancement = actionEnhancement;
+        return this;
+    }
+    
+    public StateActionAssignment withDelegatedAction(Action delegatedAction) {
+        this.delegatedAction = delegatedAction;
         return this;
     }
     

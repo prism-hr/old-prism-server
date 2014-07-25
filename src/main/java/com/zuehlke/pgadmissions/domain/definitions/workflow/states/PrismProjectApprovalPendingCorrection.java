@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 import java.util.Arrays;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -18,7 +19,7 @@ public class PrismProjectApprovalPendingCorrection extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_CORRECT) //
             .withRaisesUrgentFlag(true) //
-            .withDefaultAction(false) //
+            .withDefaultAction(true) //
             .withNotificationTemplate(PrismNotificationTemplate.PROJECT_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
@@ -81,18 +82,15 @@ public class PrismProjectApprovalPendingCorrection extends PrismWorkflowState {
                         .withTransitionAction(PrismAction.PROJECT_TERMINATE)))); //
         
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROJECT_VIEW) //
+            .withAction(PrismAction.PROJECT_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(true) //
+            .withDefaultAction(false) //
+            .withActionEnhancement(PrismActionEnhancement.PROJECT_VIEW_AS_USER)
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR), //
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROJECT_ADMINISTRATOR), //
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR)))); //
+                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR)))); //
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_WITHDRAW) //

@@ -29,7 +29,6 @@ import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
-import com.zuehlke.pgadmissions.domain.StateActionEnhancement;
 import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -225,7 +224,8 @@ public class WorkflowConfigurationHelper {
 
     private void verifyStateActions(State state) {
         Set<PrismAction> escalationActions = Sets.newHashSet();
-        Set<Action> defaultActions = Sets.newHashSet();
+        Set<Action> userDefaultActions = Sets.newHashSet();
+        Set<Action> systemDefaultActions = Sets.newHashSet();
         Set<Action> viewEditActions = Sets.newHashSet();
 
         for (StateAction stateAction : state.getStateActions()) {
@@ -254,8 +254,11 @@ public class WorkflowConfigurationHelper {
             }
 
             if (stateAction.isDefaultAction()) {
-                assertEquals(PrismActionType.USER_INVOCATION, action.getActionType());
-                defaultActions.add(action);
+                if (action.getActionType() == PrismActionType.USER_INVOCATION) {
+                    userDefaultActions.add(action);
+                } else {
+                    systemDefaultActions.add(action);
+                }
             }
 
             if (actionCategory == PrismActionCategory.CREATE_RESOURCE) {
@@ -269,7 +272,8 @@ public class WorkflowConfigurationHelper {
             verifyStateTransitions(stateAction);
         }
 
-        assertEquals(1, defaultActions.size());
+        assertEquals(1, userDefaultActions.size());
+        assertTrue(systemDefaultActions.size() < 2);
         assertTrue(viewEditActions.size() > 0);
 
         if (stateService.getStateDuration(systemService.getSystem(), state) != null) {
@@ -394,15 +398,6 @@ public class WorkflowConfigurationHelper {
 
                 assertTrue(assignedRole.getScope().getPrecedence() <= state.getScope().getPrecedence());
                 assertTrue(actualRolesCreated.contains(assignedRole.getId()));
-                
-                Set<StateActionEnhancement> enhancements = assignment.getEnhancements();
-                if (enhancements.size() > 0) {
-                    assertEquals(PrismActionCategory.VIEW_EDIT_RESOURCE, stateAction.getAction().getActionCategory());
-                    
-                    for (StateActionEnhancement enhancement : enhancements) {
-                        assertEquals(state.getScope().getId(), enhancement.getEnhancementType().getScope());
-                    }
-                }
             }
         }
     }

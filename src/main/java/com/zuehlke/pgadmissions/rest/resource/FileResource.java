@@ -30,21 +30,33 @@ public class FileResource {
 
     @RequestMapping(method = RequestMethod.POST)
     public Map<String, Object> uploadFile(@RequestParam(value = "file-data", required = false) Part part) throws IOException {
-        Document document = new Document().withContent(Streams.readAll(part.getInputStream())).withContentType(part.getContentType()).withCreatedTimestamp(new DateTime()).withFileName(part.getName()).withType(DocumentType.COMMENT);
+        Document document = new Document().withContent(Streams.readAll(part.getInputStream())).withContentType(part.getContentType()).withCreatedTimestamp(new DateTime()).withFileName(getFileName(part)).withType(DocumentType.COMMENT);
         Integer id = (Integer) entityService.save(document);
         return ImmutableMap.of("id", (Object) id);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{fileId}", method = RequestMethod.GET)
     public void downloadFile(@PathVariable Integer fileId, HttpServletResponse response) throws IOException {
         Document document = entityService.getById(Document.class, fileId);
 
         response.setHeader("Content-Disposition", "attachment; filename=\"" + document.getFileName() + "\"");
+        response.setHeader("File-Name", document.getFileName());
         response.setContentType(document.getContentType());
+//        response.setContentLength(document.getContent().length);
 
         ServletOutputStream outputStream = response.getOutputStream();
         outputStream.write(document.getContent());
-        response.flushBuffer();
+//        response.flushBuffer();
+    }
+
+    private String getFileName(Part part) {
+        for (String cd : part.getHeader("content-disposition").split(";")) {
+            if (cd.trim().startsWith("filename")) {
+                return cd.substring(cd.indexOf('=') + 1).trim()
+                        .replace("\"", "");
+            }
+        }
+        return null;
     }
 
 }

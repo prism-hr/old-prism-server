@@ -6,6 +6,7 @@ import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.definitions.Gender;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.rest.representation.application.ImportedEntityRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.application.LanguageQualificationTypeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.RoleRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.StateActionRepresentation;
@@ -82,7 +83,7 @@ public class StaticDataResource {
         List<InstitutionDomicile> institutionDomiciles = entityService.list(InstitutionDomicile.class);
         staticData.put("institutionDomiciles", institutionDomiciles);
 
-
+        // Display names for imported entities
         for (Class<Object> importedEntityType : new Class[]{StudyOption.class, ReferralSource.class, Title.class, Country.class, ReferralSource.class, Language.class, QualificationType.class, LanguageQualificationType.class}) {
             String simpleName = importedEntityType.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);
@@ -108,6 +109,14 @@ public class StaticDataResource {
             }
             staticData.put(pluralize(simpleName), definitions);
         }
+
+        // Display names and min/max values for language qualification types
+        List<LanguageQualificationType> languageQualificationTypes = entityService.list(LanguageQualificationType.class);
+        List<LanguageQualificationTypeRepresentation> languageQualificationTypeRepresentations = Lists.newArrayListWithCapacity(languageQualificationTypes.size());
+        for (LanguageQualificationType languageQualificationType : languageQualificationTypes) {
+            languageQualificationTypeRepresentations.add(dozerBeanMapper.map(languageQualificationType, LanguageQualificationTypeRepresentation.class));
+        }
+        staticData.put("languageQualificationTypes", languageQualificationTypeRepresentations);
 
         return staticData;
     }

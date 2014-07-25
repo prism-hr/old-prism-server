@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.domain;
 
 public interface ImportedEntity {
 
+    public Integer getId();
+
     public Institution getInstitution() ;
 
     public void setInstitution(Institution institution) ;

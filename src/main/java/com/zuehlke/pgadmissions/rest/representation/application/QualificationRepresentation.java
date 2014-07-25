@@ -14,7 +14,7 @@ public class QualificationRepresentation {
 
     private String language;
 
-    private String type;
+    private Integer type;
 
     private String grade;
 
@@ -66,11 +66,11 @@ public class QualificationRepresentation {
         this.language = language;
     }
 
-    public String getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 

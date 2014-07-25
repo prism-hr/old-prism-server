@@ -4,7 +4,7 @@ import org.joda.time.LocalDate;
 
 public class LanguageQualificationRepresentation {
 
-    private String type;
+    private Integer type;
 
     private LocalDate examDate;
 
@@ -20,11 +20,11 @@ public class LanguageQualificationRepresentation {
 
     private DocumentRepresentation proofOfAward;
 
-    public String getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 

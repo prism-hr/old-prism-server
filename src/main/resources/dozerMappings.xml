@@ -12,7 +12,7 @@
             </converter>
             <converter type="com.zuehlke.pgadmissions.rest.converter.ImportedEntityConverter">
                 <class-a>com.zuehlke.pgadmissions.domain.ImportedEntity</class-a>
-                <class-b>java.lang.String</class-b>
+                <class-b>java.lang.Integer</class-b>
             </converter>
         </custom-converters>
     </configuration>

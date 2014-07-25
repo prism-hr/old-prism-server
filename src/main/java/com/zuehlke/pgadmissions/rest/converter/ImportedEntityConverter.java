@@ -6,31 +6,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.services.EntityService;
 
-public class ImportedEntityConverter extends DozerConverter<ImportedEntity, String> {
+public class ImportedEntityConverter extends DozerConverter<ImportedEntity, Integer> {
 
     @Autowired
     private EntityService entityService;
 
     public ImportedEntityConverter() {
-        super(ImportedEntity.class, String.class);
+        super(ImportedEntity.class, Integer.class);
     }
 
     @Override
-    public String convertTo(ImportedEntity source, String destination) {
-        return source != null ? source.getCode() : null;
+    public Integer convertTo(ImportedEntity source, Integer destination) {
+        return source != null ? source.getId() : null;
     }
 
     @Override
-    public ImportedEntity convertFrom(String source, ImportedEntity destination) {
+    public ImportedEntity convertFrom(Integer source, ImportedEntity destination) {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public Object convert(Object existingDestinationFieldValue, Object sourceFieldValue, Class<?> destinationClass, Class<?> sourceClass) {
-        if(ImportedEntity.class.isAssignableFrom(destinationClass)) {
-            ImportedEntity entity = (ImportedEntity) entityService.getByCode(destinationClass, (String) sourceFieldValue);
-            return entity;
-        }
-        return super.convert(existingDestinationFieldValue, sourceFieldValue, destinationClass, sourceClass);
-    }
 }

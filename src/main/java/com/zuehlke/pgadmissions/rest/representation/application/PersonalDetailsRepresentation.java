@@ -1,8 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.application;
 
-import org.joda.time.LocalDate;
-
 import com.zuehlke.pgadmissions.domain.definitions.Gender;
+import org.joda.time.LocalDate;
 
 public class PersonalDetailsRepresentation {
 
@@ -18,23 +17,23 @@ public class PersonalDetailsRepresentation {
 
     private PassportRepresentation passport;
 
-    private String firstNationality;
+    private Integer firstNationality;
 
-    private String secondNationality;
+    private Integer secondNationality;
 
-    private String title;
+    private Integer title;
 
     private Gender gender;
 
     private LocalDate dateOfBirth;
 
-    private String country;
+    private Integer country;
 
-    private String ethnicity;
+    private Integer ethnicity;
 
-    private String disability;
+    private Integer disability;
 
-    private String residenceCountry;
+    private Integer residenceCountry;
 
     public String getMessenger() {
         return messenger;
@@ -84,27 +83,27 @@ public class PersonalDetailsRepresentation {
         this.passport = passport;
     }
 
-    public String getFirstNationality() {
+    public Integer getFirstNationality() {
         return firstNationality;
     }
 
-    public void setFirstNationality(String firstNationality) {
+    public void setFirstNationality(Integer firstNationality) {
         this.firstNationality = firstNationality;
     }
 
-    public String getSecondNationality() {
+    public Integer getSecondNationality() {
         return secondNationality;
     }
 
-    public void setSecondNationality(String secondNationality) {
+    public void setSecondNationality(Integer secondNationality) {
         this.secondNationality = secondNationality;
     }
 
-    public String getTitle() {
+    public Integer getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(Integer title) {
         this.title = title;
     }
 
@@ -124,35 +123,35 @@ public class PersonalDetailsRepresentation {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public String getCountry() {
+    public Integer getCountry() {
         return country;
     }
 
-    public void setCountry(String country) {
+    public void setCountry(Integer country) {
         this.country = country;
     }
 
-    public String getEthnicity() {
+    public Integer getEthnicity() {
         return ethnicity;
     }
 
-    public void setEthnicity(String ethnicity) {
+    public void setEthnicity(Integer ethnicity) {
         this.ethnicity = ethnicity;
     }
 
-    public String getDisability() {
+    public Integer getDisability() {
         return disability;
     }
 
-    public void setDisability(String disability) {
+    public void setDisability(Integer disability) {
         this.disability = disability;
     }
 
-    public String getResidenceCountry() {
+    public Integer getResidenceCountry() {
         return residenceCountry;
     }
 
-    public void setResidenceCountry(String residenceCountry) {
+    public void setResidenceCountry(Integer residenceCountry) {
         this.residenceCountry = residenceCountry;
     }
 }

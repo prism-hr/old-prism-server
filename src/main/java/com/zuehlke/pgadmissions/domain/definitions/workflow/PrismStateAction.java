@@ -12,6 +12,8 @@ public class PrismStateAction {
     
     private boolean defaultAction;
     
+    private PrismActionEnhancement actionEnhancement;
+    
     private PrismNotificationTemplate notificationTemplate;
     
     private List<PrismStateActionAssignment> assignments = Lists.newArrayList();
@@ -30,6 +32,10 @@ public class PrismStateAction {
 
     public boolean isDefaultAction() {
         return defaultAction;
+    }
+    
+    public PrismActionEnhancement getActionEnhancement() {
+        return actionEnhancement;
     }
 
     public PrismNotificationTemplate getNotificationTemplate() {
@@ -60,6 +66,11 @@ public class PrismStateAction {
     
     public PrismStateAction withDefaultAction(boolean defaultAction) {
         this.defaultAction = defaultAction;
+        return this;
+    }
+    
+    public PrismStateAction withActionEnhancement(PrismActionEnhancement actionEnhancement) {
+        this.actionEnhancement = actionEnhancement;
         return this;
     }
     

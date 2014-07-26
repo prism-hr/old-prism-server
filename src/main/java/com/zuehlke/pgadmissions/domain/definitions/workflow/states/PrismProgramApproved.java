@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 import java.util.Arrays;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -38,9 +39,10 @@ public class PrismProgramApproved extends PrismWorkflowState {
                                 PrismAction.PROJECT_TERMINATE))))); //
     
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROGRAM_CONFIGURE) //
+            .withAction(PrismAction.PROGRAM_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
+            .withDefaultAction(true) //
+            .withActionEnhancement(PrismActionEnhancement.PROGRAM_VIEW_EDIT_AS_USER) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -49,7 +51,7 @@ public class PrismProgramApproved extends PrismWorkflowState {
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVED) // 
-                        .withTransitionAction(PrismAction.PROGRAM_CONFIGURE) // 
+                        .withTransitionAction(PrismAction.PROGRAM_VIEW_EDIT) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CONFIGURED_OUTCOME)
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
@@ -84,7 +86,7 @@ public class PrismProgramApproved extends PrismWorkflowState {
                                 .withRestrictToOwner(false))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DEACTIVATED) // 
-                        .withTransitionAction(PrismAction.PROGRAM_CONFIGURE) // 
+                        .withTransitionAction(PrismAction.PROGRAM_VIEW_EDIT) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CONFIGURED_OUTCOME)
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
@@ -119,7 +121,7 @@ public class PrismProgramApproved extends PrismWorkflowState {
                                 .withRestrictToOwner(false))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DISABLED_COMPLETED) // 
-                        .withTransitionAction(PrismAction.PROGRAM_CONFIGURE) // 
+                        .withTransitionAction(PrismAction.PROGRAM_VIEW_EDIT) // 
                         .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CONFIGURED_OUTCOME)))); //
     
         stateActions.add(new PrismStateAction() //
@@ -210,21 +212,6 @@ public class PrismProgramApproved extends PrismWorkflowState {
                         .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_EXPIRED_OUTCOME)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.PROJECT_SUSPEND))))); //
-    
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROGRAM_VIEW) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(true)); //
-    
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROGRAM_VIEW_APPLICATION_LIST) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false)); //
-    
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROGRAM_VIEW_PROJECT_LIST) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false));
     }
 
 }

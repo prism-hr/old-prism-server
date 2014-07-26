@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.services.StateService;
-import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilderV2;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationExportBuilder;
 import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -47,7 +47,7 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
 
     private ApplicationDAO applicationFormDAO;
 
-    private SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder;
+    private ApplicationExportBuilder requestBuilder;
 
     /**
      * This test collects all the completed application forms (except test applications) from the database and sends them to the configured web service. It
@@ -130,6 +130,6 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
     @Before
     public void initialise() {
         applicationFormDAO = new ApplicationDAO();
-        requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
+        requestBuilder = new ApplicationExportBuilder(new ObjectFactory());
     }
 }

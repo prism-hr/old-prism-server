@@ -29,12 +29,12 @@ import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
 import com.zuehlke.pgadmissions.pdf.Transcript1PdfBuilder;
 import com.zuehlke.pgadmissions.services.PorticoService;
-import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationDocumentExportService.CouldNotCreateAttachmentsPack;
 
 @Component
-public class PorticoAttachmentsZipCreator {
+public class ApplicationDocumentExportHelper {
 
-    private Logger log = LoggerFactory.getLogger(PorticoAttachmentsZipCreator.class);
+    private Logger log = LoggerFactory.getLogger(ApplicationDocumentExportHelper.class);
 
     @Autowired
     private PdfDocumentBuilder pdfDocumentBuilder;

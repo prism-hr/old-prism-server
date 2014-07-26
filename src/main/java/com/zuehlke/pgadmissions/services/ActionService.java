@@ -1,21 +1,24 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Scope;
-import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
@@ -79,6 +82,13 @@ public class ActionService {
         return actionDAO.getPermittedActions(resource, user);
     }
     
+    public List<PrismActionEnhancement> getPermittedActionEnhancements(Resource resource, User user) {
+        Set<PrismActionEnhancement> enhancements = Sets.newHashSet();
+        enhancements.addAll(actionDAO.getGlobalActionEnhancements(resource, user));
+        enhancements.addAll(actionDAO.getCustomActionEnhancements(resource, user));
+        return Lists.newArrayList(enhancements);
+    }
+    
     public ActionOutcome executeUserAction(Resource resource, Action action, Comment comment) {
         validateAction(resource, action, comment.getUser(), comment.getDelegateUser());
         return executeSystemAction(resource, action, comment);
@@ -89,10 +99,20 @@ public class ActionService {
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE && action.getId() != PrismAction.SYSTEM_STARTUP) {
             Resource duplicateResource = entityService.getDuplicateEntity(resource);
+            
             if (duplicateResource != null) {
-                Action redirectAction = actionDAO.getRedirectAction(duplicateResource, actionOwner);
-                comment = new Comment().withResource(duplicateResource).withUser(actionOwner).withAction(redirectAction);
-                executeUserAction(duplicateResource, redirectAction, comment);
+                Action redirectAction = null;
+                
+                if (action.getActionType() == PrismActionType.USER_INVOCATION) {
+                    redirectAction = actionDAO.getUserRedirectAction(duplicateResource, actionOwner);
+                } else {
+                    redirectAction = actionDAO.getSystemRedirectAction(duplicateResource);
+                }
+                
+                if (redirectAction != null) {
+                    comment = new Comment().withResource(duplicateResource).withUser(actionOwner).withAction(redirectAction);
+                    executeUserAction(duplicateResource, redirectAction, comment);
+                }
             }
         }
 
@@ -109,10 +129,6 @@ public class ActionService {
 
     public List<Action> getActions() {
         return entityService.list(Action.class);
-    }
-
-    public List<Action> getCreationActions(State state, Scope scope) {
-        return actionDAO.getCreationActions(state, scope);
     }
 
 }

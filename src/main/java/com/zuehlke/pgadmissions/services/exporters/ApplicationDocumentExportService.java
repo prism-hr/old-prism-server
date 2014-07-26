@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
  * </ol>
  */
 @Service
-public class SftpAttachmentsSendingService {
+public class ApplicationDocumentExportService {
 
     public static class CouldNotCreateAttachmentsPack extends Exception {
         private static final long serialVersionUID = 79819935845687782L;
@@ -66,9 +66,9 @@ public class SftpAttachmentsSendingService {
         }
     }
 
-    private final JSchFactory jSchFactory;
+    private final ApplicationExportAuthenticationHelper jSchFactory;
 
-    private PorticoAttachmentsZipCreator attachmentsZipCreator;
+    private ApplicationDocumentExportHelper attachmentsZipCreator;
 
     private String sftpHost;
 
@@ -80,12 +80,12 @@ public class SftpAttachmentsSendingService {
 
     private String targetFolder;
 
-    public SftpAttachmentsSendingService() {
+    public ApplicationDocumentExportService() {
         this(null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public SftpAttachmentsSendingService(JSchFactory jSchFactory, PorticoAttachmentsZipCreator attachmentsZipCreator,
+    public ApplicationDocumentExportService(ApplicationExportAuthenticationHelper jSchFactory, ApplicationDocumentExportHelper attachmentsZipCreator,
             @Value("${xml.data.export.sftp.host}") String sftpHost, @Value("${xml.data.export.sftp.port}") String sftpPort,
             @Value("${xml.data.export.sftp.username}") String sftpUsername, @Value("${xml.data.export.sftp.password}") String sftpPassword,
             @Value("${xml.data.export.sftp.folder}") String targetFolder) {
@@ -186,7 +186,7 @@ public class SftpAttachmentsSendingService {
         }
     }
 
-    public void setPorticoAttachmentsZipCreator(PorticoAttachmentsZipCreator zipCreator) {
+    public void setPorticoAttachmentsZipCreator(ApplicationDocumentExportHelper zipCreator) {
         this.attachmentsZipCreator = zipCreator;
     }
 }

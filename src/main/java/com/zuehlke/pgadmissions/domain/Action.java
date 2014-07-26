@@ -115,12 +115,12 @@ public class Action extends WorkflowResource {
         this.actionType = actionType;
         return this;
     }
-
+    
     public Action withActionCategory(PrismActionCategory actionCategory) {
         this.actionCategory = actionCategory;
         return this;
     }
-
+    
     public Action withSaveComment(boolean saveComment) {
         this.saveComment = saveComment;
         return this;

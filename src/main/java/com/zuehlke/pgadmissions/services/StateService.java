@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -12,17 +12,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.StateActionAssignment;
+import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.StateDuration;
+import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
@@ -30,6 +35,16 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 @Service
 @Transactional
 public class StateService {
+    
+    private static final Set<Class<? extends IUniqueEntity>> workflowConfigurationClasses = Sets.newLinkedHashSet();
+
+    static {
+        workflowConfigurationClasses.add(RoleTransition.class);
+        workflowConfigurationClasses.add(StateTransition.class);
+        workflowConfigurationClasses.add(StateActionAssignment.class);
+        workflowConfigurationClasses.add(StateActionNotification.class);
+        workflowConfigurationClasses.add(StateAction.class);
+    }
 
     @Autowired
     private StateDAO stateDAO;
@@ -65,12 +80,16 @@ public class StateService {
         entityService.save(state);
     }
 
-    public List<State> getActiveStates() {
-        return stateDAO.getActiveStates();
+    public List<State> getConfigurableStates() {
+        return stateDAO.getConfigurableStates();
     }
 
     public List<State> getStates() {
         return entityService.list(State.class);
+    }
+    
+    public List<StateGroup> getStateGroups() {
+        return entityService.list(StateGroup.class);
     }
 
     public List<State> getWorkflowStates() {
@@ -94,11 +113,13 @@ public class StateService {
     }
 
     public void deleteStateActions() {
-        stateDAO.deleteStateActions();
+        for (Class<? extends IUniqueEntity> workflowConfigurationClass : workflowConfigurationClasses) {
+            stateDAO.deleteStateActions(workflowConfigurationClass);
+        }
     }
 
     public void deleteObseleteStateDurations() {
-        stateDAO.deleteObseleteStateDurations(getActiveStates());
+        stateDAO.deleteObseleteStateDurations(getConfigurableStates());
     }
 
     public <T extends Resource> List<State> getDeprecatedStates(Class<T> resourceClass) {
@@ -116,23 +137,7 @@ public class StateService {
     public List<State> getOrderedTransitionStates(State state, State... excludedTransitionStates) {
         return stateDAO.getOrderedTransitionStates(state, excludedTransitionStates);
     }
-
-    public State getRootState() {
-        return stateDAO.getRootState();
-    }
-
-    public List<State> getUpstreamStates(State state) {
-        return stateDAO.getUpstreamStates(state);
-    }
-
-    public List<State> getDownstreamStates(State state) {
-        return stateDAO.getDownstreamStates(state);
-    }
-
-    public List<PrismState> getActionableStates(Collection<PrismAction> actions) {
-        return stateDAO.getActionableStates(actions);
-    }
-
+    
     public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) {
         comment.setResource(resourceService.getOperativeResource(resource, action));
         
@@ -231,11 +236,11 @@ public class StateService {
     @SuppressWarnings("unused")
     private StateTransition getApplicationExportedOutcome(Resource resource, Comment comment, List<StateTransition> stateTransitions) {
         State transitionState = resource.getState();
-        State parentState = transitionState.getParentState();
+        StateGroup stateGroup = transitionState.getStateGroup();
         if (comment.getExportError() != null) {
-            transitionState = getById(PrismState.valueOf(parentState.toString() + "_PENDING_CORRECTION"));
+            transitionState = getById(PrismState.valueOf(stateGroup.toString() + "_PENDING_CORRECTION"));
         } else if (comment.getExportResponse() != null && comment.getExportError() == null) {
-            transitionState = getById(PrismState.valueOf(parentState.toString() + "_COMPLETED"));
+            transitionState = getById(PrismState.valueOf(stateGroup.toString() + "_COMPLETED"));
         }
         return stateDAO.getStateTransition(stateTransitions, transitionState);
     }

@@ -33,7 +33,6 @@ public class OpportunityCategoryImportService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public void importEntities(String fileLocation) throws XMLDataImportException {
         OpportunityCategoryImportService thisBean = applicationContext.getBean(OpportunityCategoryImportService.class);
         log.info("Starting the import from file: " + fileLocation);

@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
@@ -67,11 +66,6 @@ public class ProspectusController {
     @ModelAttribute("studyOptions")
     public List<StudyOption> getDistinctStudyOptions() {
         return programInstanceService.getAvailableStudyOptions();
-    }
-
-    @ModelAttribute("countries")
-    public List<Domicile> getAllEnabledDomiciles() {
-        return importedEntityService.getAllDomiciles();
     }
 
     @ModelAttribute("advertisingDeadlines")

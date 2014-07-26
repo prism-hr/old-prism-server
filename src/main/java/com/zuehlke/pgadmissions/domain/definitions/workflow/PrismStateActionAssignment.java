@@ -1,23 +1,25 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
 
 public class PrismStateActionAssignment {
 
     private PrismRole role;
 
-    private List<PrismStateActionEnhancement> enhancements = Lists.newArrayList();
+    private PrismActionEnhancement actionEnhancement;
+
+    private PrismAction delegatedAction;
 
     public PrismRole getRole() {
         return role;
     }
 
-    public List<PrismStateActionEnhancement> getEnhancements() {
-        return enhancements == null ? new ArrayList<PrismStateActionEnhancement>() : enhancements;
+    public PrismActionEnhancement getActionEnhancement() {
+        return actionEnhancement;
+    }
+
+    public PrismAction getDelegatedAction() {
+        return delegatedAction;
     }
 
     public PrismStateActionAssignment withRole(PrismRole role) {
@@ -25,14 +27,19 @@ public class PrismStateActionAssignment {
         return this;
     }
 
-    public PrismStateActionAssignment withEnhancements(List<PrismStateActionEnhancement> enhancements) {
-        this.enhancements = enhancements;
+    public PrismStateActionAssignment withActionEnhancement(PrismActionEnhancement actionEnhancement) {
+        this.actionEnhancement = actionEnhancement;
+        return this;
+    }
+    
+    public PrismStateActionAssignment withDelegatedAction(PrismAction delegatedAction) {
+        this.delegatedAction = delegatedAction;
         return this;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(role, enhancements);
+        return Objects.hashCode(role, actionEnhancement);
     }
 
     @Override
@@ -44,8 +51,7 @@ public class PrismStateActionAssignment {
             return false;
         }
         final PrismStateActionAssignment other = (PrismStateActionAssignment) obj;
-        final List<PrismStateActionEnhancement> otherEnhancements = other.getEnhancements();
-        return Objects.equal(role, other.getRole()) && enhancements.size() == otherEnhancements.size() && enhancements.containsAll(otherEnhancements);
+        return Objects.equal(role, other.getRole()) && Objects.equal(actionEnhancement, other.getActionEnhancement())
+                && Objects.equal(delegatedAction, other.getDelegatedAction());
     }
-
 }

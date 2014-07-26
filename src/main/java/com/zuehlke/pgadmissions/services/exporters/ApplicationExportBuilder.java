@@ -57,15 +57,15 @@ import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Gender;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ReferralSource;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.Gender;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
-public class SubmitAdmissionsApplicationRequestBuilderV2 {
+public class ApplicationExportBuilder {
 
     private static final String NOT_PROVIDED_VALUE = "NOT PROVIDED";
 
@@ -123,7 +123,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         }
     }
 
-    public SubmitAdmissionsApplicationRequestBuilderV2(ObjectFactory xmlFactory) {
+    public ApplicationExportBuilder(ObjectFactory xmlFactory) {
         this.xmlFactory = xmlFactory;
         try {
             datatypeFactory = DatatypeFactory.newInstance();
@@ -132,21 +132,21 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         }
     }
 
-    public SubmitAdmissionsApplicationRequestBuilderV2() {
+    public ApplicationExportBuilder() {
         this(null);
     }
 
-    public SubmitAdmissionsApplicationRequestBuilderV2 applicationForm(final Application applicationForm) {
+    public ApplicationExportBuilder applicationForm(final Application applicationForm) {
         this.applicationForm = applicationForm;
         return this;
     }
 
-    public SubmitAdmissionsApplicationRequestBuilderV2 isOverseasStudent(Boolean isOverseasStudent) {
+    public ApplicationExportBuilder isOverseasStudent(Boolean isOverseasStudent) {
         this.isOverseasStudent = isOverseasStudent;
         return this;
     }
 
-    public SubmitAdmissionsApplicationRequestBuilderV2 primarySupervisor(User primarySupervisor) {
+    public ApplicationExportBuilder primarySupervisor(User primarySupervisor) {
         this.primarySupervisor = primarySupervisor;
         return this;
     }
@@ -169,7 +169,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private ApplicantTp buildApplicant() {
         ApplicantTp applicant = xmlFactory.createApplicantTp();
         applicant.setFullName(buildFullName());
-        applicant.setSex(buildSex());
+        applicant.setSex(buildGender());
         applicant.setDateOfBirth(buildDateOfBirth());
         applicant.setNationality(buildFirstNationality());
         applicant.setSecondaryNationality(buildSecondNationality());
@@ -221,17 +221,9 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         return nameTp;
     }
 
-    private GenderTp buildSex() {
+    private GenderTp buildGender() {
         Gender gender = applicationForm.getPersonalDetails().getGender();
-        if (gender == Gender.MALE) {
-            return GenderTp.M;
-        } else if (gender == Gender.FEMALE) {
-            return GenderTp.F;
-        } else if (gender == Gender.INDETERMINATE_GENDER) {
-            return GenderTp.N;
-        } else {
-            throw new IllegalArgumentException(String.format("Gender type [%s] could not be converted", gender));
-        }
+        return GenderTp.valueOf(gender.getCode());
     }
 
     private XMLGregorianCalendar buildDateOfBirth() {
@@ -373,7 +365,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         ApplicationProgramDetails programmeDetails = applicationForm.getProgramDetails();
         CourseApplicationTp applicationTp = xmlFactory.createCourseApplicationTp();
         applicationTp.setStartMonth(new DateTime(programmeDetails.getStartDate()));
-        if (!programmeDetails.getSupervisors().isEmpty()) {
+        if (!programmeDetails.getSuggestedSupervisors().isEmpty()) {
             // Which supervisor to pick if there are multiple
             // Just send the first one. Confirmed by Alastair Knowles
             applicationTp.setProposedSupervisorName(buildProposedSupervisorName(0));
@@ -498,7 +490,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private NameTp buildProposedSupervisorName(int idx) {
         ApplicationProgramDetails programmeDetails = applicationForm.getProgramDetails();
         NameTp nameTp = xmlFactory.createNameTp();
-        List<ApplicationSupervisor> suggestedSupervisors = programmeDetails.getSupervisors();
+        List<ApplicationSupervisor> suggestedSupervisors = programmeDetails.getSuggestedSupervisors();
 
         if (idx < suggestedSupervisors.size()) {
             ApplicationSupervisor suggestedSupervisor = suggestedSupervisors.get(idx);

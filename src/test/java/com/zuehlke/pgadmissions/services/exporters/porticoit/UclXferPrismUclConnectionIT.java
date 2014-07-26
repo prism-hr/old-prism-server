@@ -28,7 +28,7 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.services.exporters.JSchFactory;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationExportAuthenticationHelper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testSftpContext.xml")
@@ -36,7 +36,7 @@ import com.zuehlke.pgadmissions.services.exporters.JSchFactory;
 public class UclXferPrismUclConnectionIT  {
 
     @Autowired
-    private JSchFactory jSchFactory;
+    private ApplicationExportAuthenticationHelper jSchFactory;
     
     @Value("${application.host}")
     private String configuredHost;

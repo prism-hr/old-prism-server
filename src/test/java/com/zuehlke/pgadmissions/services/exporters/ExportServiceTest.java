@@ -36,15 +36,15 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
 
     private WebServiceTemplate webServiceTemplateMock;
 
-    private JSchFactory jschfactoryMock;
+    private ApplicationExportAuthenticationHelper jschfactoryMock;
 
     private Application applicationForm;
 
-    private ExportService exportService;
+    private ApplicationExportService exportService;
 
-    private SftpAttachmentsSendingService attachmentsSendingService;
+    private ApplicationDocumentExportService attachmentsSendingService;
 
-    private PorticoAttachmentsZipCreator attachmentsZipCreatorMock;
+    private ApplicationDocumentExportHelper attachmentsZipCreatorMock;
 
     private ApplicationDAO applicationFormDAOMock;
 

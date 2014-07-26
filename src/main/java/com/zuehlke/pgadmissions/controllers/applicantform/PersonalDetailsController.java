@@ -27,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.Gender;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
@@ -118,34 +117,9 @@ public class PersonalDetailsController {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
-    @ModelAttribute("languages")
-    public List<Language> getAllEnabledLanguages() {
-        return importedEntityService.getAllLanguages();
-    }
-
-    @ModelAttribute("countries")
-    public List<Country> getAllEnabledCountries() {
-        return importedEntityService.getAllCountries();
-    }
-
-    @ModelAttribute("ethnicities")
-    public List<Ethnicity> getAllEnabledEthnicities() {
-        return importedEntityService.getAllEthnicities();
-    }
-
     @ModelAttribute("disabilities")
     public List<Disability> getAllEnabledDisabilities() {
         return importedEntityService.getAllDisabilities();
-    }
-
-    @ModelAttribute("domiciles")
-    public List<Domicile> getAllEnabledDomiciles() {
-        return importedEntityService.getAllDomiciles();
-    }
-
-    @ModelAttribute("genders")
-    public Gender[] getGenders() {
-        return Gender.values();
     }
 
     @ModelAttribute("applicationForm")

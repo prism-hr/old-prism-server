@@ -8,7 +8,7 @@ SELECT ${queryScopeUpper}_LIST_BLOCK.*, (
 	AS averageRating
 FROM (
 	SELECT ${queryScopeUpper}.id AS id, ${queryScopeUpper}.code AS code,
-		${queryScopeUpper}_LIST_PERMISSION.raises_urgent_flag AS raisesUrgentFlag, STATE.parent_state_id AS state,
+		${queryScopeUpper}_LIST_PERMISSION.raises_urgent_flag AS raisesUrgentFlag, STATE.state_group_id AS state,
   	<#include "${queryScopeLower}_custom_columns.ftl">
 	FROM ${queryScopeUpper} INNER JOIN (
 		SELECT USER_ROLE.${queryScopeLower}_id,

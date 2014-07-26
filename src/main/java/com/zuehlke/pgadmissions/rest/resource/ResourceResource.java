@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -85,7 +86,9 @@ public class ResourceResource {
         List<PrismAction> permittedActions = actionService.getPermittedActions(resource, currentUser);
         representation.setActions(permittedActions);
 
-        // TODO: supply list of enhancements
+        // set list of available action enhancements (viewing and editing permissions)
+        List<PrismActionEnhancement> permittedActionEnhancements = actionService.getPermittedActionEnhancements(resource, currentUser);
+        representation.setActionEnhancements(permittedActionEnhancements);
 
         // set list of user to roles mappings
         List<User> users = roleService.getResourceUsers(resource);

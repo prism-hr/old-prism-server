@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,11 +88,6 @@ public class RefereeController {
         ApplicationReferee referee = refereeService.getById(refereeId);
         refereeService.delete(refereeId);
         return "redirect:/update/getReferee?applicationId=" + referee.getApplication().getCode() + "&message=deleted";
-    }
-
-    @ModelAttribute("domiciles")
-    public List<Domicile> getAllDomiciles() {
-        return importedEntityService.getAllDomiciles();
     }
 
     @ModelAttribute("applicationForm")

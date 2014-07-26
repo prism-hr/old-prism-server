@@ -14,7 +14,7 @@ import com.jcraft.jsch.Session;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 
 @Component
-public class JSchFactory {
+public class ApplicationExportAuthenticationHelper {
 
     @Value("${xml.data.export.sftp.host}")
     private String sftpHost;
@@ -39,7 +39,7 @@ public class JSchFactory {
 
     private JSch jSch = null;
     
-    public JSchFactory() {
+    public ApplicationExportAuthenticationHelper() {
     }
     
     public Session getInstance() throws JSchException, ResourceNotFoundException {

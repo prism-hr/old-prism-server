@@ -91,12 +91,7 @@ public class ProgramDetailsController {
     public List<StudyOption> getStudyOptions(@RequestParam String applicationId) {
         return programService.getAvailableStudyOptions(getApplicationForm(applicationId).getProgram());
     }
-
-    @ModelAttribute("sourcesOfInterests")
-    public List<ReferralSource> getSourcesOfInterests() {
-        return importedEntityService.getAllSourcesOfInterest();
-    }
-
+    
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(String applicationId) {
         // TODO: check actions

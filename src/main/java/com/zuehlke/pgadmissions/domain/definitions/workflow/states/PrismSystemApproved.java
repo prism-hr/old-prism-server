@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 import java.util.Arrays;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -16,16 +17,17 @@ public class PrismSystemApproved extends PrismWorkflowState {
     @Override
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.SYSTEM_CONFIGURE) //
+            .withAction(PrismAction.SYSTEM_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(true) // //
+            .withDefaultAction(true) //
+            .withActionEnhancement(PrismActionEnhancement.SYSTEM_VIEW_EDIT_AS_USER)
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
-                        .withTransitionState(PrismState.SYSTEM_APPROVED) // 
-                        .withTransitionAction(PrismAction.SYSTEM_CONFIGURE)
+                        .withTransitionState(PrismState.SYSTEM_RUNNING) // 
+                        .withTransitionAction(PrismAction.SYSTEM_VIEW_EDIT)
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.SYSTEM_ADMINISTRATOR) //
@@ -66,8 +68,8 @@ public class PrismSystemApproved extends PrismWorkflowState {
              .withDefaultAction(false) //
              .withTransitions(Arrays.asList( // 
                  new PrismStateTransition() // 
-                     .withTransitionState(PrismState.SYSTEM_APPROVED) // 
-                     .withTransitionAction(PrismAction.SYSTEM_CONFIGURE)
+                     .withTransitionState(PrismState.SYSTEM_RUNNING) // 
+                     .withTransitionAction(PrismAction.SYSTEM_VIEW_EDIT)
                      .withRoleTransitions(Arrays.asList( // 
                          new PrismRoleTransition() //
                              .withRole(PrismRole.SYSTEM_ADMINISTRATOR) //

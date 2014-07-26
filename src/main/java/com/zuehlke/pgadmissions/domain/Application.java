@@ -463,7 +463,7 @@ public class Application extends Resource {
     @Override
     public LocalDate getDueDateBaseline() {
         LocalDate dueDateBaseline = new LocalDate();
-        if (state.getParentState().getId() == PrismState.APPLICATION_REVIEW_PENDING_FEEDBACK && closingDate != null && closingDate.isAfter(dueDateBaseline)) {
+        if (state.getId() == PrismState.APPLICATION_REVIEW_PENDING_FEEDBACK && closingDate != null && closingDate.isAfter(dueDateBaseline)) {
             return closingDate;
         }
         return dueDateBaseline;

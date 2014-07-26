@@ -29,11 +29,11 @@ import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
-import com.zuehlke.pgadmissions.domain.StateActionEnhancement;
 import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -97,8 +97,6 @@ public class WorkflowConfigurationHelper {
         assertEquals(workflowStates.size(), statesVisited.size());
         assertCollectionEquals(PrismScope.getCreatableScopes(), actualParentScopes.keySet());
         assertCollectionEquals(PrismAction.getCreationActions(), actualCreationActions);
-        assertCollectionEquals(PrismState.getInitialStates(), actualInitialStates);
-        assertCollectionEquals(PrismState.getFinalStates(), actualFinalStates);
         
         assertTrue(actualCreationActions.contains(PrismAction.SYSTEM_STARTUP));
         verifyCreatorRoles();
@@ -133,10 +131,9 @@ public class WorkflowConfigurationHelper {
         verifyAsInitialState(state);
         verifyAsFinalState(state);
 
-        State parentState = state.getParentState();
-        assertTrue(state.getSequenceOrder() == null || state == parentState);
-        verifyAsParentState(state);
-
+        assertEquals(state.getScope(), state.getStateGroup().getScope());
+        assertFalse(state.getStateActions().isEmpty());
+        
         verifyStateActions(state);
         verifyStateActionAssignments(state);
         verifyStateActionNotifications(state);
@@ -197,23 +194,6 @@ public class WorkflowConfigurationHelper {
         }
     }
 
-    private void verifyAsParentState(State state) {
-        State parentState = state.getParentState();
-
-        if (state == parentState) {
-            Integer sequenceIndex = 0;
-
-            for (State childState : parentState.getChildStates()) {
-                Integer sequenceOrder = childState.getSequenceOrder();
-
-                if (sequenceOrder != null) {
-                    assertNotSame(sequenceIndex, sequenceOrder);
-                    sequenceIndex = sequenceOrder;
-                }
-            }
-        }
-    }
-
     private void verifyCreatorRoles() {
         Set<PrismScope> actualScopes = actualCreatorRoles.keySet();
         assertCollectionEquals(Arrays.asList(PrismScope.values()), actualScopes);
@@ -226,7 +206,7 @@ public class WorkflowConfigurationHelper {
     private void verifyStateActions(State state) {
         Set<PrismAction> escalationActions = Sets.newHashSet();
         Set<Action> defaultActions = Sets.newHashSet();
-        Set<Action> viewEditActions = Sets.newHashSet();
+        Set<StateAction> viewEditActions = Sets.newHashSet();
 
         for (StateAction stateAction : state.getStateActions()) {
             Action action = stateAction.getAction();
@@ -254,16 +234,24 @@ public class WorkflowConfigurationHelper {
             }
 
             if (stateAction.isDefaultAction()) {
-                assertEquals(PrismActionType.USER_INVOCATION, action.getActionType());
                 defaultActions.add(action);
             }
 
             if (actionCategory == PrismActionCategory.CREATE_RESOURCE) {
+                assertTrue(stateAction.getActionEnhancement() != null);
                 actualCreationActions.add(action.getId());
             }
             
             if (actionCategory == PrismActionCategory.VIEW_EDIT_RESOURCE) {
-                viewEditActions.add(action);
+                Set<PrismActionEnhancement> enhancements = Sets.newHashSet();
+                enhancements.add(stateAction.getActionEnhancement());
+                
+                for (StateActionAssignment stateActionAssignment : stateAction.getStateActionAssignments()) {
+                    enhancements.add(stateActionAssignment.getActionEnhancement());
+                }
+                
+                assertFalse(enhancements.isEmpty());
+                viewEditActions.add(stateAction);
             }
 
             verifyStateTransitions(stateAction);
@@ -271,7 +259,7 @@ public class WorkflowConfigurationHelper {
 
         assertEquals(1, defaultActions.size());
         assertTrue(viewEditActions.size() > 0);
-
+     
         if (stateService.getStateDuration(systemService.getSystem(), state) != null) {
             assertFalse(escalationActions.isEmpty());
         }
@@ -382,10 +370,13 @@ public class WorkflowConfigurationHelper {
 
     private void verifyStateActionAssignments(State state) {
         for (StateAction stateAction : state.getStateActions()) {
+            Action action = stateAction.getAction();
             Set<StateActionAssignment> assignments = stateAction.getStateActionAssignments();
-
-            if (stateAction.getAction().getActionType() == PrismActionType.SYSTEM_INVOCATION) {
+            
+            if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
                 assertTrue(assignments.size() == 0);
+            } else if (action.getCreationScope() != null) {
+                assertFalse(assignments.size() == 0);
             }
 
             for (StateActionAssignment assignment : assignments) {
@@ -394,22 +385,12 @@ public class WorkflowConfigurationHelper {
 
                 assertTrue(assignedRole.getScope().getPrecedence() <= state.getScope().getPrecedence());
                 assertTrue(actualRolesCreated.contains(assignedRole.getId()));
-                
-                Set<StateActionEnhancement> enhancements = assignment.getEnhancements();
-                if (enhancements.size() > 0) {
-                    assertEquals(PrismActionCategory.VIEW_EDIT_RESOURCE, stateAction.getAction().getActionCategory());
-                    
-                    for (StateActionEnhancement enhancement : enhancements) {
-                        assertEquals(state.getScope().getId(), enhancement.getEnhancementType().getScope());
-                    }
-                }
             }
         }
     }
 
     private void verifyStateActionNotifications(State state) {
         for (StateAction stateAction : state.getStateActions()) {
-
             for (StateActionNotification notification : stateAction.getStateActionNotifications()) {
                 NotificationTemplate template = notification.getNotificationTemplate();
                 Scope templateScope = template.getScope();

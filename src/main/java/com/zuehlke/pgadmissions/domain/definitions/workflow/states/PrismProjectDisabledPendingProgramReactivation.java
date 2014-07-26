@@ -3,10 +3,12 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 import java.util.Arrays;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
@@ -34,7 +36,7 @@ public class PrismProjectDisabledPendingProgramReactivation extends PrismWorkflo
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_RESTORE) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
+            .withDefaultAction(true) //
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
@@ -89,16 +91,21 @@ public class PrismProjectDisabledPendingProgramReactivation extends PrismWorkflo
                         .withTransitionAction(PrismAction.PROJECT_TERMINATE)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.APPLICATION_TERMINATE))))); //
-    
+        
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROJECT_VIEW) //
+            .withAction(PrismAction.PROJECT_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(true)); //
-    
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROJECT_VIEW_APPLICATION_LIST) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false));
+            .withDefaultAction(true) //
+            .withActionEnhancement(PrismActionEnhancement.PROJECT_VIEW_AS_USER)
+                .withAssignments(Arrays.asList( // 
+                    new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
+                    new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR), // 
+                    new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.PROJECT_ADMINISTRATOR), // 
+                    new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR)))); //
     }
 
 }

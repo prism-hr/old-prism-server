@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -17,17 +16,12 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
-import com.zuehlke.pgadmissions.domain.StateActionAssignment;
-import com.zuehlke.pgadmissions.domain.StateActionEnhancement;
-import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
@@ -38,17 +32,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 @Repository
 @SuppressWarnings("unchecked")
 public class StateDAO {
-
-    private static final Set<Class<? extends IUniqueEntity>> workflowConfigurationClasses = Sets.newLinkedHashSet();
-
-    static {
-        workflowConfigurationClasses.add(RoleTransition.class);
-        workflowConfigurationClasses.add(StateTransition.class);
-        workflowConfigurationClasses.add(StateActionEnhancement.class);
-        workflowConfigurationClasses.add(StateActionAssignment.class);
-        workflowConfigurationClasses.add(StateActionNotification.class);
-        workflowConfigurationClasses.add(StateAction.class);
-    }
 
     @Autowired
     private ScopeDAO scopeDAO;
@@ -164,12 +147,10 @@ public class StateDAO {
         return escalations;
     }
 
-    public void deleteStateActions() {
-        for (Class<? extends IUniqueEntity> workflowConfigurationClass : workflowConfigurationClasses) {
-            sessionFactory.getCurrentSession().createQuery( //
-                    "delete " + workflowConfigurationClass.getSimpleName()) //
-                    .executeUpdate();
-        }
+    public <T extends IUniqueEntity> void deleteStateActions(Class<T> workflowConfigurationClass) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete " + workflowConfigurationClass.getSimpleName()) //
+                .executeUpdate();
     }
 
     public void deleteObseleteStateDurations(List<State> activeStates) {

@@ -8,8 +8,8 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
-import com.zuehlke.pgadmissions.services.exporters.PorticoAttachmentsZipCreator;
-import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationDocumentExportHelper;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationDocumentExportService.CouldNotCreateAttachmentsPack;
 
 public class PdfDocumentBuilderTest {
 
@@ -21,7 +21,7 @@ public class PdfDocumentBuilderTest {
     
     private Transcript1PdfBuilder transcript1PdfBuilder;
     
-    private PorticoAttachmentsZipCreator attachmentsZipCreator;
+    private ApplicationDocumentExportHelper attachmentsZipCreator;
     
     public PdfDocumentBuilderTest() {
     }

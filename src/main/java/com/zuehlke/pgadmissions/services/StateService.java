@@ -155,7 +155,7 @@ public class StateService {
     public List<PrismState> getActionableStates(Collection<PrismAction> actions) {
         return stateDAO.getActionableStates(actions);
     }
-
+    
     public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) {
         comment.setResource(resourceService.getOperativeResource(resource, action));
         

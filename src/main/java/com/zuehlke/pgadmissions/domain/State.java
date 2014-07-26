@@ -36,9 +36,6 @@ public class State extends WorkflowResource {
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
     
-    @OneToMany(mappedBy = "parentState")
-    private Set<State> childStates = Sets.newHashSet();
-    
     @OneToMany(mappedBy = "state")
     private Set<StateAction> stateActions = Sets.newHashSet();
     
@@ -69,10 +66,6 @@ public class State extends WorkflowResource {
 
     public void setScope(Scope scope) {
         this.scope = scope;
-    }
-    
-    public Set<State> getChildStates() {
-        return childStates;
     }
 
     public Set<StateAction> getStateActions() {

@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -29,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
@@ -82,8 +80,8 @@ public class StateService {
         entityService.save(state);
     }
 
-    public List<State> getActiveStates() {
-        return stateDAO.getActiveStates();
+    public List<State> getConfigurableStates() {
+        return stateDAO.getConfigurableStates();
     }
 
     public List<State> getStates() {
@@ -121,7 +119,7 @@ public class StateService {
     }
 
     public void deleteObseleteStateDurations() {
-        stateDAO.deleteObseleteStateDurations(getActiveStates());
+        stateDAO.deleteObseleteStateDurations(getConfigurableStates());
     }
 
     public <T extends Resource> List<State> getDeprecatedStates(Class<T> resourceClass) {
@@ -138,22 +136,6 @@ public class StateService {
 
     public List<State> getOrderedTransitionStates(State state, State... excludedTransitionStates) {
         return stateDAO.getOrderedTransitionStates(state, excludedTransitionStates);
-    }
-
-    public State getRootState() {
-        return stateDAO.getRootState();
-    }
-
-    public List<State> getUpstreamStates(State state) {
-        return stateDAO.getUpstreamStates(state);
-    }
-
-    public List<State> getDownstreamStates(State state) {
-        return stateDAO.getDownstreamStates(state);
-    }
-
-    public List<PrismState> getActionableStates(Collection<PrismAction> actions) {
-        return stateDAO.getActionableStates(actions);
     }
     
     public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) {

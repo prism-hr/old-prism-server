@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import com.zuehlke.pgadmissions.domain.definitions.Gender;
-import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
+
+import com.zuehlke.pgadmissions.domain.Gender;
+import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 
 public class ApplicationPersonalDetailsDTO {
 

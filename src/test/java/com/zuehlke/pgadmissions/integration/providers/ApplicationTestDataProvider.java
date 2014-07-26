@@ -25,12 +25,12 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.FundingSource;
+import com.zuehlke.pgadmissions.domain.Gender;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.builders.TestObjectProvider;
-import com.zuehlke.pgadmissions.domain.definitions.Gender;
 import com.zuehlke.pgadmissions.services.AdditionalInformationService;
 import com.zuehlke.pgadmissions.services.ApplicationAddressService;
 import com.zuehlke.pgadmissions.services.ApplicationDocumentService;
@@ -92,7 +92,7 @@ public class ApplicationTestDataProvider {
 
     private void createPersonalDetails(Application application) {
         ApplicationPersonalDetails personalDetails = new ApplicationPersonalDetails();
-        personalDetails.setGender(Gender.FEMALE);
+        personalDetails.setGender(testObjectProvider.get(Gender.class));
         personalDetails.setDateOfBirth(new LocalDate().minusYears(28));
         personalDetails.setCountry(testObjectProvider.get(Country.class));
         personalDetails.setFirstNationality(testObjectProvider.get(Language.class));

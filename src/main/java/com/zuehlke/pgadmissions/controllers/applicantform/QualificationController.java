@@ -116,21 +116,6 @@ public class QualificationController {
         return Collections.emptyList();
     }
 
-    @ModelAttribute("languages")
-    public List<Language> getAllEnabledLanguages() {
-        return importedEntityService.getAllLanguages();
-    }
-
-    @ModelAttribute("countries")
-    public List<Domicile> getAllEnabledDomiciles() {
-        return importedEntityService.getAllDomiciles();
-    }
-
-    @ModelAttribute("types")
-    public List<QualificationType> getAllEnabledQualificationTypes() {
-        return importedEntityService.getAllQualificationTypes();
-    }
-
     @ModelAttribute("applicationForm")
     public Application getApplicationForm(String applicationId) {
         // TODO: check actions

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 import java.util.Arrays;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -17,20 +18,21 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
     @Override
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.INSTITUTION_CONFIGURE) //
+            .withAction(PrismAction.INSTITUTION_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
+            .withDefaultAction(true) //
+            .withActionEnhancement(PrismActionEnhancement.INSTITUTION_VIEW_EDIT_AS_USER) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMITTER), // 
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))
+                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.INSTITUTION_APPROVED) // 
-                        .withTransitionAction(PrismAction.INSTITUTION_CONFIGURE)
+                        .withTransitionAction(PrismAction.INSTITUTION_VIEW_EDIT)
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) //
@@ -99,26 +101,6 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
                                 .withRestrictToOwner(true) //
                                 .withMinimumPermitted(1) //
                                 .withMaximumPermitted(1))))));
-    
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.INSTITUTION_VIEW) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(true)); //
-    
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.INSTITUTION_VIEW_APPLICATION_LIST) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false)); //
-    
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.INSTITUTION_VIEW_PROGRAM_LIST) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false)); //
-    
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.INSTITUTION_VIEW_PROJECT_LIST) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false)); //
     }
 
 }

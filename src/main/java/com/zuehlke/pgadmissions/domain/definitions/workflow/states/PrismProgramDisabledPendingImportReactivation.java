@@ -3,10 +3,12 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 import java.util.Arrays;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
@@ -77,21 +79,17 @@ public class PrismProgramDisabledPendingImportReactivation extends PrismWorkflow
                         .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_REACTIVATED_OUTCOME)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.PROJECT_RESTORE))))); //
-    
+        
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROGRAM_VIEW) //
+            .withAction(PrismAction.PROGRAM_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(true)); //
-    
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROGRAM_VIEW_APPLICATION_LIST) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false)); //
-    
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROGRAM_VIEW_PROJECT_LIST) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false));
+            .withDefaultAction(true) //
+            .withActionEnhancement(PrismActionEnhancement.PROGRAM_VIEW_AS_USER) //
+                .withAssignments(Arrays.asList( // 
+                    new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
+                    new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR)))); //
     }
 
 }

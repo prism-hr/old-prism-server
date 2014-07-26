@@ -29,24 +29,12 @@ public class State extends WorkflowResource {
     private PrismState id;
 
     @ManyToOne
-    @JoinColumn(name = "parent_state_id")
-    private State parentState;
-    
-    @Column(name = "is_initial_state", nullable = false)
-    private boolean initialState;
-    
-    @Column(name = "is_final_state", nullable = false)
-    private boolean finalState;
-
-    @Column(name = "sequence_order")
-    private Integer sequenceOrder;
+    @JoinColumn(name = "scope_group_id", nullable = false)
+    private StateGroup stateGroup;
     
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
-    
-    @OneToMany(mappedBy = "parentState")
-    private Set<State> childStates = Sets.newHashSet();
     
     @OneToMany(mappedBy = "state")
     private Set<StateAction> stateActions = Sets.newHashSet();
@@ -63,37 +51,13 @@ public class State extends WorkflowResource {
     public void setId(Object id) {
         this.id = (PrismState) id;
     }
-    
-    public State getParentState() {
-        return parentState;
+
+    public StateGroup getStateGroup() {
+        return stateGroup;
     }
 
-    public void setParentState(State parentState) {
-        this.parentState = parentState;
-    }
-    
-    public boolean isInitialState() {
-        return initialState;
-    }
-
-    public void setInitialState(boolean initialState) {
-        this.initialState = initialState;
-    }
-
-    public boolean isFinalState() {
-        return finalState;
-    }
-
-    public void setFinalState(boolean finalState) {
-        this.finalState = finalState;
-    }
-
-    public Integer getSequenceOrder() {
-        return sequenceOrder;
-    }
-
-    public void setSequenceOrder(Integer sequenceOrder) {
-        this.sequenceOrder = sequenceOrder;
+    public void setStateGroup(StateGroup stateGroup) {
+        this.stateGroup = stateGroup;
     }
 
     public Scope getScope() {
@@ -102,10 +66,6 @@ public class State extends WorkflowResource {
 
     public void setScope(Scope scope) {
         this.scope = scope;
-    }
-    
-    public Set<State> getChildStates() {
-        return childStates;
     }
 
     public Set<StateAction> getStateActions() {
@@ -125,18 +85,8 @@ public class State extends WorkflowResource {
         return this;
     }
     
-    public State withInitialState(boolean initialState) {
-        this.initialState = initialState;
-        return this;
-    }
-    
-    public State withFinalState(boolean finalState) {
-        this.finalState = finalState;
-        return this;
-    }
-    
-    public State withSequenceOrder(Integer sequenceOrder) {
-        this.sequenceOrder = sequenceOrder;
+    public State withStateGroup(StateGroup stateGroup) {
+        this.stateGroup = stateGroup;
         return this;
     }
     

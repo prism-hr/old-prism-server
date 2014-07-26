@@ -29,8 +29,8 @@ import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
-import com.zuehlke.pgadmissions.domain.StateActionEnhancement;
 import com.zuehlke.pgadmissions.domain.StateActionNotification;
+import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
@@ -43,7 +43,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -149,12 +148,16 @@ public class SystemInitialisationHelper {
         }
     }
 
+    public void verifyStateGroupCreation() {
+        for (StateGroup stateGroup : stateService.getStateGroups()) {
+            assertEquals(stateGroup.getId().getSequenceOrder(), stateGroup.getSequenceOrder());
+            assertEquals(stateGroup.getId().getScope(), stateGroup.getScope().getId());
+        }
+    }
+    
     public void verifyStateCreation() {
         for (State state : stateService.getStates()) {
-            assertEquals(PrismState.getParentState(state.getId()), state.getParentState().getId());
-            assertEquals(state.getId().isInitialState(), state.isInitialState());
-            assertEquals(state.getId().isFinalState(), state.isFinalState());
-            assertEquals(state.getId().getSequenceOrder(), state.getSequenceOrder());
+            assertEquals(state.getId().getStateGroup(), state.getStateGroup().getId());
             assertEquals(state.getId().getScope(), state.getScope().getId());
         }
     }
@@ -169,7 +172,7 @@ public class SystemInitialisationHelper {
     public void verifySystemCreation() {
         System system = systemService.getSystem();
         assertEquals(system.getName(), systemName);
-        assertEquals(system.getState().getId(), PrismState.SYSTEM_APPROVED);
+        assertEquals(system.getState().getId(), PrismState.SYSTEM_RUNNING);
     }
 
     public void verifySystemUserCreation() {
@@ -206,7 +209,7 @@ public class SystemInitialisationHelper {
 
     public void verifyStateDurationCreation() {
         System system = systemService.getSystem();
-        for (State state : stateService.getActiveStates()) {
+        for (State state : stateService.getConfigurableStates()) {
             assertEquals(state.getId().getDuration(), stateService.getStateDuration(system, state).getDuration());
         }
     }
@@ -225,6 +228,7 @@ public class SystemInitialisationHelper {
             assertNotNull(prismStateAction);
             assertEquals(prismStateAction.isRaisesUrgentFlag(), stateAction.isRaisesUrgentFlag());
             assertEquals(prismStateAction.isDefaultAction(), stateAction.isDefaultAction());
+            assertEquals(prismStateAction.getActionEnhancement(), stateAction.getActionEnhancement());
 
             NotificationTemplate template = stateAction.getNotificationTemplate();
             PrismNotificationTemplate prismTemplate = prismStateAction.getNotificationTemplate();
@@ -257,17 +261,10 @@ public class SystemInitialisationHelper {
         assertTrue(prismStateAction.getAssignments().size() == stateActionAssignments.size());
 
         for (StateActionAssignment stateActionAssignment : stateActionAssignments) {
-            PrismStateActionAssignment prismStateActionAssignment = new PrismStateActionAssignment().withRole(stateActionAssignment.getRole().getId());
-
-            Set<StateActionEnhancement> stateActionEnhancements = stateActionAssignment.getEnhancements();
-
-            for (StateActionEnhancement stateActionEnhancement : stateActionEnhancements) {
-                Action delegatedAction = stateActionEnhancement.getDelegatedAction();
-                prismStateActionAssignment.getEnhancements().add(
-                        new PrismStateActionEnhancement().withEnhancement(stateActionEnhancement.getEnhancementType()).withDelegatedAction(
-                                (PrismAction) (delegatedAction == null ? delegatedAction : delegatedAction.getId())));
-            }
-
+            Action delegatedAction = stateActionAssignment.getDelegatedAction();
+            PrismStateActionAssignment prismStateActionAssignment = new PrismStateActionAssignment().withRole(stateActionAssignment.getRole().getId())
+                    .withActionEnhancement(stateActionAssignment.getActionEnhancement())
+                    .withDelegatedAction(delegatedAction == null ? null : delegatedAction.getId());
             assertTrue(prismStateAction.getAssignments().contains(prismStateActionAssignment));
         }
     }

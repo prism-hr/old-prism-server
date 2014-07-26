@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.rest.representation.application;
 
-import com.zuehlke.pgadmissions.domain.definitions.Gender;
 import org.joda.time.LocalDate;
 
 public class PersonalDetailsRepresentation {
@@ -23,7 +22,7 @@ public class PersonalDetailsRepresentation {
 
     private Integer title;
 
-    private Gender gender;
+    private Integer gender;
 
     private LocalDate dateOfBirth;
 
@@ -107,11 +106,11 @@ public class PersonalDetailsRepresentation {
         this.title = title;
     }
 
-    public Gender getGender() {
+    public Integer getGender() {
         return gender;
     }
 
-    public void setGender(Gender gender) {
+    public void setGender(Integer gender) {
         this.gender = gender;
     }
 

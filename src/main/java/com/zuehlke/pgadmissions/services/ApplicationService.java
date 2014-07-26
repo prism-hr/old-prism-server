@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services;
 import java.util.Date;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailsDTO;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
 

@@ -17,7 +17,7 @@ public class PrismSystemApproved extends PrismWorkflowState {
     @Override
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.SYSTEM_CONFIGURE) //
+            .withAction(PrismAction.SYSTEM_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
             .withActionEnhancement(PrismActionEnhancement.SYSTEM_VIEW_EDIT_AS_USER)
@@ -26,8 +26,8 @@ public class PrismSystemApproved extends PrismWorkflowState {
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
-                        .withTransitionState(PrismState.SYSTEM_APPROVED) // 
-                        .withTransitionAction(PrismAction.SYSTEM_CONFIGURE)
+                        .withTransitionState(PrismState.SYSTEM_RUNNING) // 
+                        .withTransitionAction(PrismAction.SYSTEM_VIEW_EDIT)
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.SYSTEM_ADMINISTRATOR) //
@@ -68,8 +68,8 @@ public class PrismSystemApproved extends PrismWorkflowState {
              .withDefaultAction(false) //
              .withTransitions(Arrays.asList( // 
                  new PrismStateTransition() // 
-                     .withTransitionState(PrismState.SYSTEM_APPROVED) // 
-                     .withTransitionAction(PrismAction.SYSTEM_CONFIGURE)
+                     .withTransitionState(PrismState.SYSTEM_RUNNING) // 
+                     .withTransitionAction(PrismAction.SYSTEM_VIEW_EDIT)
                      .withRoleTransitions(Arrays.asList( // 
                          new PrismRoleTransition() //
                              .withRole(PrismRole.SYSTEM_ADMINISTRATOR) //

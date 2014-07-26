@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -120,7 +120,7 @@ public class IT2SystemReferenceDataImport {
         }
 
         ImportedEntityFeed importedEntityFeed = new ImportedEntityFeed();
-        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.DISABILITY);
+        importedEntityFeed.setImportedEntityType(PrismImportedEntity.DISABILITY);
         importedEntityFeed.setLocation("reference_data/conflicts/disabilities/initialDisabilities.xml");
         importedEntityFeed.setInstitution(institution);
 
@@ -171,7 +171,7 @@ public class IT2SystemReferenceDataImport {
         }
 
         ImportedEntityFeed importedEntityFeed = new ImportedEntityFeed();
-        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.PROGRAM);
+        importedEntityFeed.setImportedEntityType(PrismImportedEntity.PROGRAM);
         importedEntityFeed.setLocation("reference_data/conflicts/programs/initialPrograms.xml");
         importedEntityFeed.setInstitution(institution);
 
@@ -234,51 +234,51 @@ public class IT2SystemReferenceDataImport {
         ImportedEntityFeed importedEntityFeed = new ImportedEntityFeed();
         importedEntityFeed.setInstitution(institution);
 
-        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.COUNTRY);
+        importedEntityFeed.setImportedEntityType(PrismImportedEntity.COUNTRY);
         importedEntityFeed.setLocation("xml/defaultEntities/country.xml");
         entityImportService.importEntities(importedEntityFeed);
 
-        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.DISABILITY);
+        importedEntityFeed.setImportedEntityType(PrismImportedEntity.DISABILITY);
         importedEntityFeed.setLocation("xml/defaultEntities/disability.xml");
         entityImportService.importEntities(importedEntityFeed);
 
-        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.DOMICILE);
+        importedEntityFeed.setImportedEntityType(PrismImportedEntity.DOMICILE);
         importedEntityFeed.setLocation("xml/defaultEntities/domicile.xml");
         entityImportService.importEntities(importedEntityFeed);
 
-        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.ETHNICITY);
+        importedEntityFeed.setImportedEntityType(PrismImportedEntity.ETHNICITY);
         importedEntityFeed.setLocation("xml/defaultEntities/ethnicity.xml");
         entityImportService.importEntities(importedEntityFeed);
 
-        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.NATIONALITY);
+        importedEntityFeed.setImportedEntityType(PrismImportedEntity.NATIONALITY);
         importedEntityFeed.setLocation("xml/defaultEntities/nationality.xml");
         entityImportService.importEntities(importedEntityFeed);
 
-        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.QUALIFICATION_TYPE);
+        importedEntityFeed.setImportedEntityType(PrismImportedEntity.QUALIFICATION_TYPE);
         importedEntityFeed.setLocation("xml/defaultEntities/qualificationType.xml");
         entityImportService.importEntities(importedEntityFeed);
 
-        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.REFERRAL_SOURCE);
+        importedEntityFeed.setImportedEntityType(PrismImportedEntity.REFERRAL_SOURCE);
         importedEntityFeed.setLocation("xml/defaultEntities/sourceOfInterest.xml");
         entityImportService.importEntities(importedEntityFeed);
 
-        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.FUNDING_SOURCE);
+        importedEntityFeed.setImportedEntityType(PrismImportedEntity.FUNDING_SOURCE);
         importedEntityFeed.setLocation("xml/defaultEntities/fundingSource.xml");
         entityImportService.importEntities(importedEntityFeed);
 
-        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.LANGUAGE_QUALIFICATION_TYPE);
+        importedEntityFeed.setImportedEntityType(PrismImportedEntity.LANGUAGE_QUALIFICATION_TYPE);
         importedEntityFeed.setLocation("xml/defaultEntities/languageQualificationType.xml");
         entityImportService.importEntities(importedEntityFeed);
 
-        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.TITLE);
+        importedEntityFeed.setImportedEntityType(PrismImportedEntity.TITLE);
         importedEntityFeed.setLocation("xml/defaultEntities/title.xml");
         entityImportService.importEntities(importedEntityFeed);
 
-        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.INSTITUTION);
+        importedEntityFeed.setImportedEntityType(PrismImportedEntity.INSTITUTION);
         importedEntityFeed.setLocation("reference_data/conflicts/institutions/institution.xml");
         entityImportService.importEntities(importedEntityFeed);
 
-        importedEntityFeed.setImportedEntityType(PrismImportedEntityType.PROGRAM);
+        importedEntityFeed.setImportedEntityType(PrismImportedEntity.PROGRAM);
         importedEntityFeed.setLocation("reference_data/2014-05-08/program.xml");
         entityImportService.importEntities(importedEntityFeed);
     }

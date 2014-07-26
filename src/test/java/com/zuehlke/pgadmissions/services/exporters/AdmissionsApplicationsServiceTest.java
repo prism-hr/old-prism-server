@@ -68,7 +68,7 @@ public class AdmissionsApplicationsServiceTest {
 
     @Test
     public void shouldMarshallRequest() throws XmlMappingException, IOException {
-        SubmitAdmissionsApplicationRequestBuilderV2 SubmitAdmissionsApplicationRequestBuilderV2 = new SubmitAdmissionsApplicationRequestBuilderV2(
+        ApplicationExportBuilder SubmitAdmissionsApplicationRequestBuilderV2 = new ApplicationExportBuilder(
                 new ObjectFactory());
         SubmitAdmissionsApplicationRequest request = SubmitAdmissionsApplicationRequestBuilderV2.applicationForm(applicationForm).build();
 
@@ -86,7 +86,7 @@ public class AdmissionsApplicationsServiceTest {
     public void shouldCleanPhoneNumber() throws XmlMappingException, IOException {
         applicationForm.getPersonalDetails().setPhoneNumber("+44 7500-934 2");
 
-        SubmitAdmissionsApplicationRequestBuilderV2 SubmitAdmissionsApplicationRequestBuilderV2 = new SubmitAdmissionsApplicationRequestBuilderV2(
+        ApplicationExportBuilder SubmitAdmissionsApplicationRequestBuilderV2 = new ApplicationExportBuilder(
                 new ObjectFactory());
         SubmitAdmissionsApplicationRequest request = SubmitAdmissionsApplicationRequestBuilderV2.applicationForm(applicationForm).build();
 
@@ -99,7 +99,7 @@ public class AdmissionsApplicationsServiceTest {
     @Test
     @Ignore
     public void sendValidApplicationForm() {
-        SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory()).applicationForm(applicationForm)
+        SubmitAdmissionsApplicationRequest request = new ApplicationExportBuilder(new ObjectFactory()).applicationForm(applicationForm)
                 .build();
 
         AdmissionsApplicationResponse response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request);

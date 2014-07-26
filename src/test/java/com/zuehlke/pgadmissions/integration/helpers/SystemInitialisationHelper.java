@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.StateActionNotification;
+import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
@@ -147,12 +148,16 @@ public class SystemInitialisationHelper {
         }
     }
 
+    public void verifyStateGroupCreation() {
+        for (StateGroup stateGroup : stateService.getStateGroups()) {
+            assertEquals(stateGroup.getId().getSequenceOrder(), stateGroup.getSequenceOrder());
+            assertEquals(stateGroup.getId().getScope(), stateGroup.getScope().getId());
+        }
+    }
+    
     public void verifyStateCreation() {
         for (State state : stateService.getStates()) {
-            assertEquals(PrismState.getParentState(state.getId()), state.getParentState().getId());
-            assertEquals(state.getId().isInitialState(), state.isInitialState());
-            assertEquals(state.getId().isFinalState(), state.isFinalState());
-            assertEquals(state.getId().getSequenceOrder(), state.getSequenceOrder());
+            assertEquals(state.getId().getStateGroup(), state.getStateGroup().getId());
             assertEquals(state.getId().getScope(), state.getScope().getId());
         }
     }
@@ -167,7 +172,7 @@ public class SystemInitialisationHelper {
     public void verifySystemCreation() {
         System system = systemService.getSystem();
         assertEquals(system.getName(), systemName);
-        assertEquals(system.getState().getId(), PrismState.SYSTEM_APPROVED);
+        assertEquals(system.getState().getId(), PrismState.SYSTEM_RUNNING);
     }
 
     public void verifySystemUserCreation() {

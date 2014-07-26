@@ -53,14 +53,14 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     private String requestXmlToefl = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><SubmitAdmissionsApplicationRequest xmlns:ns2=\"http://ucl.ac.uk/isd/uclbasic_v1_0/\" xmlns=\"http://ucl.ac.uk/isd/registry/studentrecordsdata_V1.0\" xmlns:ns3=\"http://ucl.ac.uk/isd/registry/basictypes_v1\"><application><source>PRISM</source><applicant><ns2:fullName><ns2:title>Mr</ns2:title><ns2:surname>Denver</ns2:surname><ns2:forename1>Kevin</ns2:forename1><ns2:forename2>Franciszek</ns2:forename2><ns2:forename3>Duncan</ns2:forename3></ns2:fullName><ns2:sex>M</ns2:sex><dateOfBirth>2013-01-01Z</dateOfBirth><nationality><ns2:code>GB</ns2:code><ns2:name>England</ns2:name></nationality><countryOfDomicile><ns2:code>XK</ns2:code><ns2:name>United Kingdom</ns2:name></countryOfDomicile><countryOfBirth><ns2:code>XK</ns2:code><ns2:name>United Kingdom</ns2:name></countryOfBirth><passport><ns2:number>000</ns2:number><ns2:name>Kevin Francis Denver</ns2:name><ns2:issueDate>2013-01-01Z</ns2:issueDate><ns2:expiryDate>2013-01-01Z</ns2:expiryDate></passport><visaRequired>true</visaRequired><disability><ns2:code>0</ns2:code><ns2:name>No Disability</ns2:name></disability><ethnicity><ns2:code>10</ns2:code><ns2:name>White</ns2:name></ethnicity><homeAddress><ns3:addressDtls><ns2:addressLine1>Zuhlke Engineering Ltd</ns2:addressLine1><ns2:addressLine2>43 Whitfield Street</ns2:addressLine2><ns2:addressLine3>London</ns2:addressLine3><ns2:addressLine4></ns2:addressLine4><ns2:postCode>W1T 4HD</ns2:postCode><ns2:country>XK</ns2:country></ns3:addressDtls><ns3:email>ked@zuhlke.com</ns3:email><ns3:landline>+44 (0) 123 123 1234</ns3:landline></homeAddress><correspondenceAddress><ns3:addressDtls><ns2:addressLine1>Zuhlke Engineering Ltd</ns2:addressLine1><ns2:addressLine2>43 Whitfield Street</ns2:addressLine2><ns2:addressLine3>London</ns2:addressLine3><ns2:addressLine4></ns2:addressLine4><ns2:postCode>W1T 4HD</ns2:postCode><ns2:country>XK</ns2:country></ns3:addressDtls><ns3:email>ked@zuhlke.com</ns3:email><ns3:landline>+44 (0) 123 123 1234</ns3:landline></correspondenceAddress><criminalConvictions>false</criminalConvictions><qualificationList><qualificationDetail><institution><code>UK0000</code><name>University of London</name><country><ns2:code>XK</ns2:code><ns2:name>United Kingdom</ns2:name></country></institution><startDate>2013-01-01Z</startDate><endDate>2013-01-01Z</endDate><qualification><code>DEGTRE</code><name>Bachelors Degree - France</name></qualification><grade>6</grade><mainSubject>Engineering</mainSubject><languageOfInstruction>English</languageOfInstruction></qualificationDetail><qualificationDetail><institution><code>UK0000</code><name>University of London</name><country><ns2:code>XK</ns2:code><ns2:name>United Kingdom</ns2:name></country></institution><startDate>2013-01-01Z</startDate><endDate>2013-01-01Z</endDate><qualification><code>DEGTRE</code><name>Bachelors Degree - France</name></qualification><grade>6</grade><mainSubject>Engineering</mainSubject><languageOfInstruction>English</languageOfInstruction></qualificationDetail></qualificationList><englishIsFirstLanguage>true</englishIsFirstLanguage><englishLanguageQualificationList><englishLanguageQualification><languageExam>TOEFL</languageExam><method>TOEFL_PAPER</method><dateTaken>2013-01-01Z</dateTaken><languageScore><name>OVERALL</name><score>1</score></languageScore><languageScore><name>READING</name><score>1</score></languageScore><languageScore><name>WRITING</name><score>1</score></languageScore><languageScore><name>ESSAY</name><score>1</score></languageScore><languageScore><name>LISTENING</name><score>1</score></languageScore></englishLanguageQualification></englishLanguageQualificationList><employerList><employer><ns2:employer><ns2:name>Zuhlke Ltd.</ns2:name></ns2:employer><ns2:jobTitle>Software Engineer</ns2:jobTitle><ns2:startDate>2013-01-01Z</ns2:startDate><ns2:responsibilities>Developer</ns2:responsibilities></employer></employerList></applicant><courseApplication><externalApplicationID>TMRMBISING01-2012-999999</externalApplicationID><programme><code>TMRMBISING99</code><modeOfAttendance><code>F+++++</code><name>Full-time</name></modeOfAttendance><identifier>0009</identifier><academicYear>2013</academicYear><startDate>2013-01-01Z</startDate><endDate>2013-01-01Z</endDate></programme><startMonth>--01</startMonth><personalStatement>Refer to attached document.</personalStatement><sourcesOfInterest><code>BRIT_COUN</code><name>British Council</name></sourcesOfInterest><ipAddress>127.0.0.1</ipAddress><creationDate>2013-01-01T08:00:00.000Z</creationDate><applicationStatus>ACTIVE</applicationStatus><departmentalDecision>OFFER</departmentalDecision><refereeList><referee><name><ns2:surname>Smith</ns2:surname><ns2:forename1>Bob</ns2:forename1></name><position>Software Engineer</position><contactDetails><ns3:addressDtls><ns2:addressLine1>Zuhlke Engineering Ltd</ns2:addressLine1><ns2:addressLine2>43 Whitfield Street</ns2:addressLine2><ns2:addressLine3>London</ns2:addressLine3><ns2:addressLine4></ns2:addressLine4><ns2:postCode>W1T 4HD</ns2:postCode><ns2:country>XK</ns2:country></ns3:addressDtls><ns3:email>ked1@zuhlke.com</ns3:email><ns3:landline>+44 (0) 123 123 1234</ns3:landline></contactDetails></referee><referee><name><ns2:surname>Austen</ns2:surname><ns2:forename1>Jane</ns2:forename1></name><position>Software Engineer</position><contactDetails><ns3:addressDtls><ns2:addressLine1>Zuhlke Engineering Ltd</ns2:addressLine1><ns2:addressLine2>43 Whitfield Street</ns2:addressLine2><ns2:addressLine3>London</ns2:addressLine3><ns2:addressLine4></ns2:addressLine4><ns2:postCode>W1T 4HD</ns2:postCode><ns2:country>XK</ns2:country></ns3:addressDtls><ns3:email>ked2@zuhlke.com</ns3:email><ns3:landline>+44 (0) 123 123 1234</ns3:landline></contactDetails></referee></refereeList></courseApplication></application></SubmitAdmissionsApplicationRequest>";
 
-    private SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder;
+    private ApplicationExportBuilder requestBuilder;
 
     private LocalDate recommendedStartDate;
 
     @Before
     public void prepare() throws ParseException {
         applicationForm = new ValidApplicationFormBuilder().build();
-        requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
+        requestBuilder = new ApplicationExportBuilder(new ObjectFactory());
         recommendedStartDate = new LocalDate(2014, 10, 1);
     }
 
@@ -192,7 +192,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         final LocalDate dateInThePast = new LocalDate(2013, 1, 1);
         applicationForm.getProgramDetails().setStartDate(dateInThePast);
 
-        SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
+        ApplicationExportBuilder requestBuilder = new ApplicationExportBuilder(new ObjectFactory());
 
         applicationForm
                 .getPersonalDetails()
@@ -216,7 +216,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         final LocalDate dateInThePast = new LocalDate(2013, 1, 1);
         applicationForm.getProgramDetails().setStartDate(dateInThePast);
 
-        SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
+        ApplicationExportBuilder requestBuilder = new ApplicationExportBuilder(new ObjectFactory());
         SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(applicationForm).build();
 
         JAXBContext context = JAXBContext.newInstance(SubmitAdmissionsApplicationRequest.class);
@@ -238,7 +238,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         // applicationForm.getApplicationComments().add(offerComment);
         applicationForm.getProgram().setRequireProjectDefinition(true);
 
-        SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
+        ApplicationExportBuilder requestBuilder = new ApplicationExportBuilder(new ObjectFactory());
         requestBuilder.isOverseasStudent(true);
 
         SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(applicationForm).build();
@@ -262,7 +262,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         // applicationForm.getApplicationComments().add(offerComment);
         applicationForm.getProgram().setRequireProjectDefinition(false);
 
-        SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
+        ApplicationExportBuilder requestBuilder = new ApplicationExportBuilder(new ObjectFactory());
         requestBuilder.isOverseasStudent(true);
 
         SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(applicationForm).build();
@@ -289,7 +289,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         // agreed supervisor
         User primarySupervisorUser = new User().withFirstName("Franciszek").withLastName("Pieczka");
 
-        SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
+        ApplicationExportBuilder requestBuilder = new ApplicationExportBuilder(new ObjectFactory());
         requestBuilder.isOverseasStudent(true);
         requestBuilder.primarySupervisor(primarySupervisorUser);
 

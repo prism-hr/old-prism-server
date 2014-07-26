@@ -18,6 +18,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Disability;
+import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
@@ -28,8 +31,6 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.Title;
-import com.zuehlke.pgadmissions.domain.definitions.Gender;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.rest.representation.application.ImportedEntityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.LanguageQualificationTypeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation;
@@ -68,7 +69,8 @@ public class StaticDataResource {
         List<ActionRepresentation> actionRepresentations = Lists.newArrayListWithExpectedSize(actions.size());
         for (Action action : actions) {
             ActionRepresentation actionRepresentation = dozerBeanMapper.map(action, ActionRepresentation.class);
-            actionRepresentation.setDisplayName(applicationContext.getMessage("action." + actionRepresentation.getId().toString(), null, LocaleContextHolder.getLocale()));
+            actionRepresentation.setDisplayName(applicationContext.getMessage("action." + actionRepresentation.getId().toString(), null,
+                    LocaleContextHolder.getLocale()));
             actionRepresentations.add(actionRepresentation);
         }
         staticData.put("actions", actionRepresentations);
@@ -77,7 +79,8 @@ public class StaticDataResource {
         List<StateRepresentation> stateRepresentations = Lists.newArrayListWithExpectedSize(states.size());
         for (State state : states) {
             StateRepresentation stateRepresentation = dozerBeanMapper.map(state, StateRepresentation.class);
-            stateRepresentation.setDisplayName(applicationContext.getMessage("state." + state.getParentState().getId().toString(), null, LocaleContextHolder.getLocale()));
+            stateRepresentation.setDisplayName(applicationContext.getMessage("state." + state.getStateGroup().getId().toString(), null,
+                    LocaleContextHolder.getLocale()));
             stateRepresentations.add(stateRepresentation);
         }
         staticData.put("states", stateRepresentations);
@@ -95,7 +98,8 @@ public class StaticDataResource {
         staticData.put("institutionDomiciles", institutionDomiciles);
 
         // Display names for imported entities
-        for (Class<Object> importedEntityType : new Class[]{StudyOption.class, ReferralSource.class, Title.class, Ethnicity.class, Disability.class, Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, LanguageQualificationType.class}) {
+        for (Class<Object> importedEntityType : new Class[] { StudyOption.class, ReferralSource.class, Title.class, Ethnicity.class, Disability.class,
+                Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, LanguageQualificationType.class }) {
             String simpleName = importedEntityType.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);
             List<Object> entities = entityService.list(importedEntityType);
@@ -106,24 +110,10 @@ public class StaticDataResource {
             staticData.put(pluralize(simpleName), entityRepresentations);
         }
 
-        // Display names for enum classes
-        for (Class<?> enumClass : new Class[]{Gender.class, PrismProgramType.class}) {
-            List<EnumDefinition> definitions = Lists.newArrayListWithExpectedSize(enumClass.getEnumConstants().length);
-            String simpleName = enumClass.getSimpleName();
-            if (simpleName.startsWith("Prism")) {
-                simpleName = simpleName.replaceFirst("Prism", "");
-            }
-            simpleName = WordUtils.uncapitalize(simpleName);
-            for (java.lang.Object key : enumClass.getEnumConstants()) {
-                String message = applicationContext.getMessage(simpleName + "." + key, null, LocaleContextHolder.getLocale());
-                definitions.add(new EnumDefinition(key.toString(), message));
-            }
-            staticData.put(pluralize(simpleName), definitions);
-        }
-
         // Display names and min/max values for language qualification types
         List<LanguageQualificationType> languageQualificationTypes = entityService.list(LanguageQualificationType.class);
-        List<LanguageQualificationTypeRepresentation> languageQualificationTypeRepresentations = Lists.newArrayListWithCapacity(languageQualificationTypes.size());
+        List<LanguageQualificationTypeRepresentation> languageQualificationTypeRepresentations = Lists.newArrayListWithCapacity(languageQualificationTypes
+                .size());
         for (LanguageQualificationType languageQualificationType : languageQualificationTypes) {
             languageQualificationTypeRepresentations.add(dozerBeanMapper.map(languageQualificationType, LanguageQualificationTypeRepresentation.class));
         }

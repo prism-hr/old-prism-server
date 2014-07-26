@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.StateDuration;
+import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
@@ -48,6 +49,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
@@ -128,6 +130,10 @@ public class SystemService {
         verifyBackwardCompatibility(Action.class);
         initialiseActions();
 
+        logger.info("Initialising state group definitions");
+        verifyBackwardCompatibility(StateGroup.class);
+        initialiseStateGroups();
+        
         logger.info("Initialising state definitions");
         verifyBackwardCompatibility(State.class);
         initialiseStates();
@@ -203,24 +209,26 @@ public class SystemService {
         }
     }
 
+    private void initialiseStateGroups() {
+        for (PrismStateGroup prismStateGroup : PrismStateGroup.values()) {
+            Scope scope = entityService.getByProperty(Scope.class, "id", prismStateGroup.getScope());
+            StateGroup transientStateGroup = new StateGroup().withId(prismStateGroup).withSequenceOrder(prismStateGroup.getSequenceOrder()).withScope(scope);
+            entityService.createOrUpdate(transientStateGroup);
+        }
+    }
+    
     private void initialiseStates() {
         for (PrismState prismState : PrismState.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismState.getScope());
-            State transientState = new State().withId(prismState).withInitialState(prismState.isInitialState()).withFinalState(prismState.isFinalState())
-                    .withSequenceOrder(prismState.getSequenceOrder()).withScope(scope);
+            StateGroup stateGroup = entityService.getByProperty(StateGroup.class, "id", prismState.getStateGroup());
+            State transientState = new State().withId(prismState).withStateGroup(stateGroup).withScope(scope);
             entityService.createOrUpdate(transientState);
-        }
-
-        for (PrismState prismState : PrismState.values()) {
-            State childState = stateService.getById(prismState);
-            State parentState = stateService.getById(PrismState.getParentState(prismState));
-            childState.setParentState(parentState);
         }
     }
 
     private System initialiseSystemResource() {
         User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail);
-        State systemRunning = stateService.getById(PrismState.SYSTEM_APPROVED);
+        State systemRunning = stateService.getById(PrismState.SYSTEM_RUNNING);
         DateTime startupTimestamp = new DateTime();
         System transientSystem = new System().withName(systemName).withUser(systemUser).withState(systemRunning).withCreatedTimestamp(startupTimestamp)
                 .withUpdatedTimestamp(startupTimestamp);

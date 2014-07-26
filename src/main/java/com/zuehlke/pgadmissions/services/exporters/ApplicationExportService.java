@@ -33,23 +33,9 @@ import com.zuehlke.pgadmissions.services.PorticoService;
  * This is UCL data export service. Used for situations where we push data to UCL system (PORTICO).
  */
 @Service
-public class ExportService {
+public class ApplicationExportService {
 
-    private final Logger log = LoggerFactory.getLogger(ExportService.class);
-
-    private static final String PRISM_EXCEPTION = "There was an internal PRISM exception [applicationNumber=%s]";
-
-    private static final String WS_CALL_FAILED_NETWORK = "The web service is unreachable because of network issues [applicationNumber=%s]";
-
-    private static final String WS_CALL_FAILED_REFUSED = "The web service refused our request [applicationNumber=%s]";
-
-    private static final String SFTP_CALL_FAILED_UNEXPECTED = "There was an error creating the ZIP file for PORTICO [applicationNumber=%s]";
-
-    private static final String SFTP_CALL_FAILED_CONFIGURATION = "There was an error speaking to the SFTP service due to a misconfiguration in PRISM [applicationNumber=%s]";
-
-    private static final String SFTP_CALL_FAILED_NETWORK = "The SFTP service is unreachable because of network issues [applicationNumber=%s]";
-
-    private static final String SFTP_CALL_FAILED_DIRECTORY = "The SFTP target directory is not accessible [applicationNumber=%s]";
+    private final Logger log = LoggerFactory.getLogger(ApplicationExportService.class);
 
     @Autowired
     private WebServiceTemplate webServiceTemplate;
@@ -61,7 +47,7 @@ public class ExportService {
     private UserDAO userDAO;
 
     @Autowired
-    private SftpAttachmentsSendingService sftpAttachmentsSendingService;
+    private ApplicationDocumentExportService sftpAttachmentsSendingService;
 
     @Autowired
     private ApplicationService applicationsService;
@@ -77,7 +63,7 @@ public class ExportService {
     public void sendToPortico(final Application form)  {
         try {
             log.info(String.format("Submitting application to PORTICO [applicationNumber=%s]", form.getCode()));
-            ExportService proxy = context.getBean(this.getClass());
+            ApplicationExportService proxy = context.getBean(this.getClass());
             proxy.prepareApplicationForm(form);
             proxy.sendWebServiceRequest(form);
             proxy.uploadDocuments(form);
@@ -88,11 +74,11 @@ public class ExportService {
         }
     }
 
-    public void setPorticoAttachmentsZipCreator(final PorticoAttachmentsZipCreator zipCreator) {
+    public void setPorticoAttachmentsZipCreator(final ApplicationDocumentExportHelper zipCreator) {
         sftpAttachmentsSendingService.setPorticoAttachmentsZipCreator(zipCreator);
     }
 
-    public void setSftpAttachmentsSendingService(final SftpAttachmentsSendingService sendingService) {
+    public void setSftpAttachmentsSendingService(final ApplicationDocumentExportService sendingService) {
         sftpAttachmentsSendingService = sendingService;
     }
 
@@ -106,7 +92,7 @@ public class ExportService {
 
         final ByteArrayOutputStream requestMessageBuffer = new ByteArrayOutputStream(5000);
 
-        SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory()).applicationForm(form)
+        SubmitAdmissionsApplicationRequest request = new ApplicationExportBuilder(new ObjectFactory()).applicationForm(form)
                 .isOverseasStudent(isOverseasStudent).primarySupervisor(primarySupervisor).build();
 
         log.info(String.format("Calling PORTICO web service [applicationNumber=%s]", form.getCode()));

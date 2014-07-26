@@ -3,8 +3,6 @@ package com.zuehlke.pgadmissions.domain;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -13,15 +11,11 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
-
-import com.zuehlke.pgadmissions.domain.definitions.Gender;
-import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
 @Table(name = "APPLICATION_PERSONAL_DETAIL")
@@ -73,8 +67,8 @@ public class ApplicationPersonalDetails {
     @JoinColumn(name = "title_id", nullable = false)
     private Title title;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "gender", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "gender_id", nullable = false)
     private Gender gender;
 
     @Column(name = "date_of_birth", nullable = false)

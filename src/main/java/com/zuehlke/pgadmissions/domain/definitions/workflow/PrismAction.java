@@ -102,7 +102,7 @@ public enum PrismAction {
     PROJECT_SUSPEND(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.PROPAGATE_RESOURCE, true, PrismScope.PROJECT, null, null), //
     PROJECT_TERMINATE(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.PROPAGATE_RESOURCE, true, PrismScope.PROJECT, null, null), ///
     PROJECT_WITHDRAW(PrismActionType.USER_INVOCATION, PrismActionCategory.WITHDRAW_RESOURCE, true, PrismScope.PROJECT, null, null), //
-    SYSTEM_CONFIGURE(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_EDIT_RESOURCE, true, PrismScope.SYSTEM, null, null), //
+    SYSTEM_VIEW_EDIT(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_EDIT_RESOURCE, true, PrismScope.SYSTEM, null, null), //
     SYSTEM_CREATE_INSTITUTION(PrismActionType.USER_INVOCATION, PrismActionCategory.CREATE_RESOURCE, true, PrismScope.SYSTEM, PrismScope.INSTITUTION, null), //
     SYSTEM_MANAGE_ACCOUNT(PrismActionType.USER_INVOCATION, PrismActionCategory.MANAGE_ACCOUNT, true, PrismScope.SYSTEM, null, null), //
     SYSTEM_STARTUP(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.CREATE_RESOURCE, true, PrismScope.SYSTEM, PrismScope.SYSTEM, null), //

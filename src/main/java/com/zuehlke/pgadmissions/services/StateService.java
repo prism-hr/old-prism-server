@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.StateDuration;
+import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
@@ -87,6 +88,10 @@ public class StateService {
 
     public List<State> getStates() {
         return entityService.list(State.class);
+    }
+    
+    public List<StateGroup> getStateGroups() {
+        return entityService.list(StateGroup.class);
     }
 
     public List<State> getWorkflowStates() {
@@ -249,11 +254,11 @@ public class StateService {
     @SuppressWarnings("unused")
     private StateTransition getApplicationExportedOutcome(Resource resource, Comment comment, List<StateTransition> stateTransitions) {
         State transitionState = resource.getState();
-        State parentState = transitionState.getParentState();
+        StateGroup stateGroup = transitionState.getStateGroup();
         if (comment.getExportError() != null) {
-            transitionState = getById(PrismState.valueOf(parentState.toString() + "_PENDING_CORRECTION"));
+            transitionState = getById(PrismState.valueOf(stateGroup.toString() + "_PENDING_CORRECTION"));
         } else if (comment.getExportResponse() != null && comment.getExportError() == null) {
-            transitionState = getById(PrismState.valueOf(parentState.toString() + "_COMPLETED"));
+            transitionState = getById(PrismState.valueOf(stateGroup.toString() + "_COMPLETED"));
         }
         return stateDAO.getStateTransition(stateTransitions, transitionState);
     }

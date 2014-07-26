@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.FundingSource;
+import com.zuehlke.pgadmissions.domain.Gender;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Language;
@@ -43,7 +44,6 @@ import com.zuehlke.pgadmissions.domain.Title;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.definitions.DocumentType;
-import com.zuehlke.pgadmissions.domain.definitions.Gender;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 public class ValidApplicationFormBuilder {
@@ -67,6 +67,7 @@ public class ValidApplicationFormBuilder {
     protected Disability disability;
     protected Ethnicity ethnicity;
     protected Domicile domicile;
+    protected Gender gender;
     protected ApplicationPersonalDetails personalDetails;
     protected ApplicationAdditionalInformation additionalInformation;
     protected ProgramInstance instance;
@@ -124,6 +125,7 @@ public class ValidApplicationFormBuilder {
         approverUser = new User().withId(Integer.MAX_VALUE - 1).withEmail("approver@zhaw.ch").withAccount(new UserAccount().withEnabled(true));
         country = new Country().withCode("XK").withName("United Kingdom");
         domicile = new Domicile().withCode("XK").withName("United Kingdom");
+        gender = new Gender().withCode("F").withName("Female");
         address = TestData.anAddress(domicile);
         // referenceComment1 = new ReferenceCommentBuilder().comment("Hello From Bob").document(referenceDocument).providedBy(user).suitableForProgramme(true)
         // .suitableForUcl(true).user(user).build();
@@ -143,6 +145,7 @@ public class ValidApplicationFormBuilder {
         language = new Language().withCode("GB").withName("England");
         disability = new Disability().withCode("0").withName("No Disability");
         ethnicity = new Ethnicity().withCode("10").withName("White");
+        
         personalDetails = new ApplicationPersonalDetails()
                 .withFirstNationality(language)
                 .withCountry(country)
@@ -150,7 +153,7 @@ public class ValidApplicationFormBuilder {
                 .withDisability(disability)
                 .withEnglishFirstLanguage(true)
                 .withEthnicity(ethnicity)
-                .withGender(Gender.MALE)
+                .withGender(gender)
                 .withRequiresVisa(true)
                 .withPassportInformation(
                         new ApplicationPassport().withNumber("000").withName("Kevin Francis Denver").withExpiryDate(new LocalDate().plusYears(20))

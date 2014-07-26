@@ -132,8 +132,9 @@ public class WorkflowConfigurationHelper {
         verifyAsInitialState(state);
         verifyAsFinalState(state);
 
-        State parentState = state.getParentState();
-        assertTrue(state.getSequenceOrder() == null || state == parentState);
+        assertEquals(state.getScope(), state.getStateGroup().getScope());
+        assertFalse(state.getStateActions().isEmpty());
+        
         verifyAsParentState(state);
 
         verifyStateActions(state);
@@ -386,10 +387,13 @@ public class WorkflowConfigurationHelper {
 
     private void verifyStateActionAssignments(State state) {
         for (StateAction stateAction : state.getStateActions()) {
+            Action action = stateAction.getAction();
             Set<StateActionAssignment> assignments = stateAction.getStateActionAssignments();
-
-            if (stateAction.getAction().getActionType() == PrismActionType.SYSTEM_INVOCATION) {
+            
+            if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
                 assertTrue(assignments.size() == 0);
+            } else if (action.getCreationScope() != null) {
+                assertFalse(assignments.size() == 0);
             }
 
             for (StateActionAssignment assignment : assignments) {
@@ -404,7 +408,6 @@ public class WorkflowConfigurationHelper {
 
     private void verifyStateActionNotifications(State state) {
         for (StateAction stateAction : state.getStateActions()) {
-
             for (StateActionNotification notification : stateAction.getStateActionNotifications()) {
                 NotificationTemplate template = notification.getNotificationTemplate();
                 Scope templateScope = template.getScope();

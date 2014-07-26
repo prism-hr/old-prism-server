@@ -26,14 +26,14 @@ import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.pdf.CombinedReferencesPdfBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.Transcript1PdfBuilder;
-import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationDocumentExportService.CouldNotCreateAttachmentsPack;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class PorticoAttachmentsZipCreatorTest {
 
     private String uclBookingReferenceNumber = "P123456";
 
-    private PorticoAttachmentsZipCreator attachmentsZipCreator;
+    private ApplicationDocumentExportHelper attachmentsZipCreator;
 
     private Application applicationForm;
 
@@ -103,7 +103,7 @@ public class PorticoAttachmentsZipCreatorTest {
         combinedReferenceBuilder = new CombinedReferencesPdfBuilder();
         transcriptBuilder = new Transcript1PdfBuilder();
 
-        attachmentsZipCreator = new PorticoAttachmentsZipCreator();
+        attachmentsZipCreator = new ApplicationDocumentExportHelper();
         InjectionUtils.injectInto(pdfDocumentBuilder, attachmentsZipCreator, "pdfDocumentBuilder");
         InjectionUtils.injectInto(combinedReferenceBuilder, attachmentsZipCreator, "combinedReferenceBuilder");
         InjectionUtils.injectInto(transcriptBuilder, attachmentsZipCreator, "transcriptBuilder");

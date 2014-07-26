@@ -27,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.Gender;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
@@ -141,11 +140,6 @@ public class PersonalDetailsController {
     @ModelAttribute("domiciles")
     public List<Domicile> getAllEnabledDomiciles() {
         return importedEntityService.getAllDomiciles();
-    }
-
-    @ModelAttribute("genders")
-    public Gender[] getGenders() {
-        return Gender.values();
     }
 
     @ModelAttribute("applicationForm")

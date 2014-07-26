@@ -114,11 +114,13 @@ public class StaticDataResource {
     public Map<String, Object> getStaticData(@RequestParam Integer institutionId) {
         Map<String, Object> staticData = Maps.newHashMap();
 
+        Institution institution = entityService.getById(Institution.class, institutionId);
+
         // Display names for imported entities
         for (Class<Object> importedEntityType : new Class[]{StudyOption.class, ReferralSource.class, Title.class, Ethnicity.class, Disability.class, Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, LanguageQualificationType.class}) {
             String simpleName = importedEntityType.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);
-            List<Object> entities = entityService.listByProperty(importedEntityType, "institutionId", institutionId);
+            List<Object> entities = entityService.listByProperty(importedEntityType, "institution", institution);
             List<ImportedEntityRepresentation> entityRepresentations = Lists.newArrayListWithCapacity(entities.size());
             for (Object studyOption : entities) {
                 entityRepresentations.add(dozerBeanMapper.map(studyOption, ImportedEntityRepresentation.class));

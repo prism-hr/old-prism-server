@@ -183,9 +183,9 @@ public class ApplicationService {
         programDetails.setStartDate(programDetailsDTO.getStartDate().toLocalDate());
         programDetails.setReferralSource(referralSource);
 
-        programDetails.getSupervisors().clear();
+        // TODO replace supervisors
+//        programDetails.getSupervisors().clear();
         for (ApplicationSupervisorDTO supervisorDTO : programDetailsDTO.getSupervisors()) {
-            // TODO replace supervisors
         }
     }
 
@@ -225,11 +225,11 @@ public class ApplicationService {
         personalDetails.setDisability(disability);
 
         ApplicationLanguageQualificationDTO languageQualificationDTO = personalDetailsDTO.getLanguageQualification();
-        if(languageQualificationDTO == null) {
+        if (languageQualificationDTO == null) {
             personalDetails.setLanguageQualification(null);
         } else {
             ApplicationLanguageQualification languageQualification = personalDetails.getLanguageQualification();
-            if(languageQualification == null) {
+            if (languageQualification == null) {
                 languageQualification = new ApplicationLanguageQualification();
                 personalDetails.setLanguageQualification(languageQualification);
             }
@@ -246,11 +246,11 @@ public class ApplicationService {
         }
 
         ApplicationPassportDTO passportDTO = personalDetailsDTO.getPassport();
-        if(passportDTO == null) {
+        if (passportDTO == null) {
             personalDetails.setPassport(null);
         } else {
             ApplicationPassport passport = personalDetails.getPassport();
-            if(passport == null) {
+            if (passport == null) {
                 passport = new ApplicationPassport();
                 personalDetails.setPassport(passport);
             }
@@ -259,5 +259,40 @@ public class ApplicationService {
             passport.setIssueDate(passportDTO.getIssueDate().toLocalDate());
             passport.setExpiryDate(passportDTO.getExpiryDate().toLocalDate());
         }
+    }
+
+    public void saveAddress(Integer applicationId, ApplicationAddressDTO addressDTO) {
+        Application application = entityService.getById(Application.class, applicationId);
+        ApplicationAddress address = application.getAddress();
+        if (address == null) {
+            address = new ApplicationAddress();
+            application.setAddress(address);
+        }
+
+        AddressDTO currentAddressDTO = addressDTO.getCurrentAddress();
+        Address currentAddress = address.getCurrentAddress();
+        if (currentAddress == null) {
+            currentAddress = new Address();
+            address.setCurrentAddress(currentAddress);
+        }
+        copyAddress(currentAddress, currentAddressDTO);
+
+        AddressDTO contactAddressDTO = addressDTO.getContactAddress();
+        Address contactAddress = address.getContactAddress();
+        if (contactAddress == null) {
+            contactAddress = new Address();
+            address.setContactAddress(contactAddress);
+        }
+        copyAddress(contactAddress, contactAddressDTO);
+    }
+
+    private void copyAddress(Address to, AddressDTO from) {
+        Domicile currentAddressDomicile = entityService.getById(Domicile.class, from.getDomicile());
+        to.setDomicile(currentAddressDomicile);
+        to.setAddressLine1(from.getAddressLine1());
+        to.setAddressLine2(from.getAddressLine2());
+        to.setAddressTown(from.getAddressTown());
+        to.setAddressRegion(from.getAddressRegion());
+        to.setAddressCode(from.getAddressCode());
     }
 }

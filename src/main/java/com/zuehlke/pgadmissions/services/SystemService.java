@@ -305,7 +305,6 @@ public class SystemService {
             stateService.deleteStateActions();
 
             for (State state : stateService.getStates()) {
-                logger.info("Configuring " + state.getId().toString());
                 for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
                     Action action = actionService.getById(prismStateAction.getAction());
                     NotificationTemplate template = notificationService.getById(prismStateAction.getNotificationTemplate());

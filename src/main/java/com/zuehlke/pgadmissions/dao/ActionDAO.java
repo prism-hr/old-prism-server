@@ -13,8 +13,6 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Scope;
-import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.User;
@@ -54,7 +52,7 @@ public class ActionDAO {
                 .uniqueResult();
     }
 
-    public Action getRedirectAction(Resource resource, User user) {
+    public Action getUserRedirectAction(Resource resource, User user) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
@@ -65,7 +63,7 @@ public class ActionDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
-                .add(Restrictions.eq("action.actionCategory", PrismActionCategory.VIEW_EDIT_RESOURCE)) //
+                .add(Restrictions.eq("defaultAction", true)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
@@ -74,6 +72,16 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
                 .add(Restrictions.eq("user.parentUser", user)) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
+                .uniqueResult();
+    }
+    
+    public Action getSystemRedirectAction(Resource resource) {
+        return (Action) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.property("action")) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("state", resource.getState())) //
+                .add(Restrictions.eq("action.actionType", PrismActionType.SYSTEM_INVOCATION)) //
+                .add(Restrictions.eq("defaultAction", true)) //
                 .uniqueResult();
     }
     
@@ -138,15 +146,6 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                         .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
-                .list();
-    }
-    
-    public List<Action> getCreationActions(State state, Scope scope) {
-        return (List<Action>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.property("action")) //
-                .createAlias("action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("state", state)) //
-                .add(Restrictions.eq("action.creationScope", scope)) //
                 .list();
     }
     

@@ -1,17 +1,10 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.Gender;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.rest.representation.application.ImportedEntityRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.application.LanguageQualificationTypeRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.workflow.RoleRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.workflow.StateActionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.workflow.StateRepresentation;
-import com.zuehlke.pgadmissions.services.EntityService;
+import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
+
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.WordUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +15,32 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Map;
-
-import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Disability;
+import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.Ethnicity;
+import com.zuehlke.pgadmissions.domain.Gender;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
+import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.QualificationType;
+import com.zuehlke.pgadmissions.domain.ReferralSource;
+import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.StudyOption;
+import com.zuehlke.pgadmissions.domain.Title;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.rest.representation.application.ImportedEntityRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.application.LanguageQualificationTypeRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.workflow.RoleRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.workflow.StateActionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.workflow.StateRepresentation;
+import com.zuehlke.pgadmissions.services.EntityService;
 
 @RestController
 @RequestMapping("/api/static")
@@ -40,7 +55,6 @@ public class StaticDataResource {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET)
     public Map<String, Object> getStaticData() {
         Map<String, Object> staticData = Maps.newHashMap();
@@ -66,7 +80,7 @@ public class StaticDataResource {
         List<StateRepresentation> stateRepresentations = Lists.newArrayListWithExpectedSize(states.size());
         for (State state : states) {
             StateRepresentation stateRepresentation = dozerBeanMapper.map(state, StateRepresentation.class);
-            stateRepresentation.setDisplayName(applicationContext.getMessage("state." + state.getParentState().getId(), null, LocaleContextHolder.getLocale()));
+            stateRepresentation.setDisplayName(applicationContext.getMessage("state." + state.getStateGroup().getId(), null, LocaleContextHolder.getLocale()));
             stateRepresentations.add(stateRepresentation);
         }
         staticData.put("states", stateRepresentations);
@@ -84,7 +98,7 @@ public class StaticDataResource {
         staticData.put("institutionDomiciles", institutionDomiciles);
 
         // Display names for enum classes
-        for (Class<?> enumClass : new Class[]{Gender.class, PrismProgramType.class}) {
+        for (Class<?> enumClass : new Class[] { Gender.class, PrismProgramType.class }) {
             List<EnumDefinition> definitions = Lists.newArrayListWithExpectedSize(enumClass.getEnumConstants().length);
             String simpleName = enumClass.getSimpleName();
             if (simpleName.startsWith("Prism")) {
@@ -100,7 +114,8 @@ public class StaticDataResource {
 
         // Display names and min/max values for language qualification types
         List<LanguageQualificationType> languageQualificationTypes = entityService.list(LanguageQualificationType.class);
-        List<LanguageQualificationTypeRepresentation> languageQualificationTypeRepresentations = Lists.newArrayListWithCapacity(languageQualificationTypes.size());
+        List<LanguageQualificationTypeRepresentation> languageQualificationTypeRepresentations = Lists.newArrayListWithCapacity(languageQualificationTypes
+                .size());
         for (LanguageQualificationType languageQualificationType : languageQualificationTypes) {
             languageQualificationTypeRepresentations.add(dozerBeanMapper.map(languageQualificationType, LanguageQualificationTypeRepresentation.class));
         }
@@ -115,7 +130,8 @@ public class StaticDataResource {
         Map<String, Object> staticData = Maps.newHashMap();
 
         // Display names for imported entities
-        for (Class<Object> importedEntityType : new Class[]{StudyOption.class, ReferralSource.class, Title.class, Ethnicity.class, Disability.class, Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, LanguageQualificationType.class}) {
+        for (Class<Object> importedEntityType : new Class[] { StudyOption.class, ReferralSource.class, Title.class, Ethnicity.class, Disability.class,
+                Gender.class, Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, LanguageQualificationType.class }) {
             String simpleName = importedEntityType.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);
             List<Object> entities = entityService.listByProperty(importedEntityType, "institutionId", institutionId);
@@ -140,10 +156,12 @@ public class StaticDataResource {
             this.displayName = displayName;
         }
 
+        @SuppressWarnings("unused")
         public String getKey() {
             return key;
         }
 
+        @SuppressWarnings("unused")
         public String getDisplayName() {
             return displayName;
         }

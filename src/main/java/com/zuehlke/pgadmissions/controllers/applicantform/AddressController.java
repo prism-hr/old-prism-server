@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,11 +79,6 @@ public class AddressController {
     @ModelAttribute("message")
     public String getMessage(@RequestParam(required = false) String message) {
         return message;
-    }
-
-    @ModelAttribute("domiciles")
-    public List<Domicile> getAllEnabledDomiciles() {
-        return importedEntityService.getAllDomiciles();
     }
 
     private String returnView(ModelMap modelMap, ApplicationAddress applicationFormAddress) {

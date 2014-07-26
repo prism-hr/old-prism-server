@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.rest.representation.application;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.rest.representation.InstitutionRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -11,6 +13,8 @@ import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 public class ApplicationRepresentation extends ResourceRepresentation {
 
     private UserRepresentation user;
+
+    private InstitutionRepresentation institution;
 
     private ProgramRepresentation program;
 
@@ -43,6 +47,14 @@ public class ApplicationRepresentation extends ResourceRepresentation {
     private ApplicationDocumentRepresentation document;
 
     private AdditionalInformationRepresentation additionalInformation;
+
+    public InstitutionRepresentation getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(InstitutionRepresentation institution) {
+        this.institution = institution;
+    }
 
     public ProgramRepresentation getProgram() {
         return program;

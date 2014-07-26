@@ -57,7 +57,7 @@ public class ProgramDetailsValidator extends AbstractValidator {
         }
 
         Set<String> supervisorEmails = new HashSet<String>();
-        for (ApplicationSupervisor supervisor : programDetail.getSuggestedSupervisors()) {
+        for (ApplicationSupervisor supervisor : programDetail.getSupervisors()) {
             if (StringUtils.isBlank(supervisor.getUser().getFirstName())) {
                 errors.rejectValue("suggestedSupervisors", EMPTY_FIELD_ERROR_MESSAGE);
             }

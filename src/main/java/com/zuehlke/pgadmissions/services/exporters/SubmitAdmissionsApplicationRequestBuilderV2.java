@@ -373,7 +373,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         ApplicationProgramDetails programmeDetails = applicationForm.getProgramDetails();
         CourseApplicationTp applicationTp = xmlFactory.createCourseApplicationTp();
         applicationTp.setStartMonth(new DateTime(programmeDetails.getStartDate()));
-        if (!programmeDetails.getSuggestedSupervisors().isEmpty()) {
+        if (!programmeDetails.getSupervisors().isEmpty()) {
             // Which supervisor to pick if there are multiple
             // Just send the first one. Confirmed by Alastair Knowles
             applicationTp.setProposedSupervisorName(buildProposedSupervisorName(0));
@@ -498,7 +498,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private NameTp buildProposedSupervisorName(int idx) {
         ApplicationProgramDetails programmeDetails = applicationForm.getProgramDetails();
         NameTp nameTp = xmlFactory.createNameTp();
-        List<ApplicationSupervisor> suggestedSupervisors = programmeDetails.getSuggestedSupervisors();
+        List<ApplicationSupervisor> suggestedSupervisors = programmeDetails.getSupervisors();
 
         if (idx < suggestedSupervisors.size()) {
             ApplicationSupervisor suggestedSupervisor = suggestedSupervisors.get(idx);

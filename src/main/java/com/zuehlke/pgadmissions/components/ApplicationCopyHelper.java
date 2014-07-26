@@ -91,7 +91,7 @@ public class ApplicationCopyHelper {
         to.setStartDate(from.getStartDate());
         to.setReferralSource(from.getReferralSource());
         to.setSourceOfInterestText(from.getSourceOfInterestText());
-        to.getSuggestedSupervisors().addAll(from.getSuggestedSupervisors());
+        to.getSupervisors().addAll(from.getSupervisors());
     }
 
     public void copyAdditionalInformation(ApplicationAdditionalInformation to, ApplicationAdditionalInformation from) {

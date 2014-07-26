@@ -149,7 +149,7 @@
       </div>
     
 
-        <@spring.bind "programmeDetails.suggestedSupervisors" /> 
+        <@spring.bind "programmeDetails.supervisors" />
         <#list spring.status.errorMessages as error>
         <div class="alert alert-error">
             <i class="icon-warning-sign"></i> ${error}</div>
@@ -161,7 +161,7 @@
             <col style="width: 30px;" />
           </colgroup>
           <tbody>
-            <#list programmeDetails.suggestedSupervisors! as supervisor>
+            <#list programmeDetails.supervisors! as supervisor>
             <tr class="<#if supervisor.aware>aware<#else>unaware</#if>"<#if supervisor.id?? > rel="${encrypter.encrypt(supervisor.id)!}"</#if>>
               <td data-desc="Supervisor <#if supervisor.aware>aware<#else>unaware</#if> of application">
                 ${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!} (${supervisor.email?html})

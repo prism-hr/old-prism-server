@@ -283,7 +283,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         // suggested supervisors
         ApplicationSupervisor suggestedSupervisor1 = new ApplicationSupervisor().withUser(new User().withFirstName("Eugeniusz").withLastName("Kowalski"));
         ApplicationSupervisor suggestedSupervisor2 = new ApplicationSupervisor().withUser(new User().withFirstName("Genowefa").withLastName("Pigwa"));
-        applicationForm.getProgramDetails().setSuggestedSupervisors(Arrays.asList(suggestedSupervisor1, suggestedSupervisor2));
+        applicationForm.getProgramDetails().setSupervisors(Arrays.asList(suggestedSupervisor1, suggestedSupervisor2));
         applicationForm.getProgramDetails().setStartDate(dateInThePast);
 
         // agreed supervisor

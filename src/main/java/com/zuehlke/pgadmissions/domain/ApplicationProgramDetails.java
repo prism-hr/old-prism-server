@@ -46,7 +46,7 @@ public class ApplicationProgramDetails {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_program_detail_id", nullable = false)
     @Valid
-    private List<ApplicationSupervisor> suggestedSupervisors = new ArrayList<ApplicationSupervisor>();
+    private List<ApplicationSupervisor> supervisors = new ArrayList<ApplicationSupervisor>();
 
     @OneToOne(mappedBy = "programDetails")
     private Application application;
@@ -91,12 +91,12 @@ public class ApplicationProgramDetails {
         this.sourceOfInterestText = sourceOfInterest;
     }
 
-    public List<ApplicationSupervisor> getSuggestedSupervisors() {
-        return suggestedSupervisors;
+    public List<ApplicationSupervisor> getSupervisors() {
+        return supervisors;
     }
 
-    public void setSuggestedSupervisors(List<ApplicationSupervisor> suggestedSupervisors) {
-        this.suggestedSupervisors = suggestedSupervisors;
+    public void setSupervisors(List<ApplicationSupervisor> supervisors) {
+        this.supervisors = supervisors;
     }
 
     public Application getApplication() {
@@ -133,7 +133,7 @@ public class ApplicationProgramDetails {
     }
     
     public ApplicationProgramDetails withSuggestedSupervisors(ApplicationSupervisor... suggestedSupervisors) {
-        this.suggestedSupervisors.addAll(Arrays.asList(suggestedSupervisors));
+        this.supervisors.addAll(Arrays.asList(suggestedSupervisors));
         return this;
     }
     

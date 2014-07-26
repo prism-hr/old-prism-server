@@ -10,7 +10,7 @@ public class ApplicationProgramDetailsDTO {
 
     private Integer referralSource;
 
-    private ApplicationSupervisorDTO[] suggestedSupervisors;
+    private ApplicationSupervisorDTO[] supervisors;
 
     public Integer getStudyOption() {
         return studyOption;
@@ -36,11 +36,11 @@ public class ApplicationProgramDetailsDTO {
         this.referralSource = referralSource;
     }
 
-    public ApplicationSupervisorDTO[] getSuggestedSupervisors() {
-        return suggestedSupervisors;
+    public ApplicationSupervisorDTO[] getSupervisors() {
+        return supervisors;
     }
 
-    public void setSuggestedSupervisors(ApplicationSupervisorDTO[] suggestedSupervisors) {
-        this.suggestedSupervisors = suggestedSupervisors;
+    public void setSupervisors(ApplicationSupervisorDTO[] supervisors) {
+        this.supervisors = supervisors;
     }
 }

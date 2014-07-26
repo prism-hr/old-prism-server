@@ -283,7 +283,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        if (form.getProgramDetails().getSuggestedSupervisors().isEmpty()) {
+        if (form.getProgramDetails().getSupervisors().isEmpty()) {
             table = new PdfPTable(2);
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             table.addCell(newTableCell("Supervisor", SMALL_BOLD_FONT));
@@ -292,7 +292,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             pdfDocument.add(addSectionSeparators());
         } else {
             int counter = 1;
-            for (ApplicationSupervisor supervisor : form.getProgramDetails().getSuggestedSupervisors()) {
+            for (ApplicationSupervisor supervisor : form.getProgramDetails().getSupervisors()) {
                 table = new PdfPTable(2);
                 table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                 PdfPCell headerCell = newTableCell("Supervisor (" + counter++ + ")", SMALL_BOLD_FONT);

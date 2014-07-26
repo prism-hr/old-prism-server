@@ -152,7 +152,7 @@ public class ApplicationService {
     private void addSuggestedSupervisorsFromProject(Application application) {
         Project project = application.getProject();
         if (project != null) {
-            List<ApplicationSupervisor> suggestedSupervisors = application.getProgramDetails().getSuggestedSupervisors();
+            List<ApplicationSupervisor> suggestedSupervisors = application.getProgramDetails().getSupervisors();
             // FIXME add sugested supervisors
 //            suggestedSupervisors.add(createSuggestedSupervisor(project.getPrimarySupervisor()));
 //            User secondarySupervisor = project.getSecondarySupervisor();
@@ -183,9 +183,9 @@ public class ApplicationService {
         programDetails.setStartDate(programDetailsDTO.getStartDate().toLocalDate());
         programDetails.setReferralSource(referralSource);
 
-        programDetails.getSuggestedSupervisors().clear();
-        for (ApplicationSupervisorDTO supervisorDTO : programDetailsDTO.getSuggestedSupervisors()) {
-
+        programDetails.getSupervisors().clear();
+        for (ApplicationSupervisorDTO supervisorDTO : programDetailsDTO.getSupervisors()) {
+            // TODO replace supervisors
         }
     }
 

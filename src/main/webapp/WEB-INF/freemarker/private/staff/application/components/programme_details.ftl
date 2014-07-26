@@ -71,8 +71,8 @@
       
     </div>
 
-    <#if applicationForm.programmeDetails?? && applicationForm.programmeDetails.suggestedSupervisors?? && (applicationForm.programmeDetails.suggestedSupervisors?size > 0) >
-    <#list applicationForm.programmeDetails.suggestedSupervisors! as supervisor>
+    <#if applicationForm.programmeDetails?? && applicationForm.programmeDetails.supervisors?? && (applicationForm.programmeDetails.supervisors?size > 0) >
+    <#list applicationForm.programmeDetails.supervisors! as supervisor>
       
     <div class="row-group">
       

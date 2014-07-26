@@ -1,26 +1,23 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Date;
-import java.util.List;
-
+import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailsDTO;
+import com.zuehlke.pgadmissions.domain.definitions.ReportFormat;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.*;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
-import com.zuehlke.pgadmissions.dao.ApplicationDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
-import com.zuehlke.pgadmissions.domain.definitions.ReportFormat;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional
@@ -188,16 +185,79 @@ public class ApplicationService {
 
         programDetails.getSuggestedSupervisors().clear();
         for (ApplicationSupervisorDTO supervisorDTO : programDetailsDTO.getSuggestedSupervisors()) {
-                
+
         }
     }
 
     public void savePersonalDetails(Integer applicationId, ApplicationPersonalDetailsDTO personalDetailsDTO) {
         Application application = entityService.getById(Application.class, applicationId);
         ApplicationPersonalDetails personalDetails = application.getPersonalDetails();
-        if(personalDetails == null) {
+        if (personalDetails == null) {
             personalDetails = new ApplicationPersonalDetails();
             application.setPersonalDetails(personalDetails);
+        }
+
+        User user = application.getUser();
+        user.setFirstName(personalDetailsDTO.getUser().getFirstName());
+        user.setFirstName2(personalDetailsDTO.getUser().getFirstName2());
+        user.setFirstName3(personalDetailsDTO.getUser().getFirstName3());
+        user.setLastName(personalDetailsDTO.getUser().getLastName());
+
+        Title title = entityService.getById(Title.class, personalDetailsDTO.getTitle());
+        Country country = entityService.getById(Country.class, personalDetailsDTO.getCountry());
+        Language firstNationality = entityService.getById(Language.class, personalDetailsDTO.getFirstNationality());
+        Language secondNationality = personalDetailsDTO.getSecondNationality() != null ? entityService.getById(Language.class, personalDetailsDTO.getSecondNationality()) : null;
+        Domicile residenceCountry = entityService.getById(Domicile.class, personalDetailsDTO.getResidenceCountry());
+        Ethnicity ethnicity = entityService.getById(Ethnicity.class, personalDetailsDTO.getEthnicity());
+        Disability disability = entityService.getById(Disability.class, personalDetailsDTO.getDisability());
+        personalDetails.setTitle(title);
+        personalDetails.setGender(personalDetailsDTO.getGender());
+        personalDetails.setDateOfBirth(personalDetailsDTO.getDateOfBirth().toLocalDate());
+        personalDetails.setCountry(country);
+        personalDetails.setFirstNationality(firstNationality);
+        personalDetails.setSecondNationality(secondNationality);
+        personalDetails.setFirstLanguageEnglish(personalDetailsDTO.getFirstLanguageEnglish());
+        personalDetails.setResidenceCountry(residenceCountry);
+        personalDetails.setVisaRequired(personalDetailsDTO.getVisaRequired());
+        personalDetails.setPhoneNumber(personalDetailsDTO.getPhoneNumber());
+        personalDetails.setMessenger(personalDetailsDTO.getMessenger());
+        personalDetails.setEthnicity(ethnicity);
+        personalDetails.setDisability(disability);
+
+        ApplicationLanguageQualificationDTO languageQualificationDTO = personalDetailsDTO.getLanguageQualification();
+        if(languageQualificationDTO == null) {
+            personalDetails.setLanguageQualification(null);
+        } else {
+            ApplicationLanguageQualification languageQualification = personalDetails.getLanguageQualification();
+            if(languageQualification == null) {
+                languageQualification = new ApplicationLanguageQualification();
+                personalDetails.setLanguageQualification(languageQualification);
+            }
+            LanguageQualificationType languageQualificationType = entityService.getById(LanguageQualificationType.class, languageQualificationDTO.getType());
+            Document proofOfAward = entityService.getById(Document.class, languageQualificationDTO.getProofOfAward().getId());
+            languageQualification.setType(languageQualificationType);
+            languageQualification.setExamDate(languageQualificationDTO.getExamDate().toLocalDate());
+            languageQualification.setOverallScore(languageQualificationDTO.getOverallScore());
+            languageQualification.setReadingScore(languageQualificationDTO.getReadingScore());
+            languageQualification.setWritingScore(languageQualificationDTO.getWritingScore());
+            languageQualification.setSpeakingScore(languageQualificationDTO.getSpeakingScore());
+            languageQualification.setListeningScore(languageQualificationDTO.getListeningScore());
+            languageQualification.setProofOfAward(proofOfAward);
+        }
+
+        ApplicationPassportDTO passportDTO = personalDetailsDTO.getPassport();
+        if(passportDTO == null) {
+            personalDetails.setPassport(null);
+        } else {
+            ApplicationPassport passport = personalDetails.getPassport();
+            if(passport == null) {
+                passport = new ApplicationPassport();
+                personalDetails.setPassport(passport);
+            }
+            passport.setNumber(passportDTO.getNumber());
+            passport.setName(passportDTO.getName());
+            passport.setIssueDate(passportDTO.getIssueDate().toLocalDate());
+            passport.setExpiryDate(passportDTO.getExpiryDate().toLocalDate());
         }
     }
 }

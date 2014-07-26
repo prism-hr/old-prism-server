@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import org.joda.time.LocalDate;
+import org.joda.time.DateTime;
 
 public class ApplicationPassportDTO {
 
@@ -8,9 +8,9 @@ public class ApplicationPassportDTO {
 
     private String name;
 
-    private LocalDate issueDate;
+    private DateTime issueDate;
 
-    private LocalDate expiryDate;
+    private DateTime expiryDate;
 
     public String getNumber() {
         return number;
@@ -28,19 +28,19 @@ public class ApplicationPassportDTO {
         this.name = name;
     }
 
-    public LocalDate getIssueDate() {
+    public DateTime getIssueDate() {
         return issueDate;
     }
 
-    public void setIssueDate(LocalDate issueDate) {
+    public void setIssueDate(DateTime issueDate) {
         this.issueDate = issueDate;
     }
 
-    public LocalDate getExpiryDate() {
+    public DateTime getExpiryDate() {
         return expiryDate;
     }
 
-    public void setExpiryDate(LocalDate expiryDate) {
+    public void setExpiryDate(DateTime expiryDate) {
         this.expiryDate = expiryDate;
     }
 }

@@ -1,9 +1,13 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
 import com.zuehlke.pgadmissions.domain.definitions.Gender;
+import com.zuehlke.pgadmissions.rest.dto.UserDTO;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 public class ApplicationPersonalDetailsDTO {
+
+    private UserDTO user;
 
     private String messenger;
 
@@ -25,7 +29,7 @@ public class ApplicationPersonalDetailsDTO {
 
     private Gender gender;
 
-    private LocalDate dateOfBirth;
+    private DateTime dateOfBirth;
 
     private Integer country;
 
@@ -34,6 +38,14 @@ public class ApplicationPersonalDetailsDTO {
     private Integer disability;
 
     private Integer residenceCountry;
+
+    public UserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
+    }
 
     public String getMessenger() {
         return messenger;
@@ -115,11 +127,11 @@ public class ApplicationPersonalDetailsDTO {
         this.gender = gender;
     }
 
-    public LocalDate getDateOfBirth() {
+    public DateTime getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
+    public void setDateOfBirth(DateTime dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 

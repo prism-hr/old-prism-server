@@ -18,7 +18,7 @@ public class LanguageQualificationRepresentation {
 
     private String listeningScore;
 
-    private DocumentRepresentation proofOfAward;
+    private FileRepresentation proofOfAward;
 
     public Integer getType() {
         return type;
@@ -76,11 +76,11 @@ public class LanguageQualificationRepresentation {
         this.listeningScore = listeningScore;
     }
 
-    public DocumentRepresentation getProofOfAward() {
+    public FileRepresentation getProofOfAward() {
         return proofOfAward;
     }
 
-    public void setProofOfAward(DocumentRepresentation proofOfAward) {
+    public void setProofOfAward(FileRepresentation proofOfAward) {
         this.proofOfAward = proofOfAward;
     }
 }

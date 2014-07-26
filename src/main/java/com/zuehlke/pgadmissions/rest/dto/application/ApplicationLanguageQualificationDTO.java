@@ -1,12 +1,13 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import org.joda.time.LocalDate;
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
+import org.joda.time.DateTime;
 
 public class ApplicationLanguageQualificationDTO {
 
     private Integer type;
 
-    private LocalDate examDate;
+    private DateTime examDate;
 
     private String overallScore;
 
@@ -18,7 +19,7 @@ public class ApplicationLanguageQualificationDTO {
 
     private String listeningScore;
 
-    private Integer proofOfAward;
+    private FileDTO proofOfAward;
 
     public Integer getType() {
         return type;
@@ -28,11 +29,11 @@ public class ApplicationLanguageQualificationDTO {
         this.type = type;
     }
 
-    public LocalDate getExamDate() {
+    public DateTime getExamDate() {
         return examDate;
     }
 
-    public void setExamDate(LocalDate examDate) {
+    public void setExamDate(DateTime examDate) {
         this.examDate = examDate;
     }
 
@@ -76,11 +77,11 @@ public class ApplicationLanguageQualificationDTO {
         this.listeningScore = listeningScore;
     }
 
-    public Integer getProofOfAward() {
+    public FileDTO getProofOfAward() {
         return proofOfAward;
     }
 
-    public void setProofOfAward(Integer proofOfAward) {
+    public void setProofOfAward(FileDTO proofOfAward) {
         this.proofOfAward = proofOfAward;
     }
 }

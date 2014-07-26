@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.application;
 
-public class DocumentRepresentation {
+public class FileRepresentation {
 
     private Integer id;
 

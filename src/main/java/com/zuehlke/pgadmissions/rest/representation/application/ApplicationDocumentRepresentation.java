@@ -2,23 +2,23 @@ package com.zuehlke.pgadmissions.rest.representation.application;
 
 public class ApplicationDocumentRepresentation {
 
-    private DocumentRepresentation personalStatement;
+    private FileRepresentation personalStatement;
 
-    private DocumentRepresentation cv;
+    private FileRepresentation cv;
 
-    public DocumentRepresentation getPersonalStatement() {
+    public FileRepresentation getPersonalStatement() {
         return personalStatement;
     }
 
-    public void setPersonalStatement(DocumentRepresentation personalStatement) {
+    public void setPersonalStatement(FileRepresentation personalStatement) {
         this.personalStatement = personalStatement;
     }
 
-    public DocumentRepresentation getCv() {
+    public FileRepresentation getCv() {
         return cv;
     }
 
-    public void setCv(DocumentRepresentation cv) {
+    public void setCv(FileRepresentation cv) {
         this.cv = cv;
     }
 }

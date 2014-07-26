@@ -1,46 +1,157 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import org.joda.time.DateTime;
+import com.zuehlke.pgadmissions.domain.definitions.Gender;
+import org.joda.time.LocalDate;
 
 public class ApplicationPersonalDetailsDTO {
 
-    private String studyOption;
+    private String messenger;
 
-    private DateTime startDate;
+    private String phoneNumber;
 
-    private String referralSource;
+    private Boolean firstLanguageEnglish;
 
-    private ApplicationSupervisorDTO[] suggestedSupervisors;
+    private ApplicationLanguageQualificationDTO languageQualification;
 
-    public String getStudyOption() {
-        return studyOption;
+    private Boolean visaRequired;
+
+    private ApplicationPassportDTO passport;
+
+    private Integer firstNationality;
+
+    private Integer secondNationality;
+
+    private Integer title;
+
+    private Gender gender;
+
+    private LocalDate dateOfBirth;
+
+    private Integer country;
+
+    private Integer ethnicity;
+
+    private Integer disability;
+
+    private Integer residenceCountry;
+
+    public String getMessenger() {
+        return messenger;
     }
 
-    public void setStudyOption(String studyOption) {
-        this.studyOption = studyOption;
+    public void setMessenger(String messenger) {
+        this.messenger = messenger;
     }
 
-    public DateTime getStartDate() {
-        return startDate;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setStartDate(DateTime startDate) {
-        this.startDate = startDate;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
-    public String getReferralSource() {
-        return referralSource;
+    public Boolean getFirstLanguageEnglish() {
+        return firstLanguageEnglish;
     }
 
-    public void setReferralSource(String referralSource) {
-        this.referralSource = referralSource;
+    public void setFirstLanguageEnglish(Boolean firstLanguageEnglish) {
+        this.firstLanguageEnglish = firstLanguageEnglish;
     }
 
-    public ApplicationSupervisorDTO[] getSuggestedSupervisors() {
-        return suggestedSupervisors;
+    public ApplicationLanguageQualificationDTO getLanguageQualification() {
+        return languageQualification;
     }
 
-    public void setSuggestedSupervisors(ApplicationSupervisorDTO[] suggestedSupervisors) {
-        this.suggestedSupervisors = suggestedSupervisors;
+    public void setLanguageQualification(ApplicationLanguageQualificationDTO languageQualification) {
+        this.languageQualification = languageQualification;
+    }
+
+    public Boolean getVisaRequired() {
+        return visaRequired;
+    }
+
+    public void setVisaRequired(Boolean visaRequired) {
+        this.visaRequired = visaRequired;
+    }
+
+    public ApplicationPassportDTO getPassport() {
+        return passport;
+    }
+
+    public void setPassport(ApplicationPassportDTO passport) {
+        this.passport = passport;
+    }
+
+    public Integer getFirstNationality() {
+        return firstNationality;
+    }
+
+    public void setFirstNationality(Integer firstNationality) {
+        this.firstNationality = firstNationality;
+    }
+
+    public Integer getSecondNationality() {
+        return secondNationality;
+    }
+
+    public void setSecondNationality(Integer secondNationality) {
+        this.secondNationality = secondNationality;
+    }
+
+    public Integer getTitle() {
+        return title;
+    }
+
+    public void setTitle(Integer title) {
+        this.title = title;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public Integer getCountry() {
+        return country;
+    }
+
+    public void setCountry(Integer country) {
+        this.country = country;
+    }
+
+    public Integer getEthnicity() {
+        return ethnicity;
+    }
+
+    public void setEthnicity(Integer ethnicity) {
+        this.ethnicity = ethnicity;
+    }
+
+    public Integer getDisability() {
+        return disability;
+    }
+
+    public void setDisability(Integer disability) {
+        this.disability = disability;
+    }
+
+    public Integer getResidenceCountry() {
+        return residenceCountry;
+    }
+
+    public void setResidenceCountry(Integer residenceCountry) {
+        this.residenceCountry = residenceCountry;
     }
 }

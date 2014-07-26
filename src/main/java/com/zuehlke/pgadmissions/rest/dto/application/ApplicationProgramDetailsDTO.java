@@ -4,19 +4,19 @@ import org.joda.time.DateTime;
 
 public class ApplicationProgramDetailsDTO {
 
-    private String studyOption;
+    private Integer studyOption;
 
     private DateTime startDate;
 
-    private String referralSource;
+    private Integer referralSource;
 
     private ApplicationSupervisorDTO[] suggestedSupervisors;
 
-    public String getStudyOption() {
+    public Integer getStudyOption() {
         return studyOption;
     }
 
-    public void setStudyOption(String studyOption) {
+    public void setStudyOption(Integer studyOption) {
         this.studyOption = studyOption;
     }
 
@@ -28,11 +28,11 @@ public class ApplicationProgramDetailsDTO {
         this.startDate = startDate;
     }
 
-    public String getReferralSource() {
+    public Integer getReferralSource() {
         return referralSource;
     }
 
-    public void setReferralSource(String referralSource) {
+    public void setReferralSource(Integer referralSource) {
         this.referralSource = referralSource;
     }
 

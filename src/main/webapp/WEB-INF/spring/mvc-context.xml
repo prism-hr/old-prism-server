@@ -38,6 +38,7 @@
         <property name="dateFormat">
             <bean class="com.fasterxml.jackson.databind.util.ISO8601DateFormat"/>
         </property>
+        <property name="indentOutput" value="${json.pretty.print}"/>
     </bean>
 
     <bean id="jacksonMessageConverter"

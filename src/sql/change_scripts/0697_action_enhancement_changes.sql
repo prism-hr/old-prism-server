@@ -9,7 +9,7 @@ ALTER TABLE STATE_ACTION_ASSIGNMENT
 ;
 
 ALTER TABLE STATE_ACTION_ASSIGNMENT
-	ADD COLUMN delegated_action_id VARCHAR(100) AFTER action_enhancement_type,
+	ADD COLUMN delegated_action_id VARCHAR(100) AFTER action_enhancement,
 	ADD INDEX (delegated_action_id),
 	ADD FOREIGN KEY (delegated_action_id) REFERENCES ACTION (id)
 ;
@@ -46,6 +46,15 @@ FROM ACTION WHERE id LIKE "%_LIST"
 	AND id NOT LIKE "SYSTEM%"
 ;
 
+UPDATE STATE
+SET sequence_order = 2
+WHERE id = "INSTITUTION_APPROVED"
+;
+
+INSERT INTO STATE (id, parent_state_id, is_initial_state, is_final_state, sequence_order, scope_id)
+VALUES ("INSTITUTION_APPROVAL", "INSTITUTION_APPROVAL", 0, 1, 1, "INSTITUTION")
+;
+
 UPDATE COMMENT
 SET transition_state_id = "INSTITUTION_APPROVAL"
 WHERE transition_state_id = "INSTITUTION_APPROVED"
@@ -55,6 +64,10 @@ INSERT INTO COMMENT (institution_id, user_id, role_id, action_id, declined_respo
 	SELECT institution_id, user_id, role_id, action_id, declined_response, content, transition_state_id, created_timestamp
 	FROM COMMENT
 	WHERE transition_state_id = "INSTITUTION_APPROVAL"
+;
+
+INSERT INTO ACTION (id, action_type, action_category, do_save_comment, scope_id)
+VALUES("INSTITUTION_COMPLETE_APPROVAL_STAGE", "USER_INVOCATION", "PROCESS_RESOURCE", 1, "INSTITUTION")
 ;
 
 UPDATE COMMENT

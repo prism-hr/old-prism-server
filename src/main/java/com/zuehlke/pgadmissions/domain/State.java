@@ -29,7 +29,7 @@ public class State extends WorkflowResource {
     private PrismState id;
 
     @ManyToOne
-    @JoinColumn(name = "scope_group_id", nullable = false)
+    @JoinColumn(name = "state_group_id", nullable = false)
     private StateGroup stateGroup;
     
     @ManyToOne

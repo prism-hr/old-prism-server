@@ -6,7 +6,7 @@ public class FundingRepresentation {
 
     private String fundingSource;
 
-    private DocumentRepresentation document;
+    private FileRepresentation document;
 
     private String description;
 
@@ -22,11 +22,11 @@ public class FundingRepresentation {
         this.fundingSource = fundingSource;
     }
 
-    public DocumentRepresentation getDocument() {
+    public FileRepresentation getDocument() {
         return document;
     }
 
-    public void setDocument(DocumentRepresentation document) {
+    public void setDocument(FileRepresentation document) {
         this.document = document;
     }
 

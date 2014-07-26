@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.rest.representation;
 import java.util.Set;
 import java.util.TimeZone;
 
+import com.zuehlke.pgadmissions.rest.representation.application.FileRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -13,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.definitions.ApplicationResidenceStatus;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.rest.representation.application.DocumentRepresentation;
 
 public class CommentRepresentation {
 
@@ -97,7 +97,7 @@ public class CommentRepresentation {
 
     private Set<CommentAssignedUserRepresentation> commentAssignedUsers = Sets.newHashSet();
 
-    private Set<DocumentRepresentation> documents = Sets.newHashSet();
+    private Set<FileRepresentation> documents = Sets.newHashSet();
 
     private Set<CommentAppointmentTimeslot> appointmentTimeslots = Sets.newHashSet();
 
@@ -423,11 +423,11 @@ public class CommentRepresentation {
         this.commentAssignedUsers = commentAssignedUsers;
     }
 
-    public Set<DocumentRepresentation> getDocuments() {
+    public Set<FileRepresentation> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(Set<DocumentRepresentation> documents) {
+    public void setDocuments(Set<FileRepresentation> documents) {
         this.documents = documents;
     }
 

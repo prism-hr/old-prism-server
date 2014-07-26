@@ -98,7 +98,7 @@ public class ApplicationPersonalDetails {
     private Domicile residenceCountry;
 
     @OneToOne(mappedBy = "personalDetails")
-    private Application application = null;
+    private Application application;
 
     public void setId(Integer id) {
         this.id = id;

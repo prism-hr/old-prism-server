@@ -18,9 +18,9 @@ public class QualificationRepresentation {
 
     private String grade;
 
-    private DocumentRepresentation document;
+    private FileRepresentation document;
 
-    private String institution;
+    private Integer institution;
 
     private Boolean completed;
 
@@ -82,19 +82,19 @@ public class QualificationRepresentation {
         this.grade = grade;
     }
 
-    public DocumentRepresentation getDocument() {
+    public FileRepresentation getDocument() {
         return document;
     }
 
-    public void setDocument(DocumentRepresentation document) {
+    public void setDocument(FileRepresentation document) {
         this.document = document;
     }
 
-    public String getInstitution() {
+    public Integer getInstitution() {
         return institution;
     }
 
-    public void setInstitution(String institution) {
+    public void setInstitution(Integer institution) {
         this.institution = institution;
     }
 

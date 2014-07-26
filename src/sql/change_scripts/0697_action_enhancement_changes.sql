@@ -156,3 +156,47 @@ SET state_id = "SYSTEM_RUNNING"
 
 SET FOREIGN_KEY_CHECKS = 1
 ;
+
+INSERT INTO IMPORTED_ENTITY (institution_id, imported_entity_type, code, name, enabled)
+VALUES(5243, "GENDER", "F", "Female", 1),
+	(5243, "GENDER", "M", "Male", 1),
+	(5243, "GENDER", "N", "Indeterminate Gender", 1)
+;
+
+ALTER TABLE APPLICATION_PERSONAL_DETAIL
+	ADD COLUMN gender_id INT(10) UNSIGNED AFTER title_id,
+	ADD INDEX (gender_id),
+	ADD FOREIGN KEY (gender_id) REFERENCES IMPORTED_ENTITY (id)
+;
+
+UPDATE APPLICATION_PERSONAL_DETAIL
+SET gender_id = (
+	SELECT id
+	FROM IMPORTED_ENTITY
+	WHERE imported_entity_type = "GENDER"
+	AND code = "F")
+WHERE gender = "FEMALE"
+;
+
+UPDATE APPLICATION_PERSONAL_DETAIL
+SET gender_id = (
+	SELECT id
+	FROM IMPORTED_ENTITY
+	WHERE imported_entity_type = "GENDER"
+	AND code = "M")
+WHERE gender = "MALE"
+;
+
+UPDATE APPLICATION_PERSONAL_DETAIL
+SET gender_id = (
+	SELECT id
+	FROM IMPORTED_ENTITY
+	WHERE imported_entity_type = "GENDER"
+	AND code = "N")
+WHERE gender = "INDETERMINATE_GENDER"
+;
+
+ALTER TABLE APPLICATION_PERSONAL_DETAIL
+	MODIFY COLUMN gender_id INT(10) UNSIGNED NOT NULL,
+	DROP COLUMN gender
+;

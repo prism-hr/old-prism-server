@@ -91,37 +91,37 @@ public class IT5InstitutionReferenceDataImport {
         entityImportService.importEntities(importedEntityFeed);
 
         assertEquals(2, importedEntityService.getAllDisabilities().size());
-        assertEquals("disability1", importedEntityService.getByCode(Disability.class, "0").getName());
-        assertEquals("otherDisability", importedEntityService.getByCode(Disability.class, "99").getName());
-        assertTrue(importedEntityService.getByCode(Disability.class, "0").isEnabled());
-        assertTrue(importedEntityService.getByCode(Disability.class, "99").isEnabled());
+        assertEquals("disability1", importedEntityService.getByCode(Disability.class, institution, "0").getName());
+        assertEquals("otherDisability", importedEntityService.getByCode(Disability.class, institution, "99").getName());
+        assertTrue(importedEntityService.getByCode(Disability.class, institution, "0").isEnabled());
+        assertTrue(importedEntityService.getByCode(Disability.class, institution, "99").isEnabled());
 
         importedEntityFeed.setLocation("reference_data/conflicts/disabilities/changeName.xml");
         entityImportService.importEntities(importedEntityFeed);
 
         assertEquals(2, importedEntityService.getAllDisabilities().size());
-        assertEquals("disability2", importedEntityService.getByCode(Disability.class, "0").getName());
-        assertEquals("otherDisability", importedEntityService.getByCode(Disability.class, "99").getName());
-        assertTrue(importedEntityService.getByCode(Disability.class, "0").isEnabled());
-        assertTrue(importedEntityService.getByCode(Disability.class, "99").isEnabled());
+        assertEquals("disability2", importedEntityService.getByCode(Disability.class, institution, "0").getName());
+        assertEquals("otherDisability", importedEntityService.getByCode(Disability.class, institution, "99").getName());
+        assertTrue(importedEntityService.getByCode(Disability.class, institution, "0").isEnabled());
+        assertTrue(importedEntityService.getByCode(Disability.class, institution, "99").isEnabled());
 
         importedEntityFeed.setLocation("reference_data/conflicts/disabilities/changeCode.xml");
         entityImportService.importEntities(importedEntityFeed);
 
         assertEquals(2, importedEntityService.getAllDisabilities().size());
-        assertEquals("disability2", importedEntityService.getByCode(Disability.class, "1").getName());
-        assertEquals("otherDisability", importedEntityService.getByCode(Disability.class, "99").getName());
-        assertTrue(importedEntityService.getByCode(Disability.class, "1").isEnabled());
-        assertTrue(importedEntityService.getByCode(Disability.class, "99").isEnabled());
+        assertEquals("disability2", importedEntityService.getByCode(Disability.class, institution, "1").getName());
+        assertEquals("otherDisability", importedEntityService.getByCode(Disability.class, institution, "99").getName());
+        assertTrue(importedEntityService.getByCode(Disability.class, institution, "1").isEnabled());
+        assertTrue(importedEntityService.getByCode(Disability.class, institution, "99").isEnabled());
 
         importedEntityFeed.setLocation("reference_data/conflicts/disabilities/removeDisability.xml");
         entityImportService.importEntities(importedEntityFeed);
 
         assertEquals(2, importedEntityService.getAllDisabilities().size());
-        assertEquals("disability2", importedEntityService.getByCode(Disability.class, "1").getName());
-        assertEquals("otherDisability", importedEntityService.getByCode(Disability.class, "99").getName());
-        assertTrue(importedEntityService.getByCode(Disability.class, "1").isEnabled());
-        assertFalse(importedEntityService.getByCode(Disability.class, "99").isEnabled());
+        assertEquals("disability2", importedEntityService.getByCode(Disability.class, institution, "1").getName());
+        assertEquals("otherDisability", importedEntityService.getByCode(Disability.class, institution, "99").getName());
+        assertTrue(importedEntityService.getByCode(Disability.class, institution, "1").isEnabled());
+        assertFalse(importedEntityService.getByCode(Disability.class, institution, "99").isEnabled());
     }
 
     @SuppressWarnings("unchecked")

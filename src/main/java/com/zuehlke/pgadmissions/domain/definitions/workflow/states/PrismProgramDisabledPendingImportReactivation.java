@@ -58,7 +58,7 @@ public class PrismProgramDisabledPendingImportReactivation extends PrismWorkflow
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_RESTORE) //
             .withRaisesUrgentFlag(false) //
-            .withDefaultAction(true) //
+            .withDefaultAction(false) //
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 

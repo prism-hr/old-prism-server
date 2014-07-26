@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.validation.Valid;
 
@@ -93,16 +92,6 @@ public class EmploymentPositionController {
     public String deleteEmployment(@RequestParam("id") Integer employmentPositionId, @ModelAttribute Application applicationForm) {
         employmentPositionService.delete(employmentPositionId);
         return RedirectLocation.UPDATE_APPLICATION_EMPLOYMENT_POSITION + applicationForm.getCode() + "&message=deleted";
-    }
-
-    @ModelAttribute("languages")
-    public List<Language> getAllEnabledLanguages() {
-        return importedEntityService.getAllLanguages();
-    }
-
-    @ModelAttribute("domiciles")
-    public List<Domicile> getAllEnabledDomiciles() {
-        return importedEntityService.getAllDomiciles();
     }
 
     @ModelAttribute("applicationForm")

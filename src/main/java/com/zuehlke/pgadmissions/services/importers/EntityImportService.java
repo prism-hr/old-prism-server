@@ -24,7 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
@@ -35,12 +36,15 @@ import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -54,7 +58,10 @@ public class EntityImportService {
     private static DateTimeFormatter dtFormatter = DateTimeFormat.forPattern("dd-MMM-yy");
 
     @Autowired
-    private ImportedEntityDAO importedEntityDAO;
+    private ImportedEntityService importedEntityService;
+
+    @Autowired
+    private ActionService actionService;
 
     @Autowired
     private EntityService entityService;
@@ -100,7 +107,7 @@ public class EntityImportService {
 
                 Iterable<ImportedEntity> newEntities = Iterables.transform(unmarshalled, entityConverter);
 
-                thisBean.mergeImportedEntities(entityClass, newEntities);
+                thisBean.mergeImportedEntities(entityClass, importedEntityFeed.getInstitution(), newEntities);
             }
         } catch (Exception e) {
             throw new XMLDataImportException("Error during the import of file: " + fileLocation, e);
@@ -126,18 +133,18 @@ public class EntityImportService {
         }
     }
 
-    public void mergeImportedEntities(Class<ImportedEntity> entityClass, Iterable<ImportedEntity> entities) {
+    public void mergeImportedEntities(Class<ImportedEntity> entityClass, Institution institution, Iterable<ImportedEntity> entities) {
         EntityImportService thisBean = applicationContext.getBean(EntityImportService.class);
-        thisBean.disableAllEntities(entityClass);
+        thisBean.disableAllEntities(entityClass, institution);
         for (ImportedEntity entity : entities) {
             try {
                 thisBean.attemptInsert(entity);
             } catch (ConstraintViolationException e) {
                 try {
-                    thisBean.attemptUpdateByCode(entityClass, entity);
+                    thisBean.attemptUpdateByCode(entityClass, institution, entity);
                 } catch (Exception e1) {
                     try {
-                        thisBean.attemptUpdateByName(entityClass, entity);
+                        thisBean.attemptUpdateByName(entityClass, institution, entity);
                     } catch (Exception e2) {
                         log.error("Couldn't insert entity", e);
                         log.error("Couldn't update entity by code", e1);
@@ -182,13 +189,13 @@ public class EntityImportService {
     }
 
     @Transactional
-    public void disableAllEntities(Class<? extends ImportedEntity> entityClass) {
-        importedEntityDAO.disableAllEntities(entityClass);
+    public void disableAllEntities(Class<? extends ImportedEntity> entityClass, Institution institution) {
+        importedEntityService.disableAllEntities(entityClass, institution);
     }
 
     @Transactional
     public void disableAllProgramInstances(Institution institution) {
-        importedEntityDAO.disableAllProgramInstances(institution);
+        importedEntityService.disableAllProgramInstances(institution);
     }
 
     @Transactional
@@ -197,15 +204,15 @@ public class EntityImportService {
     }
 
     @Transactional
-    public void attemptUpdateByCode(Class<ImportedEntity> entityClass, ImportedEntity entity) {
-        ImportedEntity entityByCode = importedEntityDAO.getByCode(entityClass, entity.getCode());
+    public void attemptUpdateByCode(Class<ImportedEntity> entityClass, Institution institution, ImportedEntity entity) {
+        ImportedEntity entityByCode = importedEntityService.getByCode(entityClass, institution, entity.getCode());
         entityByCode.setName(entity.getName());
         entityByCode.setEnabled(true);
     }
 
     @Transactional
-    public void attemptUpdateByName(Class<ImportedEntity> entityClass, ImportedEntity entity) {
-        ImportedEntity entityByName = importedEntityDAO.getByName(entityClass, entity.getName());
+    public void attemptUpdateByName(Class<ImportedEntity> entityClass, Institution institution, ImportedEntity entity) {
+        ImportedEntity entityByName = importedEntityService.getByName(entityClass, institution, entity.getName());
         entityByName.setCode(entity.getCode());
         entityByName.setEnabled(true);
     }
@@ -220,18 +227,20 @@ public class EntityImportService {
         persistentProgramInstance.setEnabled(true);
     }
 
-    // TODO: integrate with workflow engine when finished
     @Transactional
     public Program getOrCreateProgram(Programme programme, Institution institution) {
         String prefixedProgramCode = String.format("%010d", institution.getId()) + "-" + programme.getCode();
-        Program program = programService.getProgramByCode(prefixedProgramCode);
-        if (program == null) {
-            PrismProgramType programType = PrismProgramType.findValueFromString(programme.getName());
-            program = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withCode(prefixedProgramCode)
-                    .withTitle(programme.getName()).withState(new State().withId(PrismState.PROGRAM_APPROVED)).withProgramType(programType)
-                    .withImported(true).withCreatedTimestamp(new DateTime()).withUpdatedTimestamp(new DateTime());
-            entityService.save(program);
-        }
+        PrismProgramType programType = PrismProgramType.findValueFromString(programme.getName());
+
+        Program program = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withCode(prefixedProgramCode)
+                .withTitle(programme.getName()).withState(new State().withId(PrismState.PROGRAM_APPROVED)).withProgramType(programType).withImported(true)
+                .withCreatedTimestamp(new DateTime()).withUpdatedTimestamp(new DateTime());
+
+        Action importAction = actionService.getById(PrismAction.INSTITUTION_IMPORT_PROGRAM);
+        Comment comment = new Comment().withUser(systemService.getSystem().getUser()).withCreatedTimestamp(new DateTime()).withAction(importAction)
+                .withDeclinedResponse(false);
+        actionService.executeSystemAction(institution, importAction, comment);
+
         return program.withTitle(programme.getName()).withRequireProjectDefinition(programme.isAtasRegistered());
     }
 
@@ -248,7 +257,7 @@ public class EntityImportService {
 
     @Transactional
     public List<ImportedEntityFeed> getImportedEntityFeeds() {
-        return importedEntityDAO.getImportedEntityFeeds();
+        return importedEntityService.getImportedEntityFeeds();
     }
 
 }

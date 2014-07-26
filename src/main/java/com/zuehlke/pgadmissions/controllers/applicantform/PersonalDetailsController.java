@@ -117,29 +117,9 @@ public class PersonalDetailsController {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
-    @ModelAttribute("languages")
-    public List<Language> getAllEnabledLanguages() {
-        return importedEntityService.getAllLanguages();
-    }
-
-    @ModelAttribute("countries")
-    public List<Country> getAllEnabledCountries() {
-        return importedEntityService.getAllCountries();
-    }
-
-    @ModelAttribute("ethnicities")
-    public List<Ethnicity> getAllEnabledEthnicities() {
-        return importedEntityService.getAllEthnicities();
-    }
-
     @ModelAttribute("disabilities")
     public List<Disability> getAllEnabledDisabilities() {
         return importedEntityService.getAllDisabilities();
-    }
-
-    @ModelAttribute("domiciles")
-    public List<Domicile> getAllEnabledDomiciles() {
-        return importedEntityService.getAllDomiciles();
     }
 
     @ModelAttribute("applicationForm")

@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.services.DocumentService;
 
 @Component
@@ -26,9 +27,10 @@ public class ApplicationCopyHelper {
 
     @Autowired
     DocumentService documentService;
-
+    
     @Transactional
     public void copyApplicationFormData(Application to, Application from) {
+        
         if (from.getPersonalDetails() != null) {
             ApplicationPersonalDetails personalDetails = new ApplicationPersonalDetails();
             to.setPersonalDetails(personalDetails);
@@ -87,9 +89,10 @@ public class ApplicationCopyHelper {
     }
 
     public void copyProgramDetails(ApplicationProgramDetails to, ApplicationProgramDetails from) {
-        to.setStudyOption(from.getStudyOption());
+        Institution toInstitution = to.getApplication().getInstitution();
+        to.setStudyOption(getEnabledImportedObject(toInstitution, from.getStudyOption()));
         to.setStartDate(from.getStartDate());
-        to.setReferralSource(from.getReferralSource());
+        to.setReferralSource(getEnabledImportedObject(toInstitution, from.getReferralSource()));
         to.setSourceOfInterestText(from.getSourceOfInterestText());
         to.getSupervisors().addAll(from.getSupervisors());
     }
@@ -100,20 +103,22 @@ public class ApplicationCopyHelper {
     }
 
     public void copyReferee(ApplicationReferee to, ApplicationReferee from, boolean doPerformDeepCopy) {
+        Institution toInstitution = to.getApplication().getInstitution();
         to.setUser(from.getUser());
         to.setJobEmployer(from.getJobEmployer());
         to.setJobTitle(from.getJobTitle());
         to.setPhoneNumber(from.getPhoneNumber());
         to.setSkype(from.getSkype());
         if (doPerformDeepCopy) {
-            to.setAddress(copyAddress(from.getAddress()));
+            to.setAddress(copyAddress(toInstitution, from.getAddress()));
         } else {
             to.setAddress(from.getAddress());
         }
     }
 
     public void copyFunding(ApplicationFunding to, ApplicationFunding from, boolean doPerformDeepCopy) {
-        to.setFundingSource(from.getFundingSource());
+        Institution toInstitution = to.getApplication().getInstitution();
+        to.setFundingSource(getEnabledImportedObject(toInstitution, from.getFundingSource()));
         to.setDescription(from.getDescription());
         to.setValue(from.getValue());
         to.setAwardDate(from.getAwardDate());
@@ -126,6 +131,7 @@ public class ApplicationCopyHelper {
     }
 
     public void copyEmploymentPosition(ApplicationEmploymentPosition to, ApplicationEmploymentPosition from, boolean doPerformDeepCopy) {
+        Institution toInstitution = to.getApplication().getInstitution();
         to.setEmployerName(from.getEmployerName());
         to.setPosition(from.getPosition());
         to.setRemit(from.getRemit());
@@ -133,15 +139,16 @@ public class ApplicationCopyHelper {
         to.setCurrent(from.isCurrent());
         to.setEndDate(from.getEndDate());
         if (doPerformDeepCopy) {
-            to.setEmployerAddress(copyAddress(from.getEmployerAddress()));
+            to.setEmployerAddress(copyAddress(toInstitution, from.getEmployerAddress()));
         } else {
             to.setEmployerAddress(from.getEmployerAddress());
         }
     }
 
     public void copyQualification(ApplicationQualification to, ApplicationQualification from, boolean doPerformDeepCopy) {
-        to.setInstitution(from.getInstitution());
-        to.setType(getEnabledImportedObject(from.getType()));
+        Institution toInstitution = to.getApplication().getInstitution();
+        to.setInstitution(getEnabledImportedObject(toInstitution, from.getInstitution()));
+        to.setType(getEnabledImportedObject(toInstitution, from.getType()));
         to.setTitle(from.getTitle());
         to.setSubject(from.getSubject());
         to.setLanguage(from.getLanguage());
@@ -158,23 +165,24 @@ public class ApplicationCopyHelper {
     }
 
     public void copyPersonalDetails(ApplicationPersonalDetails to, ApplicationPersonalDetails from, boolean doPerformDeepCopy) {
-        to.setTitle(from.getTitle());
-        to.setGender(from.getGender());
+        Institution toInstitution = to.getApplication().getInstitution();
+        to.setTitle(getEnabledImportedObject(toInstitution, from.getTitle()));
+        to.setGender(getEnabledImportedObject(toInstitution, from.getGender()));
         to.setDateOfBirth(from.getDateOfBirth());
-        to.setCountry(getEnabledImportedObject(from.getCountry()));
-        to.setFirstNationality(getEnabledImportedObject(from.getFirstNationality()));
-        to.setSecondNationality(getEnabledImportedObject(from.getSecondNationality()));
+        to.setCountry(getEnabledImportedObject(toInstitution, from.getCountry()));
+        to.setFirstNationality(getEnabledImportedObject(toInstitution, from.getFirstNationality()));
+        to.setSecondNationality(getEnabledImportedObject(toInstitution, from.getSecondNationality()));
         to.setFirstLanguageEnglish(from.getFirstLanguageEnglish());
         to.setLanguageQualificationAvailable(from.getLanguageQualificationAvailable());
-        to.setResidenceCountry(getEnabledImportedObject(from.getResidenceCountry()));
+        to.setResidenceCountry(getEnabledImportedObject(toInstitution, from.getResidenceCountry()));
         to.setVisaRequired(from.getVisaRequired());
         to.setPassportAvailable(from.getPassportAvailable());
         to.setPhoneNumber(from.getPhoneNumber());
         to.setMessenger(from.getMessenger());
-        to.setEthnicity(getEnabledImportedObject(from.getEthnicity()));
-        to.setDisability(getEnabledImportedObject(from.getDisability()));
+        to.setEthnicity(getEnabledImportedObject(toInstitution, from.getEthnicity()));
+        to.setDisability(getEnabledImportedObject(toInstitution, from.getDisability()));
         if (doPerformDeepCopy) {
-            to.setLanguageQualification(copyLanguageQualification(from.getLanguageQualification()));
+            to.setLanguageQualification(copyLanguageQualification(toInstitution, from.getLanguageQualification()));
             to.setPassport(copyPassport(from.getPassport()));
         } else {
             ApplicationLanguageQualification toQualification = to.getLanguageQualification();
@@ -194,9 +202,10 @@ public class ApplicationCopyHelper {
     }
 
     public void copyApplicationFormAddress(ApplicationAddress to, ApplicationAddress from, boolean doPerformDeepCopy) {
+        Institution toInstitution = to.getApplication().getInstitution();
         if (doPerformDeepCopy) {
-            to.setCurrentAddress(copyAddress(from.getCurrentAddress()));
-            to.setContactAddress(copyAddress(from.getContactAddress()));
+            to.setCurrentAddress(copyAddress(toInstitution, from.getCurrentAddress()));
+            to.setContactAddress(copyAddress(toInstitution, from.getContactAddress()));
         } else {
             to.setCurrentAddress(from.getCurrentAddress());
             to.setContactAddress(from.getContactAddress());
@@ -215,7 +224,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private Address copyAddress(Address from) {
+    private Address copyAddress(Institution toInstitution, Address from) {
         if (from == null) {
             return null;
         }
@@ -225,7 +234,7 @@ public class ApplicationCopyHelper {
         to.setAddressTown(from.getAddressTown());
         to.setAddressRegion(from.getAddressRegion());
         to.setAddressCode(from.getAddressCode());
-        to.setDomicile(getEnabledImportedObject(from.getDomicile()));
+        to.setDomicile(getEnabledImportedObject(toInstitution, from.getDomicile()));
         return to;
     }
 
@@ -242,12 +251,12 @@ public class ApplicationCopyHelper {
         return to;
     }
 
-    private ApplicationLanguageQualification copyLanguageQualification(ApplicationLanguageQualification from) {
+    private ApplicationLanguageQualification copyLanguageQualification(Institution toInstitution, ApplicationLanguageQualification from) {
         if (from == null) {
             return null;
         }
         ApplicationLanguageQualification to = new ApplicationLanguageQualification();
-        to.setType(from.getType());
+        to.setType(getEnabledImportedObject(toInstitution, from.getType()));
         to.setExamDate(from.getExamDate());
         to.setOverallScore(from.getOverallScore());
         to.setReadingScore(from.getReadingScore());
@@ -269,10 +278,10 @@ public class ApplicationCopyHelper {
         to.setExpiryDate(from.getExpiryDate());
         return to;
     }
-
-    private <T extends ImportedEntity> T getEnabledImportedObject(T object) {
-        if (object == null || object.isEnabled()) {
-            return object;
+    
+    private <T extends ImportedEntity> T getEnabledImportedObject(Institution toInstitution, T fromEntity) {
+        if (fromEntity == null || (fromEntity.isEnabled() && fromEntity.getInstitution() == toInstitution)) {
+            return fromEntity;
         }
         return null;
     }

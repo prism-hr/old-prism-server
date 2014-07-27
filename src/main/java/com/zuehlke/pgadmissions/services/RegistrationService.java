@@ -93,7 +93,7 @@ public class RegistrationService {
                 actionOutcome = actionService.executeSystemAction(resource, action, comment);
             }
             
-            resource = actionOutcome.getResource();
+            resource = actionOutcome.getTransitionResource();
         }
         
         return resource;

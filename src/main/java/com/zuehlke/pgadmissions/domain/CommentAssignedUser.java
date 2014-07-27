@@ -60,6 +60,11 @@ public class CommentAssignedUser {
         this.role = role;
     }
 
+    public CommentAssignedUser withComment(Comment comment) {
+        this.comment = comment;
+        return this;
+    }
+    
     public CommentAssignedUser withUser(User user) {
         this.user = user;
         return this;

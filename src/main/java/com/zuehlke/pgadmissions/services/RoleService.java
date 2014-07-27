@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.rest.representation.ResourceRepresentation;
 @Service
 @Transactional
 public class RoleService {
-    
+
     @Autowired
     private RoleDAO roleDAO;
 
@@ -112,7 +112,7 @@ public class RoleService {
     public List<Role> getDelegateActionOwnerRoles(User user, Resource resource, Action action) {
         return roleDAO.getActionOwnerRoles(user, resource, action);
     }
-    
+
     public List<User> getResourceUsers(Resource resource) {
         return roleDAO.getUsers(resource);
     }
@@ -146,7 +146,7 @@ public class RoleService {
     public List<UserRole> getUpdateNotificationRoles(User user, Resource resource, NotificationTemplate template) {
         return roleDAO.getUpdateNotificationRoles(user, resource, template);
     }
-    
+
     public List<Role> getAssignedRoles(StateAction stateAction) {
         List<Role> assignedRoles = roleDAO.getAssignedRoles(stateAction);
         return assignedRoles.isEmpty() ? getRoles() : assignedRoles;
@@ -155,7 +155,7 @@ public class RoleService {
     public Role getCreatorRole(Resource resource) {
         return roleDAO.getCreatorRole(resource);
     }
-    
+
     public void executeRoleTransitions(StateTransition stateTransition, Comment comment) throws WorkflowEngineException {
         for (PrismRoleTransitionType transitionType : PrismRoleTransitionType.values()) {
             HashMultimap<User, RoleTransition> userRoleTransitions = null;
@@ -257,7 +257,8 @@ public class RoleService {
     }
 
     private boolean isRoleAssignmentPermitted(UserRole userRole, Comment comment) {
-        return roleDAO.getExcludingRoles(userRole, comment).isEmpty() && roleDAO.getExcludingUserRoles(userRole).isEmpty();
+        return userRole.getRole().getExcludedRoles().isEmpty()
+                || (roleDAO.getExcludingRoles(userRole, comment).isEmpty() && roleDAO.getExcludingUserRoles(userRole).isEmpty());
     }
 
     private void executeUpdateUserRole(UserRole userRole, UserRole transientTransitionRole) throws WorkflowEngineException {

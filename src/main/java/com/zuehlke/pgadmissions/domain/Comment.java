@@ -612,6 +612,11 @@ public class Comment {
     }
     
     public void setResource(Resource resource) {
+        this.system = null;
+        this.institution = null;
+        this.program = null;
+        this.project = null;
+        this.application = null;
         try {
             PropertyUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
         } catch (Exception e) {
@@ -691,6 +696,12 @@ public class Comment {
 
     public Comment withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
+        return this;
+    }
+    
+    public Comment withAssignedUser(User user, Role role) {
+        CommentAssignedUser newAssignment = new CommentAssignedUser().withComment(this).withUser(user).withRole(role);
+        commentAssignedUsers.add(newAssignment);
         return this;
     }
 

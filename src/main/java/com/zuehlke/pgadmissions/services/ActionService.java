@@ -114,7 +114,7 @@ public class ActionService {
         Action transitionAction = stateTransition == null ? action : stateTransition.getTransitionAction();
         Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
-        return new ActionOutcome(actionOwner, transitionResource, transitionAction);
+        return new ActionOutcome(actionOwner, resource, transitionResource, transitionAction);
     }
 
     public Action getRedirectAction(Action action, User actionOwner, Resource duplicateResource) {

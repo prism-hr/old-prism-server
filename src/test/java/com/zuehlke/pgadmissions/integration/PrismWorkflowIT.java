@@ -102,7 +102,7 @@ public class PrismWorkflowIT {
         Application application = new Application().withInitialData(applicant, program, null);
         Action action = entityService.getByProperty(Action.class, "id", PrismAction.PROGRAM_CREATE_APPLICATION);
         ActionOutcome actionOutcome = actionService.executeUserAction(application, action, createApplicationComment);
-        Application createdApplication = (Application) actionOutcome.getResource();
+        Application createdApplication = (Application) actionOutcome.getTransitionResource();
         assertEquals(PrismAction.APPLICATION_COMPLETE, actionOutcome.getNextAction());
 
         entityService.update(createdApplication);
@@ -112,7 +112,7 @@ public class PrismWorkflowIT {
         action = entityService.getByProperty(Action.class, "id", PrismAction.APPLICATION_COMPLETE);
         actionOutcome = actionService.executeUserAction(createdApplication, action, completeApplicationComment);
         assertEquals(PrismAction.SYSTEM_VIEW_APPLICATION_LIST, actionOutcome.getNextAction());
-        assertEquals(systemService.getSystem().getId(), actionOutcome.getResource().getId());
+        assertEquals(systemService.getSystem().getId(), actionOutcome.getTransitionResource().getId());
 
         Comment assignReviewerComment = new Comment().withUser(programAdministrator);
         action = entityService.getByProperty(Action.class, "id", PrismAction.APPLICATION_ASSIGN_REVIEWERS);

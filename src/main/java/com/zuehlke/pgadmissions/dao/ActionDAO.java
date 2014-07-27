@@ -151,7 +151,7 @@ public class ActionDAO {
     
     public List<PrismActionEnhancement> getGlobalActionEnhancements(Resource resource, User user) {
         return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.property("stateActionEnhancement")) //
+                .setProjection(Projections.groupProperty("stateActionEnhancement")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
@@ -173,7 +173,7 @@ public class ActionDAO {
     
     public List<PrismActionEnhancement> getCustomActionEnhancements(Resource resource, User user) {
         return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.property("stateActionAssignment.stateActionEnhancement")) //
+                .setProjection(Projections.groupProperty("stateActionAssignment.stateActionEnhancement")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //

@@ -99,7 +99,7 @@ public class StaticDataResource {
         staticData.put("institutionDomiciles", institutionDomiciles);
 
         // Display names for enum classes
-        for (Class<?> enumClass : new Class[] { Gender.class, PrismProgramType.class }) {
+        for (Class<?> enumClass : new Class[] { PrismProgramType.class }) {
             List<EnumDefinition> definitions = Lists.newArrayListWithExpectedSize(enumClass.getEnumConstants().length);
             String simpleName = enumClass.getSimpleName();
             if (simpleName.startsWith("Prism")) {

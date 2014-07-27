@@ -159,6 +159,7 @@ public class ActionDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
+                .add(Restrictions.isNotNull("stateActionEnhancement")) //
                 .add(Restrictions.eq("action.actionCategory", PrismActionCategory.VIEW_EDIT_RESOURCE)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
@@ -181,6 +182,7 @@ public class ActionDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
+                .add(Restrictions.isNotNull("stateActionAssignment.stateActionEnhancement")) //
                 .add(Restrictions.eq("action.actionCategory", PrismActionCategory.VIEW_EDIT_RESOURCE)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //

@@ -51,7 +51,7 @@ SET sequence_order = 2
 WHERE id = "INSTITUTION_APPROVED"
 ;
 
-INSERT INTO STATE (id, parent_state_id, is_initial_state, is_final_state, sequence_order, scope_id)
+INSERT IGNORE INTO STATE (id, parent_state_id, is_initial_state, is_final_state, sequence_order, scope_id)
 VALUES ("INSTITUTION_APPROVAL", "INSTITUTION_APPROVAL", 0, 1, 1, "INSTITUTION")
 ;
 
@@ -66,7 +66,7 @@ INSERT INTO COMMENT (institution_id, user_id, role_id, action_id, declined_respo
 	WHERE transition_state_id = "INSTITUTION_APPROVAL"
 ;
 
-INSERT INTO ACTION (id, action_type, action_category, do_save_comment, scope_id)
+INSERT IGNORE INTO ACTION (id, action_type, action_category, do_save_comment, scope_id)
 VALUES("INSTITUTION_COMPLETE_APPROVAL_STAGE", "USER_INVOCATION", "PROCESS_RESOURCE", 1, "INSTITUTION")
 ;
 

@@ -348,6 +348,7 @@ public class Program extends Advert {
             HashMap<String, Object> properties2 = Maps.newHashMap();
             properties2.put("institution", institution);
             properties2.put("code", code);
+            properties2.put("imported", true);
             propertiesWrapper.add(properties2);
         }
         HashMultimap<String, Object> exclusions = HashMultimap.create();

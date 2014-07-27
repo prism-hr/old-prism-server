@@ -33,7 +33,9 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.StudyOption;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
@@ -234,8 +236,11 @@ public class EntityImportService {
                 .withTitle(programme.getName()).withProgramType(programType).withImported(true);
 
         Action importAction = actionService.getById(PrismAction.INSTITUTION_IMPORT_PROGRAM);
-        Comment comment = new Comment().withUser(systemService.getSystem().getUser()).withCreatedTimestamp(new DateTime()).withAction(importAction)
-                .withDeclinedResponse(false);
+        User proxyCreator = institution.getUser();
+        Role proxyCreatorRole = roleService.getCreatorRole(transientProgram);
+        
+        Comment comment = new Comment().withUser(proxyCreator).withCreatedTimestamp(new DateTime()).withAction(importAction)
+                .withDeclinedResponse(false).withAssignedUser(proxyCreator, proxyCreatorRole);
         
         Program persistentProgram = (Program) actionService.executeSystemAction(transientProgram, importAction, comment).getResource();
         return persistentProgram.withTitle(programme.getName()).withRequireProjectDefinition(programme.isAtasRegistered());

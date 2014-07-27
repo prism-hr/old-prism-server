@@ -81,10 +81,13 @@ public class NotificationTemplateVersion {
     }
 
     public void setResource(Resource resource) {
+        this.system = null;
+        this.institution = null;
+        this.program = null;
         try {
             PropertyUtils.setSimpleProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
         } catch (Exception e) {
-            throw new Error("Tried to create notification template version for invalid prism resource", e);
+            throw new Error(e);
         }
     }
     

@@ -1,0 +1,11 @@
+syntax: glob
+.classpath
+.project
+.settings
+.metadata
+target/*
+testIndexes/*
+bin/*
+.externalToolBuilders/*
+.idea/*
+pgadmissions.iml

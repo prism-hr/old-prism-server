@@ -78,10 +78,10 @@ public class WorkflowConfigurationHelper {
 
     public void verifyWorkflowConfiguration() {
         verifyState(null);
-        
+
         List<State> workflowStates = stateService.getWorkflowStates();
         assertEquals(workflowStates.size(), statesVisited.size());
-        
+
         verifyPropagatedActions();
         verifyCreatorRoles();
 
@@ -98,7 +98,7 @@ public class WorkflowConfigurationHelper {
 
         assertEquals(state.getScope(), state.getStateGroup().getScope());
         assertFalse(state.getStateActions().isEmpty());
-        
+
         verifyStateActions(state);
         verifyStateActionAssignments(state);
         verifyStateActionNotifications(state);
@@ -113,13 +113,13 @@ public class WorkflowConfigurationHelper {
     private void verifyTransitionState(State state, State transitionState) {
         int statePrecedence = state.getScope().getPrecedence();
         int transitionStatePrecedence = transitionState.getScope().getPrecedence();
-        
+
         assertTrue(statePrecedence <= transitionStatePrecedence);
-        
+
         if (statePrecedence != transitionStatePrecedence) {
             PrismScope parentScopeId = state.getScope().getId();
             PrismScope childScopeId = transitionState.getScope().getId();
-            
+
             actualChildScopes.put(parentScopeId, childScopeId);
             actualParentScopes.put(childScopeId, parentScopeId);
         }
@@ -138,7 +138,7 @@ public class WorkflowConfigurationHelper {
             assertEquals(state.getScope(), action.getScope());
 
             PrismActionCategory actionCategory = action.getActionCategory();
-            
+
             if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
                 assertNotSame(stateAction.getState(), stateAction.getStateTransitions().iterator().next());
                 assertFalse(stateAction.isRaisesUrgentFlag());
@@ -157,11 +157,11 @@ public class WorkflowConfigurationHelper {
                     systemDefaultActions.add(action);
                 }
             }
-            
+
             if (actionCategory == PrismActionCategory.ESCALATE_RESOURCE) {
                 escalationActions.add(action);
             }
-            
+
             if (actionCategory == PrismActionCategory.VIEW_EDIT_RESOURCE) {
                 verifyActionEnhancements(stateAction);
                 viewEditActions.add(action);
@@ -173,7 +173,7 @@ public class WorkflowConfigurationHelper {
         assertEquals(1, userDefaultActions.size());
         assertTrue(systemDefaultActions.size() <= 1);
         assertTrue(viewEditActions.size() >= 1);
-     
+
         if (stateService.getStateDuration(systemService.getSystem(), state) != null) {
             assertFalse(escalationActions.isEmpty());
         }
@@ -182,11 +182,11 @@ public class WorkflowConfigurationHelper {
     private void verifyActionEnhancements(StateAction stateAction) {
         Set<PrismActionEnhancement> enhancements = Sets.newHashSet();
         enhancements.add(stateAction.getActionEnhancement());
-        
+
         for (StateActionAssignment stateActionAssignment : stateAction.getStateActionAssignments()) {
             enhancements.add(stateActionAssignment.getActionEnhancement());
         }
-        
+
         assertFalse(enhancements.isEmpty());
     }
 
@@ -199,9 +199,10 @@ public class WorkflowConfigurationHelper {
         int stateTransitionCount = stateTransitions.size();
 
         for (StateTransition stateTransition : stateTransitions) {
-            assertTrue(stateTransition.getRoleTransitions().size() > 0 || state != stateTransition.getTransitionState());
-            
             PrismTransitionEvaluation thisTransitionEvaluation = stateTransition.getStateTransitionEvaluation();
+            
+            assertTrue(stateTransition.getRoleTransitions().size() > 0 || state != stateTransition.getTransitionState()
+                    || action != stateTransition.getTransitionAction() || thisTransitionEvaluation != null);
 
             logger.info("Verifying state transition: " + state.getId().toString() + " "
                     + (thisTransitionEvaluation == null ? "" : thisTransitionEvaluation + " ") + stateTransition.getTransitionState().getId().toString());
@@ -232,7 +233,7 @@ public class WorkflowConfigurationHelper {
         State transitionState = stateTransition.getTransitionState();
 
         Set<RoleTransition> roleTransitions = stateTransition.getRoleTransitions();
-        
+
         if (!roleTransitions.isEmpty()) {
             assertTrue(action.isSaveComment());
         }
@@ -240,7 +241,7 @@ public class WorkflowConfigurationHelper {
         for (RoleTransition roleTransition : roleTransitions) {
             Role role = roleTransition.getRole();
             Role transitionRole = roleTransition.getTransitionRole();
-            
+
             PrismRole transitionRoleId = transitionRole.getId();
             PrismRoleTransitionType roleTransitionType = roleTransition.getRoleTransitionType();
             logger.info("Verifying role transition: " + role.getId().toString() + " " + roleTransitionType + " " + transitionRoleId.toString());
@@ -276,7 +277,7 @@ public class WorkflowConfigurationHelper {
         for (StateAction stateAction : state.getStateActions()) {
             Action action = stateAction.getAction();
             Set<StateActionAssignment> assignments = stateAction.getStateActionAssignments();
-            
+
             if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
                 assertTrue(assignments.size() == 0);
             }
@@ -335,7 +336,7 @@ public class WorkflowConfigurationHelper {
             }
         }
     }
-    
+
     private void verifyCreatorRoles() {
         Set<PrismScope> actualScopes = actualCreatorRoles.keySet();
         assertCollectionEquals(Arrays.asList(PrismScope.values()), actualScopes);
@@ -344,7 +345,7 @@ public class WorkflowConfigurationHelper {
             assertEquals(1, actualCreatorRoles.get(scope).size());
         }
     }
-    
+
     private <T> void assertCollectionEquals(Collection<T> expectedCollection, Collection<T> actualCollection) {
         assertEquals(expectedCollection.size(), actualCollection.size());
         assertTrue(actualCollection.containsAll(expectedCollection));

@@ -101,14 +101,7 @@ public class ActionService {
             Resource duplicateResource = entityService.getDuplicateEntity(resource);
             
             if (duplicateResource != null) {
-                Action redirectAction = null;
-                
-                if (action.getActionType() == PrismActionType.USER_INVOCATION) {
-                    redirectAction = actionDAO.getUserRedirectAction(duplicateResource, actionOwner);
-                } else {
-                    redirectAction = actionDAO.getSystemRedirectAction(duplicateResource);
-                }
-                
+                Action redirectAction = getRedirectAction(action, actionOwner, duplicateResource);
                 if (redirectAction != null) {
                     comment = new Comment().withResource(duplicateResource).withUser(actionOwner).withAction(redirectAction);
                     executeUserAction(duplicateResource, redirectAction, comment);
@@ -121,6 +114,14 @@ public class ActionService {
         Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
         return new ActionOutcome(actionOwner, transitionResource, transitionAction);
+    }
+
+    public Action getRedirectAction(Action action, User actionOwner, Resource duplicateResource) {
+        if (action.getActionType() == PrismActionType.USER_INVOCATION) {
+            return actionDAO.getUserRedirectAction(duplicateResource, actionOwner);
+        } else {
+            return actionDAO.getSystemRedirectAction(duplicateResource);
+        }
     }
 
     public List<PrismRedactionType> getRedactions(User user, Resource resource, Action action) {

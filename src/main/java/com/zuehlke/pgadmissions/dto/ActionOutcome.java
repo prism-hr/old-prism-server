@@ -14,12 +14,15 @@ public class ActionOutcome {
 
     private User user;
 
+    private Resource resource;
+
     private Resource transitionResource;
 
     private Action transitionAction;
 
-    public ActionOutcome(User user, Resource transitionResource, Action transitionAction) {
+    public ActionOutcome(User user, Resource resource, Resource transitionResource, Action transitionAction) {
         this.user = user;
+        this.resource = resource;
         this.transitionResource = transitionResource;
         this.transitionAction = transitionAction;
     }
@@ -29,6 +32,11 @@ public class ActionOutcome {
     }
 
     public Resource getResource() {
+        Hibernate.initialize(resource);
+        return resource;
+    }
+
+    public Resource getTransitionResource() {
         Hibernate.initialize(transitionResource);
         return transitionResource;
     }

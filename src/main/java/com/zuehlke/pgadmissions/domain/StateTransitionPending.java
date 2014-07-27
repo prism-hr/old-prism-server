@@ -112,10 +112,15 @@ public class StateTransitionPending {
     }
     
     public void setResource(Resource resource) {
+        this.system = null;
+        this.institution = null;
+        this.program = null;
+        this.project = null;
+        this.application = null;
         try {
             PropertyUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
         } catch (Exception e) {
-            new Error("Tried to queue state transition for invalid prism resource", e);
+            new Error(e);
         }
     }
 

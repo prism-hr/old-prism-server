@@ -102,10 +102,13 @@ public class IT2SystemReferenceDataImport {
         State institutionState = entityService.getByProperty(State.class, "id", PrismState.INSTITUTION_APPROVED);
 
         InstitutionDomicile poland = entityService.getByProperty(InstitutionDomicile.class, "id", "PL");
+        InstitutionAddress address = new InstitutionAddress().withAddressLine1("test").withAddressTown("test").withCountry(poland);
+        entityService.save(address);
+        
         User user = new User().withEmail("jerzy@urban.pl").withFirstName("Jerzy").withLastName("Urban").withActivationCode("jurekjurektrzymajsie");
         Institution institution = new Institution().withName("Akademia Gorniczo-Hutnicza").withState(institutionState).withHomepage("www.agh.edu.pl")
                 .withSystem(system).withUser(user).withCreatedTimestamp(new DateTime()).withUpdatedTimestamp(new DateTime())
-                .withAddress(new InstitutionAddress().withCountry(poland));
+                .withAddress(address).withDomicile(poland);
         entityService.getOrCreate(user);
         return entityService.getOrCreate(institution);
     }
@@ -207,8 +210,8 @@ public class IT2SystemReferenceDataImport {
         assertSame(PrismProgramType.MRES, program1.getProgramType());
         assertEquals("Internship otherProgram", otherProgram.getTitle());
         assertSame(PrismProgramType.INTERNSHIP, otherProgram.getProgramType());
-        // assertTrue(program1.isEnabled());
-        // assertFalse(otherProgram.isEnabled());
+        assertEquals(program1.getState().getId(), PrismState.PROGRAM_APPROVED);
+        assertEquals(otherProgram.getState(), PrismState.PROGRAM_APPROVED);
         assertFalse(program1.getRequireProjectDefinition());
         assertTrue(otherProgram.getRequireProjectDefinition());
 

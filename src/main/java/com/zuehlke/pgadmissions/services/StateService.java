@@ -126,10 +126,6 @@ public class StateService {
         return stateDAO.getDeprecatedStates(resourceClass);
     }
 
-    public ThreadPoolExecutor getThreadedStateTransitionPool() {
-        return threadedStateTransitionPool;
-    }
-
     public List<StateAction> getStateActions() {
         return entityService.list(StateAction.class);
     }
@@ -139,7 +135,7 @@ public class StateService {
     }
     
     public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) {
-        comment.setResource(resourceService.getOperativeResource(resource, action));
+        comment.setResource(resource);
         
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             resourceService.commitResourceCreation(resource, action, comment);

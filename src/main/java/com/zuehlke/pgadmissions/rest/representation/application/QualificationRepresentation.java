@@ -4,6 +4,8 @@ import org.joda.time.LocalDate;
 
 public class QualificationRepresentation {
 
+    private Integer id;
+
     private String subject;
 
     private String title;
@@ -20,11 +22,19 @@ public class QualificationRepresentation {
 
     private FileRepresentation document;
 
-    private Integer institution;
+    private ImportedInstitutionRepresentation institution;
 
     private Boolean completed;
 
     private Boolean includeInExport;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getSubject() {
         return subject;
@@ -90,11 +100,11 @@ public class QualificationRepresentation {
         this.document = document;
     }
 
-    public Integer getInstitution() {
+    public ImportedInstitutionRepresentation getInstitution() {
         return institution;
     }
 
-    public void setInstitution(Integer institution) {
+    public void setInstitution(ImportedInstitutionRepresentation institution) {
         this.institution = institution;
     }
 

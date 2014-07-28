@@ -44,7 +44,7 @@ public class IT3ManageUserRoles {
     public void testManageUserRoles() throws Exception {
         it2SystemReferenceDataImport.testImportData();
 
-        Program program = programService.getProgramByCode("AGH-RRDCOMSING01");
+        Program program = programService.getProgramByImportedCode(null, "RRDCOMSING01");
 
         User user = userService.getOrCreateUserWithRoles("Jozef", "Oleksy", "jozef@oleksy.pl", program, Lists.newArrayList(new ResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_VIEWER, true), new ResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_APPROVER, true)));
 

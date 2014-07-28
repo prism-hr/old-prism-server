@@ -156,8 +156,9 @@ public class EntityImportService {
     }
 
     public void mergePrograms(List<ProgrammeOccurrence> programOccurrences, Institution institution) throws XMLDataImportException {
+        LocalDate baseline = new LocalDate();
+        
         EntityImportService thisBean = applicationContext.getBean(EntityImportService.class);
-
         thisBean.disableAllProgramInstances(institution);
 
         for (ProgrammeOccurrence occurrence : programOccurrences) {
@@ -171,7 +172,7 @@ public class EntityImportService {
             LocalDate endDate = dtFormatter.parseLocalDate(occurrence.getEndDate());
             ProgramInstance programInstance = new ProgramInstance().withProgram(program).withIdentifier(occurrence.getIdentifier())
                     .withAcademicYear(occurrence.getAcademicYear()).withStudyOption(studyOption).withApplicationStartDate(startDate)
-                    .withApplicationDeadline(endDate).withEnabled(true);
+                    .withApplicationDeadline(endDate).withEnabled(baseline.isBefore(endDate));
 
             try {
                 thisBean.attemptInsert(programInstance);
@@ -184,8 +185,9 @@ public class EntityImportService {
                     throw new XMLDataImportException("Could not merge: " + programInstance + " due to a data integrity problem in the import feed.");
                 }
             }
-
         }
+        
+        programService.disableInactiveImportedPrograms();
     }
 
     @Transactional

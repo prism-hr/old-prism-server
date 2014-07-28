@@ -106,6 +106,7 @@ public class ActionService {
                     comment = new Comment().withResource(duplicateResource).withUser(actionOwner).withAction(redirectAction);
                     executeUserAction(duplicateResource, redirectAction, comment);
                 }
+                return new ActionOutcome(actionOwner, duplicateResource, duplicateResource, action);
             }
         }
 

@@ -17,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.CommentCustomQuestion;
 import com.zuehlke.pgadmissions.domain.CommentCustomQuestionVersion;
-import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -59,8 +58,6 @@ public class ProgramService {
     public List<ResourceConsoleListRowDTO> getProgramListBlock(Integer page, Integer perPage) {
         return resourceService.getConsoleListBlock(Program.class, page, perPage);
     }
-    
-    // TODO: Rewrite below
     
     public List<Program> getAllEnabledPrograms() {
         return programDAO.getAllEnabledPrograms();
@@ -145,18 +142,6 @@ public class ProgramService {
         programDAO.save(program);
     }
 
-    protected String generateNextProgramCode(Institution institution) {
-        Program lastCustomProgram = programDAO.getLastCustomProgram(institution);
-        Integer codeNumber;
-        if (lastCustomProgram != null) {
-            codeNumber = Integer.valueOf(lastCustomProgram.getCode());
-            codeNumber++;
-        } else {
-            codeNumber = 0;
-        }
-        return String.format("%05d", codeNumber);
-    }
-
 // TODO: rewrite for new workflow paradigm    
     
 //    protected Program getOrCreateProgram(Program program) {
@@ -193,28 +178,6 @@ public class ProgramService {
 //        return program;
 //    }
 
-    protected void grantAdminPermissionsForProgram(User user, Program program) {
-        // TODO try to reuse any method from RoleService
-        throw new UnsupportedOperationException();
-        // if (!HibernateUtils.containsEntity(user.getInstitutions(), program.getInstitution())) {
-        // user.getInstitutions().add(program.getInstitution());
-        // }
-        // Role adminRole = roleService.getById(Authority.ADMINISTRATOR);
-        // Role approverRole = roleService.getById(Authority.APPROVER);
-        // if (!HibernateUtils.containsEntity(user.getRoles(), adminRole)) {
-        // user.getRoles().add(adminRole);
-        // }
-        // if (!HibernateUtils.containsEntity(user.getRoles(), approverRole)) {
-        // user.getRoles().add(approverRole);
-        // }
-        // if (!HibernateUtils.containsEntity(user.getProgramsOfWhichAdministrator(), program)) {
-        // user.getProgramsOfWhichAdministrator().add(program);
-        // }
-        // if (!HibernateUtils.containsEntity(user.getProgramsOfWhichApprover(), program)) {
-        // user.getProgramsOfWhichApprover().add(program);
-        // }
-    }
-
     public Advert getValidProgramProjectAdvert(Integer advertId) {
         Advert advert = null;
         if (advertId != null) {
@@ -250,18 +213,6 @@ public class ProgramService {
 
     public LocalDate getNextClosingDate(Program program) {
         return programDAO.getNextClosingDate(program);
-    }
-
-    protected User getContactUserForProgram(Program program, User candidateUser) {
-        List<User> administrators = roleService.getProgramAdministrators(program);
-        if (!administrators.isEmpty()) {
-            if (administrators.contains(candidateUser)) {
-                return candidateUser;
-            } else {
-                return administrators.get(0);
-            }
-        }
-        return program.getUser();
     }
 
     public Project addProject(ProjectDTO projectDTO) {

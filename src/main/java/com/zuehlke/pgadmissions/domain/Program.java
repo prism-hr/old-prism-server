@@ -36,6 +36,9 @@ public class Program extends Advert {
 
     @Column(name = "code")
     private String code;
+    
+    @Column(name = "imported_code")
+    private String importedCode;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     @Column(name = "title", nullable = false)
@@ -55,9 +58,6 @@ public class Program extends Advert {
 
     @Column(name = "require_project_definition", nullable = false)
     private boolean requireProjectDefinition;
-    
-    @Column(name = "is_imported", nullable = false)
-    private boolean imported;
     
     @ManyToOne
     @JoinColumn(name = "state_id")
@@ -123,15 +123,7 @@ public class Program extends Advert {
     public void setRequireProjectDefinition(Boolean requireProjectDefinition) {
         this.requireProjectDefinition = requireProjectDefinition;
     }
-
-    public boolean isImported() {
-        return imported;
-    }
-
-    public void setImported(boolean imported) {
-        this.imported = imported;
-    }
-
+    
     public Set<Project> getProjects() {
         return projects;
     }
@@ -142,6 +134,10 @@ public class Program extends Advert {
 
     public void setProgramType(PrismProgramType programType) {
         this.programType = programType;
+    }
+    
+    public boolean isImported() {
+        return importedCode != null;
     }
 
     public Set<Comment> getComments() {
@@ -155,6 +151,11 @@ public class Program extends Advert {
     
     public Program withCode(String code) {
         this.code = code;
+        return this;
+    }
+    
+    public Program withImportedCode(String importedCode) {
+        this.importedCode = importedCode;
         return this;
     }
 
@@ -180,11 +181,6 @@ public class Program extends Advert {
 
     public Program withRequireProjectDefinition(boolean requireProjectDefinition) {
         this.requireProjectDefinition = requireProjectDefinition;
-        return this;
-    }
-    
-    public Program withImported(boolean imported) {
-        this.imported = imported;
         return this;
     }
 

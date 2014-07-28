@@ -15,18 +15,18 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
-import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.CommentService;
 
 @Component
 public class Transcript1PdfBuilder extends AbstractPdfModelBuilder {
     
     @Autowired
-    private ApplicationService applicationsService;
+    private CommentService commentService;
 
     public Transcript1PdfBuilder() {
     }
 
-    public byte[] build(final Application form) {
+    public byte[] build(final Application application) {
         try {
             Document document = new Document(PageSize.A4, 50, 50, 100, 50);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -39,10 +39,10 @@ public class Transcript1PdfBuilder extends AbstractPdfModelBuilder {
             document.add(table);
             document.add(addSectionSeparators());
 
-            Comment latestApprovalRound = applicationsService.getLatestStateChangeComment(form, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
-            if (latestApprovalRound != null) {
-                if (StringUtils.isBlank(latestApprovalRound.getEquivalentExperience())) {
-                    document.add(new Paragraph(String.format("Approval Round Comment:\n%s", latestApprovalRound.getEquivalentExperience())));
+            Comment latestApprovalComment = commentService.getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
+            if (latestApprovalComment != null) {
+                if (StringUtils.isBlank(latestApprovalComment.getEquivalentExperience())) {
+                    document.add(new Paragraph(String.format("Approval Round Comment:\n%s", latestApprovalComment.getEquivalentExperience())));
                 } else {
                     document.add(new Paragraph(String.format("Approval Round Comment:\n%s", NOT_PROVIDED)));
                 }

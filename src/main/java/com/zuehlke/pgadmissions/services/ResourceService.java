@@ -75,7 +75,7 @@ public class ResourceService {
         resource.setCreatedTimestamp(new DateTime());
         resource.setUpdatedTimestamp(new DateTime());
         entityService.save(resource);
-        resource.generateCode();
+        generateResourceCode(resource);
         comment.setRole(roleService.getCreatorRole(resource).toString());
     }
 
@@ -96,7 +96,7 @@ public class ResourceService {
         setDueDate(resource, comment, transitionStateDuration);
         resource.setUpdatedTimestamp(new DateTime());
     }
-    
+
     public Resource createResource(Resource parentResource, User user, PrismScope creationScope, RegistrationDetails registrationDetails) {
         switch (creationScope) {
         case SYSTEM:
@@ -113,7 +113,11 @@ public class ResourceService {
             throw new IllegalArgumentException(creationScope.name());
         }
     }
-    
+
+    private void generateResourceCode(Resource resource) {
+        resource.setCode("PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId()));
+    }
+
     private Resource createNewInstitution(System system, User user, InstitutionDTO institutionDTO) {
         InstitutionDomicile domicile = entityService.getByProperty(InstitutionDomicile.class, "id", institutionDTO.getDomicile());
         InstitutionAddressDTO addressDTO = institutionDTO.getAddress();

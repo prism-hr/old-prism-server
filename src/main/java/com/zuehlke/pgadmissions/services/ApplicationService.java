@@ -6,7 +6,6 @@ import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.definitions.ReportFormat;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
@@ -66,43 +65,33 @@ public class ApplicationService {
     @Autowired
     private Mapper mapper;
 
-    public Application create(User user, Advert advert) {
-        Application application = new Application();
-        application.setUser(user);
-        application.setParentResource(advert);
-        application.setCreatedTimestamp(new DateTime());
-        Application previousApplication = applicationDAO.getPreviousApplication(application);
-        if (previousApplication != null) {
-            applicationCopyHelper.copyApplicationFormData(application, previousApplication);
+    public Application getById(int id) {
+        return entityService.getById(Application.class, id);
+    }
+
+    public Application getOrCreate(final User user, Advert advert) {
+        Application transientApplication = new Application().withUser(user).withParentResource(advert).withCreatedTimestamp(new DateTime());
+        Application persistentApplication = entityService.getDuplicateEntity(transientApplication);
+        if (persistentApplication == null) {
+            Application previousApplication = applicationDAO.getPreviousSubmittedApplication(transientApplication);
+            if (previousApplication == null) {
+                previousApplication = applicationDAO.getPreviousUnsubmittedApplication(transientApplication);
+            }
+            if (previousApplication != null) {
+                applicationCopyHelper.copyApplicationFormData(transientApplication, previousApplication);
+                entityService.save(transientApplication);
+                persistentApplication = transientApplication;
+            }
         }
-        return application;
-    }
-
-    public Application getOrCreate(final User user, final Integer advertId) throws Exception {
-        return getOrCreate(user, programService.getValidProgramProjectAdvert(advertId));
-    }
-
-    public Application getOrCreate(final User user, final Advert advert) {
-        Application transientApplication = create(user, advert);
-        return entityService.getOrCreate(transientApplication);
+        return persistentApplication;
     }
 
     public void save(Application application) {
         entityService.save(application);
     }
 
-    // TODO: Rewrite/remove the following
-
-    public Application getById(int id) {
-        return applicationDAO.getById(id);
-    }
-
-    public void refresh(final Application applicationForm) {
-        applicationDAO.refresh(applicationForm);
-    }
-
-    public Application getByApplicationNumber(String applicationNumber) {
-        return applicationDAO.getByApplicationNumber(applicationNumber);
+    public Application getByCode(String code) {
+        return entityService.getByProperty(Application.class, "code", code);
     }
 
     public List<Application> getApplicationsForList(final User user, final Filter filtering) {
@@ -145,30 +134,6 @@ public class ApplicationService {
 //        applicationDescriptor.setNeedsToSeeUrgentFlag(applicationFormDAO.getRaisesUrgentFlagForUser(application, user));
 //        applicationDescriptor.setNeedsToSeeUpdateFlag(applicationFormDAO.getRaisesUpdateFlagForUser(application, user));
         return applicationDescriptor;
-    }
-
-    public Comment getLatestStateChangeComment(Application applicationForm, PrismAction action) {
-        return applicationDAO.getLatestStateChangeComment(applicationForm);
-    }
-
-    private void addSuggestedSupervisorsFromProject(Application application) {
-        Project project = application.getProject();
-        if (project != null) {
-            List<ApplicationSupervisor> suggestedSupervisors = application.getProgramDetails().getSupervisors();
-            // FIXME add sugested supervisors
-//            suggestedSupervisors.add(createSuggestedSupervisor(project.getPrimarySupervisor()));
-//            User secondarySupervisor = project.getSecondarySupervisor();
-//            if (secondarySupervisor != null) {
-//                suggestedSupervisors.add(createSuggestedSupervisor(project.getSecondarySupervisor()));
-//            }
-        }
-    }
-
-    private ApplicationSupervisor createSuggestedSupervisor(User user) {
-        ApplicationSupervisor supervisor = new ApplicationSupervisor();
-        supervisor.setUser(user);
-        supervisor.setAware(true);
-        return supervisor;
     }
 
     public List<ResourceConsoleListRowDTO> getConsoleListBlock(Integer page, Integer perPage) {

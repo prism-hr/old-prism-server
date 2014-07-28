@@ -36,6 +36,9 @@ public class Program extends Advert {
 
     @Column(name = "code")
     private String code;
+    
+    @Column(name = "imported_code")
+    private String importedCode;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     @Column(name = "title", nullable = false)
@@ -55,9 +58,6 @@ public class Program extends Advert {
 
     @Column(name = "require_project_definition", nullable = false)
     private boolean requireProjectDefinition;
-    
-    @Column(name = "is_imported", nullable = false)
-    private boolean imported;
     
     @ManyToOne
     @JoinColumn(name = "state_id")
@@ -123,15 +123,7 @@ public class Program extends Advert {
     public void setRequireProjectDefinition(Boolean requireProjectDefinition) {
         this.requireProjectDefinition = requireProjectDefinition;
     }
-
-    public boolean isImported() {
-        return imported;
-    }
-
-    public void setImported(boolean imported) {
-        this.imported = imported;
-    }
-
+    
     public Set<Project> getProjects() {
         return projects;
     }
@@ -142,6 +134,10 @@ public class Program extends Advert {
 
     public void setProgramType(PrismProgramType programType) {
         this.programType = programType;
+    }
+    
+    public boolean isImported() {
+        return importedCode != null;
     }
 
     public Set<Comment> getComments() {
@@ -155,6 +151,11 @@ public class Program extends Advert {
     
     public Program withCode(String code) {
         this.code = code;
+        return this;
+    }
+    
+    public Program withImportedCode(String importedCode) {
+        this.importedCode = importedCode;
         return this;
     }
 
@@ -180,11 +181,6 @@ public class Program extends Advert {
 
     public Program withRequireProjectDefinition(boolean requireProjectDefinition) {
         this.requireProjectDefinition = requireProjectDefinition;
-        return this;
-    }
-    
-    public Program withImported(boolean imported) {
-        this.imported = imported;
         return this;
     }
 
@@ -340,17 +336,15 @@ public class Program extends Advert {
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties1 = Maps.newHashMap();
-        properties1.put("institution", institution);
-        properties1.put("title", title);
-        propertiesWrapper.add(properties1);
-        if (code != null) {
-            HashMap<String, Object> properties2 = Maps.newHashMap();
-            properties2.put("institution", institution);
-            properties2.put("code", code);
-            properties2.put("imported", true);
-            propertiesWrapper.add(properties2);
+        HashMap<String, Object> properties = Maps.newHashMap();
+        if (importedCode == null) {
+            properties.put("institution", institution);
+            properties.put("title", title);
+        } else {
+            properties.put("institution", institution);
+            properties.put("importedCode", importedCode);
         }
+        propertiesWrapper.add(properties);
         HashMultimap<String, Object> exclusions = HashMultimap.create();
         exclusions.put("state.id", PrismState.PROGRAM_DISABLED_COMPLETED);
         exclusions.put("state.id", PrismState.PROGRAM_REJECTED);

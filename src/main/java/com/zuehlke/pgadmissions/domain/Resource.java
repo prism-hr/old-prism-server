@@ -104,9 +104,5 @@ public abstract class Resource implements IUniqueEntity {
             }
         }
     }
-
-    public void generateCode() {
-        setCode("PRiSM-" + PrismScope.getResourceScope(this.getClass()).getShortCode() + "-" + String.format("%010d", getId()));
-    }
     
 }

@@ -336,17 +336,15 @@ public class Program extends Advert {
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties1 = Maps.newHashMap();
-        properties1.put("institution", institution);
-        properties1.put("title", title);
-        propertiesWrapper.add(properties1);
-        if (code != null) {
-            HashMap<String, Object> properties2 = Maps.newHashMap();
-            properties2.put("institution", institution);
-            properties2.put("code", code);
-            properties2.put("imported", true);
-            propertiesWrapper.add(properties2);
+        HashMap<String, Object> properties = Maps.newHashMap();
+        if (importedCode == null) {
+            properties.put("institution", institution);
+            properties.put("title", title);
+        } else {
+            properties.put("institution", institution);
+            properties.put("importedCode", importedCode);
         }
+        propertiesWrapper.add(properties);
         HashMultimap<String, Object> exclusions = HashMultimap.create();
         exclusions.put("state.id", PrismState.PROGRAM_DISABLED_COMPLETED);
         exclusions.put("state.id", PrismState.PROGRAM_REJECTED);

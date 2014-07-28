@@ -88,14 +88,14 @@ public class PrismWorkflowIT {
 
     @Test
     public void runWorkflowTest() throws Exception {
-        Program program = programService.getAllEnabledPrograms().get(0);
+        Program program = programService.getProgramsOpenForApplication().get(0);
 
         User programAdministrator = userService.getOrCreateUserWithRoles("Jerzy", "Urban", "jerzy@urban.pl", program, Lists.newArrayList(new ResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_ADMINISTRATOR, true)));
 
         User applicant = registerAndActivateUser(PrismAction.PROGRAM_CREATE_APPLICATION, program.getId(), "Kuba", "Fibinger", "kuba@fibinger.pl");
 
         Comment createApplicationComment = new Comment().withCreatedTimestamp(new DateTime()).withUser(applicant);
-        Application application = new Application().withInitialData(applicant, program, null);
+        Application application = new Application().withUser(applicant).withParentResource(program);
         Action action = entityService.getByProperty(Action.class, "id", PrismAction.PROGRAM_CREATE_APPLICATION);
         ActionOutcome actionOutcome = actionService.executeUserAction(application, action, createApplicationComment);
         Application createdApplication = (Application) actionOutcome.getTransitionResource();

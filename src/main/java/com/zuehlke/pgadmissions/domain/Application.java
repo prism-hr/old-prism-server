@@ -25,7 +25,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -352,11 +351,8 @@ public class Application extends Resource {
         return this;
     }
 
-    public Application withInitialData(User user, Program program, Project project) {
-        this.user = Preconditions.checkNotNull(user);
-        this.program = Preconditions.checkNotNull(program);
-        this.project = project;
-        this.createdTimestamp = new DateTime();
+    public Application withParentResource(Resource parentResource) {
+        setParentResource(parentResource);
         return this;
     }
 

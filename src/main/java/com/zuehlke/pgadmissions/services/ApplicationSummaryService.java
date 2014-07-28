@@ -49,7 +49,7 @@ public class ApplicationSummaryService {
 
     private void addApplicationProperties(final Application application, final Map<String, String> result) {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-        DateTime updatedTimeStamp = commentService.getLastComment(application).getCreatedTimestamp();
+        DateTime updatedTimeStamp = commentService.getLatestComment(application).getCreatedTimestamp();
 
         result.put("applicationSubmissionDate", dateFormat.format(application.getSubmittedTimestamp()));
         result.put("applicationUpdateDate", dateFormat.format(updatedTimeStamp));
@@ -170,7 +170,7 @@ public class ApplicationSummaryService {
     }
 
     public Map<String, String> getSummary(final String applicationNumber) {
-        Application form = applicationsService.getByApplicationNumber(applicationNumber);
+        Application form = applicationsService.getByCode(applicationNumber);
 
         if (form.getState().equals(PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT) || form.getState().equals(PrismState.APPLICATION_UNSUBMITTED)) {
             return Collections.emptyMap();

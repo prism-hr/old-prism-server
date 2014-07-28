@@ -70,7 +70,7 @@ public class ImportedEntityService {
     }
 
     public void disableAllProgramInstances(Institution institution) {
-        importedEntityDAO.disableAllProgramInstances(institution);   
+        importedEntityDAO.disableAllImportedProgramInstances(institution);   
     }
 
     public ImportedEntity getByName(Class<ImportedEntity> entityClass, Institution institution, String name) {

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Conjunction;
@@ -71,6 +72,7 @@ public class EntityDAO {
     }
 
 
+    @SuppressWarnings("unchecked")
     public <T> List<T> listByProperties(Class<T> klass, Map<String, Object> properties) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(klass);
 

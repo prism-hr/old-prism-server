@@ -54,7 +54,7 @@ public class CommentAssignedUserPropertyEditor extends PropertyEditorSupport {
             throw new IllegalArgumentException("no such user: " + split[1]);
         }
 
-        Application applicationForm = applicationsService.getByApplicationNumber(appId);
+        Application applicationForm = applicationsService.getByCode(appId);
         if (applicationForm == null) {
             throw new IllegalArgumentException("no such applications: " + split[0]);
         }

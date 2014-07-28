@@ -106,7 +106,7 @@ public class IT2SystemReferenceDataImport {
         entityService.save(address);
         
         User user = new User().withEmail("jerzy@urban.pl").withFirstName("Jerzy").withLastName("Urban").withActivationCode("jurekjurektrzymajsie");
-        Institution institution = new Institution().withName("Akademia Gorniczo-Hutnicza").withState(institutionState).withHomepage("www.agh.edu.pl")
+        Institution institution = new Institution().withName("University College London").withState(institutionState).withHomepage("www.agh.edu.pl")
                 .withSystem(system).withUser(user).withCreatedTimestamp(new DateTime()).withUpdatedTimestamp(new DateTime())
                 .withAddress(address).withDomicile(poland);
         entityService.getOrCreate(user);
@@ -180,8 +180,8 @@ public class IT2SystemReferenceDataImport {
 
         entityImportService.importEntities(importedEntityFeed);
 
-        Program program1 = programService.getProgramByCode("AGH-1");
-        Program otherProgram = programService.getProgramByCode("AGH-99");
+        Program program1 = programService.getProgramByImportedCode(institution, "1");
+        Program otherProgram = programService.getProgramByImportedCode(institution, "99");
         assertEquals("MRes program1", program1.getTitle());
         assertSame(PrismProgramType.MRES, program1.getProgramType());
         assertEquals("Internship otherProgram", otherProgram.getTitle());
@@ -204,14 +204,14 @@ public class IT2SystemReferenceDataImport {
         importedEntityFeed.setLocation("reference_data/conflicts/programs/updatedPrograms.xml");
         entityImportService.importEntities(importedEntityFeed);
 
-        program1 = programService.getProgramByCode("AGH-1");
-        otherProgram = programService.getProgramByCode("AGH-99");
+        program1 = programService.getProgramByImportedCode(institution, "1");
+        otherProgram = programService.getProgramByImportedCode(institution, "99");
         assertEquals("MRes new_program1", program1.getTitle());
         assertSame(PrismProgramType.MRES, program1.getProgramType());
         assertEquals("Internship otherProgram", otherProgram.getTitle());
         assertSame(PrismProgramType.INTERNSHIP, otherProgram.getProgramType());
         assertEquals(program1.getState().getId(), PrismState.PROGRAM_APPROVED);
-        assertEquals(otherProgram.getState(), PrismState.PROGRAM_APPROVED);
+        assertEquals(otherProgram.getState().getId(), PrismState.PROGRAM_APPROVED);
         assertFalse(program1.getRequireProjectDefinition());
         assertTrue(otherProgram.getRequireProjectDefinition());
 
@@ -232,6 +232,8 @@ public class IT2SystemReferenceDataImport {
                         .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(false))));
 
     }
+    
+    // TODO: test coverage for disabling inactive imported programs
 
     private void importRemainingEntities(Institution institution) throws Exception {
         ImportedEntityFeed importedEntityFeed = new ImportedEntityFeed();

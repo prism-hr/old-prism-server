@@ -2,22 +2,16 @@ package com.zuehlke.pgadmissions.rest.resource;
 
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.rest.dto.application.*;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.*;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.UserService;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -55,7 +49,7 @@ public class ApplicationResource {
     @RequestMapping(value = "/{applicationId}/qualifications", method = RequestMethod.POST)
     public Map<String, Object> createQualification(@PathVariable Integer applicationId, @RequestBody ApplicationQualificationDTO qualificationDTO) {
         ApplicationQualification qualification = applicationService.saveQualification(applicationId, null, qualificationDTO);
-        return ImmutableMap.of("id", (Object)qualification.getId());
+        return ImmutableMap.of("id", (Object) qualification.getId());
     }
 
     @RequestMapping(value = "/{applicationId}/qualifications/{qualificationId}", method = RequestMethod.PUT)
@@ -71,7 +65,7 @@ public class ApplicationResource {
     @RequestMapping(value = "/{applicationId}/employmentPositions", method = RequestMethod.POST)
     public Map<String, Object> createEmploymentPosition(@PathVariable Integer applicationId, @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
         ApplicationEmploymentPosition employmentPosition = applicationService.saveEmploymentPosition(applicationId, null, employmentPositionDTO);
-        return ImmutableMap.of("id", (Object)employmentPosition.getId());
+        return ImmutableMap.of("id", (Object) employmentPosition.getId());
     }
 
     @RequestMapping(value = "/{applicationId}/employmentPositions/{employmentPositionId}", method = RequestMethod.PUT)
@@ -87,7 +81,7 @@ public class ApplicationResource {
     @RequestMapping(value = "/{applicationId}/fundings", method = RequestMethod.POST)
     public Map<String, Object> createFunding(@PathVariable Integer applicationId, @RequestBody ApplicationFundingDTO fundingDTO) {
         ApplicationFunding funding = applicationService.saveFunding(applicationId, null, fundingDTO);
-        return ImmutableMap.of("id", (Object)funding.getId());
+        return ImmutableMap.of("id", (Object) funding.getId());
     }
 
     @RequestMapping(value = "/{applicationId}/fundings/{fundingId}", method = RequestMethod.PUT)
@@ -103,7 +97,7 @@ public class ApplicationResource {
     @RequestMapping(value = "/{applicationId}/referees", method = RequestMethod.POST)
     public Map<String, Object> createRreferee(@PathVariable Integer applicationId, @RequestBody ApplicationRefereeDTO refereeDTO) {
         ApplicationReferee referee = applicationService.saveReferee(applicationId, null, refereeDTO);
-        return ImmutableMap.of("id", (Object)referee.getId());
+        return ImmutableMap.of("id", (Object) referee.getId());
     }
 
     @RequestMapping(value = "/{applicationId}/referees/{refereeId}", method = RequestMethod.PUT)

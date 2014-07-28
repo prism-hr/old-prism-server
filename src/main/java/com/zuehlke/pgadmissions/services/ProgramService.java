@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -15,6 +16,7 @@ import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentCustomQuestion;
 import com.zuehlke.pgadmissions.domain.CommentCustomQuestionVersion;
 import com.zuehlke.pgadmissions.domain.Institution;
@@ -26,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
-import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 
 @Service
 @Transactional
@@ -56,36 +57,42 @@ public class ProgramService {
     @Autowired
     private ResourceService resourceService;
     
-    public List<ResourceConsoleListRowDTO> getProgramListBlock(Integer page, Integer perPage) {
-        return resourceService.getConsoleListBlock(Program.class, page, perPage);
-    }
+    @Autowired
+    private SystemService systemService;
     
-    // TODO: Rewrite below
-    
-    public List<Program> getAllEnabledPrograms() {
-        return programDAO.getAllEnabledPrograms();
-    }
-
     public Advert getById(Integer id) {
         return entityService.getById(Advert.class, id);
     }
     
-    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
-    public void save(Advert advert) {
-        programDAO.save(advert);
+    public List<ResourceConsoleListRowDTO> getProgramListBlock(Integer page, Integer perPage) {
+        return resourceService.getConsoleListBlock(Program.class, page, perPage);
     }
-
-    public Advert merge(Advert advert) {
-        programDAO.merge(advert);
-        return advert;
+    
+    public List<Program> getProgramsOpenForApplication() {
+        return programDAO.getProgramsOpenForApplication();
     }
 
     public Program getProgramByCode(String code) {
         return programDAO.getProgramByCode(code);
     }
+    
+    public Program getProgramByImportedCode(Institution institution, String importedCode) {
+        institution = institution == null ? entityService.getByProperty(Institution.class, "name", "University College London") : institution;
+        return programDAO.getProgramByImportedCode(institution, importedCode);
+    }
 
+    public void disableInactiveImportedPrograms() {
+        List<Program> inactivePrograms = programDAO.getInactiveImportedPrograms();
+        for (Program inactiveProgram : inactivePrograms) {
+            Action action = actionService.getById(PrismAction.PROGRAM_ESCALATE);
+            Comment comment = new Comment().withResource(inactiveProgram).withAction(action).withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
+            actionService.executeSystemAction(inactiveProgram, action, comment);
+        }
+    }
+     
     public List<Program> getProgramsForWhichCanManageProjects(User user) {
-        return programDAO.getProgramsForWhichUserCanManageProjects(user);
+        // TODO implement SQL query for basic list;
+        return null;
     }
     
     public CommentCustomQuestion getCustomQuestionsForProgram(Integer programId, PrismAction actionId) {
@@ -135,26 +142,8 @@ public class ProgramService {
         programDAO.updateClosingDate(closingDate);
     }
 
-    public void deleteClosingDateById(Integer programClosingDateId) {
-        AdvertClosingDate programClosingDate = programDAO.getClosingDateById(programClosingDateId);
-        programDAO.deleteClosingDate(programClosingDate);
-    }
-
     public void addClosingDateToProgram(Program program, AdvertClosingDate programClosingDate) {
         program.getClosingDates().add(programClosingDate);
-        programDAO.save(program);
-    }
-
-    protected String generateNextProgramCode(Institution institution) {
-        Program lastCustomProgram = programDAO.getLastCustomProgram(institution);
-        Integer codeNumber;
-        if (lastCustomProgram != null) {
-            codeNumber = Integer.valueOf(lastCustomProgram.getCode());
-            codeNumber++;
-        } else {
-            codeNumber = 0;
-        }
-        return String.format("%05d", codeNumber);
     }
 
 // TODO: rewrite for new workflow paradigm    
@@ -193,41 +182,6 @@ public class ProgramService {
 //        return program;
 //    }
 
-    protected void grantAdminPermissionsForProgram(User user, Program program) {
-        // TODO try to reuse any method from RoleService
-        throw new UnsupportedOperationException();
-        // if (!HibernateUtils.containsEntity(user.getInstitutions(), program.getInstitution())) {
-        // user.getInstitutions().add(program.getInstitution());
-        // }
-        // Role adminRole = roleService.getById(Authority.ADMINISTRATOR);
-        // Role approverRole = roleService.getById(Authority.APPROVER);
-        // if (!HibernateUtils.containsEntity(user.getRoles(), adminRole)) {
-        // user.getRoles().add(adminRole);
-        // }
-        // if (!HibernateUtils.containsEntity(user.getRoles(), approverRole)) {
-        // user.getRoles().add(approverRole);
-        // }
-        // if (!HibernateUtils.containsEntity(user.getProgramsOfWhichAdministrator(), program)) {
-        // user.getProgramsOfWhichAdministrator().add(program);
-        // }
-        // if (!HibernateUtils.containsEntity(user.getProgramsOfWhichApprover(), program)) {
-        // user.getProgramsOfWhichApprover().add(program);
-        // }
-    }
-
-    public Advert getValidProgramProjectAdvert(Integer advertId) {
-        Advert advert = null;
-        if (advertId != null) {
-            advert = programDAO.getAcceptingApplicationsById(advertId);
-        }
-
-        if (advert == null) {
-            throw new CannotApplyException();
-        }
-
-        return advert;
-    }
-
     public void deleteInactiveAdverts() {
         programDAO.deleteInactiveAdverts();
     }
@@ -252,18 +206,6 @@ public class ProgramService {
         return programDAO.getNextClosingDate(program);
     }
 
-    protected User getContactUserForProgram(Program program, User candidateUser) {
-        List<User> administrators = roleService.getProgramAdministrators(program);
-        if (!administrators.isEmpty()) {
-            if (administrators.contains(candidateUser)) {
-                return candidateUser;
-            } else {
-                return administrators.get(0);
-            }
-        }
-        return program.getUser();
-    }
-
     public Project addProject(ProjectDTO projectDTO) {
         // TODO Auto-generated method stub
         return null;
@@ -271,7 +213,6 @@ public class ProgramService {
 
     public void updateProject(Integer id, ProjectDTO projectDTO) {
         // TODO Auto-generated method stub
-
     }
 
     public List<Program> getAllPrograms() {

@@ -432,7 +432,19 @@ public class ApplicationService {
         ApplicationReferee referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
         application.getReferees().remove(referee);
     }
-    
+
+    public void saveAdditionalInformation(Integer applicationId, ApplicationAdditionalInformationDTO additionalInformationDTO) {
+        Application application = entityService.getById(Application.class, applicationId);
+        ApplicationAdditionalInformation additionalInformation = application.getAdditionalInformation();
+        if (additionalInformation == null) {
+            additionalInformation = new ApplicationAdditionalInformation();
+            application.setAdditionalInformation(additionalInformation);
+        }
+
+        additionalInformation.setHasConvictions(additionalInformationDTO.getHasConvictions());
+        additionalInformation.setConvictionsText(additionalInformationDTO.getConvictionsText());
+    }
+
     private void copyAddress(Address to, AddressDTO from) {
         Domicile currentAddressDomicile = entityService.getById(Domicile.class, from.getDomicile());
         to.setDomicile(currentAddressDomicile);
@@ -442,5 +454,4 @@ public class ApplicationService {
         to.setAddressRegion(from.getAddressRegion());
         to.setAddressCode(from.getAddressCode());
     }
-
 }

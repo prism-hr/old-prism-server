@@ -156,8 +156,9 @@ public class EntityImportService {
     }
 
     public void mergePrograms(List<ProgrammeOccurrence> programOccurrences, Institution institution) throws XMLDataImportException {
+        LocalDate baseline = new LocalDate();
+        
         EntityImportService thisBean = applicationContext.getBean(EntityImportService.class);
-
         thisBean.disableAllProgramInstances(institution);
 
         for (ProgrammeOccurrence occurrence : programOccurrences) {
@@ -171,7 +172,7 @@ public class EntityImportService {
             LocalDate endDate = dtFormatter.parseLocalDate(occurrence.getEndDate());
             ProgramInstance programInstance = new ProgramInstance().withProgram(program).withIdentifier(occurrence.getIdentifier())
                     .withAcademicYear(occurrence.getAcademicYear()).withStudyOption(studyOption).withApplicationStartDate(startDate)
-                    .withApplicationDeadline(endDate).withEnabled(true);
+                    .withApplicationDeadline(endDate).withEnabled(baseline.isBefore(endDate));
 
             try {
                 thisBean.attemptInsert(programInstance);
@@ -184,8 +185,9 @@ public class EntityImportService {
                     throw new XMLDataImportException("Could not merge: " + programInstance + " due to a data integrity problem in the import feed.");
                 }
             }
-
         }
+        
+        programService.disableInactiveImportedPrograms();
     }
 
     @Transactional
@@ -229,19 +231,18 @@ public class EntityImportService {
 
     @Transactional
     public Program getOrCreateProgram(Programme programme, Institution institution) {
-        String prefixedProgramCode = String.format("%010d", institution.getId()) + "-" + programme.getCode();
         PrismProgramType programType = PrismProgramType.findValueFromString(programme.getName());
 
-        Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withCode(prefixedProgramCode)
-                .withTitle(programme.getName()).withProgramType(programType).withImported(true);
+        Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withImportedCode(programme.getCode())
+                .withTitle(programme.getName()).withProgramType(programType);
 
         Action importAction = actionService.getById(PrismAction.INSTITUTION_IMPORT_PROGRAM);
         User proxyCreator = institution.getUser();
         Role proxyCreatorRole = roleService.getCreatorRole(transientProgram);
-        
-        Comment comment = new Comment().withUser(proxyCreator).withCreatedTimestamp(new DateTime()).withAction(importAction)
-                .withDeclinedResponse(false).withAssignedUser(proxyCreator, proxyCreatorRole);
-        
+
+        Comment comment = new Comment().withUser(proxyCreator).withCreatedTimestamp(new DateTime()).withAction(importAction).withDeclinedResponse(false)
+                .withAssignedUser(proxyCreator, proxyCreatorRole);
+
         Program persistentProgram = (Program) actionService.executeSystemAction(transientProgram, importAction, comment).getResource();
         return persistentProgram.withTitle(programme.getName()).withRequireProjectDefinition(programme.isAtasRegistered());
     }

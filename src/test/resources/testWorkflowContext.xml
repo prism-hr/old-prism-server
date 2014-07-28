@@ -46,10 +46,7 @@
         <property name="transactionManager" ref="transactionManager"/>
     </bean>
 
-    <context:component-scan base-package="com.zuehlke.pgadmissions">
-        <context:exclude-filter type="assignable"
-                                expression="com.zuehlke.pgadmissions.controllers.prospectus.ApplyTemplateRenderer"/>
-    </context:component-scan>
+    <context:component-scan base-package="com.zuehlke.pgadmissions"/>
 
     <bean id="javaMailSender" class="com.zuehlke.pgadmissions.mail.MailMockServer"/>
 
@@ -73,10 +70,6 @@
     </bean>
 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
-
-    <bean id="applyTemplateRenderer" class="com.zuehlke.pgadmissions.utils.EasyMockFactoryBean" primary="true">
-        <constructor-arg value="com.zuehlke.pgadmissions.controllers.prospectus.ApplyTemplateRenderer"/>
-    </bean>
 
     <bean id="mailSender" class="com.zuehlke.pgadmissions.mail.MailSenderMock" primary="true"/>
 

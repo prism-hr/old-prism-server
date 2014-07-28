@@ -12,17 +12,16 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
-import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
-import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserNotification;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.representation.ResourceRepresentation;
 
@@ -50,18 +49,9 @@ public class RoleService {
         return entityService.list(Role.class);
     }
 
-    public UserRole createUserRole(Resource resource, User user, PrismRole roleId) {
-        Role role = getById(roleId);
-        UserRole userRole = new UserRole();
-        userRole.setResource(resource);
-        userRole.setUser(user);
-        userRole.setRole(role);
-        userRole.setAssignedTimestamp(new DateTime());
-        return userRole;
-    }
-
-    public UserRole getOrCreateUserRole(Resource resource, User user, PrismRole roleToCreate) {
-        UserRole transientUserRole = createUserRole(resource, user, roleToCreate);
+    public UserRole getOrCreateUserRole(Resource resource, User user, PrismRole newRoleId) {
+        Role newRole = getById(newRoleId);
+        UserRole transientUserRole = new UserRole().withResource(resource).withUser(user).withRole(newRole).withAssignedTimestamp(new DateTime());
         return entityService.getOrCreate(transientUserRole);
     }
 
@@ -73,36 +63,35 @@ public class RoleService {
 
     public void removeUserRoles(Resource resource, User user, PrismRole... rolesToRemove) {
         for (UserRole roleToRemove : roleDAO.getUserRoles(resource, user, rolesToRemove)) {
+            validateUserRoleRemoval(resource, roleToRemove.getRole());
             for (UserNotification notificationToRemove : roleToRemove.getUserNotifications()) {
                 entityService.delete(notificationToRemove);
             }
             entityService.delete(roleToRemove);
         }
+        reassignResourceOwner(resource);
     }
 
-    @Deprecated
-    public boolean hasRole(User user, PrismRole authority) {
-        return hasRole(null, user, authority);
+    private void validateUserRoleRemoval(Resource resource, Role roleToRemove) {
+        Role creatorRole = getCreatorRole(resource);
+        if (creatorRole == roleToRemove) {
+            List<User> creatorRoleAssignments = getRoleUsers(resource, creatorRole);
+            if (creatorRoleAssignments.size() == 1) {
+                throw new Error("User attempted to remove the final " + roleToRemove.getAuthority() + " for "
+                        + PrismScope.getResourceScope(resource.getClass()).getLowerCaseName() + " " + resource.getCode());
+            }
+        }
     }
-
-    public boolean hasRole(Resource scope, User user, PrismRole authority) {
-        return roleDAO.getUserRole(user, scope, authority) != null;
-    }
-
-    @Deprecated
-    public User getUserInRole(Resource scope, PrismRole... authorities) {
-        List<User> users = roleDAO.getUsersByRole(scope, authorities);
-        return users.get(0);
-    }
-
-    @Deprecated
-    public List<Program> getProgramsByUserAndRole(User currentUser, PrismRole administrator) {
-        return null;
-    }
-
-    @Deprecated
-    public List<User> getProgramAdministrators(Program program) {
-        return null;
+    
+    private void reassignResourceOwner(Resource resource) {
+        User owner = resource.getUser();
+        Role ownerRole = getCreatorRole(resource);
+        
+        UserRole ownerUserRole = getUserRole(resource, owner, ownerRole);
+        if (ownerUserRole == null) {
+            User newOwner = getRoleUsers(resource, ownerRole).get(0);
+            resource.setUser(newOwner);
+        }
     }
 
     public List<Role> getActionOwnerRoles(User user, Resource resource, Action action) {
@@ -113,12 +102,25 @@ public class RoleService {
         return roleDAO.getActionOwnerRoles(user, resource, action);
     }
 
-    public List<User> getResourceUsers(Resource resource) {
+    public List<User> getUsers(Resource resource) {
         return roleDAO.getUsers(resource);
     }
+    
+    public UserRole getUserRole(Resource resource, User user, Role role) {
+        return roleDAO.getUserRole(resource, user, role);
+    }
+    
+    public boolean hasUserRole(Resource resource, User user, PrismRole roleId) {
+        Role role = getById(roleId);
+        return getUserRole(resource, user, role) != null;
+    }
 
-    public List<PrismRole> getResourceUserRoles(Resource resource, User user) {
+    public List<PrismRole> getUserRoles(Resource resource, User user) {
         return roleDAO.getUserRoles(resource, user);
+    }
+
+    public List<User> getRoleUsers(Resource resource, Role role) {
+        return roleDAO.getRoleUsers(resource, role);
     }
 
     public void updateRoles(Resource resource, User user, List<ResourceRepresentation.RoleRepresentation> roles) {
@@ -131,7 +133,7 @@ public class RoleService {
         }
     }
 
-    public List<PrismRole> getRoles(Class<? extends Resource> resourceClass, PrismRole... rolesToCreate) {
+    public List<PrismRole> getRoles(Class<? extends Resource> resourceClass) {
         return roleDAO.getRoles(resourceClass);
     }
 
@@ -145,11 +147,6 @@ public class RoleService {
 
     public List<UserRole> getUpdateNotificationRoles(User user, Resource resource, NotificationTemplate template) {
         return roleDAO.getUpdateNotificationRoles(user, resource, template);
-    }
-
-    public List<Role> getAssignedRoles(StateAction stateAction) {
-        List<Role> assignedRoles = roleDAO.getAssignedRoles(stateAction);
-        return assignedRoles.isEmpty() ? getRoles() : assignedRoles;
     }
 
     public Role getCreatorRole(Resource resource) {

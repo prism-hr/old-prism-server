@@ -70,14 +70,16 @@ public class ImportedEntityDAO {
                 .executeUpdate();
     }
 
-    public void disableAllProgramInstances(Institution institution) {
+    public void disableAllImportedProgramInstances(Institution institution) {
         sessionFactory.getCurrentSession().createQuery( //
-                "update ProgramInstance as programInstance " //
+                "update ProgramInstance " //
                         + "set enabled = false " //
-                        + "where programInstance.program in (" //
+                        + "where program in (" //
                                 + "select id from Program " //
-                                + "where institution = :institution)") //
+                                + "where institution = :institution "
+                                        + "and importedCode is not null)") //
                 .setParameter("institution", institution) //
                 .executeUpdate();
     }
+    
 }

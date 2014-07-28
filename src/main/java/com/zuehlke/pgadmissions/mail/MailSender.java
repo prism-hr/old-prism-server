@@ -22,11 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
-import com.zuehlke.pgadmissions.services.NotificationService;
 
 import freemarker.template.Template;
 
@@ -50,9 +47,6 @@ public class MailSender {
     private String emailAddressTo;
 
     @Autowired
-    private NotificationService NotificationTemplateService;
-
-    @Autowired
     private FreeMarkerConfig freemarkerConfig;
 
     public MailSender() {
@@ -74,11 +68,6 @@ public class MailSender {
                 }));
             }
         }
-    }
-
-    protected String resolveSubject(final Resource resource, final NotificationTemplate template, final Object... args) {
-        String subjectFormat = NotificationTemplateService.getActiveVersionToSend(resource, template).getSubject();
-        return args == null ? subjectFormat : String.format(subjectFormat, args);
     }
 
     public void sendEmail(final MailMessageDTO... emailMessage) {
@@ -164,7 +153,6 @@ public class MailSender {
                     }
 
                     StringBuilder subjectBuilder = new StringBuilder();
-                    // the subject should be built anywhere else even with the new editable subject!!
                     subjectBuilder.append("<NON-PROD-Message: TO: ").append(message.getToAsInternetAddresses().toString());
                     subjectBuilder.append(" CC: ").append(message.getCcAsInternetAddresses().toString());
                     subjectBuilder.append(" BCC: ").append(message.getBccAsInternetAddresses().toString());
@@ -195,10 +183,6 @@ public class MailSender {
             log.error(String.format("Failed to send email message %s", message.toString()), e);
             throw new MailException(message, e);
         }
-    }
-
-    public NotificationService getEmailTemplateService() {
-        return NotificationTemplateService;
     }
 
     public FreeMarkerConfig getFreemarkerConfig() {

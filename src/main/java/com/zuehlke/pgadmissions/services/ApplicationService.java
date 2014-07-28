@@ -1,60 +1,24 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Date;
-import java.util.List;
-
+import com.google.common.collect.ImmutableMap;
+import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.ReportFormat;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
+import com.zuehlke.pgadmissions.rest.dto.UserDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.*;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.ImmutableMap;
-import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
-import com.zuehlke.pgadmissions.dao.ApplicationDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
-import com.zuehlke.pgadmissions.domain.Address;
-import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.ApplicationPassport;
-import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
-import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
-import com.zuehlke.pgadmissions.domain.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.Disability;
-import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.Ethnicity;
-import com.zuehlke.pgadmissions.domain.Filter;
-import com.zuehlke.pgadmissions.domain.FundingSource;
-import com.zuehlke.pgadmissions.domain.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.QualificationType;
-import com.zuehlke.pgadmissions.domain.ReferralSource;
-import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.Title;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.ReportFormat;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.AddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositionDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationFundingDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationLanguageQualificationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPassportDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional
@@ -100,7 +64,7 @@ public class ApplicationService {
 
     @Autowired
     private Mapper mapper;
-    
+
     public Application getById(int id) {
         return entityService.getById(Application.class, id);
     }
@@ -121,10 +85,11 @@ public class ApplicationService {
         }
         return persistentApplication;
     }
-     
+
     public void save(Application application) {
         entityService.save(application);
     }
+
     public Application getByCode(String code) {
         return entityService.getByProperty(Application.class, "code", code);
     }
@@ -388,6 +353,63 @@ public class ApplicationService {
         application.getFundings().remove(funding);
     }
 
+    public ApplicationReferee saveReferee(Integer applicationId, Integer refereeId, ApplicationRefereeDTO refereeDTO) {
+        Application application = entityService.getById(Application.class, applicationId);
+
+        ApplicationReferee referee;
+        if (refereeId != null) {
+            referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
+        } else {
+            referee = new ApplicationReferee();
+            application.getReferees().add(referee);
+        }
+
+        UserDTO userDTO = refereeDTO.getUser();
+        User user = referee.getUser();
+        if (user == null) {
+            user = new User();
+            referee.setUser(user);
+        }
+
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setEmail(userDTO.getEmail());
+
+        referee.setJobEmployer(refereeDTO.getJobEmployer());
+        referee.setJobTitle(refereeDTO.getJobTitle());
+
+        AddressDTO addressDTO = refereeDTO.getAddress();
+        Address address = referee.getAddress();
+        if (address == null) {
+            address = new Address();
+            referee.setAddress(address);
+        }
+        copyAddress(address, addressDTO);
+
+        referee.setPhoneNumber(refereeDTO.getPhoneNumber());
+        referee.setSkype(refereeDTO.getSkype());
+
+        return referee;
+    }
+
+    public void deleteReferee(Integer applicationId, Integer refereeId) {
+        Application application = entityService.getById(Application.class, applicationId);
+        ApplicationReferee referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
+        application.getReferees().remove(referee);
+    }
+
+    public void saveAdditionalInformation(Integer applicationId, ApplicationAdditionalInformationDTO additionalInformationDTO) {
+        Application application = entityService.getById(Application.class, applicationId);
+        ApplicationAdditionalInformation additionalInformation = application.getAdditionalInformation();
+        if (additionalInformation == null) {
+            additionalInformation = new ApplicationAdditionalInformation();
+            application.setAdditionalInformation(additionalInformation);
+        }
+
+        additionalInformation.setHasConvictions(additionalInformationDTO.getHasConvictions());
+        additionalInformation.setConvictionsText(additionalInformationDTO.getConvictionsText());
+    }
+
     private void copyAddress(Address to, AddressDTO from) {
         Domicile currentAddressDomicile = entityService.getById(Domicile.class, from.getDomicile());
         to.setDomicile(currentAddressDomicile);
@@ -397,5 +419,4 @@ public class ApplicationService {
         to.setAddressRegion(from.getAddressRegion());
         to.setAddressCode(from.getAddressCode());
     }
-
 }

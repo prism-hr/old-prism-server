@@ -115,7 +115,12 @@ public class ApplicationResource {
     public void updateReferee(@PathVariable Integer applicationId, @PathVariable Integer refereeId) {
         applicationService.deleteReferee(applicationId, refereeId);
     }
-    
+
+    @RequestMapping(value = "/{applicationId}/additionalInformation", method = RequestMethod.PUT)
+    public void saveAdditionalInformation(@PathVariable Integer applicationId, @RequestBody ApplicationAdditionalInformationDTO additionalInformationDTO) {
+        applicationService.saveAdditionalInformation(applicationId, additionalInformationDTO);
+    }
+
     @RequestMapping(value = "/{applicationId}/comments", method = RequestMethod.POST)
     public void performAction(@PathVariable Integer applicationId, @RequestParam PrismAction actionId, @RequestBody CommentDTO commentDTO) {
         Application application = entityService.getById(Application.class, applicationId);

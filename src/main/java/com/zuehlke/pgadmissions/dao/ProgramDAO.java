@@ -8,10 +8,8 @@ import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
@@ -25,81 +23,37 @@ import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Repository
 @SuppressWarnings("unchecked")
 public class ProgramDAO {
-    // TODO reimplement getProgramsOfWhichPrevious*() methods
 
     @Autowired
     private SessionFactory sessionFactory;
-
-    public Advert getAcceptingApplicationsById(Integer advertId) {
-        Advert project = (Advert) sessionFactory.getCurrentSession() //
-                .createCriteria(Project.class)//
-                .add(Restrictions.eq("id", advertId)) //
-                .add(Restrictions.eq("state.id", PrismState.PROJECT_APPROVED))//
-                .uniqueResult();
-        if (project != null) {
-            return project;
-        }
-        return (Advert) sessionFactory.getCurrentSession() //
-                .createCriteria(Program.class)//
-                .add(Restrictions.eq("id", advertId)) //
-                .add(Restrictions.eq("state.id", PrismState.PROGRAM_APPROVED))//
-                .uniqueResult();
-    }
-
+    
     public Program getProgramByCode(String code) {
         return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .setFetchMode("programInstances", FetchMode.JOIN).add(Restrictions.eq("code", code)) //
+                .setFetchMode("programInstances", FetchMode.JOIN) //
+                .add(Restrictions.eq("code", code)) //
+                .uniqueResult();
+    }
+    
+    public Program getProgramByImportedCode(Institution institution, String importedCode) {
+        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class) //
+                .setFetchMode("programInstances", FetchMode.JOIN) //
+                .add(Restrictions.eq("institution", institution)) //
+                .add(Restrictions.eq("importedCode", importedCode))
                 .uniqueResult();
     }
 
-    public Program getProgamAcceptingApplicationsByCode(String code) {
-        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("code", code))
-                .add(Restrictions.eq("state.id", PrismState.PROGRAM_APPROVED)).uniqueResult();
-    }
-
-    public String getProgramIdByCode(String code) {
-        return (String) sessionFactory.getCurrentSession().createCriteria(Program.class).setProjection(Projections.property("id"))
-                .add(Restrictions.eq("code", code)).uniqueResult().toString();
-    }
-
-    public void save(Advert advert) {
-        sessionFactory.getCurrentSession().saveOrUpdate(advert);
-    }
-
-    public void merge(Advert advert) {
-        sessionFactory.getCurrentSession().merge(advert);
-    }
-
-    public void saveStudyOption(StudyOption studyOption) {
-        sessionFactory.getCurrentSession().saveOrUpdate(studyOption);
-    }
-
-    public List<Program> getAllEnabledPrograms() {
-        return sessionFactory.getCurrentSession().createCriteria(Program.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .add(Restrictions.eq("state.id", PrismState.PROGRAM_APPROVED)).addOrder(Order.asc("title")).list();
-    }
-
-    public List<Program> getProgramsForWhichUserCanManageProjects(User user) {
-        // TODO implement
-        return null;
-    }
-
-    public Program getLastCustomProgram(Institution institution) {
-        DetachedCriteria maxCustomCode = DetachedCriteria.forClass(Program.class).setProjection(Projections.max("code"))
-                .add(Restrictions.eq("institution", institution));
-        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Property.forName("code").eq(maxCustomCode)).uniqueResult();
-    }
-
-    public AdvertClosingDate getClosingDateById(final Integer id) {
-        return (AdvertClosingDate) sessionFactory.getCurrentSession().createCriteria(AdvertClosingDate.class).add(Restrictions.eq("id", id)).uniqueResult();
+    public List<Program> getProgramsOpenForApplication() {
+        return sessionFactory.getCurrentSession().createCriteria(Program.class) //
+                .add(Restrictions.eq("state.id", PrismState.PROGRAM_APPROVED)) //
+                .addOrder(Order.asc("title")) //
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY) //
+                .list();
     }
 
     public AdvertClosingDate getClosingDateByDate(final Program advert, final LocalDate date) {
@@ -117,7 +71,6 @@ public class ProgramDAO {
             Advert advert = closingDate.getAdvert();
             if (advert != null) {
                 sessionFactory.getCurrentSession().update(closingDate);
-                save(advert);
             }
         }
     }
@@ -127,41 +80,12 @@ public class ProgramDAO {
             Advert advert = closingDate.getAdvert();
             if (advert != null) {
                 sessionFactory.getCurrentSession().delete(closingDate);
-                save(advert);
             }
         }
     }
 
-    public List<Program> getEnabledProgramsForWhichUserHasProjectAuthority(User user) {
-        return sessionFactory
-                .getCurrentSession()
-                .createCriteria(Project.class)
-                .setProjection(Projections.groupProperty("program"))
-                .createAlias("program", "program", JoinType.INNER_JOIN)
-                .add(Restrictions.disjunction().add(Restrictions.eq("primarySupervisor", user)).add(Restrictions.eq("administrator", user))
-                        .add(Restrictions.eq("secondarySupervisor", user)).add(Restrictions.eq("program.enabled", true))).list();
-    }
-
-
-
-    public List<Project> getProjectsForProgram(Program program) {
-        return sessionFactory.getCurrentSession().createCriteria(Project.class).add(Restrictions.eq("program", program))
-                .add(Restrictions.eq("state.id", PrismState.PROJECT_APPROVED)).list();
-    }
-
-    public List<Project> getProjectsForProgramOfWhichAuthor(Program program, User author) {
-        // TODO check also for primarySupervisor role
-        return sessionFactory.getCurrentSession() //
-                .createCriteria(Project.class) //
-                .add(Restrictions.eq("program", program)) //
-                .add(Restrictions.eq("user", author)) //
-                .add(Restrictions.eq("state.id", PrismState.PROJECT_APPROVED)).list();
-    }
-
     public void deleteInactiveAdverts() {
-        // TODO reimplement
-//        Query query = sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_INACTIVE_ADVERTS();");
-//        query.executeUpdate();
+        // TODO implement for projects - programs done
     }
 
     public Date getDefaultStartDate(Program program, StudyOption studyOption) {
@@ -223,6 +147,16 @@ public class ProgramDAO {
                 .add(Restrictions.eq("academicYear", academicYear)) //
                 .add(Restrictions.eq("studyOption", studyOption)) //
                 .uniqueResult();
+    }
+    
+    public List<Program> getInactiveImportedPrograms() {
+        return (List<Program>) sessionFactory.getCurrentSession().createQuery( //
+                "select program " //
+                        + "from ProgramInstance programInstance join programInstance.program program " //
+                        + "where program.importedCode is not null " //
+                        + "group by program " //
+                        + "having count(enabled) = 0") //
+                        .list();
     }
 
 }

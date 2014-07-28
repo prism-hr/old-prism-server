@@ -83,8 +83,7 @@ public class ActionService {
     }
     
     public List<PrismActionEnhancement> getPermittedActionEnhancements(Resource resource, User user) {
-        Set<PrismActionEnhancement> enhancements = Sets.newHashSet();
-        
+        Set<PrismActionEnhancement> enhancements = Sets.newHashSet();  
         enhancements.addAll(actionDAO.getGlobalActionEnhancements(resource, user));
         enhancements.addAll(actionDAO.getCustomActionEnhancements(resource, user));
         return Lists.newArrayList(enhancements);
@@ -107,6 +106,7 @@ public class ActionService {
                     comment = new Comment().withResource(duplicateResource).withUser(actionOwner).withAction(redirectAction);
                     executeUserAction(duplicateResource, redirectAction, comment);
                 }
+                return new ActionOutcome(actionOwner, duplicateResource, duplicateResource, action);
             }
         }
 

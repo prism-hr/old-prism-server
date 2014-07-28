@@ -694,6 +694,11 @@ public class Comment {
         return this;
     }
 
+    public Comment withPositionTitle(String positionTitle) {
+        this.positionTitle = positionTitle;
+        return this;
+    }
+    
     public Comment withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
         return this;
@@ -702,6 +707,13 @@ public class Comment {
     public Comment withAssignedUser(User user, Role role) {
         CommentAssignedUser newAssignment = new CommentAssignedUser().withComment(this).withUser(user).withRole(role);
         commentAssignedUsers.add(newAssignment);
+        return this;
+    }
+    
+    public Comment withAssignedUsers(Set<CommentAssignedUser> assignedUsers) {
+        for (CommentAssignedUser assignedUser : commentAssignedUsers) {
+            withAssignedUser(assignedUser.getUser(), assignedUser.getRole());
+        }
         return this;
     }
 

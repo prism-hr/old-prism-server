@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
-import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
@@ -35,13 +34,10 @@ public class RefereeService {
     private CommentService commentService;
 
     @Autowired
-    private ApplicationDAO applicationDAO;
-
-    @Autowired
     private EncryptionHelper encryptionHelper;
 
     @Autowired
-    private ApplicationService applicationFormService;
+    private ApplicationService applicationService;
 
     @Autowired
     private ApplicationCopyHelper applicationFormCopyHelper;
@@ -51,13 +47,13 @@ public class RefereeService {
     }
 
     public void saveOrUpdate(int applicationId, Integer refereeId, ApplicationReferee referee) {
-        Application application = applicationDAO.getById(applicationId);
+        Application application = applicationService.getById(applicationId);
         ApplicationReferee persistentReferee;
         if (refereeId == null) {
             persistentReferee = new ApplicationReferee();
             persistentReferee.setApplication(application);
             application.getReferees().add(persistentReferee);
-            applicationFormService.save(application);
+            applicationService.save(application);
         } else {
             persistentReferee = entityDAO.getById(ApplicationReferee.class, refereeId);
         }

@@ -25,7 +25,6 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.State;
@@ -115,20 +114,6 @@ public class ProgramsServiceTest {
     }
 
     @Test
-    public void shouldGenerateNextProgramCode() {
-        Institution institution = new Institution();
-        Program lastCustomProgram = new Program().withCode("00018");
-
-        expect(programDAOMock.getLastCustomProgram(institution)).andReturn(lastCustomProgram);
-
-        replay();
-        String nextCode = programsService.generateNextProgramCode(institution);
-        verify();
-
-        assertEquals("00019", nextCode);
-    }
-
-    @Test
     public void shouldUpdateClosingDate() {
         Program program = new Program().withCode("AAA_00018").withDescription("program").withStudyDuration(12).withState(new State().withId(PrismState.PROGRAM_APPROVED));
         AdvertClosingDate closingDate = new AdvertClosingDate().withClosingDate(new LocalDate()).withAdvert(program);
@@ -156,19 +141,6 @@ public class ProgramsServiceTest {
         replay();
         programsService.deleteClosingDateById(closingDate.getId());
         verify();
-    }
-
-    @Test
-    public void shouldInitialProgramCode() {
-        Institution institution = new Institution();
-
-        expect(programDAOMock.getLastCustomProgram(institution)).andReturn(null);
-
-        replay();
-        String nextCode = programsService.generateNextProgramCode(institution);
-        verify();
-
-        assertEquals("00000", nextCode);
     }
 
     @Test(expected = CannotApplyException.class)

@@ -6,7 +6,6 @@ import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.definitions.ReportFormat;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
@@ -144,30 +143,6 @@ public class ApplicationService {
 //        applicationDescriptor.setNeedsToSeeUrgentFlag(applicationFormDAO.getRaisesUrgentFlagForUser(application, user));
 //        applicationDescriptor.setNeedsToSeeUpdateFlag(applicationFormDAO.getRaisesUpdateFlagForUser(application, user));
         return applicationDescriptor;
-    }
-
-    public Comment getLatestStateChangeComment(Application applicationForm, PrismAction action) {
-        return applicationDAO.getLatestStateChangeComment(applicationForm);
-    }
-
-    private void addSuggestedSupervisorsFromProject(Application application) {
-        Project project = application.getProject();
-        if (project != null) {
-            List<ApplicationSupervisor> suggestedSupervisors = application.getProgramDetails().getSupervisors();
-            // FIXME add sugested supervisors
-//            suggestedSupervisors.add(createSuggestedSupervisor(project.getPrimarySupervisor()));
-//            User secondarySupervisor = project.getSecondarySupervisor();
-//            if (secondarySupervisor != null) {
-//                suggestedSupervisors.add(createSuggestedSupervisor(project.getSecondarySupervisor()));
-//            }
-        }
-    }
-
-    private ApplicationSupervisor createSuggestedSupervisor(User user) {
-        ApplicationSupervisor supervisor = new ApplicationSupervisor();
-        supervisor.setUser(user);
-        supervisor.setAware(true);
-        return supervisor;
     }
 
     public List<ResourceConsoleListRowDTO> getConsoleListBlock(Integer page, Integer perPage) {

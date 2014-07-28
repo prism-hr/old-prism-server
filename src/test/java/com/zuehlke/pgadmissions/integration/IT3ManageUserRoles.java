@@ -48,14 +48,16 @@ public class IT3ManageUserRoles {
 
         User user = userService.getOrCreateUserWithRoles("Jozef", "Oleksy", "jozef@oleksy.pl", program, Lists.newArrayList(new ResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_VIEWER, true), new ResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_APPROVER, true)));
 
-        assertTrue(roleService.hasRole(program, user, PrismRole.PROGRAM_VIEWER));
-        assertTrue(roleService.hasRole(program, user, PrismRole.PROGRAM_APPROVER));
-        assertFalse(roleService.hasRole(program, user, PrismRole.PROGRAM_ADMINISTRATOR));
+        assertTrue(roleService.hasUserRole(program, user, PrismRole.PROGRAM_VIEWER));
+        assertTrue(roleService.hasUserRole(program, user, PrismRole.PROGRAM_APPROVER));
+        assertFalse(roleService.hasUserRole(program, user, PrismRole.PROGRAM_ADMINISTRATOR));
 
         roleService.updateRoles(program, user, Lists.newArrayList(new ResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_VIEWER, true), new ResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_APPROVER, false), new ResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_ADMINISTRATOR, true)));
 
-        assertTrue(roleService.hasRole(program, user, PrismRole.PROGRAM_VIEWER));
-        assertFalse(roleService.hasRole(program, user, PrismRole.PROGRAM_APPROVER));
-        assertTrue(roleService.hasRole(program, user, PrismRole.PROGRAM_ADMINISTRATOR));
+        assertTrue(roleService.hasUserRole(program, user, PrismRole.PROGRAM_VIEWER));
+        assertFalse(roleService.hasUserRole(program, user, PrismRole.PROGRAM_APPROVER));
+        assertTrue(roleService.hasUserRole(program, user, PrismRole.PROGRAM_ADMINISTRATOR));
+        
+        // TODO test reassigning owner role
     }
 }

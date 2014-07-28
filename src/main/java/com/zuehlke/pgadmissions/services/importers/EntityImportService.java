@@ -229,19 +229,18 @@ public class EntityImportService {
 
     @Transactional
     public Program getOrCreateProgram(Programme programme, Institution institution) {
-        String prefixedProgramCode = String.format("%010d", institution.getId()) + "-" + programme.getCode();
         PrismProgramType programType = PrismProgramType.findValueFromString(programme.getName());
 
-        Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withCode(prefixedProgramCode)
-                .withTitle(programme.getName()).withProgramType(programType).withImported(true);
+        Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withImportedCode(programme.getCode())
+                .withTitle(programme.getName()).withProgramType(programType);
 
         Action importAction = actionService.getById(PrismAction.INSTITUTION_IMPORT_PROGRAM);
         User proxyCreator = institution.getUser();
         Role proxyCreatorRole = roleService.getCreatorRole(transientProgram);
-        
-        Comment comment = new Comment().withUser(proxyCreator).withCreatedTimestamp(new DateTime()).withAction(importAction)
-                .withDeclinedResponse(false).withAssignedUser(proxyCreator, proxyCreatorRole);
-        
+
+        Comment comment = new Comment().withUser(proxyCreator).withCreatedTimestamp(new DateTime()).withAction(importAction).withDeclinedResponse(false)
+                .withAssignedUser(proxyCreator, proxyCreatorRole);
+
         Program persistentProgram = (Program) actionService.executeSystemAction(transientProgram, importAction, comment).getResource();
         return persistentProgram.withTitle(programme.getName()).withRequireProjectDefinition(programme.isAtasRegistered());
     }

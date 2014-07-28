@@ -4,6 +4,8 @@ import org.joda.time.LocalDate;
 
 public class FundingRepresentation {
 
+    private Integer id;
+
     private String fundingSource;
 
     private FileRepresentation document;
@@ -13,6 +15,14 @@ public class FundingRepresentation {
     private String value;
 
     private LocalDate awardDate;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getFundingSource() {
         return fundingSource;

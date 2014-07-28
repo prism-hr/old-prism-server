@@ -1,24 +1,25 @@
-package com.zuehlke.pgadmissions.rest.representation.application;
+package com.zuehlke.pgadmissions.rest.dto.application;
 
-import org.joda.time.LocalDate;
+import com.zuehlke.pgadmissions.rest.representation.application.AddressRepresentation;
+import org.joda.time.DateTime;
 
-public class EmploymentPositionRepresentation {
+public class ApplicationEmploymentPositionDTO {
 
     private Integer id;
 
     private String employerName;
 
-    private AddressRepresentation employerAddress;
+    private AddressDTO employerAddress;
 
     private String position;
 
-    private boolean current;
+    private Boolean current;
 
     private String remit;
 
-    private LocalDate startDate;
+    private DateTime startDate;
 
-    private LocalDate endDate;
+    private DateTime endDate;
 
     public Integer getId() {
         return id;
@@ -36,11 +37,11 @@ public class EmploymentPositionRepresentation {
         this.employerName = employerName;
     }
 
-    public AddressRepresentation getEmployerAddress() {
+    public AddressDTO getEmployerAddress() {
         return employerAddress;
     }
 
-    public void setEmployerAddress(AddressRepresentation employerAddress) {
+    public void setEmployerAddress(AddressDTO employerAddress) {
         this.employerAddress = employerAddress;
     }
 
@@ -52,11 +53,11 @@ public class EmploymentPositionRepresentation {
         this.position = position;
     }
 
-    public boolean isCurrent() {
+    public Boolean getCurrent() {
         return current;
     }
 
-    public void setCurrent(boolean current) {
+    public void setCurrent(Boolean current) {
         this.current = current;
     }
 
@@ -68,19 +69,19 @@ public class EmploymentPositionRepresentation {
         this.remit = remit;
     }
 
-    public LocalDate getStartDate() {
+    public DateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(DateTime startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getEndDate() {
+    public DateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(DateTime endDate) {
         this.endDate = endDate;
     }
 }

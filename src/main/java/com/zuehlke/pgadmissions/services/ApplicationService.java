@@ -320,6 +320,45 @@ public class ApplicationService {
         application.getQualifications().remove(qualification);
     }
 
+
+    public ApplicationEmploymentPosition saveEmploymentPosition(Integer applicationId, Integer employmentPositionId, ApplicationEmploymentPositionDTO employmentPositionDTO) {
+        Application application = entityService.getById(Application.class, applicationId);
+
+        ApplicationEmploymentPosition employmentPosition;
+        if (employmentPositionId != null) {
+            employmentPosition = entityService.getByProperties(ApplicationEmploymentPosition.class, ImmutableMap.of("application", application, "id", employmentPositionId));
+        } else {
+            employmentPosition = new ApplicationEmploymentPosition();
+            application.getEmploymentPositions().add(employmentPosition);
+        }
+
+        employmentPosition.setEmployerName(employmentPositionDTO.getEmployerName());
+
+        AddressDTO employerAddressDTO = employmentPositionDTO.getEmployerAddress();
+        Address employerAddress = employmentPosition.getEmployerAddress();
+        if (employerAddress == null) {
+            employerAddress = new Address();
+            employmentPosition.setEmployerAddress(employerAddress);
+        }
+        copyAddress(employerAddress, employerAddressDTO);
+
+        employmentPosition.setPosition(employmentPositionDTO.getPosition());
+        employmentPosition.setRemit(employmentPositionDTO.getRemit());
+        employmentPosition.setStartDate(employmentPositionDTO.getStartDate().toLocalDate());
+        employmentPosition.setCurrent(employmentPositionDTO.getCurrent());
+        employmentPosition.setEndDate(employmentPositionDTO.getEndDate() != null ? employmentPositionDTO.getEndDate().toLocalDate() : null);
+
+        return employmentPosition;
+    }
+
+    public void deleteEmploymentPosition(Integer applicationId, Integer employmentPositionId) {
+        Application application = entityService.getById(Application.class, applicationId);
+        ApplicationEmploymentPosition employmentPosition = entityService.getByProperties(ApplicationEmploymentPosition.class, ImmutableMap.of("application", application, "id", employmentPositionId));
+        application.getEmploymentPositions().remove(employmentPosition);
+
+
+    }
+
     private void copyAddress(Address to, AddressDTO from) {
         Domicile currentAddressDomicile = entityService.getById(Domicile.class, from.getDomicile());
         to.setDomicile(currentAddressDomicile);

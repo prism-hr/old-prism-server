@@ -36,7 +36,7 @@ public abstract class Advert extends Resource {
     private Integer id;
     
     @ManyToOne
-    @JoinColumn(name = "user_id", unique = true)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(name = "description")
@@ -95,10 +95,12 @@ public abstract class Advert extends Resource {
         this.id = id;
     }
 
+    @Override
     public User getUser() {
         return user;
     }
 
+    @Override
     public void setUser(User user) {
         this.user = user;
     }

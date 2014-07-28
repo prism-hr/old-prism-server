@@ -37,7 +37,7 @@ public class RoleDAO {
 
     public UserRole getUserRole(Resource resource, User user, Role role) {
         return (UserRole) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .add(Restrictions.eq(resource.getResourceScope().toString().toLowerCase(), resource)) //
+                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("role", role)) //
                 .uniqueResult();
@@ -45,16 +45,16 @@ public class RoleDAO {
     
     public List<UserRole> getUserRoles(Resource resource, User user, PrismRole... authorities) {
         return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.in("role.id", authorities)) //
-                .add(Restrictions.eq(resource.getResourceScope().toString().toLowerCase(), resource)) //
                 .list();
     }
     
     public List<User> getRoleUsers(Resource resource, Role role) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.property("user")) //
                 .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
+                .setProjection(Projections.property("user")) //
                 .add(Restrictions.eq("role", role)) //
                 .list();
     }

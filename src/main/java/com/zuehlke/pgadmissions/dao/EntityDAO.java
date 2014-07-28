@@ -1,20 +1,22 @@
 package com.zuehlke.pgadmissions.dao;
 
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
-
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Conjunction;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.beanutils.PropertyUtils;
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 
 @Repository
 public class EntityDAO {
@@ -155,5 +157,16 @@ public class EntityDAO {
         sessionFactory.getCurrentSession().evict(entity);
     }
 
+    public Object getProperty(Object object, String property) {
+        try {
+            Object objectId = PropertyUtils.getSimpleProperty(object, "id");
+            return sessionFactory.getCurrentSession().createCriteria(object.getClass()) //
+                    .setProjection(Projections.property(property))
+                    .add(Restrictions.eq("id", objectId))
+                    .uniqueResult();
+        } catch (Exception e) {
+            throw new Error(e);
+        }
+    }
 
 }

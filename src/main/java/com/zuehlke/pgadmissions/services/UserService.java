@@ -106,9 +106,7 @@ public class UserService {
     public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource,
             List<ResourceRepresentation.RoleRepresentation> roles) {
         User user = getOrCreateUser(firstName, lastName, email);
-
         roleService.updateRoles(resource, user, roles);
-
         return user;
     }
 

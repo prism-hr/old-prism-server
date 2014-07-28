@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.integration;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -16,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.rest.representation.ResourceRepresentation;
+import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -39,6 +41,9 @@ public class IT3ManageUserRoles {
 
     @Autowired
     private ApplicationContext applicationContext;
+    
+    @Autowired
+    private EntityService entityService;
 
     @Test
     public void testManageUserRoles() throws Exception {
@@ -58,6 +63,12 @@ public class IT3ManageUserRoles {
         assertFalse(roleService.hasUserRole(program, user, PrismRole.PROGRAM_APPROVER));
         assertTrue(roleService.hasUserRole(program, user, PrismRole.PROGRAM_ADMINISTRATOR));
         
-        // TODO test reassigning owner role
+        Program program2 = programService.getProgramByImportedCode(null, "RRDSCSSING01");
+        User program2NewAdmin = userService.getOrCreateUserWithRoles("Alex", "Salmond", "alex@salmond.com", program2, Lists.newArrayList(new ResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_ADMINISTRATOR, true)));
+        User program2OldAdmin = entityService.getByProperty(User.class, "email", "jerzy@urban.pl");
+        roleService.updateRoles(program2, program2OldAdmin, Lists.newArrayList(new ResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_ADMINISTRATOR, false)));
+
+        User actualProgram2User = (User) entityService.getProperty(program2, "user");
+        assertEquals(program2NewAdmin, actualProgram2User);
     }
 }

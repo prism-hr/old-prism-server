@@ -1,14 +1,16 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.zuehlke.pgadmissions.dao.EntityDAO;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
+import com.zuehlke.pgadmissions.dao.EntityDAO;
+import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 
 @Service
 @Transactional
@@ -79,7 +81,7 @@ public class EntityService {
         return transientResource;
     }
 
-    public java.io.Serializable save(Object entity) {
+    public Serializable save(Object entity) {
         return entityDAO.save(entity);
     }
 
@@ -113,4 +115,8 @@ public class EntityService {
         entityDAO.evict(entity);
     }
 
+    public Object getProperty(Object object, String property) {
+        return entityDAO.getProperty(object, property);
+    }
+    
 }

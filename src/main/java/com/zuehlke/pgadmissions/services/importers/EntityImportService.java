@@ -231,13 +231,13 @@ public class EntityImportService {
 
     @Transactional
     public Program getOrCreateProgram(Programme programme, Institution institution) {
-        PrismProgramType programType = PrismProgramType.findValueFromString(programme.getName());
-
-        Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withImportedCode(programme.getCode())
-                .withTitle(programme.getName()).withProgramType(programType);
-
-        Action importAction = actionService.getById(PrismAction.INSTITUTION_IMPORT_PROGRAM);
         User proxyCreator = institution.getUser();
+        
+        PrismProgramType programType = PrismProgramType.findValueFromString(programme.getName());
+        Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withImportedCode(programme.getCode())
+                .withTitle(programme.getName()).withProgramType(programType).withUser(proxyCreator);
+        
+        Action importAction = actionService.getById(PrismAction.INSTITUTION_IMPORT_PROGRAM);
         Role proxyCreatorRole = roleService.getCreatorRole(transientProgram);
 
         Comment comment = new Comment().withUser(proxyCreator).withCreatedTimestamp(new DateTime()).withAction(importAction).withDeclinedResponse(false)

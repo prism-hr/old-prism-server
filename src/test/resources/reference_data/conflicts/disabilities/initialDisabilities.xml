@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<disabilities>
+  <disability>
+    <code>0</code>
+    <name>disability1</name>
+  </disability>
+  <disability>
+    <code>99</code>
+    <name>otherDisability</name>
+  </disability>
+</disabilities>
+

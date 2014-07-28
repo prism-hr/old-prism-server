@@ -355,8 +355,36 @@ public class ApplicationService {
         Application application = entityService.getById(Application.class, applicationId);
         ApplicationEmploymentPosition employmentPosition = entityService.getByProperties(ApplicationEmploymentPosition.class, ImmutableMap.of("application", application, "id", employmentPositionId));
         application.getEmploymentPositions().remove(employmentPosition);
+    }
 
 
+    public ApplicationFunding saveFunding(Integer applicationId, Integer fundingId, ApplicationFundingDTO fundingDTO) {
+        Application application = entityService.getById(Application.class, applicationId);
+
+        ApplicationFunding funding;
+        if (fundingId != null) {
+            funding = entityService.getByProperties(ApplicationFunding.class, ImmutableMap.of("application", application, "id", fundingId));
+        } else {
+            funding = new ApplicationFunding();
+            application.getFundings().add(funding);
+        }
+
+        FundingSource fundingSource = entityService.getById(FundingSource.class, fundingDTO.getFundingSource());
+        Document fundingDocument = entityService.getById(Document.class, fundingDTO.getDocument().getId());
+
+        funding.setFundingSource(fundingSource);
+        funding.setDescription(fundingDTO.getDescription());
+        funding.setValue(fundingDTO.getValue());
+        funding.setAwardDate(fundingDTO.getAwardDate().toLocalDate());
+        funding.setDocument(fundingDocument);
+
+        return funding;
+    }
+
+    public void deleteFunding(Integer applicationId, Integer fundingId) {
+        Application application = entityService.getById(Application.class, applicationId);
+        ApplicationFunding funding = entityService.getByProperties(ApplicationFunding.class, ImmutableMap.of("application", application, "id", fundingId));
+        application.getFundings().remove(funding);
     }
 
     private void copyAddress(Address to, AddressDTO from) {

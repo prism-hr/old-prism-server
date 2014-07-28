@@ -58,7 +58,6 @@ public class ApplicationResource {
         return ImmutableMap.of("id", (Object)qualification.getId());
     }
 
-
     @RequestMapping(value = "/{applicationId}/qualifications/{qualificationId}", method = RequestMethod.PUT)
     public void updateQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId, @RequestBody ApplicationQualificationDTO qualificationDTO) {
         applicationService.saveQualification(applicationId, qualificationId, qualificationDTO);
@@ -75,7 +74,6 @@ public class ApplicationResource {
         return ImmutableMap.of("id", (Object)employmentPosition.getId());
     }
 
-
     @RequestMapping(value = "/{applicationId}/employmentPositions/{employmentPositionId}", method = RequestMethod.PUT)
     public void updateEmploymentPosition(@PathVariable Integer applicationId, @PathVariable Integer employmentPositionId, @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
         applicationService.saveEmploymentPosition(applicationId, employmentPositionId, employmentPositionDTO);
@@ -86,6 +84,22 @@ public class ApplicationResource {
         applicationService.deleteEmploymentPosition(applicationId, employmentPositionId);
     }
 
+    @RequestMapping(value = "/{applicationId}/fundings", method = RequestMethod.POST)
+    public Map<String, Object> createFunding(@PathVariable Integer applicationId, @RequestBody ApplicationFundingDTO fundingDTO) {
+        ApplicationFunding funding = applicationService.saveFunding(applicationId, null, fundingDTO);
+        return ImmutableMap.of("id", (Object)funding.getId());
+    }
+
+    @RequestMapping(value = "/{applicationId}/fundings/{fundingId}", method = RequestMethod.PUT)
+    public void updateFunding(@PathVariable Integer applicationId, @PathVariable Integer fundingId, @RequestBody ApplicationFundingDTO fundingDTO) {
+        applicationService.saveFunding(applicationId, fundingId, fundingDTO);
+    }
+
+    @RequestMapping(value = "/{applicationId}/fundings/{fundingId}", method = RequestMethod.DELETE)
+    public void updateFunding(@PathVariable Integer applicationId, @PathVariable Integer fundingId) {
+        applicationService.deleteFunding(applicationId, fundingId);
+    }
+    
     @RequestMapping(value = "/{applicationId}/comments", method = RequestMethod.POST)
     public void performAction(@PathVariable Integer applicationId, @RequestParam PrismAction actionId, @RequestBody CommentDTO commentDTO) {
         Application application = entityService.getById(Application.class, applicationId);

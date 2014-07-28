@@ -99,6 +99,22 @@ public class ApplicationResource {
     public void updateFunding(@PathVariable Integer applicationId, @PathVariable Integer fundingId) {
         applicationService.deleteFunding(applicationId, fundingId);
     }
+
+    @RequestMapping(value = "/{applicationId}/referees", method = RequestMethod.POST)
+    public Map<String, Object> createRreferee(@PathVariable Integer applicationId, @RequestBody ApplicationRefereeDTO refereeDTO) {
+        ApplicationReferee referee = applicationService.saveReferee(applicationId, null, refereeDTO);
+        return ImmutableMap.of("id", (Object)referee.getId());
+    }
+
+    @RequestMapping(value = "/{applicationId}/referees/{refereeId}", method = RequestMethod.PUT)
+    public void updateReferee(@PathVariable Integer applicationId, @PathVariable Integer refereeId, @RequestBody ApplicationRefereeDTO refereeDTO) {
+        applicationService.saveReferee(applicationId, refereeId, refereeDTO);
+    }
+
+    @RequestMapping(value = "/{applicationId}/referees/{refereeId}", method = RequestMethod.DELETE)
+    public void updateReferee(@PathVariable Integer applicationId, @PathVariable Integer refereeId) {
+        applicationService.deleteReferee(applicationId, refereeId);
+    }
     
     @RequestMapping(value = "/{applicationId}/comments", method = RequestMethod.POST)
     public void performAction(@PathVariable Integer applicationId, @RequestParam PrismAction actionId, @RequestBody CommentDTO commentDTO) {

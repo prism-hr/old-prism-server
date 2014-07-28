@@ -1,12 +1,13 @@
-package com.zuehlke.pgadmissions.rest.representation.application;
+package com.zuehlke.pgadmissions.rest.dto.application;
 
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 
-public class RefereeRepresentation {
+import com.zuehlke.pgadmissions.rest.dto.UserDTO;
+
+public class ApplicationRefereeDTO {
 
     private Integer id;
 
-    private UserRepresentation user;
+    private UserDTO user;
 
     private String phoneNumber;
 
@@ -16,7 +17,7 @@ public class RefereeRepresentation {
 
     private String jobTitle;
 
-    private AddressRepresentation address;
+    private AddressDTO address;
 
     public Integer getId() {
         return id;
@@ -26,11 +27,11 @@ public class RefereeRepresentation {
         this.id = id;
     }
 
-    public UserRepresentation getUser() {
+    public UserDTO getUser() {
         return user;
     }
 
-    public void setUser(UserRepresentation user) {
+    public void setUser(UserDTO user) {
         this.user = user;
     }
 
@@ -66,12 +67,11 @@ public class RefereeRepresentation {
         this.jobTitle = jobTitle;
     }
 
-    public AddressRepresentation getAddress() {
+    public AddressDTO getAddress() {
         return address;
     }
 
-    public void setAddress(AddressRepresentation address) {
+    public void setAddress(AddressDTO address) {
         this.address = address;
     }
-
 }

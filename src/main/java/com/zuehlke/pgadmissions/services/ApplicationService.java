@@ -10,6 +10,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
+import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.*;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
@@ -387,6 +388,51 @@ public class ApplicationService {
         application.getFundings().remove(funding);
     }
 
+    public ApplicationReferee saveReferee(Integer applicationId, Integer refereeId, ApplicationRefereeDTO refereeDTO) {
+        Application application = entityService.getById(Application.class, applicationId);
+
+        ApplicationReferee referee;
+        if (refereeId != null) {
+            referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
+        } else {
+            referee = new ApplicationReferee();
+            application.getReferees().add(referee);
+        }
+
+        UserDTO userDTO = refereeDTO.getUser();
+        User user = referee.getUser();
+        if (user == null) {
+            user = new User();
+            referee.setUser(user);
+        }
+
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setEmail(userDTO.getEmail());
+
+        referee.setJobEmployer(refereeDTO.getJobEmployer());
+        referee.setJobTitle(refereeDTO.getJobTitle());
+
+        AddressDTO addressDTO = refereeDTO.getAddress();
+        Address address = referee.getAddress();
+        if (address == null) {
+            address = new Address();
+            referee.setAddress(address);
+        }
+        copyAddress(address, addressDTO);
+
+        referee.setPhoneNumber(refereeDTO.getPhoneNumber());
+        referee.setSkype(refereeDTO.getSkype());
+
+        return referee;
+    }
+
+    public void deleteReferee(Integer applicationId, Integer refereeId) {
+        Application application = entityService.getById(Application.class, applicationId);
+        ApplicationReferee referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
+        application.getReferees().remove(referee);
+    }
+    
     private void copyAddress(Address to, AddressDTO from) {
         Domicile currentAddressDomicile = entityService.getById(Domicile.class, from.getDomicile());
         to.setDomicile(currentAddressDomicile);

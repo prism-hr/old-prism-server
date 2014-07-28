@@ -1,8 +1,9 @@
-package com.zuehlke.pgadmissions.rest.representation.application;
+package com.zuehlke.pgadmissions.rest.dto.application;
 
-import org.joda.time.LocalDate;
+import com.zuehlke.pgadmissions.rest.representation.application.FileRepresentation;
+import org.joda.time.DateTime;
 
-public class FundingRepresentation {
+public class ApplicationFundingDTO {
 
     private Integer id;
 
@@ -14,7 +15,7 @@ public class FundingRepresentation {
 
     private String value;
 
-    private LocalDate awardDate;
+    private DateTime awardDate;
 
     public Integer getId() {
         return id;
@@ -56,11 +57,11 @@ public class FundingRepresentation {
         this.value = value;
     }
 
-    public LocalDate getAwardDate() {
+    public DateTime getAwardDate() {
         return awardDate;
     }
 
-    public void setAwardDate(LocalDate awardDate) {
+    public void setAwardDate(DateTime awardDate) {
         this.awardDate = awardDate;
     }
 }

@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
+import com.google.common.collect.ImmutableMap;
+import com.zuehlke.pgadmissions.domain.ApplicationQualification;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +24,8 @@ import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.UserService;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = {"api/applications"})
@@ -52,6 +57,24 @@ public class ApplicationResource {
     public void saveAddress(@PathVariable Integer applicationId, @RequestBody ApplicationAddressDTO addressDTO) {
         applicationService.saveAddress(applicationId, addressDTO);
     }
+
+    @RequestMapping(value = "/{applicationId}/qualifications", method = RequestMethod.POST)
+    public Map<String, Object> createQualification(@PathVariable Integer applicationId, @RequestBody ApplicationQualificationDTO qualificationDTO) {
+        ApplicationQualification qualification = applicationService.saveQualification(applicationId, null, qualificationDTO);
+        return ImmutableMap.of("id", (Object)qualification.getId());
+    }
+
+
+    @RequestMapping(value = "/{applicationId}/qualifications/{qualificationId}", method = RequestMethod.PUT)
+    public void updateQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId, @RequestBody ApplicationQualificationDTO qualificationDTO) {
+        applicationService.saveQualification(applicationId, qualificationId, qualificationDTO);
+    }
+
+    @RequestMapping(value = "/{applicationId}/qualifications/{qualificationId}", method = RequestMethod.DELETE)
+    public void updateQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId) {
+        applicationService.deleteQualification(applicationId, qualificationId);
+    }
+
 
     @RequestMapping(value = "/{applicationId}/comments", method = RequestMethod.POST)
     public void performAction(@PathVariable Integer applicationId, @RequestParam PrismAction actionId, @RequestBody CommentDTO commentDTO) {

@@ -1,15 +1,14 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.HashMap;
-import java.util.List;
-
+import com.zuehlke.pgadmissions.dao.EntityDAO;
+import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.EntityDAO;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -34,16 +33,20 @@ public class EntityService {
         return entityDAO.getByPropertyNotNull(klass, propertyName);
     }
 
-    public <T> T getByProperties(Class<T> klass, HashMap<String, Object> properties) {
+    public <T> T getByProperties(Class<T> klass, Map<String, Object> properties) {
         return entityDAO.getByProperties(klass, properties);
     }
 
     public <T> List<T> list(Class<T> klass) {
         return entityDAO.list(klass);
     }
-    
+
     public <T> List<T> listByProperty(Class<T> klass, String propertyName, Object propertyValue) {
         return entityDAO.listByProperty(klass, propertyName, propertyValue);
+    }
+
+    public <T> List<T> listByProperties(Class<T> klass, Map<String, Object> properties) {
+        return entityDAO.listByProperties(klass, properties);
     }
 
     public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) {
@@ -58,7 +61,7 @@ public class EntityService {
         }
         return persistentResource;
     }
-    
+
     public <T extends IUniqueEntity> T createOrUpdate(T transientResource) {
         T persistentResource = (T) getDuplicateEntity(transientResource);
         if (persistentResource == null) {
@@ -105,9 +108,9 @@ public class EntityService {
     public void merge(Object entity) {
         entityDAO.merge(entity);
     }
-    
+
     public void evict(Object entity) {
         entityDAO.evict(entity);
     }
-    
+
 }

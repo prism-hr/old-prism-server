@@ -1,53 +1,24 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Date;
-import java.util.List;
-
+import com.google.common.collect.ImmutableMap;
+import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.ReportFormat;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.*;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
-import com.zuehlke.pgadmissions.dao.ApplicationDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
-import com.zuehlke.pgadmissions.domain.Address;
-import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.ApplicationPassport;
-import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
-import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
-import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.Disability;
-import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.Ethnicity;
-import com.zuehlke.pgadmissions.domain.Filter;
-import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.ReferralSource;
-import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.Title;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.ReportFormat;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.AddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationLanguageQualificationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPassportDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional
@@ -316,6 +287,39 @@ public class ApplicationService {
         copyAddress(contactAddress, contactAddressDTO);
     }
 
+    public ApplicationQualification saveQualification(Integer applicationId, Integer qualificationId, ApplicationQualificationDTO qualificationDTO) {
+        Application application = entityService.getById(Application.class, applicationId);
+
+        ApplicationQualification qualification;
+        if (qualificationId != null) {
+            qualification = entityService.getByProperties(ApplicationQualification.class, ImmutableMap.of("application", application, "id", qualificationId));
+        } else {
+            qualification = new ApplicationQualification();
+            application.getQualifications().add(qualification);
+        }
+
+        ImportedInstitution institution = entityService.getById(ImportedInstitution.class, qualificationDTO.getInstitution().getId());
+        QualificationType qualificationType = entityService.getById(QualificationType.class, qualificationDTO.getType());
+        Document qualificationDocument = entityService.getById(Document.class, qualificationDTO.getDocument().getId());
+        qualification.setInstitution(institution);
+        qualification.setType(qualificationType);
+        qualification.setTitle(qualificationDTO.getTitle());
+        qualification.setSubject(qualificationDTO.getSubject());
+        qualification.setLanguage(qualificationDTO.getLanguage());
+        qualification.setStartDate(qualificationDTO.getStartDate().toLocalDate());
+        qualification.setCompleted(qualificationDTO.getCompleted());
+        qualification.setGrade(qualificationDTO.getGrade());
+        qualification.setAwardDate(qualificationDTO.getAwardDate().toLocalDate());
+        qualification.setDocument(qualificationDocument);
+        return qualification;
+    }
+
+    public void deleteQualification(Integer applicationId, Integer qualificationId) {
+        Application application = entityService.getById(Application.class, applicationId);
+        ApplicationQualification qualification = entityService.getByProperties(ApplicationQualification.class, ImmutableMap.of("application", application, "id", qualificationId));
+        application.getQualifications().remove(qualification);
+    }
+
     private void copyAddress(Address to, AddressDTO from) {
         Domicile currentAddressDomicile = entityService.getById(Domicile.class, from.getDomicile());
         to.setDomicile(currentAddressDomicile);
@@ -325,4 +329,5 @@ public class ApplicationService {
         to.setAddressRegion(from.getAddressRegion());
         to.setAddressCode(from.getAddressCode());
     }
+
 }

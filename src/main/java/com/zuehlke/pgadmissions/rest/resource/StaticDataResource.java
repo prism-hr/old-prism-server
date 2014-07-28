@@ -1,13 +1,18 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
-import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
-
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.rest.representation.InstitutionRepresentation;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.rest.representation.application.ImportedEntityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.ImportedInstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.application.LanguageQualificationTypeRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.workflow.RoleRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.workflow.StateActionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.workflow.StateRepresentation;
+import com.zuehlke.pgadmissions.services.EntityService;
 import org.apache.commons.lang.WordUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +23,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.rest.representation.application.ImportedEntityRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.application.LanguageQualificationTypeRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.workflow.RoleRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.workflow.StateActionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.workflow.StateRepresentation;
-import com.zuehlke.pgadmissions.services.EntityService;
+import java.util.List;
+import java.util.Map;
+
+import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 @RestController
 @RequestMapping("/api/static")
@@ -85,7 +84,7 @@ public class StaticDataResource {
         staticData.put("institutionDomiciles", institutionDomiciles);
 
         // Display names for enum classes
-        for (Class<?> enumClass : new Class[] { PrismProgramType.class }) {
+        for (Class<?> enumClass : new Class[]{PrismProgramType.class}) {
             List<EnumDefinition> definitions = Lists.newArrayListWithExpectedSize(enumClass.getEnumConstants().length);
             String simpleName = enumClass.getSimpleName();
             if (simpleName.startsWith("Prism")) {
@@ -118,11 +117,11 @@ public class StaticDataResource {
         Institution institution = entityService.getById(Institution.class, institutionId);
 
         // Display names for imported entities
-        for (Class<Object> importedEntityType : new Class[] { StudyOption.class, ReferralSource.class, Title.class, Ethnicity.class, Disability.class,
-                Gender.class, Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, LanguageQualificationType.class }) {
+        for (Class<Object> importedEntityType : new Class[]{StudyOption.class, ReferralSource.class, Title.class, Ethnicity.class, Disability.class,
+                Gender.class, Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, LanguageQualificationType.class}) {
             String simpleName = importedEntityType.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);
-            List<Object> entities = entityService.listByProperty(importedEntityType, "institution", institution);
+            List<Object> entities = entityService.listByProperties(importedEntityType, ImmutableMap.of("institution", institution, "enabled", true));
             List<ImportedEntityRepresentation> entityRepresentations = Lists.newArrayListWithCapacity(entities.size());
             for (Object studyOption : entities) {
                 entityRepresentations.add(dozerBeanMapper.map(studyOption, ImportedEntityRepresentation.class));
@@ -138,7 +137,7 @@ public class StaticDataResource {
         Map<String, Object> staticData = Maps.newHashMap();
 
         Domicile domicile = entityService.getById(Domicile.class, domicileId);
-        List<ImportedInstitution> institutions = entityService.listByProperty(ImportedInstitution.class, "domicile", domicile);
+        List<ImportedInstitution> institutions = entityService.listByProperties(ImportedInstitution.class, ImmutableMap.of("domicile", domicile, "enabled", true));
 
         List<ImportedInstitutionRepresentation> institutionRepresentations = Lists.newArrayListWithCapacity(institutions.size());
         for (ImportedInstitution institution : institutions) {

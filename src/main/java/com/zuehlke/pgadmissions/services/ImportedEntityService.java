@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
+import com.google.common.collect.ImmutableMap;
+import com.zuehlke.pgadmissions.dao.EntityDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +26,20 @@ public class ImportedEntityService {
 
     @Autowired
     private ImportedEntityDAO importedEntityDAO;
+
+    @Autowired
+    private EntityDAO entityDAO;
     
     public <T extends ImportedEntity> T getByCode(Class<? extends ImportedEntity> clazz, Institution institution, String code){
         return importedEntityDAO.getByCode(clazz, institution, code);
+    }
+
+    public <T extends ImportedEntity> T getById(Class<? extends ImportedEntity> clazz, Institution institution, Integer id){
+        T entity = (T) entityDAO.getByProperties(clazz, ImmutableMap.of("institution", institution, "id", id));
+        if(entity == null) {
+            throw new NullPointerException("Object of class " + clazz + " with id " + id + " for institution " + institution.getName() + " not found.");
+        }
+        return entity;
     }
 
     public List<Disability> getAllDisabilities() {

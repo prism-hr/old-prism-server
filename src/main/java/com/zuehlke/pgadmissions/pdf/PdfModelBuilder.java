@@ -916,7 +916,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.addCell(newTableCell("Do you have any unspent Criminial Convictions?", SMALL_BOLD_FONT));
         if (additionalInformation == null) {
             table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
-        } else if (BooleanUtils.isTrue(additionalInformation.getHasConvictions())) {
+        } else if (additionalInformation.getConvictionsText() != null) {
             table.addCell(newTableCell("Yes", SMALL_FONT));
         } else {
             table.addCell(newTableCell("No", SMALL_FONT));

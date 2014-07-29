@@ -1,11 +1,10 @@
 package com.zuehlke.pgadmissions.components;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertFalse;
-
-import javax.validation.Validator;
-
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
+import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.validators.*;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,24 +17,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ValidationUtils;
 import org.unitils.inject.util.InjectionUtils;
 
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
-import com.zuehlke.pgadmissions.services.DocumentService;
-import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
-import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
-import com.zuehlke.pgadmissions.validators.FundingValidator;
-import com.zuehlke.pgadmissions.validators.LanguageQualificationValidator;
-import com.zuehlke.pgadmissions.validators.PassportValidator;
-import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
-import com.zuehlke.pgadmissions.validators.QualificationValidator;
-import com.zuehlke.pgadmissions.validators.RefereeValidator;
+import javax.validation.Validator;
+
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.junit.Assert.assertFalse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
@@ -51,7 +37,6 @@ public class ApplicationFormCopyHelperTest {
     private EmploymentPositionValidator employmentPositionValidator;
     private FundingValidator fundingValidator;
     private RefereeValidator refereeValidator;
-    private AdditionalInformationValidator additionalInformationValidator;
 
     private ApplicationCopyHelper applicationFormCopyHelper;
 
@@ -104,10 +89,6 @@ public class ApplicationFormCopyHelperTest {
             bindingResult.popNestedPath();
         }
 
-        bindingResult.pushNestedPath("additionalInformation");
-        ValidationUtils.invokeValidator(additionalInformationValidator, applicationForm.getAdditionalInformation(), bindingResult);
-        bindingResult.popNestedPath();
-
         assertFalse(bindingResult.hasErrors());
     }
 
@@ -137,9 +118,6 @@ public class ApplicationFormCopyHelperTest {
 
         refereeValidator = new RefereeValidator(userServiceMock);
         refereeValidator.setValidator(validator);
-
-        additionalInformationValidator = new AdditionalInformationValidator();
-        additionalInformationValidator.setValidator(validator);
 
         applicationFormCopyHelper = new ApplicationCopyHelper();
         InjectionUtils.injectInto(documentService, applicationFormCopyHelper, "documentService");

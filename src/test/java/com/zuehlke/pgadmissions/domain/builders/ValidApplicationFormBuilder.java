@@ -167,7 +167,7 @@ public class ValidApplicationFormBuilder {
                                 .withListeningScore("1").withOverallScore("1").withReadingScore("1").withSpeakingScore("1").withWritingScore("1")
                                 .withProofOfAward(languageQualificationDocument)).withPhoneNumber("+44 (0) 123 123 1234").withResidenceCountry(domicile)
                 .withTitle(new Title().withName("test").withCode("test"));
-        additionalInformation = new ApplicationAdditionalInformation().withHasConvictions(false);
+        additionalInformation = new ApplicationAdditionalInformation();
         instance = new ProgramInstance().withAcademicYear("2013").withApplicationDeadline(new LocalDate().plusYears(1))
                 .withApplicationStartDate(new LocalDate().plusMonths(5)).withEnabled(true)
                 .withStudyOption(new StudyOption().withInstitution(institution).withCode("F+++++").withName("Full-time").withEnabled(true))

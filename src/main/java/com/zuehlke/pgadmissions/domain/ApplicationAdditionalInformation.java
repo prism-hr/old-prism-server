@@ -21,9 +21,6 @@ public class ApplicationAdditionalInformation {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "has_convictions", nullable = false)
-    private boolean hasConvictions;
-
     @Column(name = "convictions_text")
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 400)
     private String convictionsText;
@@ -37,14 +34,6 @@ public class ApplicationAdditionalInformation {
 
     public Integer getId() {
         return id;
-    }
-
-    public boolean getHasConvictions() {
-        return hasConvictions;
-    }
-
-    public void setHasConvictions(boolean hasConvictions) {
-        this.hasConvictions = hasConvictions;
     }
 
     public String getConvictionsText() {
@@ -65,11 +54,6 @@ public class ApplicationAdditionalInformation {
 
     public ApplicationAdditionalInformation withId(Integer id) {
         this.id = id;
-        return this;
-    }
-
-    public ApplicationAdditionalInformation withHasConvictions(boolean hasConvictions) {
-        this.hasConvictions = hasConvictions;
         return this;
     }
 

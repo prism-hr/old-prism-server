@@ -184,7 +184,7 @@ public class ApplicationExportBuilder {
         applicant.setHomeAddress(buildHomeAddress());
         applicant.setCorrespondenceAddress(buildCorrespondenceAddress());
         applicant.setCriminalConvictionDetails(cleanString(applicationForm.getAdditionalInformation().getConvictionsText()));
-        applicant.setCriminalConvictions(applicationForm.getAdditionalInformation().getHasConvictions());
+        applicant.setCriminalConvictions(applicationForm.getAdditionalInformation().getConvictionsText() != null);
         applicant.setQualificationList(buildQualificationDetails());
         applicant.setEmployerList(buildEmployer());
 

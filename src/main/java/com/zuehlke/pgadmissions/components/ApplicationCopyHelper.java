@@ -98,7 +98,6 @@ public class ApplicationCopyHelper {
     }
 
     public void copyAdditionalInformation(ApplicationAdditionalInformation to, ApplicationAdditionalInformation from) {
-        to.setHasConvictions(from.getHasConvictions());
         to.setConvictionsText(from.getConvictionsText());
     }
 

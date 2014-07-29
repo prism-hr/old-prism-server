@@ -2,12 +2,17 @@ package com.zuehlke.pgadmissions.rest.dto.application;
 
 import org.joda.time.DateTime;
 
+import javax.validation.constraints.NotNull;
+
 public class ApplicationProgramDetailsDTO {
 
+    @NotNull
     private Integer studyOption;
 
+    @NotNull
     private DateTime startDate;
 
+    @NotNull
     private Integer referralSource;
 
     private ApplicationSupervisorDTO[] supervisors;

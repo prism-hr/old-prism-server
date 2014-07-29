@@ -1,9 +1,16 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 public class ApplicationAddressDTO {
 
+    @NotNull
+    @Valid
     private AddressDTO currentAddress;
 
+    @NotNull
+    @Valid
     private AddressDTO contactAddress;
 
     public AddressDTO getCurrentAddress() {

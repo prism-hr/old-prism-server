@@ -171,6 +171,7 @@ public class ApplicationService {
         user.setLastName(personalDetailsDTO.getUser().getLastName());
 
         Title title = entityService.getById(Title.class, personalDetailsDTO.getTitle());
+        Gender gender = entityService.getById(Gender.class, personalDetailsDTO.getGender());
         Country country = entityService.getById(Country.class, personalDetailsDTO.getCountry());
         Language firstNationality = entityService.getById(Language.class, personalDetailsDTO.getFirstNationality());
         Language secondNationality = personalDetailsDTO.getSecondNationality() != null ? entityService.getById(Language.class, personalDetailsDTO.getSecondNationality()) : null;
@@ -178,7 +179,7 @@ public class ApplicationService {
         Ethnicity ethnicity = entityService.getById(Ethnicity.class, personalDetailsDTO.getEthnicity());
         Disability disability = entityService.getById(Disability.class, personalDetailsDTO.getDisability());
         personalDetails.setTitle(title);
-        personalDetails.setGender(personalDetailsDTO.getGender());
+        personalDetails.setGender(gender);
         personalDetails.setDateOfBirth(personalDetailsDTO.getDateOfBirth().toLocalDate());
         personalDetails.setCountry(country);
         personalDetails.setFirstNationality(firstNationality);

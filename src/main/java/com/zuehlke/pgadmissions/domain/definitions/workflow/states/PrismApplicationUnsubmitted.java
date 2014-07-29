@@ -2,16 +2,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 
 import java.util.Arrays;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 
 public class PrismApplicationUnsubmitted extends PrismWorkflowState {
 
@@ -23,7 +14,8 @@ public class PrismApplicationUnsubmitted extends PrismWorkflowState {
             .withDefaultAction(true) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_CREATOR))) //
+                        .withRole(PrismRole.APPLICATION_CREATOR)
+                        .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR))) //
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.APPLICATION_CREATOR) // 

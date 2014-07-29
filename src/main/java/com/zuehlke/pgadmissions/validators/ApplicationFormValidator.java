@@ -32,9 +32,6 @@ public class ApplicationFormValidator extends AbstractValidator {
     private ApplicationAddressValidator applicationFormAddressValidator;
 
     @Autowired
-    private AdditionalInformationValidator additionalInformationValidator;
-
-    @Autowired
     private ApplicationFormDocumentValidator applicationFormDocumentValidator;
 
     @Override
@@ -61,10 +58,6 @@ public class ApplicationFormValidator extends AbstractValidator {
 
         if (!applicationFormAddressValidator.isValid(applicationFormAddress)) {
             errors.rejectValue("applicationAddress", "user.addresses.notempty");
-        }
-
-        if (!additionalInformationValidator.isValid(additionalInformation)) {
-            errors.rejectValue("additionalInformation", "user.additionalInformation.incomplete");
         }
 
         if (!applicationFormDocumentValidator.isValid(applicationFormDocument)) {

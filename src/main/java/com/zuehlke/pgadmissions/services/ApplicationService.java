@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
@@ -34,6 +35,9 @@ public class ApplicationService {
 
     @Autowired
     private EntityService entityService;
+
+    @Autowired
+    private ImportedEntityService importedEntityService;
 
     @Autowired
     private UserService userService;
@@ -158,6 +162,7 @@ public class ApplicationService {
 
     public void savePersonalDetails(Integer applicationId, ApplicationPersonalDetailsDTO personalDetailsDTO) {
         Application application = entityService.getById(Application.class, applicationId);
+        Institution institution = application.getInstitution();
         ApplicationPersonalDetails personalDetails = application.getPersonalDetails();
         if (personalDetails == null) {
             personalDetails = new ApplicationPersonalDetails();
@@ -166,18 +171,18 @@ public class ApplicationService {
 
         User user = application.getUser();
         user.setFirstName(personalDetailsDTO.getUser().getFirstName());
-        user.setFirstName2(personalDetailsDTO.getUser().getFirstName2());
-        user.setFirstName3(personalDetailsDTO.getUser().getFirstName3());
+        user.setFirstName2(Strings.emptyToNull(personalDetailsDTO.getUser().getFirstName2()));
+        user.setFirstName3(Strings.emptyToNull(personalDetailsDTO.getUser().getFirstName3()));
         user.setLastName(personalDetailsDTO.getUser().getLastName());
 
-        Title title = entityService.getById(Title.class, personalDetailsDTO.getTitle());
-        Gender gender = entityService.getById(Gender.class, personalDetailsDTO.getGender());
-        Country country = entityService.getById(Country.class, personalDetailsDTO.getCountry());
-        Language firstNationality = entityService.getById(Language.class, personalDetailsDTO.getFirstNationality());
-        Language secondNationality = personalDetailsDTO.getSecondNationality() != null ? entityService.getById(Language.class, personalDetailsDTO.getSecondNationality()) : null;
-        Domicile residenceCountry = entityService.getById(Domicile.class, personalDetailsDTO.getResidenceCountry());
-        Ethnicity ethnicity = entityService.getById(Ethnicity.class, personalDetailsDTO.getEthnicity());
-        Disability disability = entityService.getById(Disability.class, personalDetailsDTO.getDisability());
+        Title title = importedEntityService.getById(Title.class, institution, personalDetailsDTO.getTitle());
+        Gender gender = importedEntityService.getById(Gender.class, institution, personalDetailsDTO.getGender());
+        Country country = importedEntityService.getById(Country.class, institution, personalDetailsDTO.getCountry());
+        Language firstNationality = importedEntityService.getById(Language.class, institution, personalDetailsDTO.getFirstNationality());
+        Language secondNationality = personalDetailsDTO.getSecondNationality() != null ? importedEntityService.<Language>getById(Language.class, institution, personalDetailsDTO.getSecondNationality()) : null;
+        Domicile residenceCountry = importedEntityService.getById(Domicile.class, institution, personalDetailsDTO.getResidenceCountry());
+        Ethnicity ethnicity = importedEntityService.getById(Ethnicity.class, institution, personalDetailsDTO.getEthnicity());
+        Disability disability = importedEntityService.getById(Disability.class, institution, personalDetailsDTO.getDisability());
         personalDetails.setTitle(title);
         personalDetails.setGender(gender);
         personalDetails.setDateOfBirth(personalDetailsDTO.getDateOfBirth().toLocalDate());
@@ -188,7 +193,7 @@ public class ApplicationService {
         personalDetails.setResidenceCountry(residenceCountry);
         personalDetails.setVisaRequired(personalDetailsDTO.getVisaRequired());
         personalDetails.setPhoneNumber(personalDetailsDTO.getPhoneNumber());
-        personalDetails.setMessenger(personalDetailsDTO.getMessenger());
+        personalDetails.setMessenger(Strings.emptyToNull(personalDetailsDTO.getMessenger()));
         personalDetails.setEthnicity(ethnicity);
         personalDetails.setDisability(disability);
 
@@ -201,7 +206,7 @@ public class ApplicationService {
                 languageQualification = new ApplicationLanguageQualification();
                 personalDetails.setLanguageQualification(languageQualification);
             }
-            LanguageQualificationType languageQualificationType = entityService.getById(LanguageQualificationType.class, languageQualificationDTO.getType());
+            LanguageQualificationType languageQualificationType = importedEntityService.getById(LanguageQualificationType.class, institution, languageQualificationDTO.getType());
             Document proofOfAward = entityService.getById(Document.class, languageQualificationDTO.getProofOfAward().getId());
             languageQualification.setType(languageQualificationType);
             languageQualification.setExamDate(languageQualificationDTO.getExamDate().toLocalDate());
@@ -231,6 +236,8 @@ public class ApplicationService {
 
     public void saveAddress(Integer applicationId, ApplicationAddressDTO addressDTO) {
         Application application = entityService.getById(Application.class, applicationId);
+        Institution institution = application.getInstitution();
+
         ApplicationAddress address = application.getAddress();
         if (address == null) {
             address = new ApplicationAddress();
@@ -243,7 +250,7 @@ public class ApplicationService {
             currentAddress = new Address();
             address.setCurrentAddress(currentAddress);
         }
-        copyAddress(currentAddress, currentAddressDTO);
+        copyAddress(institution, currentAddress, currentAddressDTO);
 
         AddressDTO contactAddressDTO = addressDTO.getContactAddress();
         Address contactAddress = address.getContactAddress();
@@ -251,11 +258,12 @@ public class ApplicationService {
             contactAddress = new Address();
             address.setContactAddress(contactAddress);
         }
-        copyAddress(contactAddress, contactAddressDTO);
+        copyAddress(institution, contactAddress, contactAddressDTO);
     }
 
     public ApplicationQualification saveQualification(Integer applicationId, Integer qualificationId, ApplicationQualificationDTO qualificationDTO) {
         Application application = entityService.getById(Application.class, applicationId);
+        Institution institution = application.getInstitution();
 
         ApplicationQualification qualification;
         if (qualificationId != null) {
@@ -265,12 +273,12 @@ public class ApplicationService {
             application.getQualifications().add(qualification);
         }
 
-        ImportedInstitution institution = entityService.getById(ImportedInstitution.class, qualificationDTO.getInstitution().getId());
-        QualificationType qualificationType = entityService.getById(QualificationType.class, qualificationDTO.getType());
+        ImportedInstitution importedInstitution = importedEntityService.getById(ImportedInstitution.class, institution, qualificationDTO.getInstitution().getId());
+        QualificationType qualificationType = importedEntityService.getById(QualificationType.class, institution, qualificationDTO.getType());
         Document qualificationDocument = entityService.getById(Document.class, qualificationDTO.getDocument().getId());
-        qualification.setInstitution(institution);
+        qualification.setInstitution(importedInstitution);
         qualification.setType(qualificationType);
-        qualification.setTitle(qualificationDTO.getTitle());
+        qualification.setTitle(Strings.emptyToNull(qualificationDTO.getTitle()));
         qualification.setSubject(qualificationDTO.getSubject());
         qualification.setLanguage(qualificationDTO.getLanguage());
         qualification.setStartDate(qualificationDTO.getStartDate().toLocalDate());
@@ -307,7 +315,7 @@ public class ApplicationService {
             employerAddress = new Address();
             employmentPosition.setEmployerAddress(employerAddress);
         }
-        copyAddress(employerAddress, employerAddressDTO);
+        copyAddress(application.getInstitution(), employerAddress, employerAddressDTO);
 
         employmentPosition.setPosition(employmentPositionDTO.getPosition());
         employmentPosition.setRemit(employmentPositionDTO.getRemit());
@@ -336,7 +344,7 @@ public class ApplicationService {
             application.getFundings().add(funding);
         }
 
-        FundingSource fundingSource = entityService.getById(FundingSource.class, fundingDTO.getFundingSource());
+        FundingSource fundingSource = importedEntityService.getById(FundingSource.class, application.getInstitution(), fundingDTO.getFundingSource());
         Document fundingDocument = entityService.getById(Document.class, fundingDTO.getDocument().getId());
 
         funding.setFundingSource(fundingSource);
@@ -385,10 +393,10 @@ public class ApplicationService {
             address = new Address();
             referee.setAddress(address);
         }
-        copyAddress(address, addressDTO);
+        copyAddress(application.getInstitution(), address, addressDTO);
 
         referee.setPhoneNumber(refereeDTO.getPhoneNumber());
-        referee.setSkype(refereeDTO.getSkype());
+        referee.setSkype(Strings.emptyToNull(refereeDTO.getSkype()));
 
         return referee;
     }
@@ -407,17 +415,16 @@ public class ApplicationService {
             application.setAdditionalInformation(additionalInformation);
         }
 
-        additionalInformation.setHasConvictions(additionalInformationDTO.getHasConvictions());
-        additionalInformation.setConvictionsText(additionalInformationDTO.getConvictionsText());
+        additionalInformation.setConvictionsText(Strings.emptyToNull(additionalInformationDTO.getConvictionsText()));
     }
 
-    private void copyAddress(Address to, AddressDTO from) {
-        Domicile currentAddressDomicile = entityService.getById(Domicile.class, from.getDomicile());
+    private void copyAddress(Institution institution, Address to, AddressDTO from) {
+        Domicile currentAddressDomicile = importedEntityService.getById(Domicile.class, institution, from.getDomicile());
         to.setDomicile(currentAddressDomicile);
         to.setAddressLine1(from.getAddressLine1());
-        to.setAddressLine2(from.getAddressLine2());
+        to.setAddressLine2(Strings.emptyToNull(from.getAddressLine2()));
         to.setAddressTown(from.getAddressTown());
-        to.setAddressRegion(from.getAddressRegion());
-        to.setAddressCode(from.getAddressCode());
+        to.setAddressRegion(Strings.emptyToNull(from.getAddressRegion()));
+        to.setAddressCode(Strings.isNullOrEmpty(from.getAddressCode()) ? "Not Provided" : from.getAddressCode());
     }
 }

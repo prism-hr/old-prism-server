@@ -1,42 +1,59 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.Gender;
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 public class ApplicationPersonalDetailsDTO {
 
+    @NotNull
     private UserDTO user;
 
     private String messenger;
 
+    @NotEmpty
     private String phoneNumber;
 
+    @NotNull
     private Boolean firstLanguageEnglish;
 
+    @Valid
     private ApplicationLanguageQualificationDTO languageQualification;
 
+    @NotNull
     private Boolean visaRequired;
 
+    @Valid
     private ApplicationPassportDTO passport;
 
+    @NotNull
     private Integer firstNationality;
 
     private Integer secondNationality;
 
     private Integer title;
 
-    private Gender gender;
+    @NotNull
+    private Integer gender;
 
+    @NotNull
     private DateTime dateOfBirth;
 
+    @NotNull
     private Integer country;
 
+    @NotNull
     private Integer ethnicity;
 
+    @NotNull
     private Integer disability;
 
+    @NotNull
     private Integer residenceCountry;
 
     public UserDTO getUser() {
@@ -119,11 +136,11 @@ public class ApplicationPersonalDetailsDTO {
         this.title = title;
     }
 
-    public Gender getGender() {
+    public Integer getGender() {
         return gender;
     }
 
-    public void setGender(Gender gender) {
+    public void setGender(Integer gender) {
         this.gender = gender;
     }
 

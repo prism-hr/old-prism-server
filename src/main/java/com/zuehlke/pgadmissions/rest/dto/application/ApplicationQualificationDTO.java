@@ -1,30 +1,45 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.representation.application.FileRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.ImportedInstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.validation.annotation.DateNotAfterDate;
+import com.zuehlke.pgadmissions.rest.validation.annotation.DatePast;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
+import javax.validation.constraints.NotNull;
+
+@DateNotAfterDate(startDate = "startDate", endDate = "awardDate")
 public class ApplicationQualificationDTO {
 
     private Integer id;
 
+    @NotEmpty
     private String subject;
 
     private String title;
 
+    @DatePast
+    @NotNull
     private DateTime startDate;
 
+    @NotNull
     private DateTime awardDate;
 
+    @NotEmpty
     private String language;
 
+    @NotNull
     private Integer type;
 
+    @NotEmpty
     private String grade;
 
-    private FileRepresentation document;
+    private FileDTO document;
 
-    private ImportedInstitutionRepresentation institution;
+    @NotNull
+    private ImportedInstitutionDTO institution;
 
     private Boolean completed;
 
@@ -94,19 +109,19 @@ public class ApplicationQualificationDTO {
         this.grade = grade;
     }
 
-    public FileRepresentation getDocument() {
+    public FileDTO getDocument() {
         return document;
     }
 
-    public void setDocument(FileRepresentation document) {
+    public void setDocument(FileDTO document) {
         this.document = document;
     }
 
-    public ImportedInstitutionRepresentation getInstitution() {
+    public ImportedInstitutionDTO getInstitution() {
         return institution;
     }
 
-    public void setInstitution(ImportedInstitutionRepresentation institution) {
+    public void setInstitution(ImportedInstitutionDTO institution) {
         this.institution = institution;
     }
 

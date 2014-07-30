@@ -146,18 +146,23 @@ public class ApplicationService {
 
     public void saveProgramDetails(Integer applicationId, ApplicationProgramDetailsDTO programDetailsDTO) {
         Application application = entityService.getById(Application.class, applicationId);
+        Institution institution = application.getInstitution();
         ApplicationProgramDetails programDetails = application.getProgramDetails();
+        if (programDetails == null) {
+            programDetails = new ApplicationProgramDetails();
+            application.setProgramDetails(programDetails);
+        }
 
-        StudyOption studyOption = entityService.getById(StudyOption.class, programDetailsDTO.getStudyOption());
-        ReferralSource referralSource = entityService.getById(ReferralSource.class, programDetailsDTO.getReferralSource());
+        StudyOption studyOption = importedEntityService.getById(StudyOption.class, institution, programDetailsDTO.getStudyOption());
+        ReferralSource referralSource = importedEntityService.getById(ReferralSource.class, institution, programDetailsDTO.getReferralSource());
         programDetails.setStudyOption(studyOption);
         programDetails.setStartDate(programDetailsDTO.getStartDate().toLocalDate());
         programDetails.setReferralSource(referralSource);
 
         // TODO replace supervisors
 //        programDetails.getSupervisors().clear();
-        for (ApplicationSupervisorDTO supervisorDTO : programDetailsDTO.getSupervisors()) {
-        }
+//        for (ApplicationSupervisorDTO supervisorDTO : programDetailsDTO.getSupervisors()) {
+//        }
     }
 
     public void savePersonalDetails(Integer applicationId, ApplicationPersonalDetailsDTO personalDetailsDTO) {
@@ -374,15 +379,8 @@ public class ApplicationService {
         }
 
         UserDTO userDTO = refereeDTO.getUser();
-        User user = referee.getUser();
-        if (user == null) {
-            user = new User();
-            referee.setUser(user);
-        }
-
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.setEmail(userDTO.getEmail());
+        User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
+        referee.setUser(user);
 
         referee.setJobEmployer(refereeDTO.getJobEmployer());
         referee.setJobTitle(refereeDTO.getJobTitle());

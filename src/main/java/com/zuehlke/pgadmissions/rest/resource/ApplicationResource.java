@@ -2,13 +2,20 @@ package com.zuehlke.pgadmissions.rest.resource;
 
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.*;
+import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.UserService;
+import org.apache.commons.lang.BooleanUtils;
+import org.dozer.DozerBeanMapper;
+import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +38,9 @@ public class ApplicationResource {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private Mapper dozerBeanMapper;
 
     @RequestMapping(value = "/{applicationId}/programDetails", method = RequestMethod.PUT)
     public void saveProgramDetails(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationProgramDetailsDTO programDetailsDTO) {
@@ -117,13 +127,14 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/comments", method = RequestMethod.POST)
-    public void performAction(@PathVariable Integer applicationId, @RequestParam PrismAction actionId, @Valid @RequestBody CommentDTO commentDTO) {
+    public ActionOutcomeRepresentation performAction(@PathVariable Integer applicationId, @RequestParam PrismAction actionId, @Valid @RequestBody CommentDTO commentDTO) {
         Application application = entityService.getById(Application.class, applicationId);
         Action action = actionService.getById(actionId);
         Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(userService.getCurrentUser())
-                .withAction(entityService.getById(Action.class, action)).withCreatedTimestamp(new DateTime())
-                .withDeclinedResponse(commentDTO.getDeclinedResponse());
-        actionService.executeUserAction(application, action, comment);
+                .withAction(action).withCreatedTimestamp(new DateTime())
+                .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse()));
+        ActionOutcome actionOutcome = actionService.executeUserAction(application, action, comment);
+        return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
     }
 
 }

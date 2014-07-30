@@ -1,11 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation.application;
 
+import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.rest.representation.ResourceRepresentation;
-
-public class ProgramRepresentation extends ResourceRepresentation {
+public class ProgramRepresentation extends AbstractResourceRepresentation {
 
     private String title;
 

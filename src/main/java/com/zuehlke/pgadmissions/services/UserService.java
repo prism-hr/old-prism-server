@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTem
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.MailDescriptor;
-import com.zuehlke.pgadmissions.rest.representation.ResourceRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
@@ -104,7 +104,7 @@ public class UserService {
     }
 
     public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource,
-            List<ResourceRepresentation.RoleRepresentation> roles) {
+            List<AbstractResourceRepresentation.RoleRepresentation> roles) {
         User user = getOrCreateUser(firstName, lastName, email);
 
         roleService.updateRoles(resource, user, roles);

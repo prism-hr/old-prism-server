@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.rest.resource;
 import java.util.List;
 import java.util.Set;
 
+import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.representation.CommentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.ApplicationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.ProgramRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.ResourceListRowRepresentation;
@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
-@RequestMapping(value = { "api/{resourceType}" })
+@RequestMapping(value = { "api/{resourceScope}" })
 public class ResourceResource {
 
     @Autowired
@@ -65,7 +65,7 @@ public class ResourceResource {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @Transactional
-    public ResourceRepresentation getResource(@PathVariable Integer id, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+    public AbstractResourceRepresentation getResource(@PathVariable Integer id, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         User currentUser = userService.getCurrentUser();
         Resource resource = entityService.getById(resourceDescriptor.getType(), id);
         if (resource == null) {
@@ -73,7 +73,7 @@ public class ResourceResource {
         }
 
         // create main representation
-        ResourceRepresentation representation = dozerBeanMapper.map(resource, resourceDescriptor.getRepresentationType());
+        AbstractResourceRepresentation representation = dozerBeanMapper.map(resource, resourceDescriptor.getRepresentationType());
 
         // set visible comments
         List<Comment> comments = commentService.getVisibleComments(resource, currentUser);
@@ -92,16 +92,16 @@ public class ResourceResource {
 
         // set list of user to roles mappings
         List<User> users = roleService.getUsers(resource);
-        List<ResourceRepresentation.UserRolesRepresentation> userRolesRepresentations = Lists.newArrayListWithCapacity(users.size());
+        List<AbstractResourceRepresentation.UserRolesRepresentation> userRolesRepresentations = Lists.newArrayListWithCapacity(users.size());
         for (User user : users) {
             List<PrismRole> availableRoles = roleService.getRoles(resourceDescriptor.getType());
             Set<PrismRole> roles = Sets.newHashSet(roleService.getUserRoles(resource, user));
-            List<ResourceRepresentation.RoleRepresentation> userRoles = Lists.newArrayListWithCapacity(availableRoles.size());
+            List<AbstractResourceRepresentation.RoleRepresentation> userRoles = Lists.newArrayListWithCapacity(availableRoles.size());
             for (PrismRole availableRole : availableRoles) {
-                userRoles.add(new ResourceRepresentation.RoleRepresentation(availableRole, roles.contains(availableRole)));
+                userRoles.add(new AbstractResourceRepresentation.RoleRepresentation(availableRole, roles.contains(availableRole)));
             }
-            ResourceRepresentation.UserRolesRepresentation userRolesRepresentation = dozerBeanMapper.map(user,
-                    ResourceRepresentation.UserRolesRepresentation.class);
+            AbstractResourceRepresentation.UserRolesRepresentation userRolesRepresentation = dozerBeanMapper.map(user,
+                    AbstractResourceRepresentation.UserRolesRepresentation.class);
             userRolesRepresentation.setRoles(userRoles);
             userRolesRepresentations.add(userRolesRepresentation);
         }
@@ -116,7 +116,7 @@ public class ResourceResource {
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
         for (ResourceConsoleListRowDTO appDTO : consoleListBlock) {
             ResourceListRowRepresentation representation = dozerBeanMapper.map(appDTO, ResourceListRowRepresentation.class);
-            representation.setResourceType(resourceDescriptor.getResourceType());
+            representation.setResourceScope(resourceDescriptor.getResourceScope());
             representations.add(representation);
         }
         return representations;
@@ -124,7 +124,7 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.PUT)
     public void changeRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestBody List<ResourceRepresentation.RoleRepresentation> roles) {
+            @RequestBody List<AbstractResourceRepresentation.RoleRepresentation> roles) {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
 
@@ -133,7 +133,7 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     public void addUserToResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestBody ResourceRepresentation.UserRolesRepresentation userRolesRepresentation) {
+            @RequestBody AbstractResourceRepresentation.UserRolesRepresentation userRolesRepresentation) {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
 
         userService.getOrCreateUserWithRoles(userRolesRepresentation.getFirstName(), userRolesRepresentation.getLastName(), userRolesRepresentation.getEmail(),
@@ -141,39 +141,39 @@ public class ResourceResource {
     }
 
     @ModelAttribute
-    private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceType) {
-        if ("applications".equals(resourceType)) {
+    private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
+        if ("applications".equals(resourceScope)) {
             return new ResourceDescriptor(Application.class, ApplicationRepresentation.class, "APPLICATION");
-        } else if ("programs".equals(resourceType)) {
+        } else if ("programs".equals(resourceScope)) {
             return new ResourceDescriptor(Program.class, ProgramRepresentation.class, "PROGRAM");
         }
-        throw new ResourceNotFoundException("Unknown resource type '" + resourceType + "'.");
+        throw new ResourceNotFoundException("Unknown resource type '" + resourceScope + "'.");
     }
 
     private static class ResourceDescriptor {
 
         private Class<? extends Resource> type;
 
-        private Class<? extends ResourceRepresentation> representationType;
+        private Class<? extends AbstractResourceRepresentation> representationType;
 
-        private String resourceType;
+        private String resourceScope;
 
-        private ResourceDescriptor(Class<? extends Resource> type, Class<? extends ResourceRepresentation> representationType, String resourceType) {
+        private ResourceDescriptor(Class<? extends Resource> type, Class<? extends AbstractResourceRepresentation> representationType, String resourceScope) {
             this.type = type;
             this.representationType = representationType;
-            this.resourceType = resourceType;
+            this.resourceScope = resourceScope;
         }
 
         public Class<? extends Resource> getType() {
             return type;
         }
 
-        public Class<? extends ResourceRepresentation> getRepresentationType() {
+        public Class<? extends AbstractResourceRepresentation> getRepresentationType() {
             return representationType;
         }
 
-        public String getResourceType() {
-            return resourceType;
+        public String getResourceScope() {
+            return resourceScope;
         }
     }
 

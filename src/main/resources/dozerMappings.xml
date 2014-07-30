@@ -78,7 +78,7 @@
 
     <mapping>
         <class-a>com.zuehlke.pgadmissions.domain.Resource</class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.representation.ResourceRepresentation</class-b>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation</class-b>
         <field>
             <a>state.id</a>
             <b>state</b>
@@ -89,8 +89,21 @@
         <class-a>com.zuehlke.pgadmissions.domain.Comment</class-a>
         <class-b>com.zuehlke.pgadmissions.rest.representation.CommentRepresentation</class-b>
         <field>
+            <a>action.id</a>
+            <b>action</b>
+        </field>
+        <field>
             <a>transitionState.id</a>
             <b>transitionState</b>
+        </field>
+    </mapping>
+
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.dto.ActionOutcome</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation</class-b>
+        <field>
+            <a>transitionAction.id</a>
+            <b>transitionAction</b>
         </field>
     </mapping>
 

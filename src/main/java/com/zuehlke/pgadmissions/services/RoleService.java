@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.representation.ResourceRepresentation;
 
 @Service
 @Transactional
@@ -123,8 +123,8 @@ public class RoleService {
         return roleDAO.getRoleUsers(resource, role);
     }
 
-    public void updateRoles(Resource resource, User user, List<ResourceRepresentation.RoleRepresentation> roles) {
-        for (ResourceRepresentation.RoleRepresentation role : roles) {
+    public void updateRoles(Resource resource, User user, List<AbstractResourceRepresentation.RoleRepresentation> roles) {
+        for (AbstractResourceRepresentation.RoleRepresentation role : roles) {
             if (role.getValue()) {
                 getOrCreateUserRole(resource, user, role.getId());
             } else {

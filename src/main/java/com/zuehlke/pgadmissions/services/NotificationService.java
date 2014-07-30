@@ -33,7 +33,6 @@ import com.zuehlke.pgadmissions.mail.MailSender;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 
 @Service
-@Transactional
 public class NotificationService {
 
     @Value("${application.host}")
@@ -60,59 +59,57 @@ public class NotificationService {
     @Autowired
     private EntityService entityService;
 
+    @Transactional
     public NotificationTemplate getById(PrismNotificationTemplate id) {
         return entityService.getByProperty(NotificationTemplate.class, "id", id);
     }
 
+    @Transactional
     public NotificationTemplateVersion getVersionById(Integer id) {
         return entityService.getById(NotificationTemplateVersion.class, id);
     }
 
+    @Transactional
     public NotificationTemplateVersion getActiveVersionToEdit(Resource resource, NotificationTemplate template) {
         return notificationDAO.getActiveVersionToEdit(resource, template);
     }
 
+    @Transactional
     public NotificationTemplateVersion getActiveVersionToSend(Resource resource, NotificationTemplate template) {
         return notificationDAO.getActiveVersionToSend(resource, template);
     }
 
+    @Transactional
     public NotificationTemplateVersion getLatestVersion(Resource resource, NotificationTemplate template) {
         return notificationDAO.getLatestVersion(resource, template);
     }
 
+    @Transactional
     public List<NotificationTemplateVersion> getVersions(Resource resource, NotificationTemplate template) {
         return notificationDAO.getVersions(resource, template);
     }
 
-    public NotificationTemplateVersion saveVersion(Resource resource, PrismNotificationTemplate templateId, String content, String subject) {
-        NotificationTemplate notificationTemplate = getById(templateId);
-        NotificationTemplateVersion templateVersion = new NotificationTemplateVersion();
-        templateVersion.setResource(resource);
-        templateVersion.setNotificationTemplate(notificationTemplate);
-        templateVersion.setContent(content);
-        templateVersion.setSubject(subject);
-        templateVersion.setCreatedTimestamp(new DateTime());
-        entityService.save(templateVersion);
-
-        return templateVersion;
-    }
-
+    @Transactional
     public List<NotificationTemplate> getTemplates() {
         return entityService.list(NotificationTemplate.class);
     }
 
+    @Transactional
     public NotificationConfiguration getConfiguration(Resource resource, NotificationTemplate template) {
         return notificationDAO.getConfiguration(resource, template);
     }
 
+    @Transactional
     public List<NotificationTemplate> getActionTemplatesToManage() {
         return notificationDAO.getActiveTemplatesToManage();
     }
 
+    @Transactional
     public void deleteObseleteNotificationConfigurations() {
         notificationDAO.deleteObseleteNotificationConfigurations(getActionTemplatesToManage());
     }
 
+    @Transactional
     public void sendUpdateNotifications(StateAction stateAction, Resource resource) {
         DateTime baseline = new DateTime();
         List<UserNotificationDefinition> definitions = notificationDAO.getUpdateNotifications(stateAction, resource);
@@ -130,10 +127,12 @@ public class NotificationService {
         }
     }
 
+    @Transactional
     public void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate) {
         sendNotification(user, resource, notificationTemplate, Collections.<String, String> emptyMap());
     }
 
+    @Transactional
     public void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate, Map<String, String> extraModelParams) {
         NotificationTemplateVersion templateVersion = getActiveVersionToSend(resource, notificationTemplate);
         MailMessageDTO message = new MailMessageDTO();
@@ -146,10 +145,19 @@ public class NotificationService {
         mailSender.sendEmail(message);
     }
     
+    @Transactional
     public List<UserNotificationDefinition> getPendingUpdateNotifications() {
         return notificationDAO.getPendingUpdateNotifications();
     }
+    
+    public void sendPendingUpdateNotifications() {
+        List<UserNotificationDefinition> definitions = getPendingUpdateNotifications();
+        for (UserNotificationDefinition definition : definitions) {
+            sendPendingNotification(definition);
+        }
+    }
 
+    @Transactional
     public void sendPendingNotification(UserNotificationDefinition definition) {
         UserRole userRole = entityService.getById(UserRole.class, definition.getUserRoleId());
         NotificationTemplate template = entityService.getByProperty(NotificationTemplate.class, "id", definition.getNotificationTemplateId());
@@ -161,6 +169,7 @@ public class NotificationService {
         deletePendingUpdateNotification(user, resource, template);
     }
 
+    @Transactional
     private void deletePendingUpdateNotification(User user, Resource resource, NotificationTemplate template) {
         List<UserRole> userRoles = roleService.getUpdateNotificationRoles(user, resource, template);
         if (!userRoles.isEmpty()) {

@@ -7,8 +7,6 @@ import com.google.common.collect.HashMultimap;
 
 public interface IUniqueEntity {
 
-    public static String UNIQUE_CREATION_ERROR = "Tried to create a resource that has an invalid unique resource signature";
-
     public static String UNIQUE_IDENTIFICATION_ERROR = "Tried to identify a resource that has an invalid unique resource signature";
 
     public ResourceSignature getResourceSignature();

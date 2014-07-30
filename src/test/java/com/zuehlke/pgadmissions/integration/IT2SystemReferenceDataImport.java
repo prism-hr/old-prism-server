@@ -135,7 +135,7 @@ public class IT2SystemReferenceDataImport {
         importedEntityFeed.setLocation("reference_data/conflicts/disabilities/initialDisabilities.xml");
         importedEntityFeed.setInstitution(institution);
 
-        entityImportService.importEntities(importedEntityFeed);
+        entityImportService.importReferenceEntities(importedEntityFeed);
 
         assertEquals("disability1", importedEntityService.getByCode(Disability.class, institution, "0").getName());
         assertEquals("otherDisability", importedEntityService.getByCode(Disability.class, institution, "99").getName());
@@ -143,7 +143,7 @@ public class IT2SystemReferenceDataImport {
         assertTrue(importedEntityService.getByCode(Disability.class, institution, "99").isEnabled());
 
         importedEntityFeed.setLocation("reference_data/conflicts/disabilities/changeName.xml");
-        entityImportService.importEntities(importedEntityFeed);
+        entityImportService.importReferenceEntities(importedEntityFeed);
 
         assertEquals("disability2", importedEntityService.getByCode(Disability.class, institution, "0").getName());
         assertEquals("otherDisability", importedEntityService.getByCode(Disability.class, institution, "99").getName());
@@ -151,7 +151,7 @@ public class IT2SystemReferenceDataImport {
         assertTrue(importedEntityService.getByCode(Disability.class, institution, "99").isEnabled());
 
         importedEntityFeed.setLocation("reference_data/conflicts/disabilities/changeCode.xml");
-        entityImportService.importEntities(importedEntityFeed);
+        entityImportService.importReferenceEntities(importedEntityFeed);
 
         assertEquals("disability2", importedEntityService.getByCode(Disability.class, institution, "1").getName());
         assertEquals("otherDisability", importedEntityService.getByCode(Disability.class, institution, "99").getName());
@@ -159,7 +159,7 @@ public class IT2SystemReferenceDataImport {
         assertTrue(importedEntityService.getByCode(Disability.class, institution, "99").isEnabled());
 
         importedEntityFeed.setLocation("reference_data/conflicts/disabilities/removeDisability.xml");
-        entityImportService.importEntities(importedEntityFeed);
+        entityImportService.importReferenceEntities(importedEntityFeed);
 
         assertEquals("disability2", importedEntityService.getByCode(Disability.class, institution, "1").getName());
         assertEquals("otherDisability", importedEntityService.getByCode(Disability.class, institution, "99").getName());
@@ -186,7 +186,7 @@ public class IT2SystemReferenceDataImport {
         importedEntityFeed.setLocation("reference_data/conflicts/programs/initialPrograms.xml");
         importedEntityFeed.setInstitution(institution);
 
-        entityImportService.importEntities(importedEntityFeed);
+        entityImportService.importReferenceEntities(importedEntityFeed);
 
         Program program1 = programService.getProgramByImportedCode(institution, "1");
         Program otherProgram = programService.getProgramByImportedCode(institution, "99");
@@ -210,7 +210,7 @@ public class IT2SystemReferenceDataImport {
                         .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(true))));
 
         importedEntityFeed.setLocation("reference_data/conflicts/programs/updatedPrograms.xml");
-        entityImportService.importEntities(importedEntityFeed);
+        entityImportService.importReferenceEntities(importedEntityFeed);
 
         program1 = programService.getProgramByImportedCode(institution, "1");
         otherProgram = programService.getProgramByImportedCode(institution, "99");
@@ -247,55 +247,55 @@ public class IT2SystemReferenceDataImport {
 
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.COUNTRY);
         importedEntityFeed.setLocation("xml/defaultEntities/country.xml");
-        entityImportService.importEntities(importedEntityFeed);
+        entityImportService.importReferenceEntities(importedEntityFeed);
 
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.DISABILITY);
         importedEntityFeed.setLocation("xml/defaultEntities/disability.xml");
-        entityImportService.importEntities(importedEntityFeed);
+        entityImportService.importReferenceEntities(importedEntityFeed);
 
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.DOMICILE);
         importedEntityFeed.setLocation("xml/defaultEntities/domicile.xml");
-        entityImportService.importEntities(importedEntityFeed);
+        entityImportService.importReferenceEntities(importedEntityFeed);
 
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.ETHNICITY);
         importedEntityFeed.setLocation("xml/defaultEntities/ethnicity.xml");
-        entityImportService.importEntities(importedEntityFeed);
+        entityImportService.importReferenceEntities(importedEntityFeed);
 
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.NATIONALITY);
         importedEntityFeed.setLocation("xml/defaultEntities/nationality.xml");
-        entityImportService.importEntities(importedEntityFeed);
+        entityImportService.importReferenceEntities(importedEntityFeed);
 
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.QUALIFICATION_TYPE);
         importedEntityFeed.setLocation("xml/defaultEntities/qualificationType.xml");
-        entityImportService.importEntities(importedEntityFeed);
+        entityImportService.importReferenceEntities(importedEntityFeed);
 
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.REFERRAL_SOURCE);
         importedEntityFeed.setLocation("xml/defaultEntities/sourceOfInterest.xml");
-        entityImportService.importEntities(importedEntityFeed);
+        entityImportService.importReferenceEntities(importedEntityFeed);
 
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.FUNDING_SOURCE);
         importedEntityFeed.setLocation("xml/defaultEntities/fundingSource.xml");
-        entityImportService.importEntities(importedEntityFeed);
+        entityImportService.importReferenceEntities(importedEntityFeed);
 
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.LANGUAGE_QUALIFICATION_TYPE);
         importedEntityFeed.setLocation("xml/defaultEntities/languageQualificationType.xml");
-        entityImportService.importEntities(importedEntityFeed);
+        entityImportService.importReferenceEntities(importedEntityFeed);
 
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.TITLE);
         importedEntityFeed.setLocation("xml/defaultEntities/title.xml");
-        entityImportService.importEntities(importedEntityFeed);
+        entityImportService.importReferenceEntities(importedEntityFeed);
         
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.GENDER);
         importedEntityFeed.setLocation("xml/defaultEntities/gender.xml");
-        entityImportService.importEntities(importedEntityFeed);
+        entityImportService.importReferenceEntities(importedEntityFeed);
 
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.INSTITUTION);
         importedEntityFeed.setLocation("reference_data/conflicts/institutions/institution.xml");
-        entityImportService.importEntities(importedEntityFeed);
+        entityImportService.importReferenceEntities(importedEntityFeed);
 
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.PROGRAM);
         importedEntityFeed.setLocation("reference_data/2014-05-08/program.xml");
-        entityImportService.importEntities(importedEntityFeed);
+        entityImportService.importReferenceEntities(importedEntityFeed);
     }
 
     private void verifyProgramImport() {

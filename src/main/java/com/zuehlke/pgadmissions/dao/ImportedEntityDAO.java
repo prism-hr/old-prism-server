@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -70,6 +71,18 @@ public class ImportedEntityDAO {
                 .executeUpdate();
     }
 
+    public void disableAllImportedPrograms(Institution institution) {
+        LocalDate dueDate = new LocalDate();
+        sessionFactory.getCurrentSession().createQuery( //
+                "update Program "
+                        + "set dueDate = :dueDate "
+                        + "where institution = :institution "
+                                + "and importedCode is not null")
+                .setParameter("institution", institution)
+                .setParameter("dueDate", dueDate)
+                .executeUpdate();
+    }
+    
     public void disableAllImportedProgramInstances(Institution institution) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update ProgramInstance " //

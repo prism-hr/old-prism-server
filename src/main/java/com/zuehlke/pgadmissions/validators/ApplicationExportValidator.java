@@ -12,7 +12,6 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.services.ApplicationQualificationService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.PorticoService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 
 @Component
@@ -27,9 +26,6 @@ public class ApplicationExportValidator extends AbstractValidator {
     @Autowired
     private RefereeService refereeService;
     
-    @Autowired
-    private PorticoService porticoService;
-
     @Override
     public boolean supports(Class<?> clazz) {
         return SendToPorticoDataDTO.class.equals(clazz);
@@ -81,7 +77,7 @@ public class ApplicationExportValidator extends AbstractValidator {
         	
             for (int i = 0; i < referees.size(); i++) {
             	Comment reference = refereeService.getById(referees.get(i)).getComment();
-                if (reference == null || reference.getDeclinedResponse()) {
+                if (reference == null || reference.isDeclinedResponse()) {
             		referees.remove(i);
             	}
             }

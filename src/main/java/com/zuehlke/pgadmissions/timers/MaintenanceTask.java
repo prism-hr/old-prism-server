@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationExportService;
 import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 
 @Service
@@ -50,6 +51,9 @@ public class MaintenanceTask {
     private SystemService systemService;
     
     @Autowired
+    private ApplicationExportService applicationExportService;
+    
+    @Autowired
     private UserService userService;
 
     @Scheduled(cron = "${daily.maintenance.cron}")
@@ -62,6 +66,9 @@ public class MaintenanceTask {
         
         log.trace("Escalating workflow transitions");
         stateService.executeEscalatedStateTransitions();
+        
+        log.trace("Exporting ucl applications");
+        applicationExportService.exportUclApplications();
         
         log.trace("Sending update notifications.");
         sendPendingUpdateNotifications();

@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.components;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertFalse;
 
 import javax.validation.Validator;
 
@@ -28,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
 import com.zuehlke.pgadmissions.validators.FundingValidator;
 import com.zuehlke.pgadmissions.validators.LanguageQualificationValidator;
@@ -51,8 +49,6 @@ public class ApplicationFormCopyHelperTest {
     private EmploymentPositionValidator employmentPositionValidator;
     private FundingValidator fundingValidator;
     private RefereeValidator refereeValidator;
-    private AdditionalInformationValidator additionalInformationValidator;
-
     private ApplicationCopyHelper applicationFormCopyHelper;
 
     @Test
@@ -103,12 +99,6 @@ public class ApplicationFormCopyHelperTest {
             ValidationUtils.invokeValidator(refereeValidator, referee, bindingResult);
             bindingResult.popNestedPath();
         }
-
-        bindingResult.pushNestedPath("additionalInformation");
-        ValidationUtils.invokeValidator(additionalInformationValidator, applicationForm.getAdditionalInformation(), bindingResult);
-        bindingResult.popNestedPath();
-
-        assertFalse(bindingResult.hasErrors());
     }
 
     @Before
@@ -137,9 +127,6 @@ public class ApplicationFormCopyHelperTest {
 
         refereeValidator = new RefereeValidator(userServiceMock);
         refereeValidator.setValidator(validator);
-
-        additionalInformationValidator = new AdditionalInformationValidator();
-        additionalInformationValidator.setValidator(validator);
 
         applicationFormCopyHelper = new ApplicationCopyHelper();
         InjectionUtils.injectInto(documentService, applicationFormCopyHelper, "documentService");

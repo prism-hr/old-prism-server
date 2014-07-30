@@ -13,10 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.mail.MailDescriptor;
@@ -115,6 +118,15 @@ public class UserDAO {
     public List<User> getAdmitters() {
         return sessionFactory.getCurrentSession().createCriteria(User.class).createAlias("roles", "role")
                 .add(Restrictions.eq("role.id", PrismRole.INSTITUTION_ADMITTER)).list();
+    }
+    
+    public String getUserInstitutionId(User user, Institution institution, PrismUserIdentity identityType) {
+        return (String) sessionFactory.getCurrentSession().createCriteria(UserInstitutionIdentity.class)
+                .setProjection(Projections.property("identifier")) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.eq("institution", institution)) //
+                .add(Restrictions.eqOrIsNull("identityType", identityType)) //
+                .uniqueResult();
     }
 
     //TODO rewrite the query - HQL?

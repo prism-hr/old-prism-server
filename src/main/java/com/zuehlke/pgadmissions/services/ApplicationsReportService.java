@@ -18,10 +18,10 @@ import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.TableRow;
 import com.google.visualization.datasource.datatable.value.ValueType;
-import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.ReportFormat;
+import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
 
 @Service("applicationsReportService")
 @Transactional
@@ -140,13 +140,9 @@ public class ApplicationsReportService {
 
         data.addColumns(cd);
 
-        List<Application> applications = applicationsService.getApplicationsForReport(user, filtering, reportType);
+        List<ResourceReportListRowDTO> reportRows = applicationsService.getReportList();
 
-        for (Application app : applications) {
-
-            if (app.getSubmittedTimestamp() == null || app.getPersonalDetails() == null) {
-                continue;
-            }
+        for (ResourceReportListRowDTO reportRow : reportRows) {
 
             try {
 //                User applicant = app.getUser();
@@ -269,7 +265,7 @@ public class ApplicationsReportService {
                 }
 
             } catch (NullPointerException e) {
-                logger.info("User tried to download spreadsheet report for corrupted application: " + app.getCode() + ".", e);
+                logger.info("User tried to download spreadsheet report for corrupted application: " + reportRow.getCode() + ".", e);
                 continue;
             }
         }

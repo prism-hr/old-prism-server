@@ -35,7 +35,6 @@ import com.zuehlke.pgadmissions.iso.jaxb.ShortNameType;
 import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionLocaleType;
 import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionType;
 import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 
 @Service
 public class InstitutionDomicileImportService {
@@ -47,9 +46,6 @@ public class InstitutionDomicileImportService {
 
     @Autowired
     private EntityService entityService;
-
-    @Autowired
-    private ProgramInstanceService programInstanceService;
 
     @Autowired
     private ApplicationContext applicationContext;

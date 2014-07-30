@@ -56,7 +56,7 @@ public class ApplicationReferee {
     private Address address;
 
     @Column(name = "include_in_export", nullable = false)
-    private Boolean includeInExport = false;
+    private boolean includeInExport;
 
     public Application getApplication() {
         return application;
@@ -130,12 +130,12 @@ public class ApplicationReferee {
         this.phoneNumber = phoneNumber;
     }
 
-    public void setIncludeInExport(Boolean includeInExport) {
-        this.includeInExport = includeInExport;
-    }
-
-    public Boolean getIncludeInExport() {
+    public Boolean isIncludeInExport() {
         return includeInExport;
+    }
+    
+    public void setIncludeInExport(boolean includeInExport) {
+        this.includeInExport = includeInExport;
     }
 
     public ApplicationReferee withId(Integer id) {
@@ -183,7 +183,7 @@ public class ApplicationReferee {
         return this;
     }
     
-    public ApplicationReferee withIncludeInExport(Boolean includeInExport) {
+    public ApplicationReferee withIncludeInExport(boolean includeInExport) {
         this.includeInExport = includeInExport;
         return this;
     }

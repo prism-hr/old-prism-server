@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,6 +15,7 @@ import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentCustomQuestion;
 import com.zuehlke.pgadmissions.domain.CommentCustomQuestionVersion;
@@ -23,11 +23,14 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 
 @Service
 @Transactional
@@ -38,9 +41,6 @@ public class ProgramService {
 
     @Autowired
     private InstitutionService qualificationInstitutionService;
-
-    @Autowired
-    private ProgramInstanceService programInstanceService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -56,6 +56,9 @@ public class ProgramService {
 
     @Autowired
     private ResourceService resourceService;
+    
+    @Autowired
+    private InstitutionService institutionService;
     
     @Autowired
     private SystemService systemService;
@@ -77,22 +80,43 @@ public class ProgramService {
     }
     
     public Program getProgramByImportedCode(Institution institution, String importedCode) {
-        institution = institution == null ? entityService.getByProperty(Institution.class, "name", "University College London") : institution;
+        institution = institution == null ? institutionService.getUclInstitution() : institution;
         return programDAO.getProgramByImportedCode(institution, importedCode);
-    }
-
-    public void disableInactiveImportedPrograms() {
-        List<Program> inactivePrograms = programDAO.getInactiveImportedPrograms();
-        for (Program inactiveProgram : inactivePrograms) {
-            Action action = actionService.getById(PrismAction.PROGRAM_ESCALATE);
-            Comment comment = new Comment().withResource(inactiveProgram).withAction(action).withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
-            actionService.executeSystemAction(inactiveProgram, action, comment);
-        }
     }
      
     public List<Program> getProgramsForWhichCanManageProjects(User user) {
         // TODO implement SQL query for basic list;
         return null;
+    }
+    
+    public Program getOrImportProgram(Programme programme, Institution institution) {
+        User proxyCreator = institution.getUser();
+        
+        PrismProgramType programType = PrismProgramType.findValueFromString(programme.getName());
+        Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withImportedCode(programme.getCode())
+                .withTitle(programme.getName()).withProgramType(programType).withUser(proxyCreator);
+        
+        Action importAction = actionService.getById(PrismAction.INSTITUTION_IMPORT_PROGRAM);
+        Role proxyCreatorRole = roleService.getCreatorRole(transientProgram);
+
+        Comment comment = new Comment().withUser(proxyCreator).withCreatedTimestamp(new DateTime()).withAction(importAction).withDeclinedResponse(false)
+                .withAssignedUser(proxyCreator, proxyCreatorRole);
+
+        Program persistentProgram = (Program) actionService.executeSystemAction(transientProgram, importAction, comment).getResource();
+        return persistentProgram.withTitle(programme.getName()).withRequireProjectDefinition(programme.isAtasRegistered());
+    }
+    
+    public void saveProgramInstance(ProgramInstance transientProgramInstance) {
+        ProgramInstance persistentInstance = (ProgramInstance) entityService.createOrUpdate(transientProgramInstance);
+        if (persistentInstance.isEnabled()) {
+            Program transientProgram = transientProgramInstance.getProgram();
+            Program persistentProgram = (Program) getById(transientProgram.getId());
+            LocalDate programDueDate = persistentProgram.getDueDate();
+            LocalDate instanceEndDate = persistentInstance.getApplicationDeadline();
+            if (programDueDate == null || programDueDate.isBefore(instanceEndDate)) {
+                persistentProgram.setDueDate(instanceEndDate);
+            }
+        }
     }
     
     public CommentCustomQuestion getCustomQuestionsForProgram(Integer programId, PrismAction actionId) {
@@ -186,20 +210,8 @@ public class ProgramService {
         programDAO.deleteInactiveAdverts();
     }
 
-    public Date getDefaultStartDate(Program program, StudyOption studyOption) {
-        return programDAO.getDefaultStartDate(program, studyOption);
-    }
-
-    public List<ProgramInstance> getActiveProgramInstances(Program program) {
-        return programDAO.getActiveProgramInstances(program);
-    }
-
-    public List<ProgramInstance> getActiveProgramInstancesForStudyOption(Program program, StudyOption studyOption) {
-        return programDAO.getActiveProgramInstancesForStudyOption(program, studyOption);
-    }
-
-    public List<StudyOption> getAvailableStudyOptions(Program program) {
-        return programDAO.getAvailableStudyOptions(program);
+    public List<ProgramInstance> getActiveProgramInstances(Program program, StudyOption studyOption) {
+        return programDAO.getActiveProgramInstances(program, studyOption);
     }
 
     public LocalDate getNextClosingDate(Program program) {
@@ -215,8 +227,16 @@ public class ProgramService {
         // TODO Auto-generated method stub
     }
 
-    public List<Program> getAllPrograms() {
-        return programDAO.getAllPrograms();
+    public List<Program> getPrograms() {
+        return programDAO.getPrograms();
+    }
+    
+    public ProgramInstance getExportProgramInstance(Application application) {
+        return programDAO.getExportProgramInstance(application);
+    }
+    
+    public ProgramInstance getLatestProgramInstance(Program program) {
+        return programDAO.getLatestProgramInstance(program);
     }
 
 }

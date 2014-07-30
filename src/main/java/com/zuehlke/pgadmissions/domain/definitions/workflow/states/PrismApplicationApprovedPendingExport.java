@@ -94,7 +94,11 @@ public class PrismApplicationApprovedPendingExport extends PrismWorkflowState {
             .withAction(PrismAction.APPLICATION_EXPORT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-                .withTransitions(Arrays.asList( // 
+                .withTransitions(Arrays.asList( //
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.APPLICATION_APPROVED) // 
+                        .withTransitionAction(PrismAction.APPLICATION_EXPORT) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME), //
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVED_COMPLETED) // 
                         .withTransitionAction(PrismAction.APPLICATION_EXPORT) // 

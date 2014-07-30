@@ -40,7 +40,7 @@ public class Address {
     private String addressRegion;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 12)
-    @Column(name = "address_code")
+    @Column(name = "address_code", nullable = false)
     private String addressCode;
 
     public Integer getId() {

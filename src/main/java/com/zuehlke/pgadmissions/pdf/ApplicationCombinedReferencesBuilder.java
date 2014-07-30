@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 
 @Component
-public class CombinedReferencesPdfBuilder extends AbstractPdfModelBuilder {
+public class ApplicationCombinedReferencesBuilder extends AbstractPdfModelBuilder {
 
     @Value("${email.address.to}")
     private String emailAddressTo;
@@ -36,7 +36,7 @@ public class CombinedReferencesPdfBuilder extends AbstractPdfModelBuilder {
             document.add(table);
             document.add(addSectionSeparators());
 
-            if (BooleanUtils.isTrue(referenceComment.getDeclinedResponse())) {
+            if (BooleanUtils.isTrue(referenceComment.isDeclinedResponse())) {
                 document.add(new Paragraph("Comment:\nDeclined to provide a reference."));
             } else {
                 document.add(new Paragraph("Comment:\n" + referenceComment.getContent()));

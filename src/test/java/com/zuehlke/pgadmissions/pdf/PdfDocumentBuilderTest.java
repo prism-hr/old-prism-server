@@ -8,8 +8,7 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
-import com.zuehlke.pgadmissions.services.exporters.ApplicationDocumentExportHelper;
-import com.zuehlke.pgadmissions.services.exporters.ApplicationDocumentExportService.CouldNotCreateAttachmentsPack;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationDocumentExportBuilder;
 
 public class PdfDocumentBuilderTest {
 
@@ -17,11 +16,7 @@ public class PdfDocumentBuilderTest {
     
     private PdfDocumentBuilder pdfDocumentBuilder;
     
-    private CombinedReferencesPdfBuilder combinedReferencesPdfBuilder;
-    
-    private Transcript1PdfBuilder transcript1PdfBuilder;
-    
-    private ApplicationDocumentExportHelper attachmentsZipCreator;
+    private ApplicationDocumentExportBuilder attachmentsZipCreator;
     
     public PdfDocumentBuilderTest() {
     }
@@ -39,7 +34,7 @@ public class PdfDocumentBuilderTest {
     }
     
     @Test
-    public void createZipForPortico() throws FileNotFoundException, IOException, CouldNotCreateAttachmentsPack {
-        attachmentsZipCreator.writeZipEntries(builder.build(), "007", new FileOutputStream(new File("PdfDocumentBuilderTest.zip")));
+    public void createZipForPortico() throws FileNotFoundException, IOException {
+        attachmentsZipCreator.getDocuments(builder.build(), "007", new FileOutputStream(new File("PdfDocumentBuilderTest.zip")));
     }
 }

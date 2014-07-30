@@ -78,4 +78,10 @@ public class InstitutionDAO {
                 .add(Restrictions.eq("address.country", domicile))
                 .list();
     }
+    
+    public Institution getUclInstitution() {
+        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
+                .add(Restrictions.eq("uclInstitution", true)) //
+                .uniqueResult();
+    }
 }

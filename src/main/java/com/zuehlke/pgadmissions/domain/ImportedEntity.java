@@ -4,20 +4,20 @@ public interface ImportedEntity {
 
     public Integer getId();
 
-    public Institution getInstitution() ;
+    public Institution getInstitution();
 
-    public void setInstitution(Institution institution) ;
+    public void setInstitution(Institution institution);
 
-    public String getCode() ;
+    public String getCode();
 
-    public void setCode(String code) ;
+    public void setCode(String code);
 
-    public String getName() ;
+    public String getName();
 
-    public void setName(String name) ;
+    public void setName(String name);
 
-    public boolean isEnabled() ;
+    public boolean isEnabled();
 
-    public void setEnabled(boolean enabled) ;
+    public void setEnabled(boolean enabled);
 
 }

@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 
 public final class MailMessageDTO {
 
-    private Application form;
+    private Application application;
 
     private String replyToAddress;
 
@@ -144,12 +144,12 @@ public final class MailMessageDTO {
         this.replyToAddress = replyToAddress;
     }
 
-    public Application getApplicationForm() {
-        return form;
+    public Application getApplication() {
+        return application;
     }
 
-    public void setApplicationForm(final Application form) {
-        this.form = form;
+    public void setApplication(final Application application) {
+        this.application = application;
     }
 
     public Address getFromAddressAsInternetAddress() {

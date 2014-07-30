@@ -74,6 +74,9 @@ public class Institution extends Resource {
     @JoinColumn(name = "institution_address_id")
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private InstitutionAddress address;
+    
+    @Column(name = "is_ucl_institution", nullable = false)
+    private boolean uclInstitution = false;
 
     @ManyToOne
     @JoinColumn(name = "state_id")
@@ -147,6 +150,14 @@ public class Institution extends Resource {
         this.address = address;
     }
 
+    public boolean isUclInstitution() {
+        return uclInstitution;
+    }
+
+    public void setUclInstitution(boolean uclInstitution) {
+        this.uclInstitution = uclInstitution;
+    }
+
     public Institution withId(Integer id) {
         this.id = id;
         return this;
@@ -184,6 +195,11 @@ public class Institution extends Resource {
 
     public Institution withAddress(InstitutionAddress address) {
         this.address = address;
+        return this;
+    }
+    
+    public Institution withUclInstitution(boolean uclInstitution) {
+        this.uclInstitution = uclInstitution;
         return this;
     }
 

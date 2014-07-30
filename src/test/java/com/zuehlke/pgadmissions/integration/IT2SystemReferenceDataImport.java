@@ -9,6 +9,8 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Test;
@@ -31,10 +33,12 @@ import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramService;
+import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 import com.zuehlke.pgadmissions.services.importers.InstitutionDomicileImportService;
@@ -64,10 +68,13 @@ public class IT2SystemReferenceDataImport {
     private ProgramService programService;
 
     @Autowired
-    private IT1SystemInitialisation it1SystemInitialisation;
-
+    private RoleService roleService;
+    
     @Autowired
     private SystemService systemService;
+    
+    @Autowired
+    private IT1SystemInitialisation it1SystemInitialisation;
 
     @Test
     public void testImportData() throws Exception {
@@ -78,6 +85,7 @@ public class IT2SystemReferenceDataImport {
         testImportDisabilities(institution);
         testConflictsInProgramImport(institution);
         importRemainingEntities(institution);
+        verifyProgramImport();
     }
 
     private void testImportInstitutionDomiciles() throws Exception {
@@ -278,6 +286,10 @@ public class IT2SystemReferenceDataImport {
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.TITLE);
         importedEntityFeed.setLocation("xml/defaultEntities/title.xml");
         entityImportService.importEntities(importedEntityFeed);
+        
+        importedEntityFeed.setImportedEntityType(PrismImportedEntity.GENDER);
+        importedEntityFeed.setLocation("xml/defaultEntities/gender.xml");
+        entityImportService.importEntities(importedEntityFeed);
 
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.INSTITUTION);
         importedEntityFeed.setLocation("reference_data/conflicts/institutions/institution.xml");
@@ -288,4 +300,15 @@ public class IT2SystemReferenceDataImport {
         entityImportService.importEntities(importedEntityFeed);
     }
 
+    private void verifyProgramImport() {
+        List<Program> programs = programService.getPrograms();
+        for (Program program : programs) {
+            ProgramInstance latestEnabledInstance = programService.getLatestProgramInstance(program);
+            assertEquals(latestEnabledInstance.getApplicationDeadline(), program.getDueDate());
+            User programUser = program.getUser();
+            assertEquals(program.getInstitution().getUser(), program.getUser());
+            assertTrue(roleService.hasUserRole(program, programUser, PrismRole.PROGRAM_ADMINISTRATOR));
+        }
+    }
+    
 }

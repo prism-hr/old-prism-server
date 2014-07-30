@@ -1,9 +1,7 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -14,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.owasp.esapi.ESAPI;
+import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.AddressTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.ApplicantTp;
@@ -55,7 +54,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
 import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Gender;
 import com.zuehlke.pgadmissions.domain.Language;
@@ -63,13 +61,13 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ReferralSource;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
+@Component
 public class ApplicationExportBuilder {
 
-    private static final String NOT_PROVIDED_VALUE = "NOT PROVIDED";
+    private static final String IP_ADDRESS_NOT_PROVIDED_VALUE = "127.0.0.1";
 
-    private static final String ADDRESS_LINE_EMPTY_VALUE = "-";
+    private static final String NOT_PROVIDED_VALUE = "NOT PROVIDED";
 
     private static final String INSTITUTION_OTHER_CODE = "OTHER";
 
@@ -79,87 +77,42 @@ public class ApplicationExportBuilder {
 
     private static final String PHONE_NUMBER_NOT_PROVIDED_VALUE = "+44 (0) 0000 000 000";
 
-    private static final String LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE = "Application predates mandatory language qualification. Please check qualifications for potential language certificates.";
+    private ObjectFactory objectFactory;
 
-    private final ObjectFactory xmlFactory;
+    private DatatypeFactory datatypeFactory;
 
-    protected final DatatypeFactory datatypeFactory;
+    private Application application;
 
-    private Application applicationForm;
+    private String creatorInstitutionApplicantId;
 
-    private boolean printLanguageQualificationAdmissionsNote = false;
+    private String creatorIpAddress;
 
-    private Boolean isOverseasStudent;
+    private Comment offerRecommendationComment;
+
+    private ProgramInstance exportProgramInstance;
 
     private User primarySupervisor;
 
-    private static class NoActiveProgrameInstanceFoundException extends RuntimeException {
-        private final ProgrammeOccurrenceTp occurrenceTp;
-        private static final long serialVersionUID = 8359986556018188704L;
+    private List<ApplicationReferee> exportReferees;
 
-        public NoActiveProgrameInstanceFoundException(ProgrammeOccurrenceTp occurrenceTp, String message) {
-            super(message);
-            this.occurrenceTp = occurrenceTp;
-        }
-
-        @SuppressWarnings("unused")
-        public ProgrammeOccurrenceTp getOccurrenceTp() {
-            return occurrenceTp;
-        }
-    }
-
-    private static class NoIdentifierForProgrameInstanceFoundException extends RuntimeException {
-        private static final long serialVersionUID = 1820912139538020762L;
-        private final ProgrammeOccurrenceTp occurrenceTp;
-
-        public NoIdentifierForProgrameInstanceFoundException(ProgrammeOccurrenceTp occurrenceTp, String message) {
-            super(message);
-            this.occurrenceTp = occurrenceTp;
-        }
-
-        @SuppressWarnings("unused")
-        public ProgrammeOccurrenceTp getOccurrenceTp() {
-            return occurrenceTp;
-        }
-    }
-
-    public ApplicationExportBuilder(ObjectFactory xmlFactory) {
-        this.xmlFactory = xmlFactory;
-        try {
-            datatypeFactory = DatatypeFactory.newInstance();
-        } catch (DatatypeConfigurationException dce) {
-            throw new IllegalStateException("Exception while obtaining DatatypeFactory instance", dce);
-        }
-    }
-
-    public ApplicationExportBuilder() {
-        this(null);
-    }
-
-    public ApplicationExportBuilder applicationForm(final Application applicationForm) {
-        this.applicationForm = applicationForm;
-        return this;
-    }
-
-    public ApplicationExportBuilder isOverseasStudent(Boolean isOverseasStudent) {
-        this.isOverseasStudent = isOverseasStudent;
-        return this;
-    }
-
-    public ApplicationExportBuilder primarySupervisor(User primarySupervisor) {
+    public SubmitAdmissionsApplicationRequest build(Application application, String creatorInstitutionApplicantId, String creatorIpAddress,
+            Comment offerRecommendationComment, User primarySupervisor, ProgramInstance exportProgramInstance, List<ApplicationReferee> exportReferees)
+            throws DatatypeConfigurationException {
+        ObjectFactory xmlFactory = new ObjectFactory();
+        datatypeFactory = DatatypeFactory.newInstance();
+        this.application = application;
+        this.creatorInstitutionApplicantId = creatorInstitutionApplicantId;
+        this.creatorIpAddress = creatorIpAddress;
+        this.offerRecommendationComment = offerRecommendationComment;
         this.primarySupervisor = primarySupervisor;
-        return this;
-    }
-
-    public SubmitAdmissionsApplicationRequest build() {
-        printLanguageQualificationAdmissionsNote = false;
+        this.exportReferees = exportReferees;
         SubmitAdmissionsApplicationRequest request = xmlFactory.createSubmitAdmissionsApplicationRequest();
         request.setApplication(buildApplication());
         return request;
     }
 
     private ApplicationTp buildApplication() {
-        ApplicationTp applicationTp = xmlFactory.createApplicationTp();
+        ApplicationTp applicationTp = objectFactory.createApplicationTp();
         applicationTp.setSource(SOURCE_IDENTIFIER);
         applicationTp.setApplicant(buildApplicant());
         applicationTp.setCourseApplication(buildCourseApplication());
@@ -167,7 +120,7 @@ public class ApplicationExportBuilder {
     }
 
     private ApplicantTp buildApplicant() {
-        ApplicantTp applicant = xmlFactory.createApplicantTp();
+        ApplicantTp applicant = objectFactory.createApplicantTp();
         applicant.setFullName(buildFullName());
         applicant.setSex(buildGender());
         applicant.setDateOfBirth(buildDateOfBirth());
@@ -175,44 +128,38 @@ public class ApplicationExportBuilder {
         applicant.setSecondaryNationality(buildSecondNationality());
         applicant.setCountryOfBirth(buildCountry());
         applicant.setCountryOfDomicile(buildDomicile());
-        applicant.setVisaRequired(BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getVisaRequired()));
-        if (BooleanUtils.isTrue(applicationForm.getPersonalDetails().getVisaRequired())) {
+        applicant.setVisaRequired(BooleanUtils.toBoolean(application.getPersonalDetails().getVisaRequired()));
+
+        if (BooleanUtils.isTrue(application.getPersonalDetails().getVisaRequired())) {
             applicant.setPassport(buildPassport());
         }
+
         applicant.setDisability(buildDisability());
         applicant.setEthnicity(buildEthnicity());
         applicant.setHomeAddress(buildHomeAddress());
         applicant.setCorrespondenceAddress(buildCorrespondenceAddress());
-        applicant.setCriminalConvictionDetails(cleanString(applicationForm.getAdditionalInformation().getConvictionsText()));
-        applicant.setCriminalConvictions(applicationForm.getAdditionalInformation().getHasConvictions());
+        applicant.setCriminalConvictionDetails(cleanString(application.getAdditionalInformation().getConvictionsText()));
+        applicant.setCriminalConvictions(application.getAdditionalInformation().getConvictionsText() != null);
         applicant.setQualificationList(buildQualificationDetails());
         applicant.setEmployerList(buildEmployer());
-
-        applicant.setEnglishIsFirstLanguage(BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getFirstLanguageEnglish()));
+        applicant.setEnglishIsFirstLanguage(BooleanUtils.toBoolean(application.getPersonalDetails().getFirstLanguageEnglish()));
         applicant.setEnglishLanguageQualificationList(buildEnglishLanguageQualification());
-
-        if (BooleanUtils.isNotTrue(applicationForm.getPersonalDetails().getFirstLanguageEnglish())
-                && BooleanUtils.isNotTrue(applicationForm.getPersonalDetails().getLanguageQualificationAvailable())) {
-            printLanguageQualificationAdmissionsNote = true;
-        }
-
-        // FIXME set applicant UCL ID
-        // applicant.setApplicantID(StringUtils.trimToNull(applicationForm.getApplicant().getUclUserId()));
+        applicant.setApplicantID(StringUtils.trimToNull(creatorInstitutionApplicantId));
 
         return applicant;
     }
 
     private DomicileTp buildDomicile() {
-        DomicileTp domicileTp = xmlFactory.createDomicileTp();
-        domicileTp.setCode(applicationForm.getPersonalDetails().getResidenceCountry().getCode());
-        domicileTp.setName(applicationForm.getPersonalDetails().getResidenceCountry().getName());
+        DomicileTp domicileTp = objectFactory.createDomicileTp();
+        domicileTp.setCode(application.getPersonalDetails().getResidenceCountry().getCode());
+        domicileTp.setName(application.getPersonalDetails().getResidenceCountry().getName());
         return domicileTp;
     }
 
     private NameTp buildFullName() {
-        NameTp nameTp = xmlFactory.createNameTp();
-        ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        User applicant = applicationForm.getUser();
+        NameTp nameTp = objectFactory.createNameTp();
+        ApplicationPersonalDetails personalDetails = application.getPersonalDetails();
+        User applicant = application.getUser();
         nameTp.setSurname(applicant.getLastName());
         nameTp.setForename1(applicant.getFirstName());
         nameTp.setForename2(applicant.getFirstName2());
@@ -222,33 +169,28 @@ public class ApplicationExportBuilder {
     }
 
     private GenderTp buildGender() {
-        Gender gender = applicationForm.getPersonalDetails().getGender();
+        Gender gender = application.getPersonalDetails().getGender();
         return GenderTp.valueOf(gender.getCode());
     }
 
     private XMLGregorianCalendar buildDateOfBirth() {
-        ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
+        ApplicationPersonalDetails personalDetails = application.getPersonalDetails();
         return buildXmlDate(personalDetails.getDateOfBirth());
     }
 
     private NationalityTp buildFirstNationality() {
-        ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
+        ApplicationPersonalDetails personalDetails = application.getPersonalDetails();
         Language firstNationality = personalDetails.getFirstNationality();
-
-        NationalityTp nationalityTp = xmlFactory.createNationalityTp();
-        if (firstNationality == null) {
-            throw new IllegalArgumentException("Candidate should have at least one nationality.");
-        }
-
+        NationalityTp nationalityTp = objectFactory.createNationalityTp();
         nationalityTp.setCode(firstNationality.getCode());
         nationalityTp.setName(firstNationality.getName());
         return nationalityTp;
     }
 
     private NationalityTp buildSecondNationality() {
-        Language secondNationality = applicationForm.getPersonalDetails().getSecondNationality();
+        Language secondNationality = application.getPersonalDetails().getSecondNationality();
+        NationalityTp nationalityTp = objectFactory.createNationalityTp();
 
-        NationalityTp nationalityTp = xmlFactory.createNationalityTp();
         if (secondNationality == null) {
             return null;
         } else {
@@ -259,24 +201,24 @@ public class ApplicationExportBuilder {
     }
 
     private CountryTp buildCountry() {
-        ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        CountryTp countryTp = xmlFactory.createCountryTp();
+        ApplicationPersonalDetails personalDetails = application.getPersonalDetails();
+        CountryTp countryTp = objectFactory.createCountryTp();
         countryTp.setCode(personalDetails.getCountry().getCode());
         countryTp.setName(personalDetails.getCountry().getName());
         return countryTp;
     }
 
     private PassportTp buildPassport() {
-        ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
+        ApplicationPersonalDetails personalDetails = application.getPersonalDetails();
         if (personalDetails.getPassportAvailable()) {
-            PassportTp passportTp = xmlFactory.createPassportTp();
+            PassportTp passportTp = objectFactory.createPassportTp();
             passportTp.setName(personalDetails.getPassport().getName());
             passportTp.setNumber(personalDetails.getPassport().getNumber());
             passportTp.setExpiryDate(buildXmlDate(personalDetails.getPassport().getExpiryDate()));
             passportTp.setIssueDate(buildXmlDate(personalDetails.getPassport().getIssueDate()));
             return passportTp;
         } else {
-            PassportTp passportTp = xmlFactory.createPassportTp();
+            PassportTp passportTp = objectFactory.createPassportTp();
             passportTp.setName(NOT_PROVIDED_VALUE);
             passportTp.setNumber(NOT_PROVIDED_VALUE);
             passportTp.setExpiryDate(buildXmlDate(new LocalDate().plusYears(1)));
@@ -286,108 +228,69 @@ public class ApplicationExportBuilder {
     }
 
     private DisabilityTp buildDisability() {
-        ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        DisabilityTp disabilityTp = xmlFactory.createDisabilityTp();
+        ApplicationPersonalDetails personalDetails = application.getPersonalDetails();
+        DisabilityTp disabilityTp = objectFactory.createDisabilityTp();
         disabilityTp.setCode(personalDetails.getDisability().getCode());
         disabilityTp.setName(personalDetails.getDisability().getName());
         return disabilityTp;
     }
 
     private EthnicityTp buildEthnicity() {
-        ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        EthnicityTp ethnicityTp = xmlFactory.createEthnicityTp();
+        ApplicationPersonalDetails personalDetails = application.getPersonalDetails();
+        EthnicityTp ethnicityTp = objectFactory.createEthnicityTp();
         ethnicityTp.setCode(personalDetails.getEthnicity().getCode());
         ethnicityTp.setName(personalDetails.getEthnicity().getName());
         return ethnicityTp;
     }
 
     private ContactDtlsTp buildHomeAddress() {
-        ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
-
-        AddressTp addressTp = xmlFactory.createAddressTp();
-        Address currentAddress = applicationForm.getAddress().getCurrentAddress();
+        ApplicationPersonalDetails personalDetails = application.getPersonalDetails();
+        ContactDtlsTp contactDtlsTp = objectFactory.createContactDtlsTp();
+        AddressTp addressTp = objectFactory.createAddressTp();
+        Address currentAddress = application.getAddress().getCurrentAddress();
         addressTp.setAddressLine1(currentAddress.getAddressLine1());
         addressTp.setAddressLine2(currentAddress.getAddressLine2());
         addressTp.setAddressLine3(currentAddress.getAddressTown());
         addressTp.setAddressLine4(currentAddress.getAddressRegion());
         addressTp.setPostCode(currentAddress.getAddressCode());
         addressTp.setCountry(currentAddress.getDomicile().getCode());
-
-        // postCode is mandatory but but PRISM did not collect addresses
-        // in this format before.
-        if (StringUtils.isBlank(addressTp.getPostCode())) {
-            addressTp.setPostCode(ADDRESS_LINE_EMPTY_VALUE);
-        }
-
-        // addressLine3 is mandatory but PRISM did not collect addresses
-        // in this format before.
-        if (StringUtils.isBlank(addressTp.getAddressLine3())) {
-            addressTp.setAddressLine3(ADDRESS_LINE_EMPTY_VALUE);
-        }
-
         contactDtlsTp.setAddressDtls(addressTp);
-        contactDtlsTp.setEmail(applicationForm.getUser().getEmail());
+        contactDtlsTp.setEmail(application.getUser().getEmail());
         contactDtlsTp.setLandline(cleanPhoneNumber(personalDetails.getPhoneNumber()));
         return contactDtlsTp;
     }
 
     private ContactDtlsTp buildCorrespondenceAddress() {
-        Address contactAddress = applicationForm.getAddress().getContactAddress();
-        ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
-        AddressTp addressTp = xmlFactory.createAddressTp();
+        Address contactAddress = application.getAddress().getContactAddress();
+        ContactDtlsTp contactDtlsTp = objectFactory.createContactDtlsTp();
+        AddressTp addressTp = objectFactory.createAddressTp();
         addressTp.setAddressLine1(contactAddress.getAddressLine1());
         addressTp.setAddressLine2(contactAddress.getAddressLine2());
         addressTp.setAddressLine3(contactAddress.getAddressTown());
         addressTp.setAddressLine4(contactAddress.getAddressRegion());
         addressTp.setPostCode(contactAddress.getAddressCode());
         addressTp.setCountry(contactAddress.getDomicile().getCode());
-
-        // postCode is mandatory but but PRISM did not collect addresses
-        // in this format before.
-        if (StringUtils.isBlank(addressTp.getPostCode())) {
-            addressTp.setPostCode(ADDRESS_LINE_EMPTY_VALUE);
-        }
-
-        // addressLine3 is mandatory but PRISM did not collect addresses
-        // in this format before.
-        if (StringUtils.isBlank(addressTp.getAddressLine3())) {
-            addressTp.setAddressLine3(ADDRESS_LINE_EMPTY_VALUE);
-        }
-
         contactDtlsTp.setAddressDtls(addressTp);
-        contactDtlsTp.setEmail(applicationForm.getUser().getEmail());
-        contactDtlsTp.setLandline(cleanPhoneNumber(applicationForm.getPersonalDetails().getPhoneNumber()));
+        contactDtlsTp.setEmail(application.getUser().getEmail());
+        contactDtlsTp.setLandline(cleanPhoneNumber(application.getPersonalDetails().getPhoneNumber()));
         return contactDtlsTp;
     }
 
     private CourseApplicationTp buildCourseApplication() {
-        ApplicationProgramDetails programmeDetails = applicationForm.getProgramDetails();
-        CourseApplicationTp applicationTp = xmlFactory.createCourseApplicationTp();
-        applicationTp.setStartMonth(new DateTime(programmeDetails.getStartDate()));
-        if (!programmeDetails.getSupervisors().isEmpty()) {
-            // Which supervisor to pick if there are multiple
-            // Just send the first one. Confirmed by Alastair Knowles
-            applicationTp.setProposedSupervisorName(buildProposedSupervisorName(0));
-        }
+        ApplicationProgramDetails programDetails = application.getProgramDetails();
+        CourseApplicationTp applicationTp = objectFactory.createCourseApplicationTp();
+        applicationTp.setStartMonth(new DateTime(programDetails.getStartDate()));
         applicationTp.setAgreedSupervisorName(buildAgreedSupervisorName());
-
         applicationTp.setPersonalStatement(REFER_TO_ATTACHED_DOCUMENT);
-
         applicationTp.setSourcesOfInterest(buildSourcesOfInterest(applicationTp));
-        applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedTimestamp()));
-        applicationTp.setExternalApplicationID(applicationForm.getCode());
-
-        // FIXME set ip address
-        // applicationTp.setIpAddress(applicationForm.getIpAddressAsString());
-        // else
-        // applicationTp.setIpAddress(IP_ADDRESS_NOT_PROVIDED_VALUE);
-
-        applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedTimestamp()));
+        applicationTp.setCreationDate(buildXmlDate(application.getSubmittedTimestamp()));
+        applicationTp.setExternalApplicationID(application.getCode());
+        applicationTp.setIpAddress(creatorIpAddress == null ? IP_ADDRESS_NOT_PROVIDED_VALUE : creatorIpAddress);
+        applicationTp.setCreationDate(buildXmlDate(application.getSubmittedTimestamp()));
         applicationTp.setRefereeList(buildReferee());
 
-        switch (applicationForm.getState().getId()) {
-        case APPLICATION_WITHDRAWN_PENDING_EXPORT:
+        switch (application.getState().getStateGroup().getId()) {
+        case APPLICATION_WITHDRAWN:
             applicationTp.setApplicationStatus("WITHDRAWN");
             break;
         case APPLICATION_APPROVED:
@@ -399,112 +302,48 @@ public class ApplicationExportBuilder {
             applicationTp.setDepartmentalDecision("REJECT");
             break;
         default:
-            throw new IllegalArgumentException("Application is in wrong state " + applicationForm.getState().getId().name());
+            throw new Error("Application in state " + application.getState().getId().name() + " cannot be exported");
         }
 
-        try {
-            applicationTp.setProgramme(buildProgrammeOccurence());
-        } catch (NoActiveProgrameInstanceFoundException exp) {
-            throw new IllegalArgumentException(exp.getMessage(), exp);
-        } catch (NoIdentifierForProgrameInstanceFoundException exp) {
-            throw new IllegalArgumentException(exp.getMessage(), exp);
-        }
+        applicationTp.setProgramme(buildProgrammeOccurence());
 
-        if (printLanguageQualificationAdmissionsNote && applicationForm.getState().getId() == PrismState.APPLICATION_APPROVED) {
-            applicationTp.setDepartmentalOfferConditions(LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE);
-        }
+        if (offerRecommendationComment != null) {
+            applicationTp.setAtasStatement(offerRecommendationComment.getPositionDescription());
 
-        // FIXME get offer recommended comment (this class should be Spring component so it can access CommentService)
-        Comment offerRecommendedComment = null; // applicationForm.getOfferRecommendedComment();
-        if (offerRecommendedComment != null) {
-            if (isOverseasStudent && BooleanUtils.isTrue(applicationForm.getProgram().getRequireProjectDefinition())) {
-                applicationTp.setAtasStatement(offerRecommendedComment.getPositionDescription());
-            }
-        }
+            String conditions = offerRecommendationComment.getAppointmentConditions();
+            String offerSummary = "Recommended conditions: " + conditions == null ? "none" : conditions + "\n\n" + "Preferred Start Date: "
+                    + offerRecommendationComment.getPositionProvisionalStartDate().toString("d MMMM yyyy");
 
-        if (offerRecommendedComment != null && applicationForm.getState().getId() == PrismState.APPLICATION_APPROVED) {
-            String departmentalOfferConditions = "Recommended Offer Type: ";
-            if (BooleanUtils.isTrue(offerRecommendedComment.getAppointmentConditions() != null)) {
-                departmentalOfferConditions += "Conditional\n\nRecommended Conditions: ";
-                departmentalOfferConditions += offerRecommendedComment.getAppointmentConditions() + "\n\n";
-            } else {
-                departmentalOfferConditions += "Unconditional\n\n";
-            }
-            SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
-            String provisionalStartDateString = outputDateFormat.format(offerRecommendedComment.getPositionProvisionalStartDate());
-            departmentalOfferConditions += "Recommended Start Date: " + provisionalStartDateString;
-            applicationTp.setDepartmentalOfferConditions(departmentalOfferConditions);
+            applicationTp.setDepartmentalOfferConditions(offerSummary);
         }
 
         return applicationTp;
     }
 
     private ProgrammeOccurrenceTp buildProgrammeOccurence() {
-        Program program = applicationForm.getProgram();
-        ApplicationProgramDetails programmeDetails = applicationForm.getProgramDetails();
-        ProgrammeOccurrenceTp occurrenceTp = xmlFactory.createProgrammeOccurrenceTp();
+        Program program = application.getProgram();
+        ProgrammeOccurrenceTp occurrenceTp = objectFactory.createProgrammeOccurrenceTp();
         occurrenceTp.setCode(program.getCode());
         occurrenceTp.setModeOfAttendance(buildModeofattendance());
-
-        ProgramInstance activeInstance = null;
-        for (ProgramInstance instance : program.getProgramInstances()) {
-            if (!instance.getApplicationStartDate().isBefore(new LocalDate())) {
-                if (instance.getStudyOption().getId().equals(programmeDetails.getId())) {
-                    activeInstance = instance;
-                    break;
-                }
-            }
-        }
-
-        if (activeInstance == null) {
-            occurrenceTp.setAcademicYear(buildXmlDateYearOnly(programmeDetails.getStartDate()));
-            occurrenceTp.setIdentifier(NOT_PROVIDED_VALUE);
-            occurrenceTp.setStartDate(buildXmlDate(programmeDetails.getStartDate()));
-            occurrenceTp.setEndDate(buildXmlDate(programmeDetails.getStartDate().plusYears(1)));
-            throw new NoActiveProgrameInstanceFoundException(occurrenceTp, String.format(
-                    "No active program found for Program[code=%s], ProgrammeDetails[studyOption=%s]", program.getCode(), programmeDetails.getStudyOption()));
-        }
-
-        occurrenceTp.setAcademicYear(buildXmlDateYearOnly(activeInstance.getAcademicYear()));
-        occurrenceTp.setIdentifier(activeInstance.getIdentifier());
-        occurrenceTp.setStartDate(buildXmlDate(activeInstance.getApplicationStartDate()));
-        occurrenceTp.setEndDate(buildXmlDate(activeInstance.getApplicationDeadline()));
-
-        if (StringUtils.isBlank(activeInstance.getIdentifier())) {
-            occurrenceTp.setIdentifier(NOT_PROVIDED_VALUE);
-            throw new NoIdentifierForProgrameInstanceFoundException(occurrenceTp, String.format("No identifier for program instance found. Program[code=%s]",
-                    program.getCode()));
-        }
-
+        occurrenceTp.setAcademicYear(buildXmlDateYearOnly(exportProgramInstance.getAcademicYear()));
+        String exportInstanceIdentifier = exportProgramInstance.getIdentifier();
+        occurrenceTp.setIdentifier(exportInstanceIdentifier == null ? NOT_PROVIDED_VALUE : exportInstanceIdentifier);
+        occurrenceTp.setStartDate(buildXmlDate(exportProgramInstance.getApplicationStartDate()));
+        occurrenceTp.setEndDate(buildXmlDate(exportProgramInstance.getApplicationDeadline()));
         return occurrenceTp;
     }
 
     private ModeofattendanceTp buildModeofattendance() {
-        ApplicationProgramDetails programmeDetails = applicationForm.getProgramDetails();
-        ModeofattendanceTp modeofattendanceTp = xmlFactory.createModeofattendanceTp();
+        ApplicationProgramDetails programmeDetails = application.getProgramDetails();
+        ModeofattendanceTp modeofattendanceTp = objectFactory.createModeofattendanceTp();
         modeofattendanceTp.setCode(programmeDetails.getStudyOption().getCode());
         modeofattendanceTp.setName(programmeDetails.getStudyOption().getName());
         return modeofattendanceTp;
     }
 
-    private NameTp buildProposedSupervisorName(int idx) {
-        ApplicationProgramDetails programmeDetails = applicationForm.getProgramDetails();
-        NameTp nameTp = xmlFactory.createNameTp();
-        List<ApplicationSupervisor> suggestedSupervisors = programmeDetails.getSupervisors();
-
-        if (idx < suggestedSupervisors.size()) {
-            ApplicationSupervisor suggestedSupervisor = suggestedSupervisors.get(idx);
-            nameTp.setForename1(suggestedSupervisor.getUser().getFirstName());
-            nameTp.setSurname(suggestedSupervisor.getUser().getLastName());
-            return nameTp;
-        } else {
-            return null;
-        }
-    }
-
     private NameTp buildAgreedSupervisorName() {
         if (primarySupervisor != null) {
-            NameTp nameTp = xmlFactory.createNameTp();
+            NameTp nameTp = objectFactory.createNameTp();
             nameTp.setForename1(primarySupervisor.getFirstName());
             nameTp.setSurname(primarySupervisor.getLastName());
             return nameTp;
@@ -513,8 +352,8 @@ public class ApplicationExportBuilder {
     }
 
     private SourceOfInterestTp buildSourcesOfInterest(CourseApplicationTp applicationTp) {
-        ApplicationProgramDetails programmeDetails = applicationForm.getProgramDetails();
-        SourceOfInterestTp interestTp = xmlFactory.createSourceOfInterestTp();
+        ApplicationProgramDetails programmeDetails = application.getProgramDetails();
+        SourceOfInterestTp interestTp = objectFactory.createSourceOfInterestTp();
         ReferralSource sourcesOfInterest = programmeDetails.getReferralSource();
         if (sourcesOfInterest == null) {
             return null;
@@ -525,12 +364,12 @@ public class ApplicationExportBuilder {
     }
 
     private QualificationDetailsTp buildQualificationDetails() {
-        QualificationDetailsTp resultList = xmlFactory.createQualificationDetailsTp();
+        QualificationDetailsTp resultList = objectFactory.createQualificationDetailsTp();
 
-        List<ApplicationQualification> qualifications = applicationForm.getQualifications();
+        List<ApplicationQualification> qualifications = application.getQualifications();
         if (!qualifications.isEmpty()) {
             for (ApplicationQualification qualification : qualifications) {
-                QualificationsTp qualificationsTp = xmlFactory.createQualificationsTp();
+                QualificationsTp qualificationsTp = objectFactory.createQualificationsTp();
 
                 qualificationsTp.setStartDate(buildXmlDate(qualification.getStartDate()));
                 qualificationsTp.setEndDate(buildXmlDate(qualification.getAwardDate()));
@@ -539,17 +378,17 @@ public class ApplicationExportBuilder {
                 qualificationsTp.setLanguageOfInstruction(qualification.getLanguage());
                 qualificationsTp.setMainSubject(qualification.getSubject());
 
-                QualificationTp qualificationTp = xmlFactory.createQualificationTp();
+                QualificationTp qualificationTp = objectFactory.createQualificationTp();
                 qualificationTp.setCode(qualification.getType().getCode());
                 qualificationTp.setName(qualification.getType().getName());
                 qualificationsTp.setQualification(qualificationTp);
 
-                InstitutionTp institutionTp = xmlFactory.createInstitutionTp();
+                InstitutionTp institutionTp = objectFactory.createInstitutionTp();
 
                 institutionTp.setCode(qualification.getInstitution().getCode());
                 institutionTp.setName(qualification.getInstitution().getName());
 
-                CountryTp countryTp = xmlFactory.createCountryTp();
+                CountryTp countryTp = objectFactory.createCountryTp();
                 countryTp.setCode(qualification.getInstitution().getDomicile().getCode());
                 countryTp.setName(qualification.getInstitution().getDomicile().getName());
                 institutionTp.setCountry(countryTp);
@@ -558,7 +397,7 @@ public class ApplicationExportBuilder {
                 resultList.getQualificationDetail().add(qualificationsTp);
             }
         } else {
-            QualificationsTp qualificationsTp = xmlFactory.createQualificationsTp();
+            QualificationsTp qualificationsTp = objectFactory.createQualificationsTp();
             qualificationsTp.setStartDate(buildXmlDate(new LocalDate().minusYears(1)));
             qualificationsTp.setEndDate(buildXmlDate(new LocalDate().plusYears(1)));
 
@@ -566,15 +405,15 @@ public class ApplicationExportBuilder {
             qualificationsTp.setLanguageOfInstruction(NOT_PROVIDED_VALUE);
             qualificationsTp.setMainSubject(NOT_PROVIDED_VALUE);
 
-            QualificationTp qualificationTp = xmlFactory.createQualificationTp();
+            QualificationTp qualificationTp = objectFactory.createQualificationTp();
             qualificationTp.setCode("6");
             qualificationTp.setName("Other examinations and/or information");
             qualificationsTp.setQualification(qualificationTp);
 
-            InstitutionTp institutionTp = xmlFactory.createInstitutionTp();
+            InstitutionTp institutionTp = objectFactory.createInstitutionTp();
             institutionTp.setCode(INSTITUTION_OTHER_CODE);
             institutionTp.setName(NOT_PROVIDED_VALUE);
-            CountryTp countryTp = xmlFactory.createCountryTp();
+            CountryTp countryTp = objectFactory.createCountryTp();
             countryTp.setCode("XK");
             countryTp.setName("United Kingdom");
             institutionTp.setCountry(countryTp);
@@ -586,18 +425,18 @@ public class ApplicationExportBuilder {
     }
 
     private EmploymentDetailsTp buildEmployer() {
-        EmploymentDetailsTp resultList = xmlFactory.createEmploymentDetailsTp();
-        List<ApplicationEmploymentPosition> employmentPositions = applicationForm.getEmploymentPositions();
+        EmploymentDetailsTp resultList = objectFactory.createEmploymentDetailsTp();
+        List<ApplicationEmploymentPosition> employmentPositions = application.getEmploymentPositions();
         if (!employmentPositions.isEmpty()) {
             for (ApplicationEmploymentPosition employmentPosition : employmentPositions) {
-                AppointmentTp appointmentTp = xmlFactory.createAppointmentTp();
+                AppointmentTp appointmentTp = objectFactory.createAppointmentTp();
 
                 appointmentTp.setJobTitle(employmentPosition.getPosition());
                 appointmentTp.setResponsibilities(cleanString(employmentPosition.getRemit()));
                 appointmentTp.setStartDate(buildXmlDate(employmentPosition.getStartDate()));
                 appointmentTp.setEndDate(buildXmlDate(employmentPosition.getEndDate()));
 
-                EmployerTp employerTp = xmlFactory.createEmployerTp();
+                EmployerTp employerTp = objectFactory.createEmployerTp();
                 employerTp.setName(employmentPosition.getEmployerName());
                 appointmentTp.setEmployer(employerTp);
 
@@ -608,21 +447,16 @@ public class ApplicationExportBuilder {
     }
 
     private RefereeListTp buildReferee() {
-        RefereeListTp resultList = xmlFactory.createRefereeListTp();
-
-        // FIXME get referees to send to portico (this class should be Spring component)
-        List<ApplicationReferee> referees = null; // applicationForm.getRefereesToSendToPortico();
-        for (ApplicationReferee referee : referees) {
-            RefereeTp refereeTp = xmlFactory.createRefereeTp();
-
+        RefereeListTp resultList = objectFactory.createRefereeListTp();
+        for (ApplicationReferee referee : exportReferees) {
+            RefereeTp refereeTp = objectFactory.createRefereeTp();
             refereeTp.setPosition(referee.getJobTitle());
-
-            NameTp nameTp = xmlFactory.createNameTp();
+            NameTp nameTp = objectFactory.createNameTp();
             nameTp.setForename1(referee.getUser().getFirstName());
             nameTp.setSurname(referee.getUser().getLastName());
             refereeTp.setName(nameTp);
 
-            ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
+            ContactDtlsTp contactDtlsTp = objectFactory.createContactDtlsTp();
             contactDtlsTp.setEmail(referee.getUser().getEmail());
             contactDtlsTp.setLandline(cleanPhoneNumber(referee.getPhoneNumber()));
 
@@ -632,42 +466,27 @@ public class ApplicationExportBuilder {
                 contactDtlsTp.setLandline(PHONE_NUMBER_NOT_PROVIDED_VALUE);
             }
 
-            AddressTp addressTp = xmlFactory.createAddressTp();
+            AddressTp addressTp = objectFactory.createAddressTp();
             addressTp.setAddressLine1(referee.getAddress().getAddressLine1());
             addressTp.setAddressLine2(referee.getAddress().getAddressLine2());
             addressTp.setAddressLine3(referee.getAddress().getAddressTown());
             addressTp.setAddressLine4(referee.getAddress().getAddressRegion());
             addressTp.setPostCode(referee.getAddress().getAddressCode());
             addressTp.setCountry(referee.getAddress().getDomicile().getCode());
-
-            // postCode is mandatory but but PRISM did not collect addresses
-            // in this format before.
-            if (StringUtils.isBlank(addressTp.getPostCode())) {
-                addressTp.setPostCode(ADDRESS_LINE_EMPTY_VALUE);
-            }
-
-            // addressLine3 is mandatory but PRISM did not collect addresses
-            // in this format before.
-            if (StringUtils.isBlank(addressTp.getAddressLine3())) {
-                addressTp.setAddressLine3(ADDRESS_LINE_EMPTY_VALUE);
-            }
-
             contactDtlsTp.setAddressDtls(addressTp);
-
             refereeTp.setContactDetails(contactDtlsTp);
-
             resultList.getReferee().add(refereeTp);
         }
         return resultList;
     }
 
     private EnglishLanguageQualificationDetailsTp buildEnglishLanguageQualification() {
-        ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        EnglishLanguageQualificationDetailsTp englishLanguageQualificationDetailsTp = xmlFactory.createEnglishLanguageQualificationDetailsTp();
+        ApplicationPersonalDetails personalDetails = application.getPersonalDetails();
+        EnglishLanguageQualificationDetailsTp englishLanguageQualificationDetailsTp = objectFactory.createEnglishLanguageQualificationDetailsTp();
 
         if (personalDetails.getLanguageQualificationAvailable()) {
             ApplicationLanguageQualification languageQualification = personalDetails.getLanguageQualification();
-            EnglishLanguageTp englishLanguageTp = xmlFactory.createEnglishLanguageTp();
+            EnglishLanguageTp englishLanguageTp = objectFactory.createEnglishLanguageTp();
             englishLanguageTp.setDateTaken(buildXmlDate(languageQualification.getExamDate()));
 
             if (languageQualification.getType().getCode().startsWith("CUST")) {
@@ -680,32 +499,30 @@ public class ApplicationExportBuilder {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.IELTS);
             }
 
-            // The web service does not allow scores in the format "6.0" it only
-            // accepts "6" and the like.
-            EnglishLanguageScoreTp overallScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+            EnglishLanguageScoreTp overallScoreTp = objectFactory.createEnglishLanguageScoreTp();
             overallScoreTp.setName(LanguageBandScoreTp.OVERALL);
             overallScoreTp.setScore(languageQualification.getOverallScore().replace(".0", ""));
 
-            EnglishLanguageScoreTp readingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+            EnglishLanguageScoreTp readingScoreTp = objectFactory.createEnglishLanguageScoreTp();
             readingScoreTp.setName(LanguageBandScoreTp.READING);
             readingScoreTp.setScore(languageQualification.getReadingScore().replace(".0", ""));
 
-            EnglishLanguageScoreTp writingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+            EnglishLanguageScoreTp writingScoreTp = objectFactory.createEnglishLanguageScoreTp();
             writingScoreTp.setName(LanguageBandScoreTp.WRITING);
             writingScoreTp.setScore(languageQualification.getWritingScore().replace(".0", ""));
 
             EnglishLanguageScoreTp essayOrSpeakingScoreTp = null;
             if (StringUtils.equalsIgnoreCase("TOEFL_PAPER", englishLanguageTp.getMethod())) {
-                essayOrSpeakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+                essayOrSpeakingScoreTp = objectFactory.createEnglishLanguageScoreTp();
                 essayOrSpeakingScoreTp.setName(LanguageBandScoreTp.ESSAY);
                 essayOrSpeakingScoreTp.setScore(languageQualification.getWritingScore().replace(".0", ""));
             } else {
-                essayOrSpeakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+                essayOrSpeakingScoreTp = objectFactory.createEnglishLanguageScoreTp();
                 essayOrSpeakingScoreTp.setName(LanguageBandScoreTp.SPEAKING);
                 essayOrSpeakingScoreTp.setScore(languageQualification.getSpeakingScore().replace(".0", ""));
             }
 
-            EnglishLanguageScoreTp listeningScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+            EnglishLanguageScoreTp listeningScoreTp = objectFactory.createEnglishLanguageScoreTp();
             listeningScoreTp.setName(LanguageBandScoreTp.LISTENING);
             listeningScoreTp.setScore(languageQualification.getListeningScore().replace(".0", ""));
 
@@ -727,30 +544,21 @@ public class ApplicationExportBuilder {
         return number.replaceAll("[^0-9()+ ]", "");
     }
 
-    protected XMLGregorianCalendar buildXmlDate(LocalDate localDate) {
+    private XMLGregorianCalendar buildXmlDate(LocalDate localDate) {
         return buildXmlDate(localDate.toDateTimeAtStartOfDay());
     }
 
-    protected XMLGregorianCalendar buildXmlDate(DateTime dateTime) {
+    private XMLGregorianCalendar buildXmlDate(DateTime dateTime) {
         if (dateTime != null) {
             return datatypeFactory.newXMLGregorianCalendar(dateTime.toGregorianCalendar());
         }
         return null;
     }
 
-    protected XMLGregorianCalendar buildXmlDateYearOnly(String date) {
+    private XMLGregorianCalendar buildXmlDateYearOnly(String date) {
         if (date != null) {
             XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
             xmlCalendar.setYear(Integer.valueOf(date));
-            return xmlCalendar;
-        }
-        return null;
-    }
-
-    protected XMLGregorianCalendar buildXmlDateYearOnly(LocalDate date) {
-        if (date != null) {
-            XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
-            xmlCalendar.setYear(date.getYear());
             return xmlCalendar;
         }
         return null;

@@ -37,7 +37,7 @@ public class ProgramDetailsValidator extends AbstractValidator {
 
         ApplicationProgramDetails programDetail = (ApplicationProgramDetails) target;
 
-        List<ProgramInstance> programInstances = programService.getActiveProgramInstancesForStudyOption(programDetail.getApplication().getProgram(),
+        List<ProgramInstance> programInstances = programService.getActiveProgramInstances(programDetail.getApplication().getProgram(),
                 programDetail.getStudyOption());
         if (programInstances.isEmpty()) {
             errors.rejectValue("studyOption", "programmeDetails.studyOption.invalid");

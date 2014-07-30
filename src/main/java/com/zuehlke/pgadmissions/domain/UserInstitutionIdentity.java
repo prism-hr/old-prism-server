@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,11 +13,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentityType;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 
 @Entity
 @Table(name = "user_institution_identity", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "institution_id", "user_identity_type_id" }) })
-public class UserInstitutionIdentity {
+public class UserInstitutionIdentity implements IUniqueEntity {
 
     @Id
     private Integer id;
@@ -29,7 +34,7 @@ public class UserInstitutionIdentity {
 
     @Column(name = "user_identity_type_id", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrismUserIdentityType type;
+    private PrismUserIdentity identityType;
 
     @Column(name = "identifier", nullable = false)
     private String identifier;
@@ -58,12 +63,12 @@ public class UserInstitutionIdentity {
         this.institution = institution;
     }
 
-    public PrismUserIdentityType getType() {
-        return type;
+    public PrismUserIdentity getIdentityType() {
+        return identityType;
     }
 
-    public void setType(PrismUserIdentityType type) {
-        this.type = type;
+    public void setIdentityType(PrismUserIdentity identityType) {
+        this.identityType = identityType;
     }
 
     public String getIdentifier() {
@@ -72,6 +77,37 @@ public class UserInstitutionIdentity {
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+    
+    public UserInstitutionIdentity withUser(User user) {
+        this.user = user;
+        return this;
+    }
+    
+    public UserInstitutionIdentity withInstitution(Institution institution) {
+        this.institution = institution;
+        return this;
+    }
+    
+    public UserInstitutionIdentity withIdentityType(PrismUserIdentity identityType) {
+        this.identityType = identityType;
+        return this;
+    }
+    
+    public UserInstitutionIdentity withIdentitier(String identifier) {
+        this.identifier = identifier;
+        return this;
+    }
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("user", user);
+        properties.put("institution", institution);
+        properties.put("identityType", identityType);
+        propertiesWrapper.add(properties);
+        return new ResourceSignature(propertiesWrapper);
     }
 
 }

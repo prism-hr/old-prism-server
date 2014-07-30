@@ -1,13 +1,8 @@
 package com.zuehlke.pgadmissions.mail;
 
-import java.io.PrintStream;
-import java.io.StringReader;
-import java.util.Arrays;
-import java.util.Collection;
-
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
+import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
+import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
+import freemarker.template.Template;
 import org.apache.commons.exec.LogOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -22,10 +17,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
-
-import freemarker.template.Template;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.io.PrintStream;
+import java.io.StringReader;
+import java.util.Arrays;
+import java.util.Collection;
 
 @Service
 public class MailSender {
@@ -165,12 +162,14 @@ public class MailSender {
 
                     NotificationTemplateVersion notificationTemplate = message.getTemplate();
 
-                    Template subjectTemplate = new Template(null, new StringReader(notificationTemplate.getSubject()), freemarkerConfig.getConfiguration());
+                    String templateName = notificationTemplate.getNotificationTemplate().getId().name() + "_subject_" + notificationTemplate.getId();
+                    Template subjectTemplate = new Template(templateName, new StringReader(notificationTemplate.getSubject()), freemarkerConfig.getConfiguration());
                     String subject = FreeMarkerTemplateUtils.processTemplateIntoString(subjectTemplate, message.getModel());
 
                     messageHelper.setSubject(subject);
 
-                    Template contentTemplate = new Template(null, new StringReader(notificationTemplate.getContent()), freemarkerConfig.getConfiguration());
+                    templateName = notificationTemplate.getNotificationTemplate().getId().name() + "_content_" + notificationTemplate.getId();
+                    Template contentTemplate = new Template(templateName, new StringReader(notificationTemplate.getContent()), freemarkerConfig.getConfiguration());
                     MailToPlainTextConverter htmlFormatter = new MailToPlainTextConverter();
                     String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(contentTemplate, message.getModel());
                     String plainText = htmlFormatter.getPlainText(htmlText);

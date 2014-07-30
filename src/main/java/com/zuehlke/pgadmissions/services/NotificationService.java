@@ -171,7 +171,27 @@ public class NotificationService {
     private Map<String, Object> createNotificationModel(User user, Resource resource, NotificationTemplateVersion notificationTemplate) {
         Map<String, Object> model = Maps.newHashMap();
         model.put("user", user);
-        model.put("resource", resource);
+
+        Program program = resource.getProgram();
+        Project project = resource.getProject();
+        Application application = resource.getApplication();
+        Institution institution = resource.getInstitution();
+
+        if (application != null) {
+            model.put("applicant", application.getUser().getDisplayName());
+            model.put("applicationCode", application.getCode());
+        }
+
+        if (program != null) {
+            model.put("projectOrProgramTitle", project == null ? program.getTitle() : project.getTitle());
+        }
+
+        if (institution != null) {
+            model.put("institutionName", institution.getName());
+        }
+
+        model.put("systemName", resource.getSystem().getCode());
+
         model.put("host", host);
         return model;
     }

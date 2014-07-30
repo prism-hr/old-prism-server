@@ -26,8 +26,9 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhanceme
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.CommentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.RegisteredUserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.SecuredResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.ApplicationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.ProgramRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.ResourceListRowRepresentation;
@@ -65,7 +66,7 @@ public class ResourceResource {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @Transactional
-    public AbstractResourceRepresentation getResource(@PathVariable Integer id, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+    public SecuredResourceRepresentation getResource(@PathVariable Integer id, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         User currentUser = userService.getCurrentUser();
         Resource resource = entityService.getById(resourceDescriptor.getType(), id);
         if (resource == null) {
@@ -73,7 +74,7 @@ public class ResourceResource {
         }
 
         // create main representation
-        AbstractResourceRepresentation representation = dozerBeanMapper.map(resource, resourceDescriptor.getRepresentationType());
+        SecuredResourceRepresentation representation = dozerBeanMapper.map(resource, resourceDescriptor.getRepresentationType());
 
         // set visible comments
         List<Comment> comments = commentService.getVisibleComments(resource, currentUser);
@@ -92,16 +93,16 @@ public class ResourceResource {
 
         // set list of user to roles mappings
         List<User> users = roleService.getUsers(resource);
-        List<AbstractResourceRepresentation.UserRolesRepresentation> userRolesRepresentations = Lists.newArrayListWithCapacity(users.size());
+        List<RegisteredUserRepresentation> userRolesRepresentations = Lists.newArrayListWithCapacity(users.size());
         for (User user : users) {
             List<PrismRole> availableRoles = roleService.getRoles(resourceDescriptor.getType());
             Set<PrismRole> roles = Sets.newHashSet(roleService.getUserRoles(resource, user));
-            List<AbstractResourceRepresentation.RoleRepresentation> userRoles = Lists.newArrayListWithCapacity(availableRoles.size());
+            List<SecuredResourceRepresentation.RoleAssignmentRepresentation> userRoles = Lists.newArrayListWithCapacity(availableRoles.size());
             for (PrismRole availableRole : availableRoles) {
-                userRoles.add(new AbstractResourceRepresentation.RoleRepresentation(availableRole, roles.contains(availableRole)));
+                userRoles.add(new SecuredResourceRepresentation.RoleAssignmentRepresentation(availableRole, roles.contains(availableRole)));
             }
-            AbstractResourceRepresentation.UserRolesRepresentation userRolesRepresentation = dozerBeanMapper.map(user,
-                    AbstractResourceRepresentation.UserRolesRepresentation.class);
+            SecuredResourceRepresentation.RegisteredUserRepresentation userRolesRepresentation = dozerBeanMapper.map(user,
+                    SecuredResourceRepresentation.RegisteredUserRepresentation.class);
             userRolesRepresentation.setRoles(userRoles);
             userRolesRepresentations.add(userRolesRepresentation);
         }
@@ -124,7 +125,7 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.PUT)
     public void changeRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestBody List<AbstractResourceRepresentation.RoleRepresentation> roles) {
+            @RequestBody List<SecuredResourceRepresentation.RoleAssignmentRepresentation> roles) {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
 
@@ -133,7 +134,7 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     public void addUserToResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestBody AbstractResourceRepresentation.UserRolesRepresentation userRolesRepresentation) {
+            @RequestBody SecuredResourceRepresentation.RegisteredUserRepresentation userRolesRepresentation) {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
 
         userService.getOrCreateUserWithRoles(userRolesRepresentation.getFirstName(), userRolesRepresentation.getLastName(), userRolesRepresentation.getEmail(),
@@ -154,11 +155,11 @@ public class ResourceResource {
 
         private Class<? extends Resource> type;
 
-        private Class<? extends AbstractResourceRepresentation> representationType;
+        private Class<? extends SecuredResourceRepresentation> representationType;
 
         private String resourceScope;
 
-        private ResourceDescriptor(Class<? extends Resource> type, Class<? extends AbstractResourceRepresentation> representationType, String resourceScope) {
+        private ResourceDescriptor(Class<? extends Resource> type, Class<? extends SecuredResourceRepresentation> representationType, String resourceScope) {
             this.type = type;
             this.representationType = representationType;
             this.resourceScope = resourceScope;
@@ -168,7 +169,7 @@ public class ResourceResource {
             return type;
         }
 
-        public Class<? extends AbstractResourceRepresentation> getRepresentationType() {
+        public Class<? extends SecuredResourceRepresentation> getRepresentationType() {
             return representationType;
         }
 

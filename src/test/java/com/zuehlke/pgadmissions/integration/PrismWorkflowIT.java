@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.beans.Introspector;
 
-import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +27,7 @@ import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.integration.providers.ApplicationTestDataProvider;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
 import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
+import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;

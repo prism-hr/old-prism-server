@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import org.joda.time.DateTime;
-
 import javax.validation.constraints.NotNull;
+
+import org.joda.time.DateTime;
 
 public class ApplicationProgramDetailsDTO {
 

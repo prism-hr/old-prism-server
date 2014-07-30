@@ -17,10 +17,11 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
-
 public abstract class AbstractValidator implements org.springframework.validation.Validator, ApplicationContextAware, ConstraintValidatorFactory {
 
+    public static final Integer ERROR_VALUE_FOR_DURATION_OF_STUDY = -1;
+    public static final Integer ERROR_UNIT_FOR_DURATION_OF_STUDY = -2;
+    
     public static final String EMPTY_FIELD_ERROR_MESSAGE = "text.field.empty";
     
     public static final String MAXIMUM_500_CHARACTERS = "maximum.500.characters";
@@ -104,10 +105,10 @@ public abstract class AbstractValidator implements org.springframework.validatio
     
     protected void validateStudyDuration(Errors errors, Integer studyDuration) {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyDuration", PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER);
-        if (studyDuration != null && studyDuration.equals(DurationOfStudyPropertyEditor.ERROR_VALUE_FOR_DURATION_OF_STUDY)) {
+        if (studyDuration != null && studyDuration.equals(ERROR_VALUE_FOR_DURATION_OF_STUDY)) {
             errors.rejectValue("studyDuration", PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER);
         }
-        if (studyDuration != null && studyDuration.equals(DurationOfStudyPropertyEditor.ERROR_UNIT_FOR_DURATION_OF_STUDY)) {
+        if (studyDuration != null && studyDuration.equals(ERROR_UNIT_FOR_DURATION_OF_STUDY)) {
             errors.rejectValue("studyDuration", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
     }

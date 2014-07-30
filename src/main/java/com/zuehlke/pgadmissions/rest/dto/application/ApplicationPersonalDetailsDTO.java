@@ -1,13 +1,12 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.domain.Gender;
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 public class ApplicationPersonalDetailsDTO {
 

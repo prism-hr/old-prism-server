@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.validation.constraints.NotNull;
 
 public class ApplicationAdditionalInformationDTO {
 

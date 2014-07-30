@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.beans.Introspector;
 
+import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +28,6 @@ import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.integration.providers.ApplicationTestDataProvider;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
 import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
-import com.zuehlke.pgadmissions.rest.representation.ResourceRepresentation;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -90,7 +90,7 @@ public class PrismWorkflowIT {
     public void runWorkflowTest() throws Exception {
         Program program = programService.getProgramsOpenForApplication().get(0);
 
-        User programAdministrator = userService.getOrCreateUserWithRoles("Jerzy", "Urban", "jerzy@urban.pl", program, Lists.newArrayList(new ResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_ADMINISTRATOR, true)));
+        User programAdministrator = userService.getOrCreateUserWithRoles("Jerzy", "Urban", "jerzy@urban.pl", program, Lists.newArrayList(new AbstractResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_ADMINISTRATOR, true)));
 
         User applicant = registerAndActivateUser(PrismAction.PROGRAM_CREATE_APPLICATION, program.getId(), "Kuba", "Fibinger", "kuba@fibinger.pl");
 
@@ -99,7 +99,7 @@ public class PrismWorkflowIT {
         Action action = entityService.getByProperty(Action.class, "id", PrismAction.PROGRAM_CREATE_APPLICATION);
         ActionOutcome actionOutcome = actionService.executeUserAction(application, action, createApplicationComment);
         Application createdApplication = (Application) actionOutcome.getTransitionResource();
-        assertEquals(PrismAction.APPLICATION_COMPLETE, actionOutcome.getNextAction());
+        assertEquals(PrismAction.APPLICATION_COMPLETE, actionOutcome.getTransitionAction());
 
         entityService.update(createdApplication);
         applicationTestDataProvider.fillWithData(createdApplication);
@@ -107,7 +107,7 @@ public class PrismWorkflowIT {
         Comment completeApplicationComment = null;
         action = entityService.getByProperty(Action.class, "id", PrismAction.APPLICATION_COMPLETE);
         actionOutcome = actionService.executeUserAction(createdApplication, action, completeApplicationComment);
-        assertEquals(PrismAction.SYSTEM_VIEW_APPLICATION_LIST, actionOutcome.getNextAction());
+        assertEquals(PrismAction.SYSTEM_VIEW_APPLICATION_LIST, actionOutcome.getTransitionAction());
         assertEquals(systemService.getSystem().getId(), actionOutcome.getTransitionResource().getId());
 
         Comment assignReviewerComment = new Comment().withUser(programAdministrator);
@@ -128,7 +128,7 @@ public class PrismWorkflowIT {
 
     @Before
     public void initializeData() {
-        userService.getOrCreateUserWithRoles("Jozef", "Oleksy", "jozek@oleksy.pl", systemService.getSystem(), Lists.newArrayList(new ResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_ADMINISTRATOR, true)));
+        userService.getOrCreateUserWithRoles("Jozef", "Oleksy", "jozek@oleksy.pl", systemService.getSystem(), Lists.newArrayList(new AbstractResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_ADMINISTRATOR, true)));
 
         for (ImportedEntityFeed feed : entityImportService.getImportedEntityFeeds()) {
             String entityName = Introspector.decapitalize(feed.getImportedEntityType().getEntityClass().getSimpleName());

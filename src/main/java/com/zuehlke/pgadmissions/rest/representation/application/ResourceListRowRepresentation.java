@@ -35,7 +35,7 @@ public class ResourceListRowRepresentation {
 
     private BigDecimal averageRating;
 
-    private String resourceType;
+    private String resourceScope;
 
     public Integer getId() {
         return id;
@@ -133,12 +133,12 @@ public class ResourceListRowRepresentation {
         this.averageRating = averageRating;
     }
 
-    public String getResourceType() {
-        return resourceType;
+    public String getResourceScope() {
+        return resourceScope;
     }
 
-    public void setResourceType(String resourceType) {
-        this.resourceType = resourceType;
+    public void setResourceScope(String resourceScope) {
+        this.resourceScope = resourceScope;
     }
 
     public static class ProjectRepresentation {

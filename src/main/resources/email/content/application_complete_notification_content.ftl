@@ -18,12 +18,12 @@
 			<td width="500">
 				<h1 style="font-size: 12pt;">
 					<font face="Arial, Helvetica, sans-serif" color="#0055A1">
-						Dear ${application.applicant.firstName},
+						Dear ${applicant},
 					</font>
 				</h1>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
-						Thank you for your Application ${application.applicationNumber} for ${application.projectOrProgramTitle}.
+						Thank you for your Application ${applicationCode} for ${projectOrProgramTitle}.
 					</font>
 				</p>
 				<p>
@@ -39,7 +39,7 @@
 
 				<p>
 					<!-- Button -->
-					<a style="text-decoration:none;" href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}&activationCode=${application.applicant.activationCode}" title="View/Update Application">
+					<a style="text-decoration:none;" href="${host}/pgadmissions/application?view=view&applicationId=${applicationCode}&activationCode=${applicant}" title="View/Update Application">
 						<img alt="View or update your application" title="View or update your application" width="180" height="33" src="${host}/pgadmissions/design/default/images/email/view_update_app.jpg" />
 					</a>
 				</p>

@@ -1,20 +1,19 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 
 import java.util.List;
 
-public class ResourceRepresentation {
+public class AbstractResourceRepresentation {
 
     private Integer id;
 
     private String code;
 
     private PrismState state;
+
+    private PrismScope resourceScope;
 
     private List<PrismAction> actions;
     
@@ -46,6 +45,14 @@ public class ResourceRepresentation {
 
     public void setState(PrismState state) {
         this.state = state;
+    }
+
+    public PrismScope getResourceScope() {
+        return resourceScope;
+    }
+
+    public void setResourceScope(PrismScope resourceScope) {
+        this.resourceScope = resourceScope;
     }
 
     public List<PrismAction> getActions() {

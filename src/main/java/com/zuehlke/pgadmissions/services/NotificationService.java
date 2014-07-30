@@ -179,6 +179,7 @@ public class NotificationService {
 
         if (application != null) {
             model.put("applicant", application.getUser().getDisplayName());
+            model.put("applicationCode", application.getCode());
         }
 
         if (program != null) {

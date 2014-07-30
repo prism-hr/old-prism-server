@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTem
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
 import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
-import com.zuehlke.pgadmissions.rest.representation.ResourceRepresentation;
 import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.RoleService;
 
@@ -52,9 +52,9 @@ public class UserHelper {
     }
 
     public void addRoles(Resource resource, User user, PrismRole... roles) {
-        List<ResourceRepresentation.RoleRepresentation> roleRepresentations = Lists.newArrayList();
+        List<AbstractResourceRepresentation.RoleRepresentation> roleRepresentations = Lists.newArrayList();
         for (PrismRole role : roles) {
-            roleRepresentations.add(new ResourceRepresentation.RoleRepresentation(role, true));
+            roleRepresentations.add(new AbstractResourceRepresentation.RoleRepresentation(role, true));
         }
         roleService.updateRoles(resource, user, roleRepresentations);
     }

@@ -1,13 +1,20 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
+
 public class AddressDTO {
 
+    @NotNull
     private Integer domicile;
 
+    @NotEmpty
     private String addressLine1;
 
     private String addressLine2;
 
+    @NotEmpty
     private String addressTown;
 
     private String addressRegion;

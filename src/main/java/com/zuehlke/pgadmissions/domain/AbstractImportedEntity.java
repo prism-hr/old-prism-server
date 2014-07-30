@@ -118,4 +118,5 @@ public abstract class AbstractImportedEntity implements ImportedEntity {
         return Objects.equal(this.code, other.code) && Objects.equal(this.name, other.name)
                 && Objects.equal(this.enabled, other.enabled);
     }
+    
 }

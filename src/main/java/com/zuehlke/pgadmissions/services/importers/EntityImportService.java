@@ -10,7 +10,6 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.exception.ConstraintViolationException;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -24,8 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
@@ -33,11 +30,7 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
@@ -45,7 +38,6 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.Programm
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
-import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.SystemService;
@@ -71,9 +63,6 @@ public class EntityImportService {
 
     @Autowired
     private SystemService systemService;
-
-    @Autowired
-    private ProgramInstanceService programInstanceService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -156,38 +145,27 @@ public class EntityImportService {
     }
 
     public void mergePrograms(List<ProgrammeOccurrence> programOccurrences, Institution institution) throws XMLDataImportException {
-        LocalDate baseline = new LocalDate();
-        
+        LocalDate currentDate = new LocalDate();
+
         EntityImportService thisBean = applicationContext.getBean(EntityImportService.class);
-        thisBean.disableAllProgramInstances(institution);
+        thisBean.disableAllImportedPrograms(institution);
 
         for (ProgrammeOccurrence occurrence : programOccurrences) {
             Programme occurrenceProgram = occurrence.getProgramme();
             ModeOfAttendance modeOfAttendance = occurrence.getModeOfAttendance();
 
-            Program program = thisBean.getOrCreateProgram(occurrenceProgram, institution);
+            Program program = programService.getOrImportProgram(occurrenceProgram, institution);
             StudyOption studyOption = thisBean.getOrCreateStudyOption(institution, modeOfAttendance);
 
-            LocalDate startDate = dtFormatter.parseLocalDate(occurrence.getStartDate());
-            LocalDate endDate = dtFormatter.parseLocalDate(occurrence.getEndDate());
-            ProgramInstance programInstance = new ProgramInstance().withProgram(program).withIdentifier(occurrence.getIdentifier())
-                    .withAcademicYear(occurrence.getAcademicYear()).withStudyOption(studyOption).withApplicationStartDate(startDate)
-                    .withApplicationDeadline(endDate).withEnabled(baseline.isBefore(endDate));
+            LocalDate applicationStartDate = dtFormatter.parseLocalDate(occurrence.getStartDate());
+            LocalDate applicationDeadline = dtFormatter.parseLocalDate(occurrence.getEndDate());
+            ProgramInstance transientProgramInstance = new ProgramInstance().withProgram(program).withIdentifier(occurrence.getIdentifier())
+                    .withAcademicYear(Integer.toString(applicationStartDate.getYear())).withStudyOption(studyOption)
+                    .withApplicationStartDate(applicationStartDate).withApplicationDeadline(applicationDeadline)
+                    .withEnabled(currentDate.isBefore(applicationDeadline));
 
-            try {
-                thisBean.attemptInsert(programInstance);
-            } catch (ConstraintViolationException e) {
-                try {
-                    thisBean.attemptUpdate(programInstance);
-                } catch (Exception e1) {
-                    log.error("Couldn't insert program instance", e);
-                    log.error("Couldn't update program instance", e1);
-                    throw new XMLDataImportException("Could not merge: " + programInstance + " due to a data integrity problem in the import feed.");
-                }
-            }
+            programService.saveProgramInstance(transientProgramInstance);
         }
-        
-        programService.disableInactiveImportedPrograms();
     }
 
     @Transactional
@@ -196,8 +174,8 @@ public class EntityImportService {
     }
 
     @Transactional
-    public void disableAllProgramInstances(Institution institution) {
-        importedEntityService.disableAllProgramInstances(institution);
+    public void disableAllImportedPrograms(Institution institution) {
+        importedEntityService.disableAllImportedPrograms(institution);
     }
 
     @Transactional
@@ -217,34 +195,6 @@ public class EntityImportService {
         ImportedEntity entityByName = importedEntityService.getByName(entityClass, institution, entity.getName());
         entityByName.setCode(entity.getCode());
         entityByName.setEnabled(true);
-    }
-
-    @Transactional
-    public void attemptUpdate(ProgramInstance programInstance) {
-        ProgramInstance persistentProgramInstance = programInstanceService.getByProgramAndAcademicYearAndStudyOption(programInstance.getProgram(),
-                programInstance.getAcademicYear(), programInstance.getStudyOption());
-        persistentProgramInstance.setIdentifier(programInstance.getIdentifier());
-        persistentProgramInstance.setApplicationStartDate(programInstance.getApplicationStartDate());
-        persistentProgramInstance.setApplicationDeadline(programInstance.getApplicationDeadline());
-        persistentProgramInstance.setEnabled(true);
-    }
-
-    @Transactional
-    public Program getOrCreateProgram(Programme programme, Institution institution) {
-        User proxyCreator = institution.getUser();
-        
-        PrismProgramType programType = PrismProgramType.findValueFromString(programme.getName());
-        Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withImportedCode(programme.getCode())
-                .withTitle(programme.getName()).withProgramType(programType).withUser(proxyCreator);
-        
-        Action importAction = actionService.getById(PrismAction.INSTITUTION_IMPORT_PROGRAM);
-        Role proxyCreatorRole = roleService.getCreatorRole(transientProgram);
-
-        Comment comment = new Comment().withUser(proxyCreator).withCreatedTimestamp(new DateTime()).withAction(importAction).withDeclinedResponse(false)
-                .withAssignedUser(proxyCreator, proxyCreatorRole);
-
-        Program persistentProgram = (Program) actionService.executeSystemAction(transientProgram, importAction, comment).getResource();
-        return persistentProgram.withTitle(programme.getName()).withRequireProjectDefinition(programme.isAtasRegistered());
     }
 
     @Transactional

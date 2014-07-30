@@ -133,7 +133,7 @@ public class IT5InstitutionReferenceDataImport {
 
         entityImportService.importEntities(importedEntityFeed);
 
-        assertEquals(2, programService.getAllPrograms().size());
+        assertEquals(2, programService.getPrograms().size());
         Program program1 = programService.getProgramByCode("AGH-1");
         Program otherProgram = programService.getProgramByCode("AGH-99");
         assertEquals("MRes program1", program1.getTitle());
@@ -158,7 +158,7 @@ public class IT5InstitutionReferenceDataImport {
         importedEntityFeed.setLocation("reference_data/conflicts/programs/updatedPrograms.xml");
         entityImportService.importEntities(importedEntityFeed);
 
-        assertEquals(2, programService.getAllPrograms().size());
+        assertEquals(2, programService.getPrograms().size());
         program1 = programService.getProgramByCode("AGH-1");
         otherProgram = programService.getProgramByCode("AGH-99");
         assertEquals("MRes new_program1", program1.getTitle());

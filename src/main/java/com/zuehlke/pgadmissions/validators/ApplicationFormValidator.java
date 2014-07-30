@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
@@ -32,9 +31,6 @@ public class ApplicationFormValidator extends AbstractValidator {
     private ApplicationAddressValidator applicationFormAddressValidator;
 
     @Autowired
-    private AdditionalInformationValidator additionalInformationValidator;
-
-    @Autowired
     private ApplicationFormDocumentValidator applicationFormDocumentValidator;
 
     @Override
@@ -48,7 +44,6 @@ public class ApplicationFormValidator extends AbstractValidator {
         ApplicationProgramDetails programDetails = applicationForm.getProgramDetails();
         ApplicationPersonalDetails personalDetails = applicationForm.getPersonalDetails();
         ApplicationAddress applicationFormAddress = applicationForm.getAddress();
-        ApplicationAdditionalInformation additionalInformation = applicationForm.getAdditionalInformation();
         ApplicationDocument applicationFormDocument = applicationForm.getDocument();
 
         if (!programDetailsValidator.isValid(programDetails)) {
@@ -61,10 +56,6 @@ public class ApplicationFormValidator extends AbstractValidator {
 
         if (!applicationFormAddressValidator.isValid(applicationFormAddress)) {
             errors.rejectValue("applicationAddress", "user.addresses.notempty");
-        }
-
-        if (!additionalInformationValidator.isValid(additionalInformation)) {
-            errors.rejectValue("additionalInformation", "user.additionalInformation.incomplete");
         }
 
         if (!applicationFormDocumentValidator.isValid(applicationFormDocument)) {
@@ -80,7 +71,7 @@ public class ApplicationFormValidator extends AbstractValidator {
         }
 
         if (programDetails != null && programDetails.getStudyOption() != null) {
-            List<ProgramInstance> programInstances = programService.getActiveProgramInstancesForStudyOption(applicationForm.getProgram(),
+            List<ProgramInstance> programInstances = programService.getActiveProgramInstances(applicationForm.getProgram(),
                     programDetails.getStudyOption());
             if (programInstances == null || programInstances.isEmpty()) {
                 errors.rejectValue("programDetails.studyOption", "programDetails.studyOption.invalid");

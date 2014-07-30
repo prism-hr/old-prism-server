@@ -74,7 +74,7 @@ public class Comment {
     private Action action;
 
     @Column(name = "declined_response", nullable = false)
-    private Boolean declinedResponse;
+    private boolean declinedResponse;
 
     @Size(max = 50000, message = "A maximum of 50000 characters are allowed.")
     @Lob
@@ -290,11 +290,11 @@ public class Comment {
         this.action = action;
     }
 
-    public Boolean getDeclinedResponse() {
+    public boolean isDeclinedResponse() {
         return declinedResponse;
     }
 
-    public void setDeclinedResponse(Boolean declinedResponse) {
+    public void setDeclinedResponse(boolean declinedResponse) {
         this.declinedResponse = declinedResponse;
     }
 
@@ -699,6 +699,21 @@ public class Comment {
         return this;
     }
     
+    public Comment withExportRequest(String exportRequest) {
+        this.exportRequest = exportRequest;
+        return this;
+    }
+    
+    public Comment withExportResponse(String exportResponse) {
+        this.exportResponse = exportResponse;
+        return this;
+    }
+    
+    public Comment withExportReference(String exportReference) {
+        this.exportReference = exportReference;
+        return this;
+    }
+    
     public Comment withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
         return this;
@@ -717,7 +732,7 @@ public class Comment {
         return this;
     }
 
-    public boolean isAtLeastOneAnswerUnsure() {
+    public boolean isApplicationCreatorEligibilityUncertain() {
         return getResidenceStatus() == ApplicationResidenceStatus.UNSURE || getQualified() == YesNoUnsureResponse.UNSURE
                 || getCompetentInWorkLanguage() == YesNoUnsureResponse.UNSURE;
     }

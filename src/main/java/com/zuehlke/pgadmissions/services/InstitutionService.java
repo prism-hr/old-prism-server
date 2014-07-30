@@ -42,4 +42,9 @@ public class InstitutionService {
     public List<Institution> listByCountry(InstitutionDomicile domicile) {
         return institutionDAO.listByCountry(domicile);
     }
+    
+    public Institution getUclInstitution() {
+        return institutionDAO.getUclInstitution();
+    }
+    
 }

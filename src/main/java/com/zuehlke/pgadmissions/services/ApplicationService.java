@@ -1,24 +1,64 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.collect.ImmutableMap;
-import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
-import com.zuehlke.pgadmissions.dao.ApplicationDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.ReportFormat;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
-import com.zuehlke.pgadmissions.rest.dto.UserDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.*;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang.BooleanUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
+import com.zuehlke.pgadmissions.domain.Address;
+import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
+import com.zuehlke.pgadmissions.domain.ApplicationAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.ApplicationFunding;
+import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
+import com.zuehlke.pgadmissions.domain.ApplicationPassport;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationQualification;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Disability;
+import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.Ethnicity;
+import com.zuehlke.pgadmissions.domain.FundingSource;
+import com.zuehlke.pgadmissions.domain.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.QualificationType;
+import com.zuehlke.pgadmissions.domain.ReferralSource;
+import com.zuehlke.pgadmissions.domain.StudyOption;
+import com.zuehlke.pgadmissions.domain.Title;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
+import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
+import com.zuehlke.pgadmissions.rest.dto.UserDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.AddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositionDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationFundingDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationLanguageQualificationDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPassportDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailsDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailsDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
 
 @Service
 @Transactional
@@ -28,10 +68,7 @@ public class ApplicationService {
 
     @Autowired
     private ApplicationDAO applicationDAO;
-
-    @Autowired
-    private ApplicationFormListDAO applicationFormListDAO;
-
+    
     @Autowired
     private EntityService entityService;
 
@@ -40,9 +77,6 @@ public class ApplicationService {
 
     @Autowired
     private StateService stateService;
-
-    @Autowired
-    private ProgramDetailsService programDetailsService;
 
     @Autowired
     private ApplicationCopyHelper applicationCopyHelper;
@@ -94,52 +128,84 @@ public class ApplicationService {
         return entityService.getByProperty(Application.class, "code", code);
     }
 
-    public List<Application> getApplicationsForList(final User user, final Filter filtering) {
-        Filter userFilter = user.getUserAccount().getFilters().get(PrismScope.APPLICATION);
-        if (userFilter.getPage() == 1) {
-            userFilter.setLastAccessTimestamp(new DateTime());
-        }
-
-        List<Application> applications = applicationFormListDAO.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE);
-        return applications;
-    }
-
-    public List<Application> getApplicationsForReport(final User user, final Filter filtering, final ReportFormat reportType) {
-        return applicationFormListDAO.getVisibleApplicationsForReport(user, filtering);
-    }
-
-    public List<Application> getApplicationsByStatus(final PrismState status) {
-        return applicationDAO.getAllApplicationsByStatus(status);
-    }
-
-    public List<Application> getApplicationsForProject(final Project project) {
-        return applicationDAO.getApplicationsByProject(project);
-    }
-
-    public void saveOrUpdateApplicationSection(Application application) {
-    }
-
-    public Date getDefaultStartDateForApplication(Application application) {
-        Program program = application.getProgram();
-        StudyOption studyOption = application.getProgramDetails().getStudyOption();
-        if (program != null && studyOption != null) {
-            return programService.getDefaultStartDate(program, studyOption);
-        }
-        return null;
-    }
-
-    public Application getApplicationDescriptorForUser(final Application application, final User user) {
-        Application applicationDescriptor = new Application();
-//        applicationDescriptor.getActionDefinitions().addAll(actionService.getUserActions(user.getId(), application.getId()));
-//        applicationDescriptor.setNeedsToSeeUrgentFlag(applicationFormDAO.getRaisesUrgentFlagForUser(application, user));
-//        applicationDescriptor.setNeedsToSeeUpdateFlag(applicationFormDAO.getRaisesUpdateFlagForUser(application, user));
-        return applicationDescriptor;
-    }
-
     public List<ResourceConsoleListRowDTO> getConsoleListBlock(Integer page, Integer perPage) {
         return resourceService.getConsoleListBlock(Application.class, page, perPage);
     }
+    
+    public List<ResourceReportListRowDTO> getReportList() {
+        return resourceService.getReportList(Application.class);
+    }
+    
+    public LocalDate getEarliestPossibleStartDate(Application application) {
+       return null; 
+    }
+    
+    public LocalDate getRecommendedStartDate(Application application) {
+        return null; 
+    }
+    
+    public LocalDate getLatestPossibleStartDate(Application application) {
+        return null;
+    }
+    
+    public String getApplicationExportReference(Application application) {
+        return applicationDAO.getApplicationExportReference(application);
+    }
+    
+    public String getApplicationCreatorIpAddress(Application application) {
+        return applicationDAO.getApplicationCreatorIpAddress(application);
+    }
+    
+    public User getPrimarySupervisor(Comment offerRecommendationComment) {
+        return applicationDAO.getPrimarySupervisor(offerRecommendationComment);
+    }
+    
+    public List<ApplicationReferee> getApplicationExportReferees(Application application) {
+        return applicationDAO.getApplicationExportReferees(application);
+    }
+    
+    public List<ApplicationReferee> setApplicationExportReferees(Application application) {
+        PrismStateGroup stateGroup = application.getState().getStateGroup().getId();
+        if (stateGroup == PrismStateGroup.APPLICATION_REJECTED || stateGroup == PrismStateGroup.APPLICATION_WITHDRAWN) {
+            if (getApplicationExportReferees(application).size() < 2) {
+                Set<Integer> refereesToSend = Sets.newHashSet();
 
+                for (ApplicationReferee referee : application.getReferees()) {
+                    if (refereesToSend.size() == 2) {
+                        break;
+                    }
+
+                    if (BooleanUtils.isTrue(referee.isIncludeInExport())) {
+                        refereesToSend.add(referee.getId());
+                    } else if (referee.getComment() != null && !referee.getComment().isDeclinedResponse()) {
+                        referee.setIncludeInExport(true);
+                        refereesToSend.add(referee.getId());
+                    }
+                }
+
+                for (ApplicationReferee referee : application.getReferees()) {
+                    if (refereesToSend.size() == 2) {
+                        break;
+                    }
+
+                    if (!refereesToSend.contains(referee.getId())) {
+                        referee.setIncludeInExport(true);
+                        refereesToSend.add(referee.getId());
+                    }
+                }
+            }
+        }
+        return getApplicationExportReferees(application);
+    }
+    
+    public List<ApplicationQualification> getApplicationExportQualifications(Application application) {
+        return applicationDAO.getApplicationExportQualification(application);
+    }
+    
+    public List<Application> getUclApplicationsForExport() {
+        return applicationDAO.getUclApplicationsForExport();
+    }
+    
     public void saveProgramDetails(Integer applicationId, ApplicationProgramDetailsDTO programDetailsDTO) {
         Application application = entityService.getById(Application.class, applicationId);
         ApplicationProgramDetails programDetails = application.getProgramDetails();
@@ -405,8 +471,6 @@ public class ApplicationService {
             additionalInformation = new ApplicationAdditionalInformation();
             application.setAdditionalInformation(additionalInformation);
         }
-
-        additionalInformation.setHasConvictions(additionalInformationDTO.getHasConvictions());
         additionalInformation.setConvictionsText(additionalInformationDTO.getConvictionsText());
     }
 
@@ -419,4 +483,5 @@ public class ApplicationService {
         to.setAddressRegion(from.getAddressRegion());
         to.setAddressCode(from.getAddressCode());
     }
+    
 }

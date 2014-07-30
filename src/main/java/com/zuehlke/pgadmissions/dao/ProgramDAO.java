@@ -12,14 +12,13 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
@@ -88,30 +87,16 @@ public class ProgramDAO {
         // TODO implement for projects - programs done
     }
 
-    public Date getDefaultStartDate(Program program, StudyOption studyOption) {
-        Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
-        return (Date) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class).setProjection(Projections.min("applicationDeadline"))
-                .add(Restrictions.eq("program", program)).add(Restrictions.eq("enabled", true)).add(Restrictions.eq("studyOption", studyOption))
-                .add(Restrictions.ge("applicationDeadline", today)).uniqueResult();
-    }
-
-    public List<ProgramInstance> getActiveProgramInstances(Program program) {
-        Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
-        return (List<ProgramInstance>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class).add(Restrictions.eq("program", program))
-                .add(Restrictions.eq("enabled", true)).add(Restrictions.ge("applicationDeadline", today)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .list();
-    }
-
     public List<StudyOption> getAvailableStudyOptions(Program program) {
-        return (List<StudyOption>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
+        return (List<StudyOption>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class) //
                 .setProjection(Projections.groupProperty("studyOption")) //
                 .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("program", program)).add(Restrictions.eq("enabled", true)) //
-                .add(Restrictions.ge("applicationDeadline", new DateTime())) //
+                .add(Restrictions.ge("applicationDeadline", new LocalDate())) //
                 .addOrder(Order.asc("studyOption.name")).list();
     }
 
-    public List<ProgramInstance> getActiveProgramInstancesForStudyOption(Program program, StudyOption studyOption) {
+    public List<ProgramInstance> getActiveProgramInstances(Program program, StudyOption studyOption) {
         Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
         return (List<ProgramInstance>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class).add(Restrictions.eq("program", program))
                 .add(Restrictions.eq("studyOption", studyOption)).add(Restrictions.eq("enabled", true)).add(Restrictions.ge("applicationDeadline", today))
@@ -123,40 +108,31 @@ public class ProgramDAO {
                 .addOrder(Order.asc("name")).list();
     }
 
-    public ProgramInstance getProgramInstance(Program program, StudyOption studyOption, Date date) {
-        // TODO Auto-generated method stub
-        return null;
+    public List<Program> getPrograms() {
+        return sessionFactory.getCurrentSession().createCriteria(Program.class) //
+                .list();
     }
-
-    public DateTimeZone getLatestActiveInstanceDeadline(Program program) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public void save(ProgramInstance programInstance) {
-        // TODO Auto-generated method stub
-    }
-
-    public List<Program> getAllPrograms() {
-        return sessionFactory.getCurrentSession().createCriteria(Program.class).list();
-    }
-
-    public ProgramInstance getByProgramAndAcademicYearAndStudyOption(Program program, String academicYear, StudyOption studyOption) {
+    
+    public ProgramInstance getExportProgramInstance(Application application) {
+        LocalDate preferredStartDate = application.getProgramDetails().getStartDate();
         return (ProgramInstance) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class) //
-                .add(Restrictions.eq("program", program)) //
-                .add(Restrictions.eq("academicYear", academicYear)) //
-                .add(Restrictions.eq("studyOption", studyOption)) //
+                .add(Restrictions.eq("program", application.getProgram())) //
+                .add(Restrictions.eq("studyOption", application.getProgramDetails().getStudyOption())) //
+                .add(Restrictions.le("programInstance.applicationStartDate", preferredStartDate)) //
+                .add(Restrictions.ge("programInstance.applicationDeadline", preferredStartDate)) //
+                .add(Restrictions.eq("enabled", true)) //
+                .addOrder(Order.asc("programInstance.applicationStartDate")) //
+                .setMaxResults(1) //
                 .uniqueResult();
     }
     
-    public List<Program> getInactiveImportedPrograms() {
-        return (List<Program>) sessionFactory.getCurrentSession().createQuery( //
-                "select program " //
-                        + "from ProgramInstance programInstance join programInstance.program program " //
-                        + "where program.importedCode is not null " //
-                        + "group by program " //
-                        + "having count(enabled) = 0") //
-                        .list();
+    public ProgramInstance getLatestProgramInstance(Program program) {
+        return (ProgramInstance) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class) //
+                .add(Restrictions.eq("program", program)) //
+                .add(Restrictions.eq("enabled", true)) //
+                .addOrder(Order.desc("programInstance.applicationStartDate")) //
+                .setMaxResults(1) //
+                .uniqueResult();     
     }
 
 }

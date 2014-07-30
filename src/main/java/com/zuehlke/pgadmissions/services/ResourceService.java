@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Advert;
@@ -28,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
+import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
@@ -50,7 +52,13 @@ public class ResourceService {
     private UserService userService;
 
     public <T extends Resource> List<ResourceConsoleListRowDTO> getConsoleListBlock(Class<T> resourceType, int page, int perPage) {
+        // TODO: Build filter and integrate
         return resourceDAO.getConsoleListBlock(userService.getCurrentUser(), resourceType, page, perPage);
+    }
+    
+    public <T extends Resource> List<ResourceReportListRowDTO> getReportList(Class<T> resourceType) {
+        // TODO: Build the query and integrate with filter
+        return Lists.newArrayList();
     }
 
     public void setTransitionState(Resource resource, State transitionState) {

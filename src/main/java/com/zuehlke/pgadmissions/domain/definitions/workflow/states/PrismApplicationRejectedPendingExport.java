@@ -86,7 +86,7 @@ public class PrismApplicationRejectedPendingExport extends PrismWorkflowState {
             .withAction(PrismAction.APPLICATION_EXPORT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-                .withTransitions(Arrays.asList( // 
+                .withTransitions(Arrays.asList( //
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REJECTED_COMPLETED) // 
                         .withTransitionAction(PrismAction.APPLICATION_EXPORT) // 

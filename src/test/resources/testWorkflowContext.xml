@@ -72,6 +72,8 @@
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
 
     <bean id="mailSender" class="com.zuehlke.pgadmissions.mail.MailSenderMock" primary="true"/>
+    
+    <bean id="applicationExportService" class="com.zuehlke.pgadmissions.services.exporters.applicationExportServiceMock" primary="true"/>
 
     <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PgAdmissionAuthenticationProvider"/>
 

@@ -15,11 +15,13 @@ import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.Filter;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
+import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
@@ -229,6 +231,10 @@ public class UserService {
 
     public List<MailDescriptor> getUserStateTransitionNotifications(StateTransition stateTransition) {
         return userDAO.getUserStateTransitionNotifications(stateTransition);
+    }
+    
+    public String getUserInstitutionId(User user, Institution institution, PrismUserIdentity identityType) {
+        return userDAO.getUserInstitutionId(user, institution, identityType);
     }
 
 }

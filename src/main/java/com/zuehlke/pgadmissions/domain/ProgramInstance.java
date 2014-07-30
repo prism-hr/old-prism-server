@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,10 +16,12 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @Entity
 @Table(name = "PROGRAM_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "program_id", "academic_year", "study_option_id" }))
-public class ProgramInstance {
+public class ProgramInstance implements IUniqueEntity {
 
     @Id
     @GeneratedValue
@@ -95,11 +100,11 @@ public class ProgramInstance {
         this.studyOption = studyOption;
     }
 
-    public void setEnabled(Boolean enabled) {
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
-    public Boolean getEnabled() {
+    public boolean isEnabled() {
         return this.enabled;
     }
 
@@ -172,6 +177,17 @@ public class ProgramInstance {
                 && Objects.equal(this.enabled, other.enabled)
                 && Objects.equal(this.applicationStartDate, other.applicationStartDate)
                 && Objects.equal(this.applicationDeadline, other.applicationDeadline);
+    }
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("program", program);
+        properties.put("academicYear", academicYear);
+        properties.put("studyOption", studyOption);
+        propertiesWrapper.add(properties);
+        return new ResourceSignature(propertiesWrapper);
     }
 
 }

@@ -69,7 +69,8 @@ public class ImportedEntityService {
         importedEntityDAO.disableAllEntities(entityClass, institution);
     }
 
-    public void disableAllProgramInstances(Institution institution) {
+    public void disableAllImportedPrograms(Institution institution) {
+        importedEntityDAO.disableAllImportedPrograms(institution);
         importedEntityDAO.disableAllImportedProgramInstances(institution);   
     }
 

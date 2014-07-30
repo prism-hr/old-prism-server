@@ -210,7 +210,6 @@ public class ApplicationTestDataProvider {
 
     private void createAdditionalInformation(Application application) {
         ApplicationAdditionalInformation additionalInformation = new ApplicationAdditionalInformation();
-        additionalInformation.setHasConvictions(true);
         additionalInformation.setConvictionsText("I was a bad person");
         additionalInformationService.saveOrUpdate(application.getId(), additionalInformation);
     }

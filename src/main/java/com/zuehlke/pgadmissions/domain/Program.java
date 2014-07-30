@@ -325,12 +325,7 @@ public class Program extends Advert {
 
     @Override
     public LocalDate getDueDateBaseline() {
-        LocalDate baseline = new LocalDate();
-        for (ProgramInstance programInstance : programInstances) {
-            LocalDate instanceExpiry = programInstance.getApplicationDeadline();
-            baseline = instanceExpiry.isAfter(baseline) ? instanceExpiry : baseline;
-        }
-        return baseline;
+        return new LocalDate();
     }
     
     @Override

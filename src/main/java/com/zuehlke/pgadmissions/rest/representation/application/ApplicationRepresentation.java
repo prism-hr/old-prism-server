@@ -2,15 +2,14 @@ package com.zuehlke.pgadmissions.rest.representation.application;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.InstitutionRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.rest.representation.ResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 
-public class ApplicationRepresentation extends ResourceRepresentation {
+public class ApplicationRepresentation extends AbstractResourceRepresentation {
 
     private UserRepresentation user;
 
@@ -190,10 +189,6 @@ public class ApplicationRepresentation extends ResourceRepresentation {
 
     public void setAdditionalInformation(AdditionalInformationRepresentation additionalInformation) {
         this.additionalInformation = additionalInformation;
-    }
-
-    public String getResourceType() {
-        return "APPLICATION";
     }
 
 }

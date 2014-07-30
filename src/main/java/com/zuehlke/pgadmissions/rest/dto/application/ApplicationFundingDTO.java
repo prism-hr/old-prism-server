@@ -1,20 +1,31 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.representation.application.FileRepresentation;
+import com.zuehlke.pgadmissions.rest.validation.annotation.DatePast;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
+
+import javax.validation.constraints.NotNull;
 
 public class ApplicationFundingDTO {
 
     private Integer id;
 
+    @NotNull
     private Integer fundingSource;
 
-    private FileRepresentation document;
+    @NotNull
+    private FileDTO document;
 
+    @NotEmpty
     private String description;
 
+    @NotEmpty
     private String value;
 
+    @NotNull
+    @DatePast
     private DateTime awardDate;
 
     public Integer getId() {
@@ -33,11 +44,11 @@ public class ApplicationFundingDTO {
         this.fundingSource = fundingSource;
     }
 
-    public FileRepresentation getDocument() {
+    public FileDTO getDocument() {
         return document;
     }
 
-    public void setDocument(FileRepresentation document) {
+    public void setDocument(FileDTO document) {
         this.document = document;
     }
 

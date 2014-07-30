@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.rest.representation;
 import java.util.Set;
 import java.util.TimeZone;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.rest.representation.application.FileRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -25,7 +26,7 @@ public class CommentRepresentation {
 
     private String delegateRole;
 
-    private Action action;
+    private PrismAction action;
 
     private Boolean declinedResponse;
 
@@ -135,11 +136,11 @@ public class CommentRepresentation {
         this.delegateRole = delegateRole;
     }
 
-    public Action getAction() {
+    public PrismAction getAction() {
         return action;
     }
 
-    public void setAction(Action action) {
+    public void setAction(PrismAction action) {
         this.action = action;
     }
 

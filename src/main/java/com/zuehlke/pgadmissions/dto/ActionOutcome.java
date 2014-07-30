@@ -32,16 +32,14 @@ public class ActionOutcome {
     }
 
     public Resource getResource() {
-        Hibernate.initialize(resource);
         return resource;
     }
 
     public Resource getTransitionResource() {
-        Hibernate.initialize(transitionResource);
         return transitionResource;
     }
 
-    public Action getNextAction() {
+    public Action getTransitionAction() {
         return transitionAction;
     }
 

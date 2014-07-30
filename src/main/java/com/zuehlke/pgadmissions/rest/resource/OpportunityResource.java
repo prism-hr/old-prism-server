@@ -30,7 +30,7 @@ public class OpportunityResource {
         List<OpportunityRepresentation> representations = Lists.newArrayListWithExpectedSize(adverts.size());
         for (Advert advert : adverts) {
             OpportunityRepresentation representation = dozerBeanMapper.map(advert, OpportunityRepresentation.class);
-            representation.setResourceType(advert.getProject() == null ? PrismScope.PROGRAM : PrismScope.PROJECT);
+            representation.setResourceScope(advert.getProject() == null ? PrismScope.PROGRAM : PrismScope.PROJECT);
             representations.add(representation);
         }
         return representations;

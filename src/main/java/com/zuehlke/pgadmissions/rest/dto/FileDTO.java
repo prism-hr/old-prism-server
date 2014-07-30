@@ -1,9 +1,15 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
+
 public class FileDTO {
 
+    @NotNull
     private Integer id;
 
+    @NotEmpty
     private String fileName;
 
     public Integer getId() {

@@ -1,22 +1,33 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
 import com.zuehlke.pgadmissions.rest.representation.application.AddressRepresentation;
+import com.zuehlke.pgadmissions.rest.validation.annotation.DateNotAfterDate;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
+import javax.validation.constraints.NotNull;
+
+@DateNotAfterDate(startDate = "startDate", endDate = "endDate")
 public class ApplicationEmploymentPositionDTO {
 
     private Integer id;
 
+    @NotEmpty
     private String employerName;
 
+    @NotNull
     private AddressDTO employerAddress;
 
+    @NotEmpty
     private String position;
 
+    @NotNull
     private Boolean current;
 
+    @NotEmpty
     private String remit;
 
+    @NotNull
     private DateTime startDate;
 
     private DateTime endDate;

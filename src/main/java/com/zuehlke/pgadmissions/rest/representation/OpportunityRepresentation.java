@@ -20,7 +20,7 @@ public class OpportunityRepresentation {
 
     private UserRepresentation user;
 
-    private PrismScope resourceType;
+    private PrismScope resourceScope;
 
     public Integer getId() {
         return id;
@@ -78,11 +78,11 @@ public class OpportunityRepresentation {
         this.user = user;
     }
 
-    public PrismScope getResourceType() {
-        return resourceType;
+    public PrismScope getResourceScope() {
+        return resourceScope;
     }
 
-    public void setResourceType(PrismScope resourceType) {
-        this.resourceType = resourceType;
+    public void setResourceScope(PrismScope resourceScope) {
+        this.resourceScope = resourceScope;
     }
 }

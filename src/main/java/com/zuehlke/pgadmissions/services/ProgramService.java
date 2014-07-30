@@ -84,7 +84,7 @@ public class ProgramService {
         return programDAO.getProgramByImportedCode(institution, importedCode);
     }
      
-    public List<Program> getProgramsForWhichCanManageProjects(User user) {
+    public List<Program> getPrograms(User user) {
         // TODO implement SQL query for basic list;
         return null;
     }

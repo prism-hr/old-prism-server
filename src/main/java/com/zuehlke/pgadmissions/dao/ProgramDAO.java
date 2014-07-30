@@ -118,10 +118,10 @@ public class ProgramDAO {
         return (ProgramInstance) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class) //
                 .add(Restrictions.eq("program", application.getProgram())) //
                 .add(Restrictions.eq("studyOption", application.getProgramDetails().getStudyOption())) //
-                .add(Restrictions.le("programInstance.applicationStartDate", preferredStartDate)) //
-                .add(Restrictions.ge("programInstance.applicationDeadline", preferredStartDate)) //
+                .add(Restrictions.le("applicationStartDate", preferredStartDate)) //
+                .add(Restrictions.ge("applicationDeadline", preferredStartDate)) //
                 .add(Restrictions.eq("enabled", true)) //
-                .addOrder(Order.asc("programInstance.applicationStartDate")) //
+                .addOrder(Order.asc("applicationStartDate")) //
                 .setMaxResults(1) //
                 .uniqueResult();
     }
@@ -130,7 +130,7 @@ public class ProgramDAO {
         return (ProgramInstance) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class) //
                 .add(Restrictions.eq("program", program)) //
                 .add(Restrictions.eq("enabled", true)) //
-                .addOrder(Order.desc("programInstance.applicationStartDate")) //
+                .addOrder(Order.desc("applicationStartDate")) //
                 .setMaxResults(1) //
                 .uniqueResult();     
     }

@@ -110,7 +110,7 @@ public class ProgramExportService {
     }
 
     private ProgramExport getDefaultOpportunitiesFeed(final User user, PrismProgramExportFormat format) {
-        List<Program> defaultPrograms = programService.getProgramsForWhichCanManageProjects(user);
+        List<Program> defaultPrograms = programService.getPrograms(user);
 
         ProgramExport defaultFeedSmall = new ProgramExport();
         defaultFeedSmall.setId(format == PrismProgramExportFormat.SMALL ? DEFAULT_SMALL_FEED_ID : DEFAULT_LARGE_FEED_ID);

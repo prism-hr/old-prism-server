@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 @Table(name = "ADVERT")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Advert extends Resource {
-
+    
     @Id
     @GeneratedValue
     private Integer id;

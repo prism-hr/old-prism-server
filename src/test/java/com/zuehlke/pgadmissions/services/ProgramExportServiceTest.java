@@ -118,7 +118,7 @@ public class ProgramExportServiceTest {
     @Test
     public void shouldGetAllFeedsForUser() {
         User user = new User().withEmail("fooBarZ@fooBarZ.com");
-        EasyMock.expect(programServiceMock.getProgramsForWhichCanManageProjects(user)).andReturn(null).times(2);
+        EasyMock.expect(programServiceMock.getPrograms(user)).andReturn(null).times(2);
         EasyMock.expect(daoMock.getAllFeedsForUser(user)).andReturn(Collections.<ProgramExport> emptyList());
 
         EasyMock.replay(daoMock, programServiceMock);

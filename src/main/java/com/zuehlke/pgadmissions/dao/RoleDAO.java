@@ -53,8 +53,8 @@ public class RoleDAO {
     
     public List<User> getRoleUsers(Resource resource, Role role) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
                 .setProjection(Projections.property("user")) //
+                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
                 .add(Restrictions.eq("role", role)) //
                 .list();
     }

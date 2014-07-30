@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.UserNotification;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 
@@ -77,23 +76,30 @@ public class RoleService {
         if (creatorRole == roleToRemove) {
             List<User> creatorRoleAssignments = getRoleUsers(resource, creatorRole);
             if (creatorRoleAssignments.size() == 1) {
-                throw new Error("User attempted to remove the final " + roleToRemove.getAuthority() + " for "
-                        + PrismScope.getResourceScope(resource.getClass()).getLowerCaseName() + " " + resource.getCode());
+                throw new Error();
             }
         }
     }
-    
+
     private void reassignResourceOwner(Resource resource) {
         User owner = resource.getUser();
         Role ownerRole = getCreatorRole(resource);
-        
-        UserRole ownerUserRole = getUserRole(resource, owner, ownerRole);
-        if (ownerUserRole == null) {
+        if (!hasUserRole(resource, owner, ownerRole.getId())) {
             User newOwner = getRoleUsers(resource, ownerRole).get(0);
             resource.setUser(newOwner);
         }
     }
-
+    
+    public void updateRoles(Resource resource, User user, List<AbstractResourceRepresentation.RoleRepresentation> roles) {
+        for (AbstractResourceRepresentation.RoleRepresentation role : roles) {
+            if (role.getValue()) {
+                getOrCreateUserRole(resource, user, role.getId());
+            } else {
+                removeUserRoles(resource, user, role.getId());
+            }
+        }
+    }
+    
     public List<Role> getActionOwnerRoles(User user, Resource resource, Action action) {
         return roleDAO.getActionOwnerRoles(user, resource, action);
     }
@@ -105,11 +111,11 @@ public class RoleService {
     public List<User> getUsers(Resource resource) {
         return roleDAO.getUsers(resource);
     }
-    
+
     public UserRole getUserRole(Resource resource, User user, Role role) {
         return roleDAO.getUserRole(resource, user, role);
     }
-    
+
     public boolean hasUserRole(Resource resource, User user, PrismRole roleId) {
         Role role = getById(roleId);
         return getUserRole(resource, user, role) != null;
@@ -121,16 +127,6 @@ public class RoleService {
 
     public List<User> getRoleUsers(Resource resource, Role role) {
         return roleDAO.getRoleUsers(resource, role);
-    }
-
-    public void updateRoles(Resource resource, User user, List<AbstractResourceRepresentation.RoleRepresentation> roles) {
-        for (AbstractResourceRepresentation.RoleRepresentation role : roles) {
-            if (role.getValue()) {
-                getOrCreateUserRole(resource, user, role.getId());
-            } else {
-                removeUserRoles(resource, user, role.getId());
-            }
-        }
     }
 
     public List<PrismRole> getRoles(Class<? extends Resource> resourceClass) {
@@ -203,8 +199,8 @@ public class RoleService {
                     userRoleTransitions.put(user, roleTransition);
                 }
             } else {
-                throw new WorkflowEngineException("Found " + users.size() + " users of role: " + roleTransition.getRole().getAuthority()
-                        + ". Expected " + minimumPermitted + " <= n <=" + maximumPermitted);
+                throw new WorkflowEngineException("Found " + users.size() + " users of role: " + roleTransition.getRole().getAuthority() + ". Expected "
+                        + minimumPermitted + " <= n <=" + maximumPermitted);
             }
         }
 

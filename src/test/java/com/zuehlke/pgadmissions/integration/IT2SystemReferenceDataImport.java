@@ -116,7 +116,7 @@ public class IT2SystemReferenceDataImport {
         User user = new User().withEmail("jerzy@urban.pl").withFirstName("Jerzy").withLastName("Urban").withActivationCode("jurekjurektrzymajsie");
         Institution institution = new Institution().withName("University College London").withState(institutionState).withHomepage("www.agh.edu.pl")
                 .withSystem(system).withUser(user).withCreatedTimestamp(new DateTime()).withUpdatedTimestamp(new DateTime())
-                .withAddress(address).withDomicile(poland);
+                .withAddress(address).withUclInstitution(true).withDomicile(poland);
         entityService.getOrCreate(user);
         return entityService.getOrCreate(institution);
     }
@@ -229,7 +229,7 @@ public class IT2SystemReferenceDataImport {
                         equalTo(new ProgramInstance().withIdentifier("0009").withAcademicYear("2013")
                                 .withStudyOption(new StudyOption().withInstitution(institution).withCode("F+++++").withName("Full-time").withEnabled(true))
                                 .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(true)),
-                        equalTo(new ProgramInstance().withIdentifier("0008").withAcademicYear("2014")
+                        equalTo(new ProgramInstance().withIdentifier("0008").withAcademicYear("2013")
                                 .withStudyOption(new StudyOption().withInstitution(institution).withCode("P+++++").withName("Fart-time").withEnabled(true))
                                 .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(true))));
 
@@ -240,8 +240,6 @@ public class IT2SystemReferenceDataImport {
                         .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(false))));
 
     }
-    
-    // TODO: test coverage for disabling inactive imported programs
 
     private void importRemainingEntities(Institution institution) throws Exception {
         ImportedEntityFeed importedEntityFeed = new ImportedEntityFeed();
@@ -304,11 +302,19 @@ public class IT2SystemReferenceDataImport {
         List<Program> programs = programService.getPrograms();
         for (Program program : programs) {
             ProgramInstance latestEnabledInstance = programService.getLatestProgramInstance(program);
-            assertEquals(latestEnabledInstance.getApplicationDeadline(), program.getDueDate());
+            LocalDate dueDate = program.getDueDate();
+            LocalDate currentDate = new LocalDate();
+            if (latestEnabledInstance == null) {
+                assertTrue(dueDate.isEqual(currentDate) || dueDate.isBefore(currentDate));
+            } else {
+                assertEquals(latestEnabledInstance.getApplicationDeadline(), program.getDueDate());
+            }
             User programUser = program.getUser();
             assertEquals(program.getInstitution().getUser(), program.getUser());
             assertTrue(roleService.hasUserRole(program, programUser, PrismRole.PROGRAM_ADMINISTRATOR));
         }
     }
+    
+    // TODO: test re-enabling an imported program that has been disabled
     
 }

@@ -108,13 +108,13 @@ public class ApplicationExportService {
     private UserService userService;
 
     @Autowired
-    private ApplicationContext context;
+    private ApplicationContext applicationContext;
 
     public void exportUclApplications() {
         List<Application> applications = getUclApplicationsForExport();
         for (Application application : applications) {
             try {
-                ApplicationExportService proxy = context.getBean(this.getClass());
+                ApplicationExportService proxy = applicationContext.getBean(this.getClass());
                 String applicationCode = application.getCode();
                 logger.info("Exporting data for application: " + applicationCode);
                 String exportReference = proxy.sendDataExportRequest(application);

@@ -115,8 +115,4 @@ public class EntityService {
         entityDAO.evict(entity);
     }
 
-    public Object getProperty(Object object, String property) {
-        return entityDAO.getProperty(object, property);
-    }
-    
 }

@@ -70,7 +70,7 @@ public class ApplicationService {
 
     @Autowired
     private ApplicationDAO applicationDAO;
-    
+
     @Autowired
     private EntityService entityService;
 
@@ -136,39 +136,53 @@ public class ApplicationService {
     public List<ResourceConsoleListRowDTO> getConsoleListBlock(Integer page, Integer perPage) {
         return resourceService.getConsoleListBlock(Application.class, page, perPage);
     }
-    
+
     public List<ResourceReportListRowDTO> getReportList() {
         return resourceService.getReportList(Application.class);
     }
-    
-    public LocalDate getEarliestPossibleStartDate(Application application) {
-       return null; 
+
+    public LocalDate getEarliestStartDate(Application application) {
+        LocalDate currentDate = new LocalDate();
+        LocalDate earliestStartDate = programService.getEarliestProgramInstance(application).getApplicationStartDate();
+        if (earliestStartDate.isBefore(currentDate)) {
+            return getNextMonday(currentDate);
+        }
+        return getNextMonday(earliestStartDate);
     }
-    
+
+    public LocalDate getLatestStartDate(Application application) {
+        LocalDate latestStartDate = programService.getLatestProgramInstance(application).getApplicationDeadline();
+        return getNextMonday(latestStartDate);
+    }
+
     public LocalDate getRecommendedStartDate(Application application) {
-        return null; 
+        LocalDate recommendedStartDate = null;
+        if (application.getAdvert().isImmediateStart()) {
+            recommendedStartDate = new LocalDate().plusWeeks(4);
+        } else {
+            recommendedStartDate = programService.getEarliestProgramInstance(application).getApplicationDeadline();
+        }
+        recommendedStartDate = getNextMonday(recommendedStartDate);
+        LocalDate latestStartDate = getLatestStartDate(application);
+        return recommendedStartDate.isAfter(latestStartDate) ? latestStartDate : recommendedStartDate;
     }
-    
-    public LocalDate getLatestPossibleStartDate(Application application) {
-        return null;
-    }
-    
+
     public String getApplicationExportReference(Application application) {
         return applicationDAO.getApplicationExportReference(application);
     }
-    
+
     public String getApplicationCreatorIpAddress(Application application) {
         return applicationDAO.getApplicationCreatorIpAddress(application);
     }
-    
+
     public User getPrimarySupervisor(Comment offerRecommendationComment) {
         return applicationDAO.getPrimarySupervisor(offerRecommendationComment);
     }
-    
+
     public List<ApplicationReferee> getApplicationExportReferees(Application application) {
         return applicationDAO.getApplicationExportReferees(application);
     }
-    
+
     public List<ApplicationReferee> setApplicationExportReferees(Application application) {
         PrismStateGroup stateGroup = application.getState().getStateGroup().getId();
         if (stateGroup == PrismStateGroup.APPLICATION_REJECTED || stateGroup == PrismStateGroup.APPLICATION_WITHDRAWN) {
@@ -202,15 +216,15 @@ public class ApplicationService {
         }
         return getApplicationExportReferees(application);
     }
-    
+
     public List<ApplicationQualification> getApplicationExportQualifications(Application application) {
         return applicationDAO.getApplicationExportQualification(application);
     }
-    
+
     public List<Application> getUclApplicationsForExport() {
         return applicationDAO.getUclApplicationsForExport();
     }
-    
+
     public void saveProgramDetails(Integer applicationId, ApplicationProgramDetailsDTO programDetailsDTO) {
         Application application = entityService.getById(Application.class, applicationId);
         Institution institution = application.getInstitution();
@@ -227,9 +241,9 @@ public class ApplicationService {
         programDetails.setReferralSource(referralSource);
 
         // TODO replace supervisors
-//        programDetails.getSupervisors().clear();
-//        for (ApplicationSupervisorDTO supervisorDTO : programDetailsDTO.getSupervisors()) {
-//        }
+        // programDetails.getSupervisors().clear();
+        // for (ApplicationSupervisorDTO supervisorDTO : programDetailsDTO.getSupervisors()) {
+        // }
     }
 
     public void savePersonalDetails(Integer applicationId, ApplicationPersonalDetailsDTO personalDetailsDTO) {
@@ -251,7 +265,8 @@ public class ApplicationService {
         Gender gender = importedEntityService.getById(Gender.class, institution, personalDetailsDTO.getGender());
         Country country = importedEntityService.getById(Country.class, institution, personalDetailsDTO.getCountry());
         Language firstNationality = importedEntityService.getById(Language.class, institution, personalDetailsDTO.getFirstNationality());
-        Language secondNationality = personalDetailsDTO.getSecondNationality() != null ? importedEntityService.<Language>getById(Language.class, institution, personalDetailsDTO.getSecondNationality()) : null;
+        Language secondNationality = personalDetailsDTO.getSecondNationality() != null ? importedEntityService.<Language> getById(Language.class, institution,
+                personalDetailsDTO.getSecondNationality()) : null;
         Domicile residenceCountry = importedEntityService.getById(Domicile.class, institution, personalDetailsDTO.getResidenceCountry());
         Ethnicity ethnicity = importedEntityService.getById(Ethnicity.class, institution, personalDetailsDTO.getEthnicity());
         Disability disability = importedEntityService.getById(Disability.class, institution, personalDetailsDTO.getDisability());
@@ -278,7 +293,8 @@ public class ApplicationService {
                 languageQualification = new ApplicationLanguageQualification();
                 personalDetails.setLanguageQualification(languageQualification);
             }
-            LanguageQualificationType languageQualificationType = importedEntityService.getById(LanguageQualificationType.class, institution, languageQualificationDTO.getType());
+            LanguageQualificationType languageQualificationType = importedEntityService.getById(LanguageQualificationType.class, institution,
+                    languageQualificationDTO.getType());
             Document proofOfAward = entityService.getById(Document.class, languageQualificationDTO.getProofOfAward().getId());
             languageQualification.setType(languageQualificationType);
             languageQualification.setExamDate(languageQualificationDTO.getExamDate().toLocalDate());
@@ -345,7 +361,8 @@ public class ApplicationService {
             application.getQualifications().add(qualification);
         }
 
-        ImportedInstitution importedInstitution = importedEntityService.getById(ImportedInstitution.class, institution, qualificationDTO.getInstitution().getId());
+        ImportedInstitution importedInstitution = importedEntityService.getById(ImportedInstitution.class, institution, qualificationDTO.getInstitution()
+                .getId());
         QualificationType qualificationType = importedEntityService.getById(QualificationType.class, institution, qualificationDTO.getType());
         Document qualificationDocument = entityService.getById(Document.class, qualificationDTO.getDocument().getId());
         qualification.setInstitution(importedInstitution);
@@ -363,16 +380,19 @@ public class ApplicationService {
 
     public void deleteQualification(Integer applicationId, Integer qualificationId) {
         Application application = entityService.getById(Application.class, applicationId);
-        ApplicationQualification qualification = entityService.getByProperties(ApplicationQualification.class, ImmutableMap.of("application", application, "id", qualificationId));
+        ApplicationQualification qualification = entityService.getByProperties(ApplicationQualification.class,
+                ImmutableMap.of("application", application, "id", qualificationId));
         application.getQualifications().remove(qualification);
     }
 
-    public ApplicationEmploymentPosition saveEmploymentPosition(Integer applicationId, Integer employmentPositionId, ApplicationEmploymentPositionDTO employmentPositionDTO) {
+    public ApplicationEmploymentPosition saveEmploymentPosition(Integer applicationId, Integer employmentPositionId,
+            ApplicationEmploymentPositionDTO employmentPositionDTO) {
         Application application = entityService.getById(Application.class, applicationId);
 
         ApplicationEmploymentPosition employmentPosition;
         if (employmentPositionId != null) {
-            employmentPosition = entityService.getByProperties(ApplicationEmploymentPosition.class, ImmutableMap.of("application", application, "id", employmentPositionId));
+            employmentPosition = entityService.getByProperties(ApplicationEmploymentPosition.class,
+                    ImmutableMap.of("application", application, "id", employmentPositionId));
         } else {
             employmentPosition = new ApplicationEmploymentPosition();
             application.getEmploymentPositions().add(employmentPosition);
@@ -399,10 +419,10 @@ public class ApplicationService {
 
     public void deleteEmploymentPosition(Integer applicationId, Integer employmentPositionId) {
         Application application = entityService.getById(Application.class, applicationId);
-        ApplicationEmploymentPosition employmentPosition = entityService.getByProperties(ApplicationEmploymentPosition.class, ImmutableMap.of("application", application, "id", employmentPositionId));
+        ApplicationEmploymentPosition employmentPosition = entityService.getByProperties(ApplicationEmploymentPosition.class,
+                ImmutableMap.of("application", application, "id", employmentPositionId));
         application.getEmploymentPositions().remove(employmentPosition);
     }
-
 
     public ApplicationFunding saveFunding(Integer applicationId, Integer fundingId, ApplicationFundingDTO fundingDTO) {
         Application application = entityService.getById(Application.class, applicationId);
@@ -490,6 +510,10 @@ public class ApplicationService {
         to.setAddressTown(from.getAddressTown());
         to.setAddressRegion(Strings.emptyToNull(from.getAddressRegion()));
         to.setAddressCode(Strings.isNullOrEmpty(from.getAddressCode()) ? "Not Provided" : from.getAddressCode());
+    }
+
+    private LocalDate getNextMonday(LocalDate dateFrom) {
+        return dateFrom.plusDays(8 - dateFrom.getDayOfWeek());
     }
     
 }

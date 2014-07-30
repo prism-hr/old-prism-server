@@ -113,6 +113,17 @@ public class ProgramDAO {
                 .list();
     }
     
+    public ProgramInstance getEarliestProgramInstance(Application application) {
+        return (ProgramInstance) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class) //
+                .add(Restrictions.eq("program", application.getProgram())) //
+                .add(Restrictions.eq("studyOption", application.getProgramDetails().getStudyOption())) //
+                .add(Restrictions.ge("applicationDeadline", new LocalDate()))
+                .add(Restrictions.eq("enabled", true)) //
+                .addOrder(Order.asc("applicationStartDate")) //
+                .setMaxResults(1) //
+                .uniqueResult();     
+    }
+    
     public ProgramInstance getExportProgramInstance(Application application) {
         LocalDate preferredStartDate = application.getProgramDetails().getStartDate();
         return (ProgramInstance) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class) //
@@ -124,6 +135,17 @@ public class ProgramDAO {
                 .addOrder(Order.asc("applicationStartDate")) //
                 .setMaxResults(1) //
                 .uniqueResult();
+    }
+    
+    public ProgramInstance getLatestProgramInstance(Application application) {
+        return (ProgramInstance) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class) //
+                .add(Restrictions.eq("program", application.getProgram())) //
+                .add(Restrictions.eq("studyOption", application.getProgramDetails().getStudyOption())) //
+                .add(Restrictions.ge("applicationStartDate", new LocalDate()))
+                .add(Restrictions.eq("enabled", true)) //
+                .addOrder(Order.desc("applicationStartDate")) //
+                .setMaxResults(1) //
+                .uniqueResult();     
     }
     
     public ProgramInstance getLatestProgramInstance(Program program) {

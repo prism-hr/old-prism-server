@@ -42,6 +42,9 @@ public abstract class Advert extends Resource {
     @Column(name = "description")
     private String description;
     
+    @Column(name = "immediate_start", nullable = false)
+    private boolean immediateStart;
+    
     @ManyToOne
     @JoinColumn(name = "institution_address_id")
     private InstitutionAddress address;
@@ -111,6 +114,14 @@ public abstract class Advert extends Resource {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isImmediateStart() {
+        return immediateStart;
+    }
+
+    public void setImmediateStart(boolean immediateStart) {
+        this.immediateStart = immediateStart;
     }
 
     public InstitutionAddress getAddress() {

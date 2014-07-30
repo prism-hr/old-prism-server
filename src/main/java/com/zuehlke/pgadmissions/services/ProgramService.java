@@ -235,6 +235,14 @@ public class ProgramService {
         return programDAO.getExportProgramInstance(application);
     }
     
+    public ProgramInstance getEarliestProgramInstance(Application application) {
+        return programDAO.getEarliestProgramInstance(application);
+    }
+    
+    public ProgramInstance getLatestProgramInstance(Application application) {
+        return programDAO.getLatestProgramInstance(application);
+    }
+    
     public ProgramInstance getLatestProgramInstance(Program program) {
         return programDAO.getLatestProgramInstance(program);
     }

@@ -53,7 +53,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 @Service
 public class EntityImportService {
 
-    private static final Logger log = LoggerFactory.getLogger(EntityImportService.class);
+    private static final Logger logger = LoggerFactory.getLogger(EntityImportService.class);
 
     private static DateTimeFormatter dtFormatter = DateTimeFormat.forPattern("dd-MMM-yy");
 
@@ -92,7 +92,7 @@ public class EntityImportService {
 
                 importReferenceEntities(importedEntityFeed);
             } catch (XMLDataImportException e) {
-                log.error("Error importing reference data.", e);
+                logger.error("Error importing reference data.", e);
                 String message = e.getMessage();
                 Throwable cause = e.getCause();
                 if (cause != null) {
@@ -120,7 +120,7 @@ public class EntityImportService {
     public void importReferenceEntities(ImportedEntityFeed importedEntityFeed) throws XMLDataImportException {
         EntityImportService thisBean = applicationContext.getBean(EntityImportService.class);
         String fileLocation = importedEntityFeed.getLocation();
-        log.info("Starting the import from file: " + fileLocation);
+        logger.info("Starting the import from file: " + fileLocation);
 
         try {
             List unmarshalled = thisBean.unmarshall(importedEntityFeed);
@@ -181,9 +181,9 @@ public class EntityImportService {
                     try {
                         thisBean.attemptUpdateByName(entityClass, institution, entity);
                     } catch (Exception e2) {
-                        log.error("Couldn't insert entity", e);
-                        log.error("Couldn't update entity by code", e1);
-                        log.error("Couldn't update entity by name", e2);
+                        logger.error("Couldn't insert entity", e);
+                        logger.error("Couldn't update entity by code", e1);
+                        logger.error("Couldn't update entity by name", e2);
                     }
                 }
             }

@@ -168,6 +168,11 @@ public class Program extends Advert {
         setDescription(description);
         return this;
     }
+    
+    public Program withImmediateStart(boolean immediateStart) {
+        setImmediateStart(immediateStart);
+        return this;
+    }
 
     public Program withState(State state) {
         this.state = state;

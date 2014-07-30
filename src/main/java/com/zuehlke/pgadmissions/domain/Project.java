@@ -117,6 +117,11 @@ public class Project extends Advert {
         setId(id);
         return this;
     }
+    
+    public Project withImmediateStart(boolean immediateStart) {
+        setImmediateStart(immediateStart);
+        return this;
+    }
 
     @Override
     public System getSystem() {

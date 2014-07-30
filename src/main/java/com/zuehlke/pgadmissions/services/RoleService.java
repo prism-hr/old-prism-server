@@ -203,7 +203,8 @@ public class RoleService {
                     userRoleTransitions.put(user, roleTransition);
                 }
             } else {
-                throw new WorkflowEngineException();
+                throw new WorkflowEngineException("Found " + users.size() + " users of role: " + roleTransition.getRole().getAuthority()
+                        + ". Expected " + minimumPermitted + " <= n <=" + maximumPermitted);
             }
         }
 

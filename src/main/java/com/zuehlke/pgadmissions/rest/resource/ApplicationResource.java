@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.*;
@@ -14,13 +14,13 @@ import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.UserService;
 import org.apache.commons.lang.BooleanUtils;
-import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -133,6 +133,20 @@ public class ApplicationResource {
         Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(userService.getCurrentUser())
                 .withAction(action).withCreatedTimestamp(new DateTime())
                 .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse()));
+
+        List<CommentAssignedUser> commentAssignedUsers = Lists.newLinkedList();
+        if (actionId.equals(PrismAction.APPLICATION_COMPLETE)) {
+            Role refereeRole = entityService.getById(Role.class, PrismRole.APPLICATION_REFEREE);
+            for (ApplicationReferee referee : application.getReferees()) {
+                commentAssignedUsers.add(new CommentAssignedUser().withComment(comment).withUser(referee.getUser()).withRole(refereeRole));
+            }
+            Role supervisorRole = entityService.getById(Role.class, PrismRole.APPLICATION_SUGGESTED_SUPERVISOR);
+            for (ApplicationSupervisor supervisor : application.getProgramDetails().getSupervisors()) {
+                commentAssignedUsers.add(new CommentAssignedUser().withComment(comment).withUser(supervisor.getUser()).withRole(supervisorRole));
+            }
+        }
+        comment.getCommentAssignedUsers().addAll(commentAssignedUsers);
+
         ActionOutcome actionOutcome = actionService.executeUserAction(application, action, comment);
         return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
     }

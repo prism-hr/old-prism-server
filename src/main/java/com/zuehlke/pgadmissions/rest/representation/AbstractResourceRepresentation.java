@@ -1,9 +1,13 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
-
 import java.util.List;
+
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 public class AbstractResourceRepresentation {
 

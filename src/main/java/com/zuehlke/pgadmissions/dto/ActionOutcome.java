@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.Map;
 
-import org.hibernate.Hibernate;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.Action;

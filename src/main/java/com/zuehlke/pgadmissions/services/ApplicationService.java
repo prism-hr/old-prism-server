@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.base.Strings;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -11,8 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
@@ -37,7 +36,9 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.FundingSource;
+import com.zuehlke.pgadmissions.domain.Gender;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.QualificationType;
@@ -60,7 +61,6 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailsD
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
 
 @Service
 @Transactional
@@ -72,9 +72,6 @@ public class ApplicationService {
     private ApplicationDAO applicationDAO;
     
     @Autowired
-    private ApplicationFormListDAO applicationFormListDAO;
-
-    @Autowired
     private EntityService entityService;
 
     @Autowired
@@ -85,9 +82,6 @@ public class ApplicationService {
 
     @Autowired
     private StateService stateService;
-
-    @Autowired
-    private ProgramDetailsService programDetailsService;
 
     @Autowired
     private ApplicationCopyHelper applicationCopyHelper;
@@ -145,14 +139,6 @@ public class ApplicationService {
     
     public List<ResourceReportListRowDTO> getReportList() {
         return resourceService.getReportList(Application.class);
-    public List<Application> getApplicationsForList(final User user, final Filter filtering) {
-        Filter userFilter = user.getUserAccount().getFilters().get(PrismScope.APPLICATION);
-        if (userFilter.getPage() == 1) {
-            userFilter.setLastAccessTimestamp(new DateTime());
-        }
-
-        List<Application> applications = applicationFormListDAO.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE);
-        return applications;
     }
     
     public LocalDate getEarliestPossibleStartDate(Application application) {
@@ -177,25 +163,10 @@ public class ApplicationService {
     
     public User getPrimarySupervisor(Comment offerRecommendationComment) {
         return applicationDAO.getPrimarySupervisor(offerRecommendationComment);
-
-    public Date getDefaultStartDateForApplication(Application application) {
-        Program program = application.getProgram();
-        StudyOption studyOption = application.getProgramDetails().getStudyOption();
-        if (program != null && studyOption != null) {
-            return programService.getDefaultStartDate(program, studyOption);
-        }
-        return null;
     }
     
     public List<ApplicationReferee> getApplicationExportReferees(Application application) {
         return applicationDAO.getApplicationExportReferees(application);
-
-    public Application getApplicationDescriptorForUser(final Application application, final User user) {
-        Application applicationDescriptor = new Application();
-//        applicationDescriptor.getActionDefinitions().addAll(actionService.getUserActions(user.getId(), application.getId()));
-//        applicationDescriptor.setNeedsToSeeUrgentFlag(applicationFormDAO.getRaisesUrgentFlagForUser(application, user));
-//        applicationDescriptor.setNeedsToSeeUpdateFlag(applicationFormDAO.getRaisesUpdateFlagForUser(application, user));
-        return applicationDescriptor;
     }
     
     public List<ApplicationReferee> setApplicationExportReferees(Application application) {
@@ -396,7 +367,6 @@ public class ApplicationService {
         application.getQualifications().remove(qualification);
     }
 
-
     public ApplicationEmploymentPosition saveEmploymentPosition(Integer applicationId, Integer employmentPositionId, ApplicationEmploymentPositionDTO employmentPositionDTO) {
         Application application = entityService.getById(Application.class, applicationId);
 
@@ -477,15 +447,6 @@ public class ApplicationService {
         UserDTO userDTO = refereeDTO.getUser();
         User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
         referee.setUser(user);
-        User user = referee.getUser();
-        if (user == null) {
-            user = new User();
-            referee.setUser(user);
-        }
-
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.setEmail(userDTO.getEmail());
 
         referee.setJobEmployer(refereeDTO.getJobEmployer());
         referee.setJobTitle(refereeDTO.getJobTitle());
@@ -519,17 +480,16 @@ public class ApplicationService {
         }
 
         additionalInformation.setConvictionsText(Strings.emptyToNull(additionalInformationDTO.getConvictionsText()));
-        additionalInformation.setConvictionsText(additionalInformationDTO.getConvictionsText());
     }
 
-    private void copyAddress(Address to, AddressDTO from) {
-        Domicile currentAddressDomicile = entityService.getById(Domicile.class, from.getDomicile());
+    private void copyAddress(Institution institution, Address to, AddressDTO from) {
+        Domicile currentAddressDomicile = importedEntityService.getById(Domicile.class, institution, from.getDomicile());
         to.setDomicile(currentAddressDomicile);
         to.setAddressLine1(from.getAddressLine1());
-        to.setAddressLine2(from.getAddressLine2());
+        to.setAddressLine2(Strings.emptyToNull(from.getAddressLine2()));
         to.setAddressTown(from.getAddressTown());
-        to.setAddressRegion(from.getAddressRegion());
-        to.setAddressCode(from.getAddressCode());
+        to.setAddressRegion(Strings.emptyToNull(from.getAddressRegion()));
+        to.setAddressCode(Strings.isNullOrEmpty(from.getAddressCode()) ? "Not Provided" : from.getAddressCode());
     }
     
 }

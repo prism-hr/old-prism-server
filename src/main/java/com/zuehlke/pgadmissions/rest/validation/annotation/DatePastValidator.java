@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.validation.annotation;
 
-import org.joda.time.DateTime;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+
+import org.joda.time.DateTime;
 
 public class DatePastValidator implements ConstraintValidator<DatePast, Object> {
 

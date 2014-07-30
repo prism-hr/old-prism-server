@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 public class FileDTO {
 

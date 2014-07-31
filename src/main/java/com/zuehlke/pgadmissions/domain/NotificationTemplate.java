@@ -51,9 +51,8 @@ public class NotificationTemplate extends WorkflowResource {
         return id;
     }
 
-    @Override
-    public void setId(Object id) {
-        this.id = (PrismNotificationTemplate) id;
+    public void setId(PrismNotificationTemplate id) {
+        this.id = id;
     }
 
     public PrismNotificationType getNotificationType() {

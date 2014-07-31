@@ -57,9 +57,8 @@ public class Action extends WorkflowResource {
         return id;
     }
 
-    @Override
-    public void setId(Object id) {
-        this.id = (PrismAction) id;
+    public void setId(PrismAction id) {
+        this.id = id;
     }
 
     public PrismActionType getActionType() {

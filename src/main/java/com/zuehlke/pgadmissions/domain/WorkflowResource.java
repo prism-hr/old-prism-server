@@ -11,8 +11,6 @@ public abstract class WorkflowResource implements IUniqueEntity {
     
     public abstract Object getId();
     
-    public abstract void setId(Object id);
-    
     @Override
     public int hashCode() {
         return Objects.hashCode(getId());

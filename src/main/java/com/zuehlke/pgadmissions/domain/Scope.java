@@ -32,8 +32,8 @@ public class Scope extends WorkflowResource {
         return id;
     }
 
-    public void setId(Object id) {
-        this.id = (PrismScope) id;
+    public void setId(PrismScope id) {
+        this.id = id;
     }
     
     public Integer getPrecedence() {

@@ -46,10 +46,9 @@ public class State extends WorkflowResource {
     public PrismState getId() {
         return id;
     }
-
-    @Override
-    public void setId(Object id) {
-        this.id = (PrismState) id;
+    
+    public void setId(PrismState id) {
+        this.id = id;
     }
 
     public StateGroup getStateGroup() {

@@ -37,9 +37,8 @@ public class StateGroup extends WorkflowResource {
         return id;
     }
 
-    @Override
-    public void setId(Object id) {
-        this.id = (PrismStateGroup) id;
+    public void setId(PrismStateGroup id) {
+        this.id = id;
     }
 
     public int getSequenceOrder() {

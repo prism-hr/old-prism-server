@@ -56,8 +56,8 @@ public class Role extends WorkflowResource implements GrantedAuthority {
         return id;
     }
 
-    public void setId(Object id) {
-        this.id = (PrismRole) id;
+    public void setId(PrismRole id) {
+        this.id = id;
     }
 
     public boolean isScopeCreator() {

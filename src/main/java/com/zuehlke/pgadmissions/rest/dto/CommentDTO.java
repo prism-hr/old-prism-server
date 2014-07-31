@@ -40,6 +40,30 @@ public class CommentDTO {
         this.documents = documents;
     }
 
+    public YesNoUnsureResponse getQualified() {
+        return qualified;
+    }
+
+    public void setQualified(YesNoUnsureResponse qualified) {
+        this.qualified = qualified;
+    }
+
+    public YesNoUnsureResponse getCompetentInWorkLanguage() {
+        return competentInWorkLanguage;
+    }
+
+    public void setCompetentInWorkLanguage(YesNoUnsureResponse competentInWorkLanguage) {
+        this.competentInWorkLanguage = competentInWorkLanguage;
+    }
+
+    public ApplicationResidenceStatus getResidenceStatus() {
+        return residenceStatus;
+    }
+
+    public void setResidenceStatus(ApplicationResidenceStatus residenceStatus) {
+        this.residenceStatus = residenceStatus;
+    }
+
     public Boolean getDeclinedResponse() {
         return declinedResponse;
     }

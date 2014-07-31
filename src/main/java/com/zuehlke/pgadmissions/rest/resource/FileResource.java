@@ -29,7 +29,7 @@ public class FileResource {
     private EntityService entityService;
 
     @RequestMapping(method = RequestMethod.POST)
-    public Map<String, Object> uploadFile(@RequestParam(value = "file-data", required = false) Part part) throws IOException {
+    public Map<String, Object> uploadFile(@RequestParam(value = "file-data") Part part) throws IOException {
         Document document = new Document().withContent(Streams.readAll(part.getInputStream())).withContentType(part.getContentType()).withCreatedTimestamp(new DateTime()).withFileName(getFileName(part)).withType(DocumentType.COMMENT);
         Integer id = (Integer) entityService.save(document);
         return ImmutableMap.of("id", (Object) id);

@@ -5,6 +5,8 @@ import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 import java.util.List;
 import java.util.Map;
 
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationResidenceStatus;
+import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import org.apache.commons.lang.WordUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,7 +105,7 @@ public class StaticDataResource {
         staticData.put("institutionDomiciles", institutionDomiciles);
 
         // Display names for enum classes
-        for (Class<?> enumClass : new Class[]{PrismProgramType.class}) {
+        for (Class<?> enumClass : new Class[]{PrismProgramType.class, YesNoUnsureResponse.class, ApplicationResidenceStatus.class}) {
             List<EnumDefinition> definitions = Lists.newArrayListWithExpectedSize(enumClass.getEnumConstants().length);
             String simpleName = enumClass.getSimpleName();
             if (simpleName.startsWith("Prism")) {

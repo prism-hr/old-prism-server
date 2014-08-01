@@ -250,9 +250,10 @@ public class WorkflowConfigurationHelper {
 
             if (roleTransitionType != PrismRoleTransitionType.REMOVE) {
                 actualRolesCreated.add(transitionRoleId);
-
+                
+                PrismActionCategory actionCategory = action.getActionCategory();
                 if (transitionRole.isScopeCreator() && roleTransitionType == PrismRoleTransitionType.CREATE
-                        && action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
+                        && (actionCategory == PrismActionCategory.CREATE_RESOURCE || actionCategory == PrismActionCategory.INITIALISE_RESOURCE)) {
                     assertEquals(transitionState.getScope(), transitionRole.getScope());
                     assertTrue(roleTransition.getMinimumPermitted() == 1);
                     assertTrue(roleTransition.getMaximumPermitted() == 1);

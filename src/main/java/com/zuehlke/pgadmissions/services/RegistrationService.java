@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -48,7 +49,7 @@ public class RegistrationService {
     @Autowired
     private RoleService roleService;
 
-    public User submitRegistration(UserRegistrationDTO registrationDTO) {
+    public User submitRegistration(UserRegistrationDTO registrationDTO) throws WorkflowEngineException {
         User user = userService.getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail());
         if (registrationDTO.getActivationCode() != null && !user.getActivationCode().equals(registrationDTO.getActivationCode())) {
             throw new ResourceNotFoundException();

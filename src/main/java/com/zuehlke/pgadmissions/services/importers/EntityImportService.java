@@ -44,6 +44,7 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.Programm
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -68,6 +69,9 @@ public class EntityImportService {
 
     @Autowired
     private ProgramService programService;
+    
+    @Autowired
+    private InstitutionService institutionService;
 
     @Autowired
     private SystemService systemService;
@@ -84,6 +88,8 @@ public class EntityImportService {
     private ApplicationContext applicationContext;
     
     public void importReferenceData() {
+        institutionService.populateDefaultImportedEntityFeeds();
+        
         for (ImportedEntityFeed importedEntityFeed : getImportedEntityFeedsToImport()) {
             String maxRedirects = null;
             try {

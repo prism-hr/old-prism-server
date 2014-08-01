@@ -79,8 +79,8 @@ public class ImportedEntityService {
         return importedEntityDAO.getImportedEntities(QualificationType.class);
     }
 
-    public List<ImportedEntityFeed> getImportedEntityFeeds() {
-        return importedEntityDAO.getImportedEntityFeeds();
+    public List<ImportedEntityFeed> getImportedEntityFeedsToImport() {
+        return importedEntityDAO.getImportedEntityFeedsToImport();
     }
 
     public void disableAllEntities(Class<? extends ImportedEntity> entityClass) {

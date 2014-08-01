@@ -84,7 +84,7 @@ public class EntityImportService {
     private ApplicationContext applicationContext;
     
     public void importReferenceData() {
-        for (ImportedEntityFeed importedEntityFeed : getImportedEntityFeeds()) {
+        for (ImportedEntityFeed importedEntityFeed : getImportedEntityFeedsToImport()) {
             String maxRedirects = null;
             try {
                 maxRedirects = System.getProperty("http.maxRedirects");
@@ -144,6 +144,9 @@ public class EntityImportService {
 
                 thisBean.mergeImportedEntities(entityClass, importedEntityFeed.getInstitution(), newEntities);
             }
+            
+            setLastImportedDate(importedEntityFeed);
+            // TODO: state change to institution ready to use.
         } catch (Exception e) {
             throw new DataImportException("Error during the import of file: " + fileLocation, e);
         }
@@ -215,6 +218,12 @@ public class EntityImportService {
     }
 
     @Transactional
+    public void setLastImportedDate(ImportedEntityFeed detachedImportedEntityFeed) {
+        ImportedEntityFeed persistentImportedEntityFeed = entityService.getById(ImportedEntityFeed.class, detachedImportedEntityFeed.getId());
+        persistentImportedEntityFeed.setLastUploadedDate(new LocalDate());
+    }
+    
+    @Transactional
     public void disableAllEntities(Class<? extends ImportedEntity> entityClass, Institution institution) {
         importedEntityService.disableAllEntities(entityClass, institution);
     }
@@ -255,8 +264,8 @@ public class EntityImportService {
     }
 
     @Transactional
-    public List<ImportedEntityFeed> getImportedEntityFeeds() {
-        return importedEntityService.getImportedEntityFeeds();
+    public List<ImportedEntityFeed> getImportedEntityFeedsToImport() {
+        return importedEntityService.getImportedEntityFeedsToImport();
     }
 
 }

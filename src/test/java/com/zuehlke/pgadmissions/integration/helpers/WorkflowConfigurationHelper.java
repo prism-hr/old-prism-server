@@ -84,7 +84,8 @@ public class WorkflowConfigurationHelper {
 
         verifyPropagatedActions();
         verifyCreatorRoles();
-
+        verifyFallbackActions();
+        
         cleanUp();
     }
 
@@ -200,7 +201,7 @@ public class WorkflowConfigurationHelper {
 
         for (StateTransition stateTransition : stateTransitions) {
             PrismTransitionEvaluation thisTransitionEvaluation = stateTransition.getStateTransitionEvaluation();
-            
+
             assertTrue(stateTransition.getRoleTransitions().size() > 0 || state != stateTransition.getTransitionState()
                     || action != stateTransition.getTransitionAction() || thisTransitionEvaluation != null);
 
@@ -250,7 +251,7 @@ public class WorkflowConfigurationHelper {
 
             if (roleTransitionType != PrismRoleTransitionType.REMOVE) {
                 actualRolesCreated.add(transitionRoleId);
-                
+
                 PrismActionCategory actionCategory = action.getActionCategory();
                 if (transitionRole.isScopeCreator() && roleTransitionType == PrismRoleTransitionType.CREATE
                         && (actionCategory == PrismActionCategory.CREATE_RESOURCE || actionCategory == PrismActionCategory.INITIALISE_RESOURCE)) {
@@ -344,6 +345,12 @@ public class WorkflowConfigurationHelper {
 
         for (PrismScope scope : actualScopes) {
             assertEquals(1, actualCreatorRoles.get(scope).size());
+        }
+    }
+    
+    private void verifyFallbackActions() {
+        for (Scope scope : scopeService.getScopesAscending()) {
+            assertEquals(PrismScope.SYSTEM, scope.getFallbackAction().getScope().getId());
         }
     }
 

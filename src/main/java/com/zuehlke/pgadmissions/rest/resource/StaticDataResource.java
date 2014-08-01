@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.zuehlke.pgadmissions.domain.definitions.ApplicationResidenceStatus;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
+
 import org.apache.commons.lang.WordUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,6 +132,7 @@ public class StaticDataResource {
         return staticData;
     }
 
+    @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET, params = "institutionId")
     public Map<String, Object> getStaticData(@RequestParam Integer institutionId) {
         Map<String, Object> staticData = Maps.newHashMap();
@@ -153,6 +155,7 @@ public class StaticDataResource {
         return staticData;
     }
 
+    @SuppressWarnings("unused")
     @RequestMapping(method = RequestMethod.GET, value = "/institutions")
     public List<ImportedInstitutionRepresentation> getInstitutions(@RequestParam Integer domicileId) {
         Map<String, Object> staticData = Maps.newHashMap();

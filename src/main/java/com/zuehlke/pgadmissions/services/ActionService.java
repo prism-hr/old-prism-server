@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhanceme
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
-import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
 
 @Service
 @Transactional
@@ -52,17 +51,18 @@ public class ActionService {
         return entityService.getByProperty(Action.class, "id", id);
     }
 
-    public void validateAction(Resource resource, Action action, User actionOwner, User delegateOwner) {
+    public Action validateAction(Resource resource, Action action, User actionOwner, User delegateOwner) {
         Resource operative = resourceService.getOperativeResource(resource, action);
+        
         if (delegateOwner == null && checkActionAvailable(operative, action, actionOwner)) {
-            return;
+            return action;
         } else if (delegateOwner != null && checkActionAvailable(operative, action, delegateOwner)) {
-            return;
+            return action;
         } else if (delegateOwner != null && checkDelegateActionAvailable(operative, action, delegateOwner)) {
-            return;
+            return action;
         }
-        // TODO : chaining actions together (default action)
-        throw new CannotExecuteActionException(operative, action);
+        
+        return actionDAO.getFallbackAction(resource);
     }
 
     public void validateAction(Resource resource, PrismAction actionId, User actionOwner) {

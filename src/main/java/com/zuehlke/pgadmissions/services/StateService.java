@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import org.apache.commons.beanutils.MethodUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 
 @Service
@@ -139,7 +139,7 @@ public class StateService {
         comment.setResource(resource);
         
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
-            resourceService.createResource(resource, action, comment);
+            resourceService.persistResource(resource, action, comment);
         } else {
             resourceService.updateResource(resource, action, comment);
         }
@@ -221,7 +221,6 @@ public class StateService {
         }
     }
 
-    @SuppressWarnings("unused")
     public StateTransition getApplicationEligibilityAssessedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
         PrismState transitionState = PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION;
         if (comment.isApplicationCreatorEligibilityUncertain()) {
@@ -230,7 +229,6 @@ public class StateService {
         return stateDAO.getStateTransition(evaluation, getById(transitionState));
     }
 
-    @SuppressWarnings("unused")
     public StateTransition getApplicationExportedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
         State transitionState = resource.getState();
         StateGroup stateGroup = transitionState.getStateGroup();
@@ -242,7 +240,6 @@ public class StateService {
         return stateDAO.getStateTransition(evaluation, transitionState);
     }
 
-    @SuppressWarnings("unused")
     public StateTransition getInterviewScheduledOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
         State transitionState;
         DateTime baselineDateTime = new DateTime();

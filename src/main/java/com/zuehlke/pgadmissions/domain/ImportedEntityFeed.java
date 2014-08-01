@@ -14,6 +14,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
@@ -42,6 +45,10 @@ public class ImportedEntityFeed implements IUniqueEntity {
 
     @Column(name = "location", nullable = false)
     private String location;
+    
+    @Column(name = "last_uploaded_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastUploadedDate;
 
     public Integer getId() {
         return id;
@@ -91,6 +98,14 @@ public class ImportedEntityFeed implements IUniqueEntity {
         this.location = location;
     }
     
+    public final LocalDate getLastUploadedDate() {
+        return lastUploadedDate;
+    }
+
+    public final void setLastUploadedDate(LocalDate lastUploadedDate) {
+        this.lastUploadedDate = lastUploadedDate;
+    }
+
     public ImportedEntityFeed withInstitution(Institution institution) {
         this.institution = institution;
         return this;
@@ -113,6 +128,11 @@ public class ImportedEntityFeed implements IUniqueEntity {
    
     public ImportedEntityFeed withPassword(String password) {
         this.password = password;
+        return this;
+    }
+    
+    public ImportedEntityFeed withLastUploadedDate(LocalDate lastUploadedDate) {
+        this.lastUploadedDate = lastUploadedDate;
         return this;
     }
     

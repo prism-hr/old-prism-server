@@ -1,0 +1,5 @@
+ALTER TABLE REGISTERED_USER ADD INDEX email_idx (email)
+;
+
+ALTER TABLE APPLICATION_FORM ADD INDEX status_idx (status)
+;

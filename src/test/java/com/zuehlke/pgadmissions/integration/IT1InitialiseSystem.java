@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.services.SystemService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
-public class IT1SystemInitialisation {
+public class IT1InitialiseSystem implements IPrismIntegrationTest {
     
     @Autowired
     private SystemService systemService;
@@ -26,9 +26,13 @@ public class IT1SystemInitialisation {
     
     @Autowired
     private SystemInitialisationHelper systemInitialisationHelper;
+    
+    @Autowired
+    private IntegrationTestRunner integrationTestRunner;
 
     @Test
-    public void testSystemInitialisation() throws WorkflowConfigurationException, WorkflowEngineException {
+    @Override
+    public void run() throws WorkflowConfigurationException, WorkflowEngineException {
         for (int i = 0; i < 2; i++) {
             systemService.initialiseSystem();
 
@@ -52,6 +56,7 @@ public class IT1SystemInitialisation {
 
             mailSenderMock.verify();
         }
+        integrationTestRunner.recordTestSuccess(this);
     }
 
 }

@@ -25,10 +25,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
-public class IT4InstitutionUserRoleManagement {
-
-    @Autowired
-    private IT3InstitutionReferenceDataImport it2SystemReferenceDataImport;
+public class IT5AssignInstitutionUsers implements IPrismIntegrationTest {
 
     @Autowired
     private UserService userService;
@@ -47,10 +44,14 @@ public class IT4InstitutionUserRoleManagement {
     
     @Autowired
     private UserRoleHelper userRoleHelper;
+    
+    @Autowired
+    private IT4ImportInstitutionReferenceData it4;
 
     @Test
-    public void testManageUserRoles() throws Exception {
-        it2SystemReferenceDataImport.testImportData();
+    @Override
+    public void run() throws Exception {
+        it4.run();
 
         Program program = programService.getProgramByImportedCode(null, "RRDCOMSING01");
 

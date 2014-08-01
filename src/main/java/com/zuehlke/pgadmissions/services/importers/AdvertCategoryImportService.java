@@ -6,6 +6,7 @@ import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
@@ -20,10 +21,13 @@ import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.services.EntityService;
 
 @Service
-public class OpportunityCategoryImportService {
+public class AdvertCategoryImportService {
 
-    private static final Logger log = LoggerFactory.getLogger(OpportunityCategoryImportService.class);
+    private static final Logger log = LoggerFactory.getLogger(AdvertCategoryImportService.class);
 
+    @Value("${advertCategory.import.location}")
+    private String importLocation;
+    
     @Autowired
     private ImportedEntityDAO importedEntityDAO;
 
@@ -33,22 +37,22 @@ public class OpportunityCategoryImportService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public void importEntities(String fileLocation) throws DataImportException {
-        OpportunityCategoryImportService thisBean = applicationContext.getBean(OpportunityCategoryImportService.class);
-        log.info("Starting the import from file: " + fileLocation);
+    public void importEntities() throws DataImportException {
+        AdvertCategoryImportService thisBean = applicationContext.getBean(AdvertCategoryImportService.class);
+        log.info("Starting the import from file: " + importLocation);
 
         try {
-            URL fileUrl = new DefaultResourceLoader().getResource(fileLocation).getURL();
+            URL fileUrl = new DefaultResourceLoader().getResource(importLocation).getURL();
             CSVReader reader = new CSVReader(new InputStreamReader(fileUrl.openStream(), Charsets.UTF_8));
 
             thisBean.mergeCategories(reader);
         } catch (Exception e) {
-            throw new DataImportException("Error during the import of file: " + fileLocation, e);
+            throw new DataImportException("Error during the import of file: " + importLocation, e);
         }
     }
 
     public void mergeCategories(CSVReader reader) throws Exception {
-        OpportunityCategoryImportService thisBean = applicationContext.getBean(OpportunityCategoryImportService.class);
+        AdvertCategoryImportService thisBean = applicationContext.getBean(AdvertCategoryImportService.class);
 
         thisBean.disableAllCategories();
         String[] row;

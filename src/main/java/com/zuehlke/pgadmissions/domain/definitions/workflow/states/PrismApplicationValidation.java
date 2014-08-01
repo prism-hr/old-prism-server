@@ -49,11 +49,11 @@ public class PrismApplicationValidation extends PrismWorkflowState {
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
+                        .withTransitionAction(PrismAction.APPLICATION_COMPLETE_VALIDATION_STAGE) //
                         .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_ELIGIBILITY_ASSESSED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_VALIDATION_PENDING_FEEDBACK) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
+                        .withTransitionAction(PrismAction.APPLICATION_CONFIRM_ELIGIBILITY) //
                         .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_ELIGIBILITY_ASSESSED_OUTCOME)))); //
     
         stateActions.add(new PrismStateAction() //

@@ -105,7 +105,7 @@ public enum PrismAction {
     SYSTEM_VIEW_EDIT(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_EDIT_RESOURCE, true, PrismScope.SYSTEM, null, null), //
     SYSTEM_CREATE_INSTITUTION(PrismActionType.USER_INVOCATION, PrismActionCategory.CREATE_RESOURCE, true, PrismScope.SYSTEM, PrismScope.INSTITUTION, null), //
     SYSTEM_MANAGE_ACCOUNT(PrismActionType.USER_INVOCATION, PrismActionCategory.MANAGE_ACCOUNT, true, PrismScope.SYSTEM, null, null), //
-    SYSTEM_STARTUP(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.CREATE_RESOURCE, true, PrismScope.SYSTEM, PrismScope.SYSTEM, null), //
+    SYSTEM_STARTUP(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.INITIALISE_RESOURCE, true, PrismScope.SYSTEM, PrismScope.SYSTEM, null), //
     SYSTEM_VIEW_APPLICATION_LIST(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE_LIST, true, PrismScope.SYSTEM, null, null), //
     SYSTEM_VIEW_INSTITUTION_LIST(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE_LIST, true, PrismScope.SYSTEM, null, null), //
     SYSTEM_VIEW_PROGRAM_LIST(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE_LIST, true, PrismScope.SYSTEM, null, null), //

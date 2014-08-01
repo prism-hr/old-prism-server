@@ -45,6 +45,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -250,7 +251,7 @@ public class SystemInitialisationHelper {
         workflowConfigurationHelper.verifyWorkflowConfiguration();
     }
 
-    public void verifySystemUserRegistration() {
+    public void verifySystemUserRegistration() throws WorkflowEngineException {
         System system = systemService.getSystem();
         userHelper.registerAndActivateUser(PrismAction.SYSTEM_STARTUP, system.getId(), system.getUser(),
                 PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);

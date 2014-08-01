@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -7,6 +8,8 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 
+import com.zuehlke.pgadmissions.rest.representation.AutosuggestedUserRepresentation;
+import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,11 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.User;
@@ -52,6 +51,9 @@ public class UserResource {
 
     @Autowired
     private RegistrationService registrationService;
+
+    @Autowired
+    private FullTextSearchService searchService;
 
     @Autowired
     private Mapper dozerBeanMapper;
@@ -104,5 +106,21 @@ public class UserResource {
         registrationService.submitRegistration(registrationDetails);
         return "OK";
     }
+
+    @RequestMapping(value="/suggestion", method = RequestMethod.GET, params = "firstName")
+    public List<AutosuggestedUserRepresentation> provideSuggestionsForFirstName(@RequestParam String firstName) {
+        return searchService.getMatchingUsersWithFirstNameLike(firstName);
+    }
+
+    @RequestMapping(value="/suggestion", method = RequestMethod.GET, params = "lastName")
+    public List<AutosuggestedUserRepresentation> provideSuggestionsForLastName(@PathVariable final String lastName) {
+        return searchService.getMatchingUsersWithLastNameLike(lastName);
+    }
+
+    @RequestMapping(value="/suggestion", method = RequestMethod.GET, params = "email")
+    public List<AutosuggestedUserRepresentation> provideSuggestionsForEmail(@PathVariable final String email) {
+        return searchService.getMatchingUsersWithEmailLike(email);
+    }
+
 
 }

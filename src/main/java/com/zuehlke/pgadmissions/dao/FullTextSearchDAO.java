@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
 
+import com.zuehlke.pgadmissions.rest.representation.AutosuggestedUserRepresentation;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -37,23 +38,19 @@ public class FullTextSearchDAO {
         }
     };
 
-    public List<User> getMatchingUsersWithFirstnameLike(final String searchTerm) {
+    public List<AutosuggestedUserRepresentation> getMatchingUsersWithFirstnameLike(final String searchTerm) {
         return getMatchingUsers(searchTerm, "firstName", LASTNAME_COMPARATOR);
     }
 
-    public List<User> getMatchingUsersWithLastnameLike(final String searchTerm) {
+    public List<AutosuggestedUserRepresentation> getMatchingUsersWithLastnameLike(final String searchTerm) {
         return getMatchingUsers(searchTerm, "lastName", LASTNAME_COMPARATOR);
     }
 
-    public List<User> getMatchingUsersWithEmailLike(final String searchTerm) {
+    public List<AutosuggestedUserRepresentation> getMatchingUsersWithEmailLike(final String searchTerm) {
         return getMatchingUsers(searchTerm, "email", LASTNAME_COMPARATOR);
     }
 
-    private List<User> getMatchingUsers(final String searchTerm, final String propertyName, final Comparator<User> comparator) {
-
-        // FIXME use non-an-applicant-citerion
-//        Criterion notAnApplicantCriterion = Restrictions.in("r.id", new Authority[] { Authority.PROGRAM_ADMINISTRATOR, Authority.PROGRAM_APPROVER, Authority.APPLICATION_INTERVIEWER,
-//                Authority.APPLICATION_REFEREE, Authority.APPLICATION_REVIEWER, Authority.SYSTEM_ADMINISTRATOR, Authority.APPLICATION_PRIMARY_SUPERVISOR });
+    private List<AutosuggestedUserRepresentation> getMatchingUsers(final String searchTerm, final String propertyName, final Comparator<User> comparator) {
 
         String trimmedSearchTerm = StringUtils.trimToEmpty(searchTerm);
 
@@ -63,13 +60,11 @@ public class FullTextSearchDAO {
 
         TreeSet<User> uniqueResults = new TreeSet<User>(comparator);
 
-        Criteria wildcardCriteria = sessionFactory.getCurrentSession().createCriteria(User.class).add(Restrictions.isNotNull("account"))
-                // FIXME consider only primary users
-//                .add(Restrictions.isNull("primaryAccount"))
-                
+        Criteria wildcardCriteria = sessionFactory.getCurrentSession().createCriteria(User.class)
+                .add(Restrictions.isNotNull("userAccount"))
+                .createAlias("parentUser", "parentUser")
+                .add(Restrictions.eqProperty("parentUser.id", "id"))
                 .add(Restrictions.ilike(propertyName, trimmedSearchTerm, MatchMode.START))
-//                .createAlias("roles", "r")
-//                .add(notAnApplicantCriterion)
                 .addOrder(Order.asc("lastName")).setMaxResults(25);
 
         uniqueResults.addAll(wildcardCriteria.list());
@@ -78,13 +73,8 @@ public class FullTextSearchDAO {
             FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
 
             QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(User.class).get();
-            Criteria notApplicantCriteria = fullTextSession.createCriteria(User.class).add(Restrictions.isNotNull("account"))
-
-//                    .add(Restrictions.isNull("primaryAccount"))
-                    
-//                    .createAlias("roles", "r")
-//                    .add(notAnApplicantCriterion)
-                    ;
+            Criteria notApplicantCriteria = fullTextSession.createCriteria(User.class);
+            // FIXME seems like notApplicantCriteria is completely ignored (have a look at a query)
 
             FullTextQuery fuzzyQuery = fullTextSession.createFullTextQuery(
                     queryBuilder.keyword().fuzzy().withThreshold(.7f).withPrefixLength(0).onField(propertyName).matching(trimmedSearchTerm).createQuery(),
@@ -93,7 +83,12 @@ public class FullTextSearchDAO {
             uniqueResults.addAll(fuzzyQuery.list());
         }
 
-        return new ArrayList<User>(uniqueResults);
+        ArrayList<User> users = new ArrayList<User>(uniqueResults);
+        List<AutosuggestedUserRepresentation> representations = Lists.newArrayListWithCapacity(users.size());
+        for (User user : users) {
+            representations.add(new AutosuggestedUserRepresentation(user.getFirstName(), user.getLastName(), user.getEmail()));
+        }
+        return representations;
     }
 
     public List<String> getMatchingInsitutions(final String searchTerm, final String domicileCode) {

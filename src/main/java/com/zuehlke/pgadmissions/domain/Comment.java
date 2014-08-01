@@ -732,6 +732,21 @@ public class Comment {
         return this;
     }
 
+    public Comment withQualified(final YesNoUnsureResponse qualified) {
+        this.qualified = qualified;
+        return this;
+    }
+
+    public Comment withCompetentInWorkLanguage(final YesNoUnsureResponse competentInWorkLanguage) {
+        this.competentInWorkLanguage = competentInWorkLanguage;
+        return this;
+    }
+
+    public Comment withResidenceStatus(final ApplicationResidenceStatus residenceStatus) {
+        this.residenceStatus = residenceStatus;
+        return this;
+    }
+
     public boolean isApplicationCreatorEligibilityUncertain() {
         return getResidenceStatus() == ApplicationResidenceStatus.UNSURE || getQualified() == YesNoUnsureResponse.UNSURE
                 || getCompetentInWorkLanguage() == YesNoUnsureResponse.UNSURE;

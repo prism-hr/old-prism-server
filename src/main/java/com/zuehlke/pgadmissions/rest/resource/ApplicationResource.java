@@ -155,7 +155,9 @@ public class ApplicationResource {
         Action action = actionService.getById(actionId);
         Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(userService.getCurrentUser())
                 .withAction(action).withCreatedTimestamp(new DateTime())
-                .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse()));
+                .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse()))
+                .withQualified(commentDTO.getQualified()).withCompetentInWorkLanguage(commentDTO.getCompetentInWorkLanguage())
+                .withResidenceStatus(commentDTO.getResidenceStatus());
 
         List<CommentAssignedUser> commentAssignedUsers = Lists.newLinkedList();
         if (actionId.equals(PrismAction.APPLICATION_COMPLETE)) {

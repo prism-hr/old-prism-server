@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -52,9 +53,9 @@ public class StateDAO {
                 .list();
     }
 
-    public StateTransition getStateTransition(List<StateTransition> permittedTransitions, State candidateTransitionState) {
+    public StateTransition getStateTransition(PrismTransitionEvaluation evaluation, State candidateTransitionState) {
         return (StateTransition) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
-                .add(Restrictions.in("id", permittedTransitions)) //
+                .add(Restrictions.eq("stateTransitionEvaluation", evaluation)) //
                 .add(Restrictions.eq("transitionState", candidateTransitionState)) //
                 .uniqueResult();
     }

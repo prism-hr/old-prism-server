@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import org.apache.commons.beanutils.MethodUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,8 +173,8 @@ public class StateService {
         
         if (potentialStateTransitions.size() > 1) {
             try {
-                String method = potentialStateTransitions.get(0).getStateTransitionEvaluation().getMethodName();
-                return (StateTransition) MethodUtils.invokeExactMethod(this, method, new Object[] { operative, comment, potentialStateTransitions });
+                PrismTransitionEvaluation evaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation();
+                return (StateTransition) MethodUtils.invokeMethod(this, evaluation.getMethodName(), new Object[]{operative, comment, evaluation});
             } catch (Exception e) {
                 throw new Error(e);
             }
@@ -221,16 +222,16 @@ public class StateService {
     }
 
     @SuppressWarnings("unused")
-    private StateTransition getApplicationEligibilityAssessedOutcome(Resource resource, Comment comment, List<StateTransition> stateTransitions) {
+    public StateTransition getApplicationEligibilityAssessedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
         PrismState transitionState = PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION;
         if (comment.isApplicationCreatorEligibilityUncertain()) {
             transitionState = PrismState.APPLICATION_VALIDATION_PENDING_FEEDBACK;
         }
-        return stateDAO.getStateTransition(stateTransitions, getById(transitionState));
+        return stateDAO.getStateTransition(evaluation, getById(transitionState));
     }
 
     @SuppressWarnings("unused")
-    private StateTransition getApplicationExportedOutcome(Resource resource, Comment comment, List<StateTransition> stateTransitions) {
+    public StateTransition getApplicationExportedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
         State transitionState = resource.getState();
         StateGroup stateGroup = transitionState.getStateGroup();
         if (comment.getExportError() != null) {
@@ -238,11 +239,11 @@ public class StateService {
         } else if (comment.getExportResponse() != null && comment.getExportError() == null) {
             transitionState = getById(PrismState.valueOf(stateGroup.toString() + "_COMPLETED"));
         }
-        return stateDAO.getStateTransition(stateTransitions, transitionState);
+        return stateDAO.getStateTransition(evaluation, transitionState);
     }
 
     @SuppressWarnings("unused")
-    private StateTransition getInterviewScheduledOutcome(Resource resource, Comment comment, List<StateTransition> stateTransitions) {
+    public StateTransition getInterviewScheduledOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
         State transitionState;
         DateTime baselineDateTime = new DateTime();
         DateTime interviewDateTime = comment.getInterviewDateTime();
@@ -259,7 +260,7 @@ public class StateService {
                 transitionState = getById(PrismState.APPLICATION_INTERVIEW);
             }
         }
-        return stateDAO.getStateTransition(stateTransitions, transitionState);
+        return stateDAO.getStateTransition(evaluation, transitionState);
     }
 
 }

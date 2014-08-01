@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.integration.helpers.ReferenceDataImportHelper;
+import com.zuehlke.pgadmissions.integration.helpers.InstitutionDataImportHelper;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -23,12 +23,12 @@ import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 import com.zuehlke.pgadmissions.services.importers.InstitutionDomicileImportService;
-import com.zuehlke.pgadmissions.services.importers.OpportunityCategoryImportService;
+import com.zuehlke.pgadmissions.services.importers.AdvertCategoryImportService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
-public class IT3InstitutionReferenceDataImport {
+public class IT4ImportInstitutionReferenceData implements IPrismIntegrationTest {
 
     @Autowired
     private EntityImportService entityImportService;
@@ -40,7 +40,7 @@ public class IT3InstitutionReferenceDataImport {
     private InstitutionDomicileImportService institutionDomicileImportService;
 
     @Autowired
-    private OpportunityCategoryImportService opportunityCategoryImportService;
+    private AdvertCategoryImportService opportunityCategoryImportService;
 
     @Autowired
     private EntityService entityService;
@@ -55,16 +55,15 @@ public class IT3InstitutionReferenceDataImport {
     private SystemService systemService;
     
     @Autowired
-    private ReferenceDataImportHelper referenceDataImportHelper;
+    private InstitutionDataImportHelper referenceDataImportHelper;
     
     @Autowired
-    private IT1SystemInitialisation it1SystemInitialisation;
+    private IT1InitialiseSystem it1;
 
     @Test
-    public void testImportData() throws Exception {
-        it1SystemInitialisation.testSystemInitialisation();
-        referenceDataImportHelper.verifyInstitutionDomicileImport();
-        referenceDataImportHelper.verifyOpportunityCategoryImport();
+    @Override
+    public void run() throws Exception {
+        it1.run();
         Institution institution = createTestInstitution();
         referenceDataImportHelper.verifyEntityImport(institution);
         referenceDataImportHelper.verifyProgramImport(institution);

@@ -19,8 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.StudyOption;
@@ -35,12 +33,12 @@ import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.StateService;
+import com.zuehlke.pgadmissions.services.importers.AdvertCategoryImportService;
 import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 import com.zuehlke.pgadmissions.services.importers.InstitutionDomicileImportService;
-import com.zuehlke.pgadmissions.services.importers.OpportunityCategoryImportService;
 
 @Service
-public class ReferenceDataImportHelper {
+public class InstitutionDataImportHelper {
     
     @Autowired
     private EntityService entityService;
@@ -55,7 +53,7 @@ public class ReferenceDataImportHelper {
     private ImportedEntityService importedEntityService;
     
     @Autowired
-    private OpportunityCategoryImportService opportunityCategoryImportService;
+    private AdvertCategoryImportService opportunityCategoryImportService;
     
     @Autowired
     private ProgramService programService;
@@ -65,23 +63,6 @@ public class ReferenceDataImportHelper {
     
     @Autowired
     private StateService stateService;
-
-    public void verifyInstitutionDomicileImport() throws Exception {
-        institutionDomicileImportService.importEntities("reference_data/isoCountryCodes/iso_country_codes.xml");
-        institutionDomicileImportService.importEntities("xml/iso/iso_country_codes.xml");
-
-        InstitutionDomicile poland = entityService.getByProperty(InstitutionDomicile.class, "id", "PL");
-        assertEquals("Poland", poland.getName());
-        assertTrue(poland.isEnabled());
-
-        InstitutionDomicileRegion wojBielskie = entityService.getByProperty(InstitutionDomicileRegion.class, "id", "PL-BIELSKO");
-        assertEquals("Bielskie", wojBielskie.getName());
-        assertFalse(wojBielskie.isEnabled());
-    }
-    
-    public void verifyOpportunityCategoryImport() throws DataImportException {
-        opportunityCategoryImportService.importEntities("xml/opportunityCategories/soc2010.csv");
-    }
     
     public void verifyEntityImport(Institution institution) throws DataImportException {
         for (String code : new String[] { "1", "99" }) {

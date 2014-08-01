@@ -47,7 +47,7 @@ public class RoleTransition implements IUniqueEntity {
     private Role transitionRole;
     
     @Column(name = "restrict_to_action_owner", nullable = false)
-    private boolean restrictToActionOwner;
+    private Boolean restrictToActionOwner;
 
     @Column(name = "minimum_permitted")
     private Integer minimumPermitted;

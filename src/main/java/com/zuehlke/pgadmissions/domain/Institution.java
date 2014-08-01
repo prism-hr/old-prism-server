@@ -48,13 +48,13 @@ public class Institution extends Resource {
     @Id
     @GeneratedValue
     private Integer id;
-    
-    @Column(name = "code")
-    private String code;
 
     @ManyToOne
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
+    
+    @Column(name = "code")
+    private String code;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -76,7 +76,7 @@ public class Institution extends Resource {
     private InstitutionAddress address;
     
     @Column(name = "is_ucl_institution", nullable = false)
-    private boolean uclInstitution = false;
+    private Boolean uclInstitution = false;
 
     @ManyToOne
     @JoinColumn(name = "state_id")

@@ -25,10 +25,10 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
-public class IT3ManageUserRoles {
+public class IT4InstitutionUserRoleManagement {
 
     @Autowired
-    private IT2SystemReferenceDataImport it2SystemReferenceDataImport;
+    private IT3InstitutionReferenceDataImport it2SystemReferenceDataImport;
 
     @Autowired
     private UserService userService;

@@ -160,6 +160,10 @@ public class SystemService {
         entityService.clear();
     }
 
+    public void save(System system) {
+        entityService.save(system);
+    }
+    
     private void initialiseScopes() {
         for (PrismScope prismScope : PrismScope.values()) {
             Scope transientScope = new Scope().withId(prismScope).withPrecedence(prismScope.getPrecedence()).withShortCode(prismScope.getShortCode());
@@ -392,7 +396,7 @@ public class SystemService {
     private void initialiseSystemUser(System system) {
         User systemUser = system.getUser();
         if (systemUser.getUserAccount() == null) {
-            systemUser.withAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(systemUserPassword)));
+            systemUser.withAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(systemUserPassword)).withEnabled(false));
             NotificationTemplate registrationTemplate = notificationService.getById(PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
             notificationService.sendNotification(systemUser, system, registrationTemplate);
         } else {

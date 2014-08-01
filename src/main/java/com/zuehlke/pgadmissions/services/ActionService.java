@@ -61,6 +61,7 @@ public class ActionService {
         } else if (delegateOwner != null && checkDelegateActionAvailable(operative, action, delegateOwner)) {
             return;
         }
+        // TODO : chaining actions together (default action)
         throw new CannotExecuteActionException(operative, action);
     }
 

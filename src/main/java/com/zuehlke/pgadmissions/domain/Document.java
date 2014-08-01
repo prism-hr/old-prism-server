@@ -43,7 +43,7 @@ public class Document {
     private byte[] content;
 
     @Column(name = "is_referenced", nullable = false)
-    private boolean referenced = false;
+    private Boolean referenced = false;
 
     @Transient
     private MultipartFile fileData;

@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,11 +14,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 
 @Entity
 @Table(name = "imported_entity_feed", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_entity_type" }) })
-public class ImportedEntityFeed {
+public class ImportedEntityFeed implements IUniqueEntity {
 
     @Id
     @GeneratedValue
@@ -84,6 +89,41 @@ public class ImportedEntityFeed {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+    
+    public ImportedEntityFeed withInstitution(Institution institution) {
+        this.institution = institution;
+        return this;
+    }
+    
+    public ImportedEntityFeed withImportedEntityType(PrismImportedEntity importedEntityType) {
+        this.importedEntityType = importedEntityType;
+        return this;
+    }
+    
+    public ImportedEntityFeed withLocation(String location) {
+        this.location = location;
+        return this;
+    }
+    
+    public ImportedEntityFeed withUserName(String username) {
+        this.username = username;
+        return this;
+    }
+   
+    public ImportedEntityFeed withPassword(String password) {
+        this.password = password;
+        return this;
+    }
+    
+    @Override
+    public ResourceSignature getResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("institution", institution);
+        properties.put("importedEntityType", importedEntityType);
+        propertiesWrapper.add(properties);
+        return new ResourceSignature(propertiesWrapper);
     }
 
 }

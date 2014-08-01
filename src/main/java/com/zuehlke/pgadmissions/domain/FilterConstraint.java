@@ -22,7 +22,7 @@ public class FilterConstraint {
     private Integer id;
     
     @Column(name = "filter_position_id", nullable = false)
-    private int filterPosition;
+    private Integer filterPosition;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "search_predicate", nullable = false)

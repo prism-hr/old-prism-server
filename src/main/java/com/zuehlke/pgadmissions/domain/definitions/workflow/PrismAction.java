@@ -115,7 +115,7 @@ public enum PrismAction {
 
     private PrismActionCategory actionCategory;
 
-    private boolean saveComment;
+    private Boolean saveComment;
 
     private PrismScope scope;
 

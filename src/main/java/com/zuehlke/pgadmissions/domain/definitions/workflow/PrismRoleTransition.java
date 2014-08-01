@@ -10,7 +10,7 @@ public class PrismRoleTransition {
 
     private PrismRole transitionRole;
 
-    private boolean restrictToActionOwner;
+    private Boolean restrictToActionOwner;
 
     private Integer minimumPermitted;
 

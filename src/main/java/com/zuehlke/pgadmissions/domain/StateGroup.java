@@ -26,7 +26,7 @@ public class StateGroup extends WorkflowResource {
     private PrismStateGroup id;
     
     @Column(name = "sequence_order", nullable = false)
-    private int sequenceOrder;
+    private Integer sequenceOrder;
     
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)

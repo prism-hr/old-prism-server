@@ -31,7 +31,7 @@ public enum PrismRole {
     PROJECT_SECONDARY_SUPERVISOR(PrismScope.PROJECT, false), //
     SYSTEM_ADMINISTRATOR(PrismScope.SYSTEM, true);
     
-    private boolean scopeOwner;
+    private Boolean scopeOwner;
     
     private PrismScope scope;
     

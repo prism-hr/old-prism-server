@@ -35,7 +35,7 @@ public class Role extends WorkflowResource implements GrantedAuthority {
     private PrismRole id;
 
     @Column(name = "is_scope_creator", nullable = false)
-    private boolean scopeCreator;
+    private Boolean scopeCreator;
     
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)

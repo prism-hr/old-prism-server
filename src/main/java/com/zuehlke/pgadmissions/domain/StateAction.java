@@ -42,10 +42,10 @@ public class StateAction implements IUniqueEntity {
     private Action action;
 
     @Column(name = "raises_urgent_flag", nullable = false)
-    private boolean raisesUrgentFlag;
+    private Boolean raisesUrgentFlag;
 
     @Column(name = "is_default_action", nullable = false)
-    private boolean defaultAction;
+    private Boolean defaultAction;
 
     @Column(name = "action_enhancement")
     @Enumerated(EnumType.STRING)

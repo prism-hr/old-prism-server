@@ -138,9 +138,9 @@ public class StateService {
         comment.setResource(resource);
         
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
-            resourceService.commitResourceCreation(resource, action, comment);
+            resourceService.createResource(resource, action, comment);
         } else {
-            resourceService.commitResourceUpdate(resource, action, comment);
+            resourceService.updateResource(resource, action, comment);
         }
 
         if (action.isSaveComment()) {
@@ -151,7 +151,7 @@ public class StateService {
         if (stateTransition != null) {
             State transitionState = stateTransition.getTransitionState();
             StateDuration transitionStateDuration = getStateDuration(resource, transitionState);
-            resourceService.transitionResourceState(resource, comment, transitionState, transitionStateDuration);
+            resourceService.transitionResource(resource, comment, transitionState, transitionStateDuration);
             
             try {
                 roleService.executeRoleTransitions(stateTransition, comment);

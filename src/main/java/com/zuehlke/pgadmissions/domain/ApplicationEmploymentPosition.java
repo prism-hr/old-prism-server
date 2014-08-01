@@ -42,7 +42,7 @@ public class ApplicationEmploymentPosition {
     private String position;
 
     @Column(name = "is_current", nullable = false)
-    private boolean current;
+    private Boolean current;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 250)
     @Column(name = "remit", nullable = false)

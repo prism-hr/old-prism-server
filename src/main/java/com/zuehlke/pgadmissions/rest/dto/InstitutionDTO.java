@@ -49,4 +49,5 @@ public class InstitutionDTO {
     public void setAddress(InstitutionAddressDTO address) {
         this.address = address;
     }
+    
 }

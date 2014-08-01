@@ -49,6 +49,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
+import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.AddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
@@ -104,25 +105,20 @@ public class ApplicationService {
     @Autowired
     private Mapper mapper;
 
-    public Application getById(int id) {
+    public Application getById(Integer id) {
         return entityService.getById(Application.class, id);
     }
-
-    public Application getOrCreate(final User user, Advert advert) {
-        Application transientApplication = new Application().withUser(user).withParentResource(advert).withCreatedTimestamp(new DateTime());
-        Application persistentApplication = entityService.getDuplicateEntity(transientApplication);
-        if (persistentApplication == null) {
-            Application previousApplication = applicationDAO.getPreviousSubmittedApplication(transientApplication);
-            if (previousApplication == null) {
-                previousApplication = applicationDAO.getPreviousUnsubmittedApplication(transientApplication);
-            }
-            if (previousApplication != null) {
-                applicationCopyHelper.copyApplicationFormData(transientApplication, previousApplication);
-                entityService.save(transientApplication);
-                persistentApplication = transientApplication;
-            }
+    
+    public Application create(User user, ApplicationDTO applicationDTO) {
+        Advert advert = programService.getById(applicationDTO.getAdvertId());
+        Application application = new Application().withUser(user).withParentResource(advert).withCreatedTimestamp(new DateTime());
+        
+        Application previousApplication = getPreviousApplication(application);
+        if (previousApplication != null) {
+            applicationCopyHelper.copyApplicationFormData(application, previousApplication);
         }
-        return persistentApplication;
+        
+        return application;
     }
 
     public void save(Application application) {
@@ -501,7 +497,7 @@ public class ApplicationService {
 
         additionalInformation.setConvictionsText(Strings.emptyToNull(additionalInformationDTO.getConvictionsText()));
     }
-
+    
     private void copyAddress(Institution institution, Address to, AddressDTO from) {
         Domicile currentAddressDomicile = importedEntityService.getById(Domicile.class, institution, from.getDomicile());
         to.setDomicile(currentAddressDomicile);
@@ -510,6 +506,14 @@ public class ApplicationService {
         to.setAddressTown(from.getAddressTown());
         to.setAddressRegion(Strings.emptyToNull(from.getAddressRegion()));
         to.setAddressCode(Strings.isNullOrEmpty(from.getAddressCode()) ? "Not Provided" : from.getAddressCode());
+    }
+    
+    private Application getPreviousApplication(Application application) {
+        Application previousApplication = applicationDAO.getPreviousSubmittedApplication(application);
+        if (previousApplication == null) {
+            previousApplication = applicationDAO.getPreviousUnsubmittedApplication(application);
+        }
+        return previousApplication;
     }
 
     private LocalDate getNextMonday(LocalDate dateFrom) {

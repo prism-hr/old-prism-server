@@ -50,7 +50,7 @@ public class ProgramInstance implements IUniqueEntity {
     private String identifier;
 
     @Column(name = "enabled", nullable = false)
-    private boolean enabled;
+    private Boolean enabled;
 
     public void setId(Integer id) {
         this.id = id;

@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
+import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 
 @Service
 @Transactional
@@ -47,30 +48,34 @@ public class ProgramService {
 
     @Autowired
     private RoleService roleService;
-    
+
     @Autowired
     private EntityService entityService;
-    
+
     @Autowired
     private ActionService actionService;
 
     @Autowired
     private ResourceService resourceService;
-    
+
     @Autowired
     private InstitutionService institutionService;
-    
+
     @Autowired
     private SystemService systemService;
-    
+
     public Advert getById(Integer id) {
         return entityService.getById(Advert.class, id);
     }
     
+    public void save(Program program) {
+        entityService.save(program);
+    }
+
     public List<ResourceConsoleListRowDTO> getProgramListBlock(Integer page, Integer perPage) {
         return resourceService.getConsoleListBlock(Program.class, page, perPage);
     }
-    
+
     public List<Program> getProgramsOpenForApplication() {
         return programDAO.getProgramsOpenForApplication();
     }
@@ -78,24 +83,29 @@ public class ProgramService {
     public Program getProgramByCode(String code) {
         return programDAO.getProgramByCode(code);
     }
-    
+
     public Program getProgramByImportedCode(Institution institution, String importedCode) {
         institution = institution == null ? institutionService.getUclInstitution() : institution;
         return programDAO.getProgramByImportedCode(institution, importedCode);
     }
-     
+
     public List<Program> getPrograms(User user) {
         // TODO implement SQL query for basic list;
         return null;
     }
     
+    public Program create(User user, ProgramDTO programDTO) {
+        return null;
+    }
+
     public Program getOrImportProgram(Programme programme, Institution institution) {
         User proxyCreator = institution.getUser();
-        
+
         PrismProgramType programType = PrismProgramType.findValueFromString(programme.getName());
         Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withImportedCode(programme.getCode())
-                .withTitle(programme.getName()).withProgramType(programType).withUser(proxyCreator);
-        
+                .withTitle(programme.getName()).withRequireProjectDefinition(programme.isAtasRegistered()).withImmediateStart(false)
+                .withProgramType(programType).withUser(proxyCreator);
+
         Action importAction = actionService.getById(PrismAction.INSTITUTION_IMPORT_PROGRAM);
         Role proxyCreatorRole = roleService.getCreatorRole(transientProgram);
 
@@ -105,7 +115,7 @@ public class ProgramService {
         Program persistentProgram = (Program) actionService.executeSystemAction(transientProgram, importAction, comment).getResource();
         return persistentProgram.withTitle(programme.getName()).withRequireProjectDefinition(programme.isAtasRegistered());
     }
-    
+
     public void saveProgramInstance(ProgramInstance transientProgramInstance) {
         ProgramInstance persistentInstance = (ProgramInstance) entityService.createOrUpdate(transientProgramInstance);
         if (persistentInstance.isEnabled()) {
@@ -118,7 +128,7 @@ public class ProgramService {
             }
         }
     }
-    
+
     public CommentCustomQuestion getCustomQuestionsForProgram(Integer programId, PrismAction actionId) {
         HashMap<String, Object> properties = Maps.newHashMap();
         properties.put("program.id", programId);
@@ -130,8 +140,10 @@ public class ProgramService {
     public void createCustomQuestionsForProgram(Integer programId, PrismAction actionId, String definition) {
         Program program = getById(programId).getProgram();
         Action action = actionService.getById(actionId);
-        CommentCustomQuestion persistentCustomQuestionDefinition = entityService.getOrCreate(new CommentCustomQuestion().withProgram(program).withAction(action));
-        CommentCustomQuestionVersion version = new CommentCustomQuestionVersion().withCommentCustomQuestion(persistentCustomQuestionDefinition).withContent(definition);
+        CommentCustomQuestion persistentCustomQuestionDefinition = entityService.getOrCreate(new CommentCustomQuestion().withProgram(program)
+                .withAction(action));
+        CommentCustomQuestionVersion version = new CommentCustomQuestionVersion().withCommentCustomQuestion(persistentCustomQuestionDefinition).withContent(
+                definition);
         entityService.save(version);
         persistentCustomQuestionDefinition.setVersion(version);
         persistentCustomQuestionDefinition.setEnabled(true);
@@ -148,7 +160,7 @@ public class ProgramService {
     public void removeProject(Integer projectId) {
         Project project = (Project) getById(projectId);
         if (project != null) {
-// TODO - state transition project.setState(ProjectState.PROJECT_DISABLED);
+            // TODO - state transition project.setState(ProjectState.PROJECT_DISABLED);
         }
     }
 
@@ -170,41 +182,41 @@ public class ProgramService {
         program.getClosingDates().add(programClosingDate);
     }
 
-// TODO: rewrite for new workflow paradigm    
-    
-//    protected Program getOrCreateProgram(Program program) {
-//        ProgramService thisBean = applicationContext.getBean(ProgramService.class);
-//
-//        if (program != null) {
-//            program = (Program) merge(program);
-//            program.setUser(thisBean.getContactUserForProgram(program, program.getUser()));
-//        } else {
-//            program = new Program();
-////            program.setState(ProgramState.PROGRAM_APPROVED);
-//            program.setUser(program.getUser());
-//        }
-//
-//        if (program.isImported()) {
-//            if (program.getInstitution() == null || !HibernateUtils.sameEntities(program.getInstitution(), opportunityRequest.getInstitutionCode())) {
-//                Institution institution = qualificationInstitutionService.getOrCreate(opportunityRequest.getInstitutionCode(),
-//                        opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
-//                program.setInstitution(institution);
-//                program.setCode(thisBean.generateNextProgramCode(institution));
-//            }
-//            program.setTitle(opportunityRequest.getProgramTitle());
-//            program.setRequireProjectDefinition(opportunityRequest.getAtasRequired());
-//            program.setProgramType(opportunityRequest.getProgramType());
-//        }
-//
-//        program.setDescription(opportunityRequest.getProgramDescription());
-//        program.setStudyDuration(opportunityRequest.getStudyDuration());
-//        program.setFunding(opportunityRequest.getFunding());
-//        // FIXME set the right state, not that it can be overridden by programInstanceService#createRemoveProgramInstances() (when there are no active instanes)
-//        // program.setActive(opportunityRequest.getAcceptingApplications());
-//
-//        save(program);
-//        return program;
-//    }
+    // TODO: rewrite for new workflow paradigm
+
+    // protected Program getOrCreateProgram(Program program) {
+    // ProgramService thisBean = applicationContext.getBean(ProgramService.class);
+    //
+    // if (program != null) {
+    // program = (Program) merge(program);
+    // program.setUser(thisBean.getContactUserForProgram(program, program.getUser()));
+    // } else {
+    // program = new Program();
+    // // program.setState(ProgramState.PROGRAM_APPROVED);
+    // program.setUser(program.getUser());
+    // }
+    //
+    // if (program.isImported()) {
+    // if (program.getInstitution() == null || !HibernateUtils.sameEntities(program.getInstitution(), opportunityRequest.getInstitutionCode())) {
+    // Institution institution = qualificationInstitutionService.getOrCreate(opportunityRequest.getInstitutionCode(),
+    // opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
+    // program.setInstitution(institution);
+    // program.setCode(thisBean.generateNextProgramCode(institution));
+    // }
+    // program.setTitle(opportunityRequest.getProgramTitle());
+    // program.setRequireProjectDefinition(opportunityRequest.getAtasRequired());
+    // program.setProgramType(opportunityRequest.getProgramType());
+    // }
+    //
+    // program.setDescription(opportunityRequest.getProgramDescription());
+    // program.setStudyDuration(opportunityRequest.getStudyDuration());
+    // program.setFunding(opportunityRequest.getFunding());
+    // // FIXME set the right state, not that it can be overridden by programInstanceService#createRemoveProgramInstances() (when there are no active instanes)
+    // // program.setActive(opportunityRequest.getAcceptingApplications());
+    //
+    // save(program);
+    // return program;
+    // }
 
     public void deleteInactiveAdverts() {
         programDAO.deleteInactiveAdverts();
@@ -230,19 +242,19 @@ public class ProgramService {
     public List<Program> getPrograms() {
         return programDAO.getPrograms();
     }
-    
+
     public ProgramInstance getExportProgramInstance(Application application) {
         return programDAO.getExportProgramInstance(application);
     }
-    
+
     public ProgramInstance getEarliestProgramInstance(Application application) {
         return programDAO.getEarliestProgramInstance(application);
     }
-    
+
     public ProgramInstance getLatestProgramInstance(Application application) {
         return programDAO.getLatestProgramInstance(application);
     }
-    
+
     public ProgramInstance getLatestProgramInstance(Program program) {
         return programDAO.getLatestProgramInstance(program);
     }

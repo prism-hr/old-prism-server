@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
+import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
@@ -91,7 +91,7 @@ public class EntityImportService {
                 System.setProperty("http.maxRedirects", "5");
 
                 importReferenceEntities(importedEntityFeed);
-            } catch (XMLDataImportException e) {
+            } catch (DataImportException e) {
                 logger.error("Error importing reference data.", e);
                 String message = e.getMessage();
                 Throwable cause = e.getCause();
@@ -117,7 +117,7 @@ public class EntityImportService {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public void importReferenceEntities(ImportedEntityFeed importedEntityFeed) throws XMLDataImportException {
+    public void importReferenceEntities(ImportedEntityFeed importedEntityFeed) throws DataImportException {
         EntityImportService thisBean = applicationContext.getBean(EntityImportService.class);
         String fileLocation = importedEntityFeed.getLocation();
         logger.info("Starting the import from file: " + fileLocation);
@@ -145,7 +145,7 @@ public class EntityImportService {
                 thisBean.mergeImportedEntities(entityClass, importedEntityFeed.getInstitution(), newEntities);
             }
         } catch (Exception e) {
-            throw new XMLDataImportException("Error during the import of file: " + fileLocation, e);
+            throw new DataImportException("Error during the import of file: " + fileLocation, e);
         }
     }
 
@@ -190,7 +190,7 @@ public class EntityImportService {
         }
     }
 
-    public void mergePrograms(List<ProgrammeOccurrence> programOccurrences, Institution institution) throws XMLDataImportException {
+    public void mergePrograms(List<ProgrammeOccurrence> programOccurrences, Institution institution) throws DataImportException {
         LocalDate currentDate = new LocalDate();
 
         EntityImportService thisBean = applicationContext.getBean(EntityImportService.class);

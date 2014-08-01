@@ -16,7 +16,7 @@ import au.com.bytecode.opencsv.CSVReader;
 import com.google.common.base.Charsets;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
 import com.zuehlke.pgadmissions.domain.OpportunityCategory;
-import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
+import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.services.EntityService;
 
 @Service
@@ -33,7 +33,7 @@ public class OpportunityCategoryImportService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public void importEntities(String fileLocation) throws XMLDataImportException {
+    public void importEntities(String fileLocation) throws DataImportException {
         OpportunityCategoryImportService thisBean = applicationContext.getBean(OpportunityCategoryImportService.class);
         log.info("Starting the import from file: " + fileLocation);
 
@@ -43,7 +43,7 @@ public class OpportunityCategoryImportService {
 
             thisBean.mergeCategories(reader);
         } catch (Exception e) {
-            throw new XMLDataImportException("Error during the import of file: " + fileLocation, e);
+            throw new DataImportException("Error during the import of file: " + fileLocation, e);
         }
     }
 

@@ -74,7 +74,7 @@ public class Comment {
     private Action action;
 
     @Column(name = "declined_response", nullable = false)
-    private boolean declinedResponse;
+    private Boolean declinedResponse;
 
     @Size(max = 50000, message = "A maximum of 50000 characters are allowed.")
     @Lob

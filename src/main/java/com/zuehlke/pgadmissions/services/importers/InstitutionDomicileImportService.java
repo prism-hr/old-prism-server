@@ -26,7 +26,7 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
-import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
+import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.iso.jaxb.CategoryNameType;
 import com.zuehlke.pgadmissions.iso.jaxb.CategoryType;
 import com.zuehlke.pgadmissions.iso.jaxb.CountryCodesType;
@@ -50,7 +50,7 @@ public class InstitutionDomicileImportService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public void importEntities(String fileLocation) throws XMLDataImportException {
+    public void importEntities(String fileLocation) throws DataImportException {
         InstitutionDomicileImportService thisBean = applicationContext.getBean(InstitutionDomicileImportService.class);
         log.info("Starting the import from file: " + fileLocation);
 
@@ -59,7 +59,7 @@ public class InstitutionDomicileImportService {
 
             thisBean.mergeDomiciles(unmarshalled);
         } catch (Exception e) {
-            throw new XMLDataImportException("Error during the import of file: " + fileLocation, e);
+            throw new DataImportException("Error during the import of file: " + fileLocation, e);
         }
     }
 
@@ -77,7 +77,7 @@ public class InstitutionDomicileImportService {
         }
     }
 
-    public void mergeDomiciles(List<CountryType> countries) throws XMLDataImportException {
+    public void mergeDomiciles(List<CountryType> countries) throws DataImportException {
         InstitutionDomicileImportService thisBean = applicationContext.getBean(InstitutionDomicileImportService.class);
 
         thisBean.disableAllDomicilesAndRegions();

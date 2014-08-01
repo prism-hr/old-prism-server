@@ -2,27 +2,22 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
+import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
@@ -53,50 +48,47 @@ public class RegistrationService {
     @Autowired
     private RoleService roleService;
 
-    public User submitRegistration(RegistrationDetails registrationDetails) {
-        User user = userService.getOrCreateUser(registrationDetails.getFirstName(), registrationDetails.getLastName(), registrationDetails.getEmail());
-        if (registrationDetails.getActivationCode() != null && !user.getActivationCode().equals(registrationDetails.getActivationCode())) {
+    public User submitRegistration(UserRegistrationDTO registrationDTO) {
+        User user = userService.getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail());
+        if (registrationDTO.getActivationCode() != null && !user.getActivationCode().equals(registrationDTO.getActivationCode())) {
             throw new ResourceNotFoundException();
         }
 
         if (user.getUserAccount() == null) {
-            user.setUserAccount(new UserAccount());
+            user.setUserAccount(new UserAccount().withEnabled(false));
         }
-        user.getUserAccount().setPassword(encryptionUtils.getMD5Hash(registrationDetails.getPassword()));
+        user.getUserAccount().setPassword(encryptionUtils.getMD5Hash(registrationDTO.getPassword()));
 
-        Resource resource = performRegistrationAction(user, registrationDetails);
+        Action action = actionService.getById(registrationDTO.getActionId());
+        Resource resource = entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId());
+
+        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
+            Object newResourceDTO = unpackNewResourceDTO(registrationDTO);
+            resource = resourceService.create(user, action, newResourceDTO);
+        }
+
         sendConfirmationEmail(user, resource);
         return user;
     }
 
-    private Resource performRegistrationAction(User user, RegistrationDetails registrationDetails) {
-        Resource resource = null;
-        PrismAction actionId = registrationDetails.getAction();
-        
-        if (actionId != null) {
-            Action action = entityService.getByProperty(Action.class, "id", actionId);
-            Class<? extends Resource> resourceClass = actionId.getScope().getResourceClass();
-            resource = entityService.getById(resourceClass, registrationDetails.getResourceId());
+    private Object unpackNewResourceDTO(UserRegistrationDTO registrationDTO) {
+        Set<Object> resourceDTOs = Sets.newHashSet();
+        resourceDTOs.add(registrationDTO.getNewInstitution());
+        resourceDTOs.add(registrationDTO.getNewProgram());
+        resourceDTOs.add(registrationDTO.getNewProject());
+        resourceDTOs.add(registrationDTO.getNewApplication());
 
-            Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false);
-
-            if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
-                resource = resourceService.createResource(resource, user, actionId.getCreationScope(), registrationDetails);
-                Role creatorRole = roleService.getCreatorRole(resource);
-                comment.getCommentAssignedUsers().add(new CommentAssignedUser().withUser(user).withRole(creatorRole));
+        for (Object resourceDTO : resourceDTOs) {
+            if (resourceDTO == null) {
+                resourceDTOs.remove(resourceDTO);
             }
-            
-            ActionOutcome actionOutcome = null;
-            if (action.getActionType() == PrismActionType.USER_INVOCATION) {
-                actionOutcome = actionService.executeUserAction(resource, action, comment);
-            } else {
-                actionOutcome = actionService.executeSystemAction(resource, action, comment);
-            }
-            
-            resource = actionOutcome.getTransitionResource();
         }
-        
-        return resource;
+
+        if (resourceDTOs.size() != 1) {
+            throw new Error();
+        }
+
+        return resourceDTOs.iterator().next();
     }
 
     public User activateAccount(String activationCode) {

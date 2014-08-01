@@ -39,7 +39,7 @@ public class Action extends WorkflowResource {
     private PrismActionCategory actionCategory;
 
     @Column(name = "do_save_comment", nullable = false)
-    private boolean saveComment;
+    private Boolean saveComment;
 
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)

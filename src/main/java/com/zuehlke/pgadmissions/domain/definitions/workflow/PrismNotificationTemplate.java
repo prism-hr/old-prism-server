@@ -156,7 +156,7 @@ public enum PrismNotificationTemplate {
 
         private PrismNotificationTemplate template;
 
-        private int interval;
+        private Integer interval;
 
         public PrismNotificationTemplate getTemplate() {
             return template;

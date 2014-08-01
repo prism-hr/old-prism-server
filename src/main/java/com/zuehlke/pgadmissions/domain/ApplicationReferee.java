@@ -56,7 +56,7 @@ public class ApplicationReferee {
     private Address address;
 
     @Column(name = "include_in_export", nullable = false)
-    private boolean includeInExport;
+    private Boolean includeInExport;
 
     public Application getApplication() {
         return application;

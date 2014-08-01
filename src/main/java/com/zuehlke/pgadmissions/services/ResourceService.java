@@ -78,48 +78,11 @@ public class ResourceService {
         return Lists.newArrayList();
     }
 
-    public void setTransitionState(Resource resource, State transitionState) {
-        resource.setPreviousState(resource.getState());
-        resource.setState(transitionState);
-    }
-
-    public void setDueDate(Resource resource, Comment comment, StateDuration stateDuration) {
-        LocalDate dueDate = comment.getUserSpecifiedDueDate();
-        if (dueDate == null && comment.getAction().getActionCategory() == PrismActionCategory.ESCALATE_RESOURCE) {
-            LocalDate dueDateBaseline = resource.getDueDateBaseline();
-            dueDate = dueDateBaseline.plusDays(stateDuration == null ? 0 : stateDuration.getDuration());
-        }
-        resource.setDueDate(dueDate);
-    }
-
     public Resource getOperativeResource(Resource resource, Action action) {
         return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
     }
-
-    public void createResource(Resource resource, Action action, Comment comment) {
-        persistResource(resource);
-        comment.setRole(roleService.getCreatorRole(resource).toString());
-    }
     
-    public void updateResource(Resource resource, Action action, Comment comment) {
-        if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
-            comment.setRole(PrismRole.SYSTEM_ADMINISTRATOR.toString());
-        } else {
-            comment.setRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action)));
-            if (comment.getDelegateUser() != null) {
-                comment.setDelegateRole(Joiner.on(", ").join(roleService.getDelegateActionOwnerRoles(comment.getDelegateUser(), resource, action)));
-            }
-        }
-    }
-    
-    public void transitionResource(Resource resource, Comment comment, State transitionState, StateDuration transitionStateDuration) {
-        setTransitionState(resource, transitionState);
-        comment.setTransitionState(transitionState);
-        setDueDate(resource, comment, transitionStateDuration);
-        resource.setUpdatedTimestamp(new DateTime());
-    }
-
-    public Resource create(User user, Action action, Object newResourceDTO) throws WorkflowEngineException {
+    public Resource createResource(User user, Action action, Object newResourceDTO) throws WorkflowEngineException {
         Resource resource = null;
 
         switch (action.getCreationScope().getId()) {
@@ -148,7 +111,7 @@ public class ResourceService {
         return actionService.executeUserAction(resource, action, comment).getTransitionResource();
     }
 
-    private void persistResource(Resource resource) {
+    public void persistResource(Resource resource, Action action, Comment comment) {
         resource.setCreatedTimestamp(new DateTime());
         resource.setUpdatedTimestamp(new DateTime());
         
@@ -174,6 +137,33 @@ public class ResourceService {
         
         resource.setCode("PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId()));
         entityService.save(resource);
+        comment.setRole(roleService.getCreatorRole(resource).toString());
+    }
+    
+    public void updateResource(Resource resource, Action action, Comment comment) {
+        if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
+            comment.setRole(PrismRole.SYSTEM_ADMINISTRATOR.toString());
+        } else {
+            comment.setRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action)));
+            if (comment.getDelegateUser() != null) {
+                comment.setDelegateRole(Joiner.on(", ").join(roleService.getDelegateActionOwnerRoles(comment.getDelegateUser(), resource, action)));
+            }
+        }
+    }
+    
+    public void transitionResource(Resource resource, Comment comment, State transitionState, StateDuration stateDuration) {
+        resource.setPreviousState(resource.getState());
+        resource.setState(transitionState);
+        comment.setTransitionState(transitionState);
+        
+        LocalDate dueDate = comment.getUserSpecifiedDueDate();
+        if (dueDate == null && comment.getAction().getActionCategory() == PrismActionCategory.ESCALATE_RESOURCE) {
+            LocalDate dueDateBaseline = resource.getDueDateBaseline();
+            dueDate = dueDateBaseline.plusDays(stateDuration == null ? 0 : stateDuration.getDuration());
+        }
+        resource.setDueDate(dueDate);
+        
+        resource.setUpdatedTimestamp(new DateTime());
     }
 
 }

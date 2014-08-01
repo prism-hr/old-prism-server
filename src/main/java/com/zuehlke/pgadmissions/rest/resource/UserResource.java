@@ -56,7 +56,7 @@ public class UserResource {
 
     @Autowired
     private Mapper dozerBeanMapper;
-
+    
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     public UserRepresentation getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -65,7 +65,6 @@ public class UserResource {
             throw new WebApplicationException(401);
         }
         User user = (User) principal;
-
         return dozerBeanMapper.map(user, UserRepresentation.class);
     }
 

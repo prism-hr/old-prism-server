@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.User;
@@ -193,6 +194,13 @@ public class ActionDAO {
                 .add(Restrictions.eq("user.parentUser", user)) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();
+    }
+
+    public Action getFallbackAction(Resource resource) {
+        return (Action) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
+                .setProjection(Projections.property("fallbackAction")) //
+                .add(Restrictions.eq("id", resource.getResourceScope())) //
+                .uniqueResult();
     }
 
 }

@@ -46,17 +46,11 @@ public class MaintenanceTask {
 
     @Scheduled(cron = "${daily.maintenance.cron}")
     public void runDaily() {
-        log.trace("Importing reference data");
-        entityImportService.importReferenceData();
-        
         log.trace("Deleting unused documents");
         documentService.deleteOrphanDocuments();
         
         log.trace("Escalating workflow transitions");
         stateService.executeEscalatedStateTransitions();
-        
-        log.trace("Exporting ucl applications");
-        applicationExportService.exportUclApplications();
         
         log.trace("Sending update notifications.");
         notificationService.sendPendingUpdateNotifications();
@@ -68,6 +62,12 @@ public class MaintenanceTask {
     public void runOngoing() {
         log.trace("Flushing workflow tranistions");
         stateService.executePropagatedStateTransitions();
+        
+        log.trace("Importing reference data");
+        entityImportService.importReferenceData();
+        
+        log.trace("Exporting ucl applications");
+        applicationExportService.exportUclApplications();
     }
     
 }

@@ -141,6 +141,9 @@ public class SystemService {
         logger.info("Initialising system");
         System system = initialiseSystemResource();
 
+        logger.info("Initialising fallback action definititions");
+        initialiseFallbackActions();
+        
         logger.info("Initialising configuration definitions");
         initialiseConfigurations(system);
 
@@ -237,6 +240,13 @@ public class SystemService {
         System transientSystem = new System().withName(systemName).withUser(systemUser).withState(systemRunning).withCreatedTimestamp(startupTimestamp)
                 .withUpdatedTimestamp(startupTimestamp);
         return entityService.createOrUpdate(transientSystem);
+    }
+    
+    private void initialiseFallbackActions() {
+        for (Scope scope : scopeService.getScopesAscending()) {
+            Action fallbackAction = actionService.getById(PrismScope.getFallbackAction(scope.getId()));
+            scope.setFallbackAction(fallbackAction);
+        }
     }
 
     private void initialiseConfigurations(System system) {

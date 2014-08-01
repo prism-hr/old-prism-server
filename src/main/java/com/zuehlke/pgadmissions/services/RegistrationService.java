@@ -65,7 +65,7 @@ public class RegistrationService {
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             Object newResourceDTO = unpackNewResourceDTO(registrationDTO);
-            resource = resourceService.create(user, action, newResourceDTO);
+            resource = resourceService.createResource(user, action, newResourceDTO);
         }
 
         sendConfirmationEmail(user, resource);

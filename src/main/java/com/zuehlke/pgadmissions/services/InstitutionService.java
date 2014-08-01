@@ -80,9 +80,14 @@ public class InstitutionService {
     public void save(Institution institution) {
         InstitutionAddress institutionAddress = institution.getAddress();
         entityService.save(institutionAddress, institution);
-        for (PrismImportedEntity importedEntityType : PrismImportedEntity.values()) {
-            if (importedEntityType.getDefaultLocation() != null) {
-                importedEntityService.getOrCreateImportedEntityFeed(institution, importedEntityType, importedEntityType.getDefaultLocation());
+    }
+    
+    public void populateDefaultImportedEntityFeeds() {
+        for (Institution institution : institutionDAO.getInstitutionsWithoutImportedEntityFeeds()) {
+            for (PrismImportedEntity importedEntityType : PrismImportedEntity.values()) {
+                if (importedEntityType.getDefaultLocation() != null) {
+                    importedEntityService.getOrCreateImportedEntityFeed(institution, importedEntityType, importedEntityType.getDefaultLocation());
+                }
             }
         }
     }

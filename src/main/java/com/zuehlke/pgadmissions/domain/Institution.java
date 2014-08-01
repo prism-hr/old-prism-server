@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -35,6 +37,7 @@ import org.joda.time.LocalDate;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 @AnalyzerDef(name = "institutionNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
@@ -97,6 +100,9 @@ public class Institution extends Resource {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
+    
+    @OneToMany(mappedBy = "institution")
+    private Set<ImportedEntityFeed> importedEntityFeeds = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -156,6 +162,10 @@ public class Institution extends Resource {
 
     public void setUclInstitution(boolean uclInstitution) {
         this.uclInstitution = uclInstitution;
+    }
+
+    public final Set<ImportedEntityFeed> getImportedEntityFeeds() {
+        return importedEntityFeeds;
     }
 
     public Institution withId(Integer id) {

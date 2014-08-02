@@ -136,7 +136,7 @@ public class StateService {
         return stateDAO.getOrderedTransitionStates(state, excludedTransitionStates);
     }
     
-    public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) {
+    public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
         comment.setResource(resource);
         
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
@@ -145,9 +145,7 @@ public class StateService {
             resourceService.updateResource(resource, action, comment);
         }
 
-        if (action.isSaveComment()) {
-            commentService.save(comment);
-        }
+        commentService.save(comment);
 
         StateTransition stateTransition = getStateTransition(resource, action, comment);
         if (stateTransition != null) {
@@ -214,8 +212,12 @@ public class StateService {
                 threadedStateTransitionPool.submit(new Runnable() {
                     @Override
                     public void run() {
-                        Comment comment = new Comment().withResource(resource).withUser(invoker).withAction(action);
-                        executeStateTransition(resource, action, comment);
+                        try {
+                            Comment comment = new Comment().withResource(resource).withUser(invoker).withAction(action);
+                            executeStateTransition(resource, action, comment);
+                        } catch (WorkflowEngineException e) {
+                            throw new Error(e);
+                        }
                     }
                 });
             }
@@ -224,7 +226,7 @@ public class StateService {
 
     public StateTransition getInstitutionCreatedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
         PrismState transitionState = PrismState.INSTITUTION_APPROVAL;
-        if (roleService.hasUserRole(resource, resource.getUser(), PrismRole.SYSTEM_ADMINISTRATOR)) {
+        if (roleService.hasUserRole(resource, comment.getUser(), PrismRole.SYSTEM_ADMINISTRATOR)) {
             transitionState = PrismState.INSTITUTION_APPROVED;
         }
         return stateDAO.getStateTransition(evaluation, getById(transitionState));

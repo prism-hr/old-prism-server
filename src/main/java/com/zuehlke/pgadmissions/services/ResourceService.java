@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateDuration;
-import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
@@ -111,14 +110,11 @@ public class ResourceService {
         return actionService.executeUserAction(resource, action, comment).getTransitionResource();
     }
 
-    public void persistResource(Resource resource, Action action, Comment comment) {
+    public void persistResource(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
         resource.setCreatedTimestamp(new DateTime());
         resource.setUpdatedTimestamp(new DateTime());
         
         switch (resource.getResourceScope()) {
-        case SYSTEM:
-            systemService.save((System) resource);
-            break;
         case INSTITUTION:
             institutionService.save((Institution) resource);
             break;
@@ -132,12 +128,12 @@ public class ResourceService {
             applicationService.save((Application) resource);
             break;
         default:
-            break;
+            throw new WorkflowEngineException();
         }
         
         resource.setCode("PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId()));
         entityService.save(resource);
-        comment.setRole(roleService.getCreatorRole(resource).toString());
+        comment.setRole(roleService.getCreatorRole(resource).getId().toString());
     }
     
     public void updateResource(Resource resource, Action action, Comment comment) {
@@ -146,7 +142,7 @@ public class ResourceService {
         } else {
             comment.setRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action)));
             if (comment.getDelegateUser() != null) {
-                comment.setDelegateRole(Joiner.on(", ").join(roleService.getDelegateActionOwnerRoles(comment.getDelegateUser(), resource, action)));
+                comment.setDelegateRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getDelegateUser(), resource, action)));
             }
         }
     }

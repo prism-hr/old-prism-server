@@ -38,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
@@ -199,7 +200,7 @@ public class EntityImportService {
         }
     }
 
-    public void mergePrograms(List<ProgrammeOccurrence> programOccurrences, Institution institution) throws DataImportException {
+    public void mergePrograms(List<ProgrammeOccurrence> programOccurrences, Institution institution) throws DataImportException, WorkflowEngineException {
         LocalDate currentDate = new LocalDate();
 
         EntityImportService thisBean = applicationContext.getBean(EntityImportService.class);

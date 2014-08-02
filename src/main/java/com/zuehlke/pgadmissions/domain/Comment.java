@@ -116,7 +116,7 @@ public class Comment {
     private DateTime interviewDateTime;
 
     @Column(name = "application_interview_timezone")
-    private TimeZone interviewTimeZone = TimeZone.getTimeZone("GMT");
+    private TimeZone interviewTimeZone;
 
     @Column(name = "application_interview_duration")
     private Integer interviewDuration;

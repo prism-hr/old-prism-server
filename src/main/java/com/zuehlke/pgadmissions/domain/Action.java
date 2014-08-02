@@ -38,9 +38,6 @@ public class Action extends WorkflowResource {
     @Enumerated(EnumType.STRING)
     private PrismActionCategory actionCategory;
 
-    @Column(name = "do_save_comment", nullable = false)
-    private Boolean saveComment;
-
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
@@ -77,14 +74,6 @@ public class Action extends WorkflowResource {
         this.actionCategory = actionCategory;
     }
 
-    public boolean isSaveComment() {
-        return saveComment;
-    }
-
-    public void setSaveComment(boolean saveComment) {
-        this.saveComment = saveComment;
-    }
-
     public Scope getScope() {
         return scope;
     }
@@ -117,11 +106,6 @@ public class Action extends WorkflowResource {
     
     public Action withActionCategory(PrismActionCategory actionCategory) {
         this.actionCategory = actionCategory;
-        return this;
-    }
-    
-    public Action withSaveComment(boolean saveComment) {
-        this.saveComment = saveComment;
         return this;
     }
 

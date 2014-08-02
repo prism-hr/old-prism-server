@@ -20,9 +20,14 @@ public class IT3CreateInstitution implements IPrismIntegrationTest {
     @Autowired
     private IntegrationTestRunner integrationTestRunner;
     
+    @Autowired
+    private IT2ImportSystemReferenceData it2;
+    
     @Test
     @Override
-    public void run() {
+    public void run() throws Exception {
+        integrationTestRunner.run(it2);
+        institutionCreationHelper.verifyInstitutionCreation();
         integrationTestRunner.recordTestSuccess(this);
     }
     

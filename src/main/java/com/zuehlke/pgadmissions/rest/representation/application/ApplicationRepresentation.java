@@ -47,6 +47,10 @@ public class ApplicationRepresentation extends AbstractResourceRepresentation {
 
     private AdditionalInformationRepresentation additionalInformation;
 
+    private List<UserRepresentation> usersInterestedInApplication;
+
+    private List<UserRepresentation> usersPotentiallyInterestedInApplication;
+
     public InstitutionRepresentation getInstitution() {
         return institution;
     }
@@ -191,4 +195,19 @@ public class ApplicationRepresentation extends AbstractResourceRepresentation {
         this.additionalInformation = additionalInformation;
     }
 
+    public List<UserRepresentation> getUsersInterestedInApplication() {
+        return usersInterestedInApplication;
+    }
+
+    public void setUsersInterestedInApplication(List<UserRepresentation> usersInterestedInApplication) {
+        this.usersInterestedInApplication = usersInterestedInApplication;
+    }
+
+    public List<UserRepresentation> getUsersPotentiallyInterestedInApplication() {
+        return usersPotentiallyInterestedInApplication;
+    }
+
+    public void setUsersPotentiallyInterestedInApplication(List<UserRepresentation> usersPotentiallyInterestedInApplication) {
+        this.usersPotentiallyInterestedInApplication = usersPotentiallyInterestedInApplication;
+    }
 }

@@ -61,11 +61,7 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 public class SystemService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    private final String EMAIL_DEFAULT_SUBJECT_DIRECTORY = "email/subject/";
-
-    private final String EMAIL_DEFAULT_CONTENT_DIRECTORY = "email/content/";
-
+    
     @Value("${system.name}")
     private String systemName;
 
@@ -77,6 +73,12 @@ public class SystemService {
 
     @Value("${system.user.email}")
     private String systemUserEmail;
+    
+    @Value("${system.default.email.subject.directory}")
+    private String defaultEmailSubjectDirectory;
+    
+    @Value("${system.default.email.content.directory}")
+    private String defaultEmailContentDirectory;
 
     @Autowired
     private ConfigurationService configurationService;
@@ -268,8 +270,8 @@ public class SystemService {
             if (duplicateTemplate == null) {
                 entityService.save(transientTemplate);
                 template = transientTemplate;
-                String defaultSubject = getFileContent(EMAIL_DEFAULT_SUBJECT_DIRECTORY + prismTemplate.getInitialTemplateSubject());
-                String defaultContent = getFileContent(EMAIL_DEFAULT_CONTENT_DIRECTORY + prismTemplate.getInitialTemplateContent());
+                String defaultSubject = getFileContent(defaultEmailSubjectDirectory + prismTemplate.getInitialTemplateSubject());
+                String defaultContent = getFileContent(defaultEmailContentDirectory + prismTemplate.getInitialTemplateContent());
                 version = new NotificationTemplateVersion().withNotificationTemplate(template).withSubject(defaultSubject).withContent(defaultContent)
                         .withCreatedTimestamp(new DateTime());
                 entityService.save(version);

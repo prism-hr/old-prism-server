@@ -5,16 +5,16 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import com.zuehlke.pgadmissions.rest.validation.InvalidRequestException;
+import com.zuehlke.pgadmissions.rest.validation.validator.CommentDTOValidator;
 import org.apache.commons.lang.BooleanUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ValidationUtils;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -65,6 +65,9 @@ public class ApplicationResource {
 
     @Autowired
     private Mapper dozerBeanMapper;
+
+    @Autowired
+    private CommentDTOValidator commentDTOValidator;
 
     @RequestMapping(value = "/{applicationId}/programDetails", method = RequestMethod.PUT)
     public void saveProgramDetails(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationProgramDetailsDTO programDetailsDTO) {
@@ -154,9 +157,10 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/comments", method = RequestMethod.POST)
-    public ActionOutcomeRepresentation performAction(@PathVariable Integer applicationId, @RequestParam PrismAction actionId,
+    public ActionOutcomeRepresentation performAction(@PathVariable Integer applicationId, @Valid @RequestBody CommentDTO commentDTO) {
             @Valid @RequestBody CommentDTO commentDTO) throws WorkflowEngineException {
         Application application = entityService.getById(Application.class, applicationId);
+        PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
         Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(userService.getCurrentUser()).withAction(action)
                 .withCreatedTimestamp(new DateTime()).withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse()))
@@ -180,4 +184,8 @@ public class ApplicationResource {
         return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
     }
 
+    @InitBinder(value = "commentDTO")
+    public void configureCommentBinding(WebDataBinder binder){
+        binder.setValidator(commentDTOValidator);
+    }
 }

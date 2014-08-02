@@ -51,14 +51,12 @@ public class RegistrationService {
 
     public User submitRegistration(UserRegistrationDTO registrationDTO) throws WorkflowEngineException {
         User user = userService.getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail());
-        if (registrationDTO.getActivationCode() != null && !user.getActivationCode().equals(registrationDTO.getActivationCode())) {
+        if ((registrationDTO.getActivationCode() != null && !user.getActivationCode().equals(registrationDTO.getActivationCode()))
+                || user.getUserAccount() != null) {
             throw new ResourceNotFoundException();
         }
 
-        if (user.getUserAccount() == null) {
-            user.setUserAccount(new UserAccount().withEnabled(false));
-        }
-        user.getUserAccount().setPassword(encryptionUtils.getMD5Hash(registrationDTO.getPassword()));
+        user.setUserAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(registrationDTO.getPassword())).withEnabled(false));
 
         Action action = actionService.getById(registrationDTO.getActionId());
         Resource resource = entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId());
@@ -79,17 +77,18 @@ public class RegistrationService {
         resourceDTOs.add(registrationDTO.getNewProject());
         resourceDTOs.add(registrationDTO.getNewApplication());
 
+        Set<Object> notNullResourceDTOs = Sets.newHashSet();
         for (Object resourceDTO : resourceDTOs) {
-            if (resourceDTO == null) {
-                resourceDTOs.remove(resourceDTO);
+            if (resourceDTO != null) {
+                notNullResourceDTOs.add(resourceDTO);
             }
         }
 
-        if (resourceDTOs.size() != 1) {
+        if (notNullResourceDTOs.size() != 1) {
             throw new Error();
         }
 
-        return resourceDTOs.iterator().next();
+        return notNullResourceDTOs.iterator().next();
     }
 
     public User activateAccount(String activationCode) {

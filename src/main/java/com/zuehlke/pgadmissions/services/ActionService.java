@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhanceme
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 
 @Service
 @Transactional
@@ -90,15 +91,15 @@ public class ActionService {
         return Lists.newArrayList(enhancements);
     }
     
-    public ActionOutcome executeUserAction(Resource resource, Action action, Comment comment) {
+    public ActionOutcome executeUserAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
         validateAction(resource, action, comment.getUser(), comment.getDelegateUser());
         return executeSystemAction(resource, action, comment);
     }
 
-    public ActionOutcome executeSystemAction(Resource resource, Action action, Comment comment) {
+    public ActionOutcome executeSystemAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
         User actionOwner = comment.getUser();
 
-        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE && action.getId() != PrismAction.SYSTEM_STARTUP) {
+        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             Resource duplicateResource = entityService.getDuplicateEntity(resource);
             
             if (duplicateResource != null) {

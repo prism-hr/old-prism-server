@@ -95,9 +95,9 @@ public class RoleDAO {
                 .uniqueResult();
     }
 
-    public List<Role> getActionOwnerRoles(User user, Resource resource, Action action) {
-        return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.groupProperty("stateActionAssignment.role")) //
+    public List<PrismRole> getActionOwnerRoles(User user, Resource resource, Action action) {
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.groupProperty("role.id")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //

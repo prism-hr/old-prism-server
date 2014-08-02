@@ -46,6 +46,7 @@ import com.zuehlke.pgadmissions.domain.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -133,7 +134,7 @@ public class ApplicationExportService {
     }
 
     @Transactional
-    protected String sendDataExportRequest(Application transientApplication) throws DatatypeConfigurationException, JAXBException {
+    protected String sendDataExportRequest(Application transientApplication) throws DatatypeConfigurationException, JAXBException, WorkflowEngineException {
         Application persistentApplication = applicationService.getById(transientApplication.getId());
         SubmitAdmissionsApplicationRequest exportRequest = buildDataExportRequest(transientApplication);
         

@@ -73,6 +73,10 @@ public class Institution extends Resource {
 
     @Column(name = "homepage", nullable = false)
     private String homepage;
+    
+    @OneToOne
+    @JoinColumn(name = "logo_document_id")
+    private Document logoDocument;
 
     @JoinColumn(name = "institution_address_id")
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -148,6 +152,14 @@ public class Institution extends Resource {
         this.homepage = homepage;
     }
 
+    public final Document getLogoDocument() {
+        return logoDocument;
+    }
+
+    public final void setLogoDocument(Document logoDocument) {
+        this.logoDocument = logoDocument;
+    }
+
     public InstitutionAddress getAddress() {
         return address;
     }
@@ -200,6 +212,11 @@ public class Institution extends Resource {
 
     public Institution withHomepage(String homepage) {
         this.homepage = homepage;
+        return this;
+    }
+    
+    public Institution withLogoDocument(Document logoDocument) {
+        this.logoDocument = logoDocument;
         return this;
     }
 

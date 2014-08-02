@@ -100,11 +100,7 @@ public class RoleService {
         }
     }
     
-    public List<Role> getActionOwnerRoles(User user, Resource resource, Action action) {
-        return roleDAO.getActionOwnerRoles(user, resource, action);
-    }
-
-    public List<Role> getDelegateActionOwnerRoles(User user, Resource resource, Action action) {
+    public List<PrismRole> getActionOwnerRoles(User user, Resource resource, Action action) {
         return roleDAO.getActionOwnerRoles(user, resource, action);
     }
 

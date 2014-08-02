@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
@@ -47,7 +48,7 @@ import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
-@RequestMapping(value = {"api/applications"})
+@RequestMapping(value = { "api/applications" })
 public class ApplicationResource {
 
     @Autowired
@@ -87,7 +88,8 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/qualifications/{qualificationId}", method = RequestMethod.PUT)
-    public void updateQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId, @Valid @RequestBody ApplicationQualificationDTO qualificationDTO) {
+    public void updateQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId,
+            @Valid @RequestBody ApplicationQualificationDTO qualificationDTO) {
         applicationService.saveQualification(applicationId, qualificationId, qualificationDTO);
     }
 
@@ -97,13 +99,15 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/employmentPositions", method = RequestMethod.POST)
-    public Map<String, Object> createEmploymentPosition(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
+    public Map<String, Object> createEmploymentPosition(@PathVariable Integer applicationId,
+            @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
         ApplicationEmploymentPosition employmentPosition = applicationService.saveEmploymentPosition(applicationId, null, employmentPositionDTO);
         return ImmutableMap.of("id", (Object) employmentPosition.getId());
     }
 
     @RequestMapping(value = "/{applicationId}/employmentPositions/{employmentPositionId}", method = RequestMethod.PUT)
-    public void updateEmploymentPosition(@PathVariable Integer applicationId, @PathVariable Integer employmentPositionId, @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
+    public void updateEmploymentPosition(@PathVariable Integer applicationId, @PathVariable Integer employmentPositionId,
+            @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
         applicationService.saveEmploymentPosition(applicationId, employmentPositionId, employmentPositionDTO);
     }
 
@@ -150,12 +154,12 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/comments", method = RequestMethod.POST)
-    public ActionOutcomeRepresentation performAction(@PathVariable Integer applicationId, @RequestParam PrismAction actionId, @Valid @RequestBody CommentDTO commentDTO) {
+    public ActionOutcomeRepresentation performAction(@PathVariable Integer applicationId, @RequestParam PrismAction actionId,
+            @Valid @RequestBody CommentDTO commentDTO) throws WorkflowEngineException {
         Application application = entityService.getById(Application.class, applicationId);
         Action action = actionService.getById(actionId);
-        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(userService.getCurrentUser())
-                .withAction(action).withCreatedTimestamp(new DateTime())
-                .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse()))
+        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(userService.getCurrentUser()).withAction(action)
+                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse()))
                 .withQualified(commentDTO.getQualified()).withCompetentInWorkLanguage(commentDTO.getCompetentInWorkLanguage())
                 .withResidenceStatus(commentDTO.getResidenceStatus());
 

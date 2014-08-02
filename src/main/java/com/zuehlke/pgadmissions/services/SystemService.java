@@ -19,6 +19,7 @@ import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ActionRedaction;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Configuration;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
@@ -36,7 +37,6 @@ import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.WorkflowResource;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
@@ -53,6 +53,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
@@ -76,9 +77,6 @@ public class SystemService {
 
     @Value("${system.user.email}")
     private String systemUserEmail;
-
-    @Value("${system.user.password}")
-    private String systemUserPassword;
 
     @Autowired
     private ConfigurationService configurationService;
@@ -117,7 +115,7 @@ public class SystemService {
         return entityService.getByProperty(System.class, "name", systemName);
     }
 
-    public void initialiseSystem() throws WorkflowConfigurationException {
+    public void initialiseSystem() throws WorkflowConfigurationException, WorkflowEngineException {
         logger.info("Initialising scope definitions");
         verifyBackwardCompatibility(Scope.class);
         initialiseScopes();
@@ -133,7 +131,7 @@ public class SystemService {
         logger.info("Initialising state group definitions");
         verifyBackwardCompatibility(StateGroup.class);
         initialiseStateGroups();
-        
+
         logger.info("Initialising state definitions");
         verifyBackwardCompatibility(State.class);
         initialiseStates();
@@ -143,7 +141,7 @@ public class SystemService {
 
         logger.info("Initialising fallback action definititions");
         initialiseFallbackActions();
-        
+
         logger.info("Initialising configuration definitions");
         initialiseConfigurations(system);
 
@@ -166,7 +164,7 @@ public class SystemService {
     public void save(System system) {
         entityService.save(system);
     }
-    
+
     private void initialiseScopes() {
         for (PrismScope prismScope : PrismScope.values()) {
             Scope transientScope = new Scope().withId(prismScope).withPrecedence(prismScope.getPrecedence()).withShortCode(prismScope.getShortCode());
@@ -201,8 +199,7 @@ public class SystemService {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismAction.getScope());
             Scope creationScope = entityService.getByProperty(Scope.class, "id", prismAction.getCreationScope());
             Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType())
-                    .withActionCategory(prismAction.getActionCategory()).withSaveComment(prismAction.isSaveComment()).withScope(scope)
-                    .withCreationScope(creationScope);
+                    .withActionCategory(prismAction.getActionCategory()).withScope(scope).withCreationScope(creationScope);
             Action action = entityService.createOrUpdate(transientAction);
             action.getRedactions().clear();
 
@@ -223,7 +220,7 @@ public class SystemService {
             entityService.createOrUpdate(transientStateGroup);
         }
     }
-    
+
     private void initialiseStates() {
         for (PrismState prismState : PrismState.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismState.getScope());
@@ -241,7 +238,7 @@ public class SystemService {
                 .withUpdatedTimestamp(startupTimestamp);
         return entityService.createOrUpdate(transientSystem);
     }
-    
+
     private void initialiseFallbackActions() {
         for (Scope scope : scopeService.getScopesAscending()) {
             Action fallbackAction = actionService.getById(PrismScope.getFallbackAction(scope.getId()));
@@ -403,16 +400,16 @@ public class SystemService {
         }
     }
 
-    private void initialiseSystemUser(System system) {
-        User systemUser = system.getUser();
-        if (systemUser.getUserAccount() == null) {
-            systemUser.withAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(systemUserPassword)).withEnabled(false));
+    private void initialiseSystemUser(System system) throws WorkflowEngineException {
+        User user = system.getUser();
+        if (user.getUserAccount() == null) {
+            Action action = actionService.getById(PrismAction.SYSTEM_STARTUP);
+            Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
+                    .withAssignedUser(user, roleService.getCreatorRole(system));
+            actionService.executeUserAction(system, action, comment);
             NotificationTemplate registrationTemplate = notificationService.getById(PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
-            notificationService.sendNotification(systemUser, system, registrationTemplate);
-        } else {
-            systemUser.getUserAccount().setEnabled(true);
+            notificationService.sendNotification(user, system, registrationTemplate);
         }
-        roleService.getOrCreateUserRole(system, systemUser, PrismRole.SYSTEM_ADMINISTRATOR);
     }
 
     private void verifyBackwardResourceCompatibility() throws WorkflowConfigurationException {

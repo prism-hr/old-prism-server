@@ -134,7 +134,6 @@ public class SystemInitialisationHelper {
         for (Action action : actionService.getActions()) {
             assertEquals(action.getId().getActionType(), action.getActionType());
             assertEquals(action.getId().getActionCategory(), action.getActionCategory());
-            assertEquals(action.getId().isSaveComment(), action.isSaveComment());
             assertEquals(action.getId().getScope(), action.getScope().getId());
             assertEquals(action.getId().getCreationScope(), action.getCreationScope() == null ? null : action.getCreationScope().getId());
 

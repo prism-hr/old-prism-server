@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 
@@ -98,7 +99,7 @@ public class ProgramService {
         return null;
     }
 
-    public Program getOrImportProgram(Programme programme, Institution institution) {
+    public Program getOrImportProgram(Programme programme, Institution institution) throws WorkflowEngineException {
         User proxyCreator = institution.getUser();
 
         PrismProgramType programType = PrismProgramType.findValueFromString(programme.getName());

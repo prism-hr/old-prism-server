@@ -235,10 +235,6 @@ public class WorkflowConfigurationHelper {
 
         Set<RoleTransition> roleTransitions = stateTransition.getRoleTransitions();
 
-        if (!roleTransitions.isEmpty()) {
-            assertTrue(action.isSaveComment());
-        }
-
         for (RoleTransition roleTransition : roleTransitions) {
             Role role = roleTransition.getRole();
             Role transitionRole = roleTransition.getTransitionRole();

@@ -8,6 +8,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.integration.helpers.SystemInitialisationHelper;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
 import com.zuehlke.pgadmissions.services.SystemService;
@@ -15,7 +16,7 @@ import com.zuehlke.pgadmissions.services.SystemService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
-public class IT1SystemInitialisation {
+public class IT1InitialiseSystem implements IPrismIntegrationTest {
     
     @Autowired
     private SystemService systemService;
@@ -25,9 +26,13 @@ public class IT1SystemInitialisation {
     
     @Autowired
     private SystemInitialisationHelper systemInitialisationHelper;
+    
+    @Autowired
+    private IntegrationTestRunner integrationTestRunner;
 
     @Test
-    public void testSystemInitialisation() throws WorkflowConfigurationException {
+    @Override
+    public void run() throws WorkflowConfigurationException, WorkflowEngineException {
         for (int i = 0; i < 2; i++) {
             systemService.initialiseSystem();
 
@@ -51,6 +56,7 @@ public class IT1SystemInitialisation {
 
             mailSenderMock.verify();
         }
+        integrationTestRunner.recordTestSuccess(this);
     }
 
 }

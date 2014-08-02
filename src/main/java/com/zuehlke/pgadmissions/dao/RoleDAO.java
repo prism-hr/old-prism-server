@@ -95,9 +95,9 @@ public class RoleDAO {
                 .uniqueResult();
     }
 
-    public List<Role> getActionOwnerRoles(User user, Resource resource, Action action) {
-        return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.groupProperty("stateActionAssignment.role")) //
+    public List<PrismRole> getActionOwnerRoles(User user, Resource resource, Action action) {
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.groupProperty("role.id")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
@@ -203,7 +203,8 @@ public class RoleDAO {
     public List<UserRole> getUpdateNotificationRoles(User user, Resource resource, NotificationTemplate template) {
         return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .createAlias("userNotifications", "userNotification", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("user", user)) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("user.parentUser", user)) //
                 .add(Restrictions.eq("userNotification.notificationTemplate", template)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //

@@ -37,13 +37,15 @@ import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
+import com.zuehlke.pgadmissions.exceptions.DataImportException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -68,6 +70,9 @@ public class EntityImportService {
 
     @Autowired
     private ProgramService programService;
+    
+    @Autowired
+    private InstitutionService institutionService;
 
     @Autowired
     private SystemService systemService;
@@ -84,14 +89,16 @@ public class EntityImportService {
     private ApplicationContext applicationContext;
     
     public void importReferenceData() {
-        for (ImportedEntityFeed importedEntityFeed : getImportedEntityFeeds()) {
+        institutionService.populateDefaultImportedEntityFeeds();
+        
+        for (ImportedEntityFeed importedEntityFeed : getImportedEntityFeedsToImport()) {
             String maxRedirects = null;
             try {
                 maxRedirects = System.getProperty("http.maxRedirects");
                 System.setProperty("http.maxRedirects", "5");
 
                 importReferenceEntities(importedEntityFeed);
-            } catch (XMLDataImportException e) {
+            } catch (DataImportException e) {
                 logger.error("Error importing reference data.", e);
                 String message = e.getMessage();
                 Throwable cause = e.getCause();
@@ -117,7 +124,7 @@ public class EntityImportService {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public void importReferenceEntities(ImportedEntityFeed importedEntityFeed) throws XMLDataImportException {
+    public void importReferenceEntities(ImportedEntityFeed importedEntityFeed) throws DataImportException {
         EntityImportService thisBean = applicationContext.getBean(EntityImportService.class);
         String fileLocation = importedEntityFeed.getLocation();
         logger.info("Starting the import from file: " + fileLocation);
@@ -144,8 +151,11 @@ public class EntityImportService {
 
                 thisBean.mergeImportedEntities(entityClass, importedEntityFeed.getInstitution(), newEntities);
             }
+            
+            setLastImportedDate(importedEntityFeed);
+            // TODO: state change to institution ready to use.
         } catch (Exception e) {
-            throw new XMLDataImportException("Error during the import of file: " + fileLocation, e);
+            throw new DataImportException("Error during the import of file: " + fileLocation, e);
         }
     }
 
@@ -190,7 +200,7 @@ public class EntityImportService {
         }
     }
 
-    public void mergePrograms(List<ProgrammeOccurrence> programOccurrences, Institution institution) throws XMLDataImportException {
+    public void mergePrograms(List<ProgrammeOccurrence> programOccurrences, Institution institution) throws DataImportException, WorkflowEngineException {
         LocalDate currentDate = new LocalDate();
 
         EntityImportService thisBean = applicationContext.getBean(EntityImportService.class);
@@ -214,6 +224,12 @@ public class EntityImportService {
         }
     }
 
+    @Transactional
+    public void setLastImportedDate(ImportedEntityFeed detachedImportedEntityFeed) {
+        ImportedEntityFeed persistentImportedEntityFeed = entityService.getById(ImportedEntityFeed.class, detachedImportedEntityFeed.getId());
+        persistentImportedEntityFeed.setLastUploadedDate(new LocalDate());
+    }
+    
     @Transactional
     public void disableAllEntities(Class<? extends ImportedEntity> entityClass, Institution institution) {
         importedEntityService.disableAllEntities(entityClass, institution);
@@ -255,8 +271,8 @@ public class EntityImportService {
     }
 
     @Transactional
-    public List<ImportedEntityFeed> getImportedEntityFeeds() {
-        return importedEntityService.getImportedEntityFeeds();
+    public List<ImportedEntityFeed> getImportedEntityFeedsToImport() {
+        return importedEntityService.getImportedEntityFeedsToImport();
     }
 
 }

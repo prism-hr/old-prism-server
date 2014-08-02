@@ -88,7 +88,7 @@ public class UserAccountValidator extends AbstractValidator {
         } else if (!EmailValidator.getInstance().isValid(updatedUser.getEmail())) {
             errors.rejectValue("email", "text.email.notvalid");
         } else {
-            User userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(updatedUser.getEmail());
+            User userWithSameEmail = userService.getUserByEmail(updatedUser.getEmail());
             if (userWithSameEmail != null && !userWithSameEmail.getId().equals(existingUser.getId())) {
                 errors.rejectValue("email", "user.email.alreadyexists");
             }

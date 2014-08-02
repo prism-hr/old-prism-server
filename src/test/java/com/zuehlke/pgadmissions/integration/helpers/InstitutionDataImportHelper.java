@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.integration;
+package com.zuehlke.pgadmissions.integration.helpers;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -9,80 +9,69 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.joda.time.LocalDate;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.InstitutionAddress;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.StateService;
+import com.zuehlke.pgadmissions.services.importers.AdvertCategoryImportService;
 import com.zuehlke.pgadmissions.services.importers.EntityImportService;
+import com.zuehlke.pgadmissions.services.importers.InstitutionDomicileImportService;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testWorkflowContext.xml")
-public class IT5InstitutionReferenceDataImport {
-
-    @Autowired
-    private EntityImportService entityImportService;
-
-    @Autowired
-    private ImportedEntityService importedEntityService;
-
+@Service
+public class InstitutionDataImportHelper {
+    
     @Autowired
     private EntityService entityService;
-
+    
+    @Autowired
+    private EntityImportService entityImportService;
+    
+    @Autowired
+    private InstitutionDomicileImportService institutionDomicileImportService;
+    
+    @Autowired
+    private ImportedEntityService importedEntityService;
+    
+    @Autowired
+    private AdvertCategoryImportService opportunityCategoryImportService;
+    
     @Autowired
     private ProgramService programService;
-
+    
     @Autowired
-    private IT1SystemInitialisation systemInitialisationIT;
-
+    private RoleService roleService;
+    
     @Autowired
-    private SystemService systemService;
+    private StateService stateService;
+    
+    public void verifyEntityImport(Institution institution) throws DataImportException {
+        for (String code : new String[] { "1", "99" }) {
+            Disability disability = entityService.getByCode(Disability.class, code);
+            if (disability != null) {
+                entityService.delete(disability);
+            }
+        }
 
-    @Test
-    public void testImportData() throws Exception {
-        systemInitialisationIT.testSystemInitialisation();
-        Institution institution = createInstitution();
-        testImportDisabilities(institution);
-        testConflictsInProgramImport(institution);
-        testImportInstitutionDomiciles();
-
-        importRemainingEntities(institution);
-    }
-
-    public Institution createInstitution() {
-        System system = systemService.getSystem();
-        State institutionState = entityService.getByProperty(State.class, "id", PrismState.INSTITUTION_APPROVED);
-
-        InstitutionDomicile institutionDomicile = new InstitutionDomicile().withName("Poland").withEnabled(true);
-        User user = new User().withEmail("jerzy@urban.pl").withFirstName("Jerzy").withLastName("Urban").withActivationCode("jurekjurektrzymajsie");
-        Institution institution = new Institution().withName("Akademia Gorniczo-Hutnicza").withState(institutionState).withHomepage("www.agh.edu.pl")
-                .withSystem(system).withUser(user).withAddress(new InstitutionAddress().withCountry(institutionDomicile));
-        entityService.save(institutionDomicile, user, institution);
-
-        return institution;
-    }
-
-    public void testImportDisabilities(Institution institution) throws Exception {
         ImportedEntityFeed importedEntityFeed = new ImportedEntityFeed();
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.DISABILITY);
         importedEntityFeed.setLocation("reference_data/conflicts/disabilities/initialDisabilities.xml");
@@ -90,7 +79,6 @@ public class IT5InstitutionReferenceDataImport {
 
         entityImportService.importReferenceEntities(importedEntityFeed);
 
-        assertEquals(2, importedEntityService.getAllDisabilities().size());
         assertEquals("disability1", importedEntityService.getByCode(Disability.class, institution, "0").getName());
         assertEquals("otherDisability", importedEntityService.getByCode(Disability.class, institution, "99").getName());
         assertTrue(importedEntityService.getByCode(Disability.class, institution, "0").isEnabled());
@@ -99,7 +87,6 @@ public class IT5InstitutionReferenceDataImport {
         importedEntityFeed.setLocation("reference_data/conflicts/disabilities/changeName.xml");
         entityImportService.importReferenceEntities(importedEntityFeed);
 
-        assertEquals(2, importedEntityService.getAllDisabilities().size());
         assertEquals("disability2", importedEntityService.getByCode(Disability.class, institution, "0").getName());
         assertEquals("otherDisability", importedEntityService.getByCode(Disability.class, institution, "99").getName());
         assertTrue(importedEntityService.getByCode(Disability.class, institution, "0").isEnabled());
@@ -108,7 +95,6 @@ public class IT5InstitutionReferenceDataImport {
         importedEntityFeed.setLocation("reference_data/conflicts/disabilities/changeCode.xml");
         entityImportService.importReferenceEntities(importedEntityFeed);
 
-        assertEquals(2, importedEntityService.getAllDisabilities().size());
         assertEquals("disability2", importedEntityService.getByCode(Disability.class, institution, "1").getName());
         assertEquals("otherDisability", importedEntityService.getByCode(Disability.class, institution, "99").getName());
         assertTrue(importedEntityService.getByCode(Disability.class, institution, "1").isEnabled());
@@ -117,15 +103,24 @@ public class IT5InstitutionReferenceDataImport {
         importedEntityFeed.setLocation("reference_data/conflicts/disabilities/removeDisability.xml");
         entityImportService.importReferenceEntities(importedEntityFeed);
 
-        assertEquals(2, importedEntityService.getAllDisabilities().size());
         assertEquals("disability2", importedEntityService.getByCode(Disability.class, institution, "1").getName());
         assertEquals("otherDisability", importedEntityService.getByCode(Disability.class, institution, "99").getName());
         assertTrue(importedEntityService.getByCode(Disability.class, institution, "1").isEnabled());
         assertFalse(importedEntityService.getByCode(Disability.class, institution, "99").isEnabled());
     }
-
+    
     @SuppressWarnings("unchecked")
-    public void testConflictsInProgramImport(Institution institution) throws Exception {
+    public void verifyProgramImport(Institution institution) throws DataImportException {
+        for (String code : new String[] { "AGH-1", "AGH-99" }) {
+            Program program = programService.getProgramByCode(code);
+            if (program != null) {
+                for (ProgramInstance programInstance : program.getProgramInstances()) {
+                    entityService.delete(programInstance);
+                }
+                entityService.delete(program);
+            }
+        }
+
         ImportedEntityFeed importedEntityFeed = new ImportedEntityFeed();
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.PROGRAM);
         importedEntityFeed.setLocation("reference_data/conflicts/programs/initialPrograms.xml");
@@ -133,9 +128,8 @@ public class IT5InstitutionReferenceDataImport {
 
         entityImportService.importReferenceEntities(importedEntityFeed);
 
-        assertEquals(2, programService.getPrograms().size());
-        Program program1 = programService.getProgramByCode("AGH-1");
-        Program otherProgram = programService.getProgramByCode("AGH-99");
+        Program program1 = programService.getProgramByImportedCode(institution, "1");
+        Program otherProgram = programService.getProgramByImportedCode(institution, "99");
         assertEquals("MRes program1", program1.getTitle());
         assertSame(PrismProgramType.MRES, program1.getProgramType());
         assertEquals("Internship otherProgram", otherProgram.getTitle());
@@ -158,15 +152,14 @@ public class IT5InstitutionReferenceDataImport {
         importedEntityFeed.setLocation("reference_data/conflicts/programs/updatedPrograms.xml");
         entityImportService.importReferenceEntities(importedEntityFeed);
 
-        assertEquals(2, programService.getPrograms().size());
-        program1 = programService.getProgramByCode("AGH-1");
-        otherProgram = programService.getProgramByCode("AGH-99");
+        program1 = programService.getProgramByImportedCode(institution, "1");
+        otherProgram = programService.getProgramByImportedCode(institution, "99");
         assertEquals("MRes new_program1", program1.getTitle());
         assertSame(PrismProgramType.MRES, program1.getProgramType());
         assertEquals("Internship otherProgram", otherProgram.getTitle());
         assertSame(PrismProgramType.INTERNSHIP, otherProgram.getProgramType());
-        // assertTrue(program1.isEnabled());
-        // assertFalse(otherProgram.isEnabled());
+        assertEquals(program1.getState().getId(), PrismState.PROGRAM_APPROVED);
+        assertEquals(otherProgram.getState().getId(), PrismState.PROGRAM_APPROVED);
         assertFalse(program1.getRequireProjectDefinition());
         assertTrue(otherProgram.getRequireProjectDefinition());
 
@@ -176,7 +169,7 @@ public class IT5InstitutionReferenceDataImport {
                         equalTo(new ProgramInstance().withIdentifier("0009").withAcademicYear("2013")
                                 .withStudyOption(new StudyOption().withInstitution(institution).withCode("F+++++").withName("Full-time").withEnabled(true))
                                 .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(true)),
-                        equalTo(new ProgramInstance().withIdentifier("0008").withAcademicYear("2014")
+                        equalTo(new ProgramInstance().withIdentifier("0008").withAcademicYear("2013")
                                 .withStudyOption(new StudyOption().withInstitution(institution).withCode("P+++++").withName("Fart-time").withEnabled(true))
                                 .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(true))));
 
@@ -186,11 +179,8 @@ public class IT5InstitutionReferenceDataImport {
                         .withStudyOption(new StudyOption().withInstitution(institution).withCode("F+++++").withName("Full-time").withEnabled(true))
                         .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(false))));
     }
-
-    private void testImportInstitutionDomiciles() {
-    }
-
-    private void importRemainingEntities(Institution institution) throws Exception {
+    
+    public void verifyProductionDataImport(Institution institution) throws DataImportException {
         ImportedEntityFeed importedEntityFeed = new ImportedEntityFeed();
         importedEntityFeed.setInstitution(institution);
 
@@ -233,10 +223,47 @@ public class IT5InstitutionReferenceDataImport {
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.TITLE);
         importedEntityFeed.setLocation("xml/defaultEntities/title.xml");
         entityImportService.importReferenceEntities(importedEntityFeed);
+        
+        importedEntityFeed.setImportedEntityType(PrismImportedEntity.GENDER);
+        importedEntityFeed.setLocation("xml/defaultEntities/gender.xml");
+        entityImportService.importReferenceEntities(importedEntityFeed);
 
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.INSTITUTION);
         importedEntityFeed.setLocation("reference_data/conflicts/institutions/institution.xml");
         entityImportService.importReferenceEntities(importedEntityFeed);
-    }
 
+        importedEntityFeed.setImportedEntityType(PrismImportedEntity.PROGRAM);
+        importedEntityFeed.setLocation("reference_data/2014-05-08/program.xml");
+        entityImportService.importReferenceEntities(importedEntityFeed);
+    }
+    
+    @Transactional
+    public void verifyImportedProgramInitialisation() {
+        List<Program> programs = programService.getPrograms();
+        for (Program program : programs) {
+            ProgramInstance latestEnabledInstance = programService.getLatestProgramInstance(program);
+            LocalDate dueDate = program.getDueDate();
+            LocalDate currentDate = new LocalDate();
+            if (latestEnabledInstance == null) {
+                assertTrue(dueDate.isEqual(currentDate) || dueDate.isBefore(currentDate));
+            } else {
+                assertEquals(latestEnabledInstance.getApplicationDeadline(), program.getDueDate());
+            }
+            User programUser = program.getUser();
+            assertEquals(program.getInstitution().getUser(), program.getUser());
+            assertTrue(roleService.hasUserRole(program, programUser, PrismRole.PROGRAM_ADMINISTRATOR));
+        }
+    }
+    
+    @Transactional
+    public void verifyImportedProgramReactivation() {
+        Program programToDisable1 = programService.getProgramByImportedCode(null, "RRDMECSING01");
+        Program programToDisable2 = programService.getProgramByImportedCode(null, "RRDMPHSING01");
+        
+        programToDisable1.setState(stateService.getById(PrismState.PROGRAM_DISABLED_PENDING_IMPORT_REACTIVATION));
+        programToDisable2.setState(stateService.getById(PrismState.PROGRAM_DISABLED_COMPLETED));
+        
+        
+    }
+    
 }

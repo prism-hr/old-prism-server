@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -29,8 +31,15 @@ public class ImportedEntityDAO {
         return (T) sessionFactory.getCurrentSession().get(ImportedEntity.class, id);
     }
 
-    public List<ImportedEntityFeed> getImportedEntityFeeds() {
-        return sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class).addOrder(Order.asc("id")).list();
+    public List<ImportedEntityFeed> getImportedEntityFeedsToImport() {
+        return sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
+                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
+                .createAlias("institition.state", "state", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.lt("lastImportedDate", new LocalDate())) //
+                        .add(Restrictions.isNull("lastImportedDate"))) //
+                .addOrder(Order.asc("id")).list();
     }
 
     public <T extends ImportedEntity> T getByCode(Class<? extends ImportedEntity> clazz, Institution institution, String code) {

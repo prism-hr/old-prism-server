@@ -83,7 +83,7 @@ public class LanguageQualificationType implements ImportedEntity {
     private BigDecimal maximumListeningScore;
 
     @Column(name = "enabled", nullable = false)
-    private boolean enabled;
+    private Boolean enabled;
 
     public Integer getId() {
         return id;

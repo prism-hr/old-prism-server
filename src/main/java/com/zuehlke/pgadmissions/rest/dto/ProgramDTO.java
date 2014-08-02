@@ -8,6 +8,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 
 public class ProgramDTO {
+    
+    @NotNull
+    private Integer institutionID;
 
     @NotNull
     private PrismProgramType programType;
@@ -20,6 +23,14 @@ public class ProgramDTO {
 
     @Size(min = 1)
     private String[] studyOptions;
+
+    public final Integer getInstitutionID() {
+        return institutionID;
+    }
+
+    public final void setInstitutionID(Integer institutionID) {
+        this.institutionID = institutionID;
+    }
 
     public PrismProgramType getProgramType() {
         return programType;

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -35,6 +37,7 @@ import org.joda.time.LocalDate;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 @AnalyzerDef(name = "institutionNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
@@ -48,13 +51,13 @@ public class Institution extends Resource {
     @Id
     @GeneratedValue
     private Integer id;
-    
-    @Column(name = "code")
-    private String code;
 
     @ManyToOne
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
+    
+    @Column(name = "code")
+    private String code;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -70,13 +73,17 @@ public class Institution extends Resource {
 
     @Column(name = "homepage", nullable = false)
     private String homepage;
+    
+    @OneToOne
+    @JoinColumn(name = "logo_document_id")
+    private Document logoDocument;
 
     @JoinColumn(name = "institution_address_id")
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private InstitutionAddress address;
     
     @Column(name = "is_ucl_institution", nullable = false)
-    private boolean uclInstitution = false;
+    private Boolean uclInstitution = false;
 
     @ManyToOne
     @JoinColumn(name = "state_id")
@@ -97,6 +104,9 @@ public class Institution extends Resource {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
+    
+    @OneToMany(mappedBy = "institution")
+    private Set<ImportedEntityFeed> importedEntityFeeds = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -142,6 +152,14 @@ public class Institution extends Resource {
         this.homepage = homepage;
     }
 
+    public final Document getLogoDocument() {
+        return logoDocument;
+    }
+
+    public final void setLogoDocument(Document logoDocument) {
+        this.logoDocument = logoDocument;
+    }
+
     public InstitutionAddress getAddress() {
         return address;
     }
@@ -156,6 +174,10 @@ public class Institution extends Resource {
 
     public void setUclInstitution(boolean uclInstitution) {
         this.uclInstitution = uclInstitution;
+    }
+
+    public final Set<ImportedEntityFeed> getImportedEntityFeeds() {
+        return importedEntityFeeds;
     }
 
     public Institution withId(Integer id) {
@@ -190,6 +212,11 @@ public class Institution extends Resource {
 
     public Institution withHomepage(String homepage) {
         this.homepage = homepage;
+        return this;
+    }
+    
+    public Institution withLogoDocument(Document logoDocument) {
+        this.logoDocument = logoDocument;
         return this;
     }
 

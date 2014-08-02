@@ -55,7 +55,7 @@ public class ImportedInstitution implements ImportedEntity{
     private String name;
 
     @Column(name = "enabled", nullable = false)
-    private boolean enabled;
+    private Boolean enabled;
 
     public Integer getId() {
         return id;

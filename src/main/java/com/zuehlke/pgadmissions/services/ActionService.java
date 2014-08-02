@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
-import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 
 @Service
 @Transactional
@@ -48,16 +48,18 @@ public class ActionService {
         return entityService.getByProperty(Action.class, "id", id);
     }
 
-    public void validateAction(Resource resource, Action action, User actionOwner, User delegateOwner) {
+    public Action validateAction(Resource resource, Action action, User actionOwner, User delegateOwner) {
         Resource operative = resourceService.getOperativeResource(resource, action);
+        
         if (delegateOwner == null && checkActionAvailable(operative, action, actionOwner)) {
-            return;
+            return action;
         } else if (delegateOwner != null && checkActionAvailable(operative, action, delegateOwner)) {
-            return;
+            return action;
         } else if (delegateOwner != null && checkDelegateActionAvailable(operative, action, delegateOwner)) {
-            return;
+            return action;
         }
-        throw new CannotExecuteActionException(operative, action);
+        
+        return actionDAO.getFallbackAction(resource);
     }
 
     public void validateAction(Resource resource, PrismAction actionId, User actionOwner) {
@@ -89,15 +91,15 @@ public class ActionService {
         return actionDAO.getAvailableNextStati(resource, action);
     }
     
-    public ActionOutcome executeUserAction(Resource resource, Action action, Comment comment) {
+    public ActionOutcome executeUserAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
         validateAction(resource, action, comment.getUser(), comment.getDelegateUser());
         return executeSystemAction(resource, action, comment);
     }
 
-    public ActionOutcome executeSystemAction(Resource resource, Action action, Comment comment) {
+    public ActionOutcome executeSystemAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
         User actionOwner = comment.getUser();
 
-        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE && action.getId() != PrismAction.SYSTEM_STARTUP) {
+        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             Resource duplicateResource = entityService.getDuplicateEntity(resource);
             
             if (duplicateResource != null) {

@@ -7,19 +7,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.importers.AdvertCategoryImportService;
 import com.zuehlke.pgadmissions.services.importers.InstitutionDomicileImportService;
 
 @Service
 public class PrismInitialisationService implements InitializingBean {
-
-    @Autowired
-    private FullTextSearchService fullTextSearchService;
-
-    @Autowired
-    private SystemService systemService;
 
     @Value("${startup.hibernate.search.buildIndex}")
     private Boolean buildIndex;
@@ -27,28 +21,41 @@ public class PrismInitialisationService implements InitializingBean {
     @Value("${startup.workflow.initialize}")
     private Boolean initializeWorkflow;
 
-    @Value("${startup.isoCountries.import}")
-    private Boolean importIsoCountries;
+    @Value("${startup.institutionDomicile.import}")
+    private Boolean importInstitutionDomicile;
+    
+    @Value("${startup.advertCategory.import}")
+    private Boolean importAdvertCategory;
+    
+    @Autowired
+    private FullTextSearchService fullTextSearchService;
+
+    @Autowired
+    private SystemService systemService;
 
     @Autowired
     private InstitutionDomicileImportService institutionDomicileImportService;
+    
+    @Autowired
+    private AdvertCategoryImportService advertCategoryImportService;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         if (BooleanUtils.isTrue(initializeWorkflow)) {
-            initializeWorkflow();
+            systemService.initialiseSystem();
         }
+        
         if (BooleanUtils.isTrue(buildIndex)) {
             initialiseHibernateSearchIndexes();
         }
-        if (BooleanUtils.isTrue(importIsoCountries)) {
-            institutionDomicileImportService.importEntities("xml/iso/iso_country_codes.xml");
+        
+        if (BooleanUtils.isTrue(importInstitutionDomicile)) {
+            institutionDomicileImportService.importEntities();
         }
-    }
-
-    @Transactional
-    private void initializeWorkflow() throws WorkflowConfigurationException {
-        systemService.initialiseSystem();
+        
+        if (BooleanUtils.isTrue(importAdvertCategory)) {
+            advertCategoryImportService.importEntities();
+        }
     }
 
     @Transactional

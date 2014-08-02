@@ -38,7 +38,7 @@ public class CommentCustomQuestion implements IUniqueEntity {
     private CommentCustomQuestionVersion version;
     
     @Column(name = "is_enabled")
-    private boolean enabled;
+    private Boolean enabled;
     
     @OneToMany(mappedBy = "commentCustomQuestion")
     private Set<CommentCustomQuestionVersion> versions = Sets.newHashSet();

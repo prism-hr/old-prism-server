@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -120,18 +119,6 @@ public class ProgramExportService {
         defaultFeedSmall.setUser(user);
         defaultFeedSmall.setFormat(format);
         return defaultFeedSmall;
-    }
-
-    private List<ProgramExport> getDefaultOpportunitiesFeeds(List<User> users, PrismProgramExportFormat format) {
-        LinkedList<ProgramExport> feeds = Lists.newLinkedList();
-        for (User linkedUser : users) {
-            feeds.add(getDefaultOpportunitiesFeed(linkedUser, format));
-        }
-        return feeds;
-    }
-
-    public List<ProgramExport> getDefaultOpportunitiesFeedsByUpi(String upi, PrismProgramExportFormat format) {
-        return getDefaultOpportunitiesFeeds(userService.getUsersWithUpi(upi), format);
     }
 
     @Transactional(readOnly = true)

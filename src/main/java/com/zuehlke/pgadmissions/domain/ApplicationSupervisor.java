@@ -26,7 +26,7 @@ public class ApplicationSupervisor {
     private User user;
 
     @Column(name = "aware_of_application", nullable = false)
-    private boolean aware = false;
+    private Boolean aware = false;
 
     public Integer getId() {
         return id;

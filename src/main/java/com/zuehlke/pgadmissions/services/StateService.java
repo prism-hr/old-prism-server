@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import org.apache.commons.beanutils.MethodUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,9 @@ import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 
 @Service
@@ -135,24 +136,22 @@ public class StateService {
         return stateDAO.getOrderedTransitionStates(state, excludedTransitionStates);
     }
     
-    public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) {
+    public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
         comment.setResource(resource);
         
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
-            resourceService.commitResourceCreation(resource, action, comment);
+            resourceService.persistResource(resource, action, comment);
         } else {
-            resourceService.commitResourceUpdate(resource, action, comment);
+            resourceService.updateResource(resource, action, comment);
         }
 
-        if (action.isSaveComment()) {
-            commentService.save(comment);
-        }
+        commentService.save(comment);
 
         StateTransition stateTransition = getStateTransition(resource, action, comment);
         if (stateTransition != null) {
             State transitionState = stateTransition.getTransitionState();
             StateDuration transitionStateDuration = getStateDuration(resource, transitionState);
-            resourceService.transitionResourceState(resource, comment, transitionState, transitionStateDuration);
+            resourceService.transitionResource(resource, comment, transitionState, transitionStateDuration);
             
             try {
                 roleService.executeRoleTransitions(stateTransition, comment);
@@ -213,8 +212,12 @@ public class StateService {
                 threadedStateTransitionPool.submit(new Runnable() {
                     @Override
                     public void run() {
-                        Comment comment = new Comment().withResource(resource).withUser(invoker).withAction(action);
-                        executeStateTransition(resource, action, comment);
+                        try {
+                            Comment comment = new Comment().withResource(resource).withUser(invoker).withAction(action);
+                            executeStateTransition(resource, action, comment);
+                        } catch (WorkflowEngineException e) {
+                            throw new Error(e);
+                        }
                     }
                 });
             }
@@ -223,6 +226,14 @@ public class StateService {
 
     public StateTransition getApplicationEvaluatedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), comment.getTransitionState());
+	}
+
+    public StateTransition getInstitutionCreatedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
+        PrismState transitionState = PrismState.INSTITUTION_APPROVAL;
+        if (roleService.hasUserRole(resource, comment.getUser(), PrismRole.SYSTEM_ADMINISTRATOR)) {
+            transitionState = PrismState.INSTITUTION_APPROVED;
+        }
+        return stateDAO.getStateTransition(evaluation, getById(transitionState));
     }
 
     @SuppressWarnings("unused")
@@ -234,7 +245,6 @@ public class StateService {
         return stateDAO.getStateTransition(evaluation, getById(transitionState));
     }
 
-    @SuppressWarnings("unused")
     public StateTransition getApplicationExportedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
         State transitionState = resource.getState();
         StateGroup stateGroup = transitionState.getStateGroup();
@@ -246,7 +256,6 @@ public class StateService {
         return stateDAO.getStateTransition(evaluation, transitionState);
     }
 
-    @SuppressWarnings("unused")
     public StateTransition getInterviewScheduledOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
         State transitionState;
         DateTime baselineDateTime = new DateTime();

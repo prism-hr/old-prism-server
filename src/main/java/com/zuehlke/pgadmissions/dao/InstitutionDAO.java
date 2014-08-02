@@ -84,4 +84,10 @@ public class InstitutionDAO {
                 .add(Restrictions.eq("uclInstitution", true)) //
                 .uniqueResult();
     }
+
+    public List<Institution> getInstitutionsWithoutImportedEntityFeeds() {
+        return (List<Institution>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
+                .add(Restrictions.isEmpty("importedEntityFeeds")) //
+                .list();
+    }
 }

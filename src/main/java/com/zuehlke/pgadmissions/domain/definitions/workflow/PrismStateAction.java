@@ -8,9 +8,9 @@ public class PrismStateAction {
     
     private PrismAction action;
     
-    private boolean raisesUrgentFlag;
+    private Boolean raisesUrgentFlag;
     
-    private boolean defaultAction;
+    private Boolean defaultAction;
     
     private PrismActionEnhancement actionEnhancement;
     

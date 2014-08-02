@@ -34,6 +34,16 @@ public enum PrismScope {
         resourceScopes.put(Application.class, APPLICATION);
     }
     
+    private static HashMap<PrismScope, PrismAction> fallbackActions = Maps.newHashMap();
+    
+    static {
+        fallbackActions.put(SYSTEM, PrismAction.SYSTEM_VIEW_APPLICATION_LIST);
+        fallbackActions.put(INSTITUTION, PrismAction.SYSTEM_VIEW_INSTITUTION_LIST);
+        fallbackActions.put(PROGRAM, PrismAction.SYSTEM_VIEW_PROGRAM_LIST);
+        fallbackActions.put(PROJECT, PrismAction.SYSTEM_VIEW_PROJECT_LIST);
+        fallbackActions.put(APPLICATION, PrismAction.SYSTEM_VIEW_APPLICATION_LIST);
+    }
+    
     private PrismScope(Class<? extends Resource> resourceClass, int precedence, String shortCode) {
         this.resourceClass = resourceClass;
         this.precedence = precedence;
@@ -54,6 +64,10 @@ public enum PrismScope {
 
     public static PrismScope getResourceScope(Class<? extends Resource> resourceClass) {
         return resourceScopes.get(resourceClass);
+    }
+    
+    public static PrismAction getFallbackAction(PrismScope scope) {
+        return fallbackActions.get(scope);
     }
 
     public String getLowerCaseName() {

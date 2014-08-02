@@ -12,17 +12,14 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.InstitutionAddress;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateDuration;
-import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
@@ -30,10 +27,11 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
-import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
+import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
 
 @Service
 @Transactional
@@ -43,10 +41,28 @@ public class ResourceService {
     private ResourceDAO resourceDAO;
 
     @Autowired
-    private RoleService roleService;
+    private ActionService actionService;
+
+    @Autowired
+    private ApplicationService applicationService;
+
+    @Autowired
+    private ProjectService projectService;
+
+    @Autowired
+    private ProgramService programService;
+
+    @Autowired
+    private InstitutionService institutionService;
 
     @Autowired
     private EntityService entityService;
+
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private SystemService systemService;
 
     @Autowired
     private UserService userService;
@@ -55,92 +71,95 @@ public class ResourceService {
         // TODO: Build filter and integrate
         return resourceDAO.getConsoleListBlock(userService.getCurrentUser(), resourceType, page, perPage);
     }
-    
+
     public <T extends Resource> List<ResourceReportListRowDTO> getReportList(Class<T> resourceType) {
         // TODO: Build the query and integrate with filter
         return Lists.newArrayList();
     }
 
-    public void setTransitionState(Resource resource, State transitionState) {
-        resource.setPreviousState(resource.getState());
-        resource.setState(transitionState);
+    public Resource getOperativeResource(Resource resource, Action action) {
+        return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
+    }
+    
+    public Resource createResource(User user, Action action, Object newResourceDTO) throws WorkflowEngineException {
+        Resource resource = null;
+
+        switch (action.getCreationScope().getId()) {
+        case INSTITUTION:
+            resource = institutionService.create(user, (InstitutionDTO) newResourceDTO);
+            break;
+        case PROGRAM:
+            resource = programService.create(user, (ProgramDTO) newResourceDTO);
+            break;
+        case PROJECT:
+            resource = projectService.create(user, (ProjectDTO) newResourceDTO);
+            break;
+        case APPLICATION:
+            resource = applicationService.create(user, (ApplicationDTO) newResourceDTO);
+            break;
+        default:
+            throw new WorkflowEngineException();
+        }
+
+        if (entityService.getDuplicateEntity(resource) != null) {
+            throw new WorkflowEngineException();
+        }
+        
+        Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
+                .withAssignedUser(user, roleService.getCreatorRole(resource));
+        return actionService.executeUserAction(resource, action, comment).getTransitionResource();
     }
 
-    public void setDueDate(Resource resource, Comment comment, StateDuration stateDuration) {
+    public void persistResource(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
+        resource.setCreatedTimestamp(new DateTime());
+        resource.setUpdatedTimestamp(new DateTime());
+        
+        switch (resource.getResourceScope()) {
+        case INSTITUTION:
+            institutionService.save((Institution) resource);
+            break;
+        case PROGRAM:
+            programService.save((Program) resource);
+            break;
+        case PROJECT:
+            projectService.save((Project) resource);
+            break;
+        case APPLICATION:
+            applicationService.save((Application) resource);
+            break;
+        default:
+            throw new WorkflowEngineException();
+        }
+        
+        resource.setCode("PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId()));
+        entityService.save(resource);
+        comment.setRole(roleService.getCreatorRole(resource).getId().toString());
+    }
+    
+    public void updateResource(Resource resource, Action action, Comment comment) {
+        if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
+            comment.setRole(PrismRole.SYSTEM_ADMINISTRATOR.toString());
+        } else {
+            comment.setRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action)));
+            if (comment.getDelegateUser() != null) {
+                comment.setDelegateRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getDelegateUser(), resource, action)));
+            }
+        }
+    }
+    
+    public void transitionResource(Resource resource, Comment comment, State transitionState, StateDuration stateDuration) {
+        resource.setPreviousState(resource.getState());
+        resource.setState(transitionState);
+        comment.setTransitionState(transitionState);
+        
         LocalDate dueDate = comment.getUserSpecifiedDueDate();
         if (dueDate == null && comment.getAction().getActionCategory() == PrismActionCategory.ESCALATE_RESOURCE) {
             LocalDate dueDateBaseline = resource.getDueDateBaseline();
             dueDate = dueDateBaseline.plusDays(stateDuration == null ? 0 : stateDuration.getDuration());
         }
         resource.setDueDate(dueDate);
-    }
-
-    public Resource getOperativeResource(Resource resource, Action action) {
-        return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
-    }
-
-    public void commitResourceCreation(Resource resource, Action action, Comment comment) {
-        resource.setCreatedTimestamp(new DateTime());
+        
         resource.setUpdatedTimestamp(new DateTime());
-        entityService.save(resource);
-        generateResourceCode(resource);
-        comment.setRole(roleService.getCreatorRole(resource).toString());
-    }
-
-    public void commitResourceUpdate(Resource resource, Action action, Comment comment) {
-        if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
-            comment.setRole(PrismRole.SYSTEM_ADMINISTRATOR.toString());
-        } else {
-            comment.setRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action)));
-            if (comment.getDelegateUser() != null) {
-                comment.setDelegateRole(Joiner.on(", ").join(roleService.getDelegateActionOwnerRoles(comment.getDelegateUser(), resource, action)));
-            }
-        }
-    }
-
-    public void transitionResourceState(Resource resource, Comment comment, State transitionState, StateDuration transitionStateDuration) {
-        setTransitionState(resource, transitionState);
-        comment.setTransitionState(transitionState);
-        setDueDate(resource, comment, transitionStateDuration);
-        resource.setUpdatedTimestamp(new DateTime());
-    }
-
-    public Resource createResource(Resource parentResource, User user, PrismScope creationScope, RegistrationDetails registrationDetails) {
-        switch (creationScope) {
-        case SYSTEM:
-            return entityService.getById(System.class, registrationDetails.getResourceId());
-        case INSTITUTION:
-            InstitutionDTO institutionDTO = registrationDetails.getNewInstitution();
-            return createNewInstitution((System) parentResource, user, institutionDTO);
-        case PROGRAM:
-            ProgramDTO programDTO = registrationDetails.getNewProgram();
-            return createNewProgram((Institution) parentResource, user, programDTO);
-        case APPLICATION:
-            return createNewApplication((Advert) parentResource, user);
-        default:
-            throw new IllegalArgumentException(creationScope.name());
-        }
-    }
-
-    private void generateResourceCode(Resource resource) {
-        resource.setCode("PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId()));
-    }
-
-    private Resource createNewInstitution(System system, User user, InstitutionDTO institutionDTO) {
-        InstitutionDomicile domicile = entityService.getByProperty(InstitutionDomicile.class, "id", institutionDTO.getDomicile());
-        InstitutionAddressDTO addressDTO = institutionDTO.getAddress();
-        InstitutionAddress address = new InstitutionAddress().withCountry(domicile).withAddressLine1(addressDTO.getAddressLine1())
-                .withAddressLine2(addressDTO.getAddressLine2()).withAddressTown(addressDTO.getAddressTown()).withAddressCode(addressDTO.getAddressCode());
-        return new Institution().withSystem(system).withUser(user).withDomicile(domicile).withName(institutionDTO.getName())
-                .withHomepage(institutionDTO.getHomepage()).withAddress(address);
-    }
-
-    private Resource createNewProgram(Institution institution, User user, ProgramDTO programDTO) {
-        return new Program().withInstitution(institution).withUser(user);
-    }
-
-    private Resource createNewApplication(Advert advert, User user) {
-        return new Application().withProgram(advert.getProgram()).withProject(advert.getProject()).withUser(user);
     }
 
 }

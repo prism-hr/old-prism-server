@@ -11,6 +11,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 
 public class PrismSystemApproved extends PrismWorkflowState {
 
@@ -47,7 +48,20 @@ public class PrismSystemApproved extends PrismWorkflowState {
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.INSTITUTION_APPROVAL) // 
-                        .withTransitionAction(PrismAction.SYSTEM_CREATE_INSTITUTION)
+                        .withTransitionAction(PrismAction.SYSTEM_CREATE_INSTITUTION) //
+                        .withTransitionEvaluation(PrismTransitionEvaluation.INSTITUTION_CREATED_OUTCOME) //
+                        .withRoleTransitions(Arrays.asList( // 
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.INSTITUTION_ADMINISTRATOR) //
+                                .withRestrictToOwner(true) //
+                                .withMinimumPermitted(1) //
+                                .withMaximumPermitted(1))),        
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.INSTITUTION_APPROVED) // 
+                        .withTransitionAction(PrismAction.INSTITUTION_VIEW_EDIT) //
+                        .withTransitionEvaluation(PrismTransitionEvaluation.INSTITUTION_CREATED_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) //

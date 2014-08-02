@@ -2,14 +2,14 @@ package com.zuehlke.pgadmissions.rest.dto;
 
 import com.zuehlke.pgadmissions.domain.definitions.ApplicationResidenceStatus;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class CommentDTO {
+
+    private PrismAction action;
 
     @NotNull
     private String content;
@@ -23,6 +23,14 @@ public class CommentDTO {
     private ApplicationResidenceStatus residenceStatus;
 
     private Boolean declinedResponse;
+
+    public PrismAction getAction() {
+        return action;
+    }
+
+    public void setAction(PrismAction action) {
+        this.action = action;
+    }
 
     public String getContent() {
         return content;

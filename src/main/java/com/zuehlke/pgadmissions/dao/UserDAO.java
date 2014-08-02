@@ -32,7 +32,7 @@ public class UserDAO {
 
     public User getUserByActivationCode(String activationCode) {
         return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
-                .setProjection(Projections.property("user.parentUser")) //
+                .setProjection(Projections.property("parentUser")) //
                 .add(Restrictions.eq("activationCode", activationCode)) //
                 .uniqueResult();
     }

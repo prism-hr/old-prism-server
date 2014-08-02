@@ -230,11 +230,10 @@ public class UserService {
         List<Comment> assessments = commentService.getApplicationAssessmentComments(application);
         for (Comment comment : assessments) {
             User assessor = comment.getUser().getParentUser();
-            assessors.add(assessor);
-            if (!interestedAssessors.containsValue(assessor)
-                    && (BooleanUtils.isTrue(comment.isDesireToInterview()) || BooleanUtils.isTrue(comment.isDesireToRecruit()))) {
+            if (!assessors.contains(assessor) && (BooleanUtils.isTrue(comment.isDesireToInterview()) || BooleanUtils.isTrue(comment.isDesireToRecruit()))) {
                 interestedAssessors.put(assessor.getLastName() + assessor.getFirstName(), assessor);
             }
+            assessors.add(assessor);
         }
 
         List<User> suggestedSupervisors = userDAO.getSuggestedSupervisors(application);

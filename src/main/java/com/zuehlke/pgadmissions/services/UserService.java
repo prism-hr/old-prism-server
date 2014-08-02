@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,13 +13,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
@@ -33,8 +38,6 @@ import com.zuehlke.pgadmissions.utils.HibernateUtils;
 @Service("userService")
 @Transactional
 public class UserService {
-
-    private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     private UserDAO userDAO;
@@ -55,14 +58,17 @@ public class UserService {
     private EntityService entityService;
 
     @Autowired
+    private CommentService commentService;
+
+    @Autowired
     private SystemService systemService;
 
-    public void save(User user) {
-        userDAO.save(user);
+    public User getById(Integer id) {
+        return entityService.getById(User.class, id);
     }
 
-    public User getById(int id) {
-        return entityService.getById(User.class, id);
+    public void save(User user) {
+        entityService.save(user);
     }
 
     public User getCurrentUser() {
@@ -84,10 +90,6 @@ public class UserService {
 
     public User getUserByEmail(String email) {
         return entityService.getByProperty(User.class, "email", email);
-    }
-
-    public User getUserByEmailIncludingDisabledAccounts(String email) {
-        return userDAO.getUserByEmailIncludingDisabledAccounts(email);
     }
 
     public User getOrCreateUser(final String firstName, final String lastName, final String email) {
@@ -116,10 +118,6 @@ public class UserService {
         return userDAO.getUserByActivationCode(activationCode);
     }
 
-    public List<User> getUsersWithUpi(final String upi) {
-        return userDAO.getUsersWithUpi(upi);
-    }
-
     public void updateCurrentUser(User user) {
         User currentUser = getCurrentUser();
         currentUser.setFirstName(user.getFirstName());
@@ -130,26 +128,19 @@ public class UserService {
         if (StringUtils.isNotBlank(user.getUserAccount().getNewPassword())) {
             currentUser.getUserAccount().setPassword(encryptionUtils.getMD5Hash(user.getUserAccount().getNewPassword()));
         }
-        save(currentUser);
     }
 
     public void resetPassword(String email) {
-        User storedUser = userDAO.getUserByEmailIncludingDisabledAccounts(email);
-        if (storedUser == null) {
-            log.info("reset password request failed, e-mail not found: " + email);
-            return;
-        }
-        try {
-            String newPassword = encryptionUtils.generateUserPassword();
-
-            NotificationTemplate passwordTemplate = notificationService.getById(PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION);
-            notificationService.sendNotification(storedUser, null, passwordTemplate, ImmutableMap.of("newPassword", newPassword));
-
-            String hashPassword = encryptionUtils.getMD5Hash(newPassword);
-            storedUser.getUserAccount().setPassword(hashPassword);
-            userDAO.save(storedUser);
-        } catch (Exception e) {
-            log.warn("error while sending email", e);
+        User storedUser = entityService.getByProperty(User.class, "email", email);
+        if (storedUser != null) {
+            try {
+                String newPassword = encryptionUtils.generateUserPassword();
+                NotificationTemplate passwordTemplate = notificationService.getById(PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION);
+                notificationService.sendNotification(storedUser, null, passwordTemplate, ImmutableMap.of("newPassword", newPassword));
+                storedUser.getUserAccount().setPassword(encryptionUtils.getMD5Hash(newPassword));
+            } catch (Exception e) {
+                throw new Error(e);
+            }
         }
     }
 
@@ -214,7 +205,6 @@ public class UserService {
     public void setFiltering(final User user, final Filter filter) {
         Filter mergedFilter = filteringDAO.merge(filter);
         user.getUserAccount().getFilters().put(filter.getScope(), mergedFilter);
-        userDAO.save(user);
     }
 
     public Long getNumberOfActiveApplicationsForApplicant(final User applicant) {
@@ -229,12 +219,35 @@ public class UserService {
         return userDAO.getUsersForResourceAndRole(resource, authority);
     }
 
-    public List<MailDescriptor> getUserStateTransitionNotifications(StateTransition stateTransition) {
-        return userDAO.getUserStateTransitionNotifications(stateTransition);
-    }
-    
     public String getUserInstitutionId(User user, Institution institution, PrismUserIdentity identityType) {
         return userDAO.getUserInstitutionId(user, institution, identityType);
     }
 
+    public List<User> getUsersInterestedInApplication(Application application) {
+        Set<User> assessors = Sets.newHashSet();
+        TreeMap<String, User> interestedAssessors = Maps.newTreeMap();
+
+        List<Comment> assessments = commentService.getApplicationAssessmentComments(application);
+        for (Comment comment : assessments) {
+            User assessor = comment.getUser().getParentUser();
+            assessors.add(assessor);
+            if (!interestedAssessors.containsValue(assessor)
+                    && (BooleanUtils.isTrue(comment.isDesireToInterview()) || BooleanUtils.isTrue(comment.isDesireToRecruit()))) {
+                interestedAssessors.put(assessor.getLastName() + assessor.getFirstName(), assessor);
+            }
+        }
+
+        List<User> suggestedSupervisors = userDAO.getSuggestedSupervisors(application);
+        for (User suggestedSupervisor : suggestedSupervisors) {
+            if (!assessors.contains(suggestedSupervisor)) {
+                interestedAssessors.put(suggestedSupervisor.getLastName() + suggestedSupervisor.getFirstName(), suggestedSupervisor);
+            }
+        }
+
+        return Lists.newArrayList(interestedAssessors.values());
+    }
+
+    public List<User> getUsersPotentiallyInterestedInApplication(Application application, List<User> usersInterestedInApplication) {
+        return userDAO.getUsersPotentiallyInterestedInApplication(application, usersInterestedInApplication);
+    }
 }

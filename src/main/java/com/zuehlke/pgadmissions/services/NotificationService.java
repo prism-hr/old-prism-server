@@ -120,9 +120,9 @@ public class NotificationService {
             if (notificationTemplate.getNotificationType() == PrismNotificationType.INDIVIDUAL) {
                 sendNotification(userRole.getUser(), userRole.getResource(), notificationTemplate);
             } else {
-                UserNotification transientNotification = new UserNotification().withUserRole(userRole).withNotificationTemplate(notificationTemplate)
+                UserNotification transientUserNotification = new UserNotification().withUserRole(userRole).withNotificationTemplate(notificationTemplate)
                         .withCreatedTimestamp(baseline);
-                entityService.getOrCreate(transientNotification);
+                entityService.getOrCreate(transientUserNotification);
             }
         }
     }

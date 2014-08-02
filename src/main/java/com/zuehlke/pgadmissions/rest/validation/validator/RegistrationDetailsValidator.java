@@ -23,10 +23,11 @@ public class RegistrationDetailsValidator extends AbstractValidator {
 
     @Override
     public void addExtraValidation(Object target, Errors errors) {
-        UserRegistrationDTO user = (UserRegistrationDTO) target;
-
-        if (!StringUtils.isBlank(user.getEmail())) {
-            User userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(user.getEmail());
+        UserRegistrationDTO registrationDTO = (UserRegistrationDTO) target;
+        String userEmail = registrationDTO.getEmail();
+        
+        if (!StringUtils.isBlank(userEmail)) {
+            User userWithSameEmail = userService.getUserByEmail(userEmail);
             if (userWithSameEmail != null) {
                 errors.rejectValue("email", "alreadyExists");
             }

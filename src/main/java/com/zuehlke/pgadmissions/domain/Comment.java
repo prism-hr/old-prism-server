@@ -362,7 +362,7 @@ public class Comment {
         this.suitableForOpportunity = suitableForOpportunity;
     }
 
-    public Boolean getDesireToInterview() {
+    public Boolean isDesireToInterview() {
         return desireToInterview;
     }
 
@@ -370,7 +370,7 @@ public class Comment {
         this.desireToInterview = desireToInterview;
     }
 
-    public Boolean getDesireToRecruit() {
+    public Boolean isDesireToRecruit() {
         return desireToRecruit;
     }
 

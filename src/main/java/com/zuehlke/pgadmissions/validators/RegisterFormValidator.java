@@ -42,7 +42,7 @@ public class RegisterFormValidator extends AbstractValidator {
 	        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", EMPTY_FIELD_ERROR_MESSAGE);	        
 	        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", EMPTY_FIELD_ERROR_MESSAGE);	        
 	        if (!StringUtils.isBlank(user.getEmail())) {
-	            User userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(user.getEmail());
+	            User userWithSameEmail = userService.getUserByEmail(user.getEmail());
 	            if (userWithSameEmail != null && !userWithSameEmail.getId().equals(user.getId())) {
 	                errors.rejectValue("email", "user.email.alreadyexists");
 	            }

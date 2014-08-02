@@ -76,7 +76,7 @@ public class ProjectDTOValidator extends AbstractValidator {
         if (StringUtils.isBlank(primarySupervisor.getEmail())) {
             return;
         }
-        User user = userService.getUserByEmailIncludingDisabledAccounts(primarySupervisor.getEmail());
+        User user = userService.getUserByEmail(primarySupervisor.getEmail());
         if (user == null) {
             errors.rejectValue("primarySupervisor", PROSPECTUS_PERSON_NOT_EXISTS);
         }
@@ -96,7 +96,7 @@ public class ProjectDTOValidator extends AbstractValidator {
         if (StringUtils.isBlank(administrator.getEmail())) {
             return;
         }
-        User user = userService.getUserByEmailIncludingDisabledAccounts(administrator.getEmail());
+        User user = userService.getUserByEmail(administrator.getEmail());
         if (user == null) {
             errors.rejectValue("administrator", PROSPECTUS_PERSON_NOT_EXISTS);
         }
@@ -116,7 +116,7 @@ public class ProjectDTOValidator extends AbstractValidator {
         if (StringUtils.isBlank(secondarySupervisor.getEmail())) {
             return;
         }
-        User user = userService.getUserByEmailIncludingDisabledAccounts(secondarySupervisor.getEmail());
+        User user = userService.getUserByEmail(secondarySupervisor.getEmail());
         if (user == null) {
             errors.rejectValue("secondarySupervisor", PROSPECTUS_PERSON_NOT_EXISTS);
         }

@@ -203,7 +203,8 @@ public class RoleDAO {
     public List<UserRole> getUpdateNotificationRoles(User user, Resource resource, NotificationTemplate template) {
         return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .createAlias("userNotifications", "userNotification", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("user", user)) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("user.parentUser", user)) //
                 .add(Restrictions.eq("userNotification.notificationTemplate", template)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //

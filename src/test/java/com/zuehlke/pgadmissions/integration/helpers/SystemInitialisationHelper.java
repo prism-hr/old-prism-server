@@ -60,10 +60,6 @@ import com.zuehlke.pgadmissions.services.SystemService;
 @Transactional
 public class SystemInitialisationHelper {
 
-    private final String EMAIL_DEFAULT_SUBJECT_DIRECTORY = "email/subject/";
-
-    private final String EMAIL_DEFAULT_CONTENT_DIRECTORY = "email/content/";
-
     @Value("${system.name}")
     private String systemName;
 
@@ -75,6 +71,12 @@ public class SystemInitialisationHelper {
 
     @Value("${system.user.email}")
     private String systemUserEmail;
+    
+    @Value("${system.default.email.subject.directory}")
+    private String defaultEmailSubjectDirectory;
+    
+    @Value("${system.default.email.content.directory}")
+    private String defaultEmailContentDirectory;
 
     @Autowired
     private ActionService actionService;
@@ -204,8 +206,8 @@ public class SystemInitialisationHelper {
             assertEquals(PrismNotificationTemplate.getReminderInterval(template.getId()), configuration.getReminderInterval());
 
             NotificationTemplateVersion version = configuration.getNotificationTemplateVersion();
-            assertEquals(getFileContent(EMAIL_DEFAULT_SUBJECT_DIRECTORY + template.getId().getInitialTemplateSubject()), version.getSubject());
-            assertEquals(getFileContent(EMAIL_DEFAULT_CONTENT_DIRECTORY + template.getId().getInitialTemplateContent()), version.getContent());
+            assertEquals(getFileContent(defaultEmailSubjectDirectory + template.getId().getInitialTemplateSubject()), version.getSubject());
+            assertEquals(getFileContent(defaultEmailContentDirectory + template.getId().getInitialTemplateContent()), version.getContent());
         }
     }
 

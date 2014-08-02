@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.StateTransition;
@@ -134,11 +135,10 @@ public class UserDAO {
         return new ArrayList<User>();
     }
 
-    //TODO rewrite the query - HQL?
-    public List<User> getUsersPotentiallyInterestedInApplication(Application application) {
+    public List<User> getUsersPotentiallyInterestedInApplication(Application application, List<User> exclusions) {
         return new ArrayList<User>();
     }
-
+    
     public List<MailDescriptor> getUseDueTaskNotification() {
         // TODO Auto-generated method stub
         return null;

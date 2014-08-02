@@ -10,6 +10,19 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.ActionRedaction;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.Scope;
+import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.StateActionAssignment;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
+
 import java.util.List;
 
 @Repository
@@ -192,5 +205,12 @@ public class ActionDAO {
                 .add(Restrictions.eq("stateAction.state", resource.getState()))
                 .add(Restrictions.eq("stateAction.action.id", action))
                 .list();
-    }
+	}
+
+    public Action getFallbackAction(Resource resource) {
+        return (Action) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
+                .setProjection(Projections.property("fallbackAction")) //
+                .add(Restrictions.eq("id", resource.getResourceScope())) //
+                .uniqueResult();
+	}
 }

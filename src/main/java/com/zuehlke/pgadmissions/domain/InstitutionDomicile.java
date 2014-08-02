@@ -38,7 +38,7 @@ public class InstitutionDomicile {
     private String name;
 
     @Column(name = "enabled", nullable = false)
-    private boolean enabled;
+    private Boolean enabled;
 
     public String getId() {
         return id;

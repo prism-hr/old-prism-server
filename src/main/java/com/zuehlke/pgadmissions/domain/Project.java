@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Table(name = "PROJECT")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Project extends Advert {
-
+    
     @Column(name = "code")
     private String code;
     

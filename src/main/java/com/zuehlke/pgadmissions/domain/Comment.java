@@ -74,7 +74,7 @@ public class Comment {
     private Action action;
 
     @Column(name = "declined_response", nullable = false)
-    private boolean declinedResponse;
+    private Boolean declinedResponse;
 
     @Size(max = 50000, message = "A maximum of 50000 characters are allowed.")
     @Lob
@@ -116,7 +116,7 @@ public class Comment {
     private DateTime interviewDateTime;
 
     @Column(name = "application_interview_timezone")
-    private TimeZone interviewTimeZone = TimeZone.getTimeZone("GMT");
+    private TimeZone interviewTimeZone;
 
     @Column(name = "application_interview_duration")
     private Integer interviewDuration;
@@ -362,7 +362,7 @@ public class Comment {
         this.suitableForOpportunity = suitableForOpportunity;
     }
 
-    public Boolean getDesireToInterview() {
+    public Boolean isDesireToInterview() {
         return desireToInterview;
     }
 
@@ -370,7 +370,7 @@ public class Comment {
         this.desireToInterview = desireToInterview;
     }
 
-    public Boolean getDesireToRecruit() {
+    public Boolean isDesireToRecruit() {
         return desireToRecruit;
     }
 

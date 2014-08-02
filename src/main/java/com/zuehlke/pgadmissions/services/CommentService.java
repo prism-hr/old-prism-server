@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Resource;
@@ -64,6 +65,10 @@ public class CommentService {
             comments = commentDAO.getComments(resource);
         }
         return comments;
+    }
+    
+    public List<Comment> getApplicationAssessmentComments(Application application) {
+        return commentDAO.getApplicationAssessmentComments(application);
     }
 
 }

@@ -57,7 +57,7 @@ public class Program extends Advert {
     private PrismProgramType programType;
 
     @Column(name = "require_project_definition", nullable = false)
-    private boolean requireProjectDefinition;
+    private Boolean requireProjectDefinition;
     
     @ManyToOne
     @JoinColumn(name = "state_id")
@@ -346,7 +346,9 @@ public class Program extends Advert {
         }
         propertiesWrapper.add(properties);
         HashMultimap<String, Object> exclusions = HashMultimap.create();
-        exclusions.put("state.id", PrismState.PROGRAM_DISABLED_COMPLETED);
+        if (importedCode != null) {
+            exclusions.put("state.id", PrismState.PROGRAM_DISABLED_COMPLETED);
+        }
         exclusions.put("state.id", PrismState.PROGRAM_REJECTED);
         exclusions.put("state.id", PrismState.PROGRAM_WITHDRAWN);
         return new ResourceSignature(propertiesWrapper, exclusions);

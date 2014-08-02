@@ -29,7 +29,7 @@ public class ApplicationDocument {
     private Application application;
 
     @Transient
-    private boolean acceptedTerms;
+    private Boolean acceptedTerms;
 
     public Integer getId() {
         return id;

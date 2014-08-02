@@ -13,6 +13,7 @@ import javax.xml.bind.Unmarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
-import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
+import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.iso.jaxb.CategoryNameType;
 import com.zuehlke.pgadmissions.iso.jaxb.CategoryType;
 import com.zuehlke.pgadmissions.iso.jaxb.CountryCodesType;
@@ -41,6 +42,9 @@ public class InstitutionDomicileImportService {
 
     private static final Logger log = LoggerFactory.getLogger(InstitutionDomicileImportService.class);
 
+    @Value("${institutionDomicile.import.location}")
+    private String importLocation;
+    
     @Autowired
     private ImportedEntityDAO importedEntityDAO;
 
@@ -50,16 +54,16 @@ public class InstitutionDomicileImportService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public void importEntities(String fileLocation) throws XMLDataImportException {
+    public void importEntities() throws DataImportException {
         InstitutionDomicileImportService thisBean = applicationContext.getBean(InstitutionDomicileImportService.class);
-        log.info("Starting the import from file: " + fileLocation);
+        log.info("Starting the import from file: " + importLocation);
 
         try {
-            List<CountryType> unmarshalled = thisBean.unmarshall(fileLocation);
+            List<CountryType> unmarshalled = thisBean.unmarshall(importLocation);
 
             thisBean.mergeDomiciles(unmarshalled);
         } catch (Exception e) {
-            throw new XMLDataImportException("Error during the import of file: " + fileLocation, e);
+            throw new DataImportException("Error during the import of file: " + importLocation, e);
         }
     }
 
@@ -77,7 +81,7 @@ public class InstitutionDomicileImportService {
         }
     }
 
-    public void mergeDomiciles(List<CountryType> countries) throws XMLDataImportException {
+    public void mergeDomiciles(List<CountryType> countries) throws DataImportException {
         InstitutionDomicileImportService thisBean = applicationContext.getBean(InstitutionDomicileImportService.class);
 
         thisBean.disableAllDomicilesAndRegions();

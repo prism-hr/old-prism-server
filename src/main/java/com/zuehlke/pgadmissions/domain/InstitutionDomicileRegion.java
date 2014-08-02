@@ -36,7 +36,7 @@ public class InstitutionDomicileRegion {
     private String otherName;
 
     @Column(name = "enabled", nullable = false)
-    private boolean enabled;
+    private Boolean enabled;
 
     @OneToMany(mappedBy = "parentRegion")
     private Set<InstitutionDomicileRegion> subRegions;

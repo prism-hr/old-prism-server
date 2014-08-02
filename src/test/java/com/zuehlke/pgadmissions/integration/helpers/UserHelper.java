@@ -14,8 +14,9 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
-import com.zuehlke.pgadmissions.rest.dto.RegistrationDetails;
+import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -33,14 +34,14 @@ public class UserHelper {
     @Autowired
     private RoleService roleService;
 
-    public void registerAndActivateUser(PrismAction actionId, Integer resourceId, User user, PrismNotificationTemplate activationTemplate) {
+    public void registerAndActivateUser(PrismAction actionId, Integer resourceId, User user, PrismNotificationTemplate activationTemplate) throws WorkflowEngineException {
         if (user.getUserAccount() != null && user.getUserAccount().getPassword() == null) {
             throw new IllegalStateException("User already registered");
         }
 
         mailSenderMock.assertEmailSent(user, activationTemplate);
 
-        registrationService.submitRegistration(new RegistrationDetails().withFirstName(user.getFirstName())
+        registrationService.submitRegistration(new UserRegistrationDTO().withFirstName(user.getFirstName())
                 .withLastName(user.getLastName()).withEmail(user.getEmail()).withActivationCode(user.getActivationCode())
                 .withPassword("password").withAction(actionId).withResourceId(resourceId));
 
@@ -59,7 +60,7 @@ public class UserHelper {
         roleService.updateRoles(resource, user, roleRepresentations);
     }
 
-    public void registerAndActivateUserInRoles(PrismAction createAction, Resource resource, User user, PrismNotificationTemplate activationTemplate, PrismRole... roles) {
+    public void registerAndActivateUserInRoles(PrismAction createAction, Resource resource, User user, PrismNotificationTemplate activationTemplate, PrismRole... roles) throws WorkflowEngineException {
         addRoles(resource, user, roles);
         registerAndActivateUser(createAction, resource.getId(), user, activationTemplate);
     }

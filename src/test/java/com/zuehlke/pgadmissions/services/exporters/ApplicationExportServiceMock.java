@@ -9,15 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Application;
 
-@Service
-@Transactional
 public class ApplicationExportServiceMock extends ApplicationExportService {
 
     private final HashMap<Application, ApplicationExportRequest> exportRequests = Maps.newHashMap();

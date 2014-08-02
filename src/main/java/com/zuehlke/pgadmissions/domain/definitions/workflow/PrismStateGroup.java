@@ -26,7 +26,7 @@ public enum PrismStateGroup {
     PROJECT_WITHDRAWN(5, PrismScope.PROJECT), //
     SYSTEM_RUNNING(1, PrismScope.SYSTEM);
     
-    private int sequenceOrder;
+    private Integer sequenceOrder;
     
     private PrismScope scope;
     

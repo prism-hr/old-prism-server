@@ -1,14 +1,14 @@
 package com.zuehlke.pgadmissions.exceptions;
 
-public class XMLDataImportException extends Exception {
+public class DataImportException extends Exception {
 
     private static final long serialVersionUID = 649448905824352045L;
 
-    public XMLDataImportException(String message, Throwable cause) {
+    public DataImportException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public XMLDataImportException(String message) {
+    public DataImportException(String message) {
         super(message);
     }
 

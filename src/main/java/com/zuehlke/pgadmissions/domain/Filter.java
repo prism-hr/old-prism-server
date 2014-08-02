@@ -41,7 +41,7 @@ public class Filter {
     private Scope scope;
 
     @Column(name = "satisfy_all_conditions", nullable = false)
-    private boolean satisfyAllConditions = false;
+    private Boolean satisfyAllConditions = false;
 
     @Column(name = "sort_category", nullable = false)
     @Enumerated(EnumType.STRING)

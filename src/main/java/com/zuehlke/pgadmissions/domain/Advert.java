@@ -43,7 +43,7 @@ public abstract class Advert extends Resource {
     private String description;
     
     @Column(name = "immediate_start", nullable = false)
-    private boolean immediateStart;
+    private Boolean immediateStart;
     
     @ManyToOne
     @JoinColumn(name = "institution_address_id")

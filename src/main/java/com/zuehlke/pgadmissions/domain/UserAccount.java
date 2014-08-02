@@ -35,7 +35,7 @@ public class UserAccount {
     private String confirmPassword;
 
     @Column(name = "enabled", nullable = false)
-    private boolean enabled;
+    private Boolean enabled;
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_account_id", nullable = false)

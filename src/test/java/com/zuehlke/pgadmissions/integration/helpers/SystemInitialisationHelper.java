@@ -40,11 +40,13 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -58,10 +60,6 @@ import com.zuehlke.pgadmissions.services.SystemService;
 @Transactional
 public class SystemInitialisationHelper {
 
-    private final String EMAIL_DEFAULT_SUBJECT_DIRECTORY = "email/subject/";
-
-    private final String EMAIL_DEFAULT_CONTENT_DIRECTORY = "email/content/";
-
     @Value("${system.name}")
     private String systemName;
 
@@ -73,6 +71,12 @@ public class SystemInitialisationHelper {
 
     @Value("${system.user.email}")
     private String systemUserEmail;
+    
+    @Value("${system.default.email.subject.directory}")
+    private String defaultEmailSubjectDirectory;
+    
+    @Value("${system.default.email.content.directory}")
+    private String defaultEmailContentDirectory;
 
     @Autowired
     private ActionService actionService;
@@ -108,6 +112,7 @@ public class SystemInitialisationHelper {
         for (Scope scope : scopeService.getScopesDescending()) {
             assertEquals(scope.getId().getPrecedence(), scope.getPrecedence());
             assertEquals(scope.getId().getShortCode(), scope.getShortCode());
+            assertEquals(PrismScope.getFallbackAction(scope.getId()), scope.getFallbackAction().getId());
         }
     }
 
@@ -131,7 +136,6 @@ public class SystemInitialisationHelper {
         for (Action action : actionService.getActions()) {
             assertEquals(action.getId().getActionType(), action.getActionType());
             assertEquals(action.getId().getActionCategory(), action.getActionCategory());
-            assertEquals(action.getId().isSaveComment(), action.isSaveComment());
             assertEquals(action.getId().getScope(), action.getScope().getId());
             assertEquals(action.getId().getCreationScope(), action.getCreationScope() == null ? null : action.getCreationScope().getId());
 
@@ -202,8 +206,8 @@ public class SystemInitialisationHelper {
             assertEquals(PrismNotificationTemplate.getReminderInterval(template.getId()), configuration.getReminderInterval());
 
             NotificationTemplateVersion version = configuration.getNotificationTemplateVersion();
-            assertEquals(getFileContent(EMAIL_DEFAULT_SUBJECT_DIRECTORY + template.getId().getInitialTemplateSubject()), version.getSubject());
-            assertEquals(getFileContent(EMAIL_DEFAULT_CONTENT_DIRECTORY + template.getId().getInitialTemplateContent()), version.getContent());
+            assertEquals(getFileContent(defaultEmailSubjectDirectory + template.getId().getInitialTemplateSubject()), version.getSubject());
+            assertEquals(getFileContent(defaultEmailContentDirectory + template.getId().getInitialTemplateContent()), version.getContent());
         }
     }
 
@@ -250,7 +254,7 @@ public class SystemInitialisationHelper {
         workflowConfigurationHelper.verifyWorkflowConfiguration();
     }
 
-    public void verifySystemUserRegistration() {
+    public void verifySystemUserRegistration() throws WorkflowEngineException {
         System system = systemService.getSystem();
         userHelper.registerAndActivateUser(PrismAction.SYSTEM_STARTUP, system.getId(), system.getUser(),
                 PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);

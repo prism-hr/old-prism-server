@@ -60,6 +60,15 @@ public class StateDAO {
                 .uniqueResult();
     }
 
+    public StateTransition getStateTransition(State state, Action action, State transitionState) {
+        return (StateTransition) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
+                .createAlias("stateAction", "stateAction")
+                .add(Restrictions.eq("stateAction.state", state)) //
+                .add(Restrictions.eq("stateAction.action", action)) //
+                .add(Restrictions.eq("transitionState", transitionState)) //
+                .uniqueResult();
+    }
+
     public StateDuration getStateDuration(Resource resource, State state) {
         return (StateDuration) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
                 .add(Restrictions.eq("state", state)) //
@@ -125,10 +134,10 @@ public class StateDAO {
                 .add(Restrictions.eq("action.actionCategory", PrismActionCategory.ESCALATE_RESOURCE)) //
                 .addOrder(Order.desc("scope.precedence")) //
                 .list();
-        
+
         LocalDate baseline = new LocalDate();
         HashMultimap<Action, Resource> escalations = HashMultimap.create();
-        
+
         for (Action escalateAction : escalateActions) {
 
             escalations.putAll(escalateAction, sessionFactory.getCurrentSession() //
@@ -193,5 +202,4 @@ public class StateDAO {
                 .setProjection(Projections.groupProperty("state")) //
                 .list();
     }
-
 }

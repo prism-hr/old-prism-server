@@ -1,8 +1,10 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.definitions.ApplicationResidenceStatus;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -13,6 +15,8 @@ public class CommentDTO {
 
     @NotNull
     private String content;
+
+    private PrismState transitionState;
 
     private List<Integer> documents;
 
@@ -38,6 +42,14 @@ public class CommentDTO {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public PrismState getTransitionState() {
+        return transitionState;
+    }
+
+    public void setTransitionState(PrismState transitionState) {
+        this.transitionState = transitionState;
     }
 
     public List<Integer> getDocuments() {

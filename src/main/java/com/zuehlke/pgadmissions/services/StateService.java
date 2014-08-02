@@ -221,6 +221,10 @@ public class StateService {
         }
     }
 
+    public StateTransition getApplicationEvaluatedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
+        return stateDAO.getStateTransition(resource.getState(), comment.getAction(), comment.getTransitionState());
+    }
+
     @SuppressWarnings("unused")
     public StateTransition getApplicationEligibilityAssessedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
         PrismState transitionState = PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION;

@@ -96,7 +96,7 @@ public class CommentRepresentation {
 
     private DateTime createdTimestamp;
 
-    private Set<CommentAssignedUserRepresentation> commentAssignedUsers = Sets.newHashSet();
+    private Set<CommentAssignedUserRepresentation> assignedUsers = Sets.newHashSet();
 
     private Set<FileRepresentation> documents = Sets.newHashSet();
 
@@ -416,12 +416,12 @@ public class CommentRepresentation {
         this.createdTimestamp = createdTimestamp;
     }
 
-    public Set<CommentAssignedUserRepresentation> getCommentAssignedUsers() {
-        return commentAssignedUsers;
+    public Set<CommentAssignedUserRepresentation> getAssignedUsers() {
+        return assignedUsers;
     }
 
-    public void setCommentAssignedUsers(Set<CommentAssignedUserRepresentation> commentAssignedUsers) {
-        this.commentAssignedUsers = commentAssignedUsers;
+    public void setAssignedUsers(Set<CommentAssignedUserRepresentation> assignedUsers) {
+        this.assignedUsers = assignedUsers;
     }
 
     public Set<FileRepresentation> getDocuments() {

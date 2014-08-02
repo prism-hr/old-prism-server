@@ -3,6 +3,10 @@ package com.zuehlke.pgadmissions.rest.resource;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.base.Functions;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,6 +89,11 @@ public class ResourceResource {
         // set list of available actions
         List<PrismAction> permittedActions = actionService.getPermittedActions(resource, currentUser);
         representation.setActions(permittedActions);
+
+        Optional<PrismAction> completeAction = Iterables.tryFind(permittedActions, Predicates.compose(Predicates.containsPattern("^APPLICATION_COMPLETE_"), Functions.toStringFunction()));
+        if(completeAction.isPresent()) {
+            representation.setNextStates(actionService.getAvailableNextStati(resource, completeAction.get()));
+        }
 
         // set list of available action enhancements (viewing and editing permissions)
         List<PrismActionEnhancement> permittedActionEnhancements = actionService.getPermittedActionEnhancements(resource, currentUser);

@@ -33,15 +33,15 @@ public class CommentService {
     }
 
     public void save(Comment comment) {
-        List<CommentAssignedUser> assignedUsers = Lists.newArrayList(comment.getCommentAssignedUsers());
-        comment.getCommentAssignedUsers().clear();
+        List<CommentAssignedUser> assignedUsers = Lists.newArrayList(comment.getAssignedUsers());
+        comment.getAssignedUsers().clear();
         
         entityService.save(comment);
         
         for (CommentAssignedUser assignedUser : assignedUsers) {
             assignedUser.setComment(comment);
             entityService.save(assignedUser);
-            comment.getCommentAssignedUsers().add(assignedUser);
+            comment.getAssignedUsers().add(assignedUser);
         }
     }
 

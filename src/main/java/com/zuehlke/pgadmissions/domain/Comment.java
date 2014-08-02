@@ -188,7 +188,7 @@ public class Comment {
     private DateTime createdTimestamp;
 
     @OneToMany(mappedBy = "comment")
-    private Set<CommentAssignedUser> commentAssignedUsers = Sets.newHashSet();
+    private Set<CommentAssignedUser> assignedUsers = Sets.newHashSet();
 
     @OneToMany
     @JoinColumn(name = "comment_id")
@@ -562,8 +562,8 @@ public class Comment {
         this.actionOnParentResource = actionOnParentResource;
     }
 
-    public Set<CommentAssignedUser> getCommentAssignedUsers() {
-        return commentAssignedUsers;
+    public Set<CommentAssignedUser> getAssignedUsers() {
+        return assignedUsers;
     }
 
     public DateTime getCreatedTimestamp() {
@@ -694,6 +694,11 @@ public class Comment {
         return this;
     }
 
+    public Comment withTransitionState(final State transitionState) {
+        this.transitionState = transitionState;
+        return this;
+    }
+
     public Comment withPositionTitle(String positionTitle) {
         this.positionTitle = positionTitle;
         return this;
@@ -721,12 +726,12 @@ public class Comment {
     
     public Comment withAssignedUser(User user, Role role) {
         CommentAssignedUser newAssignment = new CommentAssignedUser().withComment(this).withUser(user).withRole(role);
-        commentAssignedUsers.add(newAssignment);
+        assignedUsers.add(newAssignment);
         return this;
     }
     
     public Comment withAssignedUsers(Set<CommentAssignedUser> assignedUsers) {
-        for (CommentAssignedUser assignedUser : commentAssignedUsers) {
+        for (CommentAssignedUser assignedUser : this.assignedUsers) {
             withAssignedUser(assignedUser.getUser(), assignedUser.getRole());
         }
         return this;

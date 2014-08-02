@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.List;
-
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -10,25 +10,15 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.ActionRedaction;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.StateAction;
-import com.zuehlke.pgadmissions.domain.StateActionAssignment;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")
 public class ActionDAO {
-    
+
     @Autowired
     private SessionFactory sessionFactory;
-    
+
     public Action getValidAction(Resource resource, Action action) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action.id")) //
@@ -38,7 +28,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .uniqueResult();
     }
-    
+
     public Action getDelegateAction(Resource resource, Action action) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(StateActionAssignment.class) //
                 .setProjection(Projections.property("stateAction.action")) //
@@ -74,7 +64,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .uniqueResult();
     }
-    
+
     public Action getSystemRedirectAction(Resource resource) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action")) //
@@ -84,7 +74,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("defaultAction", true)) //
                 .uniqueResult();
     }
-    
+
     public Action getPermittedAction(Resource resource, Action action, User user) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action")) //
@@ -107,7 +97,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .uniqueResult();
     }
-    
+
     public List<PrismAction> getPermittedActions(Resource resource, User user) {
         return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("action.id"))
@@ -131,7 +121,7 @@ public class ActionDAO {
                 .addOrder(Order.asc("action.id")) //
                 .list();
     }
-    
+
     public List<PrismRedactionType> getRedactions(User user, Resource resource, Action action) {
         return (List<PrismRedactionType>) sessionFactory.getCurrentSession().createCriteria(ActionRedaction.class)
                 .setProjection(Projections.groupProperty("redactionType")) //
@@ -148,7 +138,7 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
                 .list();
     }
-    
+
     public List<PrismActionEnhancement> getGlobalActionEnhancements(Resource resource, User user) {
         return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("actionEnhancement")) //
@@ -171,7 +161,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();
     }
-    
+
     public List<PrismActionEnhancement> getCustomActionEnhancements(Resource resource, User user) {
         return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("stateActionAssignment.actionEnhancement")) //
@@ -195,4 +185,12 @@ public class ActionDAO {
                 .list();
     }
 
+    public List<PrismState> getAvailableNextStati(Resource resource, PrismAction action) {
+        return sessionFactory.getCurrentSession().createCriteria(StateTransition.class)
+                .setProjection(Projections.property("transitionState.id"))
+                .createAlias("stateAction", "stateAction")
+                .add(Restrictions.eq("stateAction.state", resource.getState()))
+                .add(Restrictions.eq("stateAction.action.id", action))
+                .list();
+    }
 }

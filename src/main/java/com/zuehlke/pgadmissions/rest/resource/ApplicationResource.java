@@ -5,29 +5,17 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
-import com.zuehlke.pgadmissions.rest.validation.InvalidRequestException;
+import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.rest.validation.validator.CommentDTOValidator;
 import org.apache.commons.lang.BooleanUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
@@ -157,24 +145,25 @@ public class ApplicationResource {
         Application application = entityService.getById(Application.class, applicationId);
         PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
+        State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
         Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(userService.getCurrentUser())
                 .withAction(action).withCreatedTimestamp(new DateTime())
                 .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse()))
                 .withQualified(commentDTO.getQualified()).withCompetentInWorkLanguage(commentDTO.getCompetentInWorkLanguage())
-                .withResidenceStatus(commentDTO.getResidenceStatus());
+                .withResidenceStatus(commentDTO.getResidenceStatus()).withTransitionState(transitionState);
 
-        List<CommentAssignedUser> commentAssignedUsers = Lists.newLinkedList();
+        List<CommentAssignedUser> assignedUsers = Lists.newLinkedList();
         if (actionId.equals(PrismAction.APPLICATION_COMPLETE)) {
             Role refereeRole = entityService.getById(Role.class, PrismRole.APPLICATION_REFEREE);
             for (ApplicationReferee referee : application.getReferees()) {
-                commentAssignedUsers.add(new CommentAssignedUser().withComment(comment).withUser(referee.getUser()).withRole(refereeRole));
+                assignedUsers.add(new CommentAssignedUser().withComment(comment).withUser(referee.getUser()).withRole(refereeRole));
             }
             Role supervisorRole = entityService.getById(Role.class, PrismRole.APPLICATION_SUGGESTED_SUPERVISOR);
             for (ApplicationSupervisor supervisor : application.getProgramDetails().getSupervisors()) {
-                commentAssignedUsers.add(new CommentAssignedUser().withComment(comment).withUser(supervisor.getUser()).withRole(supervisorRole));
+                assignedUsers.add(new CommentAssignedUser().withComment(comment).withUser(supervisor.getUser()).withRole(supervisorRole));
             }
         }
-        comment.getCommentAssignedUsers().addAll(commentAssignedUsers);
+        comment.getAssignedUsers().addAll(assignedUsers);
 
         ActionOutcome actionOutcome = actionService.executeUserAction(application, action, comment);
         return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);

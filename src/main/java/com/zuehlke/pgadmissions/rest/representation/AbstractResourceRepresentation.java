@@ -23,6 +23,8 @@ public class AbstractResourceRepresentation {
     
     private List<PrismActionEnhancement> actionEnhancements;
 
+    private List<PrismState> nextStates;
+
     private List<CommentRepresentation> comments;
 
     private List<UserRolesRepresentation> users;
@@ -73,6 +75,14 @@ public class AbstractResourceRepresentation {
 
     public void setActionEnhancements(List<PrismActionEnhancement> actionEnhancements) {
         this.actionEnhancements = actionEnhancements;
+    }
+
+    public List<PrismState> getNextStates() {
+        return nextStates;
+    }
+
+    public void setNextStates(List<PrismState> nextStates) {
+        this.nextStates = nextStates;
     }
 
     public List<CommentRepresentation> getComments() {

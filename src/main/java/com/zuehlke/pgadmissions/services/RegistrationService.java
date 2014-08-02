@@ -83,7 +83,7 @@ public class RegistrationService {
             if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
                 resource = resourceService.createResource(resource, user, actionId.getCreationScope(), registrationDetails);
                 Role creatorRole = roleService.getCreatorRole(resource);
-                comment.getCommentAssignedUsers().add(new CommentAssignedUser().withUser(user).withRole(creatorRole));
+                comment.getAssignedUsers().add(new CommentAssignedUser().withUser(user).withRole(creatorRole));
             }
             
             ActionOutcome actionOutcome = null;

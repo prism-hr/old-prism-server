@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.definitions.ApplicationResidenceStatus;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
@@ -8,6 +10,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 
 public class CommentDTO {
 
@@ -17,6 +20,8 @@ public class CommentDTO {
     private String content;
 
     private PrismState transitionState;
+
+    private Set<CommentAssignedUserDTO> assignedUsers;
 
     private List<Integer> documents;
 

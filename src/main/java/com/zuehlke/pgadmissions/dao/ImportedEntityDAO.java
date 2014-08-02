@@ -34,7 +34,7 @@ public class ImportedEntityDAO {
     public List<ImportedEntityFeed> getImportedEntityFeedsToImport() {
         return sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
                 .createAlias("institution", "institution", JoinType.INNER_JOIN) //
-                .createAlias("institition.state", "state", JoinType.INNER_JOIN) //
+                .createAlias("institution.state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.lt("lastImportedDate", new LocalDate())) //

@@ -119,13 +119,13 @@ public class UserDAO {
                 .list();
     }
     
-    public void mergeUsers(User mergeTo, User mergeFrom) {
+    public void mergeUsers(User mergeFrom, User mergeInto) {
         sessionFactory.getCurrentSession().createSQLQuery( //
-                "CALL SP_MERGE_ENTITIES(:schema, :table, :mergeToId, :mergeFromId)") //
+                "CALL SP_MERGE_ENTITIES(:schema, :table, :mergeFromId, :mergeIntoId)") //
                 .setParameter("schema", schema.toUpperCase()) //
                 .setParameter("table", "USER") //
-                .setParameter("mergeToId", mergeTo.getId()) //
                 .setParameter("mergeFromId", mergeFrom.getId()) //
+                .setParameter("mergeIntoId", mergeInto.getId()) //
                 .executeUpdate();
     }
     

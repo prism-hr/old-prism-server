@@ -78,16 +78,19 @@ public class User implements UserDetails, Comparable<User>, IUniqueEntity {
 
     @Column(name = "activation_code", nullable = false, unique = true)
     private String activationCode;
+    
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_account_id")
+    private UserAccount userAccount;
 
     @OneToMany(mappedBy = "user")
     private Set<UserRole> userRoles = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
     private Set<ProgramExport> programExports = Sets.newHashSet();
-
-    @JoinColumn(name = "user_account_id")
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    private UserAccount userAccount;
+    
+    @OneToMany(mappedBy = "user")
+    private Set<UserUnusedEmail> unusedEmails = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -149,6 +152,14 @@ public class User implements UserDetails, Comparable<User>, IUniqueEntity {
         this.activationCode = activationCode;
     }
     
+    public UserAccount getUserAccount() {
+        return userAccount;
+    }
+
+    public void setUserAccount(UserAccount account) {
+        this.userAccount = account;
+    }
+    
     public Set<UserRole> getUserRoles() {
         return userRoles;
     }
@@ -157,12 +168,12 @@ public class User implements UserDetails, Comparable<User>, IUniqueEntity {
         return programExports;
     }
 
-    public UserAccount getUserAccount() {
-        return userAccount;
+    public final Set<UserUnusedEmail> getUnusedEmails() {
+        return unusedEmails;
     }
 
-    public void setUserAccount(UserAccount account) {
-        this.userAccount = account;
+    public final void setUnusedEmails(Set<UserUnusedEmail> unusedEmails) {
+        this.unusedEmails = unusedEmails;
     }
 
     public String getDisplayName() {

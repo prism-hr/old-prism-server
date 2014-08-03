@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
+import com.zuehlke.pgadmissions.domain.UserUnusedEmail;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -141,12 +142,19 @@ public class UserService {
         }
     }
 
-    public void mergeUsers(UserAccountDTO mergeTo, UserAccountDTO mergeFrom) {
-        User mergeToUser = userDAO.getAuthenticatedUser(mergeTo.getEmail(), mergeTo.getPassword());
+    public void mergeUsers(UserAccountDTO mergeFrom, UserAccountDTO mergeInto) {
         User mergeFromUser = userDAO.getAuthenticatedUser(mergeFrom.getEmail(), mergeFrom.getPassword());
+        User mergeIntoUser = userDAO.getAuthenticatedUser(mergeInto.getEmail(), mergeInto.getPassword());
         
-        if (mergeToUser != null && mergeFromUser != null) {
-            userDAO.mergeUsers(mergeToUser, mergeFromUser);
+        if (mergeFromUser != null && mergeIntoUser != null) {
+            userDAO.mergeUsers(mergeFromUser, mergeIntoUser);
+            entityService.flush();
+            
+            // TODO: When inviting new user to join, see if email address supplied is unused and map to active user
+            
+            UserUnusedEmail transientUnusedEmail = new UserUnusedEmail().withUser(mergeIntoUser).withEmail(mergeFrom.getEmail());
+            UserUnusedEmail persistentUnusedEmail = entityService.getOrCreate(transientUnusedEmail);
+            mergeIntoUser.getUnusedEmails().add(persistentUnusedEmail);
         }
     }
 

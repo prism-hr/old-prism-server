@@ -437,7 +437,7 @@ public class ApplicationService {
         if (refereeId != null) {
             referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
         } else {
-            referee = new ApplicationReferee();
+            referee = new ApplicationReferee().withIncludeInExport(false);
             application.getReferees().add(referee);
         }
 

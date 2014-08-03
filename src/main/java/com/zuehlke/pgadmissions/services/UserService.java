@@ -148,7 +148,6 @@ public class UserService {
         
         if (mergeFromUser != null && mergeIntoUser != null) {
             userDAO.mergeUsers(mergeFromUser, mergeIntoUser);
-            entityService.flush();
             
             // TODO: When inviting new user to join, see if email address supplied is unused and map to active user
             

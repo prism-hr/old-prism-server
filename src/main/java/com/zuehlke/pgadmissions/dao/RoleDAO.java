@@ -37,25 +37,34 @@ public class RoleDAO {
 
     public UserRole getUserRole(Resource resource, User user, Role role) {
         return (UserRole) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("role", role)) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
                 .uniqueResult();
     }
     
     public List<UserRole> getUserRoles(Resource resource, User user, PrismRole... authorities) {
         return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.in("role.id", authorities)) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();
     }
     
     public List<User> getRoleUsers(Resource resource, Role role) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.property("user")) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
                 .add(Restrictions.eq("role", role)) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();
     }
 
@@ -113,7 +122,8 @@ public class RoleDAO {
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                         .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
-                .add(Restrictions.eq("user.parentUser", user)) //
+                .add(Restrictions.eq("userRole.user", user)) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();
     }
 
@@ -129,6 +139,8 @@ public class RoleDAO {
                 .setProjection(Projections.property("userRole.user")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("id", roleTransition.getId())) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
@@ -141,6 +153,7 @@ public class RoleDAO {
                                 .add(Restrictions.eq("restrictToInvoker", true)) //
                                 .add(Restrictions.eq("userRole.user", actionOwner))) //
                         .add(Restrictions.eq("restrictToInvoker", false))) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();
     }
 
@@ -159,7 +172,10 @@ public class RoleDAO {
     public List<User> getUsers(Resource resource) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user"))
-                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource))
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();
     }
 
@@ -204,7 +220,8 @@ public class RoleDAO {
         return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .createAlias("userNotifications", "userNotification", JoinType.INNER_JOIN) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("user.parentUser", user)) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("userNotification.user", user)) //
                 .add(Restrictions.eq("userNotification.notificationTemplate", template)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
@@ -212,6 +229,7 @@ public class RoleDAO {
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                         .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();
     }
     

@@ -236,7 +236,6 @@ public class StateService {
         return stateDAO.getStateTransition(evaluation, getById(transitionState));
     }
 
-    @SuppressWarnings("unused")
     public StateTransition getApplicationEligibilityAssessedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
         PrismState transitionState = PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION;
         if (comment.isApplicationCreatorEligibilityUncertain()) {

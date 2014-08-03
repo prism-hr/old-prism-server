@@ -108,13 +108,9 @@ public class RoleService {
         return roleDAO.getUsers(resource);
     }
 
-    public UserRole getUserRole(Resource resource, User user, Role role) {
-        return roleDAO.getUserRole(resource, user, role);
-    }
-
     public boolean hasUserRole(Resource resource, User user, PrismRole roleId) {
         Role role = getById(roleId);
-        return getUserRole(resource, user, role) != null;
+        return roleDAO.getUserRole(resource, user, role) != null;
     }
 
     public List<PrismRole> getUserRoles(Resource resource, User user) {

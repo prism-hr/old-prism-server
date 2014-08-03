@@ -21,9 +21,9 @@ import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.importers.AdvertCategoryImportService;
 import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 import com.zuehlke.pgadmissions.services.importers.InstitutionDomicileImportService;
-import com.zuehlke.pgadmissions.services.importers.AdvertCategoryImportService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")

@@ -12,7 +12,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -79,13 +78,6 @@ public class User implements UserDetails, Comparable<User>, IUniqueEntity {
 
     @Column(name = "activation_code", nullable = false, unique = true)
     private String activationCode;
-
-    @OneToMany(mappedBy = "parentUser")
-    private Set<User> linkedAccounts = Sets.newHashSet();
-
-    @ManyToOne
-    @JoinColumn(name = "parent_user_id")
-    private User parentUser;
 
     @OneToMany(mappedBy = "user")
     private Set<UserRole> userRoles = Sets.newHashSet();
@@ -156,19 +148,7 @@ public class User implements UserDetails, Comparable<User>, IUniqueEntity {
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
     }
-
-    public Set<User> getLinkedAccounts() {
-        return linkedAccounts;
-    }
-
-    public User getParentUser() {
-        return parentUser;
-    }
-
-    public void setParentUser(User parentUser) {
-        this.parentUser = parentUser;
-    }
-
+    
     public Set<UserRole> getUserRoles() {
         return userRoles;
     }

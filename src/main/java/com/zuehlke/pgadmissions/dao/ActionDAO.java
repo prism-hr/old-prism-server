@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
+import java.util.List;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -16,14 +16,14 @@ import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
+import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
-
-import java.util.List;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -73,7 +73,7 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                         .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
-                .add(Restrictions.eq("user.parentUser", user)) //
+                .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .uniqueResult();
     }
@@ -106,7 +106,7 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                         .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
-                .add(Restrictions.eq("user.parentUser", user)) //
+                .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .uniqueResult();
     }
@@ -128,7 +128,7 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                         .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
-                .add(Restrictions.eq("user.parentUser", user)) //
+                .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eq("userAccount.enabled", true))
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.asc("action.id")) //
@@ -142,7 +142,7 @@ public class ActionDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("action", action)) //
-                .add(Restrictions.eq("user.parentUser", user)) //
+                .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
@@ -170,7 +170,7 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                         .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
-                .add(Restrictions.eq("user.parentUser", user)) //
+                .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();
     }
@@ -193,7 +193,7 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                         .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
-                .add(Restrictions.eq("user.parentUser", user)) //
+                .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();
     }

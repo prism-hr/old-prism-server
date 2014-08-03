@@ -14,7 +14,6 @@ public class CommentDTO {
 
     private PrismAction action;
 
-    @NotNull
     private String content;
 
     private PrismState transitionState;

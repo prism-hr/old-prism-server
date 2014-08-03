@@ -18,7 +18,7 @@ INNER JOIN STATE
 	ON STATE_ACTION.state_id = STATE.id
 INNER JOIN ACTION
 	ON STATE_ACTION.action_id = ACTION.id
-WHERE USER.parent_user_id = ${user.id?c}
+WHERE USER.id = ${user.id?c}
 	AND ${queryScopeUpper}.id = ${queryScopeUpper}_LIST_BLOCK.id
 	AND ${queryScopeUpper}.state_id = STATE_ACTION.state_id
 	AND STATE.scope_id = "${queryScopeUpper}"

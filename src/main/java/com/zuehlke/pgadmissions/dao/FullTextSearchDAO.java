@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
 
-import com.zuehlke.pgadmissions.rest.representation.AutosuggestedUserRepresentation;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -17,12 +16,14 @@ import org.hibernate.search.FullTextQuery;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
+import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.rest.representation.AutosuggestedUserRepresentation;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -60,11 +61,10 @@ public class FullTextSearchDAO {
 
         TreeSet<User> uniqueResults = new TreeSet<User>(comparator);
 
-        Criteria wildcardCriteria = sessionFactory.getCurrentSession().createCriteria(User.class)
-                .add(Restrictions.isNotNull("userAccount"))
-                .createAlias("parentUser", "parentUser")
-                .add(Restrictions.eqProperty("parentUser.id", "id"))
-                .add(Restrictions.ilike(propertyName, trimmedSearchTerm, MatchMode.START))
+        Criteria wildcardCriteria = sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
+                .add(Restrictions.ilike(propertyName, trimmedSearchTerm, MatchMode.START)) //
                 .addOrder(Order.asc("lastName")).setMaxResults(25);
 
         uniqueResults.addAll(wildcardCriteria.list());

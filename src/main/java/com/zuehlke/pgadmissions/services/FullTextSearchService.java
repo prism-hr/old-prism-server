@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.rest.representation.AutosuggestedUserRepresentation;
 import org.hibernate.SessionFactory;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.FullTextSearchDAO;
-import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.rest.representation.AutosuggestedUserRepresentation;
 
 @Service
 public class FullTextSearchService {

@@ -29,11 +29,10 @@ import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.MailDescriptor;
+import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
 @Service("userService")
 @Transactional
@@ -74,8 +73,7 @@ public class UserService {
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof User) {
-            User currentUser = (User) authentication.getPrincipal();
-            return currentUser.getParentUser();
+            return (User) authentication.getPrincipal();
         }
         return null;
     }
@@ -100,7 +98,6 @@ public class UserService {
             user = transientUser;
             user.setActivationCode(encryptionUtils.generateUUID());
             entityService.save(user);
-            user.setParentUser(user);
         } else {
             user = duplicateUser;
         }
@@ -144,61 +141,12 @@ public class UserService {
         }
     }
 
-    public void linkAccounts(String secondAccountEmail) throws LinkAccountsException {
-        User secondAccount = getUserByEmail(secondAccountEmail);
-        User currentAccount = getCurrentUser();
-
-        if (HibernateUtils.containsEntity(currentAccount.getLinkedAccounts(), secondAccount)) {
-            return;
-        }
-
-        if (!currentAccount.isEnabled() || !secondAccount.isEnabled()) {
-            throw new LinkAccountsException("account.not.enabled");
-        }
-
-        if (!currentAccount.isAccountNonExpired() || !secondAccount.isAccountNonExpired()) {
-            throw new LinkAccountsException("account.not.enabled");
-        }
-
-        if (!currentAccount.isAccountNonLocked() || !secondAccount.isAccountNonLocked()) {
-            throw new LinkAccountsException("account.not.enabled");
-        }
-
-        if (!currentAccount.isCredentialsNonExpired() || !secondAccount.isCredentialsNonExpired()) {
-            throw new LinkAccountsException("account.not.enabled");
-        }
-
-        User primary = currentAccount.getParentUser();
-        if (primary == null) {
-            primary = currentAccount;
-        }
-
-        User secondPrimary = secondAccount.getParentUser();
-        if (secondPrimary != null) {
-            for (User u : secondPrimary.getLinkedAccounts()) {
-                u.setParentUser(primary);
-            }
-            secondPrimary.setParentUser(primary);
-        } else {
-            secondAccount.setParentUser(primary);
-            for (User u : secondAccount.getLinkedAccounts()) {
-                u.setParentUser(primary);
-            }
-        }
-    }
-
-    public void deleteLinkedAccount(String accountToDeleteEmail) {
-        User currentAccount = getCurrentUser();
-        User accountToDelete = getUserByEmail(accountToDeleteEmail);
-
-        User primary = accountToDelete.getParentUser();
-        if (primary == null) {
-            for (User u : accountToDelete.getLinkedAccounts()) {
-                u.setParentUser(currentAccount);
-            }
-            currentAccount.setParentUser(null);
-        } else {
-            accountToDelete.setParentUser(null);
+    public void mergeUsers(UserAccountDTO mergeTo, UserAccountDTO mergeFrom) {
+        User mergeToUser = userDAO.getAuthenticatedUser(mergeTo.getEmail(), mergeTo.getPassword());
+        User mergeFromUser = userDAO.getAuthenticatedUser(mergeFrom.getEmail(), mergeFrom.getPassword());
+        
+        if (mergeToUser != null && mergeFromUser != null) {
+            userDAO.mergeUsers(mergeToUser, mergeFromUser);
         }
     }
 
@@ -229,7 +177,7 @@ public class UserService {
 
         List<Comment> assessments = commentService.getApplicationAssessmentComments(application);
         for (Comment comment : assessments) {
-            User assessor = comment.getUser().getParentUser();
+            User assessor = comment.getUser();
             if (!assessors.contains(assessor) && (BooleanUtils.isTrue(comment.isDesireToInterview()) || BooleanUtils.isTrue(comment.isDesireToRecruit()))) {
                 interestedAssessors.put(assessor.getLastName() + assessor.getFirstName(), assessor);
             }

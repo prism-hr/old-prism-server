@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -25,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 
 @Repository
 @SuppressWarnings("unchecked")

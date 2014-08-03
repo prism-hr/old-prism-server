@@ -28,7 +28,7 @@ FROM (
 			ON STATE_ACTION.state_id = STATE.id
 		LEFT JOIN ${queryScopeUpper}
 			ON USER_ROLE.${queryScopeLower}_id = ${queryScopeUpper}.id
-		WHERE USER.parent_user_id = ${user.id?c}
+		WHERE USER.id = ${user.id?c}
 			AND USER_ACCOUNT.enabled = 1
 			AND STATE.scope_id = "${queryScopeUpper}"
 			AND (USER_ROLE.${queryScopeLower}_id IS NULL

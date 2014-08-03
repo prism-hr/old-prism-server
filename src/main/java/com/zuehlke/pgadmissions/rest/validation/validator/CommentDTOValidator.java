@@ -1,14 +1,14 @@
 package com.zuehlke.pgadmissions.rest.validation.validator;
 
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
-import com.zuehlke.pgadmissions.validators.AbstractValidator;
+import java.util.Arrays;
+
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import java.util.Arrays;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import com.zuehlke.pgadmissions.validators.AbstractValidator;
 
 @Component
 public class CommentDTOValidator extends AbstractValidator {

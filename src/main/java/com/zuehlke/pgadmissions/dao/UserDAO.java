@@ -122,7 +122,7 @@ public class UserDAO {
     public void mergeUsers(User mergeFrom, User mergeInto) {
         sessionFactory.getCurrentSession().createSQLQuery( //
                 "CALL SP_MERGE_ENTITIES(:schema, :table, :mergeFromId, :mergeIntoId)") //
-                .addSynchronizedQuerySpace("USER") //
+                .addSynchronizedEntityClass(User.class) //
                 .setParameter("schema", schema.toUpperCase()) //
                 .setParameter("table", "USER") //
                 .setParameter("mergeFromId", mergeFrom.getId()) //

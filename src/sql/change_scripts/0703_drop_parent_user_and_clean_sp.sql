@@ -6,10 +6,12 @@ ALTER TABLE USER
 DROP PROCEDURE SP_MERGE_ENTITIES
 ;
 
+/* TODO: merge the existing linked accounts into the new model */
+
 CREATE PROCEDURE SP_MERGE_ENTITIES(
 	IN schema_name TEXT, 
 	IN table_to_merge_name TEXT, 
-	IN remove_row_id INT, 
+	IN merge_from_id INT, 
 	IN merge_into_id INT)
 BEGIN
 
@@ -43,11 +45,11 @@ BEGIN
 				FROM FOUND_RELATION r
 				WHERE r.id = iter;
 
-				SET @update_keys_statement = CONCAT('UPDATE IGNORE ', @table_name, ' SET ', @column_name, ' = ', merge_into_id, ' WHERE ', @column_name, ' = ', remove_row_id);
+				SET @update_keys_statement = CONCAT('UPDATE IGNORE ', @table_name, ' SET ', @column_name, ' = ', merge_into_id, ' WHERE ', @column_name, ' = ', merge_from_id);
 				PREPARE update_keys FROM @update_keys_statement;
 				EXECUTE update_keys;
 				
-				SET @delete_keys_statement = CONCAT('DELETE FROM ', @table_name, ' WHERE ', @column_name, ' = ', remove_row_id);
+				SET @delete_keys_statement = CONCAT('DELETE FROM ', @table_name, ' WHERE ', @column_name, ' = ', merge_from_id);
 				PREPARE delete_keys FROM @delete_keys_statement;
 				EXECUTE delete_keys;
 				
@@ -55,7 +57,7 @@ BEGIN
 				
 			END WHILE;
 
-		SET @delete_row_statement = CONCAT('DELETE FROM ', table_to_merge_name, ' WHERE id = ', remove_row_id);
+		SET @delete_row_statement = CONCAT('DELETE FROM ', table_to_merge_name, ' WHERE id = ', merge_from_id);
 		PREPARE delete_row FROM @delete_row_statement;
 		EXECUTE delete_row;
 
@@ -66,4 +68,14 @@ BEGIN
 	DROP TABLE FOUND_RELATION;
 	
 END
+;
+
+CREATE TABLE USER_UNUSED_EMAIL (
+	id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	user_id INT(10) UNSIGNED NOT NULL,
+	email VARCHAR(255) NOT NULL,
+	PRIMARY KEY (id),
+	UNIQUE INDEX (email),
+	FOREIGN KEY (user_id) REFERENCES USER (id)
+) ENGINE = INNODB
 ;

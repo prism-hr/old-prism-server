@@ -227,7 +227,7 @@ public class EntityImportService {
     @Transactional
     public void setLastImportedDate(ImportedEntityFeed detachedImportedEntityFeed) {
         ImportedEntityFeed persistentImportedEntityFeed = entityService.getById(ImportedEntityFeed.class, detachedImportedEntityFeed.getId());
-        persistentImportedEntityFeed.setLastUploadedDate(new LocalDate());
+        persistentImportedEntityFeed.setLastImportedDate(new LocalDate());
     }
     
     @Transactional

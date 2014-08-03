@@ -1,8 +1,20 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
+import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
+import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
+import com.zuehlke.pgadmissions.rest.dto.UserDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.*;
 import org.apache.commons.lang.BooleanUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
@@ -11,57 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
-import com.zuehlke.pgadmissions.dao.ApplicationDAO;
-import com.zuehlke.pgadmissions.domain.Address;
-import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.ApplicationPassport;
-import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
-import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
-import com.zuehlke.pgadmissions.domain.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.Disability;
-import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.Ethnicity;
-import com.zuehlke.pgadmissions.domain.FundingSource;
-import com.zuehlke.pgadmissions.domain.Gender;
-import com.zuehlke.pgadmissions.domain.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.QualificationType;
-import com.zuehlke.pgadmissions.domain.ReferralSource;
-import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.Title;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
-import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
-import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
-import com.zuehlke.pgadmissions.rest.dto.UserDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.AddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositionDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationFundingDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationLanguageQualificationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPassportDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -108,16 +72,16 @@ public class ApplicationService {
     public Application getById(Integer id) {
         return entityService.getById(Application.class, id);
     }
-    
+
     public Application create(User user, ApplicationDTO applicationDTO) {
         Advert advert = programService.getById(applicationDTO.getAdvertId());
         Application application = new Application().withUser(user).withParentResource(advert).withCreatedTimestamp(new DateTime());
-        
+
         Application previousApplication = getPreviousApplication(application);
         if (previousApplication != null) {
             applicationCopyHelper.copyApplicationFormData(application, previousApplication);
         }
-        
+
         return application;
     }
 
@@ -236,10 +200,27 @@ public class ApplicationService {
         programDetails.setStartDate(programDetailsDTO.getStartDate().toLocalDate());
         programDetails.setReferralSource(referralSource);
 
-        // TODO replace supervisors
-        // programDetails.getSupervisors().clear();
-        // for (ApplicationSupervisorDTO supervisorDTO : programDetailsDTO.getSupervisors()) {
-        // }
+        Iterator<ApplicationSupervisor> supervisorsIterator = programDetails.getSupervisors().iterator();
+        while (supervisorsIterator.hasNext()) {
+            final ApplicationSupervisor supervisor = supervisorsIterator.next();
+            Optional<ApplicationSupervisorDTO> supervisorDTO = Iterables.tryFind(programDetailsDTO.getSupervisors(), new Predicate<ApplicationSupervisorDTO>() {
+                @Override
+                public boolean apply(ApplicationSupervisorDTO dto) {
+                    return supervisor.getUser().getEmail().equals(dto.getUser().getEmail());
+                }
+            });
+            if (supervisorDTO.isPresent()) {
+                programDetailsDTO.getSupervisors().remove(supervisorDTO.get());
+                supervisor.setAware(supervisorDTO.get().getAware());
+            } else {
+                supervisorsIterator.remove();
+            }
+        }
+        for (ApplicationSupervisorDTO supervisorDTO : programDetailsDTO.getSupervisors()) {
+            User user = userService.getOrCreateUser(supervisorDTO.getUser().getFirstName(), supervisorDTO.getUser().getLastName(), supervisorDTO.getUser().getEmail());
+            ApplicationSupervisor supervisor = new ApplicationSupervisor().withAware(supervisorDTO.getAware()).withUser(user);
+            programDetails.getSupervisors().add(supervisor);
+        }
     }
 
     public void savePersonalDetails(Integer applicationId, ApplicationPersonalDetailsDTO personalDetailsDTO) {
@@ -261,7 +242,7 @@ public class ApplicationService {
         Gender gender = importedEntityService.getById(Gender.class, institution, personalDetailsDTO.getGender());
         Country country = importedEntityService.getById(Country.class, institution, personalDetailsDTO.getCountry());
         Language firstNationality = importedEntityService.getById(Language.class, institution, personalDetailsDTO.getFirstNationality());
-        Language secondNationality = personalDetailsDTO.getSecondNationality() != null ? importedEntityService.<Language> getById(Language.class, institution,
+        Language secondNationality = personalDetailsDTO.getSecondNationality() != null ? importedEntityService.<Language>getById(Language.class, institution,
                 personalDetailsDTO.getSecondNationality()) : null;
         Domicile residenceCountry = importedEntityService.getById(Domicile.class, institution, personalDetailsDTO.getResidenceCountry());
         Ethnicity ethnicity = importedEntityService.getById(Ethnicity.class, institution, personalDetailsDTO.getEthnicity());
@@ -382,7 +363,7 @@ public class ApplicationService {
     }
 
     public ApplicationEmploymentPosition saveEmploymentPosition(Integer applicationId, Integer employmentPositionId,
-            ApplicationEmploymentPositionDTO employmentPositionDTO) {
+                                                                ApplicationEmploymentPositionDTO employmentPositionDTO) {
         Application application = entityService.getById(Application.class, applicationId);
 
         ApplicationEmploymentPosition employmentPosition;
@@ -497,7 +478,7 @@ public class ApplicationService {
 
         additionalInformation.setConvictionsText(Strings.emptyToNull(additionalInformationDTO.getConvictionsText()));
     }
-    
+
     private void copyAddress(Institution institution, Address to, AddressDTO from) {
         Domicile currentAddressDomicile = importedEntityService.getById(Domicile.class, institution, from.getDomicile());
         to.setDomicile(currentAddressDomicile);
@@ -507,7 +488,7 @@ public class ApplicationService {
         to.setAddressRegion(Strings.emptyToNull(from.getAddressRegion()));
         to.setAddressCode(Strings.isNullOrEmpty(from.getAddressCode()) ? "Not Provided" : from.getAddressCode());
     }
-    
+
     private Application getPreviousApplication(Application application) {
         Application previousApplication = applicationDAO.getPreviousSubmittedApplication(application);
         if (previousApplication == null) {
@@ -519,5 +500,5 @@ public class ApplicationService {
     private LocalDate getNextMonday(LocalDate dateFrom) {
         return dateFrom.plusDays(8 - dateFrom.getDayOfWeek());
     }
-    
+
 }

@@ -46,9 +46,9 @@ public class ImportedEntityFeed implements IUniqueEntity {
     @Column(name = "location", nullable = false)
     private String location;
     
-    @Column(name = "last_uploaded_date")
+    @Column(name = "last_imported_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastUploadedDate;
+    private LocalDate lastImportedDate;
 
     public Integer getId() {
         return id;
@@ -98,12 +98,12 @@ public class ImportedEntityFeed implements IUniqueEntity {
         this.location = location;
     }
     
-    public final LocalDate getLastUploadedDate() {
-        return lastUploadedDate;
+    public final LocalDate getLastImportedDate() {
+        return lastImportedDate;
     }
 
-    public final void setLastUploadedDate(LocalDate lastUploadedDate) {
-        this.lastUploadedDate = lastUploadedDate;
+    public final void setLastImportedDate(LocalDate lastImportedDate) {
+        this.lastImportedDate = lastImportedDate;
     }
 
     public ImportedEntityFeed withInstitution(Institution institution) {
@@ -132,7 +132,7 @@ public class ImportedEntityFeed implements IUniqueEntity {
     }
     
     public ImportedEntityFeed withLastUploadedDate(LocalDate lastUploadedDate) {
-        this.lastUploadedDate = lastUploadedDate;
+        this.lastImportedDate = lastUploadedDate;
         return this;
     }
     

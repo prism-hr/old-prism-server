@@ -4,6 +4,8 @@ import javax.validation.constraints.NotNull;
 
 import org.joda.time.DateTime;
 
+import java.util.List;
+
 public class ApplicationProgramDetailsDTO {
 
     @NotNull
@@ -15,7 +17,7 @@ public class ApplicationProgramDetailsDTO {
     @NotNull
     private Integer referralSource;
 
-    private ApplicationSupervisorDTO[] supervisors;
+    private List<ApplicationSupervisorDTO> supervisors;
 
     public Integer getStudyOption() {
         return studyOption;
@@ -41,11 +43,11 @@ public class ApplicationProgramDetailsDTO {
         this.referralSource = referralSource;
     }
 
-    public ApplicationSupervisorDTO[] getSupervisors() {
+    public List<ApplicationSupervisorDTO> getSupervisors() {
         return supervisors;
     }
 
-    public void setSupervisors(ApplicationSupervisorDTO[] supervisors) {
+    public void setSupervisors(List<ApplicationSupervisorDTO> supervisors) {
         this.supervisors = supervisors;
     }
 }

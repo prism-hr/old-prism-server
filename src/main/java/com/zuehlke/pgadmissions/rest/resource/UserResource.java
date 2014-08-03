@@ -104,14 +104,13 @@ public class UserResource {
     }
 
     @RequestMapping(value="/suggestion", method = RequestMethod.GET, params = "lastName")
-    public List<AutosuggestedUserRepresentation> provideSuggestionsForLastName(@PathVariable final String lastName) {
+    public List<AutosuggestedUserRepresentation> provideSuggestionsForLastName(@RequestParam final String lastName) {
         return searchService.getMatchingUsersWithLastNameLike(lastName);
     }
 
     @RequestMapping(value="/suggestion", method = RequestMethod.GET, params = "email")
-    public List<AutosuggestedUserRepresentation> provideSuggestionsForEmail(@PathVariable final String email) {
+    public List<AutosuggestedUserRepresentation> provideSuggestionsForEmail(@RequestParam final String email) {
         return searchService.getMatchingUsersWithEmailLike(email);
     }
-
 
 }

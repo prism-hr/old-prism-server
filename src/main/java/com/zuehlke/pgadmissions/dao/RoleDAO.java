@@ -150,9 +150,9 @@ public class RoleDAO {
                         .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("restrictToInvoker", true)) //
+                                .add(Restrictions.eq("restrictToActionOwner", true)) //
                                 .add(Restrictions.eq("userRole.user", actionOwner))) //
-                        .add(Restrictions.eq("restrictToInvoker", false))) //
+                        .add(Restrictions.eq("restrictToActionOwner", false))) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();
     }

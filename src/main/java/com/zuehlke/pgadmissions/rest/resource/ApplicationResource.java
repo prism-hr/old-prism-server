@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
@@ -34,24 +35,29 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.rest.dto.CommentAssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositionDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationFundingDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
+import com.zuehlke.pgadmissions.rest.dto.UserDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.*;
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.CommentDTOValidator;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.UserService;
+import org.apache.commons.lang.BooleanUtils;
+import org.dozer.Mapper;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping(value = { "api/applications" })
+@RequestMapping(value = {"api/applications"})
 public class ApplicationResource {
 
     @Autowired
@@ -95,7 +101,7 @@ public class ApplicationResource {
 
     @RequestMapping(value = "/{applicationId}/qualifications/{qualificationId}", method = RequestMethod.PUT)
     public void updateQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId,
-            @Valid @RequestBody ApplicationQualificationDTO qualificationDTO) {
+                                    @Valid @RequestBody ApplicationQualificationDTO qualificationDTO) {
         applicationService.saveQualification(applicationId, qualificationId, qualificationDTO);
     }
 
@@ -106,14 +112,14 @@ public class ApplicationResource {
 
     @RequestMapping(value = "/{applicationId}/employmentPositions", method = RequestMethod.POST)
     public Map<String, Object> createEmploymentPosition(@PathVariable Integer applicationId,
-            @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
+                                                        @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
         ApplicationEmploymentPosition employmentPosition = applicationService.saveEmploymentPosition(applicationId, null, employmentPositionDTO);
         return ImmutableMap.of("id", (Object) employmentPosition.getId());
     }
 
     @RequestMapping(value = "/{applicationId}/employmentPositions/{employmentPositionId}", method = RequestMethod.PUT)
     public void updateEmploymentPosition(@PathVariable Integer applicationId, @PathVariable Integer employmentPositionId,
-            @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
+                                         @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
         applicationService.saveEmploymentPosition(applicationId, employmentPositionId, employmentPositionDTO);
     }
 
@@ -182,7 +188,14 @@ public class ApplicationResource {
             for (ApplicationSupervisor supervisor : application.getProgramDetails().getSupervisors()) {
                 assignedUsers.add(new CommentAssignedUser().withComment(comment).withUser(supervisor.getUser()).withRole(supervisorRole));
             }
+        } else if (commentDTO.getAssignedUsers() != null) {
+            for (CommentAssignedUserDTO assignedUserDTO : commentDTO.getAssignedUsers()) {
+                UserDTO userDTO = assignedUserDTO.getUser();
+                User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
+                assignedUsers.add(new CommentAssignedUser().withUser(user).withRole(entityService.getById(Role.class, assignedUserDTO.getRole())));
+            }
         }
+
         comment.getAssignedUsers().addAll(assignedUsers);
 
         ActionOutcome actionOutcome = actionService.executeUserAction(application, action, comment);

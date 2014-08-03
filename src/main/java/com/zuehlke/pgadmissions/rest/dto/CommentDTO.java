@@ -55,6 +55,14 @@ public class CommentDTO {
         this.transitionState = transitionState;
     }
 
+    public Set<CommentAssignedUserDTO> getAssignedUsers() {
+        return assignedUsers;
+    }
+
+    public void setAssignedUsers(Set<CommentAssignedUserDTO> assignedUsers) {
+        this.assignedUsers = assignedUsers;
+    }
+
     public List<Integer> getDocuments() {
         return documents;
     }

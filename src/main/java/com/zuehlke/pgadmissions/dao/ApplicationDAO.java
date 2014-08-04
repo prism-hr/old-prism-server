@@ -90,7 +90,7 @@ public class ApplicationDAO {
         return (List<Application>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                .createAlias("state", "state", JoinType.INNER_JOIN) //
                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-               .createAlias("action", "action", JoinType.INNER_JOIN) //
+               .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
                .add(Restrictions.eq("institution.uclInstitution", true)) //
                .add(Restrictions.eq("action.actionCategory", PrismActionCategory.EXPORT_RESOURCE)) //

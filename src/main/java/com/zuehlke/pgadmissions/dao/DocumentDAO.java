@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import org.hibernate.SessionFactory;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +17,7 @@ public class DocumentDAO {
                         + "where referenced = :referenced " //
                         + "and createdTimestamp <= :createdTimestamp") //
                 .setParameter("referenced", false) //
-                .setParameter("createdTimestamp", new DateTime().minusDays(1)) //
+                .setParameter("createdTimestamp", new LocalDate().minusDays(1)) //
                 .executeUpdate();
     }
 

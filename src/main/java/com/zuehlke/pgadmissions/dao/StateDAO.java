@@ -15,7 +15,6 @@ import org.springframework.stereotype.Repository;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
@@ -151,12 +150,6 @@ public class StateDAO {
         }
 
         return escalations;
-    }
-
-    public <T extends IUniqueEntity> void deleteStateActions(Class<T> workflowConfigurationClass) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "delete " + workflowConfigurationClass.getSimpleName()) //
-                .executeUpdate();
     }
 
     public void deleteObseleteStateDurations(List<State> activeStates) {

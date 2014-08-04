@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismConfiguration;
 @Table(name = "CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "configuration_parameter" }),
         @UniqueConstraint(columnNames = { "institution_id", "configuration_parameter" }),
         @UniqueConstraint(columnNames = { "program_id", "configuration_parameter" }) })
-public class Configuration implements IUniqueEntity {
+public class Configuration extends WorkflowResourceConfiguration {
 
     @Id
     @GeneratedValue
@@ -56,26 +56,32 @@ public class Configuration implements IUniqueEntity {
         this.id = id;
     }
 
+    @Override
     public System getSystem() {
         return system;
     }
 
+    @Override
     public void setSystem(System system) {
         this.system = system;
     }
 
+    @Override
     public Institution getInstitution() {
         return institution;
     }
 
+    @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
 
+    @Override
     public Program getProgram() {
         return program;
     }
 
+    @Override
     public void setProgram(Program program) {
         this.program = program;
     }

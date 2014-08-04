@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Configuration;
+import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
@@ -37,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.WorkflowResource;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismConfiguration;
@@ -141,11 +141,12 @@ public class SystemService {
         logger.info("Initialising system");
         System system = initialiseSystemResource();
 
+        logger.info("Initialising configuration definitions");
+        verifyBackwardCompatibility(Configuration.class);
+        initialiseConfigurations(system);
+        
         logger.info("Initialising fallback action definititions");
         initialiseFallbackActions();
-
-        logger.info("Initialising configuration definitions");
-        initialiseConfigurations(system);
 
         logger.info("Initialising notification definitions");
         initialiseNotificationTemplates(system);
@@ -308,14 +309,6 @@ public class SystemService {
         }
     }
 
-    private <T extends WorkflowResource> void verifyBackwardCompatibility(Class<T> workflowResourceClass) throws WorkflowConfigurationException {
-        try {
-            entityService.list(workflowResourceClass);
-        } catch (IllegalArgumentException e) {
-            throw new WorkflowConfigurationException(e);
-        }
-    }
-
     private void initialiseStateActions() throws WorkflowConfigurationException {
         if (stateService.getPendingStateTransitions().size() == 0) {
             stateService.deleteStateActions();
@@ -417,6 +410,14 @@ public class SystemService {
         }
     }
 
+    private <T extends IUniqueEntity> void verifyBackwardCompatibility(Class<T> workflowResourceClass) throws WorkflowConfigurationException {
+        try {
+            entityService.list(workflowResourceClass);
+        } catch (IllegalArgumentException e) {
+            throw new WorkflowConfigurationException(e);
+        }
+    }
+    
     private void verifyBackwardResourceCompatibility() throws WorkflowConfigurationException {
         for (Scope scope : scopeService.getScopesDescending()) {
             Class<? extends Resource> resourceClass = scope.getId().getResourceClass();
@@ -425,7 +426,7 @@ public class SystemService {
             }
         }
     }
-
+    
     private String getFileContent(String filePath) {
         try {
             return Joiner.on(java.lang.System.lineSeparator()).join(Resources.readLines(Resources.getResource(filePath), Charsets.UTF_8));

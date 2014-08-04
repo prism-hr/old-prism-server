@@ -137,7 +137,7 @@ public class UserDAO {
                 .add(Restrictions.eq("userAccount.enabled", true)); //
         
         for (User excludedUser : usersToExclude) {
-            criteria.add(Restrictions.ne("user", excludedUser));
+            criteria.add(Restrictions.ne("userRole.user", excludedUser));
         }
         
         return criteria.addOrder(Order.asc("user.lastName")) //
@@ -159,7 +159,7 @@ public class UserDAO {
                 .add(Restrictions.eq("userAccount.enabled", true)); //
         
         for (User excludedUser : usersToExclude) {
-            criteria.add(Restrictions.ne("user", excludedUser));
+            criteria.add(Restrictions.ne("userRole.user", excludedUser));
         }
         
         return criteria.addOrder(Order.asc("user.lastName")) //

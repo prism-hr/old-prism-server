@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 @Service
 public class MaintenanceTask {
 
-    private final Logger log = LoggerFactory.getLogger(MaintenanceTask.class);
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private DocumentService documentService;
@@ -46,28 +46,53 @@ public class MaintenanceTask {
 
     @Scheduled(cron = "${daily.maintenance.cron}")
     public void runDaily() {
-        log.trace("Deleting unused documents");
-        documentService.deleteOrphanDocuments();
+        try {
+            logger.info("Deleting unused documents");
+            documentService.deleteOrphanDocuments();
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        }
         
-        log.trace("Escalating workflow transitions");
-        stateService.executeEscalatedStateTransitions();
+        try {
+            logger.info("Escalating workflow transitions");
+            stateService.executeEscalatedStateTransitions();
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        }
         
-        log.trace("Sending update notifications.");
-        notificationService.sendPendingUpdateNotifications();
+        try {
+            logger.info("Sending update notifications.");
+            notificationService.sendPendingUpdateNotifications();
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        }
         
         // TODO: email requests & reminders
     }
     
     @Scheduled(cron = "${ongoing.maintenance.cron}")
     public void runOngoing() {
-        log.trace("Flushing workflow tranistions");
-        stateService.executePropagatedStateTransitions();
+        try {
+            logger.info("Flushing workflow transitions");
+            stateService.executePropagatedStateTransitions();
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        }
         
-        log.trace("Importing reference data");
-        entityImportService.importReferenceData();
-        
-        log.trace("Exporting ucl applications");
-        applicationExportService.exportUclApplications();
+        try {
+            logger.info("Importing reference data");
+            entityImportService.importReferenceData();
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        }
+
+        try {
+            logger.trace("Exporting ucl applications");
+            applicationExportService.exportUclApplications();
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        }
+
     }
     
 }

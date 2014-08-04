@@ -27,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.UserUnusedEmail;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
@@ -148,12 +147,10 @@ public class UserService {
     public void mergeUsers(UserAccountDTO mergeFrom, UserAccountDTO mergeInto) throws WorkflowEngineException {
         User mergeFromUser = userDAO.getAuthenticatedUser(mergeFrom.getEmail(), mergeFrom.getPassword());
         User mergeIntoUser = userDAO.getAuthenticatedUser(mergeInto.getEmail(), mergeInto.getPassword());
-        
-        if (mergeFromUser != null && mergeIntoUser != null) {
-            mergeUserRoles(mergeFromUser, mergeIntoUser);
-            
-            userDAO.mergeUsers(mergeFromUser, mergeIntoUser);
 
+        if (mergeFromUser != null && mergeIntoUser != null) {
+            roleService.mergeUserRoles(mergeFromUser, mergeIntoUser);
+            userDAO.mergeUsers(mergeFromUser, mergeIntoUser);
             UserUnusedEmail transientUnusedEmail = new UserUnusedEmail().withUser(mergeIntoUser).withEmail(mergeFrom.getEmail());
             UserUnusedEmail persistentUnusedEmail = entityService.getOrCreate(transientUnusedEmail);
             mergeIntoUser.getUnusedEmails().add(persistentUnusedEmail);
@@ -206,7 +203,7 @@ public class UserService {
 
     public List<User> getUsersPotentiallyInterestedInApplication(Application application, List<User> usersToExclude) {
         usersToExclude = Lists.newArrayList(usersToExclude);
-        
+
         List<User> recruiters = userDAO.getRecruitersAssignedToApplication(application, usersToExclude);
         usersToExclude.addAll(recruiters);
 
@@ -215,33 +212,17 @@ public class UserService {
         List<User> programRecruiters = userDAO.getRecruitersAssignedToProgramApplications(program, usersToExclude);
         recruiters.addAll(programRecruiters);
         usersToExclude.addAll(programRecruiters);
-        
+
         List<User> projectRecruiters = userDAO.getRecruitersAssignedToProgramProjects(program, usersToExclude);
         recruiters.addAll(projectRecruiters);
-        
+
         TreeMap<String, User> orderedRecruiters = Maps.newTreeMap();
-        
+
         for (User recruiter : recruiters) {
             orderedRecruiters.put(recruiter.getLastName() + recruiter.getFirstName(), recruiter);
         }
-        
+
         return Lists.newArrayList(orderedRecruiters.values());
     }
-    
-    private void mergeUserRoles(User mergeFromUser, User mergeIntoUser) throws WorkflowEngineException {
-        Set<UserRole> mergeFromRoles = mergeFromUser.getUserRoles();
-        for (UserRole mergeFromRole : mergeFromRoles) {
-            UserRole transientUserRole = new UserRole().withResource(mergeFromRole.getResource()).withUser(mergeIntoUser).withRole(mergeFromRole.getRole());
-            UserRole persistentUserRole= entityService.getDuplicateEntity(transientUserRole);
-            
-            if (persistentUserRole == null) {
-                if (roleService.isRoleAssignmentPermitted(transientUserRole)) {
-                    entityService.save(transientUserRole);
-                } else {
-                    throw new WorkflowEngineException();
-                }
-            }
-        }
-    }
-    
+
 }

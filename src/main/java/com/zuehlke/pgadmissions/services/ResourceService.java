@@ -131,9 +131,13 @@ public class ResourceService {
             throw new WorkflowEngineException();
         }
         
-        resource.setCode("PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId()));
+        setResourceCode(resource);
         entityService.save(resource);
         comment.setRole(roleService.getCreatorRole(resource).getId().toString());
+    }
+
+    public void setResourceCode(Resource resource) {
+        resource.setCode("PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId()));
     }
     
     public void updateResource(Resource resource, Action action, Comment comment) {
@@ -158,7 +162,6 @@ public class ResourceService {
             dueDate = dueDateBaseline.plusDays(stateDuration == null ? 0 : stateDuration.getDuration());
         }
         resource.setDueDate(dueDate);
-        
         resource.setUpdatedTimestamp(new DateTime());
     }
 

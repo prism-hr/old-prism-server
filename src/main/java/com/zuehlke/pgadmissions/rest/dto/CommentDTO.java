@@ -33,7 +33,15 @@ public class CommentDTO {
 
     private ApplicationResidenceStatus residenceStatus;
 
-    private Boolean declinedResponse;
+    private Boolean suitableForInstitution;
+
+    private Boolean suitableForOpportunity;
+
+    private Boolean desireToInterview;
+
+    private Boolean desireToRecruit;
+
+    private Integer rating;
 
     private DateTime interviewDateTime;
 
@@ -46,6 +54,8 @@ public class CommentDTO {
     private String interviewerInstructions;
 
     private String interviewLocation;
+
+    private Boolean declinedResponse;
 
     public PrismAction getAction() {
         return action;
@@ -111,12 +121,44 @@ public class CommentDTO {
         this.residenceStatus = residenceStatus;
     }
 
-    public Boolean getDeclinedResponse() {
-        return declinedResponse;
+    public Boolean getSuitableForInstitution() {
+        return suitableForInstitution;
     }
 
-    public void setDeclinedResponse(Boolean declinedResponse) {
-        this.declinedResponse = declinedResponse;
+    public void setSuitableForInstitution(Boolean suitableForInstitution) {
+        this.suitableForInstitution = suitableForInstitution;
+    }
+
+    public Boolean getSuitableForOpportunity() {
+        return suitableForOpportunity;
+    }
+
+    public void setSuitableForOpportunity(Boolean suitableForOpportunity) {
+        this.suitableForOpportunity = suitableForOpportunity;
+    }
+
+    public Boolean getDesireToInterview() {
+        return desireToInterview;
+    }
+
+    public void setDesireToInterview(Boolean desireToInterview) {
+        this.desireToInterview = desireToInterview;
+    }
+
+    public Boolean getDesireToRecruit() {
+        return desireToRecruit;
+    }
+
+    public void setDesireToRecruit(Boolean desireToRecruit) {
+        this.desireToRecruit = desireToRecruit;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
     }
 
     public DateTime getInterviewDateTime() {
@@ -165,5 +207,13 @@ public class CommentDTO {
 
     public void setInterviewLocation(String interviewLocation) {
         this.interviewLocation = interviewLocation;
+    }
+
+    public Boolean getDeclinedResponse() {
+        return declinedResponse;
+    }
+
+    public void setDeclinedResponse(Boolean declinedResponse) {
+        this.declinedResponse = declinedResponse;
     }
 }

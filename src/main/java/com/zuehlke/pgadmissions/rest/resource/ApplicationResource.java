@@ -150,7 +150,9 @@ public class ApplicationResource {
                 .withResidenceStatus(commentDTO.getResidenceStatus()).withInterviewDateTime(commentDTO.getInterviewDateTime())
                 .withInterviewTimeZone(commentDTO.getInterviewTimeZone()).withInterviewDuration(commentDTO.getInterviewDuration())
                 .withInterviewerInstructions(commentDTO.getInterviewerInstructions()).withIntervieweeInstructions(commentDTO.getIntervieweeInstructions())
-                .withInterviewLocation(commentDTO.getInterviewLocation()).withTransitionState(transitionState);
+                .withInterviewLocation(commentDTO.getInterviewLocation()).withSuitableForInstitution(commentDTO.getSuitableForInstitution())
+                .withSuitableForOpportunity(commentDTO.getSuitableForOpportunity()).withDesireToInterview(commentDTO.getDesireToInterview())
+                .withDesireToRecruit(commentDTO.getDesireToRecruit()).withTransitionState(transitionState);
 
         List<CommentAssignedUser> assignedUsers = Lists.newLinkedList();
         if (actionId.equals(PrismAction.APPLICATION_COMPLETE)) {

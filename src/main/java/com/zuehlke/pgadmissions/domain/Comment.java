@@ -782,6 +782,26 @@ public class Comment {
         return this;
     }
 
+    public Comment withDesireToRecruit(final Boolean desireToRecruit) {
+        this.desireToRecruit = desireToRecruit;
+        return this;
+    }
+
+    public Comment withDesireToInterview(final Boolean desireToInterview) {
+        this.desireToInterview = desireToInterview;
+        return this;
+    }
+
+    public Comment withSuitableForOpportunity(final Boolean suitableForOpportunity) {
+        this.suitableForOpportunity = suitableForOpportunity;
+        return this;
+    }
+
+    public Comment withSuitableForInstitution(final Boolean suitableForInstitution) {
+        this.suitableForInstitution = suitableForInstitution;
+        return this;
+    }
+
     public boolean isApplicationCreatorEligibilityUncertain() {
         return getResidenceStatus() == ApplicationResidenceStatus.UNSURE || getQualified() == YesNoUnsureResponse.UNSURE
                 || getCompetentInWorkLanguage() == YesNoUnsureResponse.UNSURE;

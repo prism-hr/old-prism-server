@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserNotification;
 import com.zuehlke.pgadmissions.domain.UserRole;
@@ -82,11 +84,6 @@ public class NotificationService {
     }
 
     @Transactional
-    public NotificationTemplateVersion getLatestVersion(Resource resource, NotificationTemplate template) {
-        return notificationDAO.getLatestVersion(resource, template);
-    }
-
-    @Transactional
     public List<NotificationTemplateVersion> getVersions(Resource resource, NotificationTemplate template) {
         return notificationDAO.getVersions(resource, template);
     }
@@ -140,8 +137,8 @@ public class NotificationService {
         MailMessageDTO message = new MailMessageDTO();
 
         message.setTo(Collections.singletonList(user));
-        message.setModel(createNotificationModel(user, resource, templateVersion));
         message.setTemplate(templateVersion);
+        message.setModel(createNotificationModel(user, resource, templateVersion, extraModelParams));
         message.setAttachments(Lists.<PdfAttachmentInputSource> newArrayList());
 
         mailSender.sendEmail(message);
@@ -174,8 +171,8 @@ public class NotificationService {
     @Transactional
     public void sendDataImportErrorNotifications(Institution institution, String errorMessage) {
         for (User user : userService.getUsersForResourceAndRole(institution, PrismRole.INSTITUTION_ADMINISTRATOR)) {
-            NotificationTemplate importError = getById(PrismNotificationTemplate.SYSTEM_IMPORT_ERROR_NOTIFICATION);
-            sendNotification(user, institution, importError, ImmutableMap.of("errorMessage", errorMessage));
+            NotificationTemplate template = getById(PrismNotificationTemplate.SYSTEM_IMPORT_ERROR_NOTIFICATION);
+            sendNotification(user, institution, template, ImmutableMap.of("message", errorMessage));
         }
     }
 
@@ -187,14 +184,16 @@ public class NotificationService {
         }
     }
 
-    private Map<String, Object> createNotificationModel(User user, Resource resource, NotificationTemplateVersion notificationTemplate) {
+    @Transactional
+    private Map<String, Object> createNotificationModel(User user, Resource resource, NotificationTemplateVersion notificationTemplate, Map<String, String> extraModelParams) {
         Map<String, Object> model = Maps.newHashMap();
         model.put("user", user);
 
+        System system = resource.getSystem();
+        Institution institution = resource.getInstitution();
         Program program = resource.getProgram();
         Project project = resource.getProject();
         Application application = resource.getApplication();
-        Institution institution = resource.getInstitution();
 
         if (application != null) {
             model.put("applicant", application.getUser().getDisplayName());
@@ -208,9 +207,13 @@ public class NotificationService {
         if (institution != null) {
             model.put("institutionName", institution.getName());
         }
+        
+        for (String parameter : extraModelParams.keySet()) {
+            model.put(parameter, extraModelParams.get(parameter));
+        }
 
-        model.put("systemName", resource.getSystem().getCode());
-
+        model.put("systemName", system.getName());
+        model.put("time", new Date());
         model.put("host", host);
         return model;
     }

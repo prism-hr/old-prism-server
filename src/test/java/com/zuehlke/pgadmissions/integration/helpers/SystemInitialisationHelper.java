@@ -176,6 +176,7 @@ public class SystemInitialisationHelper {
     public void verifySystemCreation() {
         System system = systemService.getSystem();
         assertEquals(system.getName(), systemName);
+        assertEquals(system.getCode(), "PRiSM-" + PrismScope.getResourceScope(system.getClass()).getShortCode() + "-" + String.format("%010d", system.getId()));
         assertEquals(system.getState().getId(), PrismState.SYSTEM_RUNNING);
     }
 

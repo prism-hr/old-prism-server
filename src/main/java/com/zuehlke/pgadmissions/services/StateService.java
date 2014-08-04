@@ -164,7 +164,7 @@ public class StateService {
         return stateTransition;
     }
     
-    private StateTransition getStateTransition(Resource resource, Action action, Comment comment) {
+    public StateTransition getStateTransition(Resource resource, Action action, Comment comment) {
         Resource operative = resourceService.getOperativeResource(resource, action);
         List<StateTransition> potentialStateTransitions = stateDAO.getStateTransitions(operative, action);
         
@@ -195,30 +195,6 @@ public class StateService {
             }
 
             lastResource = thisResource;
-        }
-    }
-    
-    private void queuePropagatedStateTransitions(StateTransition stateTransition, Resource resource) {
-        if (stateTransition.getPropagatedActions().size() > 0) {
-            entityService.save(new StateTransitionPending().withResource(resource).withStateTransition(stateTransition));
-        }
-    }
-     
-    private void executeThreadedStateTransitions(final HashMultimap<Action, Resource> threadedStateTransitions, final User invoker) {
-        for (final Action action : threadedStateTransitions.keySet()) {
-            for (final Resource resource : threadedStateTransitions.get(action)) {
-                threadedStateTransitionPool.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Comment comment = new Comment().withResource(resource).withUser(invoker).withAction(action);
-                            executeStateTransition(resource, action, comment);
-                        } catch (WorkflowEngineException e) {
-                            throw new Error(e);
-                        }
-                    }
-                });
-            }
         }
     }
 
@@ -280,4 +256,28 @@ public class StateService {
         return stateDAO.getStateTransition(evaluation, transitionState);
     }
 
+    private void queuePropagatedStateTransitions(StateTransition stateTransition, Resource resource) {
+        if (stateTransition.getPropagatedActions().size() > 0) {
+            entityService.save(new StateTransitionPending().withResource(resource).withStateTransition(stateTransition));
+        }
+    }
+     
+    private void executeThreadedStateTransitions(final HashMultimap<Action, Resource> threadedStateTransitions, final User invoker) {
+        for (final Action action : threadedStateTransitions.keySet()) {
+            for (final Resource resource : threadedStateTransitions.get(action)) {
+                threadedStateTransitionPool.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Comment comment = new Comment().withResource(resource).withUser(invoker).withAction(action);
+                            executeStateTransition(resource, action, comment);
+                        } catch (WorkflowEngineException e) {
+                            throw new Error(e);
+                        }
+                    }
+                });
+            }
+        }
+    }
+    
 }

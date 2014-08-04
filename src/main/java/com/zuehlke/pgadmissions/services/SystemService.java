@@ -61,7 +61,7 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 public class SystemService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     @Value("${system.name}")
     private String systemName;
 
@@ -73,10 +73,10 @@ public class SystemService {
 
     @Value("${system.user.email}")
     private String systemUserEmail;
-    
+
     @Value("${system.default.email.subject.directory}")
     private String defaultEmailSubjectDirectory;
-    
+
     @Value("${system.default.email.content.directory}")
     private String defaultEmailContentDirectory;
 
@@ -144,7 +144,7 @@ public class SystemService {
         logger.info("Initialising configuration definitions");
         verifyBackwardCompatibility(Configuration.class);
         initialiseConfigurations(system);
-        
+
         logger.info("Initialising fallback action definititions");
         initialiseFallbackActions();
 
@@ -200,7 +200,7 @@ public class SystemService {
 
     private void initialiseActions() {
         entityService.deleteAll(ActionRedaction.class);
-        
+
         for (PrismAction prismAction : PrismAction.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismAction.getScope());
             Scope creationScope = entityService.getByProperty(Scope.class, "id", prismAction.getCreationScope());
@@ -242,7 +242,9 @@ public class SystemService {
         DateTime startupTimestamp = new DateTime();
         System transientSystem = new System().withName(systemName).withUser(systemUser).withState(systemRunning).withCreatedTimestamp(startupTimestamp)
                 .withUpdatedTimestamp(startupTimestamp);
-        return entityService.createOrUpdate(transientSystem);
+        System system = entityService.createOrUpdate(transientSystem);
+        resourceService.setResourceCode(system);
+        return system;
     }
 
     private void initialiseFallbackActions() {
@@ -274,16 +276,12 @@ public class SystemService {
             if (duplicateTemplate == null) {
                 entityService.save(transientTemplate);
                 template = transientTemplate;
-                String defaultSubject = getFileContent(defaultEmailSubjectDirectory + prismTemplate.getInitialTemplateSubject());
-                String defaultContent = getFileContent(defaultEmailContentDirectory + prismTemplate.getInitialTemplateContent());
-                version = new NotificationTemplateVersion().withNotificationTemplate(template).withSubject(defaultSubject).withContent(defaultContent)
-                        .withCreatedTimestamp(new DateTime());
-                entityService.save(version);
+                version = initialiseNotificationTemplateVersion(template);
             } else {
                 template = duplicateTemplate;
                 version = notificationService.getActiveVersionToSend(system, template);
                 if (version == null) {
-                    version = notificationService.getLatestVersion(system, template);
+                    version = initialiseNotificationTemplateVersion(duplicateTemplate);
                 }
             }
 
@@ -297,6 +295,16 @@ public class SystemService {
                     .withReminderInterval(PrismNotificationTemplate.getReminderInterval(template.getId()));
             entityService.createOrUpdate(transientConfiguration);
         }
+    }
+
+    private NotificationTemplateVersion initialiseNotificationTemplateVersion(NotificationTemplate template) {
+        PrismNotificationTemplate templateId = template.getId();
+        String defaultSubject = getFileContent(defaultEmailSubjectDirectory + templateId.getInitialTemplateSubject());
+        String defaultContent = getFileContent(defaultEmailContentDirectory + templateId.getInitialTemplateContent());
+        NotificationTemplateVersion version = new NotificationTemplateVersion().withNotificationTemplate(template).withSubject(defaultSubject)
+                .withContent(defaultContent).withCreatedTimestamp(new DateTime());
+        entityService.save(version);
+        return version;
     }
 
     private void initialiseStateDurations(System system) {
@@ -417,7 +425,7 @@ public class SystemService {
             throw new WorkflowConfigurationException(e);
         }
     }
-    
+
     private void verifyBackwardResourceCompatibility() throws WorkflowConfigurationException {
         for (Scope scope : scopeService.getScopesDescending()) {
             Class<? extends Resource> resourceClass = scope.getId().getResourceClass();
@@ -426,7 +434,7 @@ public class SystemService {
             }
         }
     }
-    
+
     private String getFileContent(String filePath) {
         try {
             return Joiner.on(java.lang.System.lineSeparator()).join(Resources.readLines(Resources.getResource(filePath), Charsets.UTF_8));

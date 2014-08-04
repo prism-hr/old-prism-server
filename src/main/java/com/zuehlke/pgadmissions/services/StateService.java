@@ -38,6 +38,8 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 @Transactional
 public class StateService {
     
+    private ThreadPoolExecutor threadedStateTransitionPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1000);
+    
     @Autowired
     private StateDAO stateDAO;
 
@@ -61,8 +63,6 @@ public class StateService {
 
     @Autowired
     private UserService userService;
-
-    private ThreadPoolExecutor threadedStateTransitionPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1000);
 
     public State getById(PrismState id) {
         return entityService.getByProperty(State.class, "id", id);

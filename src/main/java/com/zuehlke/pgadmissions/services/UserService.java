@@ -195,6 +195,7 @@ public class UserService {
 
     public List<User> getUsersPotentiallyInterestedInApplication(Application application, List<User> usersToExclude) {
         usersToExclude = Lists.newArrayList(usersToExclude);
+        
         List<User> recruiters = userDAO.getRecruitersAssignedToApplication(application, usersToExclude);
         usersToExclude.addAll(recruiters);
 

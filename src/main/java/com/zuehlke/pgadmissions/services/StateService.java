@@ -263,10 +263,9 @@ public class StateService {
 
     public StateTransition getInterviewScheduledOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
         State transitionState;
-        DateTime baselineDateTime = new DateTime();
         DateTime interviewDateTime = comment.getInterviewDateTime();
         if (interviewDateTime != null) {
-            if (interviewDateTime.isEqual(baselineDateTime) || interviewDateTime.isBefore(baselineDateTime)) {
+            if (new DateTime().isAfter(interviewDateTime)) {
                 transitionState = getById(PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK);
             } else {
                 transitionState = getById(PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW);

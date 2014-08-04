@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
-import com.zuehlke.pgadmissions.domain.*;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +18,27 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Filter;
+import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserAccount;
+import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.UserUnusedEmail;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.mail.MailDescriptor;
 import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
-@Service("userService")
+@Service
 @Transactional
 public class UserService {
 
@@ -98,7 +109,7 @@ public class UserService {
     }
 
     public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource,
-            List<AbstractResourceRepresentation.RoleRepresentation> roles) {
+            List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
         User user = getOrCreateUser(firstName, lastName, email);
         roleService.updateRoles(resource, user, roles);
         return user;
@@ -134,15 +145,15 @@ public class UserService {
         }
     }
 
-    public void mergeUsers(UserAccountDTO mergeFrom, UserAccountDTO mergeInto) {
+    public void mergeUsers(UserAccountDTO mergeFrom, UserAccountDTO mergeInto) throws WorkflowEngineException {
         User mergeFromUser = userDAO.getAuthenticatedUser(mergeFrom.getEmail(), mergeFrom.getPassword());
         User mergeIntoUser = userDAO.getAuthenticatedUser(mergeInto.getEmail(), mergeInto.getPassword());
         
         if (mergeFromUser != null && mergeIntoUser != null) {
+            mergeUserRoles(mergeFromUser, mergeIntoUser);
+            
             userDAO.mergeUsers(mergeFromUser, mergeIntoUser);
-            
-            // TODO: When inviting new user to join, see if email address supplied is unused and map to active user
-            
+
             UserUnusedEmail transientUnusedEmail = new UserUnusedEmail().withUser(mergeIntoUser).withEmail(mergeFrom.getEmail());
             UserUnusedEmail persistentUnusedEmail = entityService.getOrCreate(transientUnusedEmail);
             mergeIntoUser.getUnusedEmails().add(persistentUnusedEmail);
@@ -216,4 +227,21 @@ public class UserService {
         
         return Lists.newArrayList(orderedRecruiters.values());
     }
+    
+    private void mergeUserRoles(User mergeFromUser, User mergeIntoUser) throws WorkflowEngineException {
+        Set<UserRole> mergeFromRoles = mergeFromUser.getUserRoles();
+        for (UserRole mergeFromRole : mergeFromRoles) {
+            UserRole transientUserRole = new UserRole().withResource(mergeFromRole.getResource()).withUser(mergeIntoUser).withRole(mergeFromRole.getRole());
+            UserRole persistentUserRole= entityService.getDuplicateEntity(transientUserRole);
+            
+            if (persistentUserRole == null) {
+                if (roleService.isRoleAssignmentPermitted(transientUserRole)) {
+                    entityService.save(transientUserRole);
+                } else {
+                    throw new WorkflowEngineException();
+                }
+            }
+        }
+    }
+    
 }

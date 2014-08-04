@@ -18,7 +18,7 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 
 @Entity
-@Table(name = "user_institution_identity", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "institution_id", "user_identity_type_id" }) })
+@Table(name = "user_institution_identity", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "institution_id", "user_identity_type" }) })
 public class UserInstitutionIdentity implements IUniqueEntity {
 
     @Id
@@ -32,7 +32,7 @@ public class UserInstitutionIdentity implements IUniqueEntity {
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
-    @Column(name = "user_identity_type_id", nullable = false)
+    @Column(name = "user_identity_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismUserIdentity identityType;
 

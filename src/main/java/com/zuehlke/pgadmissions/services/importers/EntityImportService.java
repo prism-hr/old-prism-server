@@ -9,7 +9,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -17,7 +16,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
@@ -54,9 +52,6 @@ public class EntityImportService {
     private static final Logger logger = LoggerFactory.getLogger(EntityImportService.class);
 
     private static DateTimeFormatter dtFormatter = DateTimeFormat.forPattern("dd-MMM-yy");
-    
-    @Value("${institution.feed.data.import}")
-    private Boolean importInstitutionData;
 
     @Autowired
     private ImportedEntityService importedEntityService;
@@ -88,33 +83,31 @@ public class EntityImportService {
     private ApplicationContext applicationContext;
     
     public void importReferenceData() {
-        if (BooleanUtils.isTrue(importInstitutionData)) {
-            institutionService.populateDefaultImportedEntityFeeds();
-            
-            for (ImportedEntityFeed importedEntityFeed : getImportedEntityFeedsToImport()) {
-                String maxRedirects = null;
-                try {
-                    maxRedirects = System.getProperty("http.maxRedirects");
-                    System.setProperty("http.maxRedirects", "5");
-    
-                    importReferenceEntities(importedEntityFeed);
-                } catch (DataImportException e) {
-                    logger.error("Error importing reference data.", e);
-                    String errorMessage = e.getMessage();
-                    Throwable cause = e.getCause();
-                    if (cause != null) {
-                        errorMessage += "\n" + cause.toString();
-                    }
-    
-                    notificationService.sendDataImportErrorNotifications(importedEntityFeed.getInstitution(), errorMessage);
-    
-                } finally {
-                    Authenticator.setDefault(null);
-                    if (maxRedirects != null) {
-                        System.setProperty("http.maxRedirects", maxRedirects);
-                    } else {
-                        System.clearProperty("http.maxRedirects");
-                    }
+        institutionService.populateDefaultImportedEntityFeeds();
+        
+        for (ImportedEntityFeed importedEntityFeed : getImportedEntityFeedsToImport()) {
+            String maxRedirects = null;
+            try {
+                maxRedirects = System.getProperty("http.maxRedirects");
+                System.setProperty("http.maxRedirects", "5");
+
+                importReferenceEntities(importedEntityFeed);
+            } catch (DataImportException e) {
+                logger.error("Error importing reference data.", e);
+                String errorMessage = e.getMessage();
+                Throwable cause = e.getCause();
+                if (cause != null) {
+                    errorMessage += "\n" + cause.toString();
+                }
+
+                notificationService.sendDataImportErrorNotifications(importedEntityFeed.getInstitution(), errorMessage);
+
+            } finally {
+                Authenticator.setDefault(null);
+                if (maxRedirects != null) {
+                    System.setProperty("http.maxRedirects", maxRedirects);
+                } else {
+                    System.clearProperty("http.maxRedirects");
                 }
             }
         }

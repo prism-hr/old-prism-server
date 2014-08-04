@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
+import com.zuehlke.pgadmissions.domain.*;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +19,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Filter;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.NotificationTemplate;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.UserUnusedEmail;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -204,12 +196,14 @@ public class UserService {
     public List<User> getUsersPotentiallyInterestedInApplication(Application application, List<User> usersToExclude) {
         List<User> recruiters = userDAO.getRecruitersAssignedToApplication(application, usersToExclude);
         usersToExclude.addAll(recruiters);
-        
-        List<User> programRecruiters = userDAO.getRecruitersAssignedToProgramApplications(application.getProgram(), usersToExclude);
+
+        Program program = application.getProgram();
+
+        List<User> programRecruiters = userDAO.getRecruitersAssignedToProgramApplications(program, usersToExclude);
         recruiters.addAll(programRecruiters);
         usersToExclude.addAll(programRecruiters);
         
-        List<User> projectRecruiters = userDAO.getRecruitersAssignedToProgramProjects(application.getProject(), usersToExclude);
+        List<User> projectRecruiters = userDAO.getRecruitersAssignedToProgramProjects(program, usersToExclude);
         recruiters.addAll(projectRecruiters);
         
         TreeMap<String, User> orderedRecruiters = Maps.newTreeMap();

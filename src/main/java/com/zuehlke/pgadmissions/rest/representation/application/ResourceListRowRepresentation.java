@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -25,7 +26,7 @@ public class ResourceListRowRepresentation {
 
     private LocalDate closingDate;
 
-    private PrismState state;
+    private PrismStateGroup state;
 
     private LocalDate dueDate;
 
@@ -93,11 +94,11 @@ public class ResourceListRowRepresentation {
         this.closingDate = closingDate;
     }
 
-    public PrismState getState() {
+    public PrismStateGroup getState() {
         return state;
     }
 
-    public void setState(PrismState state) {
+    public void setState(PrismStateGroup state) {
         this.state = state;
     }
 

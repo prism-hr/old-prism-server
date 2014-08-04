@@ -74,6 +74,9 @@ public class Project extends Advert {
     
     @OneToMany(mappedBy = "project")
     private Set<Comment> comments = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "project")
+    private Set<UserRole> userRoles = Sets.newHashSet();
 
     @Override
     public String getCode() {
@@ -111,6 +114,10 @@ public class Project extends Advert {
 
     public Set<Comment> getComments() {
         return comments;
+    }
+    
+    public final Set<UserRole> getUserRoles() {
+        return userRoles;
     }
 
     public Project withId(Integer id) {

@@ -15,6 +15,8 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserInstitutionIdentity;
@@ -94,7 +96,7 @@ public class UserDAO {
                 .list();
     }
 
-    public List<User> getUsersPotentiallyInterestedInApplication(Application application, List<User> usersInterestedInApplication) {
+    public List<User> getRecruitersAssignedToApplication(Application application, List<User> usersToExclude) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
@@ -110,7 +112,51 @@ public class UserDAO {
                         PrismRole.APPLICATION_SECONDARY_SUPERVISOR, PrismRole.APPLICATION_VIEWER_RECRUITER))) //
                 .add(Restrictions.eq("userAccount.enabled", true)); //
         
-        for (User excludedUser : usersInterestedInApplication) {
+        for (User excludedUser : usersToExclude) {
+            criteria.add(Restrictions.ne("user", excludedUser));
+        }
+        
+        return criteria.addOrder(Order.asc("user.lastName")) //
+                .addOrder(Order.asc("user.firstName")) //
+                .list();
+    }
+    
+    public List<User> getRecruitersAssignedToProgramApplications(Program program, List<User> usersToExclude) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("userRole.user")) //
+                .createAlias("program", "program", JoinType.INNER_JOIN) //
+                .createAlias("program.applications", "application", JoinType.INNER_JOIN) //
+                .createAlias("application.userRoles", "userRole") //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("userRole.role.id", Arrays.asList(PrismRole.APPLICATION_ADMINISTRATOR, //
+                        PrismRole.APPLICATION_REVIEWER, PrismRole.APPLICATION_INTERVIEWER, //
+                        PrismRole.APPLICATION_PRIMARY_SUPERVISOR, PrismRole.APPLICATION_SECONDARY_SUPERVISOR, //
+                        PrismRole.APPLICATION_VIEWER_RECRUITER))) //
+                .add(Restrictions.eq("userAccount.enabled", true)); //
+        
+        for (User excludedUser : usersToExclude) {
+            criteria.add(Restrictions.ne("user", excludedUser));
+        }
+        
+        return criteria.addOrder(Order.asc("user.lastName")) //
+                .addOrder(Order.asc("user.firstName")) //
+                .list();
+    }
+    
+    public List<User> getRecruitersAssignedToProgramProjects(Project project, List<User> usersToExclude) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("userRole.user")) //
+                .createAlias("program", "program", JoinType.INNER_JOIN) //
+                .createAlias("program.projects", "projects", JoinType.INNER_JOIN) //
+                .createAlias("project.userRoles", "userRole") //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("userRole.role.id", Arrays.asList(PrismRole.PROJECT_PRIMARY_SUPERVISOR, //
+                        PrismRole.PROJECT_SECONDARY_SUPERVISOR))) //
+                .add(Restrictions.eq("userAccount.enabled", true)); //
+        
+        for (User excludedUser : usersToExclude) {
             criteria.add(Restrictions.ne("user", excludedUser));
         }
         

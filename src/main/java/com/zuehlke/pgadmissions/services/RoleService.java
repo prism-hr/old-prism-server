@@ -141,6 +141,12 @@ public class RoleService {
         return roleDAO.getCreatorRole(resource);
     }
 
+    public void deleteExludedRoles() {
+        for (Role role : entityService.list(Role.class)) {
+            role.getExcludedRoles().clear();
+        }
+    }
+    
     public void executeRoleTransitions(StateTransition stateTransition, Comment comment) throws WorkflowEngineException {
         for (PrismRoleTransitionType transitionType : PrismRoleTransitionType.values()) {
             HashMultimap<User, RoleTransition> userRoleTransitions = null;
@@ -253,6 +259,7 @@ public class RoleService {
             throw new WorkflowEngineException();
         }
         entityService.delete(persistentRole);
+        entityService.evict(persistentRole);
         entityService.getOrCreate(transientTransitionRole);
     }
 

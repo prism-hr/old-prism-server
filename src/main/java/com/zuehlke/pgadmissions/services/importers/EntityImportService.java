@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services.importers;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.SYSTEM_IMPORT_ERROR_NOTIFICATION;
-
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
@@ -24,19 +22,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
@@ -100,17 +94,13 @@ public class EntityImportService {
                 importReferenceEntities(importedEntityFeed);
             } catch (DataImportException e) {
                 logger.error("Error importing reference data.", e);
-                String message = e.getMessage();
+                String errorMessage = e.getMessage();
                 Throwable cause = e.getCause();
                 if (cause != null) {
-                    message += "\n" + cause.toString();
+                    errorMessage += "\n" + cause.toString();
                 }
 
-                com.zuehlke.pgadmissions.domain.System system = systemService.getSystem();
-                for (User user : userService.getUsersForResourceAndRole(system, PrismRole.SYSTEM_ADMINISTRATOR)) {
-                    NotificationTemplate importError = notificationService.getById(SYSTEM_IMPORT_ERROR_NOTIFICATION);
-                    notificationService.sendNotification(user, system, importError, ImmutableMap.of("errorMessage", message));
-                }
+                notificationService.sendDataImportErrorNotifications(importedEntityFeed.getInstitution(), errorMessage);
 
             } finally {
                 Authenticator.setDefault(null);

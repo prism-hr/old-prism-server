@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
@@ -27,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.UserNotification;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinition;
 import com.zuehlke.pgadmissions.mail.MailMessageDTO;
 import com.zuehlke.pgadmissions.mail.MailSender;
@@ -167,6 +169,14 @@ public class NotificationService {
         
         sendNotification(user, resource, template);
         deletePendingUpdateNotification(user, resource, template);
+    }
+    
+    @Transactional
+    public void sendDataImportErrorNotifications(Institution institution, String errorMessage) {
+        for (User user : userService.getUsersForResourceAndRole(institution, PrismRole.INSTITUTION_ADMINISTRATOR)) {
+            NotificationTemplate importError = getById(PrismNotificationTemplate.SYSTEM_IMPORT_ERROR_NOTIFICATION);
+            sendNotification(user, institution, importError, ImmutableMap.of("errorMessage", errorMessage));
+        }
     }
 
     @Transactional

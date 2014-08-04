@@ -209,7 +209,7 @@ public class RoleService {
         DateTime baseline = new DateTime();
         Resource resource = comment.getResource();
         UserRole transientRole = new UserRole().withResource(resource).withUser(user).withRole(roleTransition.getRole()).withAssignedTimestamp(baseline);
-        UserRole transientTransitionRole = new UserRole().withResource(resource).withRole(roleTransition.getTransitionRole()).withAssignedTimestamp(baseline);
+        UserRole transientTransitionRole = new UserRole().withResource(resource).withUser(user).withRole(roleTransition.getTransitionRole()).withAssignedTimestamp(baseline);
 
         switch (roleTransition.getRoleTransitionType()) {
         case BRANCH:
@@ -259,7 +259,6 @@ public class RoleService {
             throw new WorkflowEngineException();
         }
         entityService.delete(persistentRole);
-        entityService.evict(persistentRole);
         entityService.getOrCreate(transientTransitionRole);
     }
 

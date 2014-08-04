@@ -122,13 +122,14 @@ public class UserDAO {
     }
     
     public List<User> getRecruitersAssignedToProgramApplications(Program program, List<User> usersToExclude) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Program.class) //
                 .setProjection(Projections.groupProperty("userRole.user")) //
                 .createAlias("program", "program", JoinType.INNER_JOIN) //
                 .createAlias("program.applications", "application", JoinType.INNER_JOIN) //
                 .createAlias("application.userRoles", "userRole") //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("program.id", program.getId())) //
                 .add(Restrictions.in("userRole.role.id", Arrays.asList(PrismRole.APPLICATION_ADMINISTRATOR, //
                         PrismRole.APPLICATION_REVIEWER, PrismRole.APPLICATION_INTERVIEWER, //
                         PrismRole.APPLICATION_PRIMARY_SUPERVISOR, PrismRole.APPLICATION_SECONDARY_SUPERVISOR, //
@@ -145,13 +146,14 @@ public class UserDAO {
     }
     
     public List<User> getRecruitersAssignedToProgramProjects(Project project, List<User> usersToExclude) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Project.class) //
                 .setProjection(Projections.groupProperty("userRole.user")) //
                 .createAlias("program", "program", JoinType.INNER_JOIN) //
                 .createAlias("program.projects", "projects", JoinType.INNER_JOIN) //
                 .createAlias("project.userRoles", "userRole") //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("id", project.getId())) //
                 .add(Restrictions.in("userRole.role.id", Arrays.asList(PrismRole.PROJECT_PRIMARY_SUPERVISOR, //
                         PrismRole.PROJECT_SECONDARY_SUPERVISOR))) //
                 .add(Restrictions.eq("userAccount.enabled", true)); //

@@ -115,4 +115,8 @@ public class EntityService {
         entityDAO.evict(entity);
     }
     
+    public <T> void deleteAll(Class<T> classReference) {
+        entityDAO.deleteAll(classReference);
+    }
+    
 }

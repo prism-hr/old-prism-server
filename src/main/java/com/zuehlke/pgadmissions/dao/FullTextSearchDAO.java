@@ -62,8 +62,10 @@ public class FullTextSearchDAO {
         TreeSet<User> uniqueResults = new TreeSet<User>(comparator);
 
         Criteria wildcardCriteria = sessionFactory.getCurrentSession().createCriteria(User.class) //
-                .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("userAccount.enabled", true)) //
+                .createAlias("userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.isNull("userAccount")) //
+                        .add(Restrictions.eq("userAccount.enabled", true))) //
                 .add(Restrictions.ilike(propertyName, trimmedSearchTerm, MatchMode.START)) //
                 .addOrder(Order.asc("lastName")).setMaxResults(25);
 

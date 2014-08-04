@@ -175,6 +175,7 @@ public class SystemService {
     }
 
     private void initialiseRoles() {
+        roleService.deleteExludedRoles();
         Set<Role> rolesWithExclusions = Sets.newHashSet();
 
         for (PrismRole prismRole : PrismRole.values()) {
@@ -197,6 +198,8 @@ public class SystemService {
     }
 
     private void initialiseActions() {
+        entityService.deleteAll(ActionRedaction.class);
+        
         for (PrismAction prismAction : PrismAction.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismAction.getScope());
             Scope creationScope = entityService.getByProperty(Scope.class, "id", prismAction.getCreationScope());

@@ -752,6 +752,36 @@ public class Comment {
         return this;
     }
 
+    public Comment withInterviewDateTime(final DateTime interviewDateTime) {
+        this.interviewDateTime = interviewDateTime;
+        return this;
+    }
+
+    public Comment withInterviewTimeZone(final TimeZone interviewTimeZone) {
+        this.interviewTimeZone = interviewTimeZone;
+        return this;
+    }
+
+    public Comment withInterviewDuration(final Integer interviewDuration) {
+        this.interviewDuration = interviewDuration;
+        return this;
+    }
+
+    public Comment withIntervieweeInstructions(final String intervieweeInstructions) {
+        this.intervieweeInstructions = intervieweeInstructions;
+        return this;
+    }
+
+    public Comment withInterviewerInstructions(final String interviewerInstructions) {
+        this.interviewerInstructions = interviewerInstructions;
+        return this;
+    }
+
+    public Comment withInterviewLocation(final String interviewLocation) {
+        this.interviewLocation = interviewLocation;
+        return this;
+    }
+
     public boolean isApplicationCreatorEligibilityUncertain() {
         return getResidenceStatus() == ApplicationResidenceStatus.UNSURE || getQualified() == YesNoUnsureResponse.UNSURE
                 || getCompetentInWorkLanguage() == YesNoUnsureResponse.UNSURE;

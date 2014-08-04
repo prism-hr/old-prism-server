@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhanceme
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
@@ -137,20 +138,22 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.PUT)
     public void changeRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                           @RequestBody List<AbstractResourceRepresentation.RoleRepresentation> roles) {
+                           @RequestBody List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
 
         roleService.updateRoles(resource, user, roles);
+        // TODO: return validation error if workflow engine exception is thrown.
     }
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     public void addUserToResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                                  @RequestBody AbstractResourceRepresentation.UserRolesRepresentation userRolesRepresentation) {
+                                  @RequestBody AbstractResourceRepresentation.UserRolesRepresentation userRolesRepresentation) throws WorkflowEngineException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
 
         userService.getOrCreateUserWithRoles(userRolesRepresentation.getFirstName(), userRolesRepresentation.getLastName(), userRolesRepresentation.getEmail(),
                 resource, userRolesRepresentation.getRoles());
+        // TODO: return validation error if workflow engine exception is thrown.
     }
 
     public void enrichApplicationRepresentation(Application application, ApplicationRepresentation applicationRepresentation) {

@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-public class MailMockServer extends JavaMailSenderImpl {
+public class MailMockSender extends JavaMailSenderImpl {
 
-    private final Logger log = LoggerFactory.getLogger(MailMockServer.class);
+    private final Logger log = LoggerFactory.getLogger(MailMockSender.class);
     
     @Override
     protected void doSend(MimeMessage[] mimeMessages, Object[] originalMessages) throws MailException {

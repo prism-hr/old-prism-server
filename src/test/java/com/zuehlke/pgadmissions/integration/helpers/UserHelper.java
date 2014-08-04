@@ -52,7 +52,7 @@ public class UserHelper {
         assertTrue(user.isEnabled());
     }
 
-    public void addRoles(Resource resource, User user, PrismRole... roles) {
+    public void addRoles(Resource resource, User user, PrismRole... roles) throws WorkflowEngineException {
         List<AbstractResourceRepresentation.RoleRepresentation> roleRepresentations = Lists.newArrayList();
         for (PrismRole role : roles) {
             roleRepresentations.add(new AbstractResourceRepresentation.RoleRepresentation(role, true));

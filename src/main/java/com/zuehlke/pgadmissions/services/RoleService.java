@@ -48,13 +48,16 @@ public class RoleService {
         return entityService.list(Role.class);
     }
 
-    public UserRole getOrCreateUserRole(Resource resource, User user, PrismRole newRoleId) {
+    public UserRole getOrCreateUserRole(Resource resource, User user, PrismRole newRoleId) throws WorkflowEngineException {
         Role newRole = getById(newRoleId);
         UserRole transientUserRole = new UserRole().withResource(resource).withUser(user).withRole(newRole).withAssignedTimestamp(new DateTime());
-        return entityService.getOrCreate(transientUserRole);
+        if (isRoleAssignmentPermitted(transientUserRole)) {
+            return entityService.getOrCreate(transientUserRole);
+        }
+        throw new WorkflowEngineException();
     }
 
-    public void getOrCreateUserRoles(Resource resource, User user, PrismRole... rolesToCreate) {
+    public void getOrCreateUserRoles(Resource resource, User user, PrismRole... rolesToCreate) throws WorkflowEngineException {
         for (PrismRole roleToCreate : rolesToCreate) {
             getOrCreateUserRole(resource, user, roleToCreate);
         }
@@ -89,8 +92,8 @@ public class RoleService {
             resource.setUser(newOwner);
         }
     }
-    
-    public void updateRoles(Resource resource, User user, List<AbstractResourceRepresentation.RoleRepresentation> roles) {
+
+    public void updateRoles(Resource resource, User user, List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
         for (AbstractResourceRepresentation.RoleRepresentation role : roles) {
             if (role.getValue()) {
                 getOrCreateUserRole(resource, user, role.getId());
@@ -99,7 +102,7 @@ public class RoleService {
             }
         }
     }
-    
+
     public List<PrismRole> getActionOwnerRoles(User user, Resource resource, Action action) {
         return roleDAO.getActionOwnerRoles(user, resource, action);
     }
@@ -145,6 +148,10 @@ public class RoleService {
         for (Role role : entityService.list(Role.class)) {
             role.getExcludedRoles().clear();
         }
+    }
+    
+    public boolean isRoleAssignmentPermitted(UserRole userRole) {
+        return roleDAO.getExcludingUserRoles(userRole).isEmpty();
     }
     
     public void executeRoleTransitions(StateTransition stateTransition, Comment comment) throws WorkflowEngineException {
@@ -209,7 +216,8 @@ public class RoleService {
         DateTime baseline = new DateTime();
         Resource resource = comment.getResource();
         UserRole transientRole = new UserRole().withResource(resource).withUser(user).withRole(roleTransition.getRole()).withAssignedTimestamp(baseline);
-        UserRole transientTransitionRole = new UserRole().withResource(resource).withUser(user).withRole(roleTransition.getTransitionRole()).withAssignedTimestamp(baseline);
+        UserRole transientTransitionRole = new UserRole().withResource(resource).withUser(user).withRole(roleTransition.getTransitionRole())
+                .withAssignedTimestamp(baseline);
 
         switch (roleTransition.getRoleTransitionType()) {
         case BRANCH:
@@ -247,10 +255,10 @@ public class RoleService {
             entityService.delete(persistentRole);
         }
     }
-
+    
     private boolean isRoleAssignmentPermitted(UserRole userRole, Comment comment) {
         return userRole.getRole().getExcludedRoles().isEmpty()
-                || (roleDAO.getExcludingRoles(userRole, comment).isEmpty() && roleDAO.getExcludingUserRoles(userRole).isEmpty());
+                || (roleDAO.getExcludingRoles(userRole, comment).isEmpty() && isRoleAssignmentPermitted(userRole));
     }
 
     private void executeUpdateUserRole(UserRole userRole, UserRole transientTransitionRole) throws WorkflowEngineException {

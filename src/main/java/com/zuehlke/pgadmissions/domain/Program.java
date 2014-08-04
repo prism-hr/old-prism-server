@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -44,11 +45,11 @@ public class Program extends Advert {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 

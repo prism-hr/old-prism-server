@@ -189,11 +189,6 @@ public class UserRole implements IUniqueEntity {
         return this;
     }
 
-    public UserRole withScope(Resource resource) {
-        this.setResource(resource);
-        return this;
-    }
-
     public Resource getResource() {
         if (system != null) {
             return system;

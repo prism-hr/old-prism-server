@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -28,6 +29,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Entity
@@ -133,6 +135,9 @@ public class Application extends Resource {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
+    
+    @OneToMany(mappedBy = "application")
+    private Set<UserRole> userRoles = Sets.newHashSet();
 
     @Transient
     private Boolean acceptedTerms;
@@ -259,6 +264,10 @@ public class Application extends Resource {
 
     public List<ApplicationReferee> getReferees() {
         return referees;
+    }
+
+    public final Set<UserRole> getUserRoles() {
+        return userRoles;
     }
 
     public Application withId(Integer id) {

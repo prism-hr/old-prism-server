@@ -179,29 +179,45 @@ public class UserService {
     }
 
     public List<User> getUsersInterestedInApplication(Application application) {
-        Set<User> assessors = Sets.newHashSet();
-        TreeMap<String, User> interestedAssessors = Maps.newTreeMap();
+        Set<User> recruiters = Sets.newHashSet();
+        TreeMap<String, User> orderedRecruiters = Maps.newTreeMap();
 
         List<Comment> assessments = commentService.getApplicationAssessmentComments(application);
         for (Comment comment : assessments) {
-            User assessor = comment.getUser();
-            if (!assessors.contains(assessor) && (BooleanUtils.isTrue(comment.isDesireToInterview()) || BooleanUtils.isTrue(comment.isDesireToRecruit()))) {
-                interestedAssessors.put(assessor.getLastName() + assessor.getFirstName(), assessor);
+            User recruiter = comment.getUser();
+            if (!recruiters.contains(recruiter) && (BooleanUtils.isTrue(comment.isDesireToInterview()) || BooleanUtils.isTrue(comment.isDesireToRecruit()))) {
+                orderedRecruiters.put(recruiter.getLastName() + recruiter.getFirstName(), recruiter);
             }
-            assessors.add(assessor);
+            recruiters.add(recruiter);
         }
 
         List<User> suggestedSupervisors = userDAO.getSuggestedSupervisors(application);
         for (User suggestedSupervisor : suggestedSupervisors) {
-            if (!assessors.contains(suggestedSupervisor)) {
-                interestedAssessors.put(suggestedSupervisor.getLastName() + suggestedSupervisor.getFirstName(), suggestedSupervisor);
+            if (!recruiters.contains(suggestedSupervisor)) {
+                orderedRecruiters.put(suggestedSupervisor.getLastName() + suggestedSupervisor.getFirstName(), suggestedSupervisor);
             }
         }
 
-        return Lists.newArrayList(interestedAssessors.values());
+        return Lists.newArrayList(orderedRecruiters.values());
     }
 
-    public List<User> getUsersPotentiallyInterestedInApplication(Application application, List<User> usersInterestedInApplication) {
-        return userDAO.getUsersPotentiallyInterestedInApplication(application, usersInterestedInApplication);
+    public List<User> getUsersPotentiallyInterestedInApplication(Application application, List<User> usersToExclude) {
+        List<User> recruiters = userDAO.getRecruitersAssignedToApplication(application, usersToExclude);
+        usersToExclude.addAll(recruiters);
+        
+        List<User> programRecruiters = userDAO.getRecruitersAssignedToProgramApplications(application.getProgram(), usersToExclude);
+        recruiters.addAll(programRecruiters);
+        usersToExclude.addAll(programRecruiters);
+        
+        List<User> projectRecruiters = userDAO.getRecruitersAssignedToProgramProjects(application.getProject(), usersToExclude);
+        recruiters.addAll(projectRecruiters);
+        
+        TreeMap<String, User> orderedRecruiters = Maps.newTreeMap();
+        
+        for (User recruiter : recruiters) {
+            orderedRecruiters.put(recruiter.getLastName() + recruiter.getFirstName(), recruiter);
+        }
+        
+        return Lists.newArrayList(orderedRecruiters.values());
     }
 }

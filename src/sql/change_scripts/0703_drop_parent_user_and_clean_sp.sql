@@ -8,7 +8,7 @@ DROP PROCEDURE SP_MERGE_ENTITIES
 
 /* TODO: merge the existing linked accounts into the new model */
 
-CREATE PROCEDURE SP_MERGE_ENTITIES(
+CREATE PROCEDURE SP_MERGE_ENTITIES (
 	IN schema_name TEXT, 
 	IN table_to_merge_name TEXT, 
 	IN merge_from_id INT, 

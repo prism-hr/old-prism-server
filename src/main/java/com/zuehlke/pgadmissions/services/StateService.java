@@ -38,16 +38,6 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 @Transactional
 public class StateService {
     
-    private static final Set<Class<? extends IUniqueEntity>> workflowConfigurationClasses = Sets.newLinkedHashSet();
-
-    static {
-        workflowConfigurationClasses.add(RoleTransition.class);
-        workflowConfigurationClasses.add(StateTransition.class);
-        workflowConfigurationClasses.add(StateActionAssignment.class);
-        workflowConfigurationClasses.add(StateActionNotification.class);
-        workflowConfigurationClasses.add(StateAction.class);
-    }
-
     @Autowired
     private StateDAO stateDAO;
 
@@ -115,8 +105,16 @@ public class StateService {
     }
 
     public void deleteStateActions() {
+        Set<Class<? extends IUniqueEntity>> workflowConfigurationClasses = Sets.newLinkedHashSet();
+
+        workflowConfigurationClasses.add(RoleTransition.class);
+        workflowConfigurationClasses.add(StateTransition.class);
+        workflowConfigurationClasses.add(StateActionAssignment.class);
+        workflowConfigurationClasses.add(StateActionNotification.class);
+        workflowConfigurationClasses.add(StateAction.class);
+
         for (Class<? extends IUniqueEntity> workflowConfigurationClass : workflowConfigurationClasses) {
-            stateDAO.deleteStateActions(workflowConfigurationClass);
+            entityService.deleteAll(workflowConfigurationClass);
         }
     }
 
@@ -228,6 +226,14 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), comment.getTransitionState());
 	}
 
+    public StateTransition getApplicationReviewedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
+        PrismState transitionState = PrismState.APPLICATION_REVIEW_PENDING_FEEDBACK;
+        if (roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_REVIEWER)).size() == 1) {
+            transitionState = PrismState.APPLICATION_REVIEW_PENDING_COMPLETION;
+        }
+        return stateDAO.getStateTransition(evaluation, getById(transitionState));
+    }
+    
     public StateTransition getInstitutionCreatedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
         PrismState transitionState = PrismState.INSTITUTION_APPROVAL;
         if (roleService.hasUserRole(resource, comment.getUser(), PrismRole.SYSTEM_ADMINISTRATOR)) {

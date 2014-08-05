@@ -25,7 +25,7 @@ public class AdvertCategoryImportService {
 
     private static final Logger log = LoggerFactory.getLogger(AdvertCategoryImportService.class);
 
-    @Value("${advertCategory.import.location}")
+    @Value("${import.advertCategory.location}")
     private String importLocation;
     
     @Autowired

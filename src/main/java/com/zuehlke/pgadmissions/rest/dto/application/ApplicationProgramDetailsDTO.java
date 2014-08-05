@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import org.joda.time.DateTime;
-
-import java.util.List;
 
 public class ApplicationProgramDetailsDTO {
 

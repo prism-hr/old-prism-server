@@ -42,7 +42,7 @@ public class InstitutionDomicileImportService {
 
     private static final Logger log = LoggerFactory.getLogger(InstitutionDomicileImportService.class);
 
-    @Value("${institutionDomicile.import.location}")
+    @Value("${import.institutionDomicile.location}")
     private String importLocation;
     
     @Autowired

@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.rest.representation.AppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.AppointmentPreferenceRepresentation;
 
@@ -78,13 +79,13 @@ public class CommentService {
         return commentDAO.getApplicationAssessmentComments(application);
     }
 
-    public List<DateTime> getAppointmentTimeslots(Application application) {
+    public List<AppointmentTimeslotRepresentation> getAppointmentTimeslots(Application application) {
         Action schedulingAction = actionService.getById(PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
         Comment schedulingComment = commentDAO.getLatestComment(application, schedulingAction);
 
-        List<DateTime> schedulingOptions = Lists.newLinkedList();
+        List<AppointmentTimeslotRepresentation> schedulingOptions = Lists.newLinkedList();
         for (CommentAppointmentTimeslot schedulingOption : schedulingComment.getAppointmentTimeslots()) {
-            schedulingOptions.add(schedulingOption.getDateTime());
+            schedulingOptions.add(new AppointmentTimeslotRepresentation().withId(schedulingOption.getId()).withDateTime(schedulingOption.getDateTime()));
         }
 
         return schedulingOptions;

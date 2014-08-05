@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.beanutils.MethodUtils;
@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
@@ -38,7 +39,6 @@ import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentati
 import com.zuehlke.pgadmissions.rest.representation.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.ApplicationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.application.AppointmentPreferenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.ProgramRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -49,7 +49,7 @@ import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
-@RequestMapping(value = {"api/{resourceScope}"})
+@RequestMapping(value = { "api/{resourceScope}" })
 public class ResourceResource {
 
     @Autowired
@@ -75,7 +75,8 @@ public class ResourceResource {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @Transactional
-    public AbstractResourceRepresentation getResource(@PathVariable Integer id, @ModelAttribute ResourceDescriptor resourceDescriptor) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public AbstractResourceRepresentation getResource(@PathVariable Integer id, @ModelAttribute ResourceDescriptor resourceDescriptor)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         User currentUser = userService.getCurrentUser();
         Resource resource = entityService.getById(resourceDescriptor.getType(), id);
         if (resource == null) {
@@ -87,7 +88,7 @@ public class ResourceResource {
 
         // set visible comments
         List<Comment> comments = commentService.getVisibleComments(resource, currentUser);
-        representation.setComments(Lists.<CommentRepresentation>newArrayListWithExpectedSize(comments.size()));
+        representation.setComments(Lists.<CommentRepresentation> newArrayListWithExpectedSize(comments.size()));
         for (Comment comment : comments) {
             representation.getComments().add(dozerBeanMapper.map(comment, CommentRepresentation.class));
         }
@@ -96,7 +97,8 @@ public class ResourceResource {
         List<PrismAction> permittedActions = actionService.getPermittedActions(resource, currentUser);
         representation.setActions(permittedActions);
 
-        Optional<PrismAction> completeAction = Iterables.tryFind(permittedActions, Predicates.compose(Predicates.containsPattern("^APPLICATION_COMPLETE_"), Functions.toStringFunction()));
+        Optional<PrismAction> completeAction = Iterables.tryFind(permittedActions,
+                Predicates.compose(Predicates.containsPattern("^APPLICATION_COMPLETE_"), Functions.toStringFunction()));
         if (completeAction.isPresent()) {
             representation.setNextStates(actionService.getAvailableNextStati(resource, completeAction.get()));
         }
@@ -121,13 +123,13 @@ public class ResourceResource {
             userRolesRepresentations.add(userRolesRepresentation);
         }
         representation.setUsers(userRolesRepresentations);
-        MethodUtils.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", new Object[]{resource, representation});
+        MethodUtils.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", new Object[] { resource, representation });
         return representation;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public List<ResourceListRowRepresentation> getResources(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage,
-                                                            @ModelAttribute ResourceDescriptor resourceDescriptor) {
+            @ModelAttribute ResourceDescriptor resourceDescriptor) {
         List<ResourceConsoleListRowDTO> consoleListBlock = resourceService.getConsoleListBlock(resourceDescriptor.getType(), page, perPage);
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
         for (ResourceConsoleListRowDTO appDTO : consoleListBlock) {
@@ -140,7 +142,7 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.PUT)
     public void changeRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                           @RequestBody List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
+            @RequestBody List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
 
@@ -150,7 +152,7 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     public void addUserToResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                                  @RequestBody AbstractResourceRepresentation.UserRolesRepresentation userRolesRepresentation) throws WorkflowEngineException {
+            @RequestBody AbstractResourceRepresentation.UserRolesRepresentation userRolesRepresentation) throws WorkflowEngineException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
 
         userService.getOrCreateUserWithRoles(userRolesRepresentation.getFirstName(), userRolesRepresentation.getLastName(), userRolesRepresentation.getEmail(),
@@ -172,8 +174,12 @@ public class ResourceResource {
         applicationRepresentation.setUsersInterestedInApplication(interestedRepresentations);
         applicationRepresentation.setUsersPotentiallyInterestedInApplication(potentiallyInterestedRepresentations);
 
-        applicationRepresentation.setAppointmentTimeslots(commentService.getAppointmentTimeslots(application));
-        applicationRepresentation.setAppointmentPreferences(commentService.getAppointmentPreferences(application));
+        if (Arrays.asList(PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY, PrismState.APPLICATION_INTERVIEW_PENDING_SCHEDULING).contains(
+                application.getState().getId())) {
+            applicationRepresentation.setAppointmentTimeslots(commentService.getAppointmentTimeslots(application));
+            applicationRepresentation.setAppointmentPreferences(commentService.getAppointmentPreferences(application));
+        }
+
     }
 
     @ModelAttribute

@@ -31,15 +31,7 @@ import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.builders.TestObjectProvider;
-import com.zuehlke.pgadmissions.services.AdditionalInformationService;
-import com.zuehlke.pgadmissions.services.ApplicationAddressService;
-import com.zuehlke.pgadmissions.services.ApplicationDocumentService;
-import com.zuehlke.pgadmissions.services.ApplicationQualificationService;
-import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.FundingService;
-import com.zuehlke.pgadmissions.services.PersonalDetailsService;
-import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
@@ -48,30 +40,6 @@ public class ApplicationTestDataProvider {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private PersonalDetailsService personalDetailsService;
-
-    @Autowired
-    private ApplicationAddressService applicationAdressService;
-
-    @Autowired
-    private ApplicationQualificationService qualificationService;
-
-    @Autowired
-    private EmploymentPositionService employmentPositionService;
-
-    @Autowired
-    private FundingService fundingService;
-
-    @Autowired
-    private RefereeService refereeService;
-
-    @Autowired
-    private ApplicationDocumentService applicationDocumentService;
-
-    @Autowired
-    private AdditionalInformationService additionalInformationService;
 
     @Autowired
     private TestObjectProvider testObjectProvider;
@@ -120,8 +88,8 @@ public class ApplicationTestDataProvider {
         personalDetails.setMessenger("dupajasia");
         personalDetails.setEthnicity(testObjectProvider.get(Ethnicity.class));
         personalDetails.setDisability(testObjectProvider.get(Disability.class));
-
-        personalDetailsService.saveOrUpdate(application.getId(), personalDetails, application.getUser());
+        application.setPersonalDetails(personalDetails);
+        entityService.save(personalDetails);
     }
 
     private void createAddress(Application application) {
@@ -134,8 +102,8 @@ public class ApplicationTestDataProvider {
         address.setDomicile(testObjectProvider.get(Domicile.class));
         applicationAddress.setCurrentAddress(address);
         applicationAddress.setContactAddress(address);
-
-        applicationAdressService.saveOrUpdate(application.getId(), applicationAddress);
+        application.setAddress(applicationAddress);
+        entityService.save(applicationAddress);
     }
 
     private void createQualifications(Application application) {
@@ -151,7 +119,8 @@ public class ApplicationTestDataProvider {
             qualification.setGrade("6");
             qualification.setAwardDate(new LocalDate().minusYears(10));
             qualification.setDocument(testObjectProvider.get(Document.class));
-            qualificationService.saveOrUpdate(application.getId(), null, qualification);
+            qualification.setApplication(application);
+            entityService.save(qualification);
         }
     }
 
@@ -169,7 +138,8 @@ public class ApplicationTestDataProvider {
         employment.setRemit("Nic ino zapierdalac trza bylo");
         employment.setStartDate(new LocalDate().minusYears(2));
         employment.setCurrent(true);
-        employmentPositionService.saveOrUpdate(application.getId(), null, employment);
+        employment.setApplication(application);
+        entityService.save(employment);
     }
 
     private void createFunding(Application application) {
@@ -179,7 +149,8 @@ public class ApplicationTestDataProvider {
         funding.setValue("2000000");
         funding.setAwardDate(new LocalDate().minusYears(1));
         funding.setDocument(testObjectProvider.get(Document.class));
-        fundingService.saveOrUpdate(application.getId(), null, funding);
+        funding.setApplication(application);
+        entityService.save(funding);
     }
 
     private void createReferees(Application application) {
@@ -197,7 +168,8 @@ public class ApplicationTestDataProvider {
             referee.setAddress(address);
             referee.setPhoneNumber("+44(0)5435435");
             referee.setSkype("szefwszystkichszefow");
-            refereeService.saveOrUpdate(application.getId(), null, referee);
+            referee.setApplication(application);
+            entityService.save(referee);
         }
     }
 
@@ -205,13 +177,15 @@ public class ApplicationTestDataProvider {
         ApplicationDocument applicationDocument = new ApplicationDocument();
         applicationDocument.setPersonalStatement(testObjectProvider.get(Document.class));
         applicationDocument.setCv(testObjectProvider.get(Document.class));
-        applicationDocumentService.saveOrUpdate(application.getId(), applicationDocument);
+        application.setDocument(applicationDocument);
+        entityService.save(applicationDocument);
     }
 
     private void createAdditionalInformation(Application application) {
         ApplicationAdditionalInformation additionalInformation = new ApplicationAdditionalInformation();
         additionalInformation.setConvictionsText("I was a bad person");
-        additionalInformationService.saveOrUpdate(application.getId(), additionalInformation);
+        application.setAdditionalInformation(additionalInformation);
+        entityService.save(additionalInformation);
     }
 
 }

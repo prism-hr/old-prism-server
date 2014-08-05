@@ -79,9 +79,6 @@ public class MaintenanceTask {
             logger.info(e.getMessage());
         }
         
-        logger.info("Importing reference data");
-        entityImportService.importReferenceData();
-        
         try {
             logger.info("Importing reference data");
             entityImportService.importReferenceData();

@@ -85,8 +85,9 @@ public class EntityImportService {
     public void importReferenceData() {
         institutionService.populateDefaultImportedEntityFeeds();
         
-        for (ImportedEntityFeed importedEntityFeed : getImportedEntityFeedsToImport()) {
+        for (ImportedEntityFeed importedEntityFeed : getImportedEntityFeedsToImport()) {   
             String maxRedirects = null;
+            
             try {
                 maxRedirects = System.getProperty("http.maxRedirects");
                 System.setProperty("http.maxRedirects", "5");
@@ -118,8 +119,9 @@ public class EntityImportService {
         EntityImportService thisBean = applicationContext.getBean(EntityImportService.class);
         String fileLocation = importedEntityFeed.getLocation();
         logger.info("Starting the import from file: " + fileLocation);
-
+        
         try {
+            thisBean.setLastImportedDate(importedEntityFeed);
             List unmarshalled = thisBean.unmarshall(importedEntityFeed);
 
             Class<ImportedEntity> entityClass = (Class<ImportedEntity>) importedEntityFeed.getImportedEntityType().getEntityClass();
@@ -142,7 +144,6 @@ public class EntityImportService {
                 thisBean.mergeImportedEntities(entityClass, importedEntityFeed.getInstitution(), newEntities);
             }
             
-            setLastImportedDate(importedEntityFeed);
             // TODO: state change to institution ready to use.
         } catch (Exception e) {
             throw new DataImportException("Error during the import of file: " + fileLocation, e);

@@ -174,6 +174,10 @@ public class ApplicationResource {
                 comment.getAppointmentTimeslots().add(timeslot);
             }
         }
+        for (Integer preferenceId : commentDTO.getAppointmentPreferences()) {
+            CommentAppointmentPreference preference = entityService.getById(CommentAppointmentPreference.class, preferenceId);
+            comment.getAppointmentPreferences().add(preference);
+        }
 
         List<CommentAssignedUser> assignedUsers = Lists.newLinkedList();
         if (actionId.equals(PrismAction.APPLICATION_COMPLETE)) {

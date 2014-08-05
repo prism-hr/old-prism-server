@@ -209,6 +209,15 @@ public class StateService {
         }
         return stateDAO.getStateTransition(evaluation, getById(transitionState));
     }
+
+    // TODO: finish implementation
+    public StateTransition getApplicationInterviewRsvpedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
+        PrismState transitionState = PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY;
+        if (roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_REVIEWER)).size() == 1) {
+            transitionState = PrismState.APPLICATION_REVIEW_PENDING_COMPLETION;
+        }
+        return stateDAO.getStateTransition(evaluation, getById(transitionState));
+    }
     
     public StateTransition getInstitutionCreatedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
         PrismState transitionState = PrismState.INSTITUTION_APPROVAL;

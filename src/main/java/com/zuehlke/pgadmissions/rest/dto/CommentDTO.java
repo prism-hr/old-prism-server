@@ -55,6 +55,8 @@ public class CommentDTO {
 
     private Set<DateTime> appointmentTimeslots;
 
+    private Set<Integer> appointmentPreferences;
+
     private Boolean declinedResponse;
 
     public PrismAction getAction() {
@@ -215,6 +217,14 @@ public class CommentDTO {
 
     public void setAppointmentTimeslots(Set<DateTime> appointmentTimeslots) {
         this.appointmentTimeslots = appointmentTimeslots;
+    }
+
+    public Set<Integer> getAppointmentPreferences() {
+        return appointmentPreferences;
+    }
+
+    public void setAppointmentPreferences(Set<Integer> appointmentPreferences) {
+        this.appointmentPreferences = appointmentPreferences;
     }
 
     public Boolean getDeclinedResponse() {

@@ -35,6 +35,7 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.mail.MailDescriptor;
 import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
@@ -79,6 +80,11 @@ public class UserService {
             return (User) authentication.getPrincipal();
         }
         return null;
+    }
+
+    public UserRepresentation getUserRepresentation(User user) {
+        return new UserRepresentation().withFirstName(user.getFirstName()).withFirstName2(user.getFirstName2()).withFirstName3(user.getFirstName3())
+                .withLastName(user.getLastName()).withEmail(user.getEmail());
     }
 
     public boolean checkUserEnabled(User user) {

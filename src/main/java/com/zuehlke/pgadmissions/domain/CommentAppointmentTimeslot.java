@@ -1,9 +1,12 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -21,6 +24,9 @@ public class CommentAppointmentTimeslot {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @Column(name = "timeslot_datetime", nullable = false)
     private DateTime dateTime;
+    
+    @OneToMany(mappedBy = "appointmentTimeslot")
+    private Set<CommentAppointmentPreference> appointmentPreferences;
 
     public Integer getId() {
         return id;
@@ -36,6 +42,10 @@ public class CommentAppointmentTimeslot {
 
     public void setDateTime(DateTime dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public final Set<CommentAppointmentPreference> getAppointmentPreferences() {
+        return appointmentPreferences;
     }
 
 }

@@ -243,7 +243,7 @@ public class SystemService {
         System transientSystem = new System().withName(systemName).withUser(systemUser).withState(systemRunning).withCreatedTimestamp(startupTimestamp)
                 .withUpdatedTimestamp(startupTimestamp);
         System system = entityService.createOrUpdate(transientSystem);
-        resourceService.setResourceCode(system);
+        system.setCode(resourceService.generateResoureCode(system));
         return system;
     }
 

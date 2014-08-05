@@ -51,4 +51,30 @@ public class UserRepresentation {
     public void setEmail(String email) {
         this.email = email;
     }
+    
+    public UserRepresentation withFirstName(String firstName) {
+        this.firstName = firstName;
+        return this;
+    }
+    
+    public UserRepresentation withFirstName2(String firstName2) {
+        this.firstName2 = firstName2;
+        return this;
+    }
+    
+    public UserRepresentation withFirstName3(String firstName3) {
+        this.firstName3 = firstName3;
+        return this;
+    }
+    
+    public UserRepresentation withLastName(String lastName) {
+        this.lastName = lastName;
+        return this;
+    }
+    
+    public UserRepresentation withEmail(String email) {
+        this.email = email;
+        return this;
+    }
+    
 }

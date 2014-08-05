@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.AppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 
@@ -51,7 +52,7 @@ public class ApplicationRepresentation extends AbstractResourceRepresentation {
 
     private List<UserRepresentation> usersPotentiallyInterestedInApplication;
 
-    private List<DateTime> appointmentTimeslots;
+    private List<AppointmentTimeslotRepresentation> appointmentTimeslots;
 
     private List<AppointmentPreferenceRepresentation> appointmentPreferences;
 
@@ -215,11 +216,11 @@ public class ApplicationRepresentation extends AbstractResourceRepresentation {
         this.usersPotentiallyInterestedInApplication = usersPotentiallyInterestedInApplication;
     }
 
-    public final List<DateTime> getAppointmentTimeslots() {
+    public final List<AppointmentTimeslotRepresentation> getAppointmentTimeslots() {
         return appointmentTimeslots;
     }
 
-    public final void setAppointmentTimeslots(List<DateTime> appointmentTimeslots) {
+    public final void setAppointmentTimeslots(List<AppointmentTimeslotRepresentation> appointmentTimeslots) {
         this.appointmentTimeslots = appointmentTimeslots;
     }
 

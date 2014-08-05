@@ -237,7 +237,7 @@ public class StateService {
         return stateDAO.getStateTransition(evaluation, transitionState);
     }
 
-    public StateTransition getInterviewScheduledOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
+    public StateTransition getApplicationInterviewScheduledOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
         State transitionState;
         DateTime interviewDateTime = comment.getInterviewDateTime();
         if (interviewDateTime != null) {

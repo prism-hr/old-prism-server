@@ -7,6 +7,8 @@ import java.util.TimeZone;
 import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.definitions.ApplicationResidenceStatus;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -54,6 +56,8 @@ public class CommentDTO {
     private String interviewerInstructions;
 
     private String interviewLocation;
+
+    private Set<DateTime> appointmentTimeslots;
 
     private Boolean declinedResponse;
 
@@ -207,6 +211,14 @@ public class CommentDTO {
 
     public void setInterviewLocation(String interviewLocation) {
         this.interviewLocation = interviewLocation;
+    }
+
+    public Set<DateTime> getAppointmentTimeslots() {
+        return appointmentTimeslots;
+    }
+
+    public void setAppointmentTimeslots(Set<DateTime> appointmentTimeslots) {
+        this.appointmentTimeslots = appointmentTimeslots;
     }
 
     public Boolean getDeclinedResponse() {

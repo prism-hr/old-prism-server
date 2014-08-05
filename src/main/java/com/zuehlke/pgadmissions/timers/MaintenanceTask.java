@@ -44,7 +44,7 @@ public class MaintenanceTask {
     @Autowired
     private UserService userService;
 
-    @Scheduled(cron = "${daily.maintenance.cron}")
+    @Scheduled(cron = "${maintenance.daily}")
     public void runDaily() {
         try {
             logger.info("Deleting unused documents");
@@ -70,7 +70,7 @@ public class MaintenanceTask {
         // TODO: email requests & reminders
     }
     
-    @Scheduled(cron = "${ongoing.maintenance.cron}")
+    @Scheduled(cron = "${maintenance.ongoing}")
     public void runOngoing() {
         try {
             logger.info("Flushing workflow transitions");

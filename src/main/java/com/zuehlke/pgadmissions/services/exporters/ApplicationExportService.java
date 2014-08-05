@@ -27,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.soap.client.SoapFaultClientException;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
@@ -45,6 +44,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -115,20 +115,20 @@ public class ApplicationExportService {
         List<Application> applications = getUclApplicationsForExport();
         for (Application application : applications) {
             try {
-                ApplicationExportService proxy = applicationContext.getBean(this.getClass());
+                ApplicationExportService thisBean = applicationContext.getBean(this.getClass());
                 String applicationCode = application.getCode();
                 logger.info("Exporting data for application: " + applicationCode);
-                String exportReference = proxy.sendDataExportRequest(application);
+                String exportReference = thisBean.sendDataExportRequest(application);
                 if (exportReference != null) {
                     logger.info("Exporting documents for application: " + applicationCode);
-                    proxy.sendDocumentExportRequest(application, exportReference);
+                    thisBean.sendDocumentExportRequest(application, exportReference);
                 }
             } catch (Exception e) {
                 throw new Error(e);
             }
         }
     }
-    
+
     protected List<Application> getUclApplicationsForExport() {
         return applicationService.getUclApplicationsForExport();
     }
@@ -137,7 +137,7 @@ public class ApplicationExportService {
     protected String sendDataExportRequest(Application transientApplication) throws DatatypeConfigurationException, JAXBException, WorkflowEngineException {
         Application persistentApplication = applicationService.getById(transientApplication.getId());
         SubmitAdmissionsApplicationRequest exportRequest = buildDataExportRequest(transientApplication);
-        
+
         AdmissionsApplicationResponse exportResponse = null;
         String exportException = null;
 
@@ -148,14 +148,14 @@ public class ApplicationExportService {
                         webServiceMessage.writeTo(new ByteArrayOutputStream(5000));
                     }
                 });
-            } catch (SoapFaultClientException e) {
-                exportException = e.getFaultStringOrReason();
+            } catch (Exception e) {
+                exportException = e.getMessage();
             }
         }
 
         Action exportAction = actionService.getById(PrismAction.APPLICATION_EXPORT);
         String exportReference = exportResponse == null ? null : exportResponse.getReference().getApplicationID();
-        
+
         Institution exportInstitution = persistentApplication.getInstitution();
 
         Comment comment = new Comment().withUser(exportInstitution.getUser()).withAction(exportAction).withCreatedTimestamp(new DateTime())
@@ -173,16 +173,16 @@ public class ApplicationExportService {
     }
 
     protected SubmitAdmissionsApplicationRequest buildDataExportRequest(Application application) throws DatatypeConfigurationException {
-        String creatorInstitutionApplicantId = userService.getUserInstitutionId(application.getUser(), application.getInstitution(),
-                PrismUserIdentity.STUDY_APPLICANT);
+        String creatorExportId = userService.getUserInstitutionId(application.getUser(), application.getInstitution(), PrismUserIdentity.STUDY_APPLICANT);
         String creatorIpAddress = applicationService.getApplicationCreatorIpAddress(application);
         Comment offerRecommendationComment = commentService.getLatestComment(application, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
         User primarySupervisor = applicationService.getPrimarySupervisor(offerRecommendationComment);
         ProgramInstance exportProgramInstance = programService.getExportProgramInstance(application);
         List<ApplicationReferee> exportReferees = applicationService.setApplicationExportReferees(application);
 
-        return exportProgramInstance == null ? null : applicationExportBuilder.build(application, creatorInstitutionApplicantId, creatorIpAddress,
-                offerRecommendationComment, primarySupervisor, exportProgramInstance, exportReferees);
+        return exportProgramInstance == null ? null : applicationExportBuilder.build(new ApplicationExportDTO().withApplication(application)
+                .withCreatorExportId(creatorExportId).withCreatorIpAddress(creatorIpAddress).withOfferRecommendationComment(offerRecommendationComment)
+                .withPrimarySupervisor(primarySupervisor).withExportProgramInstance(exportProgramInstance).withExportReferees(exportReferees));
     }
 
     protected String sendDocumentExportRequest(Application application, String exportReference) throws Exception {
@@ -204,12 +204,12 @@ public class ApplicationExportService {
             IOUtils.closeQuietly(outputStream);
         }
     }
-    
+
     protected OutputStream buildDocumentExportRequest(Application application, String exportReference, OutputStream outputStream) throws IOException {
         applicationDocumentExportBuilder.getDocuments(application, exportReference, outputStream);
         return outputStream;
     }
-    
+
     private Session getSftpSession() throws JSchException, ResourceNotFoundException {
         try {
             JSch jSch = new JSch();

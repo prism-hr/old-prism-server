@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.rest.representation;
 import java.util.Set;
 import java.util.TimeZone;
 
+import com.zuehlke.pgadmissions.rest.representation.application.AppointmentPreferenceRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -92,17 +93,15 @@ public class CommentRepresentation {
 
     private String exportReference;
 
-    private Action actionOnParentResource;
-
     private DateTime createdTimestamp;
 
     private Set<CommentAssignedUserRepresentation> assignedUsers = Sets.newHashSet();
 
     private Set<FileRepresentation> documents = Sets.newHashSet();
 
-    private Set<CommentAppointmentTimeslot> appointmentTimeslots = Sets.newHashSet();
+    private Set<DateTime> appointmentTimeslots = Sets.newHashSet();
 
-    private Set<CommentAppointmentPreference> appointmentPreferences = Sets.newHashSet();
+    private Set<AppointmentPreferenceRepresentation> appointmentPreferences = Sets.newHashSet();
 
     public UserRepresentation getUser() {
         return user;
@@ -400,14 +399,6 @@ public class CommentRepresentation {
         this.exportReference = exportReference;
     }
 
-    public Action getActionOnParentResource() {
-        return actionOnParentResource;
-    }
-
-    public void setActionOnParentResource(Action actionOnParentResource) {
-        this.actionOnParentResource = actionOnParentResource;
-    }
-
     public DateTime getCreatedTimestamp() {
         return createdTimestamp;
     }
@@ -432,19 +423,19 @@ public class CommentRepresentation {
         this.documents = documents;
     }
 
-    public Set<CommentAppointmentTimeslot> getAppointmentTimeslots() {
+    public Set<DateTime> getAppointmentTimeslots() {
         return appointmentTimeslots;
     }
 
-    public void setAppointmentTimeslots(Set<CommentAppointmentTimeslot> appointmentTimeslots) {
+    public void setAppointmentTimeslots(Set<DateTime> appointmentTimeslots) {
         this.appointmentTimeslots = appointmentTimeslots;
     }
 
-    public Set<CommentAppointmentPreference> getAppointmentPreferences() {
+    public Set<AppointmentPreferenceRepresentation> getAppointmentPreferences() {
         return appointmentPreferences;
     }
 
-    public void setAppointmentPreferences(Set<CommentAppointmentPreference> appointmentPreferences) {
+    public void setAppointmentPreferences(Set<AppointmentPreferenceRepresentation> appointmentPreferences) {
         this.appointmentPreferences = appointmentPreferences;
     }
 }

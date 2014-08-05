@@ -1,20 +1,18 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "COMMENT_APPOINTMENT_PREFERENCE", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "comment_appointment_timeslot_id" }) })
+@Table(name = "COMMENT_APPOINTMENT_PREFERENCE", uniqueConstraints = {@UniqueConstraint(columnNames = {"comment_id", "comment_appointment_timeslot_id"})})
 public class CommentAppointmentPreference {
 
     @Id
     @GeneratedValue
     private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "comment_id", insertable = false, updatable = false)
+    private Comment comment;
 
     @ManyToOne
     @JoinColumn(name = "comment_appointment_timeslot_id", nullable = false)
@@ -26,6 +24,14 @@ public class CommentAppointmentPreference {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Comment getComment() {
+        return comment;
+    }
+
+    public void setComment(Comment comment) {
+        this.comment = comment;
     }
 
     public CommentAppointmentTimeslot getAppointmentTimeslot() {

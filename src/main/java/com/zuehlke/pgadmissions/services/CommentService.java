@@ -84,7 +84,7 @@ public class CommentService {
 
         List<DateTime> schedulingOptions = Lists.newLinkedList();
         for (CommentAppointmentTimeslot schedulingOption : schedulingComment.getAppointmentTimeslots()) {
-            schedulingOptions.add(schedulingOption.getId(), schedulingOption.getDateTime());
+            schedulingOptions.add(schedulingOption.getDateTime());
         }
 
         return schedulingOptions;
@@ -104,7 +104,7 @@ public class CommentService {
             
             List<CommentAppointmentTimeslot> inviteeResponses = commentDAO.getAppointmentPreferences(schedulingComment, invitee);
             for (CommentAppointmentTimeslot timeslot : schedulingComment.getAppointmentTimeslots()) {
-                inviteePreferences.add(timeslot.getId(), inviteeResponses.contains(timeslot));
+                inviteePreferences.add(inviteeResponses.contains(timeslot));
             }
             
             preferenceRepresentation.withPreferences(inviteePreferences);

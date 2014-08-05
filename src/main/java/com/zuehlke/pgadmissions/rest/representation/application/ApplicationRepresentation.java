@@ -51,9 +51,9 @@ public class ApplicationRepresentation extends AbstractResourceRepresentation {
 
     private List<UserRepresentation> usersPotentiallyInterestedInApplication;
 
-    private List<DateTime> interviewTimeslots;
+    private List<DateTime> appointmentTimeslots;
 
-    private List<AppointmentPreferenceAnswersRepresentation> preferenceAnswers;
+    private List<AppointmentPreferenceRepresentation> appointmentPreferences;
 
     public InstitutionRepresentation getInstitution() {
         return institution;
@@ -215,19 +215,20 @@ public class ApplicationRepresentation extends AbstractResourceRepresentation {
         this.usersPotentiallyInterestedInApplication = usersPotentiallyInterestedInApplication;
     }
 
-    public List<DateTime> getInterviewTimeslots() {
-        return interviewTimeslots;
+    public final List<DateTime> getAppointmentTimeslots() {
+        return appointmentTimeslots;
     }
 
-    public void setInterviewTimeslots(List<DateTime> interviewTimeslots) {
-        this.interviewTimeslots = interviewTimeslots;
+    public final void setAppointmentTimeslots(List<DateTime> appointmentTimeslots) {
+        this.appointmentTimeslots = appointmentTimeslots;
     }
 
-    public List<AppointmentPreferenceAnswersRepresentation> getPreferenceAnswers() {
-        return preferenceAnswers;
+    public final List<AppointmentPreferenceRepresentation> getAppointmentPreferences() {
+        return appointmentPreferences;
     }
 
-    public void setPreferenceAnswers(List<AppointmentPreferenceAnswersRepresentation> preferenceAnswers) {
-        this.preferenceAnswers = preferenceAnswers;
+    public final void setAppointmentPreferences(List<AppointmentPreferenceRepresentation> appointmentPreferences) {
+        this.appointmentPreferences = appointmentPreferences;
     }
+
 }

@@ -131,13 +131,13 @@ public class ResourceService {
             throw new WorkflowEngineException();
         }
         
-        setResourceCode(resource);
+        resource.setCode(generateResoureCode(resource));
         entityService.save(resource);
         comment.setRole(roleService.getCreatorRole(resource).getId().toString());
     }
-
-    public void setResourceCode(Resource resource) {
-        resource.setCode("PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId()));
+    
+    public String generateResoureCode(Resource resource) {
+        return "PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId());
     }
     
     public void updateResource(Resource resource, Action action, Comment comment) {

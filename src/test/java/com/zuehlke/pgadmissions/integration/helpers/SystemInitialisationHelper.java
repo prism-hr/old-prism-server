@@ -51,6 +51,7 @@ import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.NotificationService;
+import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.StateService;
@@ -90,6 +91,9 @@ public class SystemInitialisationHelper {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    private ResourceService resourceService;
+    
     @Autowired
     private RoleService roleService;
 
@@ -176,7 +180,7 @@ public class SystemInitialisationHelper {
     public void verifySystemCreation() {
         System system = systemService.getSystem();
         assertEquals(system.getName(), systemName);
-        assertEquals(system.getCode(), "PRiSM-" + PrismScope.getResourceScope(system.getClass()).getShortCode() + "-" + String.format("%010d", system.getId()));
+        assertEquals(system.getCode(), resourceService.generateResoureCode(system));
         assertEquals(system.getState().getId(), PrismState.SYSTEM_RUNNING);
     }
 

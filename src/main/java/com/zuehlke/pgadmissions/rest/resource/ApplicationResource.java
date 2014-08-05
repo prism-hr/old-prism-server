@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import com.zuehlke.pgadmissions.domain.*;
 import org.apache.commons.lang.BooleanUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
@@ -19,18 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
@@ -178,6 +167,13 @@ public class ApplicationResource {
                 .withInterviewLocation(commentDTO.getInterviewLocation()).withSuitableForInstitution(commentDTO.getSuitableForInstitution())
                 .withSuitableForOpportunity(commentDTO.getSuitableForOpportunity()).withDesireToInterview(commentDTO.getDesireToInterview())
                 .withDesireToRecruit(commentDTO.getDesireToRecruit()).withTransitionState(transitionState);
+        if(commentDTO.getAppointmentTimeslots() != null) {
+            for (DateTime dateTime : commentDTO.getAppointmentTimeslots()) {
+                CommentAppointmentTimeslot timeslot = new CommentAppointmentTimeslot();
+                timeslot.setDateTime(dateTime);
+                comment.getAppointmentTimeslots().add(timeslot);
+            }
+        }
 
         List<CommentAssignedUser> assignedUsers = Lists.newLinkedList();
         if (actionId.equals(PrismAction.APPLICATION_COMPLETE)) {

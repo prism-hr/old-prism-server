@@ -209,12 +209,40 @@ public class StateService {
         }
         return stateDAO.getStateTransition(evaluation, getById(transitionState));
     }
-
-    // TODO: finish implementation
+    
     public StateTransition getApplicationInterviewRsvpedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
         PrismState transitionState = PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY;
-        if (roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_REVIEWER)).size() == 1) {
-            transitionState = PrismState.APPLICATION_REVIEW_PENDING_COMPLETION;
+        List<User> interviewees = roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE));
+        List<User> interviewers = roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_POTENTIAL_INTERVIEWER));
+        if ((interviewees.size() + interviewers.size()) == 1) {
+            transitionState = PrismState.APPLICATION_INTERVIEW_PENDING_SCHEDULING;
+        }
+        return stateDAO.getStateTransition(evaluation, getById(transitionState));
+    }
+    
+    public StateTransition getApplicationInterviewScheduledOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
+        State transitionState;
+        DateTime interviewDateTime = comment.getInterviewDateTime();
+        if (interviewDateTime != null) {
+            if (new DateTime().isAfter(interviewDateTime)) {
+                transitionState = getById(PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK);
+            } else {
+                transitionState = getById(PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW);
+            }
+        } else {
+            if (resource.getState().getId() == PrismState.APPLICATION_INTERVIEW) {
+                transitionState = getById(PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY);
+            } else {
+                transitionState = getById(PrismState.APPLICATION_INTERVIEW);
+            }
+        }
+        return stateDAO.getStateTransition(evaluation, transitionState);
+    }
+    
+    public StateTransition getApplicationInterviewedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
+        PrismState transitionState = PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
+        if (roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_INTERVIEWER)).size() == 1) {
+            transitionState = PrismState.APPLICATION_INTERVIEW_PENDING_COMPLETION;
         }
         return stateDAO.getStateTransition(evaluation, getById(transitionState));
     }
@@ -242,25 +270,6 @@ public class StateService {
             transitionState = getById(PrismState.valueOf(stateGroup.toString() + "_PENDING_CORRECTION"));
         } else if (comment.getExportResponse() != null && comment.getExportError() == null) {
             transitionState = getById(PrismState.valueOf(stateGroup.toString() + "_COMPLETED"));
-        }
-        return stateDAO.getStateTransition(evaluation, transitionState);
-    }
-
-    public StateTransition getApplicationInterviewScheduledOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
-        State transitionState;
-        DateTime interviewDateTime = comment.getInterviewDateTime();
-        if (interviewDateTime != null) {
-            if (new DateTime().isAfter(interviewDateTime)) {
-                transitionState = getById(PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK);
-            } else {
-                transitionState = getById(PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW);
-            }
-        } else {
-            if (resource.getState().getId() == PrismState.APPLICATION_INTERVIEW) {
-                transitionState = getById(PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY);
-            } else {
-                transitionState = getById(PrismState.APPLICATION_INTERVIEW);
-            }
         }
         return stateDAO.getStateTransition(evaluation, transitionState);
     }

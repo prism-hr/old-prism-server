@@ -6,8 +6,6 @@ import java.util.TimeZone;
 
 import org.joda.time.DateTime;
 
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.definitions.ApplicationResidenceStatus;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;

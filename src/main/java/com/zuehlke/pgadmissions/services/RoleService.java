@@ -216,7 +216,7 @@ public class RoleService {
             List<User> users = roleDAO.getRoleCreateTransitionUsers(comment, roleTransition.getRole(), restrictedToUser);
 
             Integer minimumPermitted = roleTransition.getMinimumPermitted();
-            Integer maximumPermitted = roleTransition.getMinimumPermitted();
+            Integer maximumPermitted = roleTransition.getMaximumPermitted();
 
             if ((minimumPermitted == null || users.size() >= minimumPermitted) && (maximumPermitted == null || users.size() <= maximumPermitted)) {
                 for (User user : users) {

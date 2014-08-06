@@ -131,7 +131,7 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_POTENTIAL_INTERVIEWER) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
-                                .withTransitionRole(PrismRole.APPLICATION_INTERVIEWER) //
+                                .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
                                 .withRestrictToOwner(false))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVED) // 
@@ -161,7 +161,7 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_POTENTIAL_INTERVIEWER) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
-                                .withTransitionRole(PrismRole.APPLICATION_INTERVIEWER) //
+                                .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
                                 .withRestrictToOwner(false))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_INTERVIEW) // 
@@ -197,7 +197,7 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_POTENTIAL_INTERVIEWER) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
-                                .withTransitionRole(PrismRole.APPLICATION_INTERVIEWER) //
+                                .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
                                 .withRestrictToOwner(false))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REJECTED) // 
@@ -227,7 +227,7 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_POTENTIAL_INTERVIEWER) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
-                                .withTransitionRole(PrismRole.APPLICATION_INTERVIEWER) //
+                                .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
                                 .withRestrictToOwner(false))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REVIEW) // 
@@ -263,7 +263,7 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_POTENTIAL_INTERVIEWER) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
-                                .withTransitionRole(PrismRole.APPLICATION_INTERVIEWER) //
+                                .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
                                 .withRestrictToOwner(false)))))); //
     
         stateActions.add(new PrismStateAction() //

@@ -4,11 +4,11 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 
-public class AppointmentPreferenceRepresentation {
-
-    private UserRepresentation user;
+public class UserAppointmentPreferencesRepresentation {
 
     private List<Boolean> preferences;
+
+    private UserRepresentation user;
 
     public UserRepresentation getUser() {
         return user;
@@ -25,15 +25,15 @@ public class AppointmentPreferenceRepresentation {
     public void setAnswers(List<Boolean> preferences) {
         this.preferences = preferences;
     }
-    
-    public AppointmentPreferenceRepresentation withUser(UserRepresentation user) {
+
+    public UserAppointmentPreferencesRepresentation withUser(UserRepresentation user) {
         this.user = user;
         return this;
     }
-    
-    public AppointmentPreferenceRepresentation withPreferences(List<Boolean> preferences) {
+
+    public UserAppointmentPreferencesRepresentation withPreferences(List<Boolean> preferences) {
         this.preferences = preferences;
         return this;
     }
-    
+
 }

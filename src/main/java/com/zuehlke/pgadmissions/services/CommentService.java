@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.rest.representation.application.UserAppointmentPreferencesRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.rest.representation.AppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.application.AppointmentPreferenceRepresentation;
 
 @Service
 @Transactional
@@ -99,15 +99,15 @@ public class CommentService {
         return schedulingOptions;
     }
 
-    public List<AppointmentPreferenceRepresentation> getAppointmentPreferences(Application application) {
+    public List<UserAppointmentPreferencesRepresentation> getAppointmentPreferences(Application application) {
         Action schedulingAction = actionService.getById(PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
         Comment schedulingComment = commentDAO.getLatestComment(application, schedulingAction);
 
-        List<AppointmentPreferenceRepresentation> schedulingPreferences = Lists.newLinkedList();
+        List<UserAppointmentPreferencesRepresentation> schedulingPreferences = Lists.newLinkedList();
 
         for (User invitee : commentDAO.getAppointmentInvitees(schedulingComment)) {
             UserRepresentation inviteeRepresentation = userService.getUserRepresentation(invitee);
-            AppointmentPreferenceRepresentation preferenceRepresentation = new AppointmentPreferenceRepresentation().withUser(inviteeRepresentation);
+            UserAppointmentPreferencesRepresentation preferenceRepresentation = new UserAppointmentPreferencesRepresentation().withUser(inviteeRepresentation);
 
             List<Boolean> inviteePreferences = Lists.newLinkedList();
 

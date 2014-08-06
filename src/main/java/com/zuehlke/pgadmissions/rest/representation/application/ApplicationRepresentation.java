@@ -54,7 +54,7 @@ public class ApplicationRepresentation extends AbstractResourceRepresentation {
 
     private List<AppointmentTimeslotRepresentation> appointmentTimeslots;
 
-    private List<AppointmentPreferenceRepresentation> appointmentPreferences;
+    private List<UserAppointmentPreferencesRepresentation> appointmentPreferences;
 
     public InstitutionRepresentation getInstitution() {
         return institution;
@@ -224,11 +224,11 @@ public class ApplicationRepresentation extends AbstractResourceRepresentation {
         this.appointmentTimeslots = appointmentTimeslots;
     }
 
-    public final List<AppointmentPreferenceRepresentation> getAppointmentPreferences() {
+    public final List<UserAppointmentPreferencesRepresentation> getAppointmentPreferences() {
         return appointmentPreferences;
     }
 
-    public final void setAppointmentPreferences(List<AppointmentPreferenceRepresentation> appointmentPreferences) {
+    public final void setAppointmentPreferences(List<UserAppointmentPreferencesRepresentation> appointmentPreferences) {
         this.appointmentPreferences = appointmentPreferences;
     }
 

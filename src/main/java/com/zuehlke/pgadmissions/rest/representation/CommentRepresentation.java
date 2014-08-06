@@ -3,15 +3,14 @@ package com.zuehlke.pgadmissions.rest.representation;
 import java.util.Set;
 import java.util.TimeZone;
 
+import com.zuehlke.pgadmissions.rest.representation.application.UserAppointmentPreferencesRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.ApplicationResidenceStatus;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.rest.representation.application.AppointmentPreferenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.FileRepresentation;
 
 public class CommentRepresentation {

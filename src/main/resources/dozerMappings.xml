@@ -121,11 +121,11 @@
     </mapping>
 
     <mapping>
-        <class-a>com.zuehlke.pgadmissions.domain.CommentAppointmentTimeslot</class-a>
-        <class-b>org.joda.time.DateTime</class-b>
+        <class-a>com.zuehlke.pgadmissions.domain.CommentAppointmentPreference</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.AppointmentPreferenceRepresentation</class-b>
         <field>
-            <a>dateTime</a>
-            <b>this</b>
+            <a>appointmentTimeslot.dateTime</a>
+            <b>dateTime</b>
         </field>
     </mapping>
 

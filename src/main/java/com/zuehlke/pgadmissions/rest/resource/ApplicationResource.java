@@ -161,9 +161,9 @@ public class ApplicationResource {
             }
         }
         if (commentDTO.getAppointmentPreferences() != null) {
-            for (Integer preferenceId : commentDTO.getAppointmentPreferences()) {
-                CommentAppointmentPreference preference = entityService.getById(CommentAppointmentPreference.class, preferenceId);
-                comment.getAppointmentPreferences().add(preference);
+            for (Integer timeslotId : commentDTO.getAppointmentPreferences()) {
+                CommentAppointmentTimeslot timeslot = entityService.getById(CommentAppointmentTimeslot.class, timeslotId);
+                comment.getAppointmentPreferences().add(new CommentAppointmentPreference().withAppointmentTimeslot(timeslot));
             }
         }
 

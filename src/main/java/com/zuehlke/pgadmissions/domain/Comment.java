@@ -3,19 +3,7 @@ package com.zuehlke.pgadmissions.domain;
 import java.util.Set;
 import java.util.TimeZone;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -197,7 +185,7 @@ public class Comment {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_id", nullable = false, unique = true)
-    @OrderColumn(name = "timeslot_datetime")
+    @OrderBy("dateTime")
     private Set<CommentAppointmentTimeslot> appointmentTimeslots = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL)

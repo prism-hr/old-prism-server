@@ -442,8 +442,8 @@ public class PrismApplicationInterviewPendingScheduling extends PrismWorkflowSta
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
-                                .withTransitionRole(PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE) //
+                                .withTransitionType(PrismRoleTransitionType.UPDATE) //
+                                .withTransitionRole(PrismRole.APPLICATION_INTERVIEWEE) //
                                 .withRestrictToOwner(true), // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_POTENTIAL_INTERVIEWER) //

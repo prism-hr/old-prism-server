@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -8,9 +11,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 @Entity
 @Table(name = "COMMENT_ASSIGNED_USER", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "user_id", "role_id" }) })
-public class CommentAssignedUser {
+public class CommentAssignedUser implements IUniqueEntity {
 
     @Id
     @GeneratedValue
@@ -73,6 +79,17 @@ public class CommentAssignedUser {
     public CommentAssignedUser withRole(final Role role) {
         this.role = role;
         return this;
+    }
+    
+    @Override
+    public ResourceSignature getResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("comment", comment);
+        properties.put("user", user);
+        properties.put("role", role);
+        propertiesWrapper.add(properties);
+        return new ResourceSignature(propertiesWrapper);
     }
 
 }

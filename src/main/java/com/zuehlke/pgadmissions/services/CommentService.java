@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.rest.representation.AppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
@@ -60,7 +61,7 @@ public class CommentService {
     public Comment getLatestComment(Resource resource, Action action) {
         return commentDAO.getLatestComment(resource, action);
     }
-    
+
     public Comment getLatestComment(Resource resource, Action action, User user) {
         return commentDAO.getLatestComment(resource, action, user);
     }
@@ -69,7 +70,7 @@ public class CommentService {
         Action action = actionService.getById(actionId);
         return getLatestComment(resource, action);
     }
-    
+
     public Comment getLatestComment(Resource resource, PrismAction actionId, User user) {
         Action action = actionService.getById(actionId);
         return commentDAO.getLatestComment(resource, action, user);
@@ -123,10 +124,19 @@ public class CommentService {
 
         return schedulingPreferences;
     }
-    
+
+    public void addAssignedUser(Comment comment, UserRole userRole) {
+        CommentAssignedUser transientAssignedUser = new CommentAssignedUser().withComment(comment).withUser(userRole.getUser()).withRole(userRole.getRole());
+        CommentAssignedUser persistentAssignedUser = entityService.getDuplicateEntity(transientAssignedUser);
+        if (persistentAssignedUser == null) {
+            entityService.save(transientAssignedUser);
+            comment.getAssignedUsers().add(transientAssignedUser);
+        }
+    }
+
     private Comment getLatestAppointmentPreferenceComment(Application application, User user) {
         Comment preferenceComment = getLatestComment(application, PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY, user);
         return preferenceComment == null ? getLatestComment(application, PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY, user) : preferenceComment;
     }
-    
+
 }

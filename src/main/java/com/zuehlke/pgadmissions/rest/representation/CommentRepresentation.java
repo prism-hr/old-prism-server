@@ -92,13 +92,13 @@ public class CommentRepresentation {
 
     private DateTime createdTimestamp;
 
-    private Set<CommentAssignedUserRepresentation> assignedUsers = Sets.newHashSet();
+    private Set<CommentAssignedUserRepresentation> assignedUsers;
 
-    private Set<FileRepresentation> documents = Sets.newHashSet();
+    private Set<FileRepresentation> documents;
 
-    private Set<DateTime> appointmentTimeslots = Sets.newHashSet();
+    private Set<AppointmentTimeslotRepresentation> appointmentTimeslots;
 
-    private Set<AppointmentPreferenceRepresentation> appointmentPreferences = Sets.newHashSet();
+    private Set<AppointmentPreferenceRepresentation> appointmentPreferences;
 
     public UserRepresentation getUser() {
         return user;
@@ -420,11 +420,11 @@ public class CommentRepresentation {
         this.documents = documents;
     }
 
-    public Set<DateTime> getAppointmentTimeslots() {
+    public Set<AppointmentTimeslotRepresentation> getAppointmentTimeslots() {
         return appointmentTimeslots;
     }
 
-    public void setAppointmentTimeslots(Set<DateTime> appointmentTimeslots) {
+    public void setAppointmentTimeslots(Set<AppointmentTimeslotRepresentation> appointmentTimeslots) {
         this.appointmentTimeslots = appointmentTimeslots;
     }
 

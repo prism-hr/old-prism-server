@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 import java.util.List;
 import java.util.Map;
 
+import com.zuehlke.pgadmissions.domain.*;
 import org.apache.commons.lang.WordUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,25 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.Disability;
-import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.Ethnicity;
-import com.zuehlke.pgadmissions.domain.FundingSource;
-import com.zuehlke.pgadmissions.domain.Gender;
-import com.zuehlke.pgadmissions.domain.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.QualificationType;
-import com.zuehlke.pgadmissions.domain.ReferralSource;
-import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.StateAction;
-import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.Title;
 import com.zuehlke.pgadmissions.domain.definitions.ApplicationResidenceStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
@@ -84,11 +66,17 @@ public class StaticDataResource {
         }
         staticData.put("actions", actionRepresentations);
 
+        List<StateRepresentation> stateRepresentations = Lists.newLinkedList();
         List<State> states = entityService.list(State.class);
-        List<StateRepresentation> stateRepresentations = Lists.newArrayListWithExpectedSize(states.size());
         for (State state : states) {
             StateRepresentation stateRepresentation = dozerBeanMapper.map(state, StateRepresentation.class);
             stateRepresentation.setDisplayName(applicationContext.getMessage("state." + state.getStateGroup().getId(), null, LocaleContextHolder.getLocale()));
+            stateRepresentations.add(stateRepresentation);
+        }
+        List<StateGroup> stateGroups = entityService.list(StateGroup.class);
+        for (StateGroup stateGroup : stateGroups) {
+            StateRepresentation stateRepresentation = dozerBeanMapper.map(stateGroup, StateRepresentation.class);
+            stateRepresentation.setDisplayName(applicationContext.getMessage("state." + stateGroup.getId(), null, LocaleContextHolder.getLocale()));
             stateRepresentations.add(stateRepresentation);
         }
         staticData.put("states", stateRepresentations);

@@ -157,7 +157,7 @@ public class StateService {
                 throw new Error(e);
             }
             
-            notificationService.sendUpdateNotifications(stateTransition.getStateAction(), resource);
+            notificationService.sendUpdateNotifications(stateTransition.getStateAction(), resource, comment);
             queuePropagatedStateTransitions(stateTransition, resource);
         }
 

@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.System;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +15,20 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
+import com.zuehlke.pgadmissions.domain.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.System;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserNotification;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -101,6 +113,7 @@ public class NotificationService {
     public void sendUpdateNotifications(StateAction stateAction, Resource resource, Comment comment) {
         DateTime baseline = new DateTime();
         List<UserNotificationDefinition> definitions = notificationDAO.getUpdateNotifications(stateAction, resource);
+        
         for (UserNotificationDefinition definition : definitions) {
             UserRole userRole = entityService.getById(UserRole.class, definition.getUserRoleId());
             NotificationTemplate notificationTemplate = entityService.getByProperty(NotificationTemplate.class, "id", definition.getNotificationTemplateId());
@@ -178,6 +191,7 @@ public class NotificationService {
         Map<String, Object> model = Maps.newHashMap();
         model.put("user", user);
         model.put("userFirstName", user.getFirstName());
+        model.put("userLastName", user.getLastName());
 
         System system = resource.getSystem();
         Institution institution = resource.getInstitution();
@@ -186,8 +200,8 @@ public class NotificationService {
         Application application = resource.getApplication();
 
         if (application != null) {
-            model.put("applicationCode", application.getCode());
             model.put("applicant", application.getUser().getDisplayName());
+            model.put("applicationCode", application.getCode());
         }
 
         if (program != null) {

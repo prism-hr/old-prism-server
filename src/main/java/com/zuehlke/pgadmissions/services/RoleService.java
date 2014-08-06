@@ -259,6 +259,7 @@ public class RoleService {
             throw new WorkflowEngineException();
         }
         entityService.getOrCreate(transitionRole);
+        comment.withAssignedUser(userRole.getUser(), userRole.getRole());
     }
 
     private void executeCreateUserRole(UserRole userRole, Comment comment) throws WorkflowEngineException {

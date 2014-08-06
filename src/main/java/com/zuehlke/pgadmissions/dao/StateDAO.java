@@ -52,8 +52,10 @@ public class StateDAO {
                 .list();
     }
 
-    public StateTransition getStateTransition(PrismTransitionEvaluation evaluation, State candidateTransitionState) {
+    public StateTransition getStateTransition(Resource resource, PrismTransitionEvaluation evaluation, State candidateTransitionState) {
         return (StateTransition) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
+                .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("stateAction.state", resource.getState())) //
                 .add(Restrictions.eq("stateTransitionEvaluation", evaluation)) //
                 .add(Restrictions.eq("transitionState", candidateTransitionState)) //
                 .uniqueResult();

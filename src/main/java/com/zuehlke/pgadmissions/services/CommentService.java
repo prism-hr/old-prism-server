@@ -60,10 +60,19 @@ public class CommentService {
     public Comment getLatestComment(Resource resource, Action action) {
         return commentDAO.getLatestComment(resource, action);
     }
+    
+    public Comment getLatestComment(Resource resource, Action action, User user) {
+        return commentDAO.getLatestComment(resource, action, user);
+    }
 
     public Comment getLatestComment(Resource resource, PrismAction actionId) {
         Action action = actionService.getById(actionId);
         return getLatestComment(resource, action);
+    }
+    
+    public Comment getLatestComment(Resource resource, PrismAction actionId, User user) {
+        Action action = actionService.getById(actionId);
+        return commentDAO.getLatestComment(resource, action, user);
     }
 
     public List<Comment> getVisibleComments(Resource resource, User user) {
@@ -102,7 +111,8 @@ public class CommentService {
 
             List<Boolean> inviteePreferences = Lists.newLinkedList();
 
-            List<CommentAppointmentTimeslot> inviteeResponses = commentDAO.getAppointmentPreferences(schedulingComment, invitee);
+            Comment preferenceComment = getLatestAppointmentPreferenceComment(application, invitee);
+            List<CommentAppointmentTimeslot> inviteeResponses = commentDAO.getAppointmentPreferences(schedulingComment, preferenceComment);
             for (CommentAppointmentTimeslot timeslot : schedulingComment.getAppointmentTimeslots()) {
                 inviteePreferences.add(inviteeResponses.contains(timeslot));
             }
@@ -113,4 +123,10 @@ public class CommentService {
 
         return schedulingPreferences;
     }
+    
+    private Comment getLatestAppointmentPreferenceComment(Application application, User user) {
+        Comment preferenceComment = getLatestComment(application, PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY, user);
+        return preferenceComment == null ? getLatestComment(application, PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY, user) : preferenceComment;
+    }
+    
 }

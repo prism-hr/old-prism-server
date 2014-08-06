@@ -27,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.UserUnusedEmail;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -161,7 +160,7 @@ public class UserService {
 
         if (mergeFromUser != null && mergeIntoUser != null) {
             roleService.mergeUserRoles(mergeFromUser, mergeIntoUser);
-            userDAO.mergeUsers(mergeFromUser, mergeIntoUser);
+            userDAO.mergeUsers(mergeIntoUser, mergeFromUser);
         }
     }
 

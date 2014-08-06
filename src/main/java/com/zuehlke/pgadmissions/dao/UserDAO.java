@@ -165,12 +165,12 @@ public class UserDAO {
                 .list();
     }
     
-    public void mergeUsers(User mergeFrom, User mergeInto) {
+    public void mergeUsers(User mergeIntoUser, User mergeFromUser) {
         sessionFactory.getCurrentSession().createSQLQuery( //
-                "CALL SP_MERGE_USERS(:mergeFromId, :mergeIntoId)") //
+                "CALL SP_MERGE_USERS(:mergeIntoId, :mergeFromId)") //
                 .addSynchronizedEntityClass(User.class) //
-                .setParameter("mergeFromId", mergeFrom.getId()) //
-                .setParameter("mergeIntoId", mergeInto.getId()) //
+                .setParameter("mergeIntoId", mergeIntoUser.getId()) //
+                .setParameter("mergeFromId", mergeFromUser.getId()) //
                 .executeUpdate();
     }
     

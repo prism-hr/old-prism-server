@@ -1,0 +1,1 @@
+ALTER TABLE APPLICATION_FORM DROP COLUMN title, DROP COLUMN gender, DROP COLUMN dob, DROP COLUMN country_ob,DROP COLUMN	nationality, DROP COLUMN description_of_research;

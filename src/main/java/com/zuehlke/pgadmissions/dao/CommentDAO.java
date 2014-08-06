@@ -47,6 +47,17 @@ public class CommentDAO {
                 .uniqueResult();
     }
     
+    public Comment getLatestComment(Resource resource, Action action, User user) {
+        return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
+                .add(Restrictions.eq("action", action)) //
+                .add(Restrictions.eq("user", user)) //
+                .addOrder(Order.desc("createdTimestamp")) //
+                .addOrder(Order.desc("id")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+    
     public List<Comment> getComments(Resource resource) {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
@@ -78,12 +89,11 @@ public class CommentDAO {
                 .list();
     }
     
-    public List<CommentAppointmentTimeslot> getAppointmentPreferences(Comment schedulingComment, User user) {
+    public List<CommentAppointmentTimeslot> getAppointmentPreferences(Comment schedulingComment, Comment preferenceComment) {
         return (List<CommentAppointmentTimeslot>) sessionFactory.getCurrentSession().createCriteria(CommentAppointmentTimeslot.class) //
                 .createAlias("appointmentPreferences", "appointmentPreference", JoinType.INNER_JOIN) //
-                .createAlias("appointmentPreference.comment", "preferenceComment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("comment", schedulingComment)) //
-                .add(Restrictions.eq("preferenceComment.user", user)) //
+                .add(Restrictions.eq("appointmentPreference.comment", preferenceComment)) //
                 .list();
     }
     

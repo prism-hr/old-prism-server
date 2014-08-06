@@ -99,7 +99,7 @@ public class UserService {
         return entityService.getByProperty(User.class, "email", email);
     }
 
-    public User getOrCreateUser(final String firstName, final String lastName, final String email) {
+    public User getOrCreateUser(String firstName, String lastName, String email) {
         User user;
         User transientUser = new User().withFirstName(firstName).withLastName(lastName).withEmail(email);
         User duplicateUser = entityService.getDuplicateEntity(transientUser);
@@ -113,6 +113,11 @@ public class UserService {
         return user;
     }
 
+    public User getOrCreatedInvitedUser(String firstName, String lastName, String email) {
+        User duplicateUser = userDAO.getUserByUnusedEmailEmail(email);
+        return duplicateUser == null ? getOrCreateUser(firstName, lastName, email) : duplicateUser;
+    }
+    
     public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource,
             List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
         User user = getOrCreateUser(firstName, lastName, email);
@@ -157,9 +162,6 @@ public class UserService {
         if (mergeFromUser != null && mergeIntoUser != null) {
             roleService.mergeUserRoles(mergeFromUser, mergeIntoUser);
             userDAO.mergeUsers(mergeFromUser, mergeIntoUser);
-            UserUnusedEmail transientUnusedEmail = new UserUnusedEmail().withUser(mergeIntoUser).withEmail(mergeFrom.getEmail());
-            UserUnusedEmail persistentUnusedEmail = entityService.getOrCreate(transientUnusedEmail);
-            mergeIntoUser.getUnusedEmails().add(persistentUnusedEmail);
         }
     }
 

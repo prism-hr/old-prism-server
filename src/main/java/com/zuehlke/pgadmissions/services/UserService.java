@@ -9,6 +9,9 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,12 +37,13 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.mail.MailDescriptor;
 import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.UserAutoSuggestRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
 @Transactional
-public class UserService {
+public class UserService implements UserDetailsService {
 
     @Autowired
     private UserDAO userDAO;
@@ -69,10 +73,15 @@ public class UserService {
         return entityService.getById(User.class, id);
     }
 
-    public void save(User user) {
-        entityService.save(user);
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = getUserByEmail(username);
+        if (user == null) {
+            throw new UsernameNotFoundException(username);
+        }
+        return user;
     }
-
+    
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof User) {
@@ -106,6 +115,7 @@ public class UserService {
             user = transientUser;
             user.setActivationCode(encryptionUtils.generateUUID());
             entityService.save(user);
+            user.setParentUser(user);
         } else {
             user = duplicateUser;
         }
@@ -154,13 +164,13 @@ public class UserService {
         }
     }
 
-    public void mergeUsers(UserAccountDTO mergeFrom, UserAccountDTO mergeInto) throws WorkflowEngineException {
-        User mergeFromUser = userDAO.getAuthenticatedUser(mergeFrom.getEmail(), mergeFrom.getPassword());
-        User mergeIntoUser = userDAO.getAuthenticatedUser(mergeInto.getEmail(), mergeInto.getPassword());
-
-        if (mergeFromUser != null && mergeIntoUser != null) {
-            roleService.mergeUserRoles(mergeFromUser, mergeIntoUser);
-            userDAO.mergeUsers(mergeIntoUser, mergeFromUser);
+    public void linkUsers(UserAccountDTO linkFromUserDTO, UserAccountDTO linkIntoUserDTO) {
+        User linkFromUser = userDAO.getAuthenticatedUser(linkFromUserDTO.getEmail(), linkFromUserDTO.getPassword());
+        User linkIntoUser = userDAO.getAuthenticatedUser(linkIntoUserDTO.getEmail(), linkIntoUserDTO.getPassword());
+        
+        if (linkFromUser != null && linkIntoUser != null) {
+            userDAO.refreshParentUser(linkIntoUser);
+            linkFromUser.setParentUser(linkIntoUser);
         }
     }
 
@@ -191,7 +201,7 @@ public class UserService {
 
         List<Comment> assessments = commentService.getApplicationAssessmentComments(application);
         for (Comment comment : assessments) {
-            User recruiter = comment.getUser();
+            User recruiter = comment.getUser().getParentUser();
             if (!recruiters.contains(recruiter) && (BooleanUtils.isTrue(comment.isDesireToInterview()) || BooleanUtils.isTrue(comment.isDesireToRecruit()))) {
                 orderedRecruiters.put(recruiter.getLastName() + recruiter.getFirstName(), recruiter);
             }
@@ -231,5 +241,15 @@ public class UserService {
 
         return Lists.newArrayList(orderedRecruiters.values());
     }
-
+    
+    public List<UserAutoSuggestRepresentation> getSimilarUsers(String searchTerm) {
+        String trimmedSearchTerm = StringUtils.trim(searchTerm);
+        
+        if (trimmedSearchTerm.length() >= 3) {
+            return userDAO.getSimilarUsers(trimmedSearchTerm);
+        }
+        
+        return Lists.newArrayList();
+    }
+    
 }

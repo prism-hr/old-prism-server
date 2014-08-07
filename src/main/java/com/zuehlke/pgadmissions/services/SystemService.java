@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.apache.commons.lang.BooleanUtils;
+import org.hibernate.SessionFactory;
+import org.hibernate.search.FullTextSession;
+import org.hibernate.search.Search;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +61,6 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
-@Transactional(timeout = 120)
 public class SystemService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -79,6 +82,9 @@ public class SystemService {
 
     @Value("${system.default.email.content.directory}")
     private String defaultEmailContentDirectory;
+    
+    @Value("${startup.workflow.initialize.notifications}")
+    private Boolean initializeNotifications;
 
     @Autowired
     private ConfigurationService configurationService;
@@ -112,11 +118,16 @@ public class SystemService {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private SessionFactory sessionFactory;
 
+    @Transactional
     public System getSystem() {
         return entityService.getByProperty(System.class, "name", systemName);
     }
 
+    @Transactional(timeout = 120)
     public void initialiseSystem() throws WorkflowConfigurationException, WorkflowEngineException {
         logger.info("Initialising scope definitions");
         verifyBackwardCompatibility(Scope.class);
@@ -164,8 +175,10 @@ public class SystemService {
         entityService.clear();
     }
 
-    public void save(System system) {
-        entityService.save(system);
+    @Transactional
+    public void initializeSearchIndexes() {
+        FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
+        fullTextSession.createIndexer().start();
     }
 
     private void initialiseScopes() {
@@ -263,6 +276,10 @@ public class SystemService {
     }
 
     private void initialiseNotificationTemplates(System system) {
+        if (BooleanUtils.isTrue(initializeNotifications)) {
+            notificationService.deleteAllNotifications();
+        }
+        
         HashMap<NotificationTemplate, NotificationTemplateVersion> createdTemplates = Maps.newHashMap();
         for (PrismNotificationTemplate prismTemplate : PrismNotificationTemplate.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismTemplate.getScope());

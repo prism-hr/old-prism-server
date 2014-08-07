@@ -2,11 +2,13 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
@@ -90,6 +92,16 @@ public class InstitutionService {
                 }
             }
         }
+    }
+
+    public List<String> getSimilarInsitutions(String searchTerm, String domicileCode) {
+        String trimmedSearchTerm = StringUtils.trim(searchTerm);
+        
+        if (trimmedSearchTerm.length() >= 3) {
+            return institutionDAO.getSimilarInsitutions(trimmedSearchTerm, domicileCode);
+        }
+        
+        return Lists.newArrayList();
     }
 
 }

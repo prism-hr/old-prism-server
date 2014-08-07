@@ -179,6 +179,12 @@ public class NotificationService {
     }
 
     @Transactional
+    public void deleteAllNotifications() {
+        entityService.deleteAll(NotificationConfiguration.class);
+        entityService.deleteAll(NotificationTemplateVersion.class);
+    }
+    
+    @Transactional
     private void deletePendingUpdateNotification(User user, Resource resource, NotificationTemplate template) {
         List<UserRole> userRoles = roleService.getUpdateNotificationRoles(user, resource, template);
         if (!userRoles.isEmpty()) {

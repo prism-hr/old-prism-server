@@ -3,12 +3,17 @@ package com.zuehlke.pgadmissions.dao;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.lucene.search.Query;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.search.FullTextSession;
+import org.hibernate.search.Search;
+import org.hibernate.search.query.dsl.QueryBuilder;
 import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -25,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.mail.MailDescriptor;
+import com.zuehlke.pgadmissions.rest.representation.UserAutoSuggestRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Repository
@@ -88,9 +94,12 @@ public class UserDAO {
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
+                .createAlias("parentUser.userAccount", "parentUserAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("application", application)) //
                 .add(Restrictions.eq("role.id", PrismRole.APPLICATION_SUGGESTED_SUPERVISOR)) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
+                .add(Restrictions.eq("parentUserAccount.enabled", true)) //
                 .addOrder(Order.asc("user.firstName")) //
                 .addOrder(Order.asc("user.lastName")) //
                 .list();
@@ -98,9 +107,11 @@ public class UserDAO {
 
     public List<User> getRecruitersAssignedToApplication(Application application, List<User> usersToExclude) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("user")) //
+                .setProjection(Projections.groupProperty("user.parentUser")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
+                .createAlias("parentUser.userAccount", "parentUserAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("program", application.getProgram())) //
                         .add(Restrictions.eq("project", application.getProject())) //
@@ -110,7 +121,8 @@ public class UserDAO {
                         PrismRole.APPLICATION_ADMINISTRATOR, PrismRole.APPLICATION_REVIEWER, //
                         PrismRole.APPLICATION_INTERVIEWER, PrismRole.APPLICATION_PRIMARY_SUPERVISOR, //
                         PrismRole.APPLICATION_SECONDARY_SUPERVISOR, PrismRole.APPLICATION_VIEWER_RECRUITER))) //
-                .add(Restrictions.eq("userAccount.enabled", true)); //
+                .add(Restrictions.eq("userAccount.enabled", true))
+                .add(Restrictions.eq("parentUserAccount.enabled", true)); //
         
         for (User excludedUser : usersToExclude) {
             criteria.add(Restrictions.ne("user", excludedUser));
@@ -123,17 +135,20 @@ public class UserDAO {
     
     public List<User> getRecruitersAssignedToProgramApplications(Program program, List<User> usersToExclude) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .setProjection(Projections.groupProperty("userRole.user")) //
+                .setProjection(Projections.groupProperty("user.parentUser")) //
                 .createAlias("applications", "application", JoinType.INNER_JOIN) //
                 .createAlias("application.userRoles", "userRole") //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
+                .createAlias("parentUser.userAccount", "parentUserAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("id", program.getId())) //
                 .add(Restrictions.in("userRole.role.id", Arrays.asList(PrismRole.APPLICATION_ADMINISTRATOR, //
                         PrismRole.APPLICATION_REVIEWER, PrismRole.APPLICATION_INTERVIEWER, //
                         PrismRole.APPLICATION_PRIMARY_SUPERVISOR, PrismRole.APPLICATION_SECONDARY_SUPERVISOR, //
                         PrismRole.APPLICATION_VIEWER_RECRUITER))) //
-                .add(Restrictions.eq("userAccount.enabled", true)); //
+                .add(Restrictions.eq("userAccount.enabled", true))
+                .add(Restrictions.eq("parentUserAccount.enabled", true)); //
         
         for (User excludedUser : usersToExclude) {
             criteria.add(Restrictions.ne("userRole.user", excludedUser));
@@ -146,15 +161,18 @@ public class UserDAO {
     
     public List<User> getRecruitersAssignedToProgramProjects(Program program, List<User> usersToExclude) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .setProjection(Projections.groupProperty("userRole.user")) //
+                .setProjection(Projections.groupProperty("user.parentUser")) //
                 .createAlias("projects", "project", JoinType.INNER_JOIN) //
                 .createAlias("project.userRoles", "userRole") //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
+                .createAlias("parentUser.userAccount", "parentUserAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("id", program.getId())) //
                 .add(Restrictions.in("userRole.role.id", Arrays.asList(PrismRole.PROJECT_PRIMARY_SUPERVISOR, //
                         PrismRole.PROJECT_SECONDARY_SUPERVISOR))) //
-                .add(Restrictions.eq("userAccount.enabled", true)); //
+                .add(Restrictions.eq("userAccount.enabled", true))
+                .add(Restrictions.eq("parentUserAccount.enabled", true)); //
         
         for (User excludedUser : usersToExclude) {
             criteria.add(Restrictions.ne("userRole.user", excludedUser));
@@ -163,15 +181,6 @@ public class UserDAO {
         return criteria.addOrder(Order.asc("user.lastName")) //
                 .addOrder(Order.asc("user.firstName")) //
                 .list();
-    }
-    
-    public void mergeUsers(User mergeIntoUser, User mergeFromUser) {
-        sessionFactory.getCurrentSession().createSQLQuery( //
-                "CALL SP_MERGE_USERS(:mergeIntoId, :mergeFromId)") //
-                .addSynchronizedEntityClass(User.class) //
-                .setParameter("mergeIntoId", mergeIntoUser.getId()) //
-                .setParameter("mergeFromId", mergeFromUser.getId()) //
-                .executeUpdate();
     }
     
     public User getAuthenticatedUser(String email, String password) {
@@ -190,6 +199,43 @@ public class UserDAO {
                 .uniqueResult();
     }
 
+    public void refreshParentUser(User user) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update User " //
+                        + "set parentUser = :user " //
+                        + "where parentUser = :parentUser") //
+                .setParameter("user", user)
+                .setParameter("parentUser", user.getParentUser()) //
+                .executeUpdate();
+    }
+    
+    public List<UserAutoSuggestRepresentation> getSimilarUsers(String searchTerm) {
+        FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
+        
+        QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(User.class).get();
+        Query query = queryBuilder.keyword().fuzzy().onFields("firstName", "lastName", "email").matching(searchTerm).createQuery();
+        
+        Criteria filterCriteria = fullTextSession.createCriteria(User.class) //
+                .createAlias("childUsers", "childUser", JoinType.INNER_JOIN) //
+                .createAlias("childUser.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("childUser.userAccount", "childUserAccount", JoinType.INNER_JOIN) //
+                .add(Restrictions.ne("userRole.role.id", PrismRole.APPLICATION_CREATOR)) //
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.isNull("user.userAccount"))
+                        .add(Restrictions.eq("userAccount.enabled", true))) //
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.isNull("childUser.userAccount"))
+                        .add(Restrictions.eq("childUserAccount.enabled", true)));
+
+        return fullTextSession.createFullTextQuery(query, User.class) //
+                .setProjection("firstName", "lastName", "email") //
+                .setCriteriaQuery(filterCriteria)
+                .setMaxResults(10) //
+                .setResultTransformer(Transformers.aliasToBean(UserAutoSuggestRepresentation.class)) //
+                .list();
+    }
+    
     public List<MailDescriptor> getUseDueTaskNotification() {
         // TODO Auto-generated method stub
         return null;

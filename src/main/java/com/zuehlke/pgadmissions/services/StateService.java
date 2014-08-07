@@ -143,7 +143,7 @@ public class StateService {
             resourceService.updateResource(resource, action, comment);
         }
 
-        commentService.save(comment);
+        entityService.save(comment);
 
         StateTransition stateTransition = getStateTransition(resource, action, comment);
         if (stateTransition != null) {

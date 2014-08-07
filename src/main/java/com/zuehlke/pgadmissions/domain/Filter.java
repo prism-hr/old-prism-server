@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -20,13 +22,15 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.ApplicationListSortCategory;
 import com.zuehlke.pgadmissions.domain.definitions.ResourceListSortOrder;
 
 @Entity
 @Table(name = "FILTER", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_account_id", "scope_id" }) })
-public class Filter {
+public class Filter implements IUniqueEntity {
 
     @Id
     @GeneratedValue
@@ -88,9 +92,17 @@ public class Filter {
     public UserAccount getUserAccount() {
         return userAccount;
     }
+    
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
+    }
 
     public Scope getScope() {
         return scope;
+    }
+    
+    public void setScope(Scope scope) {
+        this.scope = scope;
     }
     
     public Boolean isSatisfyAllConditions() {
@@ -137,4 +149,14 @@ public class Filter {
         this.page = page;
     }
 
+    @Override
+    public ResourceSignature getResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("userAccount", userAccount);
+        properties.put("scope", scope);
+        propertiesWrapper.add(properties);
+        return new ResourceSignature(propertiesWrapper);
+    }
+    
 }

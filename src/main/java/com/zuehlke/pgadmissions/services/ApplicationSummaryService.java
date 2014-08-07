@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
 @Service
@@ -46,31 +45,58 @@ public class ApplicationSummaryService {
 
     @Autowired
     private CommentService commentService;
+    
+    @Autowired
+    private StateService stateService;
 
-    private void addApplicationProperties(final Application application, final Map<String, String> result) {
+    public Map<String, String> getSummary(Integer applicationId) {
+        Application application = applicationsService.getById(applicationId);
+
+        if (application.getSubmittedTimestamp() == null) {
+            return Collections.emptyMap();
+        }
+
+        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> applicantResult = new HashMap<String, String>();
+
+        addApplicationProperties(application, result);
+        addActiveApplications(application.getUser(), result);
+        addApplicantDetails(application, applicantResult);
+        addQualifications(application, applicantResult);
+        addEmployments(application, applicantResult);
+        addFundings(application, applicantResult, gson);
+        addReferences(application, result);
+        addPersonalStatement(application, result);
+        addSkype(application, applicantResult);
+        result.put("applicant", gson.toJson(applicantResult));
+        return result;
+    }
+    
+    private void addApplicationProperties(Application application, Map<String, String> result) {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         DateTime updatedTimeStamp = commentService.getLatestComment(application).getCreatedTimestamp();
 
+        result.put("applicationCreatedDate", dateFormat.format(application.getCreatedTimestamp()));
         result.put("applicationSubmissionDate", dateFormat.format(application.getSubmittedTimestamp()));
         result.put("applicationUpdateDate", dateFormat.format(updatedTimeStamp));
-//        result.put("requiresAttention", BooleanUtils.toStringTrueFalse(application.isUrgent()));
         result.put("applicationNumber", application.getCode());
     }
 
-    private void addActiveApplications(final User applicant, final Map<String, String> result) {
+    private void addActiveApplications(User applicant, Map<String, String> result) {
         result.put("numberOfActiveApplications", userService.getNumberOfActiveApplicationsForApplicant(applicant).toString());
     }
 
-    private void addApplicantDetails(final Application form, final Map<String, String> result) {
-        result.put("title", form.getPersonalDetails() == null ? "" : form.getPersonalDetails().getTitle().getName());
-        result.put("name", form.getUser().getDisplayName());
-        result.put("phoneNumber", form.getPersonalDetails() == null ? "" : form.getPersonalDetails().getPhoneNumber());
-        result.put("email", form.getUser().getEmail());
-        result.put("applicationStatus", form.getState().getId().name());
+    private void addApplicantDetails(Application application, Map<String, String> result) {
+        result.put("title", application.getPersonalDetails() == null ? "" : application.getPersonalDetails().getTitle().getName());
+        result.put("name", application.getUser().getDisplayName());
+        result.put("phoneNumber", application.getPersonalDetails() == null ? "" : application.getPersonalDetails().getPhoneNumber());
+        result.put("email", application.getUser().getEmail());
+        result.put("applicationStatus", application.getState().getId().name());
     }
 
-    private void addQualifications(final Application form, final Map<String, String> result) {
-        List<ApplicationQualification> qualifications = form.getQualifications();
+    private void addQualifications(Application application, Map<String, String> result) {
+        List<ApplicationQualification> qualifications = application.getQualifications();
         if (qualifications.isEmpty()) {
             result.put("mostRecentQualification", NONE_PROVIDED);
             return;
@@ -167,30 +193,6 @@ public class ApplicationSummaryService {
                 result.put("cvProvided", "false");
             }
         }
-    }
-
-    public Map<String, String> getSummary(final String applicationNumber) {
-        Application form = applicationsService.getByCode(applicationNumber);
-
-        if (form.getState().equals(PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT) || form.getState().equals(PrismState.APPLICATION_UNSUBMITTED)) {
-            return Collections.emptyMap();
-        }
-
-        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-        Map<String, String> result = new HashMap<String, String>();
-        Map<String, String> applicantResult = new HashMap<String, String>();
-
-        addApplicationProperties(form, result);
-        addActiveApplications(form.getUser(), result);
-        addApplicantDetails(form, applicantResult);
-        addQualifications(form, applicantResult);
-        addEmployments(form, applicantResult);
-        addFundings(form, applicantResult, gson);
-        addReferences(form, result);
-        addPersonalStatement(form, result);
-        addSkype(form, applicantResult);
-        result.put("applicant", gson.toJson(applicantResult));
-        return result;
     }
 
 }

@@ -7,7 +7,7 @@ import java.util.List;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 
 public class ResourceListRowRepresentation {
 
@@ -15,7 +15,7 @@ public class ResourceListRowRepresentation {
 
     private String code;
 
-    private UserRepresentation user;
+    private UserExtendedRepresentation user;
 
     private InstitutionRepresentation institution;
 
@@ -61,11 +61,11 @@ public class ResourceListRowRepresentation {
         this.code = code;
     }
 
-    public UserRepresentation getUser() {
+    public UserExtendedRepresentation getUser() {
         return user;
     }
 
-    public void setUser(UserRepresentation user) {
+    public void setUser(UserExtendedRepresentation user) {
         this.user = user;
     }
 

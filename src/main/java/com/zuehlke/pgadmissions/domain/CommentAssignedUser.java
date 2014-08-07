@@ -23,7 +23,7 @@ public class CommentAssignedUser implements IUniqueEntity {
     private Integer id;
     
     @ManyToOne
-    @JoinColumn(name = "comment_id", nullable = false)
+    @JoinColumn(name = "comment_id", insertable = false, updatable = false)
     private Comment comment;
     
     @ManyToOne

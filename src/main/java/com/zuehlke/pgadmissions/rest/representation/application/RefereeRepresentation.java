@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.rest.representation.application;
 
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 
 public class RefereeRepresentation {
 
     private Integer id;
 
-    private UserRepresentation user;
+    private UserExtendedRepresentation user;
 
     private String phoneNumber;
 
@@ -26,11 +26,11 @@ public class RefereeRepresentation {
         this.id = id;
     }
 
-    public UserRepresentation getUser() {
+    public UserExtendedRepresentation getUser() {
         return user;
     }
 
-    public void setUser(UserRepresentation user) {
+    public void setUser(UserExtendedRepresentation user) {
         this.user = user;
     }
 

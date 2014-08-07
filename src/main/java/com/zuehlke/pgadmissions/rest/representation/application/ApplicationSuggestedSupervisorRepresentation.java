@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.application;
 
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 
-public class SupervisorRepresentation {
+public class ApplicationSuggestedSupervisorRepresentation {
 
     private UserRepresentation user;
 
@@ -23,4 +23,5 @@ public class SupervisorRepresentation {
     public void setAware(boolean aware) {
         this.aware = aware;
     }
+    
 }

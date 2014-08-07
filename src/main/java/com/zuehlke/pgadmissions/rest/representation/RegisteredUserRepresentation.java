@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation;
 
 import java.util.List;
 
-public class RegisteredUserRepresentation extends UserRepresentation {
+public class RegisteredUserRepresentation extends UserExtendedRepresentation {
 
     private List<RoleAssignmentRepresentation> roles;
 

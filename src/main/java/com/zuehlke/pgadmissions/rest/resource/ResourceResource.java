@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -31,7 +30,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
@@ -174,12 +172,8 @@ public class ResourceResource {
         applicationRepresentation.setUsersInterestedInApplication(interestedRepresentations);
         applicationRepresentation.setUsersPotentiallyInterestedInApplication(potentiallyInterestedRepresentations);
 
-        if (Arrays.asList(PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY, PrismState.APPLICATION_INTERVIEW_PENDING_SCHEDULING).contains(
-                application.getState().getId())) {
-            applicationRepresentation.setAppointmentTimeslots(commentService.getAppointmentTimeslots(application));
-            applicationRepresentation.setAppointmentPreferences(commentService.getAppointmentPreferences(application));
-        }
-
+        applicationRepresentation.setAppointmentTimeslots(commentService.getAppointmentTimeslots(application));
+        applicationRepresentation.setAppointmentPreferences(commentService.getAppointmentPreferences(application));
     }
 
     @ModelAttribute

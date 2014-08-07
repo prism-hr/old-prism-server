@@ -56,27 +56,25 @@ public class User implements UserDetails, IUniqueEntity {
     private Integer id;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
-    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.YES)
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
-    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     @Column(name = "first_name_2")
     private String firstName2;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
-    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     @Column(name = "first_name_3")
     private String firstName3;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
-    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.YES)
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
-    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.YES)
     @Column(name = "email", nullable = false, unique = true)
     private String email;
     

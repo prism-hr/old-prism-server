@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -70,6 +71,18 @@ public class CommentService {
         return commentDAO.getLatestComment(resource, action, user);
     }
 
+
+    public void addAssignedUser(Comment comment, UserRole userRole) {
+        User user = userRole.getUser();
+        Role role = userRole.getRole();
+        
+        CommentAssignedUser transientAssignedUser = new CommentAssignedUser().withComment(comment).withUser(user).withRole(role);
+        CommentAssignedUser persistentAssignedUser = entityService.getDuplicateEntity(transientAssignedUser);
+        if (persistentAssignedUser == null) {
+            comment.withAssignedUser(user, role);
+        }
+    }
+    
     public List<Comment> getVisibleComments(Resource resource, User user) {
         List<Comment> comments = Lists.newArrayList();
         if (!actionService.getPermittedActions(resource, user).isEmpty()) {
@@ -86,46 +99,45 @@ public class CommentService {
         Action schedulingAction = actionService.getById(PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
         Comment schedulingComment = commentDAO.getLatestComment(application, schedulingAction);
 
-        List<AppointmentTimeslotRepresentation> schedulingOptions = Lists.newLinkedList();
-        for (CommentAppointmentTimeslot schedulingOption : commentDAO.getAppointmentTimeslots(schedulingComment)) {
-            schedulingOptions.add(new AppointmentTimeslotRepresentation().withId(schedulingOption.getId()).withDateTime(schedulingOption.getDateTime()));
+        if (schedulingComment != null) {           
+            List<AppointmentTimeslotRepresentation> schedulingOptions = Lists.newLinkedList();
+            for (CommentAppointmentTimeslot schedulingOption : commentDAO.getAppointmentTimeslots(schedulingComment)) {
+                schedulingOptions.add(new AppointmentTimeslotRepresentation().withId(schedulingOption.getId()).withDateTime(schedulingOption.getDateTime()));
+            }
+    
+            return schedulingOptions;
         }
-
-        return schedulingOptions;
+        
+        return Lists.newArrayList();
     }
 
     public List<UserAppointmentPreferencesRepresentation> getAppointmentPreferences(Application application) {
         Action schedulingAction = actionService.getById(PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
         Comment schedulingComment = commentDAO.getLatestComment(application, schedulingAction);
-
-        List<UserAppointmentPreferencesRepresentation> schedulingPreferences = Lists.newLinkedList();
-
-        for (User invitee : commentDAO.getAppointmentInvitees(schedulingComment)) {
-            UserExtendedRepresentation inviteeRepresentation = userService.getUserRepresentation(invitee);
-            UserAppointmentPreferencesRepresentation preferenceRepresentation = new UserAppointmentPreferencesRepresentation().withUser(inviteeRepresentation);
-
-            List<Boolean> inviteePreferences = Lists.newLinkedList();
-
-            Comment preferenceComment = getLatestAppointmentPreferenceComment(application, invitee);
-            List<CommentAppointmentTimeslot> inviteeResponses = commentDAO.getAppointmentPreferences(schedulingComment, preferenceComment);
-            for (CommentAppointmentTimeslot timeslot : commentDAO.getAppointmentTimeslots(schedulingComment)) {
-                inviteePreferences.add(inviteeResponses.contains(timeslot));
+        
+        if (schedulingComment != null) {
+            List<UserAppointmentPreferencesRepresentation> schedulingPreferences = Lists.newLinkedList();
+    
+            for (User invitee : commentDAO.getAppointmentInvitees(schedulingComment)) {
+                UserExtendedRepresentation inviteeRepresentation = userService.getUserRepresentation(invitee);
+                UserAppointmentPreferencesRepresentation preferenceRepresentation = new UserAppointmentPreferencesRepresentation().withUser(inviteeRepresentation);
+    
+                List<Boolean> inviteePreferences = Lists.newLinkedList();
+    
+                Comment preferenceComment = getLatestAppointmentPreferenceComment(application, invitee);
+                List<CommentAppointmentTimeslot> inviteeResponses = commentDAO.getAppointmentPreferences(schedulingComment, preferenceComment);
+                for (CommentAppointmentTimeslot timeslot : commentDAO.getAppointmentTimeslots(schedulingComment)) {
+                    inviteePreferences.add(inviteeResponses.contains(timeslot));
+                }
+    
+                preferenceRepresentation.withPreferences(inviteePreferences);
+                schedulingPreferences.add(preferenceRepresentation);
             }
-
-            preferenceRepresentation.withPreferences(inviteePreferences);
-            schedulingPreferences.add(preferenceRepresentation);
+    
+            return schedulingPreferences;
         }
-
-        return schedulingPreferences;
-    }
-
-    public void addAssignedUser(Comment comment, UserRole userRole) {
-        CommentAssignedUser transientAssignedUser = new CommentAssignedUser().withComment(comment).withUser(userRole.getUser()).withRole(userRole.getRole());
-        CommentAssignedUser persistentAssignedUser = entityService.getDuplicateEntity(transientAssignedUser);
-        if (persistentAssignedUser == null) {
-            entityService.save(transientAssignedUser);
-            comment.getAssignedUsers().add(transientAssignedUser);
-        }
+        
+        return Lists.newArrayList();
     }
 
     public List<ApplicationAssignedSupervisorRepresentation> getApplicationSupervisors(Application application) {
@@ -135,19 +147,23 @@ public class CommentService {
             return Lists.newArrayList(buildApplicationSupervisorRepresentation(assignmentComment));
         } else {
             assignmentComment = getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
-            Set<ApplicationAssignedSupervisorRepresentation> assignedSupervisors = buildApplicationSupervisorRepresentation(assignmentComment);
-
-            List<String> declinedSupervisors = commentDAO.getDeclinedSupervisors(assignmentComment);
-
-            for (ApplicationAssignedSupervisorRepresentation assignedSupervisor : assignedSupervisors) {
-                if (declinedSupervisors.contains(assignedSupervisor.getUser().getEmail())) {
-                    assignedSupervisors.remove(assignedSupervisor);
+            
+            if (assignmentComment != null) {
+                Set<ApplicationAssignedSupervisorRepresentation> assignedSupervisors = buildApplicationSupervisorRepresentation(assignmentComment);
+    
+                List<String> declinedSupervisors = commentDAO.getDeclinedSupervisors(assignmentComment);
+    
+                for (ApplicationAssignedSupervisorRepresentation assignedSupervisor : assignedSupervisors) {
+                    if (declinedSupervisors.contains(assignedSupervisor.getUser().getEmail())) {
+                        assignedSupervisors.remove(assignedSupervisor);
+                    }
                 }
+    
+                return Lists.newArrayList(assignedSupervisors);
             }
-
-            return Lists.newArrayList(assignedSupervisors);
         }
 
+        return Lists.newArrayList();
     }
 
     public OfferRepresentation getOfferRecommendation(Application application) {

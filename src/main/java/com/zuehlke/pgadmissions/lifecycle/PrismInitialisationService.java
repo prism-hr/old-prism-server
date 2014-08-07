@@ -5,9 +5,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.importers.AdvertCategoryImportService;
 import com.zuehlke.pgadmissions.services.importers.InstitutionDomicileImportService;
@@ -26,9 +24,6 @@ public class PrismInitialisationService implements InitializingBean {
     
     @Value("${startup.advertCategory.import}")
     private Boolean importAdvertCategory;
-    
-    @Autowired
-    private FullTextSearchService fullTextSearchService;
 
     @Autowired
     private SystemService systemService;
@@ -46,7 +41,7 @@ public class PrismInitialisationService implements InitializingBean {
         }
         
         if (BooleanUtils.isTrue(buildIndex)) {
-            initialiseHibernateSearchIndexes();
+            systemService.initializeSearchIndexes();
         }
         
         if (BooleanUtils.isTrue(importInstitutionDomicile)) {
@@ -56,11 +51,6 @@ public class PrismInitialisationService implements InitializingBean {
         if (BooleanUtils.isTrue(importAdvertCategory)) {
             advertCategoryImportService.importEntities();
         }
-    }
-
-    @Transactional
-    private void initialiseHibernateSearchIndexes() {
-        fullTextSearchService.initialiseSearchIndexes();
     }
 
 }

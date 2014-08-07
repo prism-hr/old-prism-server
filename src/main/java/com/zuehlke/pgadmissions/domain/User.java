@@ -12,10 +12,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
 import org.apache.solr.analysis.LowerCaseFilterFactory;
 import org.apache.solr.analysis.StandardTokenizerFactory;
 import org.hibernate.annotations.Cache;
@@ -38,12 +40,14 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@AnalyzerDef(name = "userAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = { @TokenFilterDef(factory = LowerCaseFilterFactory.class) })
+@AnalyzerDef(name = "userAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
+        @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = LowerCaseFilterFactory.class),
+        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class) })
 @Indexed
 @Entity
 @Table(name = "USER")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class User implements UserDetails, Comparable<User>, IUniqueEntity {
+public class User implements UserDetails, IUniqueEntity {
 
     private static final long serialVersionUID = 7913035836949510857L;
 
@@ -75,20 +79,27 @@ public class User implements UserDetails, Comparable<User>, IUniqueEntity {
     @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     @Column(name = "email", nullable = false, unique = true)
     private String email;
-
+    
     @Column(name = "activation_code", nullable = false, unique = true)
     private String activationCode;
-    
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
+
+    @ManyToOne
+    @JoinColumn(name = "parent_user_id")
+    private User parentUser;
+    
+    @OneToMany(mappedBy = "parentUser")
+    private Set<User> childUsers = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
     private Set<UserRole> userRoles = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
     private Set<ProgramExport> programExports = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "user")
     private Set<UserUnusedEmail> unusedEmails = Sets.newHashSet();
 
@@ -140,10 +151,6 @@ public class User implements UserDetails, Comparable<User>, IUniqueEntity {
         this.email = email;
     }
 
-    public boolean isEnabled() {
-        return userAccount != null && userAccount.isEnabled();
-    }
-
     public String getActivationCode() {
         return activationCode;
     }
@@ -151,7 +158,7 @@ public class User implements UserDetails, Comparable<User>, IUniqueEntity {
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
     }
-    
+
     public UserAccount getUserAccount() {
         return userAccount;
     }
@@ -159,7 +166,19 @@ public class User implements UserDetails, Comparable<User>, IUniqueEntity {
     public void setUserAccount(UserAccount account) {
         this.userAccount = account;
     }
-    
+
+    public final User getParentUser() {
+        return parentUser;
+    }
+
+    public final void setParentUser(User parentUser) {
+        this.parentUser = parentUser;
+    }
+
+    public final Set<User> getChildUsers() {
+        return childUsers;
+    }
+
     public Set<UserRole> getUserRoles() {
         return userRoles;
     }
@@ -178,45 +197,6 @@ public class User implements UserDetails, Comparable<User>, IUniqueEntity {
 
     public String getDisplayName() {
         return firstName + " " + lastName;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public int compareTo(final User other) {
-        int firstNameResult = this.firstName.compareTo(other.firstName);
-        if (firstNameResult == 0) {
-            return this.lastName.compareTo(other.lastName);
-        }
-        return firstNameResult;
-    }
-
-    @Override
-    public String getPassword() {
-        return userAccount != null ? userAccount.getPassword() : null;
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
     }
 
     public User withId(Integer id) {
@@ -257,6 +237,46 @@ public class User implements UserDetails, Comparable<User>, IUniqueEntity {
     public User withAccount(UserAccount account) {
         this.userAccount = account;
         return this;
+    }
+
+    public User withParentUser(User parentUser) {
+        this.parentUser = parentUser;
+        return this;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return userAccount != null && userAccount.isEnabled();
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public String getPassword() {
+        return userAccount != null ? userAccount.getPassword() : null;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
     }
 
     @Override

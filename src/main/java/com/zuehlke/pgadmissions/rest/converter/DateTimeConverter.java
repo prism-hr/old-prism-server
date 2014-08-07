@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.rest.converter;
 
 import org.dozer.DozerConverter;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 public class DateTimeConverter extends DozerConverter<DateTime, DateTime> {
 

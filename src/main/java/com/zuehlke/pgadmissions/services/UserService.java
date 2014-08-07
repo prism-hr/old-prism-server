@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.mail.MailDescriptor;
 import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -68,11 +69,7 @@ public class UserService {
     public User getById(Integer id) {
         return entityService.getById(User.class, id);
     }
-
-    public void save(User user) {
-        entityService.save(user);
-    }
-
+    
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof User) {
@@ -81,8 +78,8 @@ public class UserService {
         return null;
     }
 
-    public UserRepresentation getUserRepresentation(User user) {
-        return new UserRepresentation().withFirstName(user.getFirstName()).withFirstName2(user.getFirstName2()).withFirstName3(user.getFirstName3())
+    public UserExtendedRepresentation getUserRepresentation(User user) {
+        return new UserExtendedRepresentation().withFirstName(user.getFirstName()).withFirstName2(user.getFirstName2()).withFirstName3(user.getFirstName3())
                 .withLastName(user.getLastName()).withEmail(user.getEmail());
     }
 
@@ -106,6 +103,7 @@ public class UserService {
             user = transientUser;
             user.setActivationCode(encryptionUtils.generateUUID());
             entityService.save(user);
+            user.setParentUser(user);
         } else {
             user = duplicateUser;
         }
@@ -154,13 +152,13 @@ public class UserService {
         }
     }
 
-    public void mergeUsers(UserAccountDTO mergeFrom, UserAccountDTO mergeInto) throws WorkflowEngineException {
-        User mergeFromUser = userDAO.getAuthenticatedUser(mergeFrom.getEmail(), mergeFrom.getPassword());
-        User mergeIntoUser = userDAO.getAuthenticatedUser(mergeInto.getEmail(), mergeInto.getPassword());
-
-        if (mergeFromUser != null && mergeIntoUser != null) {
-            roleService.mergeUserRoles(mergeFromUser, mergeIntoUser);
-            userDAO.mergeUsers(mergeIntoUser, mergeFromUser);
+    public void linkUsers(UserAccountDTO linkFromUserDTO, UserAccountDTO linkIntoUserDTO) {
+        User linkFromUser = userDAO.getAuthenticatedUser(linkFromUserDTO.getEmail(), linkFromUserDTO.getPassword());
+        User linkIntoUser = userDAO.getAuthenticatedUser(linkIntoUserDTO.getEmail(), linkIntoUserDTO.getPassword());
+        
+        if (linkFromUser != null && linkIntoUser != null) {
+            userDAO.refreshParentUser(linkIntoUser);
+            linkFromUser.setParentUser(linkIntoUser);
         }
     }
 
@@ -191,7 +189,7 @@ public class UserService {
 
         List<Comment> assessments = commentService.getApplicationAssessmentComments(application);
         for (Comment comment : assessments) {
-            User recruiter = comment.getUser();
+            User recruiter = comment.getUser().getParentUser();
             if (!recruiters.contains(recruiter) && (BooleanUtils.isTrue(comment.isDesireToInterview()) || BooleanUtils.isTrue(comment.isDesireToRecruit()))) {
                 orderedRecruiters.put(recruiter.getLastName() + recruiter.getFirstName(), recruiter);
             }
@@ -231,5 +229,15 @@ public class UserService {
 
         return Lists.newArrayList(orderedRecruiters.values());
     }
-
+    
+    public List<UserRepresentation> getSimilarUsers(String searchTerm) {
+        String trimmedSearchTerm = StringUtils.trim(searchTerm);
+        
+        if (trimmedSearchTerm.length() >= 3) {
+            return userDAO.getSimilarUsers(trimmedSearchTerm);
+        }
+        
+        return Lists.newArrayList();
+    }
+    
 }

@@ -28,25 +28,25 @@ import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
-import com.zuehlke.pgadmissions.rest.representation.AutosuggestedUserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.InvalidRequestException;
 import com.zuehlke.pgadmissions.rest.validation.validator.RegistrationDetailsValidator;
-import com.zuehlke.pgadmissions.security.TokenUtils;
-import com.zuehlke.pgadmissions.services.FullTextSearchService;
+import com.zuehlke.pgadmissions.security.AuthenticationTokenUtils;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
 @RequestMapping("/api/user")
 public class UserResource {
 
-    @Resource(name = "pgAdmissionUserDetailsService")
-    private UserDetailsService userService;
+    @Resource(name = "prismUserDetailsService")
+    private UserDetailsService userDetailsService;
 
     @Autowired
     @Named("authenticationManager")
-    private AuthenticationManager authManager;
+    private AuthenticationManager authenticationManager;
 
     @Autowired
     private RegistrationDetailsValidator registrationDetailsValidator;
@@ -56,32 +56,32 @@ public class UserResource {
 
     @Autowired
     private RegistrationService registrationService;
-
+    
     @Autowired
-    private FullTextSearchService searchService;
+    private UserService userService;
 
     @Autowired
     private Mapper dozerBeanMapper;
     
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
-    public UserRepresentation getUser() {
+    public UserExtendedRepresentation getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         if (principal instanceof String && ((String) principal).equals("anonymousUser")) {
             throw new WebApplicationException(401);
         }
         User user = (User) principal;
-        return dozerBeanMapper.map(user, UserRepresentation.class);
+        return dozerBeanMapper.map(user, UserExtendedRepresentation.class);
     }
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST, produces = "application/json")
     public Map<String, String> authenticate(@RequestParam(required = false, value = "username") String username,
             @RequestParam(required = false, value = "password") String password) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
-        Authentication authentication = this.authManager.authenticate(authenticationToken);
+        Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserDetails userDetails = this.userService.loadUserByUsername(username);
-        return ImmutableMap.of("token", TokenUtils.createToken(userDetails));
+        UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+        return ImmutableMap.of("token", AuthenticationTokenUtils.createToken(userDetails));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -98,18 +98,8 @@ public class UserResource {
     }
 
     @RequestMapping(value="/suggestion", method = RequestMethod.GET, params = "firstName")
-    public List<AutosuggestedUserRepresentation> provideSuggestionsForFirstName(@RequestParam String firstName) {
-        return searchService.getMatchingUsersWithFirstNameLike(firstName);
-    }
-
-    @RequestMapping(value="/suggestion", method = RequestMethod.GET, params = "lastName")
-    public List<AutosuggestedUserRepresentation> provideSuggestionsForLastName(@RequestParam final String lastName) {
-        return searchService.getMatchingUsersWithLastNameLike(lastName);
-    }
-
-    @RequestMapping(value="/suggestion", method = RequestMethod.GET, params = "email")
-    public List<AutosuggestedUserRepresentation> provideSuggestionsForEmail(@RequestParam final String email) {
-        return searchService.getMatchingUsersWithEmailLike(email);
+    public List<UserRepresentation> getSimilarUsers(@RequestParam String searchTerm) {
+        return userService.getSimilarUsers(searchTerm);
     }
 
 }

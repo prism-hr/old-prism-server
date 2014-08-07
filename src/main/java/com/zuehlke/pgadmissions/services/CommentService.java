@@ -151,45 +151,37 @@ public class CommentService {
     }
 
     public OfferRepresentation getOfferRecommendation(Application application) {
-        String positionTitle;
-        String positionDescription;
-        LocalDate positionProvisionalStartDate;
-        String appointmentConditions;
-
         Comment sourceComment = getLatestComment(application, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
 
         if (sourceComment != null) {
-            positionTitle = sourceComment.getPositionTitle();
-            positionDescription = sourceComment.getPositionDescription();
-            positionProvisionalStartDate = sourceComment.getPositionProvisionalStartDate();
-            appointmentConditions = sourceComment.getAppointmentConditions();
+            return buildOfferRepresentation(sourceComment);
         } else {
             sourceComment = getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
-
-            positionTitle = sourceComment.getPositionTitle();
-            positionDescription = sourceComment.getPositionDescription();
-            positionProvisionalStartDate = sourceComment.getPositionProvisionalStartDate();
-            appointmentConditions = sourceComment.getAppointmentConditions();
-
-            User primarySupervisor = commentDAO.getAssignedUsers(sourceComment, PrismRole.APPLICATION_PRIMARY_SUPERVISOR).get(0);
-
-            sourceComment = getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS, primarySupervisor);
-
+            
             if (sourceComment != null) {
-                String primaryPositionTitle = sourceComment.getPositionTitle();
-                String primaryPositionDescription = sourceComment.getPositionDescription();
-                LocalDate primaryPositionProvisionalStartDate = sourceComment.getPositionProvisionalStartDate();
-                String primaryAppointmentConditions = sourceComment.getAppointmentConditions();
+                OfferRepresentation offerRepresentation = buildOfferRepresentation(sourceComment);
+                
+                User primarySupervisor = commentDAO.getAssignedUsers(sourceComment, PrismRole.APPLICATION_PRIMARY_SUPERVISOR).get(0);
+                sourceComment = getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS, primarySupervisor);
 
-                positionTitle = primaryPositionTitle == null ? positionTitle : primaryPositionTitle;
-                positionDescription = primaryPositionDescription == null ? positionDescription : primaryPositionDescription;
-                positionProvisionalStartDate = primaryPositionProvisionalStartDate == null ? positionProvisionalStartDate : primaryPositionProvisionalStartDate;
-                appointmentConditions = primaryAppointmentConditions == null ? appointmentConditions : primaryAppointmentConditions;
+                if (sourceComment != null) {
+                    String positionTitle = sourceComment.getPositionTitle();
+                    String positionDescription = sourceComment.getPositionDescription();
+                    LocalDate positionProvisionalStartDate = sourceComment.getPositionProvisionalStartDate();
+                    String appointmentConditions = sourceComment.getAppointmentConditions();
+                    
+                    offerRepresentation.setPositionTitle(positionTitle == null ? positionTitle : positionTitle);
+                    offerRepresentation.setPositionDescription(positionDescription == null ? positionDescription : positionDescription);
+                    offerRepresentation.setPositionProvisionalStartDate(positionProvisionalStartDate == null ? positionProvisionalStartDate
+                            : positionProvisionalStartDate);
+                    offerRepresentation.setAppointmentConditions(appointmentConditions == null ? appointmentConditions : appointmentConditions);
+                }
+                
+                return offerRepresentation;
             }
         }
 
-        return new OfferRepresentation().withPositionTitle(positionTitle).withPositionDescription(positionDescription)
-                .withPositionProvisionalStartDate(positionProvisionalStartDate).withAppointmentConditions(appointmentConditions);
+        return new OfferRepresentation();
     }
 
     private Set<ApplicationAssignedSupervisorRepresentation> buildApplicationSupervisorRepresentation(Comment assignmentComment) {
@@ -210,6 +202,14 @@ public class CommentService {
     private Comment getLatestAppointmentPreferenceComment(Application application, User user) {
         Comment preferenceComment = getLatestComment(application, PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY, user);
         return preferenceComment == null ? getLatestComment(application, PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY, user) : preferenceComment;
+    }
+
+    private OfferRepresentation buildOfferRepresentation(Comment sourceComment) {
+        OfferRepresentation offerRepresentation = new OfferRepresentation().withPositionTitle(sourceComment.getPositionTitle())
+                .withPositionDescription(sourceComment.getPositionDescription())
+                .withPositionProvisionalStartDate(sourceComment.getPositionProvisionalStartDate())
+                .withAppointmentConditions(sourceComment.getAppointmentConditions());
+        return offerRepresentation;
     }
 
 }

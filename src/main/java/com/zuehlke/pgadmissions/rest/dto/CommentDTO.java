@@ -10,7 +10,6 @@ import com.zuehlke.pgadmissions.domain.definitions.ApplicationResidenceStatus;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import org.joda.time.LocalDate;
 
 public class CommentDTO {
 

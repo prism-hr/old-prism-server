@@ -128,5 +128,12 @@ public class CommentDAO {
                 .add(Restrictions.eq("recruiterAcceptAppointment", false)) //
                 .list();
     }
-
+    
+    public List<User> getAssignedUsers(Comment comment, PrismRole roleId) {
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
+                .setProjection(Projections.property("user")) //
+                .add(Restrictions.eq("comment", comment)) //
+                .add(Restrictions.eq("role.id", roleId)) //
+                .list();
+    }
 }

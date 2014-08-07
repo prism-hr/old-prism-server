@@ -74,7 +74,7 @@ public class MailSender {
         sendEmail(Arrays.asList(emailMessage));
     }
 
-    public void sendEmail(final Collection<MailMessageDTO> emailMessages) {
+    protected void sendEmail(final Collection<MailMessageDTO> emailMessages) {
         for (MailMessageDTO message : emailMessages) {
             if (productionEmail) {
                 sendEmailAsProductionMessage(message);
@@ -84,7 +84,7 @@ public class MailSender {
         }
     }
 
-    protected void sendEmailAsProductionMessage(final MailMessageDTO message) {
+    private void sendEmailAsProductionMessage(final MailMessageDTO message) {
         log.info(String.format("Sending PRODUCTION Email: %s", message.toString()));
         try {
             javaMailSender.send(new MimeMessagePreparator() {
@@ -136,7 +136,7 @@ public class MailSender {
         }
     }
 
-    protected void sendEmailAsDevelopmentMessage(final MailMessageDTO message) {
+    private void sendEmailAsDevelopmentMessage(final MailMessageDTO message) {
         log.info(String.format("Sending DEVELOPMENT Email: %s", message.toString()));
         try {
             javaMailSender.send(new MimeMessagePreparator() {
@@ -186,9 +186,5 @@ public class MailSender {
             throw new MailException(message, e);
         }
     }
-
-    public FreeMarkerConfig getFreemarkerConfig() {
-        return freemarkerConfig;
-    }
-
+    
 }

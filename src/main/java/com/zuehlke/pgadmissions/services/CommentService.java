@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.util.List;
 import java.util.Set;
 
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +20,12 @@ import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.rest.representation.AppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.ApplicationAssignedSupervisorRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.application.OfferRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.UserAppointmentPreferencesRepresentation;
 
 @Service
@@ -127,44 +130,86 @@ public class CommentService {
 
     public List<ApplicationAssignedSupervisorRepresentation> getApplicationSupervisors(Application application) {
         Comment assignmentComment = getLatestComment(application, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
-        
+
         if (assignmentComment != null) {
             return Lists.newArrayList(buildApplicationSupervisorRepresentation(assignmentComment));
         } else {
             assignmentComment = getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
             Set<ApplicationAssignedSupervisorRepresentation> assignedSupervisors = buildApplicationSupervisorRepresentation(assignmentComment);
-            
+
             List<String> declinedSupervisors = commentDAO.getDeclinedSupervisors(assignmentComment);
-            
+
             for (ApplicationAssignedSupervisorRepresentation assignedSupervisor : assignedSupervisors) {
                 if (declinedSupervisors.contains(assignedSupervisor.getUser().getEmail())) {
                     assignedSupervisors.remove(assignedSupervisor);
                 }
             }
-            
+
             return Lists.newArrayList(assignedSupervisors);
         }
 
     }
 
+    public OfferRepresentation getOfferRecommendation(Application application) {
+        String positionTitle;
+        String positionDescription;
+        LocalDate positionProvisionalStartDate;
+        String appointmentConditions;
+
+        Comment sourceComment = getLatestComment(application, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
+
+        if (sourceComment != null) {
+            positionTitle = sourceComment.getPositionTitle();
+            positionDescription = sourceComment.getPositionDescription();
+            positionProvisionalStartDate = sourceComment.getPositionProvisionalStartDate();
+            appointmentConditions = sourceComment.getAppointmentConditions();
+        } else {
+            sourceComment = getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
+
+            positionTitle = sourceComment.getPositionTitle();
+            positionDescription = sourceComment.getPositionDescription();
+            positionProvisionalStartDate = sourceComment.getPositionProvisionalStartDate();
+            appointmentConditions = sourceComment.getAppointmentConditions();
+
+            User primarySupervisor = commentDAO.getAssignedUsers(sourceComment, PrismRole.APPLICATION_PRIMARY_SUPERVISOR).get(0);
+
+            sourceComment = getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS, primarySupervisor);
+
+            if (sourceComment != null) {
+                String primaryPositionTitle = sourceComment.getPositionTitle();
+                String primaryPositionDescription = sourceComment.getPositionDescription();
+                LocalDate primaryPositionProvisionalStartDate = sourceComment.getPositionProvisionalStartDate();
+                String primaryAppointmentConditions = sourceComment.getAppointmentConditions();
+
+                positionTitle = primaryPositionTitle == null ? positionTitle : primaryPositionTitle;
+                positionDescription = primaryPositionDescription == null ? positionDescription : primaryPositionDescription;
+                positionProvisionalStartDate = primaryPositionProvisionalStartDate == null ? positionProvisionalStartDate : primaryPositionProvisionalStartDate;
+                appointmentConditions = primaryAppointmentConditions == null ? appointmentConditions : primaryAppointmentConditions;
+            }
+        }
+
+        return new OfferRepresentation().withPositionTitle(positionTitle).withPositionDescription(positionDescription)
+                .withPositionProvisionalStartDate(positionProvisionalStartDate).withAppointmentConditions(appointmentConditions);
+    }
+
     private Set<ApplicationAssignedSupervisorRepresentation> buildApplicationSupervisorRepresentation(Comment assignmentComment) {
         Set<ApplicationAssignedSupervisorRepresentation> supervisors = Sets.newLinkedHashSet();
-        
+
         for (CommentAssignedUser assignee : commentDAO.getAssignedSupervisors(assignmentComment)) {
             User user = assignee.getUser();
             UserRepresentation userRepresentation = new UserRepresentation().withFirstName(user.getFirstName()).withLastName(user.getLastName())
                     .withEmail(user.getEmail());
-            ApplicationAssignedSupervisorRepresentation assignedSupervisorRepresentation = new ApplicationAssignedSupervisorRepresentation().withUser(
-                    userRepresentation).withRole(assignee.getRole().getId()).withAcceptedSupervision(true);
+            ApplicationAssignedSupervisorRepresentation assignedSupervisorRepresentation = new ApplicationAssignedSupervisorRepresentation()
+                    .withUser(userRepresentation).withRole(assignee.getRole().getId()).withAcceptedSupervision(true);
             supervisors.add(assignedSupervisorRepresentation);
         }
-        
+
         return supervisors;
     }
-    
+
     private Comment getLatestAppointmentPreferenceComment(Application application, User user) {
         Comment preferenceComment = getLatestComment(application, PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY, user);
         return preferenceComment == null ? getLatestComment(application, PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY, user) : preferenceComment;
     }
-    
+
 }

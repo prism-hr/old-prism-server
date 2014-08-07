@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.apache.commons.lang.BooleanUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -54,7 +55,6 @@ import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.UserService;
-import org.joda.time.LocalDate;
 
 @RestController
 @RequestMapping(value = {"api/applications"})

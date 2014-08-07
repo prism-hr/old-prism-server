@@ -39,7 +39,7 @@ public class PgAdmissionAuthenticationProviderTest {
     private EncryptionUtils encryptionUtilsMock;
 
     @TestedObject
-    private PgAdmissionAuthenticationProvider authenticationProvider;
+    private PrismAuthenticationProvider authenticationProvider;
 
     @Test
     public void shouldSupportUsernamePasswordAuthenticationToken() {

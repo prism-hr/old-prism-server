@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.rest.representation;
 import java.util.Set;
 import java.util.TimeZone;
 
-import com.zuehlke.pgadmissions.rest.representation.application.UserAppointmentPreferencesRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -15,11 +14,11 @@ import com.zuehlke.pgadmissions.rest.representation.application.FileRepresentati
 
 public class CommentRepresentation {
 
-    private UserRepresentation user;
+    private UserExtendedRepresentation user;
 
     private String role;
 
-    private UserRepresentation delegateUser;
+    private UserExtendedRepresentation delegateUser;
 
     private String delegateRole;
 
@@ -99,11 +98,11 @@ public class CommentRepresentation {
 
     private Set<AppointmentPreferenceRepresentation> appointmentPreferences;
 
-    public UserRepresentation getUser() {
+    public UserExtendedRepresentation getUser() {
         return user;
     }
 
-    public void setUser(UserRepresentation user) {
+    public void setUser(UserExtendedRepresentation user) {
         this.user = user;
     }
 
@@ -115,11 +114,11 @@ public class CommentRepresentation {
         this.role = role;
     }
 
-    public UserRepresentation getDelegateUser() {
+    public UserExtendedRepresentation getDelegateUser() {
         return delegateUser;
     }
 
-    public void setDelegateUser(UserRepresentation delegateUser) {
+    public void setDelegateUser(UserExtendedRepresentation delegateUser) {
         this.delegateUser = delegateUser;
     }
 

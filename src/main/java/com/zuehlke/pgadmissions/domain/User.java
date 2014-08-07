@@ -79,10 +79,7 @@ public class User implements UserDetails, IUniqueEntity {
     @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     @Column(name = "email", nullable = false, unique = true)
     private String email;
-
-    @Column(name = "search_representation", nullable = false)
-    private String searchRepresentation;
-
+    
     @Column(name = "activation_code", nullable = false, unique = true)
     private String activationCode;
 
@@ -152,14 +149,6 @@ public class User implements UserDetails, IUniqueEntity {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public final String getSearchRepresentation() {
-        return searchRepresentation;
-    }
-
-    public final void setSearchRepresentation(String searchRepresentation) {
-        this.searchRepresentation = searchRepresentation;
     }
 
     public String getActivationCode() {

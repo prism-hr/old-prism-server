@@ -21,9 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
-public class PgAdmissionAuthenticationProvider implements AuthenticationProvider {
+public class PrismAuthenticationProvider implements AuthenticationProvider {
 
-    private Logger log = LoggerFactory.getLogger(PgAdmissionAuthenticationProvider.class);
+    private Logger log = LoggerFactory.getLogger(PrismAuthenticationProvider.class);
 
     @Autowired
     private UserDetailsService userDetailsService;

@@ -12,7 +12,7 @@ public class ProgramDetailsRepresentation {
 
     private Integer referralSource;
 
-    private List<SupervisorRepresentation> supervisors;
+    private List<ApplicationSuggestedSupervisorRepresentation> supervisors;
 
     public Integer getStudyOption() {
         return studyOption;
@@ -38,11 +38,11 @@ public class ProgramDetailsRepresentation {
         this.referralSource = referralSource;
     }
 
-    public List<SupervisorRepresentation> getSupervisors() {
+    public List<ApplicationSuggestedSupervisorRepresentation> getSupervisors() {
         return supervisors;
     }
 
-    public void setSupervisors(List<SupervisorRepresentation> supervisors) {
+    public void setSupervisors(List<ApplicationSuggestedSupervisorRepresentation> supervisors) {
         this.supervisors = supervisors;
     }
 }

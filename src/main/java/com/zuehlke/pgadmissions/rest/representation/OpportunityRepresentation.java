@@ -18,7 +18,7 @@ public class OpportunityRepresentation {
 
     private LocalDate closingDate;
 
-    private UserRepresentation user;
+    private UserExtendedRepresentation user;
 
     private PrismScope resourceScope;
 
@@ -70,11 +70,11 @@ public class OpportunityRepresentation {
         this.closingDate = closingDate;
     }
 
-    public UserRepresentation getUser() {
+    public UserExtendedRepresentation getUser() {
         return user;
     }
 
-    public void setUser(UserRepresentation user) {
+    public void setUser(UserExtendedRepresentation user) {
         this.user = user;
     }
 

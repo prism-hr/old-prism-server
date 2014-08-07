@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.mail.MailDescriptor;
-import com.zuehlke.pgadmissions.rest.representation.UserAutoSuggestRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Repository
@@ -209,7 +209,7 @@ public class UserDAO {
                 .executeUpdate();
     }
     
-    public List<UserAutoSuggestRepresentation> getSimilarUsers(String searchTerm) {
+    public List<UserRepresentation> getSimilarUsers(String searchTerm) {
         FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
         
         QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(User.class).get();
@@ -232,7 +232,7 @@ public class UserDAO {
                 .setProjection("firstName", "lastName", "email") //
                 .setCriteriaQuery(filterCriteria)
                 .setMaxResults(10) //
-                .setResultTransformer(Transformers.aliasToBean(UserAutoSuggestRepresentation.class)) //
+                .setResultTransformer(Transformers.aliasToBean(UserRepresentation.class)) //
                 .list();
     }
     

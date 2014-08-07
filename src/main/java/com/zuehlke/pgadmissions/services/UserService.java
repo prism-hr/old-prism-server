@@ -9,9 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,13 +34,13 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.mail.MailDescriptor;
 import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.UserAutoSuggestRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
 @Transactional
-public class UserService implements UserDetailsService {
+public class UserService {
 
     @Autowired
     private UserDAO userDAO;
@@ -72,15 +69,6 @@ public class UserService implements UserDetailsService {
     public User getById(Integer id) {
         return entityService.getById(User.class, id);
     }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = getUserByEmail(username);
-        if (user == null) {
-            throw new UsernameNotFoundException(username);
-        }
-        return user;
-    }
     
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -90,8 +78,8 @@ public class UserService implements UserDetailsService {
         return null;
     }
 
-    public UserRepresentation getUserRepresentation(User user) {
-        return new UserRepresentation().withFirstName(user.getFirstName()).withFirstName2(user.getFirstName2()).withFirstName3(user.getFirstName3())
+    public UserExtendedRepresentation getUserRepresentation(User user) {
+        return new UserExtendedRepresentation().withFirstName(user.getFirstName()).withFirstName2(user.getFirstName2()).withFirstName3(user.getFirstName3())
                 .withLastName(user.getLastName()).withEmail(user.getEmail());
     }
 
@@ -242,7 +230,7 @@ public class UserService implements UserDetailsService {
         return Lists.newArrayList(orderedRecruiters.values());
     }
     
-    public List<UserAutoSuggestRepresentation> getSimilarUsers(String searchTerm) {
+    public List<UserRepresentation> getSimilarUsers(String searchTerm) {
         String trimmedSearchTerm = StringUtils.trim(searchTerm);
         
         if (trimmedSearchTerm.length() >= 3) {

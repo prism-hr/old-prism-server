@@ -16,7 +16,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -25,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
@@ -47,10 +47,7 @@ public class UserService {
 
     @Autowired
     private RoleService roleService;
-
-    @Autowired
-    private ApplicationsFilteringDAO filteringDAO;
-
+    
     @Autowired
     private EncryptionUtils encryptionUtils;
 
@@ -162,12 +159,20 @@ public class UserService {
         }
     }
 
-    public void setFiltering(final User user, final Filter filter) {
-        Filter mergedFilter = filteringDAO.merge(filter);
-        user.getUserAccount().getFilters().put(filter.getScope(), mergedFilter);
+    public void setFilter(Filter transientFilter) {
+        Filter persistentFilter = entityService.getDuplicateEntity(transientFilter);
+        if (persistentFilter == null) {
+            UserAccount userAccount = transientFilter.getUserAccount();
+            Scope scope = transientFilter.getScope();
+            
+            transientFilter.setUserAccount(null);
+            transientFilter.setScope(null);
+            
+            userAccount.getFilters().put(scope, transientFilter);
+        }
     }
 
-    public Long getNumberOfActiveApplicationsForApplicant(final User applicant) {
+    public Integer getNumberOfActiveApplicationsForApplicant(User applicant) {
         return userDAO.getNumberOfActiveApplicationsForApplicant(applicant);
     }
 

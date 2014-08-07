@@ -15,7 +15,6 @@ import org.hibernate.search.query.dsl.QueryBuilder;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Application;
@@ -28,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.UserUnusedEmail;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.mail.MailDescriptor;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
@@ -36,10 +36,7 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 @Repository
 @SuppressWarnings("unchecked")
 public class UserDAO {
-    
-    @Value("${db.schema}")
-    private String schema;
-    
+
     @Autowired
     private EncryptionUtils encryptionUtils;
 
@@ -52,13 +49,15 @@ public class UserDAO {
                 .uniqueResult();
     }
 
-    public Long getNumberOfActiveApplicationsForApplicant(User user) {
-        return (Long) sessionFactory.getCurrentSession().createCriteria(Application.class) //
-                .setProjection(Projections.rowCount()) //
+    public Integer getNumberOfActiveApplicationsForApplicant(User user) {
+        return (Integer) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .setProjection(Projections.count("id")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.not(Restrictions.eq("state.stateGroup", PrismStateGroup.APPLICATION_APPROVED))) //
-                .add(Restrictions.not(Restrictions.eq("state.stateGroup", PrismStateGroup.APPLICATION_REJECTED))) //
+                .add(Restrictions.not(Restrictions.not(Restrictions.in("state.id", Arrays.asList(PrismState.APPLICATION_APPROVED_PENDING_EXPORT,
+                        PrismState.APPLICATION_APPROVED_PENDING_CORRECTION, PrismState.APPLICATION_APPROVED_COMPLETED))))) //
+                .add(Restrictions.not(Restrictions.not(Restrictions.in("state.id", Arrays.asList(PrismState.APPLICATION_REJECTED_PENDING_EXPORT,
+                        PrismState.APPLICATION_REJECTED_PENDING_CORRECTION, PrismState.APPLICATION_REJECTED_COMPLETED))))) //
                 .add(Restrictions.not(Restrictions.eq("state,stateGroup", PrismStateGroup.APPLICATION_WITHDRAWN))) //
                 .uniqueResult();
     }
@@ -67,8 +66,7 @@ public class UserDAO {
         return sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN)
-                .add(Restrictions.disjunction() //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN).add(Restrictions.disjunction() //
                         .add(Restrictions.eq("application", resource.getApplication())) //
                         .add(Restrictions.eq("project", resource.getProject())) //
                         .add(Restrictions.eq("program", resource.getProgram())) //
@@ -121,18 +119,17 @@ public class UserDAO {
                         PrismRole.APPLICATION_ADMINISTRATOR, PrismRole.APPLICATION_REVIEWER, //
                         PrismRole.APPLICATION_INTERVIEWER, PrismRole.APPLICATION_PRIMARY_SUPERVISOR, //
                         PrismRole.APPLICATION_SECONDARY_SUPERVISOR, PrismRole.APPLICATION_VIEWER_RECRUITER))) //
-                .add(Restrictions.eq("userAccount.enabled", true))
-                .add(Restrictions.eq("parentUserAccount.enabled", true)); //
-        
+                .add(Restrictions.eq("userAccount.enabled", true)).add(Restrictions.eq("parentUserAccount.enabled", true)); //
+
         for (User excludedUser : usersToExclude) {
             criteria.add(Restrictions.ne("user", excludedUser));
         }
-        
+
         return criteria.addOrder(Order.asc("user.lastName")) //
                 .addOrder(Order.asc("user.firstName")) //
                 .list();
     }
-    
+
     public List<User> getRecruitersAssignedToProgramApplications(Program program, List<User> usersToExclude) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Program.class) //
                 .setProjection(Projections.groupProperty("user.parentUser")) //
@@ -147,18 +144,17 @@ public class UserDAO {
                         PrismRole.APPLICATION_REVIEWER, PrismRole.APPLICATION_INTERVIEWER, //
                         PrismRole.APPLICATION_PRIMARY_SUPERVISOR, PrismRole.APPLICATION_SECONDARY_SUPERVISOR, //
                         PrismRole.APPLICATION_VIEWER_RECRUITER))) //
-                .add(Restrictions.eq("userAccount.enabled", true))
-                .add(Restrictions.eq("parentUserAccount.enabled", true)); //
-        
+                .add(Restrictions.eq("userAccount.enabled", true)).add(Restrictions.eq("parentUserAccount.enabled", true)); //
+
         for (User excludedUser : usersToExclude) {
             criteria.add(Restrictions.ne("userRole.user", excludedUser));
         }
-        
+
         return criteria.addOrder(Order.asc("user.lastName")) //
                 .addOrder(Order.asc("user.firstName")) //
                 .list();
     }
-    
+
     public List<User> getRecruitersAssignedToProgramProjects(Program program, List<User> usersToExclude) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Program.class) //
                 .setProjection(Projections.groupProperty("user.parentUser")) //
@@ -171,18 +167,17 @@ public class UserDAO {
                 .add(Restrictions.eq("id", program.getId())) //
                 .add(Restrictions.in("userRole.role.id", Arrays.asList(PrismRole.PROJECT_PRIMARY_SUPERVISOR, //
                         PrismRole.PROJECT_SECONDARY_SUPERVISOR))) //
-                .add(Restrictions.eq("userAccount.enabled", true))
-                .add(Restrictions.eq("parentUserAccount.enabled", true)); //
-        
+                .add(Restrictions.eq("userAccount.enabled", true)).add(Restrictions.eq("parentUserAccount.enabled", true)); //
+
         for (User excludedUser : usersToExclude) {
             criteria.add(Restrictions.ne("userRole.user", excludedUser));
         }
-        
+
         return criteria.addOrder(Order.asc("user.lastName")) //
                 .addOrder(Order.asc("user.firstName")) //
                 .list();
     }
-    
+
     public User getAuthenticatedUser(String email, String password) {
         return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
@@ -191,7 +186,7 @@ public class UserDAO {
                 .add(Restrictions.eq("enabled", true)) //
                 .uniqueResult();
     }
-    
+
     public User getUserByUnusedEmailEmail(String email) {
         return (User) sessionFactory.getCurrentSession().createCriteria(UserUnusedEmail.class) //
                 .setProjection(Projections.property("user")) //
@@ -204,38 +199,32 @@ public class UserDAO {
                 "update User " //
                         + "set parentUser = :user " //
                         + "where parentUser = :parentUser") //
-                .setParameter("user", user)
-                .setParameter("parentUser", user.getParentUser()) //
+                .setParameter("user", user).setParameter("parentUser", user.getParentUser()) //
                 .executeUpdate();
     }
-    
+
     public List<UserRepresentation> getSimilarUsers(String searchTerm) {
         FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
-        
+
         QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(User.class).get();
         Query query = queryBuilder.keyword().fuzzy().onFields("firstName", "lastName", "email").matching(searchTerm).createQuery();
-        
+
         Criteria filterCriteria = fullTextSession.createCriteria(User.class) //
                 .createAlias("childUsers", "childUser", JoinType.INNER_JOIN) //
                 .createAlias("childUser.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("childUser.userAccount", "childUserAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.ne("userRole.role.id", PrismRole.APPLICATION_CREATOR)) //
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.isNull("user.userAccount"))
-                        .add(Restrictions.eq("userAccount.enabled", true))) //
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.isNull("childUser.userAccount"))
-                        .add(Restrictions.eq("childUserAccount.enabled", true)));
+                .add(Restrictions.disjunction().add(Restrictions.isNull("user.userAccount")).add(Restrictions.eq("userAccount.enabled", true))) //
+                .add(Restrictions.disjunction().add(Restrictions.isNull("childUser.userAccount")).add(Restrictions.eq("childUserAccount.enabled", true)));
 
         return fullTextSession.createFullTextQuery(query, User.class) //
                 .setProjection("firstName", "lastName", "email") //
-                .setCriteriaQuery(filterCriteria)
-                .setMaxResults(10) //
+                .setCriteriaQuery(filterCriteria).setMaxResults(10) //
                 .setResultTransformer(Transformers.aliasToBean(UserRepresentation.class)) //
                 .list();
     }
-    
+
     public List<MailDescriptor> getUseDueTaskNotification() {
         // TODO Auto-generated method stub
         return null;

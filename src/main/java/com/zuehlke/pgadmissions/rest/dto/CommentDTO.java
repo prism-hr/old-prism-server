@@ -10,6 +10,7 @@ import com.zuehlke.pgadmissions.domain.definitions.ApplicationResidenceStatus;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import org.joda.time.LocalDate;
 
 public class CommentDTO {
 
@@ -54,6 +55,14 @@ public class CommentDTO {
     private Set<DateTime> appointmentTimeslots;
 
     private Set<Integer> appointmentPreferences;
+
+    private String positionTitle;
+
+    private String positionDescription;
+
+    private DateTime positionProvisionalStartDate;
+
+    private String appointmentConditions;
 
     private Boolean declinedResponse;
 
@@ -223,6 +232,38 @@ public class CommentDTO {
 
     public void setAppointmentPreferences(Set<Integer> appointmentPreferences) {
         this.appointmentPreferences = appointmentPreferences;
+    }
+
+    public String getPositionTitle() {
+        return positionTitle;
+    }
+
+    public void setPositionTitle(String positionTitle) {
+        this.positionTitle = positionTitle;
+    }
+
+    public String getPositionDescription() {
+        return positionDescription;
+    }
+
+    public void setPositionDescription(String positionDescription) {
+        this.positionDescription = positionDescription;
+    }
+
+    public DateTime getPositionProvisionalStartDate() {
+        return positionProvisionalStartDate;
+    }
+
+    public void setPositionProvisionalStartDate(DateTime positionProvisionalStartDate) {
+        this.positionProvisionalStartDate = positionProvisionalStartDate;
+    }
+
+    public String getAppointmentConditions() {
+        return appointmentConditions;
+    }
+
+    public void setAppointmentConditions(String appointmentConditions) {
+        this.appointmentConditions = appointmentConditions;
     }
 
     public Boolean getDeclinedResponse() {

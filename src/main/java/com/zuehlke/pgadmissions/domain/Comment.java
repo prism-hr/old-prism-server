@@ -792,6 +792,21 @@ public class Comment {
         return this;
     }
 
+    public Comment withPositionDescription(final String positionDescription) {
+        this.positionDescription = positionDescription;
+        return this;
+    }
+
+    public Comment withAppointmentConditions(final String appointmentConditions) {
+        this.appointmentConditions = appointmentConditions;
+        return this;
+    }
+
+    public Comment withPositionProvisionalStartDate(final LocalDate positionProvisionalStartDate) {
+        this.positionProvisionalStartDate = positionProvisionalStartDate;
+        return this;
+    }
+
     public boolean isApplicationCreatorEligibilityUncertain() {
         return getResidenceStatus() == ApplicationResidenceStatus.UNSURE || getQualified() == YesNoUnsureResponse.UNSURE
                 || getCompetentInWorkLanguage() == YesNoUnsureResponse.UNSURE;

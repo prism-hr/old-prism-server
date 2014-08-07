@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 import org.apache.commons.lang.BooleanUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -144,6 +145,7 @@ public class ApplicationResource {
         PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
         State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
+        LocalDate positionProvisionalStartDate = commentDTO.getPositionProvisionalStartDate() == null ? null : commentDTO.getPositionProvisionalStartDate().toLocalDate();
         Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(userService.getCurrentUser())
                 .withAction(action).withCreatedTimestamp(new DateTime()).withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse()))
                 .withQualified(commentDTO.getQualified()).withCompetentInWorkLanguage(commentDTO.getCompetentInWorkLanguage())
@@ -152,7 +154,9 @@ public class ApplicationResource {
                 .withInterviewerInstructions(commentDTO.getInterviewerInstructions()).withIntervieweeInstructions(commentDTO.getIntervieweeInstructions())
                 .withInterviewLocation(commentDTO.getInterviewLocation()).withSuitableForInstitution(commentDTO.getSuitableForInstitution())
                 .withSuitableForOpportunity(commentDTO.getSuitableForOpportunity()).withDesireToInterview(commentDTO.getDesireToInterview())
-                .withDesireToRecruit(commentDTO.getDesireToRecruit()).withTransitionState(transitionState);
+                .withDesireToRecruit(commentDTO.getDesireToRecruit()).withPositionTitle(commentDTO.getPositionTitle())
+                .withPositionDescription(commentDTO.getPositionDescription()).withPositionProvisionalStartDate(positionProvisionalStartDate)
+                .withAppointmentConditions(commentDTO.getAppointmentConditions()).withTransitionState(transitionState);
         if (commentDTO.getAppointmentTimeslots() != null) {
             for (DateTime dateTime : commentDTO.getAppointmentTimeslots()) {
                 CommentAppointmentTimeslot timeslot = new CommentAppointmentTimeslot();

@@ -4,15 +4,15 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 
 public class CommentAssignedUserRepresentation {
 
-    private UserRepresentation user;
+    private UserExtendedRepresentation user;
 
     private PrismRole role;
 
-    public UserRepresentation getUser() {
+    public UserExtendedRepresentation getUser() {
         return user;
     }
 
-    public void setUser(UserRepresentation user) {
+    public void setUser(UserExtendedRepresentation user) {
         this.user = user;
     }
 

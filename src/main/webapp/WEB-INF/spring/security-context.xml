@@ -33,9 +33,9 @@
         <constructor-arg ref="userDetailsService"/>
     </bean>
 
-    <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PgAdmissionAuthenticationProvider"
+    <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PrismAuthenticationProvider"
           autowire-candidate="false"/>
-    <bean id="userDetailsService" class="com.zuehlke.pgadmissions.security.PgAdmissionUserDetailsService"/>
+    <bean id="userDetailsService" class="com.zuehlke.pgadmissions.security.PrismUserDetailsService"/>
     <bean id="authenticationEncryptionUtils" class="com.zuehlke.pgadmissions.utils.EncryptionUtils"
           autowire-candidate="false"/>
 

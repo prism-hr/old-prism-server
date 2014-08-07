@@ -3,7 +3,18 @@ package com.zuehlke.pgadmissions.domain;
 import java.util.Set;
 import java.util.TimeZone;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -176,21 +187,21 @@ public class Comment {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
 
-    @OneToMany(mappedBy = "comment")
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "comment_id", nullable = false, unique = true)
     private Set<CommentAssignedUser> assignedUsers = Sets.newHashSet();
-
-    @OneToMany
-    @JoinColumn(name = "comment_id")
-    private Set<Document> documents = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_id", nullable = false, unique = true)
-    @OrderBy("dateTime")
     private Set<CommentAppointmentTimeslot> appointmentTimeslots = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_id", nullable = false, unique = true)
     private Set<CommentAppointmentPreference> appointmentPreferences = Sets.newHashSet();
+    
+    @OneToMany
+    @JoinColumn(name = "comment_id")
+    private Set<Document> documents = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -715,7 +726,7 @@ public class Comment {
     }
     
     public Comment withAssignedUser(User user, Role role) {
-        CommentAssignedUser newAssignment = new CommentAssignedUser().withComment(this).withUser(user).withRole(role);
+        CommentAssignedUser newAssignment = new CommentAssignedUser().withUser(user).withRole(role);
         assignedUsers.add(newAssignment);
         return this;
     }

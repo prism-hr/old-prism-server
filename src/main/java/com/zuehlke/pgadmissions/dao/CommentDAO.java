@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
@@ -27,7 +28,7 @@ public class CommentDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
-    
+
     public Comment getLatestComment(Resource resource) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
@@ -36,7 +37,7 @@ public class CommentDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-    
+
     public Comment getLatestComment(Resource resource, Action action) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
@@ -46,7 +47,7 @@ public class CommentDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-    
+
     public Comment getLatestComment(Resource resource, Action action, User user) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
@@ -57,14 +58,14 @@ public class CommentDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-    
+
     public List<Comment> getComments(Resource resource) {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .list();
     }
-    
+
     public List<Comment> getApplicationAssessmentComments(Application application) {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq("application", application)) //
@@ -76,7 +77,7 @@ public class CommentDAO {
                 .addOrder(Order.desc("id")) //
                 .list();
     }
-    
+
     public List<User> getAppointmentInvitees(Comment comment) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .setProjection(Projections.property("user")) //
@@ -84,17 +85,48 @@ public class CommentDAO {
                 .add(Restrictions.eq("comment", comment)) //
                 .add(Restrictions.in("role.id", Lists.newArrayList(PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE, //
                         PrismRole.APPLICATION_POTENTIAL_INTERVIEWER))) //
+                .addOrder(Order.asc("role.id")) //
                 .addOrder(Order.asc("user.lastName")) //
                 .addOrder(Order.asc("user.firstName")) //
                 .list();
     }
-    
+
+    public List<CommentAppointmentTimeslot> getAppointmentTimeslots(Comment schedulingComment) {
+        return (List<CommentAppointmentTimeslot>) sessionFactory.getCurrentSession().createCriteria(CommentAppointmentTimeslot.class) //
+                .add(Restrictions.eq("comment", schedulingComment)) //
+                .addOrder(Order.asc("dateTime")) //
+                .list();
+    }
+
     public List<CommentAppointmentTimeslot> getAppointmentPreferences(Comment schedulingComment, Comment preferenceComment) {
         return (List<CommentAppointmentTimeslot>) sessionFactory.getCurrentSession().createCriteria(CommentAppointmentTimeslot.class) //
                 .createAlias("appointmentPreferences", "appointmentPreference", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("comment", schedulingComment)) //
                 .add(Restrictions.eq("appointmentPreference.comment", preferenceComment)) //
+                .addOrder(Order.asc("dateTime")) //
                 .list();
     }
-    
+
+    public List<CommentAssignedUser> getAssignedSupervisors(Comment comment) {
+        return (List<CommentAssignedUser>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("comment", comment)) //
+                .add(Restrictions.in("role.id", Lists.newArrayList(PrismRole.APPLICATION_PRIMARY_SUPERVISOR, //
+                        PrismRole.APPLICATION_SECONDARY_SUPERVISOR))) //
+                .addOrder(Order.asc("role.id")) //
+                .addOrder(Order.asc("user.lastName")) //
+                .addOrder(Order.asc("user.firstName")) //
+                .list();
+    }
+
+    public List<String> getDeclinedSupervisors(Comment assignmentComment) {
+        return (List<String>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .setProjection(Projections.property("user.email")) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .add(Restrictions.ge("createdTimestamp", assignmentComment.getCreatedTimestamp())) //
+                .add(Restrictions.eq("action.id", PrismAction.APPLICATION_ASSIGN_SUPERVISORS)) //
+                .add(Restrictions.eq("recruiterAcceptAppointment", false)) //
+                .list();
+    }
+
 }

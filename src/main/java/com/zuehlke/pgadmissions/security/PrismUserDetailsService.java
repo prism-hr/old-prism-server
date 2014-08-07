@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
-public class PgAdmissionUserDetailsService implements UserDetailsService {
+public class PrismUserDetailsService implements UserDetailsService {
 
     @Autowired
     private UserService userService;

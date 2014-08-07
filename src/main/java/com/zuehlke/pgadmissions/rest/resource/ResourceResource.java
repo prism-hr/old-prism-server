@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.CommentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.ApplicationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.ProgramRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.ResourceListRowRepresentation;
@@ -163,13 +163,13 @@ public class ResourceResource {
     public void enrichApplicationRepresentation(Application application, ApplicationRepresentation applicationRepresentation) {
         List<User> interested = userService.getUsersInterestedInApplication(application);
         List<User> potentiallyInterested = userService.getUsersPotentiallyInterestedInApplication(application, interested);
-        List<UserRepresentation> interestedRepresentations = Lists.newArrayListWithCapacity(interested.size());
-        List<UserRepresentation> potentiallyInterestedRepresentations = Lists.newArrayListWithCapacity(potentiallyInterested.size());
+        List<UserExtendedRepresentation> interestedRepresentations = Lists.newArrayListWithCapacity(interested.size());
+        List<UserExtendedRepresentation> potentiallyInterestedRepresentations = Lists.newArrayListWithCapacity(potentiallyInterested.size());
         for (User user : interested) {
-            interestedRepresentations.add(dozerBeanMapper.map(user, UserRepresentation.class));
+            interestedRepresentations.add(dozerBeanMapper.map(user, UserExtendedRepresentation.class));
         }
         for (User user : potentiallyInterested) {
-            potentiallyInterestedRepresentations.add(dozerBeanMapper.map(user, UserRepresentation.class));
+            potentiallyInterestedRepresentations.add(dozerBeanMapper.map(user, UserExtendedRepresentation.class));
         }
         applicationRepresentation.setUsersInterestedInApplication(interestedRepresentations);
         applicationRepresentation.setUsersPotentiallyInterestedInApplication(potentiallyInterestedRepresentations);

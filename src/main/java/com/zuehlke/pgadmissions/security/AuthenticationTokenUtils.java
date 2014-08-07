@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.codec.Hex;
 
-public class TokenUtils {
+public class AuthenticationTokenUtils {
 
     public static final String MAGIC_KEY = "obfuscate";
 
@@ -19,7 +19,7 @@ public class TokenUtils {
         tokenBuilder.append(":");
         tokenBuilder.append(expires);
         tokenBuilder.append(":");
-        tokenBuilder.append(TokenUtils.computeSignature(userDetails, expires));
+        tokenBuilder.append(AuthenticationTokenUtils.computeSignature(userDetails, expires));
 
         return tokenBuilder.toString();
     }
@@ -32,7 +32,7 @@ public class TokenUtils {
         signatureBuilder.append(":");
         signatureBuilder.append(userDetails.getPassword());
         signatureBuilder.append(":");
-        signatureBuilder.append(TokenUtils.MAGIC_KEY);
+        signatureBuilder.append(AuthenticationTokenUtils.MAGIC_KEY);
 
         MessageDigest digest;
         try {
@@ -62,6 +62,6 @@ public class TokenUtils {
             return false;
         }
 
-        return signature.equals(TokenUtils.computeSignature(userDetails, expires));
+        return signature.equals(AuthenticationTokenUtils.computeSignature(userDetails, expires));
     }
 }

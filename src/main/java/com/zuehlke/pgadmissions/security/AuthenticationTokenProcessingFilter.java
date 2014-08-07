@@ -20,10 +20,10 @@ import com.zuehlke.pgadmissions.domain.User;
 
 public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
 
-    private final UserDetailsService userService;
+    private final UserDetailsService userDetailsService;
 
     public AuthenticationTokenProcessingFilter(UserDetailsService userService) {
-        this.userService = userService;
+        this.userDetailsService = userService;
     }
 
     @Override
@@ -31,14 +31,14 @@ public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
         HttpServletRequest httpRequest = this.getAsHttpRequest(request);
 
         String authToken = this.extractAuthTokenFromRequest(httpRequest);
-        String userName = TokenUtils.getUserNameFromToken(authToken);
+        String userName = AuthenticationTokenUtils.getUserNameFromToken(authToken);
 
         if (userName != null) {
 
-            UserDetails userDetails = this.userService.loadUserByUsername(userName);
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
             ((User)userDetails).toString();
 
-            if (TokenUtils.validateToken(authToken, userDetails)) {
+            if (AuthenticationTokenUtils.validateToken(authToken, userDetails)) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
                 SecurityContextHolder.getContext().setAuthentication(authentication);

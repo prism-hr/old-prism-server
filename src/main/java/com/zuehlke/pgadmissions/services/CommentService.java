@@ -45,19 +45,6 @@ public class CommentService {
         return entityService.getById(Comment.class, id);
     }
 
-    public void save(Comment comment) {
-        List<CommentAssignedUser> assignedUsers = Lists.newArrayList(comment.getAssignedUsers());
-        comment.getAssignedUsers().clear();
-
-        entityService.save(comment);
-
-        for (CommentAssignedUser assignedUser : assignedUsers) {
-            assignedUser.setComment(comment);
-            entityService.save(assignedUser);
-            comment.getAssignedUsers().add(assignedUser);
-        }
-    }
-
     public Comment getLatestComment(Resource resource) {
         return commentDAO.getLatestComment(resource);
     }

@@ -40,7 +40,7 @@ import org.apache.commons.beanutils.MethodUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import com.zuehlke.pgadmissions.services.StateService;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -67,10 +67,13 @@ public class ResourceResource {
     private ActionService actionService;
 
     @Autowired
-    private Mapper dozerBeanMapper;
-
-    @Autowired
     private RoleService roleService;
+    
+    @Autowired
+    private StateService stateService;
+    
+    @Autowired
+    private Mapper dozerBeanMapper;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @Transactional
@@ -99,7 +102,7 @@ public class ResourceResource {
         Optional<PrismAction> completeAction = Iterables.tryFind(permittedActions,
                 Predicates.compose(Predicates.containsPattern("^APPLICATION_COMPLETE_|APPLICATION_MOVE_TO_DIFFERENT_STAGE"), Functions.toStringFunction()));
         if (completeAction.isPresent()) {
-            representation.setNextStates(actionService.getAvailableNextStati(resource, completeAction.get()));
+            representation.setNextStates(stateService.getAvailableNextStates(resource, completeAction.get()));
         }
 
         // set list of available action enhancements (viewing and editing permissions)

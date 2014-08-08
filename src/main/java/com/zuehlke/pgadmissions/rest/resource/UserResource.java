@@ -97,7 +97,7 @@ public class UserResource {
         return "OK";
     }
 
-    @RequestMapping(value="/suggestion", method = RequestMethod.GET, params = "firstName")
+    @RequestMapping(value="/suggestion", method = RequestMethod.GET, params = "searchTerm")
     public List<UserRepresentation> getSimilarUsers(@RequestParam String searchTerm) {
         return userService.getSimilarUsers(searchTerm);
     }

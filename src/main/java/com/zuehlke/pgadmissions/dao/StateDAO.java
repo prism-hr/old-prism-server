@@ -112,13 +112,16 @@ public class StateDAO {
         for (Action propagateAction : pendingStateTransition.getStateTransition().getPropagatedActions()) {
             String propagateResourceName = propagateAction.getScope().getId().getLowerCaseName();
             String propagateResourceReference = propagateResourceName;
+            
+            Scope scope = pendingStateTransition.getStateTransition().getStateAction().getState().getScope();
+            Scope propagateScope = propagateAction.getScope();
 
-            if (pendingStateTransition.getStateTransition().getStateAction().getState().getScope().getPrecedence() > propagateAction.getScope().getPrecedence()) {
+            if (scope.getPrecedence() > propagateScope.getPrecedence()) {
                 propagateResourceReference = propagateResourceName + "s";
             }
 
             propagations.putAll(propagateAction, sessionFactory.getCurrentSession() //
-                    .createCriteria(propagateAction.getScope().getClass()) //
+                    .createCriteria(propagateScope.getId().getResourceClass()) //
                     .createAlias(propagateResourceReference, propagateResourceName, JoinType.INNER_JOIN) //
                     .createAlias(propagateResourceName + "state", "state", JoinType.INNER_JOIN) //
                     .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //

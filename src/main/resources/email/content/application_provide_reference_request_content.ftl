@@ -23,8 +23,8 @@
 				</h1>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
-						${applicant.firstName?html} ${applicant.lastName?html} has submitted an Application ${application.applicationNumber} for postgraduate research study at 
-						<a href="http://www.ucl.ac.uk/">University College London (UCL)</a> in ${application.projectOrProgramTitle}.
+						${applicant.firstName?html} ${applicant.lastName?html} has submitted an Application ${applicationCode} for postgraduate research study at
+						<a href="http://www.ucl.ac.uk/">University College London (UCL)</a> in ${projectOrProgramTitle}.
 					</font>
 				</p>
 				<p>
@@ -41,14 +41,14 @@
 					<!-- Button -->
 					<a style="text-decoration:none;" 
 						<#if !referee.user.enabled>
-							href="${host}/pgadmissions/register?activationCode=${referee.user.activationCode!}&directToUrl=${"/referee/addReferences?applicationId=${application.applicationNumber}"?url('ISO-8859-1')}">
+							href="${host}/pgadmissions/register?activationCode=${referee.user.activationCode!}&directToUrl=${"/referee/addReferences?applicationId=${applicationCode}"?url('ISO-8859-1')}">
 						<#else>
-							href="${host}/pgadmissions/referee/addReferences?applicationId=${application.applicationNumber}&activationCode=${referee.user.activationCode!}">
+							href="${host}/pgadmissions/referee/addReferences?applicationId=${applicationCode}&activationCode=${referee.user.activationCode!}">
 						</#if>
 						<img alt="Provide your reference" title="Provide your reference" width="147" height="33" src="${host}/pgadmissions/design/default/images/email/provide_reference.jpg"/>
 					</a>
 					<!-- Button -->
-					<a style="text-decoration:none;" href="${host}/pgadmissions/decline/reference?applicationId=${application.applicationNumber}&activationCode=${referee.user.activationCode!}">
+					<a style="text-decoration:none;" href="${host}/pgadmissions/decline/reference?applicationId=${applicationCode}&activationCode=${referee.user.activationCode!}">
 						<img alt="Decline to provide a reference" title="Decline to provide a reference" width="76" height="34" src="${host}/pgadmissions/design/default/images/email/decline.jpg"/>
 					</a>
 				</p>

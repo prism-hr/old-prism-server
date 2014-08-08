@@ -1,1 +1,1 @@
-Application ${resource.code} for UCL ${projectOrProgramTitle} - Outcome
+Application ${applicationCode} for UCL ${projectOrProgramTitle} - Outcome

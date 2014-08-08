@@ -1,11 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.annotation.Generated;
+import javax.persistence.*;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
@@ -16,6 +12,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 public class StateTransitionPending {
 
     @Id
+    @GeneratedValue
     private Integer id;
     
     @ManyToOne

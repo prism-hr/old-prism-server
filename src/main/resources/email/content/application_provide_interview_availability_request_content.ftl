@@ -23,7 +23,7 @@
 				</h1>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
-						We wish to schedule an interview in connection with Application ${application.applicationNumber} for ${application.projectOrProgramTitle}.
+						We wish to schedule an interview in connection with Application ${applicationCode} for ${projectOrProgramTitle}.
 					</font>
 				</p>
 				<p>
@@ -41,9 +41,9 @@
 					<!-- Button -->
 					<a style="text-decoration:none;" 
 						<#if !participant.user.enabled>
-							href="${host}/pgadmissions/register?activationCode=${participant.user.activationCode!}&directToUrl=${"/interviewVote?applicationId=${application.applicationNumber}"?url('ISO-8859-1')}">
+							href="${host}/pgadmissions/register?activationCode=${participant.user.activationCode!}&directToUrl=${"/interviewVote?applicationId=${applicationCode}"?url('ISO-8859-1')}">
 						<#else>
-							href="${host}/pgadmissions/interviewVote?applicationId=${application.applicationNumber}&activationCode=${participant.user.activationCode!}">
+							href="${host}/pgadmissions/interviewVote?applicationId=${applicationCode}&activationCode=${participant.user.activationCode!}">
 						</#if>
 						<img alt="Confirm your availability for interview" title="Confirm your availability for interview" width="148" height="33" src="${host}/pgadmissions/design/default/images/email/confirm_availability.jpg" />
 					</a>

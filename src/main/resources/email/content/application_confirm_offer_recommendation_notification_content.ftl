@@ -18,12 +18,12 @@
             <td width="500">
                 <h1 style="font-size: 12pt;">
                     <font face="Arial, Helvetica, sans-serif" color="#0055A1">
-						Dear ${application.applicant.firstName},
+						Dear ${userFirstName},
 					</font>
                 </h1>
                 <p>
                     <font face="Arial, Helvetica, sans-serif" size="2">
-						Our Programme Director has completed their assessment of your Application ${application.applicationNumber} for ${application.projectOrProgramTitle}.
+						Our Programme Director has completed their assessment of your Application ${applicationCode} for ${projectOrProgramTitle}.
                     </font>
                 </p>
                 <p>
@@ -48,7 +48,7 @@
                 </p>
                 <p>
                     <font face="Arial, Helvetica, sans-serif" size="2">
-						UCL Admissions aim to be in contact with you within ${admissionOfferServiceLevel}. Should you have any further questions on your Application, you should now contact <a id="feedbackButton" href="mailto:admissions@ucl.ac.uk" target="_blank">UCL Admissions</a>.
+						UCL Admissions aim to be in contact with you within 5 working days. Should you have any further questions on your Application, you should now contact <a id="feedbackButton" href="mailto:admissions@ucl.ac.uk" target="_blank">UCL Admissions</a>.
                     </font>
                 </p>
                 <p>

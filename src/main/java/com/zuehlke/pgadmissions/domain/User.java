@@ -17,20 +17,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
-import org.apache.solr.analysis.LowerCaseFilterFactory;
-import org.apache.solr.analysis.StandardTokenizerFactory;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.AnalyzerDef;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Store;
-import org.hibernate.search.annotations.TokenFilterDef;
-import org.hibernate.search.annotations.TokenizerDef;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -40,10 +28,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@AnalyzerDef(name = "userAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
-        @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = LowerCaseFilterFactory.class),
-        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class) })
-@Indexed
 @Entity
 @Table(name = "USER")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -56,7 +40,6 @@ public class User implements UserDetails, IUniqueEntity {
     private Integer id;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
-    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.YES)
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
@@ -69,12 +52,10 @@ public class User implements UserDetails, IUniqueEntity {
     private String firstName3;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
-    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.YES)
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
-    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.YES)
     @Column(name = "email", nullable = false, unique = true)
     private String email;
     
@@ -88,9 +69,6 @@ public class User implements UserDetails, IUniqueEntity {
     @ManyToOne
     @JoinColumn(name = "parent_user_id")
     private User parentUser;
-    
-    @OneToMany(mappedBy = "parentUser")
-    private Set<User> childUsers = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
     private Set<UserRole> userRoles = Sets.newHashSet();
@@ -172,11 +150,7 @@ public class User implements UserDetails, IUniqueEntity {
     public final void setParentUser(User parentUser) {
         this.parentUser = parentUser;
     }
-
-    public final Set<User> getChildUsers() {
-        return childUsers;
-    }
-
+    
     public Set<UserRole> getUserRoles() {
         return userRoles;
     }

@@ -3,15 +3,12 @@ package com.zuehlke.pgadmissions.dao;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.lucene.search.Query;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.search.FullTextSession;
-import org.hibernate.search.Search;
-import org.hibernate.search.query.dsl.QueryBuilder;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -204,23 +201,26 @@ public class UserDAO {
     }
 
     public List<UserRepresentation> getSimilarUsers(String searchTerm) {
-        FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
-
-        QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(User.class).get();
-        Query query = queryBuilder.keyword().fuzzy().onFields("firstName", "lastName", "email").matching(searchTerm).createQuery();
-
-        Criteria filterCriteria = fullTextSession.createCriteria(User.class) //
-                .createAlias("childUsers", "childUser", JoinType.INNER_JOIN) //
-                .createAlias("childUser.userRoles", "userRole", JoinType.INNER_JOIN) //
+        return (List<UserRepresentation>) sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("firstName"), "firstName")
+                        .add(Projections.property("lastName"), "lastName")
+                        .add(Projections.groupProperty("email"), "email")) //
+                .createAlias("userRoles", "userRole", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("childUser.userAccount", "childUserAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.ne("userRole.role.id", PrismRole.APPLICATION_CREATOR)) //
-                .add(Restrictions.disjunction().add(Restrictions.isNull("user.userAccount")).add(Restrictions.eq("userAccount.enabled", true))) //
-                .add(Restrictions.disjunction().add(Restrictions.isNull("childUser.userAccount")).add(Restrictions.eq("childUserAccount.enabled", true)));
-
-        return fullTextSession.createFullTextQuery(query, User.class) //
-                .setProjection("firstName", "lastName", "email") //
-                .setCriteriaQuery(filterCriteria).setMaxResults(10) //
+                .add(Restrictions.eqProperty("id", "parentUser.id")) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("userRole.id")) //
+                        .add(Restrictions.ne("userRole.role.id", PrismRole.APPLICATION_CREATOR))) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("userAccount")) //
+                        .add(Restrictions.eq("userAccount.enabled", true))) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.ilike("firstName", searchTerm, MatchMode.START)) //
+                        .add(Restrictions.ilike("lastName", searchTerm, MatchMode.START)) //
+                        .add(Restrictions.sqlRestriction("CONCAT(first_name, \" \", last_name) LIKE \"" + searchTerm + "%\"")) //
+                        .add(Restrictions.ilike("email", searchTerm, MatchMode.START))) //
+                .setMaxResults(10) //
                 .setResultTransformer(Transformers.aliasToBean(UserRepresentation.class)) //
                 .list();
     }

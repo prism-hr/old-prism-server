@@ -4,7 +4,7 @@ public class StateRepresentation {
 
     private String id;
 
-    private String displayName;
+    private String name;
 
     public String getId() {
         return id;
@@ -14,11 +14,11 @@ public class StateRepresentation {
         this.id = id;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getName() {
+        return name;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public void setName(String name) {
+        this.name = name;
     }
 }

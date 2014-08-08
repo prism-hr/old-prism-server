@@ -6,7 +6,7 @@ public class ActionRepresentation {
 
     private String category;
 
-    private String displayName;
+    private String name;
 
     public String getId() {
         return id;
@@ -24,11 +24,11 @@ public class ActionRepresentation {
         this.category = category;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getName() {
+        return name;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public void setName(String name) {
+        this.name = name;
     }
 }

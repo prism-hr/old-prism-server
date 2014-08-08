@@ -1,1 +1,1 @@
-Application ${resource.code} for UCL ${projectOrProgramTitle} - Pending Completion
+Application ${applicationCode} for UCL ${projectOrProgramTitle} - Pending Completion

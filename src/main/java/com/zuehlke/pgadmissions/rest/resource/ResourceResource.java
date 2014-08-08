@@ -175,6 +175,8 @@ public class ResourceResource {
 
         applicationRepresentation.setAppointmentTimeslots(commentService.getAppointmentTimeslots(application));
         applicationRepresentation.setAppointmentPreferences(commentService.getAppointmentPreferences(application));
+        applicationRepresentation.setOfferRecommendation(commentService.getOfferRecommendation(application));
+        applicationRepresentation.setSupervisors(commentService.getApplicationSupervisors(application));
     }
 
     @ModelAttribute

@@ -1,1 +1,1 @@
-REMINDER: ${resource.user.firstName} ${resource.user.lastName} Application ${resource.code} for UCL ${projectOrProgramTitle} - Reference Request
+REMINDER: ${resource.user.firstName} ${resource.user.lastName} Application ${applicationCode} for UCL ${projectOrProgramTitle} - Reference Request

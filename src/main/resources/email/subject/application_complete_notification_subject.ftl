@@ -1,1 +1,1 @@
-Application ${resource.code} for UCL ${projectOrProgramTitle}
+Application ${applicationCode} for UCL ${projectOrProgramTitle}

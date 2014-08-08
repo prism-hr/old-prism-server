@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import org.apache.commons.beanutils.MethodUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +29,6 @@ import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 
 @Service
@@ -282,6 +279,17 @@ public class StateService {
             transitionState = getById(PrismState.valueOf(stateGroup.toString() + "_COMPLETED"));
         }
         return stateDAO.getStateTransition(resource, evaluation, transitionState);
+    }
+
+    public StateTransition getApplicationProcessedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
+        PrismState transitionState = PrismState.valueOf(resource.getState().getId().toString() + "_COMPLETED");
+        if (comment.getAction().getId() == PrismAction.APPLICATION_WITHDRAW) {
+            transitionState = PrismState.APPLICATION_WITHDRAWN_COMPLETED;
+        }
+        if (resource.getInstitution().isUclInstitution() && resource.getState().getStateGroup().getId() != PrismStateGroup.APPLICATION_UNSUBMITTED) {
+            transitionState = PrismState.valueOf(transitionState.toString().replace("COMPLETED", "PENDING_EXPORT"));
+        }
+        return stateDAO.getStateTransition(resource, evaluation, getById(transitionState));
     }
 
     private void queuePropagatedStateTransitions(StateTransition stateTransition, Resource resource) {

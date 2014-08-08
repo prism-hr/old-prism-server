@@ -18,12 +18,12 @@
 			<td width="500">
 				<h1 style="font-size: 12pt;">
 					<font face="Arial, Helvetica, sans-serif" color="#0055A1">
-						Dear ${application.applicant.firstName},
+						Dear ${userFirstName},
 					</font>
 				</h1>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
-						We have assessed your Application ${application.applicationNumber} for ${application.projectOrProgramTitle} and we regret to inform you that it was unsucessful.
+						We have assessed your Application ${applicationCode} for ${projectOrProgramTitle} and we regret to inform you that it was unsucessful.
 					</font>
 				</p>
 				<p>

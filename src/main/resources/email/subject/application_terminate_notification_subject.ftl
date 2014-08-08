@@ -1,1 +1,1 @@
-Application ${resource.code} for UCL ${projectOrProgramTitle} - Termination
+Application ${applicationCode} for UCL ${projectOrProgramTitle} - Termination

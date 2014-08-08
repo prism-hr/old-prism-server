@@ -1,1 +1,1 @@
-Application ${resource.code} to create program for ${institutionName} - Outcome
+Application ${applicationCode} to create program for ${institutionName} - Outcome

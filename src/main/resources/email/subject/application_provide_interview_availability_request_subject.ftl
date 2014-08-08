@@ -1,1 +1,1 @@
-${resource.user.firstName} ${resource.user.lastName} Application ${resource.code} for UCL ${projectOrProgramTitle} - Interview Scheduling Request
+${resource.user.firstName} ${resource.user.lastName} Application ${applicationCode} for UCL ${projectOrProgramTitle} - Interview Scheduling Request

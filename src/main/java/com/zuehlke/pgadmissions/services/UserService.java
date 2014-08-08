@@ -236,13 +236,7 @@ public class UserService {
     }
     
     public List<UserRepresentation> getSimilarUsers(String searchTerm) {
-        String trimmedSearchTerm = StringUtils.trim(searchTerm);
-        
-        if (trimmedSearchTerm.length() >= 3) {
-            return userDAO.getSimilarUsers(trimmedSearchTerm);
-        }
-        
-        return Lists.newArrayList();
+        return userDAO.getSimilarUsers(searchTerm);
     }
     
 }

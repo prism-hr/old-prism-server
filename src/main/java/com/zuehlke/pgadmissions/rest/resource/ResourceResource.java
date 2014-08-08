@@ -167,17 +167,21 @@ public class ResourceResource {
         List<User> potentiallyInterested = userService.getUsersPotentiallyInterestedInApplication(application, interested);
         List<UserExtendedRepresentation> interestedRepresentations = Lists.newArrayListWithCapacity(interested.size());
         List<UserExtendedRepresentation> potentiallyInterestedRepresentations = Lists.newArrayListWithCapacity(potentiallyInterested.size());
+        
         for (User user : interested) {
             interestedRepresentations.add(dozerBeanMapper.map(user, UserExtendedRepresentation.class));
         }
+        
         for (User user : potentiallyInterested) {
             potentiallyInterestedRepresentations.add(dozerBeanMapper.map(user, UserExtendedRepresentation.class));
         }
+        
         applicationRepresentation.setUsersInterestedInApplication(interestedRepresentations);
         applicationRepresentation.setUsersPotentiallyInterestedInApplication(potentiallyInterestedRepresentations);
 
         applicationRepresentation.setAppointmentTimeslots(commentService.getAppointmentTimeslots(application));
         applicationRepresentation.setAppointmentPreferences(commentService.getAppointmentPreferences(application));
+        
         applicationRepresentation.setOfferRecommendation(commentService.getOfferRecommendation(application));
         applicationRepresentation.setSupervisors(commentService.getApplicationSupervisors(application));
     }

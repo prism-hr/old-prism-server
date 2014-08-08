@@ -145,6 +145,8 @@ public class SystemService {
         verifyBackwardCompatibility(StateGroup.class);
         initialiseStateGroups();
 
+        // FIXME - two separate transactions
+        
         logger.info("Initialising state definitions");
         verifyBackwardCompatibility(State.class);
         initialiseStates();

@@ -8,6 +8,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.google.common.base.Objects;
+
 @Entity
 @Table(name = "COMMENT_APPOINTMENT_PREFERENCE", uniqueConstraints = {@UniqueConstraint(columnNames = {"comment_id", "comment_appointment_timeslot_id"})})
 public class CommentAppointmentPreference {
@@ -52,4 +54,22 @@ public class CommentAppointmentPreference {
         this.appointmentTimeslot = appointmentTimeslot;
         return this;
     }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(comment, appointmentTimeslot);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        CommentAppointmentPreference other = (CommentAppointmentPreference) obj;
+        return Objects.equal(comment, other.getComment()) && Objects.equal(appointmentTimeslot, other.getAppointmentTimeslot());
+    }
+    
 }

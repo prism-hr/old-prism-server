@@ -16,14 +16,12 @@ import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
-import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -197,15 +195,6 @@ public class ActionDAO {
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();
     }
-
-    public List<PrismState> getAvailableNextStati(Resource resource, PrismAction action) {
-        return sessionFactory.getCurrentSession().createCriteria(StateTransition.class)
-                .setProjection(Projections.property("transitionState.id"))
-                .createAlias("stateAction", "stateAction")
-                .add(Restrictions.eq("stateAction.state", resource.getState()))
-                .add(Restrictions.eq("stateAction.action.id", action))
-                .list();
-	}
 
     public Action getFallbackAction(Resource resource) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(Scope.class) //

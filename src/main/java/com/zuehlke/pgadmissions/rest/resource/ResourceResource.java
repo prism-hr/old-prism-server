@@ -22,7 +22,11 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -35,17 +39,13 @@ import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.ApplicationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.ProgramRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.application.ResourceListRowRepresentation;
-import com.zuehlke.pgadmissions.services.*;
-import org.apache.commons.beanutils.MethodUtils;
-import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.CommentService;
+import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.StateService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
 @RequestMapping(value = {"api/{resourceScope}"})
@@ -67,10 +67,13 @@ public class ResourceResource {
     private ActionService actionService;
 
     @Autowired
-    private Mapper dozerBeanMapper;
-
-    @Autowired
     private RoleService roleService;
+    
+    @Autowired
+    private StateService stateService;
+    
+    @Autowired
+    private Mapper dozerBeanMapper;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @Transactional
@@ -99,7 +102,7 @@ public class ResourceResource {
         Optional<PrismAction> completeAction = Iterables.tryFind(permittedActions,
                 Predicates.compose(Predicates.containsPattern("^APPLICATION_COMPLETE_|APPLICATION_MOVE_TO_DIFFERENT_STAGE"), Functions.toStringFunction()));
         if (completeAction.isPresent()) {
-            representation.setNextStates(actionService.getAvailableNextStati(resource, completeAction.get()));
+            representation.setNextStates(stateService.getAvailableNextStates(resource, completeAction.get()));
         }
 
         // set list of available action enhancements (viewing and editing permissions)

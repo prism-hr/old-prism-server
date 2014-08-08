@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 
@@ -90,10 +89,6 @@ public class ActionService {
         enhancements.addAll(actionDAO.getGlobalActionEnhancements(resource, user));
         enhancements.addAll(actionDAO.getCustomActionEnhancements(resource, user));
         return Lists.newArrayList(enhancements);
-    }
-
-    public List<PrismState> getAvailableNextStati(Resource resource, PrismAction action){
-        return actionDAO.getAvailableNextStati(resource, action);
     }
     
     public ActionOutcome executeUserAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {

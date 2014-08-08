@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.util.List;
 import java.util.Set;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,15 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
-import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.rest.representation.AppointmentTimeslotRepresentation;
@@ -52,37 +50,15 @@ public class CommentService {
     public Comment getLatestComment(Resource resource) {
         return commentDAO.getLatestComment(resource);
     }
-
-    public Comment getLatestComment(Resource resource, Action action) {
-        return commentDAO.getLatestComment(resource, action);
-    }
-
-    public Comment getLatestComment(Resource resource, Action action, User user) {
-        return commentDAO.getLatestComment(resource, action, user);
-    }
-
+    
     public Comment getLatestComment(Resource resource, PrismAction actionId) {
-        Action action = actionService.getById(actionId);
-        return getLatestComment(resource, action);
-    }
-
-    public Comment getLatestComment(Resource resource, PrismAction actionId, User user) {
-        Action action = actionService.getById(actionId);
-        return commentDAO.getLatestComment(resource, action, user);
-    }
-
-
-    public void addAssignedUser(Comment comment, UserRole userRole) {
-        User user = userRole.getUser();
-        Role role = userRole.getRole();
-        
-        CommentAssignedUser transientAssignedUser = new CommentAssignedUser().withComment(comment).withUser(user).withRole(role);
-        CommentAssignedUser persistentAssignedUser = entityService.getDuplicateEntity(transientAssignedUser);
-        if (persistentAssignedUser == null) {
-            comment.withAssignedUser(user, role);
-        }
+        return commentDAO.getLatestComment(resource, actionId);
     }
     
+    public Comment getLatestComment(Resource resource, PrismAction actionId, User user, DateTime baseline) {
+        return commentDAO.getLatestComment(resource, actionId, user, baseline);
+    }
+
     public List<Comment> getVisibleComments(Resource resource, User user) {
         List<Comment> comments = Lists.newArrayList();
         if (!actionService.getPermittedActions(resource, user).isEmpty()) {
@@ -96,8 +72,7 @@ public class CommentService {
     }
 
     public List<AppointmentTimeslotRepresentation> getAppointmentTimeslots(Application application) {
-        Action schedulingAction = actionService.getById(PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
-        Comment schedulingComment = commentDAO.getLatestComment(application, schedulingAction);
+        Comment schedulingComment = commentDAO.getLatestComment(application, PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
 
         if (schedulingComment != null) {           
             List<AppointmentTimeslotRepresentation> schedulingOptions = Lists.newLinkedList();
@@ -112,8 +87,7 @@ public class CommentService {
     }
 
     public List<UserAppointmentPreferencesRepresentation> getAppointmentPreferences(Application application) {
-        Action schedulingAction = actionService.getById(PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
-        Comment schedulingComment = commentDAO.getLatestComment(application, schedulingAction);
+        Comment schedulingComment = commentDAO.getLatestComment(application, PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
         
         if (schedulingComment != null) {
             List<UserAppointmentPreferencesRepresentation> schedulingPreferences = Lists.newLinkedList();
@@ -124,7 +98,7 @@ public class CommentService {
     
                 List<Boolean> inviteePreferences = Lists.newLinkedList();
     
-                Comment preferenceComment = getLatestAppointmentPreferenceComment(application, invitee);
+                Comment preferenceComment = getLatestAppointmentPreferenceComment(application, schedulingComment, invitee);
                 List<CommentAppointmentTimeslot> inviteeResponses = commentDAO.getAppointmentPreferences(schedulingComment, preferenceComment);
                 for (CommentAppointmentTimeslot timeslot : commentDAO.getAppointmentTimeslots(schedulingComment)) {
                     inviteePreferences.add(inviteeResponses.contains(timeslot));
@@ -178,7 +152,7 @@ public class CommentService {
                 OfferRepresentation offerRepresentation = buildOfferRepresentation(sourceComment);
                 
                 User primarySupervisor = commentDAO.getAssignedUsers(sourceComment, PrismRole.APPLICATION_PRIMARY_SUPERVISOR).get(0);
-                sourceComment = getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS, primarySupervisor);
+                sourceComment = getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS, primarySupervisor, sourceComment.getCreatedTimestamp());
 
                 if (sourceComment != null) {
                     String positionTitle = sourceComment.getPositionTitle();
@@ -215,9 +189,10 @@ public class CommentService {
         return supervisors;
     }
 
-    private Comment getLatestAppointmentPreferenceComment(Application application, User user) {
-        Comment preferenceComment = getLatestComment(application, PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY, user);
-        return preferenceComment == null ? getLatestComment(application, PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY, user) : preferenceComment;
+    private Comment getLatestAppointmentPreferenceComment(Application application, Comment schedulingComment, User user) {
+        DateTime baseline = schedulingComment.getCreatedTimestamp();
+        Comment preferenceComment = getLatestComment(application, PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY, user, baseline);
+        return preferenceComment == null ? getLatestComment(application, PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY, user, baseline) : preferenceComment;
     }
 
     private OfferRepresentation buildOfferRepresentation(Comment sourceComment) {

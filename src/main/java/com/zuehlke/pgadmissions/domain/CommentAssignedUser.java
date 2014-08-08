@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -21,11 +22,11 @@ public class CommentAssignedUser implements IUniqueEntity {
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @ManyToOne
     @JoinColumn(name = "comment_id", insertable = false, updatable = false)
     private Comment comment;
-    
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -70,7 +71,7 @@ public class CommentAssignedUser implements IUniqueEntity {
         this.comment = comment;
         return this;
     }
-    
+
     public CommentAssignedUser withUser(User user) {
         this.user = user;
         return this;
@@ -80,7 +81,24 @@ public class CommentAssignedUser implements IUniqueEntity {
         this.role = role;
         return this;
     }
-    
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(comment, user, role);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        CommentAssignedUser other = (CommentAssignedUser) obj;
+        return Objects.equal(comment, other.getComment()) && Objects.equal(user, other.getUser()) && Objects.equal(role, other.getRole());
+    }
+
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();

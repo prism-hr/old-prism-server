@@ -15,6 +15,8 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import com.google.common.base.Objects;
+
 @Entity
 @Table(name = "COMMENT_APPOINTMENT_TIMESLOT", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "timeslot_datetime" }) })
 public class CommentAppointmentTimeslot {
@@ -62,4 +64,21 @@ public class CommentAppointmentTimeslot {
         return appointmentPreferences;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(comment, dateTime);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        CommentAppointmentTimeslot other = (CommentAppointmentTimeslot) obj;
+        return Objects.equal(comment, other.getComment()) && Objects.equal(dateTime, other.getDateTime());
+    }
+    
 }

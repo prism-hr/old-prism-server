@@ -44,6 +44,7 @@ import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
@@ -66,10 +67,13 @@ public class ResourceResource {
     private ActionService actionService;
 
     @Autowired
-    private Mapper dozerBeanMapper;
-
-    @Autowired
     private RoleService roleService;
+    
+    @Autowired
+    private StateService stateService;
+    
+    @Autowired
+    private Mapper dozerBeanMapper;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @Transactional
@@ -98,7 +102,7 @@ public class ResourceResource {
         Optional<PrismAction> completeAction = Iterables.tryFind(permittedActions,
                 Predicates.compose(Predicates.containsPattern("^APPLICATION_COMPLETE_"), Functions.toStringFunction()));
         if (completeAction.isPresent()) {
-            representation.setNextStates(actionService.getAvailableNextStati(resource, completeAction.get()));
+            representation.setNextStates(stateService.getAvailableNextStates(resource, completeAction.get()));
         }
 
         // set list of available action enhancements (viewing and editing permissions)

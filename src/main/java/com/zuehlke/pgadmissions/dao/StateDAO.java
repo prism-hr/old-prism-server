@@ -22,7 +22,9 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 
 @Repository
@@ -197,4 +199,14 @@ public class StateDAO {
                 .setProjection(Projections.groupProperty("state")) //
                 .list();
     }
+    
+    public List<PrismState> getAvailableNextStates(Resource resource, PrismAction actionId) {
+        return sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
+                .setProjection(Projections.property("transitionState.id")) //
+                .createAlias("stateAction", "stateAction") //
+                .add(Restrictions.eq("stateAction.state", resource.getState())) //
+                .add(Restrictions.eq("stateAction.action.id", actionId)) //
+                .list();
+    }
+    
 }

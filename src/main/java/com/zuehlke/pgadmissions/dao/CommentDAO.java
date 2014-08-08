@@ -7,11 +7,11 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAppointmentTimeslot;
@@ -38,21 +38,22 @@ public class CommentDAO {
                 .uniqueResult();
     }
 
-    public Comment getLatestComment(Resource resource, Action action) {
+    public Comment getLatestComment(Resource resource, PrismAction actionId) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
-                .add(Restrictions.eq("action", action)) //
+                .add(Restrictions.eq("action.id", actionId)) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-
-    public Comment getLatestComment(Resource resource, Action action, User user) {
+    
+    public Comment getLatestComment(Resource resource, PrismAction actionId, User user, DateTime baseline) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
-                .add(Restrictions.eq("action", action)) //
+                .add(Restrictions.eq("action.id", actionId)) //
                 .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.ge("createdTimestamp", baseline)) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
@@ -136,4 +137,5 @@ public class CommentDAO {
                 .add(Restrictions.eq("role.id", roleId)) //
                 .list();
     }
+
 }

@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -196,6 +197,10 @@ public class StateService {
 
             lastResource = thisResource;
         }
+    }
+    
+    public List<PrismState> getAvailableNextStates(Resource resource, PrismAction actionId) {
+        return stateDAO.getAvailableNextStates(resource, actionId);
     }
 
     public StateTransition getApplicationEvaluatedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {

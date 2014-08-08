@@ -56,6 +56,10 @@ public class ApplicationRepresentation extends AbstractResourceRepresentation {
 
     private List<UserAppointmentPreferencesRepresentation> appointmentPreferences;
 
+    private OfferRepresentation offerRecommendation;
+
+    private List<ApplicationAssignedSupervisorRepresentation> supervisors;
+
     public InstitutionRepresentation getInstitution() {
         return institution;
     }
@@ -232,4 +236,19 @@ public class ApplicationRepresentation extends AbstractResourceRepresentation {
         this.appointmentPreferences = appointmentPreferences;
     }
 
+    public OfferRepresentation getOfferRecommendation() {
+        return offerRecommendation;
+    }
+
+    public void setOfferRecommendation(OfferRepresentation offerRecommendation) {
+        this.offerRecommendation = offerRecommendation;
+    }
+
+    public List<ApplicationAssignedSupervisorRepresentation> getSupervisors() {
+        return supervisors;
+    }
+
+    public void setSupervisors(List<ApplicationAssignedSupervisorRepresentation> supervisors) {
+        this.supervisors = supervisors;
+    }
 }

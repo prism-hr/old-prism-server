@@ -55,6 +55,8 @@ public class CommentDTO {
 
     private Set<Integer> appointmentPreferences;
 
+    private Boolean recruiterAcceptAppointment;
+
     private String positionTitle;
 
     private String positionDescription;
@@ -231,6 +233,14 @@ public class CommentDTO {
 
     public void setAppointmentPreferences(Set<Integer> appointmentPreferences) {
         this.appointmentPreferences = appointmentPreferences;
+    }
+
+    public Boolean getRecruiterAcceptAppointment() {
+        return recruiterAcceptAppointment;
+    }
+
+    public void setRecruiterAcceptAppointment(Boolean recruiterAcceptAppointment) {
+        this.recruiterAcceptAppointment = recruiterAcceptAppointment;
     }
 
     public String getPositionTitle() {

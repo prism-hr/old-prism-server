@@ -224,6 +224,16 @@ public class StateService {
         }
         return stateDAO.getStateTransition(resource, evaluation, getById(transitionState));
     }
+
+    public StateTransition getApplicationSupervisionConfirmedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
+        PrismState transitionState = PrismState.APPLICATION_APPROVAL_PENDING_FEEDBACK;
+        List<User> primarySupervisors = roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_PRIMARY_SUPERVISOR));
+        List<User> secondarySupervisors = roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_SECONDARY_SUPERVISOR));
+        if ((primarySupervisors.size() + secondarySupervisors.size()) == 1) {
+            transitionState = PrismState.APPLICATION_APPROVAL_PENDING_COMPLETION;
+        }
+        return stateDAO.getStateTransition(resource, evaluation, getById(transitionState));
+    }
     
     public StateTransition getApplicationInterviewScheduledOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
         State transitionState;

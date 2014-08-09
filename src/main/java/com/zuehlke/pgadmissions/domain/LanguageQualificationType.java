@@ -205,13 +205,6 @@ public class LanguageQualificationType implements ImportedEntity {
         this.enabled = enabled;
     }
 
-    public LanguageQualificationType withInitialData(Institution institution, String code, String name) {
-        this.institution = institution;
-        this.code = code;
-        this.name = name;
-        return this;
-    }
-
     public LanguageQualificationType withInstitution(Institution institution) {
         this.institution = institution;
         return this;

@@ -6,7 +6,6 @@ import java.util.TimeZone;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.definitions.ApplicationResidenceStatus;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -36,7 +35,7 @@ public class CommentRepresentation {
 
     private YesNoUnsureResponse competentInWorkLanguage;
 
-    private ApplicationResidenceStatus residenceStatus;
+    private String residenceState;
 
     private Boolean suitableForInstitution;
 
@@ -186,12 +185,12 @@ public class CommentRepresentation {
         this.competentInWorkLanguage = competentInWorkLanguage;
     }
 
-    public ApplicationResidenceStatus getResidenceStatus() {
-        return residenceStatus;
+    public final String getResidenceState() {
+        return residenceState;
     }
 
-    public void setResidenceStatus(ApplicationResidenceStatus residenceStatus) {
-        this.residenceStatus = residenceStatus;
+    public final void setResidenceState(String residenceState) {
+        this.residenceState = residenceState;
     }
 
     public Boolean getSuitableForInstitution() {

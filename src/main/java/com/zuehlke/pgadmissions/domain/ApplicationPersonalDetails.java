@@ -10,7 +10,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
@@ -41,7 +40,6 @@ public class ApplicationPersonalDetails {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_language_qualification_id")
-    @Valid
     private ApplicationLanguageQualification languageQualification;
 
     @Column(name = "visa_required", nullable = false)
@@ -52,7 +50,6 @@ public class ApplicationPersonalDetails {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_passport_id")
-    @Valid
     private ApplicationPassport passport;
 
     @ManyToOne

@@ -18,6 +18,11 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Store;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -42,6 +47,7 @@ public class Program extends Advert {
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     @Column(name = "title", nullable = false)
+    @Field(analyzer = @Analyzer(definition = "advertAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String title;
 
     @ManyToOne

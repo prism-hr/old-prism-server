@@ -9,7 +9,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.Valid;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
@@ -34,7 +33,6 @@ public class ApplicationEmploymentPosition {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id", nullable = false)
-    @Valid
     private Address employerAddress;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)

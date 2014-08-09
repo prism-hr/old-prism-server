@@ -14,6 +14,9 @@ public class InstitutionDTO {
 
     @NotEmpty
     private String homepage;
+    
+    @NotEmpty
+    private Integer logoDocumentId;
 
     @NotNull
     private InstitutionAddressDTO address;
@@ -43,6 +46,14 @@ public class InstitutionDTO {
 
     public void setHomepage(String homepage) {
         this.homepage = homepage;
+    }
+
+    public final Integer getLogoDocumentId() {
+        return logoDocumentId;
+    }
+
+    public final void setLogoDocumentId(Integer logoDocumentId) {
+        this.logoDocumentId = logoDocumentId;
     }
 
     public InstitutionAddressDTO getAddress() {

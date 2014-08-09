@@ -12,6 +12,8 @@ import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.ReferralSource;
+import com.zuehlke.pgadmissions.domain.RejectionReason;
+import com.zuehlke.pgadmissions.domain.ResidenceState;
 import com.zuehlke.pgadmissions.domain.Title;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Countries;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Disabilities;
@@ -24,6 +26,8 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Nationalities;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Qualifications;
+import com.zuehlke.pgadmissions.referencedata.jaxb.RejectionReasons;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ResidenceStates;
 import com.zuehlke.pgadmissions.referencedata.jaxb.SourcesOfInterest;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Titles;
 
@@ -40,8 +44,10 @@ public enum PrismImportedEntity {
     FUNDING_SOURCE(FundingSources.class, "fundingSource", FundingSource.class, "xml/defaultEntities/fundingSource.xml"), //
     LANGUAGE_QUALIFICATION_TYPE(LanguageQualificationTypes.class, "languageQualificationType", LanguageQualificationType.class, "xml/defaultEntities/languageQualificationType.xml"), //
     TITLE(Titles.class, "title", Title.class, "xml/defaultEntities/title.xml"), //
-    INSTITUTION(Institutions.class, "institution", ImportedInstitution.class, "reference_data/conflicts/institutions/institution.xml"), //
-    GENDER(Genders.class, "gender", Gender.class, "xml/defaultEntities/gender.xml");
+    INSTITUTION(Institutions.class, "institution", ImportedInstitution.class, "xml/defaultEntities/institution.xml"), //
+    GENDER(Genders.class, "gender", Gender.class, "xml/defaultEntities/gender.xml"),
+    REJECTION_REASON(RejectionReasons.class, "rejectionReason", RejectionReason.class, "xml/defaultEntities/rejectionReason.xml"),
+    RESIDENCE_STATE(ResidenceStates.class, "residenceState", ResidenceState.class, "xml/defaultEntities/residenceState.xml");
 
     private Class<?> jaxbClass;
 

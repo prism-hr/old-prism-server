@@ -23,8 +23,7 @@ public class DocumentService {
 
     @Autowired
     private EntityService entityService;
-
-    @Transactional(readOnly = true)
+    
     public Document getByid(Integer id) {
         return entityService.getById(Document.class, id);
     }

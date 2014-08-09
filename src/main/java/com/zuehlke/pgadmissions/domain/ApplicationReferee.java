@@ -10,7 +10,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.Valid;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -52,7 +51,6 @@ public class ApplicationReferee {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id", nullable = false)
-    @Valid
     private Address address;
 
     @Column(name = "include_in_export", nullable = false)

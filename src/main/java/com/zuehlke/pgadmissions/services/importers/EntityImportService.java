@@ -175,7 +175,7 @@ public class EntityImportService {
         for (ImportedEntity entity : entities) {
             try {
                 thisBean.attemptInsert(entity);
-            } catch (ConstraintViolationException e) {
+            } catch (Exception e) {
                 try {
                     thisBean.attemptUpdateByCode(entityClass, institution, entity);
                 } catch (Exception e1) {

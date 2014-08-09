@@ -9,7 +9,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.exception.ConstraintViolationException;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;

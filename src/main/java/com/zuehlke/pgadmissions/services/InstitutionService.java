@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
@@ -26,10 +27,13 @@ import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 public class InstitutionService {
 
     @Autowired
-    private EntityService entityService;
-
-    @Autowired
     private InstitutionDAO institutionDAO;
+    
+    @Autowired
+    private DocumentService documentService;
+    
+    @Autowired
+    private EntityService entityService;
 
     @Autowired
     private ImportedEntityService importedEntityService;
@@ -75,8 +79,10 @@ public class InstitutionService {
         
         InstitutionDomicile institutionCountry = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
         
+        Document logoDocument = documentService.getByid(institutionDTO.getLogoDocumentId());
+        
         return new Institution().withSystem(systemService.getSystem()).withDomicile(institutionCountry).withAddress(institutionAddress)
-                .withName(institutionDTO.getName()).withHomepage(institutionDTO.getHomepage()).withUser(user);
+                .withName(institutionDTO.getName()).withHomepage(institutionDTO.getHomepage()).withLogoDocument(logoDocument).withUser(user);
     }
 
     public void save(Institution institution) {

@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import org.apache.commons.beanutils.MethodUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,11 @@ import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 
 @Service

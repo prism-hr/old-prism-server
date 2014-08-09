@@ -17,7 +17,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.Valid;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -74,43 +73,38 @@ public class Application extends Resource {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_program_detail_id", unique = true)
-    @Valid
     private ApplicationProgramDetails programDetails;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_address_id", unique = true)
-    @Valid
     private ApplicationAddress address;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
-    @Valid
     private List<ApplicationQualification> qualifications = new ArrayList<ApplicationQualification>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
-    @Valid
     private List<ApplicationEmploymentPosition> employmentPositions = new ArrayList<ApplicationEmploymentPosition>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
-    @Valid
     private List<ApplicationFunding> fundings = new ArrayList<ApplicationFunding>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
-    @Valid
     private List<ApplicationReferee> referees = new ArrayList<ApplicationReferee>();
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_document_id", unique = true)
-    @Valid
     private ApplicationDocument document;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_additional_information_id", unique = true)
-    @Valid
     private ApplicationAdditionalInformation additionalInformation;
+    
+    @Column(name = "do_retain", nullable = false)
+    private Boolean doRetain;
 
     @Column(name = "submitted_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -250,6 +244,14 @@ public class Application extends Resource {
         this.additionalInformation = additionalInformation;
     }
 
+    public final Boolean isDoRetain() {
+        return doRetain;
+    }
+
+    public final void setDoRetain(Boolean doRetain) {
+        this.doRetain = doRetain;
+    }
+
     public List<ApplicationQualification> getQualifications() {
         return qualifications;
     }
@@ -342,6 +344,11 @@ public class Application extends Resource {
 
     public Application withAdditionalInformation(ApplicationAdditionalInformation additionalInformation) {
         this.additionalInformation = additionalInformation;
+        return this;
+    }
+    
+    public Application withDoRetain(Boolean doRetain) {
+        this.doRetain = doRetain;
         return this;
     }
 

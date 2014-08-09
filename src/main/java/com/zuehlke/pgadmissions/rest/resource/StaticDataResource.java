@@ -38,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.Title;
-import com.zuehlke.pgadmissions.domain.definitions.ApplicationResidenceStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.rest.representation.application.ImportedEntityRepresentation;
@@ -113,7 +112,7 @@ public class StaticDataResource {
         staticData.put("institutionDomiciles", institutionDomiciles);
 
         // Display names for enum classes
-        for (Class<?> enumClass : new Class[]{PrismProgramType.class, YesNoUnsureResponse.class, ApplicationResidenceStatus.class}) {
+        for (Class<?> enumClass : new Class[]{PrismProgramType.class, YesNoUnsureResponse.class }) {
             List<EnumDefinition> definitions = Lists.newArrayListWithExpectedSize(enumClass.getEnumConstants().length);
             String simpleName = enumClass.getSimpleName();
             if (simpleName.startsWith("Prism")) {
@@ -180,6 +179,7 @@ public class StaticDataResource {
         return institutionRepresentations;
     }
 
+    @SuppressWarnings("unused")
     private class EnumDefinition {
 
         private String id;
@@ -199,4 +199,5 @@ public class StaticDataResource {
             return name;
         }
     }
+    
 }

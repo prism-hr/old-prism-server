@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
+import com.zuehlke.pgadmissions.integration.providers.ApplicationTestDataProvider;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
@@ -41,6 +41,9 @@ public class ApplicationFormCopyHelperTest {
 
     @Autowired
     private Validator validator;
+    
+    @Autowired
+    private ApplicationTestDataProvider applicationTestDataProvider;
 
     private PersonalDetailsValidator personalDetailsValidator;
     private LanguageQualificationValidator languageQualificationValidator;
@@ -52,14 +55,15 @@ public class ApplicationFormCopyHelperTest {
     private ApplicationCopyHelper applicationFormCopyHelper;
 
     @Test
-    public void shouldCopyApplicationForm() {
-        Application applicationForm = new ValidApplicationFormBuilder().build();
+    public void shouldCopyApplication() throws Exception {
+        Application application = new Application();
+        applicationTestDataProvider.fillWithData(application);
         State state = new State();
-        applicationForm.setState(state);
-        validateApplication(applicationForm);
+        application.setState(state);
+        validateApplication(application);
 
         Application newApplicationForm = new Application();
-        applicationFormCopyHelper.copyApplicationFormData(newApplicationForm, applicationForm);
+        applicationFormCopyHelper.copyApplicationFormData(newApplicationForm, application);
 
         validateApplication(newApplicationForm);
     }

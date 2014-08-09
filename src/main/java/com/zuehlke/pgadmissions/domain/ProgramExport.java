@@ -41,7 +41,7 @@ public class ProgramExport {
     private PrismProgramExportFormat format;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "program_export_program", joinColumns = { @JoinColumn(name = "program_export_id", nullable = false) })
+    @JoinTable(name = "program_export_program", joinColumns = @JoinColumn(name = "program_export_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "program_id", nullable = false))
     private Set<Program> programs = Sets.newHashSet();
 
     public Integer getId() {

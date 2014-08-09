@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,15 +11,18 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.Valid;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
+
+import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "APPLICATION_PROGRAM_DETAIL")
@@ -45,8 +49,12 @@ public class ApplicationProgramDetails {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_program_detail_id", nullable = false)
-    @Valid
     private List<ApplicationSupervisor> supervisors = new ArrayList<ApplicationSupervisor>();
+    
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "APPLICATION_OTHER_PROJECT", joinColumns = @JoinColumn(name = "application_program_detail_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "project_id", nullable = false))
+    private Set<OpportunityCategory> categories = Sets.newHashSet();
+
 
     @OneToOne(mappedBy = "programDetails")
     private Application application;

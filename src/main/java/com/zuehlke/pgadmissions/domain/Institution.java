@@ -68,7 +68,7 @@ public class Institution extends Resource {
     private InstitutionDomicile domicile;
 
     @Column(name = "name", nullable = false, unique = true)
-    @Field(analyzer = @Analyzer(definition = "institutionNameAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.YES)
+    @Field(analyzer = @Analyzer(definition = "institutionNameAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String name;
 
     @Column(name = "homepage", nullable = false)

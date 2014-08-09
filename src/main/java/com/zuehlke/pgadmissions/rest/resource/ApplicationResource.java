@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.ResidenceState;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
@@ -54,6 +55,7 @@ import com.zuehlke.pgadmissions.rest.validation.validator.CommentDTOValidator;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
@@ -62,6 +64,9 @@ public class ApplicationResource {
 
     @Autowired
     private EntityService entityService;
+    
+    @Autowired
+    private ImportedEntityService importedEntitytService;
 
     @Autowired
     private ApplicationService applicationService;
@@ -172,11 +177,12 @@ public class ApplicationResource {
         PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
         State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
+        ResidenceState residenceState = importedEntitytService.getByCode(ResidenceState.class, application.getInstitution(), commentDTO.getResidenceState());
         LocalDate positionProvisionalStartDate = commentDTO.getPositionProvisionalStartDate() == null ? null : commentDTO.getPositionProvisionalStartDate().toLocalDate();
         Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(userService.getCurrentUser())
                 .withAction(action).withCreatedTimestamp(new DateTime()).withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse()))
                 .withQualified(commentDTO.getQualified()).withCompetentInWorkLanguage(commentDTO.getCompetentInWorkLanguage())
-                .withResidenceStatus(commentDTO.getResidenceStatus()).withInterviewDateTime(commentDTO.getInterviewDateTime())
+                .withResidenceState(residenceState).withInterviewDateTime(commentDTO.getInterviewDateTime())
                 .withInterviewTimeZone(commentDTO.getInterviewTimeZone()).withInterviewDuration(commentDTO.getInterviewDuration())
                 .withInterviewerInstructions(commentDTO.getInterviewerInstructions()).withIntervieweeInstructions(commentDTO.getIntervieweeInstructions())
                 .withInterviewLocation(commentDTO.getInterviewLocation()).withSuitableForInstitution(commentDTO.getSuitableForInstitution())

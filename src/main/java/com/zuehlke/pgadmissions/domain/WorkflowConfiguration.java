@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -14,11 +16,13 @@ import javax.persistence.UniqueConstraint;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismConfiguration;
 
 @Entity
-@Table(name = "state_duration", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "state_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "state_id" }), @UniqueConstraint(columnNames = { "program_id", "state_id" }) })
-public class StateDuration extends WorkflowResourceConfiguration {
+@Table(name = "WORKFLOW_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "configuration_parameter" }),
+        @UniqueConstraint(columnNames = { "institution_id", "configuration_parameter" }),
+        @UniqueConstraint(columnNames = { "program_id", "configuration_parameter" }) })
+public class WorkflowConfiguration extends WorkflowResourceConfiguration {
 
     @Id
     @GeneratedValue
@@ -36,13 +40,16 @@ public class StateDuration extends WorkflowResourceConfiguration {
     @JoinColumn(name = "program_id")
     private Program program;
 
-    @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
-    private State state;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "configuration_parameter", nullable = false)
+    private PrismConfiguration parameter;
 
-    @Column(name = "day_duration", nullable = false)
-    private Integer duration;
+    @Column(name = "minimum_required")
+    private Integer minimumRequired;
     
+    @Column(name = "maximum_required")
+    private Integer maximumRequired;
+
     public Integer getId() {
         return id;
     }
@@ -51,37 +58,6 @@ public class StateDuration extends WorkflowResourceConfiguration {
         this.id = id;
     }
 
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
-    }
-
-    public Integer getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Integer duration) {
-        this.duration = duration;
-    }
-
-    public StateDuration withSystem(System system) {
-        this.system = system;
-        return this;
-    }
-    
-    public StateDuration withState(State state) {
-        this.state = state;
-        return this;
-    }
-    
-    public StateDuration withDuration(Integer duration) {
-        this.duration = duration;
-        return this;
-    }
-    
     @Override
     public System getSystem() {
         return system;
@@ -111,6 +87,50 @@ public class StateDuration extends WorkflowResourceConfiguration {
     public void setProgram(Program program) {
         this.program = program;
     }
+
+    public PrismConfiguration getParameter() {
+        return parameter;
+    }
+
+    public void setParameter(PrismConfiguration parameter) {
+        this.parameter = parameter;
+    }
+    
+    public final Integer getMinimumRequired() {
+        return minimumRequired;
+    }
+
+    public final void setMinimumRequired(Integer minimumRequired) {
+        this.minimumRequired = minimumRequired;
+    }
+
+    public final Integer getMaximumRequired() {
+        return maximumRequired;
+    }
+
+    public final void setMaximumRequired(Integer maximumRequired) {
+        this.maximumRequired = maximumRequired;
+    }
+
+    public WorkflowConfiguration withSystem(System system) {
+        this.system = system;
+        return this;
+    }
+    
+    public WorkflowConfiguration withParameter(PrismConfiguration parameter) {
+        this.parameter = parameter;
+        return this;
+    }
+    
+    public WorkflowConfiguration withMinimumRequired(Integer minimumRequired) {
+        this.minimumRequired = minimumRequired;
+        return this;
+    }
+    
+    public WorkflowConfiguration withMaximumRequired(Integer maximumRequired) {
+        this.maximumRequired = maximumRequired;
+        return this;
+    }
     
     @Override
     public ResourceSignature getResourceSignature() {
@@ -123,7 +143,7 @@ public class StateDuration extends WorkflowResourceConfiguration {
         } else if (program != null) {
             properties.put("program", program);
         }
-        properties.put("state", state);
+        properties.put("parameter", parameter);
         propertiesWrapper.add(properties);
         return new ResourceSignature(propertiesWrapper);
     }

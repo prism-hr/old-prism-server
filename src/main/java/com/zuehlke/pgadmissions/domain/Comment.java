@@ -24,7 +24,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.ApplicationResidenceStatus;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 
 @Entity
@@ -42,7 +41,7 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "institution_id")
     private Institution institution;
-    
+
     @ManyToOne
     @JoinColumn(name = "program_id")
     private Program program;
@@ -95,9 +94,9 @@ public class Comment {
     @Column(name = "application_competent_in_work_language")
     private YesNoUnsureResponse competentInWorkLanguage;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "application_residence_status")
-    private ApplicationResidenceStatus residenceStatus;
+    @ManyToOne
+    @JoinColumn(name = "application_residence_state_id")
+    private ResidenceState residenceState;
 
     @Column(name = "application_suitable_for_institution")
     private Boolean suitableForInstitution;
@@ -179,7 +178,7 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "action_on_parent_resource_id")
     private Action actionOnParentResource;
-    
+
     @Column(name = "creator_ip_address")
     private String creatorIpAddress;
 
@@ -198,7 +197,7 @@ public class Comment {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_id", nullable = false, unique = true)
     private Set<CommentAppointmentPreference> appointmentPreferences = Sets.newHashSet();
-    
+
     @OneToMany
     @JoinColumn(name = "comment_id")
     private Set<Document> documents = Sets.newHashSet();
@@ -226,7 +225,7 @@ public class Comment {
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
-    
+
     public Program getProgram() {
         return program;
     }
@@ -250,7 +249,7 @@ public class Comment {
     public void setApplication(Application application) {
         this.application = application;
     }
-    
+
     public User getUser() {
         return user;
     }
@@ -339,12 +338,12 @@ public class Comment {
         this.competentInWorkLanguage = competentInWorkLanguage;
     }
 
-    public ApplicationResidenceStatus getResidenceStatus() {
-        return residenceStatus;
+    public final ResidenceState getResidenceState() {
+        return residenceState;
     }
 
-    public void setResidenceStatus(ApplicationResidenceStatus residenceStatus) {
-        this.residenceStatus = residenceStatus;
+    public final void setResidenceState(ResidenceState residenceState) {
+        this.residenceState = residenceState;
     }
 
     public Boolean getSuitableForInstitution() {
@@ -598,7 +597,7 @@ public class Comment {
             addDocument(document);
         }
     }
-    
+
     public Resource getResource() {
         if (system != null) {
             return system;
@@ -611,7 +610,7 @@ public class Comment {
         }
         return application;
     }
-    
+
     public void setResource(Resource resource) {
         this.system = null;
         this.institution = null;
@@ -629,12 +628,12 @@ public class Comment {
         this.id = id;
         return this;
     }
-    
+
     public Comment withSystem(System system) {
         this.system = system;
         return this;
     }
-    
+
     public Comment withInstitution(Institution institution) {
         this.institution = institution;
         return this;
@@ -654,7 +653,7 @@ public class Comment {
         this.application = application;
         return this;
     }
-    
+
     public Comment withResource(Resource resource) {
         setResource(resource);
         return this;
@@ -704,33 +703,33 @@ public class Comment {
         this.positionTitle = positionTitle;
         return this;
     }
-    
+
     public Comment withExportRequest(String exportRequest) {
         this.exportRequest = exportRequest;
         return this;
     }
-    
+
     public Comment withExportResponse(String exportResponse) {
         this.exportResponse = exportResponse;
         return this;
     }
-    
+
     public Comment withExportReference(String exportReference) {
         this.exportReference = exportReference;
         return this;
     }
-    
+
     public Comment withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
         return this;
     }
-    
+
     public Comment withAssignedUser(User user, Role role) {
         CommentAssignedUser newAssignment = new CommentAssignedUser().withUser(user).withRole(role);
         assignedUsers.add(newAssignment);
         return this;
     }
-    
+
     public Comment withAssignedUsers(Set<CommentAssignedUser> assignedUsers) {
         for (CommentAssignedUser assignedUser : this.assignedUsers) {
             withAssignedUser(assignedUser.getUser(), assignedUser.getRole());
@@ -748,8 +747,8 @@ public class Comment {
         return this;
     }
 
-    public Comment withResidenceStatus(final ApplicationResidenceStatus residenceStatus) {
-        this.residenceStatus = residenceStatus;
+    public Comment withResidenceState(final ResidenceState residenceState) {
+        this.residenceState = residenceState;
         return this;
     }
 
@@ -819,8 +818,7 @@ public class Comment {
     }
 
     public boolean isApplicationCreatorEligibilityUncertain() {
-        return getResidenceStatus() == ApplicationResidenceStatus.UNSURE || getQualified() == YesNoUnsureResponse.UNSURE
-                || getCompetentInWorkLanguage() == YesNoUnsureResponse.UNSURE;
+        return getQualified() == YesNoUnsureResponse.UNSURE || getCompetentInWorkLanguage() == YesNoUnsureResponse.UNSURE;
     }
 
     public String getTooltipMessage(final String role) {

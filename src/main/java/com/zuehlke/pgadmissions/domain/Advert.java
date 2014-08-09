@@ -22,13 +22,35 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
+import org.apache.solr.analysis.LowerCaseFilterFactory;
+import org.apache.solr.analysis.SnowballPorterFilterFactory;
+import org.apache.solr.analysis.StandardTokenizerFactory;
+import org.apache.solr.analysis.StopFilterFactory;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.AnalyzerDef;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Parameter;
+import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.TokenFilterDef;
+import org.hibernate.search.annotations.TokenizerDef;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 
+@AnalyzerDef(name = "advertAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
+    @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
+    @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
+    @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class)})
+
 @Entity
 @Table(name = "ADVERT")
 @Inheritance(strategy = InheritanceType.JOINED)
+@Indexed
 public abstract class Advert extends Resource {
     
     @Id
@@ -40,6 +62,7 @@ public abstract class Advert extends Resource {
     private User user;
 
     @Column(name = "description")
+    @Field(analyzer = @Analyzer(definition = "advertAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String description;
     
     @Column(name = "immediate_start", nullable = false)
@@ -81,12 +104,11 @@ public abstract class Advert extends Resource {
     private List<AdvertClosingDate> closingDates = new ArrayList<AdvertClosingDate>();
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "OPPORTUNITY_CATEGORY", joinColumns = @JoinColumn(name = "advert_id"), inverseJoinColumns = @JoinColumn(name = "advert_opportunity_category_id"))
+    @JoinTable(name = "OPPORTUNITY_CATEGORY", joinColumns = @JoinColumn(name = "advert_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "advert_opportunity_category_id", nullable = false))
     private Set<OpportunityCategory> categories = Sets.newHashSet();
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "ADVERT_PREFERRED_RECRUITER", joinColumns = { @JoinColumn(name = "advert_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "institution_id", nullable = false) })
-    private Set<Institution> preferredRecruiters = Sets.newHashSet();
+    @OneToMany(mappedBy = "advert")
+    private Set<AdvertRecruitmentPreference> recruitmentPreferences = Sets.newHashSet();
     
     @Override
     public Integer getId() {
@@ -204,8 +226,8 @@ public abstract class Advert extends Resource {
         return categories;
     }
 
-    public Set<Institution> getPreferredRecruiters() {
-        return preferredRecruiters;
+    public Set<AdvertRecruitmentPreference> getRecruitmentPreferences() {
+        return recruitmentPreferences;
     }
 
     @Override

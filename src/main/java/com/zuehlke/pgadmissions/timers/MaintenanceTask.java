@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.timers;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,6 @@ import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 public class MaintenanceTask {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    private Boolean executingEscalatedStateTransitions;
     
     @Autowired
     private DocumentService documentService;
@@ -50,23 +47,6 @@ public class MaintenanceTask {
     @Scheduled(cron = "${maintenance.daily}")
     public void runDaily() {
         try {
-            logger.info("Deleting unused documents");
-            documentService.deleteOrphanDocuments();
-        } catch (Exception e) {
-            logger.info(e.getMessage());
-        }
-        
-        try {
-            logger.info("Escalating workflow transitions");
-            executingEscalatedStateTransitions = true;
-            stateService.executeEscalatedStateTransitions();
-        } catch (Exception e) {
-            logger.info(e.getMessage());
-        } finally {
-            executingEscalatedStateTransitions = false;
-        }
-        
-        try {
             logger.info("Sending update notifications.");
             notificationService.sendPendingUpdateNotifications();
         } catch (Exception e) {
@@ -79,10 +59,8 @@ public class MaintenanceTask {
     @Scheduled(cron = "${maintenance.ongoing}")
     public void runOngoing() {
         try {
-            if (BooleanUtils.isFalse(executingEscalatedStateTransitions)) {
-                logger.info("Flushing workflow transitions");
-                stateService.executePropagatedStateTransitions();
-            }
+            logger.info("Executing deferred workflow transitions");
+            stateService.executeDeferredStateTransitions();
         } catch (Exception e) {
             logger.info(e.getMessage());
         }
@@ -97,6 +75,13 @@ public class MaintenanceTask {
         try {
             logger.trace("Exporting ucl applications");
             applicationExportService.exportUclApplications();
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        }
+        
+        try {
+            logger.info("Deleting unused documents");
+            documentService.deleteOrphanDocuments();
         } catch (Exception e) {
             logger.info(e.getMessage());
         }

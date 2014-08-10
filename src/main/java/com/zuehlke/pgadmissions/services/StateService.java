@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -38,6 +39,8 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 @Service
 @Transactional
 public class StateService {
+    
+    private boolean executingEscalatedStateTransitions;
     
     private ThreadPoolExecutor transitioner = (ThreadPoolExecutor) Executors.newFixedThreadPool(1000);
     
@@ -283,29 +286,34 @@ public class StateService {
         }
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
-
-    public void executeEscalatedStateTransitions() {
-        executeThreadedStateTransitions(resourceService.getResourceEscalations(), systemService.getSystem().getUser());
-    }
     
-    public void executePropagatedStateTransitions() {
-        executeThreadedStateTransitions(resourceService.getResourceEscalations(), systemService.getSystem().getUser());
-    }
-    
-    private void executeThreadedStateTransitions(final HashMap<Resource, Action> transitions, final User invoker) {
-        for (final Resource resource : transitions.keySet()) {
-            final Action action = transitions.get(resource);
-            transitioner.submit(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Comment comment = new Comment().withResource(resource).withUser(invoker).withAction(action);
-                        executeStateTransition(resource, action, comment);
-                    } catch (WorkflowEngineException e) {
-                        throw new Error(e);
+    public void executeDeferredStateTransitions() {
+        HashMap<Resource, Action> transitions = Maps.newLinkedHashMap();
+        transitions.putAll(resourceService.getResourceEscalations());
+        
+        executingEscalatedStateTransitions = transitions.size() > 0;
+        
+        if (!executingEscalatedStateTransitions) {
+            transitions.putAll(resourceService.getResourcePropagations());
+            
+            final User invoker = systemService.getSystem().getUser();
+            
+            for (final Resource resource : transitions.keySet()) {
+                final Action action = transitions.get(resource);
+                
+                transitioner.submit(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        try {
+                            Comment comment = new Comment().withResource(resource).withUser(invoker).withAction(action);
+                            executeStateTransition(resource, action, comment);
+                        } catch (WorkflowEngineException e) {
+                            throw new Error(e);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     }
     

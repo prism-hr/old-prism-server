@@ -7,6 +7,7 @@ import java.util.Set;
 import org.apache.commons.beanutils.MethodUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -78,7 +79,7 @@ public class ResourceResource {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @Transactional
     public AbstractResourceRepresentation getResource(@PathVariable Integer id, @ModelAttribute ResourceDescriptor resourceDescriptor)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, AccessDeniedException {
         User currentUser = userService.getCurrentUser();
         Resource resource = entityService.getById(resourceDescriptor.getType(), id);
         if (resource == null) {
@@ -97,6 +98,9 @@ public class ResourceResource {
 
         // set list of available actions
         List<PrismAction> permittedActions = actionService.getPermittedActions(resource, currentUser);
+        if(permittedActions.isEmpty()){
+            throw new AccessDeniedException("You do not have permission to access the requested resource.");
+        }
         representation.setActions(permittedActions);
 
         Optional<PrismAction> completeAction = Iterables.tryFind(permittedActions,

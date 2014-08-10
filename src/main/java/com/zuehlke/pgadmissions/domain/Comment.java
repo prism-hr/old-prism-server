@@ -147,6 +147,10 @@ public class Comment {
 
     @Column(name = "application_recruiter_accept_appointment")
     private Boolean recruiterAcceptAppointment;
+    
+    @ManyToOne
+    @JoinColumn(name = "application_rejection_reason_id")
+    private RejectionReason rejectionReason;
 
     @Column(name = "application_rating")
     private Integer rating;
@@ -198,8 +202,8 @@ public class Comment {
     @JoinColumn(name = "comment_id", nullable = false, unique = true)
     private Set<CommentAppointmentPreference> appointmentPreferences = Sets.newHashSet();
 
-    @OneToMany
-    @JoinColumn(name = "comment_id")
+    @OneToMany(cascade= CascadeType.ALL)
+    @JoinColumn(name = "comment_id", nullable = false, unique = true)
     private Set<Document> documents = Sets.newHashSet();
 
     public Integer getId() {
@@ -474,6 +478,14 @@ public class Comment {
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
     }
 
+    public final RejectionReason getRejectionReason() {
+        return rejectionReason;
+    }
+
+    public final void setRejectionReason(RejectionReason rejectionReason) {
+        this.rejectionReason = rejectionReason;
+    }
+
     public Integer getRating() {
         return rating;
     }
@@ -586,18 +598,6 @@ public class Comment {
         return appointmentPreferences;
     }
 
-    public void addDocument(Document document) {
-        document.setReferenced(true);
-        this.documents.add(document);
-    }
-
-    public void setDocument(Document document) {
-        this.documents.clear();
-        if (document != null) {
-            addDocument(document);
-        }
-    }
-
     public Resource getResource() {
         if (system != null) {
             return system;
@@ -701,6 +701,11 @@ public class Comment {
 
     public Comment withPositionTitle(String positionTitle) {
         this.positionTitle = positionTitle;
+        return this;
+    }
+    
+    public Comment withRejectionReason(RejectionReason rejectionReason) {
+        this.rejectionReason = rejectionReason;
         return this;
     }
 

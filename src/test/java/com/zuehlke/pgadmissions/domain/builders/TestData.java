@@ -67,14 +67,14 @@ public class TestData {
     }
 
     public static Document aDocument() {
-        return new Document().withFileName("dupa").withContent(new byte[0]).withContentType("application/pdf").withReferenced(false)
-                .withType(DocumentType.CV);
+        return new Document().withFileName("dupa").withContent(new byte[0]).withContentType("application/pdf").withType(DocumentType.CV);
     }
 
-    public static ApplicationQualification aQualification(Application application, QualificationType qualificationType, Document document, ImportedInstitution institution) {
-        return new ApplicationQualification().withAwardDate(new LocalDate()).withGrade("").withTitle("").withLanguage("Abkhazian").withSubject("").withCompleted(true)
-                .withStartDate(new LocalDate()).withType(qualificationType).withApplication(application).withDocument(document).withIncludeInExport(false)
-                .withInstitution(institution);
+    public static ApplicationQualification aQualification(Application application, QualificationType qualificationType, Document document,
+            ImportedInstitution institution) {
+        return new ApplicationQualification().withAwardDate(new LocalDate()).withGrade("").withTitle("").withLanguage("Abkhazian").withSubject("")
+                .withCompleted(true).withStartDate(new LocalDate()).withType(qualificationType).withApplication(application).withDocument(document)
+                .withIncludeInExport(false).withInstitution(institution);
     }
 
 }

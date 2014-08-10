@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
@@ -20,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateDuration;
+import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
@@ -60,6 +63,9 @@ public class ResourceService {
 
     @Autowired
     private RoleService roleService;
+    
+    @Autowired
+    private StateService stateService;
 
     @Autowired
     private SystemService systemService;
@@ -163,6 +169,46 @@ public class ResourceService {
         }
         resource.setDueDate(dueDate);
         resource.setUpdatedTimestamp(new DateTime());
+    }
+    
+    public HashMap<Resource, Action> getResourceEscalations() {
+        LocalDate baseline = new LocalDate();
+        HashMap<Resource, Action> escalations = Maps.newHashMap();
+        
+        for (Action action : actionService.getEscalationActions()) {
+            List<Resource> resources = resourceDAO.getResourcesToEscalate(action, baseline);
+            
+            for (Resource resource : resources) {
+                escalations.put(resource, action);
+            }
+        }
+        
+        return escalations;
+    }
+    
+    public HashMap<Resource, Action> getResourcePropagations() {
+        HashMap<Resource, Action> propagations = Maps.newHashMap();
+        List<StateTransitionPending> stateTransitionsPending = stateService.getStateTransitionsPending();
+        
+        for (StateTransitionPending stateTransitionPending : stateTransitionsPending) {
+            PrismScope propagatorScope = stateTransitionPending.getResource().getResourceScope();
+            
+            for (Action action : stateTransitionPending.getStateTransition().getPropagatedActions()) {
+                List<Resource> resources = resourceDAO.getResourcesToPropagate(action, propagatorScope);
+                
+                for (Resource resource : resources) {
+                    if (!propagations.containsKey(resource)) {
+                        propagations.put(resource, action);
+                    }
+                }
+                
+                if (resources.isEmpty()) {
+                    entityService.delete(stateTransitionPending);
+                }
+            }
+        }
+        
+        return propagations;
     }
 
 }

@@ -337,7 +337,7 @@ public class SystemService {
     }
 
     private void initialiseStateActions() throws WorkflowConfigurationException {
-        if (stateService.getPendingStateTransitions().size() == 0) {
+        if (stateService.getStateTransitionsPending().size() == 0) {
             stateService.deleteStateActions();
 
             for (State state : stateService.getStates()) {

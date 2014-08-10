@@ -135,4 +135,8 @@ public class ActionService {
         return entityService.list(Action.class);
     }
 
-}
+    public List<Action> getEscalationActions() {
+        return actionDAO.getEscalationActions();
+    }
+    
+ }

@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import org.hibernate.SessionFactory;
-import org.joda.time.LocalDate;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -14,10 +14,14 @@ public class DocumentDAO {
     public void deleteOrphanDocuments() {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete Document " //
-                        + "where referenced = :referenced " //
+                    + "where comment is null "
+                        + "and applicationlanguageQualification is null "
+                        + "and applicationQualification is null "
+                        + "and applicationFunding is null "
+                        + "and applicationCv is null "
+                        + "and applicationPersonalStatement is null " //
                         + "and createdTimestamp <= :createdTimestamp") //
-                .setParameter("referenced", false) //
-                .setParameter("createdTimestamp", new LocalDate().minusDays(1)) //
+                .setParameter("createdTimestamp", new DateTime().minusDays(1)) //
                 .executeUpdate();
     }
 

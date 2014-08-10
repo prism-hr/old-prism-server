@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.UserUnusedEmail;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -181,13 +180,6 @@ public class UserDAO {
                 .add(Restrictions.eq("email", email)) //
                 .add(Restrictions.eq("userAccount.password", encryptionUtils.getMD5Hash(password))) //
                 .add(Restrictions.eq("enabled", true)) //
-                .uniqueResult();
-    }
-
-    public User getUserByUnusedEmailEmail(String email) {
-        return (User) sessionFactory.getCurrentSession().createCriteria(UserUnusedEmail.class) //
-                .setProjection(Projections.property("user")) //
-                .add(Restrictions.eq("email", email)) //
                 .uniqueResult();
     }
 

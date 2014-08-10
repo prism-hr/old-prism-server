@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import java.io.IOException;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,21 +40,14 @@ public class DocumentService {
         document.setContent(multipartFile.getBytes());
         document.setType(documentType);
         document.setFileData(multipartFile);
+        document.setUser(userService.getCurrentUser());
+        document.setCreatedTimestamp(new DateTime());
         
         return document;
     }
 
     public void deleteOrphanDocuments() {
         documentDAO.deleteOrphanDocuments();
-    }
-
-    public void replaceDocument(Document oldDocument, Document newDocument) {
-        if (oldDocument != null) {
-            oldDocument.setReferenced(false);
-        }
-        if (newDocument != null) {
-            newDocument.setReferenced(true);
-        }
     }
 
 }

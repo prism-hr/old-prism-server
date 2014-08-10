@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -10,12 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
+import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
@@ -37,7 +39,7 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 @Transactional
 public class StateService {
     
-    private ThreadPoolExecutor threadedStateTransitionPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1000);
+    private ThreadPoolExecutor transitioner = (ThreadPoolExecutor) Executors.newFixedThreadPool(1000);
     
     @Autowired
     private StateDAO stateDAO;
@@ -56,6 +58,9 @@ public class StateService {
 
     @Autowired
     private RoleService roleService;
+    
+    @Autowired
+    private ScopeService scopeService;
 
     @Autowired
     private SystemService systemService;
@@ -95,14 +100,6 @@ public class StateService {
         return stateDAO.getStateDuration(resource, resource.getState());
     }
 
-    public List<StateTransitionPending> getPendingStateTransitions() {
-        return stateDAO.getPendingStateTransitions();
-    }
-
-    public void executeEscalatedStateTransitions() {
-        executeThreadedStateTransitions(stateDAO.getEscalatedStateTransitions(), systemService.getSystem().getUser());
-    }
-
     public void deleteStateActions() {
         entityService.deleteAll(RoleTransition.class);
         entityService.deleteAll(StateTransition.class);
@@ -125,6 +122,14 @@ public class StateService {
 
     public List<State> getOrderedTransitionStates(State state, State... excludedTransitionStates) {
         return stateDAO.getOrderedTransitionStates(state, excludedTransitionStates);
+    }
+    
+    public List<StateTransitionPending> getStateTransitionsPending() {
+        List<StateTransitionPending> pendingStateTransitions = Lists.newArrayList();
+        for (Scope scope : scopeService.getScopesDescending()) {
+            pendingStateTransitions.addAll(stateDAO.getStateTransitionsPending(scope));
+        }
+        return pendingStateTransitions;
     }
     
     public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
@@ -151,7 +156,10 @@ public class StateService {
             }
             
             notificationService.sendUpdateNotifications(stateTransition.getStateAction(), resource, comment);
-            queuePropagatedStateTransitions(stateTransition, resource);
+
+            if (stateTransition.getPropagatedActions().size() > 0) {
+                entityService.save(new StateTransitionPending().withResource(resource).withStateTransition(stateTransition));
+            }
         }
 
         return stateTransition;
@@ -163,32 +171,14 @@ public class StateService {
         
         if (potentialStateTransitions.size() > 1) {
             try {
-                PrismTransitionEvaluation evaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation();
-                return (StateTransition) MethodUtils.invokeMethod(this, evaluation.getMethodName(), new Object[]{operative, comment});
+                PrismTransitionEvaluation transitionEvaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation();
+                return (StateTransition) MethodUtils.invokeMethod(this, transitionEvaluation.getMethodName(), new Object[]{operative, comment});
             } catch (Exception e) {
                 throw new Error(e);
             }
         }
         
         return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);
-    }
-    
-    public void executePropagatedStateTransitions() {
-        Resource lastResource = null;
-        for (StateTransitionPending pendingStateTransition : getPendingStateTransitions()) {
-            Resource thisResource = pendingStateTransition.getResource();
-
-            if (thisResource != lastResource) {
-                HashMultimap<Action, Resource> propagations = stateDAO.getPropagatedStateTransitions(pendingStateTransition);
-                executeThreadedStateTransitions(propagations, systemService.getSystem().getUser());
-
-                if (propagations.isEmpty()) {
-                    entityService.delete(pendingStateTransition);
-                }
-            }
-
-            lastResource = thisResource;
-        }
     }
     
     public List<PrismState> getAvailableNextStates(Resource resource, PrismAction actionId) {
@@ -294,27 +284,28 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 
-    private void queuePropagatedStateTransitions(StateTransition stateTransition, Resource resource) {
-        if (stateTransition.getPropagatedActions().size() > 0) {
-            entityService.save(new StateTransitionPending().withResource(resource).withStateTransition(stateTransition));
-        }
+    public void executeEscalatedStateTransitions() {
+        executeThreadedStateTransitions(resourceService.getResourceEscalations(), systemService.getSystem().getUser());
     }
-     
-    private void executeThreadedStateTransitions(final HashMultimap<Action, Resource> threadedStateTransitions, final User invoker) {
-        for (final Action action : threadedStateTransitions.keySet()) {
-            for (final Resource resource : threadedStateTransitions.get(action)) {
-                threadedStateTransitionPool.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Comment comment = new Comment().withResource(resource).withUser(invoker).withAction(action);
-                            executeStateTransition(resource, action, comment);
-                        } catch (WorkflowEngineException e) {
-                            throw new Error(e);
-                        }
+    
+    public void executePropagatedStateTransitions() {
+        executeThreadedStateTransitions(resourceService.getResourceEscalations(), systemService.getSystem().getUser());
+    }
+    
+    private void executeThreadedStateTransitions(final HashMap<Resource, Action> transitions, final User invoker) {
+        for (final Resource resource : transitions.keySet()) {
+            final Action action = transitions.get(resource);
+            transitioner.submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Comment comment = new Comment().withResource(resource).withUser(invoker).withAction(action);
+                        executeStateTransition(resource, action, comment);
+                    } catch (WorkflowEngineException e) {
+                        throw new Error(e);
                     }
-                });
-            }
+                }
+            });
         }
     }
     

@@ -31,6 +31,8 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.RejectionReason;
 import com.zuehlke.pgadmissions.domain.ResidenceState;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
@@ -59,12 +61,12 @@ import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
-@RequestMapping(value = {"api/applications"})
+@RequestMapping(value = { "api/applications" })
 public class ApplicationResource {
 
     @Autowired
     private EntityService entityService;
-    
+
     @Autowired
     private ImportedEntityService importedEntitytService;
 
@@ -106,7 +108,7 @@ public class ApplicationResource {
 
     @RequestMapping(value = "/{applicationId}/qualifications/{qualificationId}", method = RequestMethod.PUT)
     public void updateQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId,
-                                    @Valid @RequestBody ApplicationQualificationDTO qualificationDTO) {
+            @Valid @RequestBody ApplicationQualificationDTO qualificationDTO) {
         applicationService.saveQualification(applicationId, qualificationId, qualificationDTO);
     }
 
@@ -117,14 +119,14 @@ public class ApplicationResource {
 
     @RequestMapping(value = "/{applicationId}/employmentPositions", method = RequestMethod.POST)
     public Map<String, Object> createEmploymentPosition(@PathVariable Integer applicationId,
-                                                        @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
+            @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
         ApplicationEmploymentPosition employmentPosition = applicationService.saveEmploymentPosition(applicationId, null, employmentPositionDTO);
         return ImmutableMap.of("id", (Object) employmentPosition.getId());
     }
 
     @RequestMapping(value = "/{applicationId}/employmentPositions/{employmentPositionId}", method = RequestMethod.PUT)
     public void updateEmploymentPosition(@PathVariable Integer applicationId, @PathVariable Integer employmentPositionId,
-                                         @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
+            @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
         applicationService.saveEmploymentPosition(applicationId, employmentPositionId, employmentPositionDTO);
     }
 
@@ -177,10 +179,13 @@ public class ApplicationResource {
         PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
         State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
-        ResidenceState residenceState = importedEntitytService.getByCode(ResidenceState.class, application.getInstitution(), commentDTO.getResidenceState());
-        LocalDate positionProvisionalStartDate = commentDTO.getPositionProvisionalStartDate() == null ? null : commentDTO.getPositionProvisionalStartDate().toLocalDate();
-        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(userService.getCurrentUser())
-                .withAction(action).withCreatedTimestamp(new DateTime()).withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse()))
+        Institution institution = application.getInstitution();
+        ResidenceState residenceState = importedEntitytService.getByCode(ResidenceState.class, institution, commentDTO.getResidenceState());
+        RejectionReason rejectionReason = importedEntitytService.getByCode(RejectionReason.class, institution, commentDTO.getRejectionReason());
+        LocalDate positionProvisionalStartDate = commentDTO.getPositionProvisionalStartDate() == null ? null : commentDTO.getPositionProvisionalStartDate()
+                .toLocalDate();
+        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(userService.getCurrentUser()).withAction(action)
+                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse()))
                 .withQualified(commentDTO.getQualified()).withCompetentInWorkLanguage(commentDTO.getCompetentInWorkLanguage())
                 .withResidenceState(residenceState).withInterviewDateTime(commentDTO.getInterviewDateTime())
                 .withInterviewTimeZone(commentDTO.getInterviewTimeZone()).withInterviewDuration(commentDTO.getInterviewDuration())
@@ -189,7 +194,7 @@ public class ApplicationResource {
                 .withSuitableForOpportunity(commentDTO.getSuitableForOpportunity()).withDesireToInterview(commentDTO.getDesireToInterview())
                 .withDesireToRecruit(commentDTO.getDesireToRecruit()).withPositionTitle(commentDTO.getPositionTitle())
                 .withPositionDescription(commentDTO.getPositionDescription()).withPositionProvisionalStartDate(positionProvisionalStartDate)
-                .withAppointmentConditions(commentDTO.getAppointmentConditions()).withTransitionState(transitionState);
+                .withAppointmentConditions(commentDTO.getAppointmentConditions()).withTransitionState(transitionState).withRejectionReason(rejectionReason);
         if (commentDTO.getAppointmentTimeslots() != null) {
             for (DateTime dateTime : commentDTO.getAppointmentTimeslots()) {
                 CommentAppointmentTimeslot timeslot = new CommentAppointmentTimeslot();

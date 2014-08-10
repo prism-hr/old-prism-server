@@ -5,25 +5,31 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.BooleanType;
 import org.hibernate.type.DateType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 
 import freemarker.template.Template;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class ResourceDAO {
 
     private static final int RESOURCE_LIST_YEAR_RANGE = 2;
@@ -39,7 +45,6 @@ public class ResourceDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    @SuppressWarnings("unchecked")
     public <T extends Resource> List<ResourceConsoleListRowDTO> getConsoleListBlock(User user, Class<T> resourceType, int page, int perPage) {
         return (List<ResourceConsoleListRowDTO>) sessionFactory.getCurrentSession().createSQLQuery(getResourceListBlockSelect(user, resourceType, page, perPage))
                 .addScalar("id", IntegerType.INSTANCE)
@@ -59,7 +64,31 @@ public class ResourceDAO {
                 .setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowDTO.class)) //
                 .list();
     }
+    
+    public List<Resource> getResourcesToEscalate(Action action, LocalDate baseline) {
+        return (List<Resource>) sessionFactory.getCurrentSession().createCriteria(action.getScope().getId().getResourceClass()) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action") //
+                .add(Restrictions.eq("action", action)) //
+                .add(Restrictions.lt("dueDate", baseline)) //
+                .list();
+    }
+    
+    public List<Resource> getResourcesToPropagate(Action action, PrismScope propagatorScope) {
+        PrismScope propagatedScope = action.getScope().getId();
+        String propagatedAlias = propagatedScope.getLowerCaseName();
+        String propagatedReference = propagatorScope.getPrecedence() > propagatedScope.getPrecedence() ? propagatedAlias : propagatedAlias + "s";
 
+        return (List<Resource>) sessionFactory.getCurrentSession().createCriteria(propagatorScope.getResourceClass()) //
+                .createAlias(propagatedReference, propagatedAlias, JoinType.INNER_JOIN) //
+                .createAlias(propagatedAlias + ".state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("action", action)) //
+                .list();
+    }
+    
     private <T extends Resource> String getResourceListBlockSelect(User user, Class<T> resourceType, int page, int perPage) {
         String resourceTypeString = resourceType.getSimpleName();
 

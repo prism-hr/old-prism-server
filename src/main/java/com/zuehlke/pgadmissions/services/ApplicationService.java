@@ -322,7 +322,7 @@ public class ApplicationService {
             languageQualification.setWritingScore(languageQualificationDTO.getWritingScore());
             languageQualification.setSpeakingScore(languageQualificationDTO.getSpeakingScore());
             languageQualification.setListeningScore(languageQualificationDTO.getListeningScore());
-            languageQualification.setProofOfAward(proofOfAward);
+            languageQualification.setDocument(proofOfAward);
         }
 
         ApplicationPassportDTO passportDTO = personalDetailsDTO.getPassport();

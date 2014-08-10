@@ -202,4 +202,15 @@ public class ActionDAO {
                 .add(Restrictions.eq("id", resource.getResourceScope())) //
                 .uniqueResult();
 	}
+    
+    public List<Action> getEscalationActions() {
+        return (List<Action>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.property("action")) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("action.actionCategory", PrismActionCategory.ESCALATE_RESOURCE)) //
+                .addOrder(Order.desc("scope.precedence")) //
+                .list();
+    }
+    
 }

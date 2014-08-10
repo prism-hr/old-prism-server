@@ -46,7 +46,7 @@ public class ApplicationLanguageQualification {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "document_id", nullable = false)
-    private Document proofOfAward;
+    private Document document;
 
     public Integer getId() {
         return id;
@@ -112,12 +112,12 @@ public class ApplicationLanguageQualification {
         this.listeningScore = listeningScore;
     }
 
-    public Document getProofOfAward() {
-        return proofOfAward;
+    public Document getDocument() {
+        return document;
     }
 
-    public void setProofOfAward(Document proofOfAward) {
-        this.proofOfAward = proofOfAward;
+    public void setDocument(Document document) {
+        this.document = document;
     }
 
     public ApplicationLanguageQualification withType(LanguageQualificationType type) {
@@ -155,8 +155,8 @@ public class ApplicationLanguageQualification {
         return this;
     }
     
-    public ApplicationLanguageQualification withProofOfAward(Document proofOfAward) {
-        this.proofOfAward = proofOfAward;
+    public ApplicationLanguageQualification withDocument(Document document) {
+        this.document = document;
         return this;
     }
 

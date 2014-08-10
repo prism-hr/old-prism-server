@@ -106,11 +106,6 @@ public class UserService {
         }
         return user;
     }
-
-    public User getOrCreatedInvitedUser(String firstName, String lastName, String email) {
-        User duplicateUser = userDAO.getUserByUnusedEmailEmail(email);
-        return duplicateUser == null ? getOrCreateUser(firstName, lastName, email) : duplicateUser;
-    }
     
     public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource,
             List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {

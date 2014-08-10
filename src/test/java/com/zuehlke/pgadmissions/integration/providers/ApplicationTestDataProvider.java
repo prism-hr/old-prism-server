@@ -74,7 +74,7 @@ public class ApplicationTestDataProvider {
         languageQualification.setWritingScore("6");
         languageQualification.setSpeakingScore("6");
         languageQualification.setListeningScore("6");
-        languageQualification.setProofOfAward(testObjectProvider.get(Document.class));
+        languageQualification.setDocument(testObjectProvider.get(Document.class));
         personalDetails.setLanguageQualification(languageQualification);
         personalDetails.setResidenceCountry(testObjectProvider.get(Domicile.class));
         personalDetails.setVisaRequired(true);

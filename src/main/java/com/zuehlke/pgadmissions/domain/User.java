@@ -75,9 +75,9 @@ public class User implements UserDetails, IUniqueEntity {
 
     @OneToMany(mappedBy = "user")
     private Set<ProgramExport> programExports = Sets.newHashSet();
-
+    
     @OneToMany(mappedBy = "user")
-    private Set<UserUnusedEmail> unusedEmails = Sets.newHashSet();
+    private Set<Document> documents = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -159,12 +159,12 @@ public class User implements UserDetails, IUniqueEntity {
         return programExports;
     }
 
-    public final Set<UserUnusedEmail> getUnusedEmails() {
-        return unusedEmails;
+    public final Set<Document> getDocuments() {
+        return documents;
     }
 
-    public final void setUnusedEmails(Set<UserUnusedEmail> unusedEmails) {
-        this.unusedEmails = unusedEmails;
+    public final void setDocuments(Set<Document> documents) {
+        this.documents = documents;
     }
 
     public String getDisplayName() {

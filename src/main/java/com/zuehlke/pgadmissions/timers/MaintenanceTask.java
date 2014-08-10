@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.timers;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ public class MaintenanceTask {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private Boolean executingEscalatedStateTransitions;
+    
     @Autowired
     private DocumentService documentService;
     
@@ -55,9 +58,12 @@ public class MaintenanceTask {
         
         try {
             logger.info("Escalating workflow transitions");
+            executingEscalatedStateTransitions = true;
             stateService.executeEscalatedStateTransitions();
         } catch (Exception e) {
             logger.info(e.getMessage());
+        } finally {
+            executingEscalatedStateTransitions = false;
         }
         
         try {
@@ -67,14 +73,16 @@ public class MaintenanceTask {
             logger.info(e.getMessage());
         }
         
-        // TODO: email requests & reminders
+        // TODO: request notifications
     }
     
     @Scheduled(cron = "${maintenance.ongoing}")
     public void runOngoing() {
         try {
-            logger.info("Flushing workflow transitions");
-            stateService.executePropagatedStateTransitions();
+            if (BooleanUtils.isFalse(executingEscalatedStateTransitions)) {
+                logger.info("Flushing workflow transitions");
+                stateService.executePropagatedStateTransitions();
+            }
         } catch (Exception e) {
             logger.info(e.getMessage());
         }

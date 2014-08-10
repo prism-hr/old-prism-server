@@ -6,6 +6,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -24,26 +27,46 @@ public class Document {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "created_timestamp", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime createdTimestamp;
-
+    @Column(name = "file_name", nullable = false)
+    private String fileName;
+    
+    @Column(name = "file_content", nullable = false)
+    @Type(type = "binary")
+    private byte[] content;
+    
     @Enumerated(EnumType.STRING)
     @Column(name = "document_type", nullable = false)
     private DocumentType type;
 
     @Column(name = "content_type", nullable = false)
     private String contentType;
-
-    @Column(name = "file_name", nullable = false)
-    private String fileName;
-
-    @Column(name = "file_content", nullable = false)
-    @Type(type = "binary")
-    private byte[] content;
-
-    @Column(name = "is_referenced", nullable = false)
-    private Boolean referenced = false;
+    
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+    
+    @ManyToOne
+    @JoinColumn(name = "comment_id", insertable = false, updatable = false)
+    private Comment comment;
+    
+    @Column(name = "created_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdTimestamp;
+    
+    @OneToOne(mappedBy = "document")
+    private ApplicationLanguageQualification applicationlanguageQualification;
+    
+    @OneToOne(mappedBy = "document")
+    private ApplicationQualification applicationQualification;
+    
+    @OneToOne(mappedBy = "document")
+    private ApplicationFunding applicationFunding;
+    
+    @OneToOne(mappedBy = "cv")
+    private ApplicationDocument applicationCv;
+    
+    @OneToOne(mappedBy = "personalStatement")
+    private ApplicationDocument applicationPersonalStatement;
 
     @Transient
     private MultipartFile fileData;
@@ -90,6 +113,14 @@ public class Document {
         this.type = type;
     }
 
+    public final User getUser() {
+        return user;
+    }
+
+    public final void setUser(User user) {
+        this.user = user;
+    }
+
     public DateTime getCreatedTimestamp() {
         return createdTimestamp;
     }
@@ -98,20 +129,36 @@ public class Document {
         this.createdTimestamp = createdTimestamp;
     }
 
+    public final Comment getComment() {
+        return comment;
+    }
+
+    public final ApplicationLanguageQualification getApplicationlanguageQualification() {
+        return applicationlanguageQualification;
+    }
+
+    public final ApplicationQualification getApplicationQualification() {
+        return applicationQualification;
+    }
+
+    public final ApplicationFunding getApplicationFunding() {
+        return applicationFunding;
+    }
+
+    public final ApplicationDocument getApplicationCv() {
+        return applicationCv;
+    }
+
+    public final ApplicationDocument getApplicationPersonalStatement() {
+        return applicationPersonalStatement;
+    }
+
     public MultipartFile getFileData() {
         return fileData;
     }
 
     public void setFileData(MultipartFile fileData) {
         this.fileData = fileData;
-    }
-
-    public boolean isReferenced() {
-        return referenced;
-    }
-
-    public void setReferenced(boolean referenced) {
-        this.referenced = referenced;
     }
 
     public Document withId(Integer id) {
@@ -141,11 +188,6 @@ public class Document {
 
     public Document withCreatedTimestamp(DateTime dateTime) {
         this.createdTimestamp = dateTime;
-        return this;
-    }
-    
-    public Document withReferenced(boolean referenced) {
-        this.referenced = referenced;
         return this;
     }
     

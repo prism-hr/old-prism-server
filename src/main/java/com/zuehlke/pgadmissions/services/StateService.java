@@ -296,9 +296,11 @@ public class StateService {
     public void executeDeferredStateTransitions() {
         marshalDeferredStateTransitions(resourceService.getResourceEscalations());
         marshalDeferredStateTransitions(resourceService.getResourcePropagations());
-        dispatchDeferredStateTransitions(escalationsPending); 
-        if (escalationsPending.isEmpty()) {
-            dispatchDeferredStateTransitions(propagationsPending);
+        
+        if (propagationsPending.isEmpty()) {
+            dispatchDeferredStateTransitions(escalationsPending);
+        } else if (escalationsPending.isEmpty()) {
+            dispatchDeferredStateTransitions(propagationsPending); 
         }
     }
 

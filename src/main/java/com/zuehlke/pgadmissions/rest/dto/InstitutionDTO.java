@@ -15,7 +15,7 @@ public class InstitutionDTO {
     @NotEmpty
     private String homepage;
     
-    @NotEmpty
+    @NotNull
     private Integer logoDocumentId;
 
     @NotNull

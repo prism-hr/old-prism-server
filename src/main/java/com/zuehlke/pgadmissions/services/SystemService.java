@@ -144,8 +144,6 @@ public class SystemService {
         logger.info("Initialising state group definitions");
         verifyBackwardCompatibility(StateGroup.class);
         initialiseStateGroups();
-
-        // FIXME - two separate transactions
         
         logger.info("Initialising state definitions");
         verifyBackwardCompatibility(State.class);
@@ -337,7 +335,7 @@ public class SystemService {
     }
 
     private void initialiseStateActions() throws WorkflowConfigurationException {
-        if (stateService.getStateTransitionsPending().size() == 0) {
+        if (!stateService.isDeferredStateTransitions()) {
             stateService.deleteStateActions();
 
             for (State state : stateService.getStates()) {
@@ -363,7 +361,7 @@ public class SystemService {
             verifyBackwardResourceCompatibility();
         } else {
             try {
-                stateService.executePropagatedStateTransitions();
+                stateService.executeDeferredStateTransitions();
                 Thread.sleep(100);
                 initialiseStateActions();
             } catch (InterruptedException e) {

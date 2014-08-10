@@ -1,7 +1,35 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.referencedata.jaxb.*;
+import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Disability;
+import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.Ethnicity;
+import com.zuehlke.pgadmissions.domain.FundingSource;
+import com.zuehlke.pgadmissions.domain.Gender;
+import com.zuehlke.pgadmissions.domain.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.QualificationType;
+import com.zuehlke.pgadmissions.domain.ReferralSource;
+import com.zuehlke.pgadmissions.domain.RejectionReason;
+import com.zuehlke.pgadmissions.domain.ResidenceState;
+import com.zuehlke.pgadmissions.domain.Title;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Countries;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Disabilities;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Domiciles;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Ethnicities;
+import com.zuehlke.pgadmissions.referencedata.jaxb.FundingSources;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Genders;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Institutions;
+import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Nationalities;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Qualifications;
+import com.zuehlke.pgadmissions.referencedata.jaxb.RejectionReasons;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ResidenceStates;
+import com.zuehlke.pgadmissions.referencedata.jaxb.SourcesOfInterest;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Titles;
 
 public enum PrismImportedEntity {
 

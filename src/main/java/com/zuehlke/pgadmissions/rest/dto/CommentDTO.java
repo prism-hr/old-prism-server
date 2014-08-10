@@ -66,6 +66,8 @@ public class CommentDTO {
 
     private Boolean declinedResponse;
 
+    private Integer rejectionReason;
+
     public PrismAction getAction() {
         return action;
     }
@@ -281,5 +283,12 @@ public class CommentDTO {
     public void setDeclinedResponse(Boolean declinedResponse) {
         this.declinedResponse = declinedResponse;
     }
-    
+
+    public Integer getRejectionReason() {
+        return rejectionReason;
+    }
+
+    public void setRejectionReason(Integer rejectionReason) {
+        this.rejectionReason = rejectionReason;
+    }
 }

@@ -73,7 +73,7 @@ public class MaintenanceTask {
         }
 
         try {
-            logger.trace("Exporting ucl applications");
+            logger.trace("Exporting applications");
             applicationExportService.exportUclApplications();
         } catch (Exception e) {
             logger.info(e.getMessage());

@@ -40,9 +40,11 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 @Transactional
 public class StateService {
     
-    private boolean executingEscalatedStateTransitions;
+    private final HashMap<Resource, Action> escalationsPending = Maps.newLinkedHashMap();
     
-    private ThreadPoolExecutor transitioner = (ThreadPoolExecutor) Executors.newFixedThreadPool(1000);
+    private final HashMap<Resource, Action> propagationsPending = Maps.newLinkedHashMap();
+    
+    private final ThreadPoolExecutor transitionRunner = (ThreadPoolExecutor) Executors.newFixedThreadPool(1000);
     
     @Autowired
     private StateDAO stateDAO;
@@ -287,33 +289,43 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
     
+    public boolean isDeferredStateTransitions() {
+        return !escalationsPending.isEmpty() || !propagationsPending.isEmpty();
+    }
+    
     public void executeDeferredStateTransitions() {
-        HashMap<Resource, Action> transitions = Maps.newLinkedHashMap();
-        transitions.putAll(resourceService.getResourceEscalations());
-        
-        executingEscalatedStateTransitions = transitions.size() > 0;
-        
-        if (!executingEscalatedStateTransitions) {
-            transitions.putAll(resourceService.getResourcePropagations());
-            
-            final User invoker = systemService.getSystem().getUser();
-            
-            for (final Resource resource : transitions.keySet()) {
-                final Action action = transitions.get(resource);
-                
-                transitioner.submit(new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                        try {
-                            Comment comment = new Comment().withResource(resource).withUser(invoker).withAction(action);
-                            executeStateTransition(resource, action, comment);
-                        } catch (WorkflowEngineException e) {
-                            throw new Error(e);
-                        }
-                    }
-                });
+        marshalDeferredStateTransitions(resourceService.getResourceEscalations());
+        marshalDeferredStateTransitions(resourceService.getResourcePropagations());
+        dispatchDeferredStateTransitions(escalationsPending); 
+        if (escalationsPending.isEmpty()) {
+            dispatchDeferredStateTransitions(propagationsPending);
+        }
+    }
+
+    private void marshalDeferredStateTransitions(HashMap<Resource, Action> transitions) {
+        for (Resource resource : transitions.keySet()) {
+            if (!escalationsPending.containsKey(resource)) {
+                escalationsPending.put(resource, transitions.get(resource));
             }
+        }
+    }
+
+    private void dispatchDeferredStateTransitions(final HashMap<Resource, Action> transitions) {
+        final User user = systemService.getSystem().getUser();
+        for (final Resource resource : transitions.keySet()) {
+            final Action action = transitions.get(resource);
+            transitionRunner.submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Comment comment = new Comment().withResource(resource).withUser(user).withAction(action);
+                        executeStateTransition(resource, action, comment);
+                        transitions.remove(resource);
+                    } catch (WorkflowEngineException e) {
+                        throw new Error(e);
+                    }
+                }
+            });
         }
     }
     

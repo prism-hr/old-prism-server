@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -54,21 +53,12 @@ public class StateDAO {
                 .list();
     }
 
-    public StateTransition getStateTransition(Resource resource, PrismTransitionEvaluation evaluation, State candidateTransitionState) {
+    public StateTransition getStateTransition(State state, Action action, PrismState transitionStateId) {
         return (StateTransition) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
-                .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("stateAction.state", resource.getState())) //
-                .add(Restrictions.eq("stateTransitionEvaluation", evaluation)) //
-                .add(Restrictions.eq("transitionState", candidateTransitionState)) //
-                .uniqueResult();
-    }
-
-    public StateTransition getStateTransition(State state, Action action, State transitionState) {
-        return (StateTransition) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
-                .createAlias("stateAction", "stateAction")
+                .createAlias("stateAction", "stateAction") //
                 .add(Restrictions.eq("stateAction.state", state)) //
                 .add(Restrictions.eq("stateAction.action", action)) //
-                .add(Restrictions.eq("transitionState", transitionState)) //
+                .add(Restrictions.eq("transitionState.id", transitionStateId)) //
                 .uniqueResult();
     }
 

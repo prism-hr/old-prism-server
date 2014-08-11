@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserNotification;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -128,9 +129,9 @@ public class NotificationService {
         
         for (UserNotificationDefinition definition : definitions) {
             PrismScope scopeId = definition.getNotificationTemplateId().getScope();
-            Integer userId = definition.getUserId();
+            Integer userId = definition.getUserRoleId();
             
-            User user = userService.getById(definition.getUserId());
+            User user = userService.getById(definition.getUserRoleId());
             if (!recipients.get(scopeId).contains(userId) && resourceService.hasVisibleResourcesWithUpdates(scopeId.getResourceClass(), user, baseline)) {
                 NotificationTemplate template = getById(definition.getNotificationTemplateId());
                 sendNotification(user, system, template);
@@ -147,13 +148,15 @@ public class NotificationService {
         List<UserNotificationDefinition> definitions = notificationDAO.getUpdateNotifications(stateAction, resource);
 
         for (UserNotificationDefinition definition : definitions) {
-            User user = userService.getById(definition.getUserId());
+            UserRole userRole = entityService.getById(UserRole.class, definition.getUserRoleId());
             NotificationTemplate notificationTemplate = entityService.getByProperty(NotificationTemplate.class, "id", definition.getNotificationTemplateId());
 
             if (notificationTemplate.getNotificationType() == PrismNotificationType.INDIVIDUAL) {
+                User user = userRole.getUser();
                 sendNotification(user, resource, notificationTemplate, ImmutableMap.of("author", comment.getUser().getDisplayName()));
+                notificationDAO.deleteUserNotifications(resource, user, notificationTemplate);
             } else {
-                UserNotification pending = new UserNotification().withUser(user).withNotificationTemplate(notificationTemplate).withCreatedDate(baseline);
+                UserNotification pending = new UserNotification().withUserRole(userRole).withNotificationTemplate(notificationTemplate).withCreatedDate(baseline);
                 entityService.getOrCreate(pending);
             }
         }
@@ -196,11 +199,16 @@ public class NotificationService {
             sendNotification(user, institution, template, ImmutableMap.of("message", errorMessage));
         }
     }
-
+    
     @Transactional
     public void deleteAllNotifications() {
         entityService.deleteAll(NotificationConfiguration.class);
         entityService.deleteAll(NotificationTemplateVersion.class);
+    }
+    
+    @Transactional
+    public void deleteUserNotifications(UserRole userRole) {
+        notificationDAO.deleteUserNotifications(userRole);
     }
 
     @Transactional

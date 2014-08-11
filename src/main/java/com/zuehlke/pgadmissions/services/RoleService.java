@@ -37,6 +37,9 @@ public class RoleService {
 
     @Autowired
     private EntityService entityService;
+    
+    @Autowired
+    private NotificationService notificationService;
 
     @Autowired
     private UserService userService;
@@ -64,42 +67,12 @@ public class RoleService {
         }
     }
 
-    public void removeUserRoles(Resource resource, User user, PrismRole... rolesToRemove) {
-        for (UserRole roleToRemove : roleDAO.getUserRoles(resource, user, rolesToRemove)) {
-            validateUserRoleRemoval(resource, roleToRemove.getRole());
-            for (UserNotification notificationToRemove : roleToRemove.getUserNotifications()) {
-                entityService.delete(notificationToRemove);
-            }
-            entityService.delete(roleToRemove);
-        }
-        reassignResourceOwner(resource);
-    }
-
-    private void validateUserRoleRemoval(Resource resource, Role roleToRemove) {
-        Role creatorRole = getCreatorRole(resource);
-        if (creatorRole == roleToRemove) {
-            List<User> creatorRoleAssignments = getRoleUsers(resource, creatorRole);
-            if (creatorRoleAssignments.size() == 1) {
-                throw new Error();
-            }
-        }
-    }
-
-    private void reassignResourceOwner(Resource resource) {
-        User owner = resource.getUser();
-        Role ownerRole = getCreatorRole(resource);
-        if (!hasUserRole(resource, owner, ownerRole.getId())) {
-            User newOwner = getRoleUsers(resource, ownerRole).get(0);
-            resource.setUser(newOwner);
-        }
-    }
-
     public void updateRoles(Resource resource, User user, List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
         for (AbstractResourceRepresentation.RoleRepresentation role : roles) {
             if (role.getValue()) {
                 getOrCreateUserRole(resource, user, role.getId());
             } else {
-                removeUserRoles(resource, user, role.getId());
+                deleteUserRoles(resource, user, role.getId());
             }
         }
     }
@@ -272,7 +245,7 @@ public class RoleService {
     private void executeRemoveUserRole(UserRole userRole) {
         UserRole persistentRole = entityService.getDuplicateEntity(userRole);
         if (persistentRole != null) {
-            entityService.delete(persistentRole);
+            deleteUserRoles(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole().getId());
         }
     }
     
@@ -281,13 +254,41 @@ public class RoleService {
                 || (roleDAO.getExcludingRoles(userRole, comment).isEmpty() && isRoleAssignmentPermitted(userRole));
     }
 
-    private void executeUpdateUserRole(UserRole userRole, UserRole transientTransitionRole) throws WorkflowEngineException {
+    private void executeUpdateUserRole(UserRole userRole, UserRole transitionRole) throws WorkflowEngineException {
         UserRole persistentRole = entityService.getDuplicateEntity(userRole);
         if (persistentRole == null) {
             throw new WorkflowEngineException();
         }
-        entityService.delete(persistentRole);
-        entityService.getOrCreate(transientTransitionRole);
+        deleteUserRoles(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole().getId());
+        entityService.getOrCreate(transitionRole);
+    }
+    
+    private void deleteUserRoles(Resource resource, User user, PrismRole... rolesToRemove) {
+        for (UserRole roleToRemove : roleDAO.getUserRoles(resource, user, rolesToRemove)) {
+            validateUserRoleRemoval(resource, roleToRemove.getRole());
+            notificationService.deleteUserNotifications(roleToRemove);
+            entityService.delete(roleToRemove);
+        }
+        reassignResourceOwner(resource);
+    }
+    
+    private void validateUserRoleRemoval(Resource resource, Role roleToRemove) {
+        Role creatorRole = getCreatorRole(resource);
+        if (creatorRole == roleToRemove) {
+            List<User> creatorRoleAssignments = getRoleUsers(resource, creatorRole);
+            if (creatorRoleAssignments.size() == 1) {
+                throw new Error();
+            }
+        }
+    }
+
+    private void reassignResourceOwner(Resource resource) {
+        User owner = resource.getUser();
+        Role ownerRole = getCreatorRole(resource);
+        if (!hasUserRole(resource, owner, ownerRole.getId())) {
+            User newOwner = getRoleUsers(resource, ownerRole).get(0);
+            resource.setUser(newOwner);
+        }
     }
 
 }

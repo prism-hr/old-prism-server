@@ -7,8 +7,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import org.bouncycastle.util.io.Streams;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,45 +16,33 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.definitions.DocumentType;
-import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.services.DocumentService;
 
 @RestController
 @RequestMapping("/api/files")
 public class FileResource {
 
     @Autowired
-    private EntityService entityService;
+    private DocumentService documentService;
 
     @RequestMapping(method = RequestMethod.POST)
-    public Map<String, Object> uploadFile(@RequestParam(value = "file-data") Part part) throws IOException {
-        Document document = new Document().withContent(Streams.readAll(part.getInputStream())).withContentType(part.getContentType()).withCreatedTimestamp(new DateTime()).withFileName(getFileName(part)).withType(DocumentType.COMMENT);
-        Integer id = (Integer) entityService.save(document);
-        return ImmutableMap.of("id", (Object) id);
+    public Map<String, Object> uploadFile(@RequestParam(value = "file-data") Part uploadStream) throws IOException {
+        Document document = documentService.create(uploadStream);
+        return ImmutableMap.of("id", (Object) document.getId());
     }
 
     @RequestMapping(value = "/{fileId}", method = RequestMethod.GET)
-    public void downloadFile(@PathVariable Integer fileId, HttpServletResponse response) throws IOException {
-        Document document = entityService.getById(Document.class, fileId);
+    public void downloadFile(@PathVariable(value = "fileId") Integer documentId, HttpServletResponse response) throws IOException {
+        Document document = documentService.getByid(documentId);
 
         response.setHeader("Content-Disposition", "attachment; filename=\"" + document.getFileName() + "\"");
         response.setHeader("File-Name", document.getFileName());
         response.setContentType(document.getContentType());
-//        response.setContentLength(document.getContent().length);
+        // TODO: reinstate? response.setContentLength(document.getContent().length);
 
         ServletOutputStream outputStream = response.getOutputStream();
         outputStream.write(document.getContent());
-//        response.flushBuffer();
-    }
-
-    private String getFileName(Part part) {
-        for (String cd : part.getHeader("content-disposition").split(";")) {
-            if (cd.trim().startsWith("filename")) {
-                return cd.substring(cd.indexOf('=') + 1).trim()
-                        .replace("\"", "");
-            }
-        }
-        return null;
+        // TODO: reinstate? response.flushBuffer();
     }
 
 }

@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -16,8 +14,6 @@ import org.bouncycastle.util.Arrays;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.zuehlke.pgadmissions.domain.definitions.DocumentType;
 
 @Entity
 @Table(name = "DOCUMENT")
@@ -33,10 +29,6 @@ public class Document {
     @Column(name = "file_content", nullable = false)
     @Type(type = "binary")
     private byte[] content;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name = "document_type", nullable = false)
-    private DocumentType type;
 
     @Column(name = "content_type", nullable = false)
     private String contentType;
@@ -103,14 +95,6 @@ public class Document {
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
-    }
-
-    public DocumentType getType() {
-        return type;
-    }
-
-    public void setType(DocumentType type) {
-        this.type = type;
     }
 
     public final User getUser() {
@@ -180,12 +164,12 @@ public class Document {
         this.contentType = contentType;
         return this;
     }
-
-    public Document withType(DocumentType type) {
-        this.type = type;
+    
+    public Document withUser(User user) {
+        this.user = user;
         return this;
     }
-
+    
     public Document withCreatedTimestamp(DateTime dateTime) {
         this.createdTimestamp = dateTime;
         return this;

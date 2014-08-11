@@ -49,7 +49,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.DocumentType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 
 public class PdfModelBuilder extends AbstractPdfModelBuilder {
@@ -77,9 +77,6 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
     private Map<Integer, Object> bookmarkMap = new HashMap<Integer, Object>();
 
     private HeaderEvent headerEvent;
-
-    public PdfModelBuilder() {
-    }
 
     public PdfModelBuilder includeReferences(final boolean flag) {
         this.includeReferences = flag;
@@ -597,8 +594,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 headerCell.setColspan(2);
                 table.addCell(headerCell);
                 table.addCell(newTableCell("Institution Country", SMALL_BOLD_FONT));
-                // TODO display country name rather than code
-                table.addCell(newTableCell(qualification.getInstitution().getDomicile().getCode(), SMALL_FONT));
+                table.addCell(newTableCell(qualification.getInstitution().getDomicile().getName(), SMALL_FONT));
 
                 table.addCell(newTableCell("Institution/Provider Name", SMALL_BOLD_FONT));
                 table.addCell(newTableCell(qualification.getInstitution().getName(), SMALL_FONT));
@@ -935,81 +931,78 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
             headerEvent.setAddHeaderAndFooter(true);
 
-            Object obj = bookmarkMap.get(integer);
-            if (obj instanceof com.zuehlke.pgadmissions.domain.Document) {
+            Object object = bookmarkMap.get(integer);
+            if (object instanceof com.zuehlke.pgadmissions.domain.Document) {
 
                 if (!includeAttachments) {
                     continue;
                 }
 
-                com.zuehlke.pgadmissions.domain.Document doc = (com.zuehlke.pgadmissions.domain.Document) obj;
-                if (doc != null) {
+                com.zuehlke.pgadmissions.domain.Document document = (com.zuehlke.pgadmissions.domain.Document) object;
+                if (document != null) {
                     pdfDocument.add(new Chunk("APPENDIX (" + integer + ")").setLocalDestination(integer.toString()));
 
-                    if (DocumentType.PERSONAL_STATEMENT == doc.getType()) {
+                    if (document.getApplicationPersonalStatement() != null) {
                         pdfDocument.add(new Chunk(" - Personal Statement"));
-                    } else if (DocumentType.CV == doc.getType()) {
+                    } else if (document.getApplicationCv() != null) {
                         pdfDocument.add(new Chunk(" - CV"));
-                    } else if (DocumentType.SUPPORTING_FUNDING == doc.getType()) {
+                    } else if (document.getApplicationFunding() != null) {
                         pdfDocument.add(new Chunk(" - Funding proof of award"));
-                    } else if (DocumentType.PROOF_OF_AWARD == doc.getType()) {
+                    } else if (document.getApplicationQualification() != null) {
                         pdfDocument.add(new Chunk(" - Qualification Transcript"));
-                    } else if (DocumentType.LANGUAGE_QUALIFICATION == doc.getType()) {
+                    } else if (document.getApplicationlanguageQualification() != null) {
                         pdfDocument.add(new Chunk(" - English Language Certificate"));
                     }
 
                     try {
-                        readPdf(pdfDocument, doc, pdfWriter);
+                        readPdf(pdfDocument, document, pdfWriter);
                     } catch (Exception e) {
-                        log.warn(
-                                String.format("Error in generating pdf while appending supporting document %s for %s", form.getCode(),
-                                        doc.getFileName()), e);
+                        log.warn(e.getMessage());
                     }
                 }
-            } else if (obj instanceof Comment) {
-                // TODO make sure it's only reference comment
-                Comment reference = (Comment) obj;
-                pdfDocument.add(new Chunk("APPENDIX (" + integer + ")").setLocalDestination(integer.toString()));
-
-                pdfDocument.add(new Chunk(" - Reference"));
-                pdfDocument.add(addSectionSeparators());
-                pdfDocument.add(addSectionSeparators());
-                pdfDocument.add(addSectionSeparators());
-                pdfDocument.add(addSectionSeparators());
-
-                PdfPTable table = new PdfPTable(1);
-                table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-                table.addCell(newGrayTableCell("REFERENCE", BOLD_FONT));
-                pdfDocument.add(table);
-                pdfDocument.add(addSectionSeparators());
-
-                table = new PdfPTable(2);
-                table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-                table.addCell(newTableCell("Referee", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(reference.getUser().getFirstName() + " " + reference.getUser().getLastName(), SMALL_FONT));
-                table.addCell(newTableCell("Comment", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(reference.getContent(), SMALL_FONT));
-                table.addCell(newTableCell("Is the applicant suitable for postgraduate study at UCL?", SMALL_BOLD_FONT));
-                if (BooleanUtils.isTrue(reference.getSuitableForInstitution())) {
-                    table.addCell(newTableCell("Yes", SMALL_FONT));
-                } else {
-                    table.addCell(newTableCell("No", SMALL_FONT));
-                }
-                table.addCell(newTableCell("Is the applicant suitable for their chosen postgraduate study programme?", SMALL_BOLD_FONT));
-                if (BooleanUtils.isTrue(reference.getSuitableForOpportunity())) {
-                    table.addCell(newTableCell("Yes", SMALL_FONT));
-                } else {
-                    table.addCell(newTableCell("No", SMALL_FONT));
-                }
-                pdfDocument.add(table);
-                for (com.zuehlke.pgadmissions.domain.Document refDocument : reference.getDocuments()) {
-                    try {
-                        readPdf(pdfDocument, refDocument, pdfWriter);
-                    } catch (Exception e) {
-                        log.warn(
-                                String.format("Error in generating pdf while appending supporting document %s for %s", form.getCode(),
-                                        refDocument.getFileName()), e);
+            } else if (object instanceof Comment) {
+                Comment reference = (Comment) object;
+                if (reference.getAction().getId() == PrismAction.APPLICATION_PROVIDE_REFERENCE) {
+                    pdfDocument.add(new Chunk("APPENDIX (" + integer + ")").setLocalDestination(integer.toString()));
+    
+                    pdfDocument.add(new Chunk(" - Reference"));
+                    pdfDocument.add(addSectionSeparators());
+                    pdfDocument.add(addSectionSeparators());
+                    pdfDocument.add(addSectionSeparators());
+                    pdfDocument.add(addSectionSeparators());
+    
+                    PdfPTable table = new PdfPTable(1);
+                    table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
+                    table.addCell(newGrayTableCell("REFERENCE", BOLD_FONT));
+                    pdfDocument.add(table);
+                    pdfDocument.add(addSectionSeparators());
+    
+                    table = new PdfPTable(2);
+                    table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
+                    table.addCell(newTableCell("Referee", SMALL_BOLD_FONT));
+                    table.addCell(newTableCell(reference.getUser().getFirstName() + " " + reference.getUser().getLastName(), SMALL_FONT));
+                    table.addCell(newTableCell("Comment", SMALL_BOLD_FONT));
+                    table.addCell(newTableCell(reference.getContent(), SMALL_FONT));
+                    table.addCell(newTableCell("Is the applicant suitable for postgraduate study at UCL?", SMALL_BOLD_FONT));
+                    if (BooleanUtils.isTrue(reference.getSuitableForInstitution())) {
+                        table.addCell(newTableCell("Yes", SMALL_FONT));
+                    } else {
+                        table.addCell(newTableCell("No", SMALL_FONT));
                     }
+                    table.addCell(newTableCell("Is the applicant suitable for their chosen postgraduate study programme?", SMALL_BOLD_FONT));
+                    if (BooleanUtils.isTrue(reference.getSuitableForOpportunity())) {
+                        table.addCell(newTableCell("Yes", SMALL_FONT));
+                    } else {
+                        table.addCell(newTableCell("No", SMALL_FONT));
+                    }
+                    pdfDocument.add(table);
+                    for (com.zuehlke.pgadmissions.domain.Document refDocument : reference.getDocuments()) {
+                        try {
+                            readPdf(pdfDocument, refDocument, pdfWriter);
+                        } catch (Exception e) {
+                            log.warn(e.getMessage());
+                        }
+                    }   
                 }
             }
         }

@@ -200,10 +200,10 @@ public class ApplicationCopyHelper {
             return null;
         }
         Document to = new Document();
-        to.setType(from.getType());
         to.setContentType(from.getContentType());
         to.setFileName(from.getFileName());
         to.setContent(from.getContent());
+        to.setUser(from.getUser());
         return to;
     }
 

@@ -29,7 +29,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
-import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
@@ -71,10 +70,6 @@ public class ProgramService {
     
     public void save(Program program) {
         entityService.save(program);
-    }
-
-    public List<ResourceConsoleListRowDTO> getProgramListBlock(Integer page, Integer perPage) {
-        return resourceService.getConsoleListBlock(Program.class, page, perPage);
     }
 
     public List<Program> getProgramsOpenForApplication() {

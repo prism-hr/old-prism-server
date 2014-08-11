@@ -127,7 +127,7 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                         .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
                 .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eq("userAccount.enabled", true))
+                .add(Restrictions.eq("userAccount.enabled", true)) //
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.asc("action.id")) //
                 .list();

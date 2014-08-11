@@ -33,8 +33,7 @@ public class ApplicationCopyHelper {
     private ImportedEntityService importedEntityService;
     
     @Transactional
-    public void copyApplicationFormData(Application to, Application from) {
-        
+    public void copyApplicationFormData(Application to, Application from) {  
         if (from.getPersonalDetails() != null) {
             ApplicationPersonalDetails personalDetails = new ApplicationPersonalDetails();
             to.setPersonalDetails(personalDetails);

@@ -56,7 +56,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
     private static final String NOT_REQUIRED = "Not Required";
 
-    private final Logger log = LoggerFactory.getLogger(PdfModelBuilder.class);
+    private final Logger logger = LoggerFactory.getLogger(PdfModelBuilder.class);
 
     private boolean includeCriminialConvictions = false;
 
@@ -177,7 +177,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             addSupportingDocuments(form, pdfDocument, pdfWriter);
 
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             throw new PdfDocumentBuilderException(e.getMessage(), e);
         }
     }
@@ -957,7 +957,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                     try {
                         readPdf(pdfDocument, document, pdfWriter);
                     } catch (Exception e) {
-                        log.warn(e.getMessage());
+                        logger.warn("Error reading PDF document", e.getMessage());
                     }
                 }
             } else if (object instanceof Comment) {
@@ -1000,7 +1000,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                         try {
                             readPdf(pdfDocument, refDocument, pdfWriter);
                         } catch (Exception e) {
-                            log.warn(e.getMessage());
+                            logger.warn("Error reading PDF document", e.getMessage());
                         }
                     }   
                 }

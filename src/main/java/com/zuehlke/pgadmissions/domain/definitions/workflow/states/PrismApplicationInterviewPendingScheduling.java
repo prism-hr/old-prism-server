@@ -422,10 +422,7 @@ public class PrismApplicationInterviewPendingScheduling extends PrismWorkflowSta
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION), // 
-                    new PrismStateActionNotification() // 
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION), //
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 
                         .withTemplate(PrismNotificationTemplate.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION), // 
@@ -581,9 +578,6 @@ public class PrismApplicationInterviewPendingScheduling extends PrismWorkflowSta
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION), // 
-                    new PrismStateActionNotification() // 
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
                         .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 

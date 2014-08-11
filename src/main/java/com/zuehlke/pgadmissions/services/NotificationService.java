@@ -5,12 +5,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -28,10 +29,10 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserNotification;
-import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinition;
 import com.zuehlke.pgadmissions.mail.MailMessageDTO;
 import com.zuehlke.pgadmissions.mail.MailSender;
@@ -49,6 +50,9 @@ public class NotificationService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ResourceService resourceService;
+    
     @Autowired
     private RoleService roleService;
 
@@ -108,29 +112,51 @@ public class NotificationService {
     public void deleteObseleteNotificationConfigurations() {
         notificationDAO.deleteObseleteNotificationConfigurations(getActionTemplatesToManage());
     }
-
+    
     @Transactional
-    public void sendUpdateNotifications(StateAction stateAction, Resource resource, Comment comment) {
-        DateTime baseline = new DateTime();
-        List<UserNotificationDefinition> definitions = notificationDAO.getUpdateNotifications(stateAction, resource);
+    public List<UserNotificationDefinition> getPendingUpdateNotifications(LocalDate baseline) {
+        return notificationDAO.getPendingUpdateNotifications(baseline);
+    }
+    
+    public void sendPendingNotifications() {
+        LocalDate baseline = new LocalDate();
+        Resource system = systemService.getSystem();
+        
+        HashMultimap<PrismScope, Integer> recipients = HashMultimap.create();
+        List<UserNotificationDefinition> definitions = Lists.newLinkedList();
+        definitions.addAll(getPendingUpdateNotifications(baseline));
         
         for (UserNotificationDefinition definition : definitions) {
-            UserRole userRole = entityService.getById(UserRole.class, definition.getUserRoleId());
-            NotificationTemplate notificationTemplate = entityService.getByProperty(NotificationTemplate.class, "id", definition.getNotificationTemplateId());
-
-            if (notificationTemplate.getNotificationType() == PrismNotificationType.INDIVIDUAL) {
-                sendNotification(userRole.getUser(), resource, notificationTemplate, ImmutableMap.of("author", comment.getUser().getDisplayName()));
-            } else {
-                UserNotification transientUserNotification = new UserNotification().withUserRole(userRole).withNotificationTemplate(notificationTemplate)
-                        .withCreatedTimestamp(baseline);
-                entityService.getOrCreate(transientUserNotification);
+            PrismScope scopeId = definition.getNotificationTemplateId().getScope();
+            Integer userId = definition.getUserId();
+            
+            User user = userService.getById(definition.getUserId());
+            if (!recipients.get(scopeId).contains(userId) && resourceService.hasVisibleResourcesWithUpdates(scopeId.getResourceClass(), user, baseline)) {
+                NotificationTemplate template = getById(definition.getNotificationTemplateId());
+                sendNotification(user, system, template);
             }
+            
+            updateUserNotification(definition, baseline);
+            recipients.put(scopeId, userId);
         }
     }
 
     @Transactional
-    public void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate) {
-        sendNotification(user, resource, notificationTemplate, Collections.<String, String> emptyMap());
+    public void sendUpdateNotifications(StateAction stateAction, Resource resource, Comment comment) {
+        LocalDate baseline = new LocalDate();
+        List<UserNotificationDefinition> definitions = notificationDAO.getUpdateNotifications(stateAction, resource);
+
+        for (UserNotificationDefinition definition : definitions) {
+            User user = userService.getById(definition.getUserId());
+            NotificationTemplate notificationTemplate = entityService.getByProperty(NotificationTemplate.class, "id", definition.getNotificationTemplateId());
+
+            if (notificationTemplate.getNotificationType() == PrismNotificationType.INDIVIDUAL) {
+                sendNotification(user, resource, notificationTemplate, ImmutableMap.of("author", comment.getUser().getDisplayName()));
+            } else {
+                UserNotification pending = new UserNotification().withUser(user).withNotificationTemplate(notificationTemplate).withCreatedDate(baseline);
+                entityService.getOrCreate(pending);
+            }
+        }
     }
 
     @Transactional
@@ -145,29 +171,16 @@ public class NotificationService {
 
         mailSender.sendEmail(message);
     }
-
+    
     @Transactional
-    public List<UserNotificationDefinition> getPendingUpdateNotifications() {
-        return notificationDAO.getPendingUpdateNotifications();
-    }
-
-    public void sendPendingUpdateNotifications() {
-        List<UserNotificationDefinition> definitions = getPendingUpdateNotifications();
-        for (UserNotificationDefinition definition : definitions) {
-            sendPendingNotification(definition);
-        }
+    public void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate) {
+        sendNotification(user, resource, notificationTemplate, Collections.<String, String> emptyMap());
     }
 
     @Transactional
-    public void sendPendingNotification(UserNotificationDefinition definition) {
-        UserRole userRole = entityService.getById(UserRole.class, definition.getUserRoleId());
-        NotificationTemplate template = entityService.getByProperty(NotificationTemplate.class, "id", definition.getNotificationTemplateId());
-
-        User user = userRole.getUser();
-        Resource resource = userRole.getResource();
-
-        sendNotification(user, resource, template);
-        deletePendingUpdateNotification(user, resource, template);
+    private void updateUserNotification(UserNotificationDefinition definition, LocalDate baseline) {
+        UserNotification userNotification = notificationDAO.getUserNotification(definition);
+        userNotification.setCreatedDate(baseline);
     }
 
     @Transactional
@@ -183,17 +196,10 @@ public class NotificationService {
         entityService.deleteAll(NotificationConfiguration.class);
         entityService.deleteAll(NotificationTemplateVersion.class);
     }
-    
-    @Transactional
-    private void deletePendingUpdateNotification(User user, Resource resource, NotificationTemplate template) {
-        List<UserRole> userRoles = roleService.getUpdateNotificationRoles(user, resource, template);
-        if (!userRoles.isEmpty()) {
-            notificationDAO.deletePendingUpdateNotification(userRoles);
-        }
-    }
 
     @Transactional
-    private Map<String, Object> createNotificationModel(User user, Resource resource, NotificationTemplateVersion notificationTemplate, Map<String, String> extraModelParams) {
+    private Map<String, Object> createNotificationModel(User user, Resource resource, NotificationTemplateVersion notificationTemplate,
+            Map<String, String> extraModelParams) {
         Map<String, Object> model = Maps.newHashMap();
         model.put("user", user);
         model.put("userFirstName", user.getFirstName());

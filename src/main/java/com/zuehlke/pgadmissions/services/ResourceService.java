@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
@@ -65,6 +66,9 @@ public class ResourceService {
     private RoleService roleService;
     
     @Autowired
+    private ScopeService scopeService;
+    
+    @Autowired
     private StateService stateService;
 
     @Autowired
@@ -73,9 +77,9 @@ public class ResourceService {
     @Autowired
     private UserService userService;
 
-    public <T extends Resource> List<ResourceConsoleListRowDTO> getConsoleListBlock(Class<T> resourceType, int page, int perPage) {
+    public <T extends Resource> List<ResourceConsoleListRowDTO> getConsoleListBlock(Class<T> resourceClass, int loadIndex) {
         // TODO: Build filter and integrate
-        return resourceDAO.getConsoleListBlock(userService.getCurrentUser(), resourceType, page, perPage);
+        return resourceDAO.getConsoleListBlock(userService.getCurrentUser(), resourceClass, scopeService.getParentScopes(resourceClass), loadIndex);
     }
 
     public <T extends Resource> List<ResourceReportListRowDTO> getReportList(Class<T> resourceType) {
@@ -208,6 +212,16 @@ public class ResourceService {
         }
         
         return propagations;
+    }
+    
+    public <T extends Resource> boolean hasVisibleResourcesWithUpdates(Class<T> resourceClass, User user, LocalDate baseline) {
+        List<Scope> roleScopes = Lists.newLinkedList();
+        roleScopes.add(scopeService.getByResourceClass(resourceClass));
+        roleScopes.addAll(scopeService.getParentScopes(resourceClass));
+        for (Scope roleScope : roleScopes) {
+            return resourceDAO.getVisibleResourceWithUpdateCount(resourceClass, roleScope, user, baseline) > 0;
+        }
+        return false;
     }
 
 }

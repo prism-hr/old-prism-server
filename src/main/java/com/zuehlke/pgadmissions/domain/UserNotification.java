@@ -13,13 +13,13 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @Entity
-@Table(name = "USER_NOTIFICATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_role_id", "notification_template_id" }) })
+@Table(name = "STATE_TRANSITION_NOTIFICATION_PENDING", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "notification_id" }) })
 public class UserNotification implements IUniqueEntity {
 
     @Id
@@ -27,16 +27,16 @@ public class UserNotification implements IUniqueEntity {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "user_role_id", nullable = false)
-    private UserRole userRole;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "notification_template_id", nullable = false)
     private NotificationTemplate notificationTemplate;
 
-    @Column(name = "created_timestamp", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime createdTimestamp;
+    @Column(name = "created_date", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate createdDate;
 
     public Integer getId() {
         return id;
@@ -46,53 +46,53 @@ public class UserNotification implements IUniqueEntity {
         this.id = id;
     }
 
-    public UserRole getUserRole() {
-        return userRole;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserRole(UserRole userRole) {
-        this.userRole = userRole;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public NotificationTemplate getNotificationTemplate() {
+    public final NotificationTemplate getNotificationTemplate() {
         return notificationTemplate;
     }
 
-    public void setNotificationTemplate(NotificationTemplate notificationTemplate) {
+    public final void setNotificationTemplate(NotificationTemplate notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
     }
 
-    public DateTime getCreatedTimestamp() {
-        return createdTimestamp;
+    public final LocalDate getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreatedTimestamp(DateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
+    public final void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
     }
 
-    public UserNotification withUserRole(UserRole userRole) {
-        this.userRole = userRole;
+    public UserNotification withUser(User user) {
+        this.user = user;
         return this;
     }
-
+    
     public UserNotification withNotificationTemplate(NotificationTemplate notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
         return this;
     }
-
-    public UserNotification withCreatedTimestamp(DateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
+    
+    public UserNotification withCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
         return this;
     }
 
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties1 = Maps.newHashMap();
-        properties1.put("userRole", userRole);
-        properties1.put("notificationTemplate", notificationTemplate);
-        propertiesWrapper.add(properties1);
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("user", user);
+        properties.put("notificationTemplate", notificationTemplate);
+        propertiesWrapper.add(properties);
         return new ResourceSignature(propertiesWrapper);
     }
-    
+
 }

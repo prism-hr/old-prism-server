@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
+import com.zuehlke.pgadmissions.rest.ActionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +29,9 @@ public class InstitutionCreationHelper {
         UserRegistrationDTO registrationDTO = new UserRegistrationDTO();
         InstitutionDTO institutionDTO = new InstitutionDTO();
         InstitutionAddressDTO institutionAddressDTO = new InstitutionAddressDTO();
-        
+        ActionDTO actionDTO = new ActionDTO();
+
+
         institutionAddressDTO.setAddressLine1("Address line 1");
         institutionAddressDTO.setAddressLine2("Address line 2");
         institutionAddressDTO.setAddressTown("Address town");
@@ -36,21 +39,23 @@ public class InstitutionCreationHelper {
         institutionAddressDTO.setAddressCode("Address code");
         institutionAddressDTO.setCountry("GB");
         institutionAddressDTO.setRegion("GB-LND");
-        
+
         institutionDTO.setDomicile("GB");
         institutionDTO.setName("University College London");
         institutionDTO.setHomepage("http://www.ucl.ac.uk/");
         institutionDTO.setAddress(institutionAddressDTO);
         institutionDTO.setUclInstitution(true);
-        
+
+        actionDTO.setActionId(PrismAction.SYSTEM_CREATE_INSTITUTION);
+        actionDTO.setNewInstitution(institutionDTO);
+
+        registrationDTO.setResourceId(systemService.getSystem().getId());
+        registrationDTO.setAction(actionDTO);
         registrationDTO.setFirstName("Chris");
         registrationDTO.setLastName("Neil");
         registrationDTO.setEmail("c.neil@ucl.ac.uk");
         registrationDTO.setPassword("pgadmissions");
-        registrationDTO.setResourceId(systemService.getSystem().getId());
-        registrationDTO.setActionId(PrismAction.SYSTEM_CREATE_INSTITUTION);
-        registrationDTO.setNewInstitution(institutionDTO);
-        
+
         User user = registrationService.submitRegistration(registrationDTO);
         return null;
     }

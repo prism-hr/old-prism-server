@@ -176,6 +176,12 @@ public class NotificationService {
     public void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate) {
         sendNotification(user, resource, notificationTemplate, Collections.<String, String> emptyMap());
     }
+    
+    @Transactional
+    public void sendNotification(User user, Resource resource, PrismNotificationTemplate notificationTemplateId) {
+        NotificationTemplate notificationTemplate = getById(notificationTemplateId);
+        sendNotification(user, resource, notificationTemplate, Collections.<String, String> emptyMap());
+    }
 
     @Transactional
     private void updateUserNotification(UserNotificationDefinition definition, LocalDate baseline) {

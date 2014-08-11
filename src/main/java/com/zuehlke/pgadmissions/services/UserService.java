@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Filter;
@@ -30,9 +31,11 @@ import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.mail.MailDescriptor;
 import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
+import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
@@ -45,6 +48,9 @@ public class UserService {
     @Autowired
     private UserDAO userDAO;
 
+    @Autowired
+    private ActionService actionService;
+    
     @Autowired
     private RoleService roleService;
     
@@ -59,6 +65,9 @@ public class UserService {
 
     @Autowired
     private CommentService commentService;
+    
+    @Autowired
+    private ResourceService resourceService;
 
     @Autowired
     private SystemService systemService;
@@ -80,14 +89,6 @@ public class UserService {
                 .withLastName(user.getLastName()).withEmail(user.getEmail());
     }
 
-    public boolean checkUserEnabled(User user) {
-        UserAccount userAccount = user.getUserAccount();
-        if (userAccount != null) {
-            return userAccount.isEnabled();
-        }
-        return false;
-    }
-
     public User getUserByEmail(String email) {
         return entityService.getByProperty(User.class, "email", email);
     }
@@ -104,6 +105,27 @@ public class UserService {
         } else {
             user = duplicateUser;
         }
+        return user;
+    }
+    
+    public User registerUser(UserRegistrationDTO registrationDTO) throws WorkflowEngineException {
+        User user = getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail());
+        if ((registrationDTO.getActivationCode() != null && !user.getActivationCode().equals(registrationDTO.getActivationCode()))
+                || user.getUserAccount() != null) {
+            throw new ResourceNotFoundException();
+        }
+
+        user.setUserAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(registrationDTO.getPassword())).withEnabled(false));
+
+        Action action = actionService.getById(registrationDTO.getAction().getActionId());
+        Resource resource = resourceService.getRegistrationResource(registrationDTO, user, action);
+        notificationService.sendNotification(user, resource, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+        return user;
+    }
+    
+    public User activateUser(String activationCode) {
+        User user = getUserByActivationCode(activationCode);
+        user.getUserAccount().setEnabled(true);
         return user;
     }
     

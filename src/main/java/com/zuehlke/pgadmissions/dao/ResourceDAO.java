@@ -69,7 +69,6 @@ public class ResourceDAO {
 
     public <T extends Resource> List<T> getResourcesToPropagate(T propagator, Action action) {
         PrismScope propagatedScope = action.getScope().getId();
-
         String propagatedAlias = propagatedScope.getLowerCaseName();
         String propagatedReference = propagator.getResourceScope().getPrecedence() > propagatedScope.getPrecedence() ? propagatedAlias : propagatedAlias + "s";
 

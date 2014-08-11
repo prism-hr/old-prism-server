@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AbstractValidator;
 
 @Component
-public class RegistrationDetailsValidator extends AbstractValidator {
+public class UserRegistrationValidator extends AbstractValidator {
 
     @Autowired
     private UserService userService;

@@ -4,16 +4,16 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTem
 
 public class UserNotificationDefinition {
 
-    private Integer userId;
+    private Integer userRoleId;
     
     private PrismNotificationTemplate notificationTemplateId;
 
-    public Integer getUserId() {
-        return userId;
+    public Integer getUserRoleId() {
+        return userRoleId;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUserRoleId(Integer userRoleId) {
+        this.userRoleId = userRoleId;
     }
 
     public PrismNotificationTemplate getNotificationTemplateId() {

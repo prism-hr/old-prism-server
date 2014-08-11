@@ -52,10 +52,11 @@ public class ActionService {
         return entityService.getByProperty(Action.class, "id", id);
     }
 
-    public Action validateAction(Resource resource, Action action, User actionOwner, User delegateOwner) {
+    public Action validateAction(Resource resource, Action action, Comment comment) {
+        User delegateOwner = comment.getDelegateUser();
         Resource operative = resourceService.getOperativeResource(resource, action);
         
-        if (delegateOwner == null && checkActionAvailable(operative, action, actionOwner)) {
+        if (delegateOwner == null && checkActionAvailable(operative, action, comment.getUser())) {
             return action;
         } else if (delegateOwner != null && checkActionAvailable(operative, action, delegateOwner)) {
             return action;
@@ -64,20 +65,6 @@ public class ActionService {
         }
         
         return actionDAO.getFallbackAction(resource);
-    }
-
-    public void validateAction(Resource resource, PrismAction actionId, User actionOwner) {
-        Action action = getById(actionId);
-        validateAction(resource, action, actionOwner, null);
-    }
-
-    public boolean checkActionAvailable(Resource resource, Action action, User invoker) {
-        return actionDAO.getPermittedAction(resource, action, invoker) != null;
-    }
-
-    public boolean checkDelegateActionAvailable(Resource resource, Action action, User invoker) {
-        Action delegateAction = actionDAO.getDelegateAction(resource, action);
-        return checkActionAvailable(resource, delegateAction, invoker);
     }
 
     public List<PrismAction> getPermittedActions(Resource resource, User user) {
@@ -92,15 +79,14 @@ public class ActionService {
     }
     
     public ActionOutcome executeUserAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
-        validateAction(resource, action, comment.getUser(), comment.getDelegateUser());
-        return executeSystemAction(resource, action, comment);
+        action = validateAction(resource, action, comment);
+        return executeSystemAction(resource, action, comment); 
     }
 
     public ActionOutcome executeSystemAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
         User actionOwner = comment.getUser();
-        PrismActionCategory actionCategory = action.getActionCategory();
 
-        if (actionCategory == PrismActionCategory.CREATE_RESOURCE) {
+        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             Resource duplicateResource = entityService.getDuplicateEntity(resource);
             
             if (duplicateResource != null) {
@@ -114,11 +100,6 @@ public class ActionService {
         }
 
         StateTransition stateTransition = stateService.executeStateTransition(resource, action, comment);
-        
-        if (stateTransition == null && actionCategory == PrismActionCategory.CREATE_RESOURCE) {
-            throw new WorkflowEngineException();
-        }
-        
         Action transitionAction = stateTransition == null ? action : stateTransition.getTransitionAction();
         Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
@@ -143,6 +124,15 @@ public class ActionService {
 
     public List<Action> getEscalationActions() {
         return actionDAO.getEscalationActions();
+    }
+    
+    private boolean checkActionAvailable(Resource resource, Action action, User invoker) {
+        return actionDAO.getPermittedAction(resource, action, invoker) != null;
+    }
+
+    private boolean checkDelegateActionAvailable(Resource resource, Action action, User invoker) {
+        Action delegateAction = actionDAO.getDelegateAction(resource, action);
+        return checkActionAvailable(resource, delegateAction, invoker);
     }
     
  }

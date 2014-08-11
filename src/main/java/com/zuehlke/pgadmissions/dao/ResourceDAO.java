@@ -57,8 +57,8 @@ public class ResourceDAO {
                 .list();
     }
 
-    public <T extends Resource> List<T> getResourcesToEscalate(Action action, LocalDate baseline) {
-        return (List<T>) sessionFactory.getCurrentSession().createCriteria(action.getScope().getId().getResourceClass()) //
+    public List<Resource> getResourcesToEscalate(Action action, LocalDate baseline) {
+        return (List<Resource>) sessionFactory.getCurrentSession().createCriteria(action.getScope().getId().getResourceClass()) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action") //
@@ -67,12 +67,12 @@ public class ResourceDAO {
                 .list();
     }
 
-    public <T extends Resource> List<T> getResourcesToPropagate(T propagator, Action action) {
+    public List<Resource> getResourcesToPropagate(Resource propagator, Action action) {
         PrismScope propagatedScope = action.getScope().getId();
         String propagatedAlias = propagatedScope.getLowerCaseName();
         String propagatedReference = propagator.getResourceScope().getPrecedence() > propagatedScope.getPrecedence() ? propagatedAlias : propagatedAlias + "s";
 
-        return (List<T>) sessionFactory.getCurrentSession().createCriteria(propagator.getClass()) //
+        return (List<Resource>) sessionFactory.getCurrentSession().createCriteria(propagator.getClass()) //
                 .createAlias(propagatedReference, propagatedAlias, JoinType.INNER_JOIN) //
                 .createAlias(propagatedAlias + ".state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //

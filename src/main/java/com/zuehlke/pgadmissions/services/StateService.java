@@ -40,9 +40,9 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 @Transactional
 public class StateService {
     
-    private final HashMap<Resource, Action> escalationsPending = Maps.newLinkedHashMap();
+    private final HashMap<Resource, Action> escalationQueue = Maps.newLinkedHashMap();
     
-    private final HashMap<Resource, Action> propagationsPending = Maps.newLinkedHashMap();
+    private final HashMap<Resource, Action> propagationQueue = Maps.newLinkedHashMap();
     
     private final ThreadPoolExecutor transitionRunner = (ThreadPoolExecutor) Executors.newFixedThreadPool(1000);
     
@@ -290,24 +290,24 @@ public class StateService {
     }
     
     public boolean isDeferredStateTransitions() {
-        return !escalationsPending.isEmpty() || !propagationsPending.isEmpty();
+        return !escalationQueue.isEmpty() || !propagationQueue.isEmpty();
     }
     
     public void executeDeferredStateTransitions() {
-        marshalDeferredStateTransitions(resourceService.getResourceEscalations());
-        marshalDeferredStateTransitions(resourceService.getResourcePropagations());
+        marshalDeferredStateTransitions(escalationQueue, resourceService.getResourceEscalations());
+        marshalDeferredStateTransitions(propagationQueue, resourceService.getResourcePropagations());
         
-        if (propagationsPending.isEmpty()) {
-            flushDeferredStateTransitions(escalationsPending);
-        } else if (escalationsPending.isEmpty()) {
-            flushDeferredStateTransitions(propagationsPending); 
+        if (propagationQueue.isEmpty()) {
+            flushDeferredStateTransitions(escalationQueue);
+        } else if (escalationQueue.isEmpty()) {
+            flushDeferredStateTransitions(propagationQueue); 
         }
     }
 
-    private void marshalDeferredStateTransitions(HashMap<Resource, Action> transitions) {
+    private void marshalDeferredStateTransitions(HashMap<Resource, Action> queue, HashMap<Resource, Action> transitions) {
         for (Resource resource : transitions.keySet()) {
-            if (!escalationsPending.containsKey(resource)) {
-                escalationsPending.put(resource, transitions.get(resource));
+            if (!queue.containsKey(resource)) {
+                queue.put(resource, transitions.get(resource));
             }
         }
     }

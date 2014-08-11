@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -7,9 +10,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 @Entity
 @Table(name = "ADVERT_OPPORTUNITY_CATEGORY")
-public class OpportunityCategory {
+public class OpportunityCategory implements IUniqueEntity {
 
     @Id
     private Integer id;
@@ -75,4 +81,14 @@ public class OpportunityCategory {
         this.enabled = enabled;
         return this;
     }
+    
+    @Override
+    public ResourceSignature getResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("name", name);
+        propertiesWrapper.add(properties);
+        return new ResourceSignature(propertiesWrapper);
+    }
+    
 }

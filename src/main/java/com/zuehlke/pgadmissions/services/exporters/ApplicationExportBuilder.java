@@ -69,22 +69,22 @@ public class ApplicationExportBuilder {
 
     private final ObjectFactory objectFactory = new ObjectFactory();
     
-    @Value("${export.source}")
+    @Value("${xml.export.source}")
     private String exportSource;
 
-    @Value("${export.not.provided}")
+    @Value("${xml.export.not.provided}")
     private String exportNotProvided;
 
-    @Value("${export.refer.to.document}")
+    @Value("${xml.export.refer.to.document}")
     private String exportReferToDocument;
 
-    @Value("${export.ip.not.provided}")
+    @Value("${xml.export.ip.not.provided}")
     private String exportIpNotProvided;
 
-    @Value("${export.other.provided}")
+    @Value("${xml.export.other.provided}")
     private String exportOtherProvided;
 
-    @Value("${export.telephone.not.provided}")
+    @Value("${xml.export.telephone.not.provided}")
     private String exportTelephoneNotProvided;
 
     @Autowired

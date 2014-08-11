@@ -98,8 +98,9 @@ public class ActionService {
 
     public ActionOutcome executeSystemAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
         User actionOwner = comment.getUser();
+        PrismActionCategory actionCategory = action.getActionCategory();
 
-        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
+        if (actionCategory == PrismActionCategory.CREATE_RESOURCE) {
             Resource duplicateResource = entityService.getDuplicateEntity(resource);
             
             if (duplicateResource != null) {
@@ -113,6 +114,11 @@ public class ActionService {
         }
 
         StateTransition stateTransition = stateService.executeStateTransition(resource, action, comment);
+        
+        if (stateTransition == null && actionCategory == PrismActionCategory.CREATE_RESOURCE) {
+            throw new WorkflowEngineException();
+        }
+        
         Action transitionAction = stateTransition == null ? action : stateTransition.getTransitionAction();
         Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 

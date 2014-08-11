@@ -142,31 +142,6 @@ public class UserRole implements IUniqueEntity {
     public Set<UserNotification> getUserNotifications() {
         return userNotifications;
     }
-
-    public UserRole withSystem(System system) {
-        this.system = system;
-        return this;
-    }
-
-    public UserRole withInstitution(Institution institution) {
-        this.institution = institution;
-        return this;
-    }
-
-    public UserRole withProgram(Program program) {
-        this.program = program;
-        return this;
-    }
-
-    public UserRole withProject(Project project) {
-        this.project = project;
-        return this;
-    }
-
-    public UserRole withApplication(Application application) {
-        this.application = application;
-        return this;
-    }
     
     public UserRole withResource(Resource resource) {
         setResource(resource);

@@ -1,9 +1,12 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.rest.ActionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,37 +61,18 @@ public class RegistrationService {
 
         user.setUserAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(registrationDTO.getPassword())).withEnabled(false));
 
-        Action action = actionService.getById(registrationDTO.getActionId());
-        Resource resource = entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId());
+        Action action = actionService.getById(registrationDTO.getAction().getActionId());
 
+        Resource resource;
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
-            Object newResourceDTO = unpackNewResourceDTO(registrationDTO);
-            resource = resourceService.createResource(user, action, newResourceDTO);
+            Object newResourceDTO = registrationDTO.getAction().getAvailableResource();
+            resource = resourceService.createResource(user, action, newResourceDTO).getTransitionResource();
+        } else {
+            resource = entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId());
         }
 
         sendConfirmationEmail(user, resource);
         return user;
-    }
-
-    private Object unpackNewResourceDTO(UserRegistrationDTO registrationDTO) {
-        Set<Object> resourceDTOs = Sets.newHashSet();
-        resourceDTOs.add(registrationDTO.getNewInstitution());
-        resourceDTOs.add(registrationDTO.getNewProgram());
-        resourceDTOs.add(registrationDTO.getNewProject());
-        resourceDTOs.add(registrationDTO.getNewApplication());
-
-        Set<Object> notNullResourceDTOs = Sets.newHashSet();
-        for (Object resourceDTO : resourceDTOs) {
-            if (resourceDTO != null) {
-                notNullResourceDTOs.add(resourceDTO);
-            }
-        }
-
-        if (notNullResourceDTOs.size() != 1) {
-            throw new Error();
-        }
-
-        return notNullResourceDTOs.iterator().next();
     }
 
     public User activateAccount(String activationCode) {

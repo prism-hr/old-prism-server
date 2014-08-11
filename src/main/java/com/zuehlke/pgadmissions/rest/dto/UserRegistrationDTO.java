@@ -4,6 +4,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.zuehlke.pgadmissions.rest.ActionDTO;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -31,20 +32,7 @@ public class UserRegistrationDTO {
     @NotNull
     private Integer resourceId;
 
-    @NotNull
-    private PrismAction actionId;
-    
-    @Valid
-    private InstitutionDTO newInstitution;
-    
-    @Valid
-    private ProgramDTO newProgram;
-    
-    @Valid
-    private ProjectDTO newProject;
-    
-    @Valid
-    private ApplicationDTO newApplication;
+    private ActionDTO action;
 
     public String getFirstName() {
         return firstName;
@@ -94,44 +82,12 @@ public class UserRegistrationDTO {
         this.resourceId = resourceId;
     }
 
-    public PrismAction getActionId() {
-        return actionId;
+    public ActionDTO getAction() {
+        return action;
     }
 
-    public void setActionId(PrismAction actionId) {
-        this.actionId = actionId;
-    }
-
-    public InstitutionDTO getNewInstitution() {
-        return newInstitution;
-    }
-
-    public void setNewInstitution(InstitutionDTO newInstitution) {
-        this.newInstitution = newInstitution;
-    }
-
-    public ProgramDTO getNewProgram() {
-        return newProgram;
-    }
-
-    public void setNewProgram(ProgramDTO newProgram) {
-        this.newProgram = newProgram;
-    }
-
-    public final ProjectDTO getNewProject() {
-        return newProject;
-    }
-
-    public final void setNewProject(ProjectDTO newProject) {
-        this.newProject = newProject;
-    }
-
-    public final ApplicationDTO getNewApplication() {
-        return newApplication;
-    }
-
-    public final void setNewApplication(ApplicationDTO newApplication) {
-        this.newApplication = newApplication;
+    public void setAction(ActionDTO action) {
+        this.action = action;
     }
 
     public UserRegistrationDTO withFirstName(final String firstName) {
@@ -163,30 +119,10 @@ public class UserRegistrationDTO {
         this.resourceId = resourceId;
         return this;
     }
-    
-    public UserRegistrationDTO withAction(final PrismAction actionId) {
-        this.actionId = actionId;
+
+    public UserRegistrationDTO withAction(final ActionDTO action) {
+        this.action = action;
         return this;
     }
-    
-    public UserRegistrationDTO withNewInstitution(InstitutionDTO newInstitution) {
-        this.newInstitution = newInstitution;
-        return this;
-    }
-    
-    public UserRegistrationDTO withNewProgram(ProgramDTO newProgram) {
-        this.newProgram = newProgram;
-        return this;
-    }
-    
-    public UserRegistrationDTO withNewProject(ProjectDTO newProject) {
-        this.newProject = newProject;
-        return this;
-    }
-    
-    public UserRegistrationDTO withNewApplication(ApplicationDTO newApplication) {
-        this.newApplication = newApplication;
-        return this;
-    }
-    
+
 }

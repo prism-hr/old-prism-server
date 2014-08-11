@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.util.HashMap;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +92,7 @@ public class ResourceService {
         return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
     }
     
-    public Resource createResource(User user, Action action, Object newResourceDTO) throws WorkflowEngineException {
+    public ActionOutcome createResource(User user, Action action, Object newResourceDTO) throws WorkflowEngineException {
         Resource resource = null;
 
         switch (action.getCreationScope().getId()) {
@@ -117,7 +118,7 @@ public class ResourceService {
         
         Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                 .withAssignedUser(user, roleService.getCreatorRole(resource));
-        return actionService.executeUserAction(resource, action, comment).getTransitionResource();
+        return actionService.executeUserAction(resource, action, comment);
     }
 
     public void persistResource(Resource resource, Action action, Comment comment) throws WorkflowEngineException {

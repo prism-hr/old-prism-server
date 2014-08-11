@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.rest.ActionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +44,7 @@ public class UserHelper {
 
         registrationService.submitRegistration(new UserRegistrationDTO().withFirstName(user.getFirstName())
                 .withLastName(user.getLastName()).withEmail(user.getEmail()).withActivationCode(user.getActivationCode())
-                .withPassword("password").withAction(actionId).withResourceId(resourceId));
+                .withPassword("password").withResourceId(resourceId).withAction(new ActionDTO().withAction(actionId)));
 
         mailSenderMock.assertEmailSent(user, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
 

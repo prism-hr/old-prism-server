@@ -5,7 +5,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.ws.rs.WebApplicationException;
 
 import org.dozer.Mapper;
@@ -16,13 +16,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.User;
@@ -30,8 +25,7 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.validation.InvalidRequestException;
-import com.zuehlke.pgadmissions.rest.validation.validator.RegistrationDetailsValidator;
+import com.zuehlke.pgadmissions.rest.validation.validator.UserRegistrationValidator;
 import com.zuehlke.pgadmissions.security.AuthenticationTokenUtils;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
@@ -49,7 +43,7 @@ public class UserResource {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private RegistrationDetailsValidator registrationDetailsValidator;
+    private UserRegistrationValidator userRegistrationValidator;
 
     @Autowired
     private ProgramService programService;
@@ -85,21 +79,20 @@ public class UserResource {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String submitRegistration(@RequestBody UserRegistrationDTO registrationDetails, BindingResult result, Model model, HttpServletRequest request)
+    public String submitRegistration(@Valid @RequestBody UserRegistrationDTO userRegistrationDTO)
             throws WorkflowEngineException {
-        registrationDetailsValidator.validate(registrationDetails, result);
-
-        if (result.hasErrors()) {
-            throw new InvalidRequestException("Invalid registration details", result);
-        }
-
-        registrationService.submitRegistration(registrationDetails);
+        registrationService.submitRegistration(userRegistrationDTO);
         return "OK";
     }
 
     @RequestMapping(value="/suggestion", method = RequestMethod.GET, params = "searchTerm")
     public List<UserRepresentation> getSimilarUsers(@RequestParam String searchTerm) {
         return userService.getSimilarUsers(searchTerm);
+    }
+
+    @InitBinder(value = "userRegistrationDTO")
+    public void configureCommentBinding(WebDataBinder binder) {
+        binder.setValidator(userRegistrationValidator);
     }
 
 }

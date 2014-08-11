@@ -289,11 +289,11 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
     
-    public boolean isDeferredStateTransitions() {
+    public boolean hasPendingStateTransitions() {
         return !escalationQueue.isEmpty() || !propagationQueue.isEmpty();
     }
     
-    public void executeDeferredStateTransitions() {
+    public void executePendingStateTransitions() {
         marshalDeferredStateTransitions(escalationQueue, resourceService.getResourceEscalations());
         marshalDeferredStateTransitions(propagationQueue, resourceService.getResourcePropagations());
         
@@ -312,17 +312,17 @@ public class StateService {
         }
     }
 
-    private void flushDeferredStateTransitions(final HashMap<Resource, Action> transitions) {
+    private void flushDeferredStateTransitions(final HashMap<Resource, Action> queue) {
         final User user = systemService.getSystem().getUser();
-        for (final Resource resource : transitions.keySet()) {
-            final Action action = transitions.get(resource);
+        for (final Resource resource : queue.keySet()) {
+            final Action action = queue.get(resource);
             transitionRunner.submit(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         Comment comment = new Comment().withResource(resource).withUser(user).withAction(action);
                         executeStateTransition(resource, action, comment);
-                        transitions.remove(resource);
+                        queue.remove(resource);
                     } catch (WorkflowEngineException e) {
                         throw new Error(e);
                     }

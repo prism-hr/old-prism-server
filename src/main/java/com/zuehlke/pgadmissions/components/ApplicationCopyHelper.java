@@ -33,8 +33,7 @@ public class ApplicationCopyHelper {
     private ImportedEntityService importedEntityService;
     
     @Transactional
-    public void copyApplicationFormData(Application to, Application from) {
-        
+    public void copyApplicationFormData(Application to, Application from) {  
         if (from.getPersonalDetails() != null) {
             ApplicationPersonalDetails personalDetails = new ApplicationPersonalDetails();
             to.setPersonalDetails(personalDetails);
@@ -200,10 +199,10 @@ public class ApplicationCopyHelper {
             return null;
         }
         Document to = new Document();
-        to.setType(from.getType());
         to.setContentType(from.getContentType());
         to.setFileName(from.getFileName());
         to.setContent(from.getContent());
+        to.setUser(from.getUser());
         return to;
     }
 

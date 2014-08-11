@@ -1,18 +1,27 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.dao.ActionDAO;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Set;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.dao.ActionDAO;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.StateTransition;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
+import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 
 @Service
 @Transactional
@@ -45,7 +54,7 @@ public class ActionService {
 
     public Action validateAction(Resource resource, Action action, User actionOwner, User delegateOwner) {
         Resource operative = resourceService.getOperativeResource(resource, action);
-
+        
         if (delegateOwner == null && checkActionAvailable(operative, action, actionOwner)) {
             return action;
         } else if (delegateOwner != null && checkActionAvailable(operative, action, delegateOwner)) {
@@ -53,7 +62,7 @@ public class ActionService {
         } else if (delegateOwner != null && checkDelegateActionAvailable(operative, action, delegateOwner)) {
             return action;
         }
-
+        
         return actionDAO.getFallbackAction(resource);
     }
 
@@ -74,14 +83,14 @@ public class ActionService {
     public List<PrismAction> getPermittedActions(Resource resource, User user) {
         return actionDAO.getPermittedActions(resource, user);
     }
-
+    
     public List<PrismActionEnhancement> getPermittedActionEnhancements(Resource resource, User user) {
-        Set<PrismActionEnhancement> enhancements = Sets.newHashSet();
+        Set<PrismActionEnhancement> enhancements = Sets.newHashSet();  
         enhancements.addAll(actionDAO.getGlobalActionEnhancements(resource, user));
         enhancements.addAll(actionDAO.getCustomActionEnhancements(resource, user));
         return Lists.newArrayList(enhancements);
     }
-
+    
     public ActionOutcome executeUserAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
         validateAction(resource, action, comment.getUser(), comment.getDelegateUser());
         return executeSystemAction(resource, action, comment);
@@ -93,7 +102,7 @@ public class ActionService {
 
         if (actionCategory == PrismActionCategory.CREATE_RESOURCE) {
             Resource duplicateResource = entityService.getDuplicateEntity(resource);
-
+            
             if (duplicateResource != null) {
                 Action redirectAction = getRedirectAction(action, actionOwner, duplicateResource);
                 if (redirectAction != null) {
@@ -105,11 +114,11 @@ public class ActionService {
         }
 
         StateTransition stateTransition = stateService.executeStateTransition(resource, action, comment);
-
+        
         if (stateTransition == null && actionCategory == PrismActionCategory.CREATE_RESOURCE) {
             throw new WorkflowEngineException();
         }
-
+        
         Action transitionAction = stateTransition == null ? action : stateTransition.getTransitionAction();
         Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
@@ -135,5 +144,5 @@ public class ActionService {
     public List<Action> getEscalationActions() {
         return actionDAO.getEscalationActions();
     }
-
-}
+    
+ }

@@ -46,27 +46,19 @@ public class ResourceDAO {
     private SessionFactory sessionFactory;
 
     public <T extends Resource> List<ResourceConsoleListRowDTO> getConsoleListBlock(User user, Class<T> resourceType, int page, int perPage) {
-        return (List<ResourceConsoleListRowDTO>) sessionFactory.getCurrentSession().createSQLQuery(getResourceListBlockSelect(user, resourceType, page, perPage))
-                .addScalar("id", IntegerType.INSTANCE)
-                .addScalar("code", StringType.INSTANCE)
-                .addScalar("raisesUrgentFlag", BooleanType.INSTANCE)
-                .addScalar("state", StringType.INSTANCE)
-                .addScalar("creatorFirstName", StringType.INSTANCE)
-                .addScalar("creatorFirstName2", StringType.INSTANCE)
-                .addScalar("creatorFirstName3", StringType.INSTANCE)
-                .addScalar("creatorLastName", StringType.INSTANCE)
-                .addScalar("institutionTitle", StringType.INSTANCE)
-                .addScalar("programTitle", StringType.INSTANCE)
-                .addScalar("projectTitle", StringType.INSTANCE)
-                .addScalar("displayTimestamp", DateType.INSTANCE)
-                .addScalar("actions", StringType.INSTANCE)
-                .addScalar("averageRating", BigDecimalType.INSTANCE)
-                .setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowDTO.class)) //
+        return (List<ResourceConsoleListRowDTO>) sessionFactory.getCurrentSession()
+                .createSQLQuery(getResourceListBlockSelect(user, resourceType, page, perPage)).addScalar("id", IntegerType.INSTANCE)
+                .addScalar("code", StringType.INSTANCE).addScalar("raisesUrgentFlag", BooleanType.INSTANCE).addScalar("state", StringType.INSTANCE)
+                .addScalar("creatorFirstName", StringType.INSTANCE).addScalar("creatorFirstName2", StringType.INSTANCE)
+                .addScalar("creatorFirstName3", StringType.INSTANCE).addScalar("creatorLastName", StringType.INSTANCE)
+                .addScalar("institutionTitle", StringType.INSTANCE).addScalar("programTitle", StringType.INSTANCE)
+                .addScalar("projectTitle", StringType.INSTANCE).addScalar("displayTimestamp", DateType.INSTANCE).addScalar("actions", StringType.INSTANCE)
+                .addScalar("averageRating", BigDecimalType.INSTANCE).setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowDTO.class)) //
                 .list();
     }
-    
-    public List<Resource> getResourcesToEscalate(Action action, LocalDate baseline) {
-        return (List<Resource>) sessionFactory.getCurrentSession().createCriteria(action.getScope().getId().getResourceClass()) //
+
+    public <T extends Resource> List<T> getResourcesToEscalate(Action action, LocalDate baseline) {
+        return (List<T>) sessionFactory.getCurrentSession().createCriteria(action.getScope().getId().getResourceClass()) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action") //
@@ -74,21 +66,23 @@ public class ResourceDAO {
                 .add(Restrictions.lt("dueDate", baseline)) //
                 .list();
     }
-    
-    public List<Resource> getResourcesToPropagate(Action action, PrismScope propagatorScope) {
-        PrismScope propagatedScope = action.getScope().getId();
-        String propagatedAlias = propagatedScope.getLowerCaseName();
-        String propagatedReference = propagatorScope.getPrecedence() > propagatedScope.getPrecedence() ? propagatedAlias : propagatedAlias + "s";
 
-        return (List<Resource>) sessionFactory.getCurrentSession().createCriteria(propagatorScope.getResourceClass()) //
+    public <T extends Resource> List<T> getResourcesToPropagate(T propagator, Action action) {
+        PrismScope propagatedScope = action.getScope().getId();
+
+        String propagatedAlias = propagatedScope.getLowerCaseName();
+        String propagatedReference = propagator.getResourceScope().getPrecedence() > propagatedScope.getPrecedence() ? propagatedAlias : propagatedAlias + "s";
+
+        return (List<T>) sessionFactory.getCurrentSession().createCriteria(propagator.getClass()) //
                 .createAlias(propagatedReference, propagatedAlias, JoinType.INNER_JOIN) //
                 .createAlias(propagatedAlias + ".state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("id", propagator.getId())) //
                 .add(Restrictions.eq("action", action)) //
                 .list();
     }
-    
+
     private <T extends Resource> String getResourceListBlockSelect(User user, Class<T> resourceType, int page, int perPage) {
         String resourceTypeString = resourceType.getSimpleName();
 

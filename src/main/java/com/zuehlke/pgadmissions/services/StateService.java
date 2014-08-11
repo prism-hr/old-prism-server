@@ -298,9 +298,9 @@ public class StateService {
         marshalDeferredStateTransitions(resourceService.getResourcePropagations());
         
         if (propagationsPending.isEmpty()) {
-            dispatchDeferredStateTransitions(escalationsPending);
+            flushDeferredStateTransitions(escalationsPending);
         } else if (escalationsPending.isEmpty()) {
-            dispatchDeferredStateTransitions(propagationsPending); 
+            flushDeferredStateTransitions(propagationsPending); 
         }
     }
 
@@ -312,7 +312,7 @@ public class StateService {
         }
     }
 
-    private void dispatchDeferredStateTransitions(final HashMap<Resource, Action> transitions) {
+    private void flushDeferredStateTransitions(final HashMap<Resource, Action> transitions) {
         final User user = systemService.getSystem().getUser();
         for (final Resource resource : transitions.keySet()) {
             final Action action = transitions.get(resource);

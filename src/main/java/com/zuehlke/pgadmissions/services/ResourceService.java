@@ -191,10 +191,9 @@ public class ResourceService {
         List<StateTransitionPending> stateTransitionsPending = stateService.getStateTransitionsPending();
         
         for (StateTransitionPending stateTransitionPending : stateTransitionsPending) {
-            PrismScope propagatorScope = stateTransitionPending.getResource().getResourceScope();
             
             for (Action action : stateTransitionPending.getStateTransition().getPropagatedActions()) {
-                List<Resource> resources = resourceDAO.getResourcesToPropagate(action, propagatorScope);
+                List<Resource> resources = resourceDAO.getResourcesToPropagate(stateTransitionPending.getResource(), action);
                 
                 for (Resource resource : resources) {
                     if (!propagations.containsKey(resource)) {

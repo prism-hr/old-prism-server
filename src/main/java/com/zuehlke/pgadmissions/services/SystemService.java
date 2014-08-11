@@ -108,9 +108,6 @@ public class SystemService {
     private ActionService actionService;
 
     @Autowired
-    private RegistrationService registrationService;
-
-    @Autowired
     private ResourceService resourceService;
 
     @Autowired

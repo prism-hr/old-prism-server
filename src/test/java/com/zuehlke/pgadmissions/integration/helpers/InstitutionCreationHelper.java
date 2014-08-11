@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
-import com.zuehlke.pgadmissions.rest.ActionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,20 +8,21 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.rest.ActionDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
-import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
 public class InstitutionCreationHelper {
     
     @Autowired
-    private RegistrationService registrationService;
+    private SystemService systemService;
     
     @Autowired
-    private SystemService systemService;
+    private UserService userService;
     
     @Transactional
     public Institution verifyInstitutionCreation() throws WorkflowEngineException {
@@ -56,7 +56,7 @@ public class InstitutionCreationHelper {
         registrationDTO.setEmail("c.neil@ucl.ac.uk");
         registrationDTO.setPassword("pgadmissions");
 
-        User user = registrationService.submitRegistration(registrationDTO);
+        User user = userService.registerUser(registrationDTO);
         return null;
     }
     

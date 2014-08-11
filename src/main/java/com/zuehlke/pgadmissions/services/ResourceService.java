@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
+import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 
 @Service
 @Transactional
@@ -223,6 +225,15 @@ public class ResourceService {
             return resourceDAO.getVisibleResourceWithUpdateCount(resourceClass, roleScope, user, baseline) > 0;
         }
         return false;
+    }
+    
+    public Resource getRegistrationResource(UserRegistrationDTO registrationDTO, User user, Action action) throws WorkflowEngineException {
+        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
+            Object newResourceDTO = registrationDTO.getAction().getAvailableResource();
+            return createResource(user, action, newResourceDTO).getTransitionResource();
+        } else {
+            return entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId());
+        }
     }
 
 }

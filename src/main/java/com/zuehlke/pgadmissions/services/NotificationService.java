@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.System;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,20 +17,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
-import com.zuehlke.pgadmissions.domain.NotificationTemplate;
-import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.StateAction;
-import com.zuehlke.pgadmissions.domain.System;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserNotification;
-import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -119,7 +107,7 @@ public class NotificationService {
             NotificationTemplate notificationTemplate = entityService.getByProperty(NotificationTemplate.class, "id", definition.getNotificationTemplateId());
 
             if (notificationTemplate.getNotificationType() == PrismNotificationType.INDIVIDUAL) {
-                sendNotification(userRole.getUser(), resource, notificationTemplate, ImmutableMap.of("author", comment.getUser().getDisplayName()));
+                sendNotification(userRole.getUser(), resource, null, notificationTemplate, ImmutableMap.of("author", comment.getUser().getDisplayName()));
             } else {
                 UserNotification transientUserNotification = new UserNotification().withUserRole(userRole).withNotificationTemplate(notificationTemplate)
                         .withCreatedTimestamp(baseline);
@@ -129,18 +117,18 @@ public class NotificationService {
     }
 
     @Transactional
-    public void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate) {
-        sendNotification(user, resource, notificationTemplate, Collections.<String, String> emptyMap());
+    public void sendNotification(User user, Resource resource, Action action, NotificationTemplate notificationTemplate) {
+        sendNotification(user, resource, action, notificationTemplate, Collections.<String, String> emptyMap());
     }
 
     @Transactional
-    public void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate, Map<String, String> extraModelParams) {
+    public void sendNotification(User user, Resource resource, Action action, NotificationTemplate notificationTemplate, Map<String, String> extraModelParams) {
         NotificationTemplateVersion templateVersion = getActiveVersionToSend(resource, notificationTemplate);
         MailMessageDTO message = new MailMessageDTO();
 
         message.setTo(Collections.singletonList(user));
         message.setTemplate(templateVersion);
-        message.setModel(createNotificationModel(user, resource, templateVersion, extraModelParams));
+        message.setModel(createNotificationModel(user, resource, action, templateVersion, extraModelParams));
         message.setAttachments(Lists.<PdfAttachmentInputSource> newArrayList());
 
         mailSender.sendEmail(message);
@@ -166,7 +154,7 @@ public class NotificationService {
         User user = userRole.getUser();
         Resource resource = userRole.getResource();
 
-        sendNotification(user, resource, template);
+        sendNotification(user, resource, null, template);
         deletePendingUpdateNotification(user, resource, template);
     }
 
@@ -174,7 +162,7 @@ public class NotificationService {
     public void sendDataImportErrorNotifications(Institution institution, String errorMessage) {
         for (User user : userService.getUsersForResourceAndRole(institution, PrismRole.INSTITUTION_ADMINISTRATOR)) {
             NotificationTemplate template = getById(PrismNotificationTemplate.SYSTEM_IMPORT_ERROR_NOTIFICATION);
-            sendNotification(user, institution, template, ImmutableMap.of("message", errorMessage));
+            sendNotification(user, institution, null, template, ImmutableMap.of("message", errorMessage));
         }
     }
 
@@ -193,11 +181,16 @@ public class NotificationService {
     }
 
     @Transactional
-    private Map<String, Object> createNotificationModel(User user, Resource resource, NotificationTemplateVersion notificationTemplate, Map<String, String> extraModelParams) {
+    private Map<String, Object> createNotificationModel(User user, Resource resource, Action action, NotificationTemplateVersion notificationTemplate, Map<String, String> extraModelParams) {
         Map<String, Object> model = Maps.newHashMap();
         model.put("user", user);
+        model.put("activationCode", user.getActivationCode());
+        model.put("userEmail", user.getEmail());
         model.put("userFirstName", user.getFirstName());
         model.put("userLastName", user.getLastName());
+
+        model.put("resourceId", resource.getId().toString());
+        model.put("action", action.getId().name());
 
         System system = resource.getSystem();
         Institution institution = resource.getInstitution();
@@ -208,6 +201,7 @@ public class NotificationService {
         if (application != null) {
             model.put("applicant", application.getUser().getDisplayName());
             model.put("applicationCode", application.getCode());
+            model.put("applicationId", application.getId().toString());
         }
 
         if (program != null) {

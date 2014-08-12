@@ -136,7 +136,7 @@ public class UserService {
             try {
                 String newPassword = encryptionUtils.generateUserPassword();
                 NotificationTemplate passwordTemplate = notificationService.getById(PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION);
-                notificationService.sendNotification(storedUser, null, passwordTemplate, ImmutableMap.of("newPassword", newPassword));
+                notificationService.sendNotification(storedUser, null, null, passwordTemplate, ImmutableMap.of("newPassword", newPassword));
                 storedUser.getUserAccount().setPassword(encryptionUtils.getMD5Hash(newPassword));
             } catch (Exception e) {
                 throw new Error(e);
@@ -239,5 +239,11 @@ public class UserService {
         
         return Lists.newArrayList();
     }
-    
+
+    public boolean activateUser(Integer userId) {
+        User user = getById(userId);
+        boolean wasEnabled = user.getUserAccount().isEnabled();
+        user.getUserAccount().setEnabled(true);
+        return !wasEnabled;
+    }
 }

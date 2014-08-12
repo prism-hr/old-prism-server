@@ -431,7 +431,7 @@ public class SystemService {
                     .withAssignedUser(user, roleService.getCreatorRole(system));
             actionService.executeUserAction(system, action, comment);
             NotificationTemplate registrationTemplate = notificationService.getById(PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
-            notificationService.sendNotification(user, system, registrationTemplate);
+            notificationService.sendNotification(user, system, null, registrationTemplate);
         }
     }
 

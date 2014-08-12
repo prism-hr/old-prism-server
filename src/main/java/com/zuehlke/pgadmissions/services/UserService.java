@@ -17,7 +17,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Filter;
@@ -31,9 +30,9 @@ import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.mail.MailDescriptor;
 import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
@@ -116,10 +115,9 @@ public class UserService {
         }
 
         user.setUserAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(registrationDTO.getPassword())).withEnabled(false));
-
-        Action action = actionService.getById(registrationDTO.getAction().getActionId());
-        Resource resource = resourceService.getRegistrationResource(registrationDTO, user, action);
-        notificationService.sendNotification(user, resource, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+        
+        ActionOutcome outcome = actionService.getRegistrationOutcome(user, registrationDTO);
+        notificationService.sendNotification(user, outcome.getTransitionResource(), PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
         return user;
     }
     
@@ -191,10 +189,6 @@ public class UserService {
 
     public Integer getNumberOfActiveApplicationsForApplicant(User applicant) {
         return userDAO.getNumberOfActiveApplicationsForApplicant(applicant);
-    }
-
-    public List<MailDescriptor> getUsersDueTaskNotification() {
-        return userDAO.getUseDueTaskNotification();
     }
 
     public List<User> getUsersForResourceAndRole(Resource resource, PrismRole authority) {

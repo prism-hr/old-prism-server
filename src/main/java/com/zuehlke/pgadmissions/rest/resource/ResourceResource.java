@@ -139,7 +139,7 @@ public class ResourceResource {
             throw new Error(actionDTO.getActionId().name() + " is not a creation action.");
         }
         User user = userService.getCurrentUser();
-        Object newResourceDTO = actionDTO.getAvailableResource();
+        Object newResourceDTO = actionDTO.getOperativeResourceDTO();
         Action action = actionService.getById(actionDTO.getActionId());
         ActionOutcome actionOutcome = resourceService.createResource(user, action, newResourceDTO);
 

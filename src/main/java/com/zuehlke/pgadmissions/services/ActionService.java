@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 
 @Service
 @Transactional
@@ -55,7 +56,7 @@ public class ActionService {
     public Action validateAction(Resource resource, Action action, Comment comment) {
         User delegateOwner = comment.getDelegateUser();
         Resource operative = resourceService.getOperativeResource(resource, action);
-        
+
         if (delegateOwner == null && checkActionAvailable(operative, action, comment.getUser())) {
             return action;
         } else if (delegateOwner != null && checkActionAvailable(operative, action, delegateOwner)) {
@@ -63,24 +64,24 @@ public class ActionService {
         } else if (delegateOwner != null && checkDelegateActionAvailable(operative, action, delegateOwner)) {
             return action;
         }
-        
+
         return actionDAO.getFallbackAction(resource);
     }
 
     public List<PrismAction> getPermittedActions(Resource resource, User user) {
         return actionDAO.getPermittedActions(resource, user);
     }
-    
+
     public List<PrismActionEnhancement> getPermittedActionEnhancements(Resource resource, User user) {
-        Set<PrismActionEnhancement> enhancements = Sets.newHashSet();  
+        Set<PrismActionEnhancement> enhancements = Sets.newHashSet();
         enhancements.addAll(actionDAO.getGlobalActionEnhancements(resource, user));
         enhancements.addAll(actionDAO.getCustomActionEnhancements(resource, user));
         return Lists.newArrayList(enhancements);
     }
-    
+
     public ActionOutcome executeUserAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
         action = validateAction(resource, action, comment);
-        return executeSystemAction(resource, action, comment); 
+        return executeSystemAction(resource, action, comment);
     }
 
     public ActionOutcome executeSystemAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
@@ -88,14 +89,14 @@ public class ActionService {
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             Resource duplicateResource = entityService.getDuplicateEntity(resource);
-            
+
             if (duplicateResource != null) {
                 Action redirectAction = getRedirectAction(action, actionOwner, duplicateResource);
                 if (redirectAction != null) {
                     comment = new Comment().withResource(duplicateResource).withUser(actionOwner).withAction(redirectAction);
                     executeUserAction(duplicateResource, redirectAction, comment);
                 }
-                return new ActionOutcome(actionOwner, duplicateResource, duplicateResource, action);
+                return new ActionOutcome().withUser(actionOwner).withResource(duplicateResource).withResource(duplicateResource).withTransitionAction(action);
             }
         }
 
@@ -103,7 +104,8 @@ public class ActionService {
         Action transitionAction = stateTransition == null ? action : stateTransition.getTransitionAction();
         Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
-        return new ActionOutcome(actionOwner, resource, transitionResource, transitionAction);
+        return new ActionOutcome().withUser(actionOwner).withResource(resource).withTransitionResource(transitionResource)
+                .withTransitionAction(transitionAction);
     }
 
     public Action getRedirectAction(Action action, User actionOwner, Resource duplicateResource) {
@@ -125,7 +127,18 @@ public class ActionService {
     public List<Action> getEscalationActions() {
         return actionDAO.getEscalationActions();
     }
-    
+
+    public ActionOutcome getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO) throws WorkflowEngineException {
+        Action action = getById(registrationDTO.getAction().getActionId());
+        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
+            Object operativeResourceDTO = registrationDTO.getAction().getOperativeResourceDTO();
+            return resourceService.createResource(user, action, operativeResourceDTO);
+        } else {
+            Resource resource = entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId()); 
+            return new ActionOutcome().withUser(user).withResource(resource).withTransitionResource(resource).withTransitionAction(action);
+        }
+    }
+
     private boolean checkActionAvailable(Resource resource, Action action, User invoker) {
         return actionDAO.getPermittedAction(resource, action, invoker) != null;
     }
@@ -134,5 +147,5 @@ public class ActionService {
         Action delegateAction = actionDAO.getDelegateAction(resource, action);
         return checkActionAvailable(resource, delegateAction, invoker);
     }
-    
- }
+
+}

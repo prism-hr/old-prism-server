@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.mail.MailDescriptor;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -215,11 +214,6 @@ public class UserDAO {
                 .setMaxResults(10) //
                 .setResultTransformer(Transformers.aliasToBean(UserRepresentation.class)) //
                 .list();
-    }
-
-    public List<MailDescriptor> getUseDueTaskNotification() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

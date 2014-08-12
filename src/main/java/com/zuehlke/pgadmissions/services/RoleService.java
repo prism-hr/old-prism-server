@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
-import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserNotification;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -121,24 +119,6 @@ public class RoleService {
     public void deleteExludedRoles() {
         for (Role role : entityService.list(Role.class)) {
             role.getExcludedRoles().clear();
-        }
-    }
-    
-    public void mergeUserRoles(User mergeFromUser, User mergeIntoUser) throws WorkflowEngineException {
-        Set<UserRole> mergeFromRoles = mergeFromUser.getUserRoles();
-        for (UserRole mergeFromRole : mergeFromRoles) {
-            UserRole transientUserRole = new UserRole().withResource(mergeFromRole.getResource()).withUser(mergeIntoUser).withRole(mergeFromRole.getRole())
-                    .withAssignedTimestamp(new DateTime());
-            UserRole persistentUserRole = entityService.getDuplicateEntity(transientUserRole);
-
-            if (persistentUserRole == null) {
-                if (isRoleAssignmentPermitted(transientUserRole)) {
-                    entityService.save(transientUserRole);
-                    entityService.delete(mergeFromRole);
-                } else {
-                    throw new WorkflowEngineException();
-                }
-            }
         }
     }
     
@@ -266,7 +246,7 @@ public class RoleService {
     private void deleteUserRoles(Resource resource, User user, PrismRole... rolesToRemove) {
         for (UserRole roleToRemove : roleDAO.getUserRoles(resource, user, rolesToRemove)) {
             validateUserRoleRemoval(resource, roleToRemove.getRole());
-            notificationService.deleteUserNotifications(roleToRemove);
+            notificationService.deleteUserNotification(roleToRemove);
             entityService.delete(roleToRemove);
         }
         reassignResourceOwner(resource);

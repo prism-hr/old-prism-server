@@ -3,8 +3,6 @@ package com.zuehlke.pgadmissions.services;
 import java.util.HashMap;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
@@ -31,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
@@ -38,7 +36,6 @@ import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
-import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 
 @Service
 @Transactional
@@ -88,10 +85,6 @@ public class ResourceService {
     public <T extends Resource> List<ResourceReportListRowDTO> getReportList(Class<T> resourceType) {
         // TODO: Build the query and integrate with filter
         return Lists.newArrayList();
-    }
-
-    public Resource getOperativeResource(Resource resource, Action action) {
-        return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
     }
     
     public ActionOutcome createResource(User user, Action action, Object newResourceDTO) throws WorkflowEngineException {
@@ -217,23 +210,8 @@ public class ResourceService {
         return propagations;
     }
     
-    public <T extends Resource> boolean hasVisibleResourcesWithUpdates(Class<T> resourceClass, User user, LocalDate baseline) {
-        List<Scope> roleScopes = Lists.newLinkedList();
-        roleScopes.add(scopeService.getByResourceClass(resourceClass));
-        roleScopes.addAll(scopeService.getParentScopes(resourceClass));
-        for (Scope roleScope : roleScopes) {
-            return resourceDAO.getVisibleResourceWithUpdateCount(resourceClass, roleScope, user, baseline) > 0;
-        }
-        return false;
-    }
-    
-    public Resource getRegistrationResource(UserRegistrationDTO registrationDTO, User user, Action action) throws WorkflowEngineException {
-        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
-            Object newResourceDTO = registrationDTO.getAction().getAvailableResource();
-            return createResource(user, action, newResourceDTO).getTransitionResource();
-        } else {
-            return entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId());
-        }
+    public Resource getOperativeResource(Resource resource, Action action) {
+        return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
     }
 
 }

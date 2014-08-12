@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
@@ -14,7 +13,6 @@ import org.hibernate.type.BooleanType;
 import org.hibernate.type.DateType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,10 +23,8 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Scope;
-import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 
@@ -95,28 +91,6 @@ public class ResourceDAO {
                 .add(Restrictions.eq("id", propagator.getId())) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .list();
-    }
-    
-    public <T extends Resource> Integer getVisibleResourceWithUpdateCount(Class<T> resourceClass, Scope roleScope, User user, LocalDate baseline) {
-        String resourceReference = PrismScope.getResourceScope(resourceClass).getLowerCaseName();
-        DateTime rangeStart = baseline.minusDays(1).toDateTimeAtStartOfDay();
-        DateTime rangeClose = rangeStart.plusDays(1).minusSeconds(1);
-        
-        return (Integer) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.countDistinct(resourceReference + ".id")) //
-                .createAlias("action", "action", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .createAlias("userRole." + resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .add(Restrictions.eqProperty("state", resourceReference + ".state")) //
-                .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
-                .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.between(resourceReference + ".updatedTimestamp", rangeStart, rangeClose)) //
-                .add(Restrictions.eq("userAccount.enabled", true)) //
-                .uniqueResult(); 
     }
 
     private <T extends Resource> String getResourceListBlockSelect(User user, Class<T> resourceClass, List<Scope> parentScopes, int loadIndex) {

@@ -8,6 +8,7 @@ import javax.inject.Named;
 import javax.validation.Valid;
 import javax.ws.rs.WebApplicationException;
 
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -57,7 +58,7 @@ public class UserResource {
     @Autowired
     private Mapper dozerBeanMapper;
     
-    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(method = RequestMethod.GET)
     public UserExtendedRepresentation getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
@@ -68,7 +69,7 @@ public class UserResource {
         return dozerBeanMapper.map(user, UserExtendedRepresentation.class);
     }
 
-    @RequestMapping(value = "/authenticate", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public Map<String, String> authenticate(@RequestParam(required = false, value = "username") String username,
             @RequestParam(required = false, value = "password") String password) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
@@ -83,6 +84,19 @@ public class UserResource {
             throws WorkflowEngineException {
         registrationService.submitRegistration(userRegistrationDTO);
         return "OK";
+    }
+
+    @RequestMapping(value = "/activate", method = RequestMethod.PUT)
+    public Map<String, String> activateAccount(@RequestParam String activationCode){
+        User user = userService.getUserByActivationCode(activationCode);
+        if(user == null){
+            throw new ResourceNotFoundException();
+        }
+        boolean activated = userService.activateUser(user.getId());
+//        if(activated){
+            return ImmutableMap.of("status", "ACTIVATED", "user", user.getEmail());
+//        }
+//        return ImmutableMap.of("status", "ALREADY_ACTIVATED");
     }
 
     @RequestMapping(value="/suggestion", method = RequestMethod.GET, params = "searchTerm")

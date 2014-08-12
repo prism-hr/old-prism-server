@@ -6,6 +6,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.rest.ActionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,12 +67,14 @@ public class RegistrationService {
         Resource resource;
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             Object newResourceDTO = registrationDTO.getAction().getAvailableResource();
-            resource = resourceService.createResource(user, action, newResourceDTO).getTransitionResource();
+            ActionOutcome actionOutcome = resourceService.createResource(user, action, newResourceDTO);
+            resource = actionOutcome.getTransitionResource();
+            action = actionOutcome.getTransitionAction();
         } else {
             resource = entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId());
         }
 
-        sendConfirmationEmail(user, resource);
+        sendConfirmationEmail(user, resource, action);
         return user;
     }
 
@@ -81,9 +84,9 @@ public class RegistrationService {
         return user;
     }
 
-    public void sendConfirmationEmail(User newUser, Resource resource) {
+    public void sendConfirmationEmail(User newUser, Resource resource, Action action) {
         NotificationTemplate confirmationTemplate = notificationService.getById(PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
-        notificationService.sendNotification(newUser, resource, confirmationTemplate);
+        notificationService.sendNotification(newUser, resource, action, confirmationTemplate);
     }
 
     public User findUserForActivationCode(String activationCode) {

@@ -18,7 +18,7 @@
             <td width="500">
 				<h1 style="font-size: 12pt;">
 					<font face="Arial, Helvetica, sans-serif" color="#0055A1">
-						Dear ${user.firstName},
+						Dear ${userFirstName},
 					</font>
 				</h1>		
 				<p>
@@ -28,7 +28,7 @@
 				</p>
 				<p>
 					<!-- Button -->
-					<a style="text-decoration:none;" href="${host}/pgadmissions/register/activateAccount?activationCode=${user.activationCode}" title="Confirm Registration">
+					<a style="text-decoration:none;" href="${host}/#/activate?activationCode=${activationCode}&resourceId=${resourceId}&action=${action}" title="Confirm Registration">
 						<img alt="Confirm registration" title="Confirm registration" width="158" height="33" src="${host}/pgadmissions/design/default/images/email/confirm_registration.jpg">
 					</a>
 				</p>

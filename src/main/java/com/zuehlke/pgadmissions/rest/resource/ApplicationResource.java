@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import com.google.common.base.Preconditions;
+import com.zuehlke.pgadmissions.services.*;
 import org.apache.commons.lang.BooleanUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
@@ -55,11 +57,6 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.CommentDTOValidator;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
-import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
 @RequestMapping(value = { "api/applications" })
@@ -87,7 +84,7 @@ public class ApplicationResource {
     private CommentDTOValidator commentDTOValidator;
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private CommentService commentService;
 
     @RequestMapping(value = "/{applicationId}/programDetails", method = RequestMethod.PUT)
     public void saveProgramDetails(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationProgramDetailsDTO programDetailsDTO) {
@@ -180,6 +177,8 @@ public class ApplicationResource {
     public ActionOutcomeRepresentation performAction(@PathVariable Integer applicationId, @Valid @RequestBody CommentDTO commentDTO)
             throws WorkflowEngineException {
         Application application = entityService.getById(Application.class, applicationId);
+        User user = userService.getById(commentDTO.getUser());
+        User delegateUser = userService.getById(commentDTO.getDelegateUser());
         PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
         State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
@@ -187,7 +186,7 @@ public class ApplicationResource {
         ResidenceState residenceState = importedEntitytService.getByCode(ResidenceState.class, institution, commentDTO.getResidenceState());
         LocalDate positionProvisionalStartDate = commentDTO.getPositionProvisionalStartDate() == null ? null : commentDTO.getPositionProvisionalStartDate()
                 .toLocalDate();
-        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(userService.getCurrentUser()).withAction(action)
+        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withDelegateUser(delegateUser).withAction(action)
                 .withTransitionState(transitionState).withCreatedTimestamp(new DateTime())
                 .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withQualified(commentDTO.getQualified())
                 .withCompetentInWorkLanguage(commentDTO.getCompetentInWorkLanguage()).withResidenceState(residenceState)
@@ -229,9 +228,9 @@ public class ApplicationResource {
             }
         } else if (commentDTO.getAssignedUsers() != null) {
             for (CommentAssignedUserDTO assignedUserDTO : commentDTO.getAssignedUsers()) {
-                UserDTO userDTO = assignedUserDTO.getUser();
-                User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
-                assignedUsers.add(new CommentAssignedUser().withUser(user).withRole(entityService.getById(Role.class, assignedUserDTO.getRole())));
+                UserDTO commentUserDTO = assignedUserDTO.getUser();
+                User commentUser = userService.getOrCreateUser(commentUserDTO.getFirstName(), commentUserDTO.getLastName(), commentUserDTO.getEmail());
+                assignedUsers.add(new CommentAssignedUser().withUser(commentUser).withRole(entityService.getById(Role.class, assignedUserDTO.getRole())));
             }
         }
 
@@ -239,6 +238,14 @@ public class ApplicationResource {
 
         ActionOutcome actionOutcome = actionService.executeUserAction(application, action, comment);
         return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
+    }
+
+    @RequestMapping(value = "/{applicationId}/comments/{commentId}", method = RequestMethod.PUT)
+    public void performAction(@PathVariable Integer applicationId, @PathVariable Integer commentId, @Valid @RequestBody CommentDTO commentDTO){
+        Comment comment = commentService.getById(commentId);
+        Preconditions.checkArgument(comment.getApplication().getId() == applicationId);
+        // TODO add permissions check for updating comment
+        commentService.updateComment(commentId, commentDTO);
     }
 
     @InitBinder(value = "commentDTO")

@@ -29,5 +29,6 @@ public class CommentDTOValidator extends AbstractValidator {
             ValidationUtils.rejectIfEmpty(errors, "competentInWorkLanguage", EMPTY_DROPDOWN_ERROR_MESSAGE);
             ValidationUtils.rejectIfEmpty(errors, "residenceStatus", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
+
     }
 }

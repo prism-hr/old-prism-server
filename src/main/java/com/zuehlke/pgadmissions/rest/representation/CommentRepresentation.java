@@ -13,6 +13,8 @@ import com.zuehlke.pgadmissions.rest.representation.application.FileRepresentati
 
 public class CommentRepresentation {
 
+    private Integer id;
+
     private UserRepresentation user;
 
     private String role;
@@ -96,6 +98,14 @@ public class CommentRepresentation {
     private Set<AppointmentTimeslotRepresentation> appointmentTimeslots;
 
     private Set<AppointmentPreferenceRepresentation> appointmentPreferences;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public UserRepresentation getUser() {
         return user;

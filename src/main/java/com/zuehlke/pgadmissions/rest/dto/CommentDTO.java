@@ -25,7 +25,7 @@ public class CommentDTO {
 
     private Set<CommentAssignedUserDTO> assignedUsers;
 
-    private List<Integer> documents;
+    private List<FileDTO> documents;
 
     private YesNoUnsureResponse qualified;
 
@@ -121,11 +121,11 @@ public class CommentDTO {
         this.assignedUsers = assignedUsers;
     }
 
-    public List<Integer> getDocuments() {
+    public List<FileDTO> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(List<Integer> documents) {
+    public void setDocuments(List<FileDTO> documents) {
         this.documents = documents;
     }
 

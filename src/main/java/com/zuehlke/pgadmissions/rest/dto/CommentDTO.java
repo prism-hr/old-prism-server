@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
+import com.zuehlke.pgadmissions.domain.User;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
@@ -11,6 +12,10 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 public class CommentDTO {
+
+    private Integer user;
+
+    private Integer delegateUser;
 
     private PrismAction action;
 
@@ -67,6 +72,22 @@ public class CommentDTO {
     private Boolean declinedResponse;
 
     private Integer rejectionReason;
+
+    public Integer getUser() {
+        return user;
+    }
+
+    public void setUser(Integer user) {
+        this.user = user;
+    }
+
+    public Integer getDelegateUser() {
+        return delegateUser;
+    }
+
+    public void setDelegateUser(Integer delegateUser) {
+        this.delegateUser = delegateUser;
+    }
 
     public PrismAction getAction() {
         return action;

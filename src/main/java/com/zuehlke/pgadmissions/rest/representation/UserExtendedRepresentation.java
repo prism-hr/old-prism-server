@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.rest.representation;
 
 public class UserExtendedRepresentation {
 
+    private Integer id;
+
     private String firstName;
 
     private String firstName2;
@@ -11,6 +13,14 @@ public class UserExtendedRepresentation {
     private String lastName;
 
     private String email;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getFirstName() {
         return firstName;

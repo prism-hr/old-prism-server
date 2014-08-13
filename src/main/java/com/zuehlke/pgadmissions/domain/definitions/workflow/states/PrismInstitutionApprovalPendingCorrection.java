@@ -19,7 +19,7 @@ public class PrismInstitutionApprovalPendingCorrection extends PrismWorkflowStat
             .withAction(PrismAction.INSTITUTION_CORRECT) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(true) //
-            .withNotificationTemplate(PrismNotificationTemplate.INSTITUTION_TASK_REQUEST) //
+            .withNotificationTemplate(PrismNotificationTemplate.SYSTEM_INSTITUTION_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR))) //

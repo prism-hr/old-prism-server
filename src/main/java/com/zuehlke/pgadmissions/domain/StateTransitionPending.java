@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -10,11 +13,14 @@ import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 @Entity
 @Table(name = "STATE_TRANSITION_PENDING", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "state_transition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "state_transition_id" }), @UniqueConstraint(columnNames = { "project_id", "state_transition_id" }),
         @UniqueConstraint(columnNames = { "application_id", "state_transition_id" }) })
-public class StateTransitionPending {
+public class StateTransitionPending implements IUniqueEntity {
 
     @Id
     @GeneratedValue
@@ -136,4 +142,24 @@ public class StateTransitionPending {
         return this;
     }
 
+    @Override
+    public ResourceSignature getResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties = Maps.newHashMap();
+        if (system != null) {
+            properties.put("system", system);
+        } else if (institution != null) {
+            properties.put("institution", institution);
+        } else if (program != null) {
+            properties.put("program", program);
+        } else if (project != null) {
+            properties.put("program", project);
+        } else if (application != null) {
+            properties.put("application", application);
+        }
+        properties.put("stateTransition", stateTransition);
+        propertiesWrapper.add(properties);
+        return new ResourceSignature(propertiesWrapper);
+    }
+    
 }

@@ -74,32 +74,31 @@ public class ImportedEntityDAO {
     public void disableAllEntities(Class<?> entityClass, Institution institution) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update " + entityClass.getSimpleName() + " " //
-                        + "set enabled = false "
-                        + "where institution = :institution") //
+                    + "set enabled = false "
+                    + "where institution = :institution") //
                 .setParameter("institution", institution) // 
                 .executeUpdate();
     }
 
     public void disableAllImportedPrograms(Institution institution) {
-        LocalDate dueDate = new LocalDate();
         sessionFactory.getCurrentSession().createQuery( //
                 "update Program "
-                        + "set dueDate = :dueDate "
-                        + "where institution = :institution "
-                                + "and importedCode is not null")
+                    + "set dueDate = :dueDate "
+                    + "where institution = :institution "
+                        + "and importedCode is not null")
                 .setParameter("institution", institution)
-                .setParameter("dueDate", dueDate)
+                .setParameter("dueDate", new LocalDate())
                 .executeUpdate();
     }
     
     public void disableAllImportedProgramInstances(Institution institution) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update ProgramInstance " //
-                        + "set enabled = false " //
-                        + "where program in (" //
-                                + "select id from Program " //
-                                + "where institution = :institution "
-                                        + "and importedCode is not null)") //
+                    + "set enabled = false " //
+                    + "where program in (" //
+                        + "select id from Program " //
+                        + "where institution = :institution "
+                            + "and importedCode is not null)") //
                 .setParameter("institution", institution) //
                 .executeUpdate();
     }

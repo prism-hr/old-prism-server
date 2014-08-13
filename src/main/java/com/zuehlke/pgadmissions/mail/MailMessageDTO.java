@@ -62,9 +62,6 @@ public final class MailMessageDTO {
         }
     };
 
-    public MailMessageDTO() {
-    }
-
     @SuppressWarnings("unchecked")
     public Collection<InternetAddress> getToAsInternetAddresses() {
         return CollectionUtils.collect(to, convertToInternetAddresses);

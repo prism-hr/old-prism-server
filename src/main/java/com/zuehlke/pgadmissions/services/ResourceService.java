@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services;
 import java.util.HashMap;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
@@ -66,6 +66,9 @@ public class ResourceService {
     private RoleService roleService;
     
     @Autowired
+    private ScopeService scopeService;
+    
+    @Autowired
     private StateService stateService;
 
     @Autowired
@@ -74,18 +77,18 @@ public class ResourceService {
     @Autowired
     private UserService userService;
 
-    public <T extends Resource> List<ResourceConsoleListRowDTO> getConsoleListBlock(Class<T> resourceType, int page, int perPage) {
+    public <T extends Resource> Resource getById(Class<T> resourceClass, Integer id) {
+        return entityService.getById(resourceClass, id);
+    }
+    
+    public <T extends Resource> List<ResourceConsoleListRowDTO> getConsoleListBlock(Class<T> resourceClass, int loadIndex) {
         // TODO: Build filter and integrate
-        return resourceDAO.getConsoleListBlock(userService.getCurrentUser(), resourceType, page, perPage);
+        return resourceDAO.getConsoleListBlock(userService.getCurrentUser(), resourceClass, scopeService.getParentScopes(resourceClass), loadIndex);
     }
 
     public <T extends Resource> List<ResourceReportListRowDTO> getReportList(Class<T> resourceType) {
         // TODO: Build the query and integrate with filter
         return Lists.newArrayList();
-    }
-
-    public Resource getOperativeResource(Resource resource, Action action) {
-        return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
     }
     
     public ActionOutcome createResource(User user, Action action, Object newResourceDTO) throws WorkflowEngineException {
@@ -209,6 +212,10 @@ public class ResourceService {
         }
         
         return propagations;
+    }
+    
+    public Resource getOperativeResource(Resource resource, Action action) {
+        return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
     }
 
 }

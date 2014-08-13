@@ -60,8 +60,8 @@ public class AdvertCategoryImportService {
             CategoryRowDescriptor rowDescriptor = getDescriptor(row);
             if (rowDescriptor != null) {
                 OpportunityCategory parentCategory = entityService.getById(OpportunityCategory.class, rowDescriptor.getId() / 10);
-                OpportunityCategory category = new OpportunityCategory().withId(rowDescriptor.getId()).withEnabled(true).withName(rowDescriptor.getName()).withParentCategory(parentCategory);
-                entityService.merge(category);
+                OpportunityCategory transientCategory = new OpportunityCategory().withId(rowDescriptor.getId()).withEnabled(true).withName(rowDescriptor.getName()).withParentCategory(parentCategory);
+                entityService.createOrUpdate(transientCategory);
             }
         }
     }

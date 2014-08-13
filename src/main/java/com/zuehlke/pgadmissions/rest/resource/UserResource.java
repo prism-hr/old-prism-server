@@ -18,7 +18,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.User;
@@ -29,7 +34,6 @@ import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.UserRegistrationValidator;
 import com.zuehlke.pgadmissions.security.AuthenticationTokenUtils;
 import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
@@ -48,9 +52,6 @@ public class UserResource {
 
     @Autowired
     private ProgramService programService;
-
-    @Autowired
-    private RegistrationService registrationService;
     
     @Autowired
     private UserService userService;
@@ -82,7 +83,7 @@ public class UserResource {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String submitRegistration(@Valid @RequestBody UserRegistrationDTO userRegistrationDTO)
             throws WorkflowEngineException {
-        registrationService.submitRegistration(userRegistrationDTO);
+        userService.registerUser(userRegistrationDTO);
         return "OK";
     }
 

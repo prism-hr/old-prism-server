@@ -30,16 +30,6 @@ public class ActionDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public Action getValidAction(Resource resource, Action action) {
-        return (Action) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.property("action.id")) //
-                .createAlias("action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("state", resource.getState())) //
-                .add(Restrictions.eq("action.id", action)) //
-                .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
-                .uniqueResult();
-    }
-
     public Action getDelegateAction(Resource resource, Action action) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(StateActionAssignment.class) //
                 .setProjection(Projections.property("stateAction.action")) //
@@ -90,22 +80,25 @@ public class ActionDAO {
         return (Action) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("stateActionAssignment.role", "role", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("role.userRoles", "userRole", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.eq("action", action)) //
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
-                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
-                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
-                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
-                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
-                .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eq("userAccount.enabled", true)) //
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.isNull("stateActionAssignment.id"))
+                        .add(Restrictions.conjunction()
+                                .add(Restrictions.disjunction() //
+                                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
+                                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
+                                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
+                                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
+                                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
+                                .add(Restrictions.eq("userRole.user", user)) //
+                                .add(Restrictions.eq("userAccount.enabled", true)))) //
                 .uniqueResult();
     }
 
@@ -127,7 +120,7 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                         .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
                 .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eq("userAccount.enabled", true))
+                .add(Restrictions.eq("userAccount.enabled", true)) //
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.asc("action.id")) //
                 .list();

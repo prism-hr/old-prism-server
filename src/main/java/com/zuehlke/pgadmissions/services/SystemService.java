@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,6 +59,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationExportService;
+import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
@@ -94,15 +97,15 @@ public class SystemService {
 
     @Autowired
     private EntityService entityService;
+    
+    @Autowired
+    private EntityImportService entityImportService;
 
     @Autowired
     private NotificationService notificationService;
 
     @Autowired
     private ActionService actionService;
-
-    @Autowired
-    private RegistrationService registrationService;
 
     @Autowired
     private ResourceService resourceService;
@@ -118,6 +121,12 @@ public class SystemService {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private ApplicationExportService applicationExportService;
+    
+    @Autowired
+    private DocumentService documentService;
     
     @Autowired
     private SessionFactory sessionFactory;
@@ -179,6 +188,46 @@ public class SystemService {
     public void initializeSearchIndexes() {
         FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
         fullTextSession.createIndexer().start();
+    }
+    
+    @Scheduled(cron = "${maintenance.ongoing}")
+    public void maintainSystem() {
+        try {
+            logger.info("Executing pending state transitions");
+            stateService.executePendingStateTransitions();
+        } catch (Exception e) {
+            logger.info("Error executing pending state transitions", e);
+        }
+        
+        if (!stateService.hasPendingStateTransitions()) {
+            try {
+                logger.info("Importing reference data");
+                entityImportService.importReferenceData();
+            } catch (Exception e) {
+                logger.info("Error importing reference data", e);
+            }
+            
+            try {
+                logger.trace("Exporting applications");
+                applicationExportService.exportUclApplications();
+            } catch (Exception e) {
+                logger.info("Error exporting applications", e);
+            }
+            
+            try {
+                logger.info("Sending deferred workflow notifications.");
+                notificationService.sendDeferredWorkflowNotifications();
+            } catch (Exception e) {
+                logger.info("Error sending deferred workflow notifications", e);
+            }
+        }
+        
+        try {
+            logger.info("Deleting unused documents");
+            documentService.deleteOrphanDocuments();
+        } catch (Exception e) {
+            logger.info("Error deleting unused documents", e);
+        }
     }
 
     private void initialiseScopes() {
@@ -335,7 +384,7 @@ public class SystemService {
     }
 
     private void initialiseStateActions() throws WorkflowConfigurationException {
-        if (!stateService.isDeferredStateTransitions()) {
+        if (!stateService.hasPendingStateTransitions()) {
             stateService.deleteStateActions();
 
             for (State state : stateService.getStates()) {
@@ -361,7 +410,7 @@ public class SystemService {
             verifyBackwardResourceCompatibility();
         } else {
             try {
-                stateService.executeDeferredStateTransitions();
+                stateService.executePendingStateTransitions();
                 Thread.sleep(100);
                 initialiseStateActions();
             } catch (InterruptedException e) {
@@ -430,8 +479,7 @@ public class SystemService {
             Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                     .withAssignedUser(user, roleService.getCreatorRole(system));
             actionService.executeUserAction(system, action, comment);
-            NotificationTemplate registrationTemplate = notificationService.getById(PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
-            notificationService.sendNotification(user, system, null, registrationTemplate);
+            notificationService.sendNotification(user, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
         }
     }
 

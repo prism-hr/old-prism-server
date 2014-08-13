@@ -65,6 +65,9 @@ public abstract class Advert extends Resource {
     @Field(analyzer = @Analyzer(definition = "advertAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String description;
     
+    @Column(name = "apply_link")
+    private String applyLink;
+    
     @Column(name = "immediate_start", nullable = false)
     private Boolean immediateStart;
     
@@ -136,6 +139,14 @@ public abstract class Advert extends Resource {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public final String getApplyLink() {
+        return applyLink;
+    }
+
+    public final void setApplyLink(String applyLink) {
+        this.applyLink = applyLink;
     }
 
     public boolean isImmediateStart() {

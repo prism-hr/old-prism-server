@@ -52,7 +52,6 @@ import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.Title;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
@@ -133,10 +132,6 @@ public class ApplicationService {
 
     public Application getByCode(String code) {
         return entityService.getByProperty(Application.class, "code", code);
-    }
-
-    public List<ResourceConsoleListRowDTO> getConsoleListBlock(Integer page, Integer perPage) {
-        return resourceService.getConsoleListBlock(Application.class, page, perPage);
     }
 
     public List<ResourceReportListRowDTO> getReportList() {

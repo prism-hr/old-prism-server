@@ -18,13 +18,6 @@ public class ActionOutcome {
 
     private Action transitionAction;
 
-    public ActionOutcome(User user, Resource resource, Resource transitionResource, Action transitionAction) {
-        this.user = user;
-        this.resource = resource;
-        this.transitionResource = transitionResource;
-        this.transitionAction = transitionAction;
-    }
-
     public User getUser() {
         return user;
     }
@@ -39,6 +32,26 @@ public class ActionOutcome {
 
     public Action getTransitionAction() {
         return transitionAction;
+    }
+    
+    public ActionOutcome withUser(User user) {
+        this.user = user;
+        return this;
+    }
+    
+    public ActionOutcome withResource(Resource resource) {
+        this.resource = resource;
+        return this;
+    }
+    
+    public ActionOutcome withTransitionResource(Resource transitionResource) {
+        this.transitionResource = transitionResource;
+        return this;
+    }
+    
+    public ActionOutcome withTransitionAction(Action transitionAction) {
+        this.transitionAction = transitionAction;
+        return this;
     }
 
     public String createRedirectionUrl() {

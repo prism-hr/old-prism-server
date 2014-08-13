@@ -14,13 +14,10 @@ import com.zuehlke.pgadmissions.domain.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.QualificationType;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.definitions.DocumentType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
@@ -60,14 +57,6 @@ public class TestData {
 
     public static State aState(PrismState stateValue) {
         return new State().withId(stateValue);
-    }
-
-    public static UserRole aUserRole(Application applicaton, Role role, User user, User requestingUser) {
-        return new UserRole().withApplication(applicaton).withRole(role).withUser(user).withAssignedTimestamp(new DateTime());
-    }
-
-    public static Document aDocument() {
-        return new Document().withFileName("dupa").withContent(new byte[0]).withContentType("application/pdf").withType(DocumentType.CV);
     }
 
     public static ApplicationQualification aQualification(Application application, QualificationType qualificationType, Document document,

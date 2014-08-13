@@ -122,9 +122,8 @@ public class ResourceResource {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<ResourceListRowRepresentation> getResources(@RequestParam Integer page, @RequestParam(value = "per_page") Integer perPage,
-                                                            @ModelAttribute ResourceDescriptor resourceDescriptor) {
-        List<ResourceConsoleListRowDTO> consoleListBlock = resourceService.getConsoleListBlock(resourceDescriptor.getType(), page, perPage);
+    public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam(value = "per_page") Integer loadIndex) {
+        List<ResourceConsoleListRowDTO> consoleListBlock = resourceService.getConsoleListBlock(resourceDescriptor.getType(), loadIndex);
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
         for (ResourceConsoleListRowDTO appDTO : consoleListBlock) {
             ResourceListRowRepresentation representation = dozerBeanMapper.map(appDTO, ResourceListRowRepresentation.class);
@@ -140,7 +139,7 @@ public class ResourceResource {
             throw new Error(actionDTO.getActionId().name() + " is not a creation action.");
         }
         User user = userService.getCurrentUser();
-        Object newResourceDTO = actionDTO.getAvailableResource();
+        Object newResourceDTO = actionDTO.getOperativeResourceDTO();
         Action action = actionService.getById(actionDTO.getActionId());
         ActionOutcome actionOutcome = resourceService.createResource(user, action, newResourceDTO);
 

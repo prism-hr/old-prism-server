@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Scope;
@@ -30,9 +29,11 @@ import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.mail.MailDescriptor;
 import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
+import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
@@ -46,8 +47,11 @@ public class UserService {
     private UserDAO userDAO;
 
     @Autowired
+    private ActionService actionService;
+
+    @Autowired
     private RoleService roleService;
-    
+
     @Autowired
     private EncryptionUtils encryptionUtils;
 
@@ -61,12 +65,15 @@ public class UserService {
     private CommentService commentService;
 
     @Autowired
+    private ResourceService resourceService;
+
+    @Autowired
     private SystemService systemService;
 
     public User getById(Integer id) {
         return entityService.getById(User.class, id);
     }
-    
+
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof User) {
@@ -78,14 +85,6 @@ public class UserService {
     public UserExtendedRepresentation getUserRepresentation(User user) {
         return new UserExtendedRepresentation().withFirstName(user.getFirstName()).withFirstName2(user.getFirstName2()).withFirstName3(user.getFirstName3())
                 .withLastName(user.getLastName()).withEmail(user.getEmail());
-    }
-
-    public boolean checkUserEnabled(User user) {
-        UserAccount userAccount = user.getUserAccount();
-        if (userAccount != null) {
-            return userAccount.isEnabled();
-        }
-        return false;
     }
 
     public User getUserByEmail(String email) {
@@ -106,7 +105,21 @@ public class UserService {
         }
         return user;
     }
-    
+
+    public User registerUser(UserRegistrationDTO registrationDTO) throws WorkflowEngineException {
+        User user = getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail());
+        if ((registrationDTO.getActivationCode() != null && !user.getActivationCode().equals(registrationDTO.getActivationCode()))
+                || user.getUserAccount() != null) {
+            throw new ResourceNotFoundException();
+        }
+
+        user.setUserAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(registrationDTO.getPassword())).withEnabled(false));
+
+        ActionOutcome outcome = actionService.getRegistrationOutcome(user, registrationDTO);
+        notificationService.sendNotification(user, outcome.getTransitionResource(), PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+        return user;
+    }
+
     public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource,
             List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
         User user = getOrCreateUser(firstName, lastName, email);
@@ -131,13 +144,13 @@ public class UserService {
     }
 
     public void resetPassword(String email) {
-        User storedUser = entityService.getByProperty(User.class, "email", email);
-        if (storedUser != null) {
+        User user = entityService.getByProperty(User.class, "email", email);
+        if (user != null) {
             try {
                 String newPassword = encryptionUtils.generateUserPassword();
-                NotificationTemplate passwordTemplate = notificationService.getById(PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION);
-                notificationService.sendNotification(storedUser, null, null, passwordTemplate, ImmutableMap.of("newPassword", newPassword));
-                storedUser.getUserAccount().setPassword(encryptionUtils.getMD5Hash(newPassword));
+                notificationService.sendNotification(user, systemService.getSystem(), PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION,
+                        ImmutableMap.of("newPassword", newPassword));
+                user.getUserAccount().setPassword(encryptionUtils.getMD5Hash(newPassword));
             } catch (Exception e) {
                 throw new Error(e);
             }
@@ -147,7 +160,7 @@ public class UserService {
     public void linkUsers(UserAccountDTO linkFromUserDTO, UserAccountDTO linkIntoUserDTO) {
         User linkFromUser = userDAO.getAuthenticatedUser(linkFromUserDTO.getEmail(), linkFromUserDTO.getPassword());
         User linkIntoUser = userDAO.getAuthenticatedUser(linkIntoUserDTO.getEmail(), linkIntoUserDTO.getPassword());
-        
+
         if (linkFromUser != null && linkIntoUser != null) {
             userDAO.refreshParentUser(linkIntoUser);
             linkFromUser.setParentUser(linkIntoUser);
@@ -159,20 +172,16 @@ public class UserService {
         if (persistentFilter == null) {
             UserAccount userAccount = transientFilter.getUserAccount();
             Scope scope = transientFilter.getScope();
-            
+
             transientFilter.setUserAccount(null);
             transientFilter.setScope(null);
-            
+
             userAccount.getFilters().put(scope, transientFilter);
         }
     }
 
     public Integer getNumberOfActiveApplicationsForApplicant(User applicant) {
         return userDAO.getNumberOfActiveApplicationsForApplicant(applicant);
-    }
-
-    public List<MailDescriptor> getUsersDueTaskNotification() {
-        return userDAO.getUseDueTaskNotification();
     }
 
     public List<User> getUsersForResourceAndRole(Resource resource, PrismRole authority) {
@@ -229,14 +238,14 @@ public class UserService {
 
         return Lists.newArrayList(orderedRecruiters.values());
     }
-    
+
     public List<UserRepresentation> getSimilarUsers(String searchTerm) {
         String trimmedSearchTerm = StringUtils.trim(searchTerm);
-        
+
         if (trimmedSearchTerm.length() >= 1) {
             return userDAO.getSimilarUsers(trimmedSearchTerm);
         }
-        
+
         return Lists.newArrayList();
     }
 

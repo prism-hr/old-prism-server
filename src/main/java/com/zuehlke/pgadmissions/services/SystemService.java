@@ -215,10 +215,10 @@ public class SystemService {
             }
             
             try {
-                logger.info("Sending pending notifications.");
-                notificationService.sendPendingNotifications();
+                logger.info("Sending deferred workflow notifications.");
+                notificationService.sendDeferredWorkflowNotifications();
             } catch (Exception e) {
-                logger.info("Error sending pending notifications", e.getMessage());
+                logger.info("Error sending deferred workflow notifications", e);
             }
         }
         
@@ -479,8 +479,7 @@ public class SystemService {
             Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                     .withAssignedUser(user, roleService.getCreatorRole(system));
             actionService.executeUserAction(system, action, comment);
-            NotificationTemplate registrationTemplate = notificationService.getById(PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
-            notificationService.sendNotification(user, system, null, registrationTemplate);
+            notificationService.sendNotification(user, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
         }
     }
 

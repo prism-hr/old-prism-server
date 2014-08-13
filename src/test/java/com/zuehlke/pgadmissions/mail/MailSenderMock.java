@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.mail;
 
-import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -11,11 +10,6 @@ import com.zuehlke.pgadmissions.utils.HibernateUtils;
 public class MailSenderMock extends MailSender {
 
     private List<MailMessageDTO> sentMessages = Lists.newLinkedList();
-
-    @Override
-    public void sendEmail(Collection<MailMessageDTO> emailMessages) {
-        sentMessages.addAll(emailMessages);
-    }
 
     public MailMessageDTO assertEmailSent(User recipient, PrismNotificationTemplate templateId) {
         for (MailMessageDTO message : sentMessages) {

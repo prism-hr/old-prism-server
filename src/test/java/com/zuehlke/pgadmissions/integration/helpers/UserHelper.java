@@ -48,8 +48,7 @@ public class UserHelper {
 
         mailSenderMock.assertEmailSent(user, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
 
-        userService.activateUser(user.getActivationCode());
-
+        userService.activateUser(user.getId());
         assertTrue(user.isEnabled());
     }
 

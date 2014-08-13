@@ -47,19 +47,19 @@ public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState 
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION))) //
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REVIEW_PENDING_COMPLETION) // 
@@ -69,7 +69,7 @@ public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState 
             .withAction(PrismAction.APPLICATION_COMPLETE_REVIEW_STAGE) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
-            .withNotificationTemplate(PrismNotificationTemplate.APPLICATION_TASK_REQUEST) //
+            .withNotificationTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
@@ -84,19 +84,19 @@ public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState 
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION))) //
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVAL) // 
@@ -233,22 +233,22 @@ public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState 
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.APPLICATION_CREATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION))) //
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REVIEW_PENDING_COMPLETION) // 
@@ -264,26 +264,26 @@ public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState 
             .withAction(PrismAction.APPLICATION_PROVIDE_REVIEW) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
-            .withNotificationTemplate(PrismNotificationTemplate.APPLICATION_TASK_REQUEST) //
+            .withNotificationTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_REVIEWER))) //
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION))) //
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REVIEW_PENDING_COMPLETION) // 
@@ -406,19 +406,19 @@ public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState 
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_NOTIFICATION))) //
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT) // 

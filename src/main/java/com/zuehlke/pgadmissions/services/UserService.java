@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Scope;
@@ -49,10 +48,10 @@ public class UserService {
 
     @Autowired
     private ActionService actionService;
-    
+
     @Autowired
     private RoleService roleService;
-    
+
     @Autowired
     private EncryptionUtils encryptionUtils;
 
@@ -64,7 +63,7 @@ public class UserService {
 
     @Autowired
     private CommentService commentService;
-    
+
     @Autowired
     private ResourceService resourceService;
 
@@ -74,7 +73,7 @@ public class UserService {
     public User getById(Integer id) {
         return entityService.getById(User.class, id);
     }
-    
+
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof User) {
@@ -106,7 +105,7 @@ public class UserService {
         }
         return user;
     }
-    
+
     public User registerUser(UserRegistrationDTO registrationDTO) throws WorkflowEngineException {
         User user = getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail());
         if ((registrationDTO.getActivationCode() != null && !user.getActivationCode().equals(registrationDTO.getActivationCode()))
@@ -115,18 +114,12 @@ public class UserService {
         }
 
         user.setUserAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(registrationDTO.getPassword())).withEnabled(false));
-        
+
         ActionOutcome outcome = actionService.getRegistrationOutcome(user, registrationDTO);
         notificationService.sendNotification(user, outcome.getTransitionResource(), PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
         return user;
     }
-    
-    public User activateUser(String activationCode) {
-        User user = getUserByActivationCode(activationCode);
-        user.getUserAccount().setEnabled(true);
-        return user;
-    }
-    
+
     public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource,
             List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
         User user = getOrCreateUser(firstName, lastName, email);
@@ -151,13 +144,13 @@ public class UserService {
     }
 
     public void resetPassword(String email) {
-        User storedUser = entityService.getByProperty(User.class, "email", email);
-        if (storedUser != null) {
+        User user = entityService.getByProperty(User.class, "email", email);
+        if (user != null) {
             try {
                 String newPassword = encryptionUtils.generateUserPassword();
-                NotificationTemplate passwordTemplate = notificationService.getById(PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION);
-                notificationService.sendNotification(storedUser, null, null, passwordTemplate, ImmutableMap.of("newPassword", newPassword));
-                storedUser.getUserAccount().setPassword(encryptionUtils.getMD5Hash(newPassword));
+                notificationService.sendNotification(user, systemService.getSystem(), PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION,
+                        ImmutableMap.of("newPassword", newPassword));
+                user.getUserAccount().setPassword(encryptionUtils.getMD5Hash(newPassword));
             } catch (Exception e) {
                 throw new Error(e);
             }
@@ -167,7 +160,7 @@ public class UserService {
     public void linkUsers(UserAccountDTO linkFromUserDTO, UserAccountDTO linkIntoUserDTO) {
         User linkFromUser = userDAO.getAuthenticatedUser(linkFromUserDTO.getEmail(), linkFromUserDTO.getPassword());
         User linkIntoUser = userDAO.getAuthenticatedUser(linkIntoUserDTO.getEmail(), linkIntoUserDTO.getPassword());
-        
+
         if (linkFromUser != null && linkIntoUser != null) {
             userDAO.refreshParentUser(linkIntoUser);
             linkFromUser.setParentUser(linkIntoUser);
@@ -179,10 +172,10 @@ public class UserService {
         if (persistentFilter == null) {
             UserAccount userAccount = transientFilter.getUserAccount();
             Scope scope = transientFilter.getScope();
-            
+
             transientFilter.setUserAccount(null);
             transientFilter.setScope(null);
-            
+
             userAccount.getFilters().put(scope, transientFilter);
         }
     }
@@ -245,14 +238,14 @@ public class UserService {
 
         return Lists.newArrayList(orderedRecruiters.values());
     }
-    
+
     public List<UserRepresentation> getSimilarUsers(String searchTerm) {
         String trimmedSearchTerm = StringUtils.trim(searchTerm);
-        
+
         if (trimmedSearchTerm.length() >= 1) {
             return userDAO.getSimilarUsers(trimmedSearchTerm);
         }
-        
+
         return Lists.newArrayList();
     }
 

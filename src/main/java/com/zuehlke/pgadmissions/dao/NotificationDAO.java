@@ -25,8 +25,8 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserNotification;
 import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinition;
@@ -93,14 +93,6 @@ public class NotificationDAO {
         return Lists.newArrayList(templates);
     }
 
-    public void deleteObseleteNotificationConfigurations(List<NotificationTemplate> activeNotificationWorkflowTemplates) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "delete NotificationConfiguration " //
-                        + "where notificationTemplate not in (:configurableTemplates)") //
-                .setParameterList("configurableTemplates", activeNotificationWorkflowTemplates) //
-                .executeUpdate();
-    }
-
     public List<UserNotificationDefinition> getUpdateNotifications(Resource resource, Action action, User invoker) {
         return (List<UserNotificationDefinition>) sessionFactory.getCurrentSession().createCriteria(StateActionNotification.class, "stateActionNotification") //
                 .setProjection(Projections.projectionList() //
@@ -114,8 +106,9 @@ public class NotificationDAO {
                 .createAlias("stateActionNotification.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", resource.getPreviousState())) //
                 .add(Restrictions.eq("stateAction.action", action)) //
+                .add(Restrictions.eq("notificationTemplate.notificationType", PrismNotificationType.INDIVIDUAL))
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("notificationTemplate.notificationType", PrismNotificationType.INDIVIDUAL))
+                        .add(Restrictions.eq("action.actionCategory", PrismActionCategory.CREATE_RESOURCE)) //
                         .add(Restrictions.ne("userRole.user", invoker))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //
@@ -143,6 +136,7 @@ public class NotificationDAO {
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", resource.getState())) //
                 .add(Restrictions.eq("stateAction.action", action)) //
+                .add(Restrictions.eq("notificationTemplate.notificationType", PrismNotificationType.INDIVIDUAL))
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
@@ -155,53 +149,20 @@ public class NotificationDAO {
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinition.class)) //
                 .list();
     }
-    
-    public List<UserNotificationDefinition> getPendingNotifications(Scope scope) {
-        return null;
-    }
 
-    public List<UserNotificationDefinition> getPendingBatchedNotifications(Scope scope, LocalDate baseline) {
+    public List<UserNotificationDefinition> getDeferredNotifications(Scope scope, LocalDate baseline) {
        return (List<UserNotificationDefinition>) sessionFactory.getCurrentSession().createSQLQuery(
                "To do ... get the string via freemarker")
                .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinition.class)) //
                .list();
     }
     
-    public UserNotification getUserNotification(UserNotificationDefinition definition) {
-        return (UserNotification) sessionFactory.getCurrentSession().createCriteria(UserNotification.class) //
-                .add(Restrictions.eq("user.id", definition.getUserRoleId())) //
-                .add(Restrictions.eq("notificationTemplate.id", definition.getNotificationTemplateId())) //
-                .uniqueResult();        
-    }
-    
-    public void updateUserNotification(Resource resource, User user, NotificationTemplate notificationTemplate, LocalDate createdDate) {
+    public void deleteObseleteNotificationConfigurations(List<NotificationTemplate> activeNotificationWorkflowTemplates) {
         sessionFactory.getCurrentSession().createQuery( //
-                "update userNotification "
-                    + "set createdDate = :createdDate" //
-                    + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
-                        + "and userRole in ( "
-                            + "from userRole "
-                            + "where user = :user)  " //
-                        + "and notificationTemplate = :notificationTemplate") //
-                .setParameter("createdDate", createdDate) //
-                .setParameter("resource", resource) //
-                .setParameter("user", user) //
-                .setParameter("notificationTemplate", notificationTemplate) //
+                "delete NotificationConfiguration " //
+                        + "where notificationTemplate not in (:configurableTemplates)") //
+                .setParameterList("configurableTemplates", activeNotificationWorkflowTemplates) //
                 .executeUpdate();
-    }
-
-    public void deleteUserNotification(Resource resource, User user, NotificationTemplate notificationTemplate) {
-        sessionFactory.getCurrentSession().createQuery( //
-            "delete UserNotification " //
-            + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
-                + "and userRole in ( " //
-                    + "from UserRole " //
-                    + "where user = :user) " //
-                + "and notificationTemplate = :notificationTemplate")
-            .setParameter("resource", resource) //
-            .setParameter("user", user) //
-            .setParameter("notificationTemplate", notificationTemplate) //
-            .executeUpdate();
     }
     
     public void deleteUserNotification(UserRole roleToRemove) {

@@ -21,14 +21,14 @@ public class PrismProgramApproval extends PrismWorkflowState {
             .withAction(PrismAction.PROGRAM_COMPLETE_APPROVAL_STAGE) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false)
-            .withNotificationTemplate(PrismNotificationTemplate.PROGRAM_TASK_REQUEST) //
+            .withNotificationTemplate(PrismNotificationTemplate.SYSTEM_PROGRAM_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR))) //
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.PROGRAM_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_PROGRAM_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 
                         .withTemplate(PrismNotificationTemplate.PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION))) //

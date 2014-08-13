@@ -40,16 +40,16 @@ public class PrismProjectDisabledPendingProgramReactivation extends PrismWorkflo
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.PROJECT_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_PROJECT_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.PROJECT_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_PROJECT_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.PROJECT_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_PROJECT_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
-                        .withTemplate(PrismNotificationTemplate.PROJECT_UPDATE_NOTIFICATION))) //
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_PROJECT_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( //
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_APPROVAL) // 
@@ -75,16 +75,16 @@ public class PrismProjectDisabledPendingProgramReactivation extends PrismWorkflo
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.PROJECT_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_PROJECT_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.PROJECT_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_PROJECT_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.PROJECT_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_PROJECT_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
-                        .withTemplate(PrismNotificationTemplate.PROJECT_UPDATE_NOTIFICATION))) //
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_PROJECT_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DISABLED_COMPLETED) // 

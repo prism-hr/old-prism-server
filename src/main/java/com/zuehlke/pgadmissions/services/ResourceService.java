@@ -77,6 +77,10 @@ public class ResourceService {
     @Autowired
     private UserService userService;
 
+    public <T extends Resource> Resource getById(Class<T> resourceClass, Integer id) {
+        return entityService.getById(resourceClass, id);
+    }
+    
     public <T extends Resource> List<ResourceConsoleListRowDTO> getConsoleListBlock(Class<T> resourceClass, int loadIndex) {
         // TODO: Build filter and integrate
         return resourceDAO.getConsoleListBlock(userService.getCurrentUser(), resourceClass, scopeService.getParentScopes(resourceClass), loadIndex);

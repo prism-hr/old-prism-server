@@ -346,9 +346,10 @@ public class Institution extends Resource {
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties1 = Maps.newHashMap();
-        properties1.put("name", name);
-        propertiesWrapper.add(properties1);
+        HashMap<String, Object> properties = Maps.newHashMap();
+        properties.put("domicile", domicile);
+        properties.put("name", name);
+        propertiesWrapper.add(properties);
         return new ResourceSignature(propertiesWrapper);
     }
 

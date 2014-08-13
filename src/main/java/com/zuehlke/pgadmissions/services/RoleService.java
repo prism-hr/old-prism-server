@@ -11,7 +11,6 @@ import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
@@ -44,6 +43,10 @@ public class RoleService {
 
     public Role getById(PrismRole roleId) {
         return entityService.getByProperty(Role.class, "id", roleId);
+    }
+    
+    public UserRole getUserRoleById(Integer id) {
+        return entityService.getById(UserRole.class, id);
     }
 
     public List<Role> getRoles() {
@@ -106,10 +109,6 @@ public class RoleService {
 
     public void deleteInactiveRoles() {
         roleDAO.deleteObseleteUserRoles(getActiveRoles());
-    }
-
-    public List<UserRole> getUpdateNotificationRoles(User user, Resource resource, NotificationTemplate template) {
-        return roleDAO.getUpdateNotificationRoles(user, resource, template);
     }
 
     public Role getCreatorRole(Resource resource) {

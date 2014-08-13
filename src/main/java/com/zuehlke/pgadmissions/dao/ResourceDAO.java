@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,7 +16,6 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.Action;
@@ -27,8 +25,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
-
-import freemarker.template.Template;
+import com.zuehlke.pgadmissions.utils.FreeMarkerHelper;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -44,14 +41,25 @@ public class ResourceDAO {
     private Integer resourceListRecordsToRetrieve;
     
     @Autowired
-    private FreeMarkerConfigurer freeMarkerConfigurer;
+    private FreeMarkerHelper freeMarkerHelper;
 
     @Autowired
     private SessionFactory sessionFactory;
 
     public <T extends Resource> List<ResourceConsoleListRowDTO> getConsoleListBlock(User user, Class<T> resourceClass, List<Scope> parentScopes, int loadIndex) {
+        HashMap<String, Object> model = Maps.newHashMap();
+        model.put("user", user);
+        model.put("queryScope", PrismScope.getResourceScope(resourceClass).getLowerCaseName());
+        model.put("parentScopes", parentScopes);
+        model.put("queryRangeValue", resourceListYearsToRetrieve);
+        model.put("queryRangeUnit", DurationUnit.YEARS.getSqlValue());
+        model.put("queryRangeValue", resourceListYearsToRetrieve);
+        model.put("queryRangeUnit", DurationUnit.YEARS.getSqlValue());
+        model.put("rowIndex", loadIndex * resourceListRecordsToRetrieve);
+        model.put("rowCount", resourceListRecordsToRetrieve);
+        
         return (List<ResourceConsoleListRowDTO>) sessionFactory.getCurrentSession() //
-                .createSQLQuery(getResourceListBlockSelect(user, resourceClass, parentScopes, loadIndex)) //
+                .createSQLQuery(freeMarkerHelper.buildString(resourceListSqlLocation, model)) //
                 .addScalar("id", IntegerType.INSTANCE) //
                 .addScalar("code", StringType.INSTANCE).addScalar("raisesUrgentFlag", BooleanType.INSTANCE) //
                 .addScalar("state", StringType.INSTANCE) //
@@ -91,27 +99,6 @@ public class ResourceDAO {
                 .add(Restrictions.eq("id", propagator.getId())) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .list();
-    }
-
-    private <T extends Resource> String getResourceListBlockSelect(User user, Class<T> resourceClass, List<Scope> parentScopes, int loadIndex) {
-        HashMap<String, Object> queryParameters = Maps.newHashMap();
-        queryParameters.put("user", user);
-        queryParameters.put("queryScope", PrismScope.getResourceScope(resourceClass).getLowerCaseName());
-        queryParameters.put("parentScopes", parentScopes);
-        queryParameters.put("queryRangeValue", resourceListYearsToRetrieve);
-        queryParameters.put("queryRangeUnit", DurationUnit.YEARS.getSqlValue());
-        queryParameters.put("rowIndex", loadIndex * resourceListRecordsToRetrieve);
-        queryParameters.put("rowCount", resourceListRecordsToRetrieve);
-
-        StringWriter writer = new StringWriter();
-
-        try {
-            Template resourceListSelect = freeMarkerConfigurer.getConfiguration().getTemplate(resourceListSqlLocation);
-            resourceListSelect.process(queryParameters, writer);
-            return writer.toString();
-        } catch (Exception e) {
-            throw new Error(e);
-        }
     }
 
 }

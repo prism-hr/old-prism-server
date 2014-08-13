@@ -180,6 +180,8 @@ public class ApplicationResource {
     public ActionOutcomeRepresentation performAction(@PathVariable Integer applicationId, @Valid @RequestBody CommentDTO commentDTO)
             throws WorkflowEngineException {
         Application application = entityService.getById(Application.class, applicationId);
+        User user = userService.getById(commentDTO.getUser());
+        User delegateUser = userService.getById(commentDTO.getDelegateUser());
         PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
         State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
@@ -187,7 +189,7 @@ public class ApplicationResource {
         ResidenceState residenceState = importedEntitytService.getByCode(ResidenceState.class, institution, commentDTO.getResidenceState());
         LocalDate positionProvisionalStartDate = commentDTO.getPositionProvisionalStartDate() == null ? null : commentDTO.getPositionProvisionalStartDate()
                 .toLocalDate();
-        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(userService.getCurrentUser()).withAction(action)
+        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withDelegateUser(delegateUser).withAction(action)
                 .withTransitionState(transitionState).withCreatedTimestamp(new DateTime())
                 .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withQualified(commentDTO.getQualified())
                 .withCompetentInWorkLanguage(commentDTO.getCompetentInWorkLanguage()).withResidenceState(residenceState)
@@ -229,9 +231,9 @@ public class ApplicationResource {
             }
         } else if (commentDTO.getAssignedUsers() != null) {
             for (CommentAssignedUserDTO assignedUserDTO : commentDTO.getAssignedUsers()) {
-                UserDTO userDTO = assignedUserDTO.getUser();
-                User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
-                assignedUsers.add(new CommentAssignedUser().withUser(user).withRole(entityService.getById(Role.class, assignedUserDTO.getRole())));
+                UserDTO commentUserDTO = assignedUserDTO.getUser();
+                User commentUser = userService.getOrCreateUser(commentUserDTO.getFirstName(), commentUserDTO.getLastName(), commentUserDTO.getEmail());
+                assignedUsers.add(new CommentAssignedUser().withUser(commentUser).withRole(entityService.getById(Role.class, assignedUserDTO.getRole())));
             }
         }
 

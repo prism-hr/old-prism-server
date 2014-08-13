@@ -13,11 +13,11 @@ import com.zuehlke.pgadmissions.rest.representation.application.FileRepresentati
 
 public class CommentRepresentation {
 
-    private UserExtendedRepresentation user;
+    private UserRepresentation user;
 
     private String role;
 
-    private UserExtendedRepresentation delegateUser;
+    private UserRepresentation delegateUser;
 
     private String delegateRole;
 
@@ -97,11 +97,11 @@ public class CommentRepresentation {
 
     private Set<AppointmentPreferenceRepresentation> appointmentPreferences;
 
-    public UserExtendedRepresentation getUser() {
+    public UserRepresentation getUser() {
         return user;
     }
 
-    public void setUser(UserExtendedRepresentation user) {
+    public void setUser(UserRepresentation user) {
         this.user = user;
     }
 
@@ -113,11 +113,11 @@ public class CommentRepresentation {
         this.role = role;
     }
 
-    public UserExtendedRepresentation getDelegateUser() {
+    public UserRepresentation getDelegateUser() {
         return delegateUser;
     }
 
-    public void setDelegateUser(UserExtendedRepresentation delegateUser) {
+    public void setDelegateUser(UserRepresentation delegateUser) {
         this.delegateUser = delegateUser;
     }
 

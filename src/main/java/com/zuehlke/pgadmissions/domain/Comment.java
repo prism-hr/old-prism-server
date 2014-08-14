@@ -673,8 +673,8 @@ public class Comment {
         return this;
     }
 
-    public Comment withDelegateUser(User user) {
-        this.user = user;
+    public Comment withDelegateUser(final User delegateUser) {
+        this.delegateUser = delegateUser;
         return this;
     }
 

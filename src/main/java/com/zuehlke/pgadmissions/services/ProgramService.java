@@ -91,7 +91,10 @@ public class ProgramService {
     }
     
     public Program create(User user, ProgramDTO programDTO) {
-        return null;
+        Institution institution = entityService.getById(Institution.class, programDTO.getInstitutionId());
+        Program program = new Program().withTitle(programDTO.getTitle()).withInstitution(institution).withProgramType(programDTO.getProgramType())
+                .withRequireProjectDefinition(false);
+        return program;
     }
 
     public Program getOrImportProgram(Programme programme, Institution institution) throws WorkflowEngineException {

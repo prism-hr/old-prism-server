@@ -26,7 +26,7 @@
     </bean>
 
     <!-- custom exception resolver -->
-    <bean class="com.zuehlke.pgadmissions.interceptors.PgadmissionsExceptionResolver">
+    <bean class="com.zuehlke.pgadmissions.interceptors.PrismExceptionResolver">
     </bean>
 
     <bean id="jacksonObjectMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">

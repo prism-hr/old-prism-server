@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.exceptions;
 
-public class PrismException extends RuntimeException {
+public abstract class PrismException extends RuntimeException {
 
     private static final long serialVersionUID = 1520657238240701657L;
 
@@ -19,5 +19,7 @@ public class PrismException extends RuntimeException {
     public PrismException(Throwable cause) {
         super(cause);
     }
+
+    public abstract Object getResponseData();
 
 }

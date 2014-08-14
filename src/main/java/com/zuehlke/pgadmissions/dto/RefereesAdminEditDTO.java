@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+import com.zuehlke.pgadmissions.rest.validation.validator.ESAPIConstraint;
 
 public class RefereesAdminEditDTO {
 

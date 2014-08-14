@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dto;
 
-import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+import com.zuehlke.pgadmissions.rest.validation.validator.ESAPIConstraint;
 
 public class SwitchAndLinkUserAccountDTO {
 

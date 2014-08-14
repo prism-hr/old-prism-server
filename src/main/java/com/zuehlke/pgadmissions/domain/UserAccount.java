@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+import com.zuehlke.pgadmissions.rest.validation.validator.ESAPIConstraint;
 
 @Entity
 @Table(name = "USER_ACCOUNT")

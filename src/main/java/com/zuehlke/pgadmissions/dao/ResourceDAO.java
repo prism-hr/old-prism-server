@@ -89,8 +89,7 @@ public class ResourceDAO {
         return (List<Resource>) sessionFactory.getCurrentSession().createCriteria(action.getScope().getId().getResourceClass()) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action") //
-                .add(Restrictions.eq("action", action)) //
+                .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.lt("dueDate", baseline)) //
                 .list();
     }

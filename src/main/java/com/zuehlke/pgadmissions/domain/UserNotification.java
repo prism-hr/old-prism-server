@@ -20,10 +20,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @Entity
-@Table(name = "USER_NOTIFICATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_id", "notification_template_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "user_id", "notification_template_id" }), @UniqueConstraint(columnNames = { "program_id", "user_id", "notification_template_id" }),
-        @UniqueConstraint(columnNames = { "project_id", "user_id", "notification_template_id" }),
-        @UniqueConstraint(columnNames = { "application_id", "user_id", "notification_template_id" }) })
+@Table(name = "USER_NOTIFICATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_role_id", "notification_template_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "user_role_id", "notification_template_id" }),
+        @UniqueConstraint(columnNames = { "program_id", "user_role_id", "notification_template_id" }),
+        @UniqueConstraint(columnNames = { "project_id", "user_role_id", "notification_template_id" }),
+        @UniqueConstraint(columnNames = { "application_id", "user_role_id", "notification_template_id" }) })
 public class UserNotification implements IUniqueEntity {
 
     @Id
@@ -49,7 +50,7 @@ public class UserNotification implements IUniqueEntity {
     @ManyToOne
     @JoinColumn(name = "application_id")
     private Application application;
-    
+
     @ManyToOne
     @JoinColumn(name = "user_role_id", nullable = false)
     private UserRole userRole;
@@ -69,7 +70,7 @@ public class UserNotification implements IUniqueEntity {
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     public System getSystem() {
         return system;
     }
@@ -138,12 +139,12 @@ public class UserNotification implements IUniqueEntity {
         setResource(resource);
         return this;
     }
-    
+
     public UserNotification withUserRole(UserRole userRole) {
         this.userRole = userRole;
         return this;
     }
-    
+
     public UserNotification withNotificationTemplate(NotificationTemplate notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
         return this;
@@ -153,7 +154,7 @@ public class UserNotification implements IUniqueEntity {
         this.createdDate = createdDate;
         return this;
     }
-    
+
     public Resource getResource() {
         if (system != null) {
             return system;

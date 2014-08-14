@@ -44,7 +44,6 @@ public class IT1InitialiseSystem implements IPrismIntegrationTest {
             systemInitialisationHelper.verifySystemCreation();
             systemInitialisationHelper.verifySystemUserCreation();
 
-            systemInitialisationHelper.verifyConfigurationCreation();
             systemInitialisationHelper.verifyNotificationTemplateCreation();
             systemInitialisationHelper.verifyStateDurationCreation();
 

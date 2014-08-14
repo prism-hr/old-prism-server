@@ -64,7 +64,7 @@ public class ActionService {
         } else if (delegateOwner != null && checkDelegateActionAvailable(operative, action, delegateOwner)) {
             return action;
         }
-
+        
         return actionDAO.getFallbackAction(resource);
     }
 

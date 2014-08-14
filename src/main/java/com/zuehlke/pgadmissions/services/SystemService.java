@@ -25,7 +25,6 @@ import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Configuration;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
@@ -45,7 +44,6 @@ import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
@@ -85,19 +83,16 @@ public class SystemService {
 
     @Value("${system.default.email.content.directory}")
     private String defaultEmailContentDirectory;
-    
+
     @Value("${startup.workflow.initialize.notifications}")
     private Boolean initializeNotifications;
-
-    @Autowired
-    private ConfigurationService configurationService;
 
     @Autowired
     private EncryptionUtils encryptionUtils;
 
     @Autowired
     private EntityService entityService;
-    
+
     @Autowired
     private EntityImportService entityImportService;
 
@@ -121,13 +116,13 @@ public class SystemService {
 
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private ApplicationExportService applicationExportService;
-    
+
     @Autowired
     private DocumentService documentService;
-    
+
     @Autowired
     private SessionFactory sessionFactory;
 
@@ -153,17 +148,13 @@ public class SystemService {
         logger.info("Initialising state group definitions");
         verifyBackwardCompatibility(StateGroup.class);
         initialiseStateGroups();
-        
+
         logger.info("Initialising state definitions");
         verifyBackwardCompatibility(State.class);
         initialiseStates();
 
         logger.info("Initialising system");
         System system = initialiseSystemResource();
-
-        logger.info("Initialising configuration definitions");
-        verifyBackwardCompatibility(Configuration.class);
-        initialiseConfigurations(system);
 
         logger.info("Initialising fallback action definititions");
         initialiseFallbackActions();
@@ -189,7 +180,7 @@ public class SystemService {
         FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
         fullTextSession.createIndexer().start();
     }
-    
+
     @Scheduled(cron = "${maintenance.ongoing}")
     public void maintainSystem() {
         try {
@@ -198,7 +189,7 @@ public class SystemService {
         } catch (Exception e) {
             logger.info("Error executing pending state transitions", e);
         }
-        
+
         if (!stateService.hasPendingStateTransitions()) {
             try {
                 logger.info("Importing reference data");
@@ -206,14 +197,14 @@ public class SystemService {
             } catch (Exception e) {
                 logger.info("Error importing reference data", e);
             }
-            
+
             try {
                 logger.trace("Exporting applications");
                 applicationExportService.exportUclApplications();
             } catch (Exception e) {
                 logger.info("Error exporting applications", e);
             }
-            
+
             try {
                 logger.info("Sending deferred workflow notifications.");
                 notificationService.sendDeferredWorkflowNotifications();
@@ -221,7 +212,7 @@ public class SystemService {
                 logger.info("Error sending deferred workflow notifications", e);
             }
         }
-        
+
         try {
             logger.info("Deleting unused documents");
             documentService.deleteOrphanDocuments();
@@ -316,19 +307,11 @@ public class SystemService {
         }
     }
 
-    private void initialiseConfigurations(System system) {
-        for (PrismConfiguration prismConfiguration : PrismConfiguration.values()) {
-            Configuration transientConfiguration = new Configuration().withSystem(system).withParameter(prismConfiguration)
-                    .withValue(prismConfiguration.getDefaultValue());
-            entityService.createOrUpdate(transientConfiguration);
-        }
-    }
-
     private void initialiseNotificationTemplates(System system) {
         if (BooleanUtils.isTrue(initializeNotifications)) {
             notificationService.deleteAllNotifications();
         }
-        
+
         HashMap<NotificationTemplate, NotificationTemplateVersion> createdTemplates = Maps.newHashMap();
         for (PrismNotificationTemplate prismTemplate : PrismNotificationTemplate.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismTemplate.getScope());
@@ -345,7 +328,7 @@ public class SystemService {
                 version = initialiseNotificationTemplateVersion(template);
             } else {
                 template = duplicateTemplate;
-                version = notificationService.getActiveVersionToSend(system, template);
+                version = notificationService.getActiveVersion(system, template);
                 if (version == null) {
                     version = initialiseNotificationTemplateVersion(duplicateTemplate);
                 }

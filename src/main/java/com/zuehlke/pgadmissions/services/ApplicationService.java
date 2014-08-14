@@ -51,7 +51,6 @@ import com.zuehlke.pgadmissions.domain.ReferralSource;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.Title;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
@@ -71,8 +70,6 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
 @Service
 @Transactional
 public class ApplicationService {
-
-    public static final int APPLICATION_BLOCK_SIZE = 50;
 
     @Autowired
     private ApplicationDAO applicationDAO;
@@ -180,34 +177,32 @@ public class ApplicationService {
         return applicationDAO.getApplicationExportReferees(application);
     }
 
+    // FIXME: default message when referees are less than 2
     public List<ApplicationReferee> setApplicationExportReferees(Application application) {
-        PrismStateGroup stateGroup = application.getState().getStateGroup().getId();
-        if (stateGroup == PrismStateGroup.APPLICATION_REJECTED || stateGroup == PrismStateGroup.APPLICATION_WITHDRAWN) {
-            if (getApplicationExportReferees(application).size() < 2) {
-                Set<Integer> refereesToSend = Sets.newHashSet();
+        if (getApplicationExportReferees(application).size() < 2) {
+            Set<Integer> refereesToSend = Sets.newHashSet();
 
-                for (ApplicationReferee referee : application.getReferees()) {
-                    if (refereesToSend.size() == 2) {
-                        break;
-                    }
-
-                    if (BooleanUtils.isTrue(referee.isIncludeInExport())) {
-                        refereesToSend.add(referee.getId());
-                    } else if (referee.getComment() != null && !referee.getComment().isDeclinedResponse()) {
-                        referee.setIncludeInExport(true);
-                        refereesToSend.add(referee.getId());
-                    }
+            for (ApplicationReferee referee : application.getReferees()) {
+                if (refereesToSend.size() == 2) {
+                    break;
                 }
 
-                for (ApplicationReferee referee : application.getReferees()) {
-                    if (refereesToSend.size() == 2) {
-                        break;
-                    }
+                if (BooleanUtils.isTrue(referee.isIncludeInExport())) {
+                    refereesToSend.add(referee.getId());
+                } else if (referee.getComment() != null && !referee.getComment().isDeclinedResponse()) {
+                    referee.setIncludeInExport(true);
+                    refereesToSend.add(referee.getId());
+                }
+            }
 
-                    if (!refereesToSend.contains(referee.getId())) {
-                        referee.setIncludeInExport(true);
-                        refereesToSend.add(referee.getId());
-                    }
+            for (ApplicationReferee referee : application.getReferees()) {
+                if (refereesToSend.size() == 2) {
+                    break;
+                }
+
+                if (!refereesToSend.contains(referee.getId())) {
+                    referee.setIncludeInExport(true);
+                    refereesToSend.add(referee.getId());
                 }
             }
         }

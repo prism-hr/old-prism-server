@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
@@ -29,8 +30,10 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.dto.ResourceActionDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
+import com.zuehlke.pgadmissions.dto.StateChangeDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
@@ -43,6 +46,9 @@ public class ResourceService {
 
     @Autowired
     private ResourceDAO resourceDAO;
+    
+    @Autowired
+    private CommentService commentService;
 
     @Autowired
     private ActionService actionService;
@@ -218,4 +224,11 @@ public class ResourceService {
         return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
     }
 
+    public List<ResourceActionDTO> getResoucesFlaggedAsUrgent(Scope scope) {
+        return resourceDAO.getResourcesFlaggedAsUrgent(scope);
+    }
+    
+    public List<StateChangeDTO> getRecentStateChanges(Scope scope, LocalDate baseline) {
+        return resourceDAO.getRecentStateChanges(scope, baseline);
+    }
 }

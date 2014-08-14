@@ -93,7 +93,8 @@ public class NotificationService {
 
     @Transactional
     public NotificationTemplateVersion getActiveVersion(Resource resource, NotificationTemplate template) {
-        return notificationDAO.getConfiguration(resource, template).getNotificationTemplateVersion();
+        NotificationConfiguration configuration = notificationDAO.getConfiguration(resource, template);
+        return configuration == null ? null : configuration.getNotificationTemplateVersion();
     }
 
     @Transactional

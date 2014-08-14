@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import com.google.common.base.Preconditions;
+import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationValidator;
 import com.zuehlke.pgadmissions.services.*;
 import org.apache.commons.lang.BooleanUtils;
 import org.dozer.Mapper;
@@ -13,6 +14,11 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -85,6 +91,9 @@ public class ApplicationResource {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private CompleteApplicationValidator completeApplicationValidator;
 
     @RequestMapping(value = "/{applicationId}/programDetails", method = RequestMethod.PUT)
     public void saveProgramDetails(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationProgramDetailsDTO programDetailsDTO) {
@@ -175,12 +184,21 @@ public class ApplicationResource {
 
     @RequestMapping(value = "/{applicationId}/comments", method = RequestMethod.POST)
     public ActionOutcomeRepresentation performAction(@PathVariable Integer applicationId, @Valid @RequestBody CommentDTO commentDTO)
-            throws WorkflowEngineException {
+            throws WorkflowEngineException, MethodArgumentNotValidException {
         Application application = entityService.getById(Application.class, applicationId);
+        PrismAction actionId = commentDTO.getAction();
+
+        if(actionId == PrismAction.APPLICATION_COMPLETE){
+            BindingResult bindingResult = new BeanPropertyBindingResult(application, "application");
+            ValidationUtils.invokeValidator(completeApplicationValidator, application, bindingResult);
+            if(bindingResult.hasErrors()){
+                throw new MethodArgumentNotValidException(null, bindingResult);
+            }
+        }
+
+        Action action = actionService.getById(actionId);
         User user = userService.getById(commentDTO.getUser());
         User delegateUser = userService.getById(commentDTO.getDelegateUser());
-        PrismAction actionId = commentDTO.getAction();
-        Action action = actionService.getById(actionId);
         State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
         Institution institution = application.getInstitution();
         ResidenceState residenceState = importedEntitytService.getByCode(ResidenceState.class, institution, commentDTO.getResidenceState());

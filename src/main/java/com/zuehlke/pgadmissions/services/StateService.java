@@ -152,13 +152,9 @@ public class StateService {
         if (stateTransition != null) {
             State transitionState = stateTransition.getTransitionState();
             StateDuration transitionStateDuration = getStateDuration(resource, transitionState);
+            
             resourceService.transitionResource(resource, comment, transitionState, transitionStateDuration);
-
-            try {
-                roleService.executeRoleTransitions(stateTransition, comment);
-            } catch (WorkflowEngineException e) {
-                throw new Error(e);
-            }
+            roleService.executeRoleTransitions(stateTransition, comment);
 
             if (stateTransition.getPropagatedActions().size() > 0) {
                 StateTransitionPending transientTransitionPending = new StateTransitionPending().withResource(resource).withStateTransition(stateTransition);

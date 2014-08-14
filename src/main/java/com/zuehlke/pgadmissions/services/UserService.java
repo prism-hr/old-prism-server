@@ -1,32 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Filter;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.NotificationTemplate;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Scope;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserAccount;
+import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -37,6 +16,17 @@ import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentati
 import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
 
 @Service
 @Transactional
@@ -47,7 +37,7 @@ public class UserService {
 
     @Autowired
     private RoleService roleService;
-    
+
     @Autowired
     private EncryptionUtils encryptionUtils;
 
@@ -66,7 +56,7 @@ public class UserService {
     public User getById(Integer id) {
         return entityService.getById(User.class, id);
     }
-    
+
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof User) {
@@ -106,9 +96,9 @@ public class UserService {
         }
         return user;
     }
-    
+
     public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource,
-            List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
+                                         List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
         User user = getOrCreateUser(firstName, lastName, email);
         roleService.updateRoles(resource, user, roles);
         return user;
@@ -133,21 +123,17 @@ public class UserService {
     public void resetPassword(String email) {
         User storedUser = entityService.getByProperty(User.class, "email", email);
         if (storedUser != null) {
-            try {
-                String newPassword = encryptionUtils.generateUserPassword();
-                NotificationTemplate passwordTemplate = notificationService.getById(PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION);
-                notificationService.sendNotification(storedUser, null, null, passwordTemplate, ImmutableMap.of("newPassword", newPassword));
-                storedUser.getUserAccount().setPassword(encryptionUtils.getMD5Hash(newPassword));
-            } catch (Exception e) {
-                throw new Error(e);
-            }
+            String newPassword = encryptionUtils.generateUserPassword();
+            NotificationTemplate passwordTemplate = notificationService.getById(PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION);
+            notificationService.sendNotification(storedUser, systemService.getSystem(), null, passwordTemplate, ImmutableMap.of("newPassword", newPassword));
+            storedUser.getUserAccount().setPassword(encryptionUtils.getMD5Hash(newPassword));
         }
     }
 
     public void linkUsers(UserAccountDTO linkFromUserDTO, UserAccountDTO linkIntoUserDTO) {
         User linkFromUser = userDAO.getAuthenticatedUser(linkFromUserDTO.getEmail(), linkFromUserDTO.getPassword());
         User linkIntoUser = userDAO.getAuthenticatedUser(linkIntoUserDTO.getEmail(), linkIntoUserDTO.getPassword());
-        
+
         if (linkFromUser != null && linkIntoUser != null) {
             userDAO.refreshParentUser(linkIntoUser);
             linkFromUser.setParentUser(linkIntoUser);
@@ -159,10 +145,10 @@ public class UserService {
         if (persistentFilter == null) {
             UserAccount userAccount = transientFilter.getUserAccount();
             Scope scope = transientFilter.getScope();
-            
+
             transientFilter.setUserAccount(null);
             transientFilter.setScope(null);
-            
+
             userAccount.getFilters().put(scope, transientFilter);
         }
     }
@@ -229,14 +215,14 @@ public class UserService {
 
         return Lists.newArrayList(orderedRecruiters.values());
     }
-    
+
     public List<UserRepresentation> getSimilarUsers(String searchTerm) {
         String trimmedSearchTerm = StringUtils.trim(searchTerm);
-        
+
         if (trimmedSearchTerm.length() >= 1) {
             return userDAO.getSimilarUsers(trimmedSearchTerm);
         }
-        
+
         return Lists.newArrayList();
     }
 

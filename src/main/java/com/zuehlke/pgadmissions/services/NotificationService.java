@@ -1,22 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.System;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -24,6 +13,16 @@ import com.zuehlke.pgadmissions.dto.UserNotificationDefinition;
 import com.zuehlke.pgadmissions.mail.MailMessageDTO;
 import com.zuehlke.pgadmissions.mail.MailSender;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class NotificationService {
@@ -101,7 +100,7 @@ public class NotificationService {
     public void sendUpdateNotifications(StateAction stateAction, Resource resource, Comment comment) {
         DateTime baseline = new DateTime();
         List<UserNotificationDefinition> definitions = notificationDAO.getUpdateNotifications(stateAction, resource);
-        
+
         for (UserNotificationDefinition definition : definitions) {
             UserRole userRole = entityService.getById(UserRole.class, definition.getUserRoleId());
             NotificationTemplate notificationTemplate = entityService.getByProperty(NotificationTemplate.class, "id", definition.getNotificationTemplateId());
@@ -118,7 +117,7 @@ public class NotificationService {
 
     @Transactional
     public void sendNotification(User user, Resource resource, Action action, NotificationTemplate notificationTemplate) {
-        sendNotification(user, resource, action, notificationTemplate, Collections.<String, String> emptyMap());
+        sendNotification(user, resource, action, notificationTemplate, Collections.<String, String>emptyMap());
     }
 
     @Transactional
@@ -129,7 +128,7 @@ public class NotificationService {
         message.setTo(Collections.singletonList(user));
         message.setTemplate(templateVersion);
         message.setModel(createNotificationModel(user, resource, action, templateVersion, extraModelParams));
-        message.setAttachments(Lists.<PdfAttachmentInputSource> newArrayList());
+        message.setAttachments(Lists.<PdfAttachmentInputSource>newArrayList());
 
         mailSender.sendEmail(message);
     }
@@ -171,7 +170,7 @@ public class NotificationService {
         entityService.deleteAll(NotificationConfiguration.class);
         entityService.deleteAll(NotificationTemplateVersion.class);
     }
-    
+
     @Transactional
     private void deletePendingUpdateNotification(User user, Resource resource, NotificationTemplate template) {
         List<UserRole> userRoles = roleService.getUpdateNotificationRoles(user, resource, template);
@@ -190,7 +189,9 @@ public class NotificationService {
         model.put("userLastName", user.getLastName());
 
         model.put("resourceId", resource.getId().toString());
-        model.put("action", action.getId().name());
+        if (action != null) {
+            model.put("action", action.getId().name());
+        }
 
         System system = resource.getSystem();
         Institution institution = resource.getInstitution();

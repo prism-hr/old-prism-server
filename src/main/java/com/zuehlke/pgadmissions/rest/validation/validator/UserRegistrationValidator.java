@@ -8,7 +8,6 @@ import org.springframework.validation.Errors;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.AbstractValidator;
 
 @Component
 public class UserRegistrationValidator extends AbstractValidator {

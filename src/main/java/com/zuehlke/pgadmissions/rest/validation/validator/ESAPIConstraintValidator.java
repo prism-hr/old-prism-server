@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.validators;
+package com.zuehlke.pgadmissions.rest.validation.validator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

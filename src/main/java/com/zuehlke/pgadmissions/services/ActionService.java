@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 
 @Service
@@ -53,19 +54,20 @@ public class ActionService {
         return entityService.getByProperty(Action.class, "id", id);
     }
 
-    public Action validateAction(Resource resource, Action action, Comment comment) {
+    public void validateAction(Resource resource, Action action, Comment comment) {
         User delegateOwner = comment.getDelegateUser();
         Resource operative = resourceService.getOperativeResource(resource, action);
 
         if (delegateOwner == null && checkActionAvailable(operative, action, comment.getUser())) {
-            return action;
+            return;
         } else if (delegateOwner != null && checkActionAvailable(operative, action, delegateOwner)) {
-            return action;
+            return;
         } else if (delegateOwner != null && checkDelegateActionAvailable(operative, action, delegateOwner)) {
-            return action;
+            return;
         }
         
-        return actionDAO.getFallbackAction(resource);
+        Action fallback = actionDAO.getFallbackAction(resource);
+        throw new WorkflowPermissionException(action.getId(), fallback.getId());
     }
 
     public List<PrismAction> getPermittedActions(Resource resource, User user) {
@@ -80,7 +82,7 @@ public class ActionService {
     }
 
     public ActionOutcome executeUserAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
-        action = validateAction(resource, action, comment);
+        validateAction(resource, action, comment);
         return executeSystemAction(resource, action, comment);
     }
 

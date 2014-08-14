@@ -46,7 +46,7 @@ public class ResourceService {
 
     @Autowired
     private ResourceDAO resourceDAO;
-    
+
     @Autowired
     private CommentService commentService;
 
@@ -70,10 +70,10 @@ public class ResourceService {
 
     @Autowired
     private RoleService roleService;
-    
+
     @Autowired
     private ScopeService scopeService;
-    
+
     @Autowired
     private StateService stateService;
 
@@ -86,7 +86,7 @@ public class ResourceService {
     public <T extends Resource> Resource getById(Class<T> resourceClass, Integer id) {
         return entityService.getById(resourceClass, id);
     }
-    
+
     public <T extends Resource> List<ResourceConsoleListRowDTO> getConsoleListBlock(Class<T> resourceClass, int loadIndex) {
         // TODO: Build filter and integrate
         return resourceDAO.getConsoleListBlock(userService.getCurrentUser(), resourceClass, scopeService.getParentScopes(resourceClass), loadIndex);
@@ -96,7 +96,7 @@ public class ResourceService {
         // TODO: Build the query and integrate with filter
         return Lists.newArrayList();
     }
-    
+
     public ActionOutcome createResource(User user, Action action, Object newResourceDTO) throws WorkflowEngineException {
         Resource resource = null;
 
@@ -114,13 +114,13 @@ public class ResourceService {
             resource = applicationService.create(user, (ApplicationDTO) newResourceDTO);
             break;
         default:
-            throw new WorkflowEngineException();
+            throw new WorkflowEngineException("Attempted to create a resource of invalid type " + action.getCreationScope().getId().toString());
         }
 
         if (entityService.getDuplicateEntity(resource) != null) {
-            throw new WorkflowEngineException();
+            throw new WorkflowEngineException("Attempted to create a duplicate resource of type " + resource.getResourceScope().getLowerCaseName());
         }
-        
+
         Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                 .withAssignedUser(user, roleService.getCreatorRole(resource));
         return actionService.executeUserAction(resource, action, comment);
@@ -129,7 +129,7 @@ public class ResourceService {
     public void persistResource(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
         resource.setCreatedTimestamp(new DateTime());
         resource.setUpdatedTimestamp(new DateTime());
-        
+
         switch (resource.getResourceScope()) {
         case INSTITUTION:
             institutionService.save((Institution) resource);
@@ -144,18 +144,18 @@ public class ResourceService {
             applicationService.save((Application) resource);
             break;
         default:
-            throw new WorkflowEngineException();
+            throw new WorkflowEngineException("You attemped to persist a resource of invalid type " + resource.getResourceScope().getLowerCaseName());
         }
-        
+
         resource.setCode(generateResoureCode(resource));
         entityService.save(resource);
         comment.setRole(roleService.getCreatorRole(resource).getId().toString());
     }
-    
+
     public String generateResoureCode(Resource resource) {
         return "PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId());
     }
-    
+
     public void updateResource(Resource resource, Action action, Comment comment) {
         if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
             comment.setRole(PrismRole.SYSTEM_ADMINISTRATOR.toString());
@@ -166,12 +166,12 @@ public class ResourceService {
             }
         }
     }
-    
+
     public void transitionResource(Resource resource, Comment comment, State transitionState, StateDuration stateDuration) {
         resource.setPreviousState(resource.getState());
         resource.setState(transitionState);
         comment.setTransitionState(transitionState);
-        
+
         LocalDate dueDate = comment.getUserSpecifiedDueDate();
         if (dueDate == null && comment.getAction().getActionCategory() == PrismActionCategory.ESCALATE_RESOURCE) {
             LocalDate dueDateBaseline = resource.getDueDateBaseline();
@@ -180,46 +180,46 @@ public class ResourceService {
         resource.setDueDate(dueDate);
         resource.setUpdatedTimestamp(new DateTime());
     }
-    
+
     public HashMap<Resource, Action> getResourceEscalations() {
         LocalDate baseline = new LocalDate();
         HashMap<Resource, Action> escalations = Maps.newHashMap();
-        
+
         for (Action action : actionService.getEscalationActions()) {
             List<Resource> resources = resourceDAO.getResourcesToEscalate(action, baseline);
-            
+
             for (Resource resource : resources) {
                 escalations.put(resource, action);
             }
         }
-        
+
         return escalations;
     }
-    
+
     public HashMap<Resource, Action> getResourcePropagations() {
         HashMap<Resource, Action> propagations = Maps.newHashMap();
         List<StateTransitionPending> stateTransitionsPending = stateService.getStateTransitionsPending();
-        
+
         for (StateTransitionPending stateTransitionPending : stateTransitionsPending) {
-            
+
             for (Action action : stateTransitionPending.getStateTransition().getPropagatedActions()) {
                 List<Resource> resources = resourceDAO.getResourcesToPropagate(stateTransitionPending.getResource(), action);
-                
+
                 for (Resource resource : resources) {
                     if (!propagations.containsKey(resource)) {
                         propagations.put(resource, action);
                     }
                 }
-                
+
                 if (resources.isEmpty()) {
                     entityService.delete(stateTransitionPending);
                 }
             }
         }
-        
+
         return propagations;
     }
-    
+
     public Resource getOperativeResource(Resource resource, Action action) {
         return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
     }
@@ -227,7 +227,7 @@ public class ResourceService {
     public List<ResourceActionDTO> getResoucesFlaggedAsUrgent(Scope scope) {
         return resourceDAO.getResourcesFlaggedAsUrgent(scope);
     }
-    
+
     public List<StateChangeDTO> getRecentStateChanges(Scope scope, LocalDate baseline) {
         return resourceDAO.getRecentStateChanges(scope, baseline);
     }

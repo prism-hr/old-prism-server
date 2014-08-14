@@ -470,7 +470,8 @@ public class SystemService {
         try {
             entityService.list(workflowResourceClass);
         } catch (IllegalArgumentException e) {
-            throw new WorkflowConfigurationException(e);
+            throw new WorkflowConfigurationException("You attempted to remove an entity of type " + workflowResourceClass.getSimpleName().toString()
+                    + " which is required for backward compatibility by the workflow engine", e);
         }
     }
 
@@ -478,7 +479,8 @@ public class SystemService {
         for (Scope scope : scopeService.getScopesDescending()) {
             Class<? extends Resource> resourceClass = scope.getId().getResourceClass();
             if (!stateService.getDeprecatedStates(resourceClass).isEmpty()) {
-                throw new WorkflowConfigurationException();
+                throw new WorkflowConfigurationException("You attempted to remove a state definition for resources of type " + scope.getId().getLowerCaseName()
+                        + " which is required for backward compatibility by the workflow engine");
             }
         }
     }

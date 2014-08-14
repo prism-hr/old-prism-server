@@ -115,14 +115,14 @@ public class Role extends WorkflowResource implements GrantedAuthority {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
+    public boolean equals(Object object) {
+        if (object == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != object.getClass()) {
             return false;
         }
-        final Role other = (Role) obj;
+        final Role other = (Role) object;
         return Objects.equal(id, other.getId());
     }
 

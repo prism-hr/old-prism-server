@@ -160,12 +160,12 @@ public class StateService {
                 throw new Error(e);
             }
 
-            notificationService.sendWorkflowNotifications(resource, action, comment.getUser());
-
             if (stateTransition.getPropagatedActions().size() > 0) {
                 StateTransitionPending transientTransitionPending = new StateTransitionPending().withResource(resource).withStateTransition(stateTransition);
                 entityService.getOrCreate(transientTransitionPending);
             }
+            
+            notificationService.sendWorkflowNotifications(resource, action, comment.getUser());
         }
 
         return stateTransition;

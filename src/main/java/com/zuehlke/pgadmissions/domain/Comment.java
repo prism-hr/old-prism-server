@@ -624,6 +624,10 @@ public class Comment {
         }
     }
 
+    public User getAuthor() {
+        return delegateUser == null ? user : delegateUser;
+    }
+    
     public Comment withId(Integer id) {
         this.id = id;
         return this;

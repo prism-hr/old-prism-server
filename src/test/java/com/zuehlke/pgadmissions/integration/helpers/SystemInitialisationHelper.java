@@ -19,7 +19,6 @@ import com.google.common.base.Joiner;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ActionRedaction;
-import com.zuehlke.pgadmissions.domain.Configuration;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
@@ -48,7 +47,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNoti
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.ResourceService;
@@ -81,9 +79,6 @@ public class SystemInitialisationHelper {
 
     @Autowired
     private ActionService actionService;
-
-    @Autowired
-    private ConfigurationService configurationService;
 
     @Autowired
     private EntityService entityService;
@@ -167,13 +162,6 @@ public class SystemInitialisationHelper {
         for (State state : stateService.getStates()) {
             assertEquals(state.getId().getStateGroup(), state.getStateGroup().getId());
             assertEquals(state.getId().getScope(), state.getScope().getId());
-        }
-    }
-
-    public void verifyConfigurationCreation() {
-        System system = systemService.getSystem();
-        for (Configuration configuration : configurationService.getConfigurations(system)) {
-            assertEquals(configuration.getParameter().getDefaultValue(), configuration.getValue());
         }
     }
 

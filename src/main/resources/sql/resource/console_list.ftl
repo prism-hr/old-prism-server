@@ -8,11 +8,7 @@ SELECT ${queryScopeUpper}_LIST_BLOCK.*, (
 	AS averageRating
 FROM (
 	SELECT ${queryScopeUpper}.id AS id, ${queryScopeUpper}.code AS code,
-		IF(${queryScopeUpper}_LIST_PERMISSION.raises_urgent_flag = 1 
-			AND DATEDIFF(CURRENT_DATE(), ${queryScopeUpper}.updated_timestamp) <= ${queryScopeUpper}_LIST_PERMISSION.action_expiry_duration, 
-			1, 
-			0) AS raisesUrgentFlag, STATE.state_group_id AS state, 
-		CONFIGURATION.parameter_value AS action_expiry_duration, 
+		${queryScopeUpper}_LIST_PERMISSION.raises_urgent_flag AS raisesUrgentFlag, STATE.state_group_id AS state,
   	<#include "${queryScopeLower}_custom_columns.ftl">
 	FROM ${queryScopeUpper} INNER JOIN (
 		SELECT USER_ROLE.${queryScopeLower}_id,
@@ -30,7 +26,6 @@ FROM (
 			ON STATE_ACTION_ASSIGNMENT.state_action_id = STATE_ACTION.id
 		INNER JOIN STATE
 			ON STATE_ACTION.state_id = STATE.id
-		<#include "../action_expiry_duration_join.sql">
 		LEFT JOIN ${queryScopeUpper}
 			ON USER_ROLE.${queryScopeLower}_id = ${queryScopeUpper}.id
 		WHERE USER.id = ${user.id?c}

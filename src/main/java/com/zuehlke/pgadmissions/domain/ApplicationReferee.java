@@ -11,7 +11,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.rest.validation.validator.ESAPIConstraint;
+import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 
 @Entity
 @Table(name = "APPLICATION_REFEREE", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "user_id" }) })

@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
+import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationValidator;
 import org.apache.commons.lang.BooleanUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
@@ -66,6 +68,8 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailsDT
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.ValidationUtils;
 
 @Service
 @Transactional
@@ -103,6 +107,9 @@ public class ApplicationService {
 
     @Autowired
     private ResourceService resourceService;
+
+    @Autowired
+    private CompleteApplicationValidator completeApplicationValidator;
 
     @Autowired
     private Mapper mapper;
@@ -533,4 +540,12 @@ public class ApplicationService {
         return dateFrom.plusDays(8 - dateFrom.getDayOfWeek());
     }
 
+    public void validateApplicationCompleteness(Integer applicationId) {
+        Application application = entityService.getById(Application.class, applicationId);
+        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(application, "application");
+        ValidationUtils.invokeValidator(completeApplicationValidator, application, errors);
+        if(errors.hasErrors()){
+            throw new PrismValidationException("Application not completed", errors);
+        }
+    }
 }

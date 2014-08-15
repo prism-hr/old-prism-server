@@ -1,8 +1,5 @@
 SELECT GROUP_CONCAT(DISTINCT 
-	IF(STATE_ACTION.raises_urgent_flag = 1 
-		AND ${queryScopeUpper}_LIST_BLOCK.raises_urgent_flag = 1,
-		1,
-		0), "|",
+	STATE_ACTION.raises_urgent_flag, "|",
 	STATE_ACTION.action_id
 	ORDER BY STATE_ACTION.raises_urgent_flag DESC,
 		STATE_ACTION.action_id)

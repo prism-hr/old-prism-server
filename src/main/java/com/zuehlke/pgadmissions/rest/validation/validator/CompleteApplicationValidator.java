@@ -27,7 +27,8 @@ public class CompleteApplicationValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmpty(errors, "programDetails", "notNull");
         ValidationUtils.rejectIfEmpty(errors, "personalDetails", "notNull");
         ValidationUtils.rejectIfEmpty(errors, "address", "notNull");
-        ValidationUtils.rejectIfEmpty(errors, "document", "notNull");
+        // FIXME uncomment when documents are implemented
+//        ValidationUtils.rejectIfEmpty(errors, "document", "notNull");
         ValidationUtils.rejectIfEmpty(errors, "additionalInformation", "notNull");
 
 
@@ -47,7 +48,7 @@ public class CompleteApplicationValidator extends AbstractValidator {
             errors.popNestedPath();
         }
         if (application.getReferees().size() != 3) {
-            errors.rejectValue("referees", "size.exact", new Object[3], null);
+            errors.rejectValue("referees", "size.exact", new Object[]{3}, null);
         }
 
     }

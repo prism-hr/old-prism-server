@@ -2,8 +2,8 @@ package com.zuehlke.pgadmissions.dto;
 
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.rest.validation.validator.ATASConstraint;
-import com.zuehlke.pgadmissions.rest.validation.validator.ESAPIConstraint;
+import com.zuehlke.pgadmissions.rest.validation.annotation.ATASConstraint;
+import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 
 public class ConfirmSupervisionDTO {
 

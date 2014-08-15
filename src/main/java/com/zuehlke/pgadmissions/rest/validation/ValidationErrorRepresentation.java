@@ -1,22 +1,12 @@
 package com.zuehlke.pgadmissions.rest.validation;
 
-public class FieldErrorResource {
-
-    private String resource;
-
-    private String field;
+public class ValidationErrorRepresentation {
 
     private String code;
 
     private String message;
 
-    public String getResource() { return resource; }
-
-    public void setResource(String resource) { this.resource = resource; }
-
-    public String getField() { return field; }
-
-    public void setField(String field) { this.field = field; }
+    private Object[] arguments;
 
     public String getCode() { return code; }
 
@@ -25,4 +15,12 @@ public class FieldErrorResource {
     public String getMessage() { return message; }
 
     public void setMessage(String message) { this.message = message; }
+
+    public Object[] getArguments() {
+        return arguments;
+    }
+
+    public void setArguments(Object[] arguments) {
+        this.arguments = arguments;
+    }
 }

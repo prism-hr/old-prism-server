@@ -2,5 +2,6 @@
    <class-loading> 
    <!-- override default hibernate-core jar in JBoss with newer one -->
       <loader-repository>org.hibernate:archive=hibernate-core</loader-repository> 
+      <loader-repository>org.hibernate.javax.persistence:archive=hibernate-jpa</loader-repository>
    </class-loading>
 </jboss-web>

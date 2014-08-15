@@ -1,20 +1,11 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.Map;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
+import org.joda.time.DateTime;
+
+import javax.persistence.*;
+import java.util.Map;
 
 @Entity
 @Table(name = "USER_ACCOUNT")
@@ -28,15 +19,13 @@ public class UserAccount {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Transient
-    private String newPassword;
+    private String temporaryPassword;
 
-    @Transient
-    private String confirmPassword;
+    private DateTime temporaryPasswordExpiryTimestamp;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
-    
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_account_id", nullable = false)
     @MapKeyColumn(name = "scope_id", nullable = false)
@@ -50,23 +39,23 @@ public class UserAccount {
         this.password = password;
     }
 
-    public String getNewPassword() {
-        return newPassword;
+    public String getTemporaryPassword() {
+        return temporaryPassword;
     }
 
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
+    public void setTemporaryPassword(String temporaryPassword) {
+        this.temporaryPassword = temporaryPassword;
     }
 
-    public String getConfirmPassword() {
-        return confirmPassword;
+    public DateTime getTemporaryPasswordExpiryTimestamp() {
+        return temporaryPasswordExpiryTimestamp;
     }
 
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
+    public void setTemporaryPasswordExpiryTimestamp(DateTime temporaryPasswordExpiryTimestamp) {
+        this.temporaryPasswordExpiryTimestamp = temporaryPasswordExpiryTimestamp;
     }
 
-    public boolean isEnabled() {
+    public boolean getEnabled() {
         return enabled;
     }
 
@@ -80,16 +69,6 @@ public class UserAccount {
 
     public UserAccount withPassword(String password) {
         this.password = password;
-        return this;
-    }
-
-    public UserAccount withNewPassword(String newPassword) {
-        this.newPassword = newPassword;
-        return this;
-    }
-
-    public UserAccount withConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
         return this;
     }
 

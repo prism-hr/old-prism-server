@@ -1,8 +1,13 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.HashMap;
-import java.util.List;
-
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
+import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,28 +15,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.dao.ProgramDAO;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.CommentCustomQuestion;
-import com.zuehlke.pgadmissions.domain.CommentCustomQuestionVersion;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.dto.ProjectDTO;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
-import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
+import java.util.HashMap;
+import java.util.List;
 
 @Service
 @Transactional
@@ -67,7 +52,7 @@ public class ProgramService {
     public Advert getById(Integer id) {
         return entityService.getById(Advert.class, id);
     }
-    
+
     public void save(Program program) {
         entityService.save(program);
     }
@@ -89,7 +74,7 @@ public class ProgramService {
         // TODO implement SQL query for basic list;
         return null;
     }
-    
+
     public Program create(User user, ProgramDTO programDTO) {
         Institution institution = entityService.getById(Institution.class, programDTO.getInstitutionId());
         Program program = new Program().withTitle(programDTO.getTitle()).withInstitution(institution).withProgramType(programDTO.getProgramType())
@@ -227,15 +212,6 @@ public class ProgramService {
 
     public LocalDate getNextClosingDate(Program program) {
         return programDAO.getNextClosingDate(program);
-    }
-
-    public Project addProject(ProjectDTO projectDTO) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public void updateProject(Integer id, ProjectDTO projectDTO) {
-        // TODO Auto-generated method stub
     }
 
     public List<Program> getPrograms() {

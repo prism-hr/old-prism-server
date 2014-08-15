@@ -98,7 +98,6 @@ public class MailSender {
             });
         } catch (Exception e) {
             logger.error(String.format("Failed to send email %s", message.toString()), e);
-            throw new MailException(message);
         }
     }
     

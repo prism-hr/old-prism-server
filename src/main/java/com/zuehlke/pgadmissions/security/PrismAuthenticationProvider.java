@@ -1,25 +1,20 @@
 package com.zuehlke.pgadmissions.security;
 
-import java.security.NoSuchAlgorithmException;
-
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AccountExpiredException;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.CredentialsExpiredException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.LockedException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import java.security.NoSuchAlgorithmException;
 
 public class PrismAuthenticationProvider implements AuthenticationProvider {
 
@@ -52,27 +47,34 @@ public class PrismAuthenticationProvider implements AuthenticationProvider {
     private UserDetails findAndValidateUser(Authentication preProcessToken) throws NoSuchAlgorithmException {
         String username = (String) preProcessToken.getPrincipal();
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        if (!userDetails.isEnabled()) {
+        User user = (User) userDetailsService.loadUserByUsername(username);
+        if (!user.isEnabled()) {
             throw new DisabledException("account \"" + username + "\" disabled");
         }
-        if (!userDetails.isAccountNonExpired()) {
+        if (!user.isAccountNonExpired()) {
             throw new AccountExpiredException("account \"" + username + "\" expired");
         }
-        if (!StringUtils.equals(userDetails.getPassword(), encryptionUtils.getMD5Hash((String) preProcessToken.getCredentials()))) {
-            throw new BadCredentialsException("invalid username/password combination");
+        String password = (String) preProcessToken.getCredentials();
+        if (!checkPassword(password, user.getPassword())) {
+            DateTime temporaryPasswordExpiryTimestamp = user.getUserAccount().getTemporaryPasswordExpiryTimestamp();
+            if (temporaryPasswordExpiryTimestamp == null || new DateTime().isAfter(temporaryPasswordExpiryTimestamp) || !checkPassword(password, user.getUserAccount().getTemporaryPassword()))
+                throw new BadCredentialsException("Invalid username/password combination");
         }
-        if (!userDetails.isAccountNonLocked()) {
+        if (!user.isAccountNonLocked()) {
             throw new LockedException("account \"" + username + "\" locked");
         }
-        if (!userDetails.isCredentialsNonExpired()) {
+        if (!user.isCredentialsNonExpired()) {
             throw new CredentialsExpiredException("credentials for \"" + username + "\" expired");
         }
-        return userDetails;
+        return user;
     }
 
     @Override
     public boolean supports(Class<? extends Object> clazz) {
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(clazz);
+    }
+
+    private boolean checkPassword(String providedPassword, String storedPassword) {
+        return StringUtils.equals(storedPassword, encryptionUtils.getMD5Hash(providedPassword));
     }
 }

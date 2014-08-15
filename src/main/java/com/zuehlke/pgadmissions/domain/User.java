@@ -218,7 +218,7 @@ public class User implements UserDetails, IUniqueEntity {
 
     @Override
     public boolean isEnabled() {
-        return userAccount != null && userAccount.isEnabled();
+        return userAccount != null && userAccount.getEnabled();
     }
 
     @Override

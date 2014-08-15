@@ -6,6 +6,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -131,24 +132,13 @@ public class UserService {
         return userDAO.getUserByActivationCode(activationCode);
     }
 
-    public void updateCurrentUser(User user) {
-        User currentUser = getCurrentUser();
-        currentUser.setFirstName(user.getFirstName());
-        currentUser.setFirstName2(user.getFirstName2());
-        currentUser.setFirstName3(user.getFirstName3());
-        currentUser.setLastName(user.getLastName());
-        currentUser.setEmail(user.getEmail());
-        if (StringUtils.isNotBlank(user.getUserAccount().getNewPassword())) {
-            currentUser.getUserAccount().setPassword(encryptionUtils.getMD5Hash(user.getUserAccount().getNewPassword()));
-        }
-    }
-
     public void resetPassword(String email) {
         User storedUser = getUserByEmail(email);
         if (storedUser != null) {
             String newPassword = encryptionUtils.generateUserPassword();
             notificationService.sendNotification(storedUser, systemService.getSystem(), PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION, ImmutableMap.of("newPassword", newPassword));
-            storedUser.getUserAccount().setPassword(encryptionUtils.getMD5Hash(newPassword));
+            storedUser.getUserAccount().setTemporaryPassword(encryptionUtils.getMD5Hash(newPassword));
+            storedUser.getUserAccount().setTemporaryPasswordExpiryTimestamp(new DateTime().plusHours(1));
         }
     }
 
@@ -246,7 +236,7 @@ public class UserService {
 
     public boolean activateUser(Integer userId) {
         User user = getById(userId);
-        boolean wasEnabled = user.getUserAccount().isEnabled();
+        boolean wasEnabled = user.getUserAccount().getEnabled();
         user.getUserAccount().setEnabled(true);
         return !wasEnabled;
     }

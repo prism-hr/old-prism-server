@@ -304,6 +304,7 @@ public class NotificationService {
         model.put("user", user);
         model.put("userFirstName", user.getFirstName());
         model.put("userLastName", user.getLastName());
+        model.put("userEmail", user.getEmail());
 
         System system = resource.getSystem();
         Institution institution = resource.getInstitution();

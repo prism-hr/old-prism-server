@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
@@ -19,8 +20,11 @@ public class UserAccount {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "temporary_password")
     private String temporaryPassword;
 
+    @Column(name = "temporary_password_expiry_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime temporaryPasswordExpiryTimestamp;
 
     @Column(name = "enabled", nullable = false)

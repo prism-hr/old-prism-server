@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.interceptors;
 
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.exceptions.PrismException;
+import com.zuehlke.pgadmissions.exceptions.PrismRequestException;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
 import org.slf4j.Logger;
@@ -31,9 +31,9 @@ public class PrismExceptionResolver extends AbstractHandlerExceptionResolver {
         if(ex instanceof AuthenticationException){
             return null;
         }
-        if (ex instanceof PrismException) {
+        if (ex instanceof PrismRequestException) {
             log.debug("Exception catched during request processing ", ex);
-            modelAndView.addObject(((PrismException) ex).getResponseData());
+            modelAndView.addObject(((PrismRequestException) ex).getResponseData());
         } else {
             User currentUser = null;
             try {

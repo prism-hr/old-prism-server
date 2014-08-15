@@ -10,9 +10,6 @@ import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -188,16 +185,9 @@ public class ApplicationResource {
     @RequestMapping(value = "/{applicationId}/comments", method = RequestMethod.POST)
     public ActionOutcomeRepresentation performAction(@PathVariable Integer applicationId, @Valid @RequestBody CommentDTO commentDTO)
             throws WorkflowEngineException, MethodArgumentNotValidException {
+        applicationService.validateApplicationCompleteness(applicationId);
         Application application = entityService.getById(Application.class, applicationId);
         PrismAction actionId = commentDTO.getAction();
-
-        if(actionId == PrismAction.APPLICATION_COMPLETE){
-            BindingResult bindingResult = new BeanPropertyBindingResult(application, "application");
-            ValidationUtils.invokeValidator(completeApplicationValidator, application, bindingResult);
-            if(bindingResult.hasErrors()){
-                throw new MethodArgumentNotValidException(null, bindingResult);
-            }
-        }
 
         Action action = actionService.getById(actionId);
         User user = userService.getById(commentDTO.getUser());

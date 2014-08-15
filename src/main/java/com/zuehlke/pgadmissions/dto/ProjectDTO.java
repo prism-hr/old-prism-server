@@ -7,8 +7,8 @@ import javax.validation.constraints.Size;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.rest.validation.validator.ATASConstraint;
-import com.zuehlke.pgadmissions.rest.validation.validator.ESAPIConstraint;
+import com.zuehlke.pgadmissions.rest.validation.annotation.ATASConstraint;
+import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 
 public class ProjectDTO {
 

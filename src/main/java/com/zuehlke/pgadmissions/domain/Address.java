@@ -9,7 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.google.common.base.Joiner;
-import com.zuehlke.pgadmissions.rest.validation.validator.ESAPIConstraint;
+import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 
 @Entity
 @Table(name = "ADDRESS")

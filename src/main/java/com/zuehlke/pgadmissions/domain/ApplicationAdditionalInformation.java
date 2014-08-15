@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.zuehlke.pgadmissions.rest.validation.validator.ESAPIConstraint;
+import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 
 @Entity
 @Table(name = "APPLICATION_ADDITIONAL_INFORMATION")

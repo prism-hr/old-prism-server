@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.validation.validator;
+package com.zuehlke.pgadmissions.rest.validation.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

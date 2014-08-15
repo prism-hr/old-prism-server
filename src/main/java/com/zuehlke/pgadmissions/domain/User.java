@@ -26,7 +26,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.rest.validation.validator.ESAPIConstraint;
+import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 
 @Entity
 @Table(name = "USER")

@@ -9,6 +9,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -66,12 +68,12 @@ public class NotificationDAO {
         return getRequestNotifications(resource, action, invoker, false);
     }
     
-    public List<UserNotificationDefinition> getUpdateNotifications(Resource resource, Action action, User invoker) {
-        return getUpdateNotifications(resource, action, invoker, true);
+    public List<UserNotificationDefinition> getUpdateNotifications(Resource resource, Action action, User invoker, LocalDate baseline) {
+        return getUpdateNotifications(resource, action, invoker, baseline, true);
     }
     
-    public List<UserNotificationDefinition> getDeferredUpdateNotifications(Resource resource, Action action, User invoker) {
-        return getUpdateNotifications(resource, action, invoker, false);
+    public List<UserNotificationDefinition> getDeferredUpdateNotifications(Resource resource, Action action, User invoker, LocalDate baseline) {
+        return getUpdateNotifications(resource, action, invoker, baseline, false);
     }
     
     public void deleteObseleteNotificationConfigurations(List<NotificationTemplate> activeNotificationWorkflowTemplates) {
@@ -113,7 +115,7 @@ public class NotificationDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignment.notificationTemplate", "notiticationTemplate", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignment.notificationTemplate", "notificationTemplate", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("id", resource.getId())) //
                 .add(Restrictions.eq("stateAction.action", action));
         
@@ -136,7 +138,7 @@ public class NotificationDAO {
                 .list();
     }
     
-    private List<UserNotificationDefinition> getUpdateNotifications(Resource resource, Action action, User invoker, boolean onStateChange) {
+    private List<UserNotificationDefinition> getUpdateNotifications(Resource resource, Action action, User invoker, LocalDate baseline, boolean onStateChange) {
         String resourceReference = resource.getResourceScope().getLowerCaseName();
         
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resource.getClass(), resourceReference) //
@@ -146,13 +148,13 @@ public class NotificationDAO {
                         .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.stateActionNotifications", "stateActionNotifications", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN) //
                 .createAlias("stateActionNotification.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .createAlias("stateActionNotification.notificationTemplate", "notiticationTemplate", JoinType.INNER_JOIN) //
-                .createAlias("stateActionNotification.stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("userRole.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("stateActionNotification.notificationTemplate", "notificationTemplate", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("id", resource.getId())) //
                 .add(Restrictions.eq("stateAction.action", action)); //
         
@@ -162,8 +164,16 @@ public class NotificationDAO {
                             .add(Restrictions.eq("action.actionCategory", PrismActionCategory.CREATE_RESOURCE)) //
                             .add(Restrictions.ne("userRole.user", invoker))); //
         } else {
+            DateTime rangeStart = baseline.minusDays(1).toDateTimeAtStartOfDay();
+            DateTime rangeClose = rangeStart.plusDays(1).minusSeconds(1);
+            
             criteria.add(Restrictions.eq("notificationTemplate.notificationType", PrismNotificationType.SYNDICATED)) //
-                    .add(Restrictions.ne("userRole.user", invoker));
+                    .add(Restrictions.between("updatedTimestamp", rangeStart, rangeClose)) //
+                    .add(Restrictions.disjunction() //
+                            .add(Restrictions.isNull("userNotification.id"))
+                            .add(Restrictions.conjunction() //
+                                    .add(Restrictions.eqProperty("userNotification.notificationTemplate", "stateActionAssignment.notificationTemplate"))
+                                    .add(Restrictions.lt("userNotification.createdDate", baseline))));
         }
         
         return (List<UserNotificationDefinition>) criteria.add(Restrictions.disjunction() //

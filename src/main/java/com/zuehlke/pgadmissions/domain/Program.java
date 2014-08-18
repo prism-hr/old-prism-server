@@ -85,6 +85,9 @@ public class Program extends Advert {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
     
+    @Column(name = "sequence_identifier", unique = true)
+    private String sequenceIdentifier;
+    
     @OneToMany(mappedBy = "program")
     private Set<Project> projects = Sets.newHashSet();
 
@@ -328,6 +331,16 @@ public class Program extends Advert {
         this.updatedTimestamp = updatedTimestamp;
     }
 
+    @Override
+    public String getSequenceIdentifier() {
+        return sequenceIdentifier;
+    }
+
+    @Override
+    public void setSequenceIdentifier(String sequenceIdentifier) {
+        this.sequenceIdentifier = sequenceIdentifier;
+    }
+    
     @Override
     public Application getApplication() {
         return null;

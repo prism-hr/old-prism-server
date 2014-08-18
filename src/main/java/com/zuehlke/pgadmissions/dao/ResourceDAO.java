@@ -144,4 +144,14 @@ public class ResourceDAO {
                 .list();
     }
 
+    public String getLastSequenceIdentifier(Resource resource, LocalDate baseline) {
+        DateTime rangeStart = baseline.toDateTimeAtStartOfDay();
+        DateTime rangeClose = rangeStart.plusDays(1).minusSeconds(1);
+        
+        return (String) sessionFactory.getCurrentSession().createCriteria(resource.getClass()) //
+                .setProjection(Projections.max("sequenceIdentifier")) //
+                .add(Restrictions.between("updatedTimestamp", rangeStart, rangeClose)) //
+                .uniqueResult();
+    }
+
 }

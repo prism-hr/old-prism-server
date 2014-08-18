@@ -90,7 +90,7 @@ public class UserService {
 
     public User getOrCreateUser(String firstName, String lastName, String email) {
         User user;
-        User transientUser = new User().withFirstName(firstName).withLastName(lastName).withEmail(email);
+        User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email);
         User duplicateUser = entityService.getDuplicateEntity(transientUser);
         if (duplicateUser == null) {
             user = transientUser;
@@ -127,7 +127,7 @@ public class UserService {
     public User getUserByEmail(String email) {
         return entityService.getByProperty(User.class, "email", email);
     }
-    
+
     public User getUserByActivationCode(String activationCode) {
         return userDAO.getUserByActivationCode(activationCode);
     }
@@ -136,7 +136,8 @@ public class UserService {
         User storedUser = getUserByEmail(email);
         if (storedUser != null) {
             String newPassword = encryptionUtils.generateUserPassword();
-            notificationService.sendNotification(storedUser, systemService.getSystem(), PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION, ImmutableMap.of("newPassword", newPassword));
+            notificationService.sendNotification(storedUser, systemService.getSystem(), PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION,
+                    ImmutableMap.of("newPassword", newPassword));
             storedUser.getUserAccount().setTemporaryPassword(encryptionUtils.getMD5Hash(newPassword));
             storedUser.getUserAccount().setTemporaryPasswordExpiryTimestamp(new DateTime().plusHours(1));
         }
@@ -240,5 +241,5 @@ public class UserService {
         user.getUserAccount().setEnabled(true);
         return !wasEnabled;
     }
-    
+
 }

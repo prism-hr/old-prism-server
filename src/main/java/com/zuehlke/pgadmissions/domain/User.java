@@ -54,6 +54,9 @@ public class User implements UserDetails, IUniqueEntity {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
     @Column(name = "last_name", nullable = false)
     private String lastName;
+    
+    @Column(name = "full_name", nullable = false)
+    private String fullName;
 
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
     @Column(name = "email", nullable = false, unique = true)
@@ -117,6 +120,14 @@ public class User implements UserDetails, IUniqueEntity {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public final String getFullName() {
+        return fullName;
+    }
+
+    public final void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getEmail() {
@@ -193,6 +204,11 @@ public class User implements UserDetails, IUniqueEntity {
 
     public User withLastName(String lastName) {
         this.lastName = lastName;
+        return this;
+    }
+    
+    public User withFullName(String fullName) {
+        this.fullName = fullName;
         return this;
     }
 

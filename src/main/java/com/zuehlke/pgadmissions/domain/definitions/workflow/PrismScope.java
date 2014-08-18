@@ -34,6 +34,7 @@ public enum PrismScope {
         resourceScopes.put(Application.class, APPLICATION);
     }
     
+    //TODO fallback action for each action.
     private static HashMap<PrismScope, PrismAction> fallbackActions = Maps.newHashMap();
     
     static {

@@ -114,7 +114,7 @@ public class NotificationDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignment.notificationTemplate", "notiticationTemplate", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.notificationTemplate", "notiticationTemplate", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("id", resource.getId())) //
                 .add(Restrictions.eq("stateAction.action", action));
         

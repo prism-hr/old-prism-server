@@ -141,7 +141,7 @@ public class ResourceResource {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam(value = "per_page") Integer loadIndex) {
+    public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam(value = "page") Integer loadIndex) {
         List<ResourceConsoleListRowDTO> consoleListBlock = resourceService.getConsoleListBlock(resourceDescriptor.getType(), loadIndex);
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
         for (ResourceConsoleListRowDTO appDTO : consoleListBlock) {

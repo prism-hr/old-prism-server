@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.exceptions;
 
-public class WorkflowEngineException extends Exception {
+public class WorkflowEngineException extends RuntimeException {
 
     private static final long serialVersionUID = -116272246657153672L;
 

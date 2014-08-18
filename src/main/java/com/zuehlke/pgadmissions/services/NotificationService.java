@@ -1,37 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
-import com.zuehlke.pgadmissions.domain.NotificationTemplate;
-import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Scope;
+import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.System;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserNotification;
-import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationPurpose;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
@@ -42,6 +14,13 @@ import com.zuehlke.pgadmissions.dto.UserNotificationDefinition;
 import com.zuehlke.pgadmissions.mail.MailMessageDTO;
 import com.zuehlke.pgadmissions.mail.MailSender;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
 
 @Service
 public class NotificationService {
@@ -168,7 +147,7 @@ public class NotificationService {
     @Transactional
     public void sendNotification(User user, Resource resource, PrismNotificationTemplate notificationTemplateId) {
         NotificationTemplate notificationTemplate = getById(notificationTemplateId);
-        sendNotification(user, resource, notificationTemplate, Collections.<String, String> emptyMap());
+        sendNotification(user, resource, notificationTemplate, Collections.<String, String>emptyMap());
     }
 
     @Transactional
@@ -242,7 +221,7 @@ public class NotificationService {
 
     @Transactional
     private void sendDeferredWorkflowNotification(Scope scope, UserNotificationDefinition definition, HashMultimap<NotificationTemplate, User> sentIndividual,
-            HashMultimap<Scope, User> sentSyndicated, LocalDate baseline) {
+                                                  HashMultimap<Scope, User> sentSyndicated, LocalDate baseline) {
         UserRole userRole = roleService.getUserRoleById(definition.getUserRoleId());
         User user = userRole.getUser();
 
@@ -278,7 +257,7 @@ public class NotificationService {
         }
         createOrUpdateUserNotification(resource, userRole, template, baseline.minusDays(1));
     }
-    
+
     @Transactional
     private void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate, Map<String, String> extraParameters) {
         NotificationTemplateVersion templateVersion = getActiveVersion(resource, notificationTemplate);
@@ -287,25 +266,27 @@ public class NotificationService {
         message.setTo(Collections.singletonList(user));
         message.setTemplate(templateVersion);
         message.setModel(createNotificationModel(user, resource, templateVersion, extraParameters));
-        message.setAttachments(Lists.<PdfAttachmentInputSource> newArrayList());
+        message.setAttachments(Lists.<PdfAttachmentInputSource>newArrayList());
 
         mailSender.sendEmail(message);
     }
 
     @Transactional
     private void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate) {
-        sendNotification(user, resource, notificationTemplate, Collections.<String, String> emptyMap());
+        sendNotification(user, resource, notificationTemplate, Collections.<String, String>emptyMap());
     }
 
     @Transactional
     private Map<String, Object> createNotificationModel(User user, Resource resource, NotificationTemplateVersion notificationTemplate,
-            Map<String, String> extraParameters) {
+                                                        Map<String, String> extraParameters) {
         Map<String, Object> model = Maps.newHashMap();
         model.put("user", user);
         model.put("userFirstName", user.getFirstName());
         model.put("userLastName", user.getLastName());
         model.put("userEmail", user.getEmail());
         model.put("activationCode", user.getActivationCode());
+
+        model.put("resourceId", resource.getId().toString());
 
         System system = resource.getSystem();
         Institution institution = resource.getInstitution();

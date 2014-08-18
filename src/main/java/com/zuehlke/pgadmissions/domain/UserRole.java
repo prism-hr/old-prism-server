@@ -200,7 +200,7 @@ public class UserRole implements IUniqueEntity {
         } else if (program != null) {
             properties.put("program", program);
         } else if (project != null) {
-            properties.put("program", project);
+            properties.put("project", project);
         } else if (application != null) {
             properties.put("application", application);
         }

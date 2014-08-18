@@ -31,6 +31,9 @@ public class RoleService {
     private NotificationService notificationService;
 
     @Autowired
+    private ResourceService resourceService;
+
+    @Autowired
     private UserService userService;
 
     public Role getById(PrismRole roleId) {
@@ -179,7 +182,8 @@ public class RoleService {
     private void executeRoleTransition(Comment comment, User user, RoleTransition roleTransition) throws WorkflowEngineException {
         DateTime baseline = new DateTime();
         Resource resource = comment.getResource();
-        UserRole transientRole = new UserRole().withResource(resource).withUser(user).withRole(roleTransition.getRole()).withAssignedTimestamp(baseline);
+        Resource operative = resourceService.getOperativeResource(resource, comment.getAction());
+        UserRole transientRole = new UserRole().withResource(operative).withUser(user).withRole(roleTransition.getRole()).withAssignedTimestamp(baseline);
         UserRole transientTransitionRole = new UserRole().withResource(resource).withUser(user).withRole(roleTransition.getTransitionRole())
                 .withAssignedTimestamp(baseline);
 
@@ -210,7 +214,7 @@ public class RoleService {
                     + " due to existing permission conflicts");
         }
         entityService.getOrCreate(transitionRole);
-        comment.withAssignedUser(userRole.getUser(), userRole.getRole());
+        comment.withAssignedUser(transitionRole.getUser(), transitionRole.getRole());
     }
 
     private void executeCreateUserRole(UserRole userRole, Comment comment) throws WorkflowEngineException {

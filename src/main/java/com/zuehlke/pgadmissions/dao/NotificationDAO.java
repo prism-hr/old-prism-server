@@ -104,7 +104,6 @@ public class NotificationDAO {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resource.getClass(), resourceReference) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty(resourceReference + ".id"), "resourceId") //
-                        .add(Projections.groupProperty(resourceReference + ".scope.id"), "resourceScopeId") //
                         .add(Projections.groupProperty("userRole.id"), "userRoleId") //
                         .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
@@ -143,7 +142,6 @@ public class NotificationDAO {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resource.getClass(), resourceReference) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty(resourceReference + ".id"), "resourceId") //
-                        .add(Projections.groupProperty(resourceReference + ".scope.id"), "resourceScopeId") //
                         .add(Projections.groupProperty("userRole.id"), "userRoleId") //
                         .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //

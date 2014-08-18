@@ -140,13 +140,12 @@ public class NotificationDAO {
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN) //
                 .createAlias("stateActionNotification.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("stateActionNotification.notificationTemplate", "notificationTemplate", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .createAlias("userRole.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("stateActionNotification.notificationTemplate", "notificationTemplate", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("id", resource.getId())) //
                 .add(Restrictions.eq("stateAction.action", action)); //
 
@@ -165,7 +164,7 @@ public class NotificationDAO {
                             .add(Restrictions.isNull("userNotification.id"))
                             .add(Restrictions.conjunction() //
                                     .add(Restrictions.eqProperty("userNotification.notificationTemplate", "stateActionAssignment.notificationTemplate"))
-                                    .add(Restrictions.lt("userNotification.createdDate", baseline))));
+                                    .add(Restrictions.lt("userNotification.createdDate", baseline.minusDays(1)))));
         }
 
         return (List<UserNotificationDefinition>) criteria.add(Restrictions.disjunction() //

@@ -188,17 +188,17 @@ public class RoleService {
                 .withAssignedTimestamp(baseline);
 
         switch (roleTransition.getRoleTransitionType()) {
-            case BRANCH:
-                executeBranchUserRole(transientRole, transientTransitionRole, comment);
-                break;
-            case CREATE:
-                executeCreateUserRole(transientRole, comment);
-                break;
-            case REMOVE:
-                executeRemoveUserRole(transientRole);
-                break;
-            case UPDATE:
-                executeUpdateUserRole(transientRole, transientTransitionRole);
+        case BRANCH:
+            executeBranchUserRole(transientRole, transientTransitionRole, comment);
+            break;
+        case CREATE:
+            executeCreateUserRole(transientRole, comment);
+            break;
+        case REMOVE:
+            executeRemoveUserRole(transientRole);
+            break;
+        case UPDATE:
+            executeUpdateUserRole(transientRole, transientTransitionRole);
         }
     }
 

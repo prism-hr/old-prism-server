@@ -121,7 +121,7 @@ public class ProgramDAO {
                 .add(Restrictions.eq("enabled", true)) //
                 .addOrder(Order.asc("applicationStartDate")) //
                 .setMaxResults(1) //
-                .uniqueResult();     
+                .uniqueResult();  
     }
     
     public ProgramInstance getExportProgramInstance(Application application) {

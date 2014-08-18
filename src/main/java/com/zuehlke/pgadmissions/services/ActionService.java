@@ -66,7 +66,6 @@ public class ActionService {
             return;
         }
         
-        // FIXME: handle create action case
         Action fallback = actionDAO.getFallbackAction(resource);
         throw new WorkflowPermissionException(action.getId(), fallback.getId());
     }

@@ -75,6 +75,9 @@ public class Project extends Advert {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
     
+    @Column(name = "sequence_identifier", unique = true)
+    private String sequenceIdentifier;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     private Set<Application> applications = Sets.newHashSet();
     
@@ -216,10 +219,19 @@ public class Project extends Advert {
     }
     
     @Override
+    public String getSequenceIdentifier() {
+        return sequenceIdentifier;
+    }
+
+    @Override
+    public void setSequenceIdentifier(String sequenceIdentifier) {
+        this.sequenceIdentifier = sequenceIdentifier;
+    }
+    
+    @Override
     public Application getApplication() {
         return null;
     }
-
 
     @Override
     public LocalDate getDueDateBaseline() {

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.util.HashMap;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.*;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,18 +14,6 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Scope;
-import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.StateDuration;
-import com.zuehlke.pgadmissions.domain.StateTransitionPending;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -123,6 +112,21 @@ public class ResourceService {
 
         Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                 .withAssignedUser(user, roleService.getCreatorRole(resource));
+
+        // in case of applying to project assign supervisors
+        if(resource.getProject() != null) {
+            Role primarySupervisorRole = entityService.getById(Role.class, PrismRole.PROJECT_PRIMARY_SUPERVISOR);
+            Role secondarySupervisorRole = entityService.getById(Role.class, PrismRole.PROJECT_SECONDARY_SUPERVISOR);
+            List<User> primarySupervisors = roleService.getRoleUsers(resource.getProject(), primarySupervisorRole);
+            for (User primarySupervisor : primarySupervisors) {
+                comment.withAssignedUser(primarySupervisor, primarySupervisorRole);
+            }
+            List<User> secondarySupervisors = roleService.getRoleUsers(resource.getProject(), secondarySupervisorRole);
+            for (User secondarySupervisor : secondarySupervisors) {
+                comment.withAssignedUser(secondarySupervisor, secondarySupervisorRole);
+            }
+        }
+
         return actionService.executeUserAction(resource, action, comment);
     }
 

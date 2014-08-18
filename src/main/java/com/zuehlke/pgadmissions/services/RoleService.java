@@ -1,26 +1,18 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.dao.RoleDAO;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.RoleTransition;
-import com.zuehlke.pgadmissions.domain.StateTransition;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
+import java.util.List;
 
 @Service
 @Transactional
@@ -192,17 +184,17 @@ public class RoleService {
                 .withAssignedTimestamp(baseline);
 
         switch (roleTransition.getRoleTransitionType()) {
-        case BRANCH:
-            executeBranchUserRole(transientRole, transientTransitionRole, comment);
-            break;
-        case CREATE:
-            executeCreateUserRole(transientRole, comment);
-            break;
-        case REMOVE:
-            executeRemoveUserRole(transientRole);
-            break;
-        case UPDATE:
-            executeUpdateUserRole(transientRole, transientTransitionRole);
+            case BRANCH:
+                executeBranchUserRole(transientRole, transientTransitionRole, comment);
+                break;
+            case CREATE:
+                executeCreateUserRole(transientRole, comment);
+                break;
+            case REMOVE:
+                executeRemoveUserRole(transientRole);
+                break;
+            case UPDATE:
+                executeUpdateUserRole(transientRole, transientTransitionRole);
         }
     }
 

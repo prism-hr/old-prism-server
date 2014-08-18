@@ -1,11 +1,9 @@
 package com.zuehlke.pgadmissions.mail;
 
-import java.io.StringReader;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
+import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
+import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
+import freemarker.template.Template;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
-
-import freemarker.template.Template;
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.io.StringReader;
 
 @Service
 public class MailSender {
@@ -36,18 +34,21 @@ public class MailSender {
 
     @Value("${email.address.to}")
     private String emailAddressTo;
-    
+
     @Value("${email.broken.link.message}")
     private String emailBrokenLinkMessage;
-    
+
     @Autowired
     private JavaMailSender javaMailSender;
 
     @Autowired
     private FreeMarkerConfig freemarkerConfig;
 
-    public void sendEmail(final MailMessageDTO message) {        
+    public void sendEmail(final MailMessageDTO message) {
         logger.info(String.format("Sending Email: %s", message.toString()));
+
+        final NotificationTemplateVersion notificationTemplate = message.getTemplate();
+
         try {
             javaMailSender.send(new MimeMessagePreparator() {
                 @Override
@@ -57,7 +58,7 @@ public class MailSender {
                     if (!productionContext) {
                         flagAsDevelopmentEmail(message, messageHelper);
                     }
-                    
+
                     messageHelper.setFrom(emailAddressFrom);
 
                     for (InternetAddress addresses : message.getToAsInternetAddresses()) {
@@ -80,8 +81,6 @@ public class MailSender {
                         messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");
                     }
 
-                    NotificationTemplateVersion notificationTemplate = message.getTemplate();
-
                     Template subjectTemplate = new Template(null, new StringReader(notificationTemplate.getSubject()), freemarkerConfig.getConfiguration());
                     String subject = FreeMarkerTemplateUtils.processTemplateIntoString(subjectTemplate, message.getModel());
 
@@ -97,10 +96,14 @@ public class MailSender {
                 }
             });
         } catch (Exception e) {
-            logger.error(String.format("Failed to send email %s", message.toString()), e);
+            if (notificationTemplate.getNotificationTemplate().getNotificationType() == PrismNotificationType.INDIVIDUAL) {
+                throw new Error(e);
+            } else {
+                logger.error(String.format("Failed to send email %s", message.toString()), e);
+            }
         }
     }
-    
+
     private void flagAsDevelopmentEmail(final MailMessageDTO message, final MimeMessageHelper messageHelper) throws MessagingException {
         messageHelper.setTo(emailAddressTo);
         StringBuilder subjectBuilder = new StringBuilder();
@@ -109,5 +112,5 @@ public class MailSender {
         subjectBuilder.append(" BCC: ").append(message.getBccAsInternetAddresses().toString());
         messageHelper.setSubject(subjectBuilder.toString());
     }
-    
+
 }

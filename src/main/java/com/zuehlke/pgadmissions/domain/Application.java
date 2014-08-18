@@ -109,6 +109,9 @@ public class Application extends Resource {
     @Column(name = "submitted_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime submittedTimestamp;
+    
+    @Column(name = "sequence_identifier", unique = true)
+    private String sequenceIdentifier;
 
     @ManyToOne
     @JoinColumn(name = "state_id")
@@ -455,6 +458,16 @@ public class Application extends Resource {
     @Override
     public void setUser(User user) {
         this.user = user;
+    }
+    
+    @Override
+    public String getSequenceIdentifier() {
+        return sequenceIdentifier;
+    }
+
+    @Override
+    public void setSequenceIdentifier(String sequenceIdentifier) {
+        this.sequenceIdentifier = sequenceIdentifier;
     }
 
     @Override

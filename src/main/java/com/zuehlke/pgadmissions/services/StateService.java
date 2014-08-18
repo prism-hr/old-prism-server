@@ -37,7 +37,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvalu
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 
 @Service
-@Transactional
 public class StateService {
 
     private final HashMap<Resource, Action> escalationQueue = Maps.newLinkedHashMap();
@@ -73,38 +72,37 @@ public class StateService {
     @Autowired
     private UserService userService;
 
+    @Transactional
     public State getById(PrismState id) {
         return entityService.getByProperty(State.class, "id", id);
     }
 
-    public void save(State state) {
-        entityService.save(state);
-    }
-
+    @Transactional
     public List<State> getConfigurableStates() {
         return stateDAO.getConfigurableStates();
     }
 
+    @Transactional
     public List<State> getStates() {
         return entityService.list(State.class);
     }
 
+    @Transactional
     public List<StateGroup> getStateGroups() {
         return entityService.list(StateGroup.class);
     }
 
+    @Transactional
     public List<State> getWorkflowStates() {
         return stateDAO.getWorkflowStates();
     }
 
+    @Transactional
     public StateDuration getStateDuration(Resource resource, State state) {
         return stateDAO.getStateDuration(resource, state);
     }
 
-    public StateDuration getCurrentStateDuration(Resource resource) {
-        return stateDAO.getStateDuration(resource, resource.getState());
-    }
-
+    @Transactional
     public void deleteStateActions() {
         entityService.deleteAll(RoleTransition.class);
         entityService.deleteAll(StateTransition.class);
@@ -113,22 +111,27 @@ public class StateService {
         entityService.deleteAll(StateAction.class);
     }
 
+    @Transactional
     public void deleteObseleteStateDurations() {
         stateDAO.deleteObseleteStateDurations(getConfigurableStates());
     }
 
+    @Transactional
     public <T extends Resource> List<State> getDeprecatedStates(Class<T> resourceClass) {
         return stateDAO.getDeprecatedStates(resourceClass);
     }
 
+    @Transactional
     public List<StateAction> getStateActions() {
         return entityService.list(StateAction.class);
     }
 
+    @Transactional
     public List<State> getOrderedTransitionStates(State state, State... excludedTransitionStates) {
         return stateDAO.getOrderedTransitionStates(state, excludedTransitionStates);
     }
 
+    @Transactional
     public List<StateTransitionPending> getStateTransitionsPending() {
         List<StateTransitionPending> pendingStateTransitions = Lists.newArrayList();
         for (Scope scope : scopeService.getScopesDescending()) {
@@ -137,6 +140,7 @@ public class StateService {
         return pendingStateTransitions;
     }
 
+    @Transactional
     public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
         comment.setResource(resource);
 
@@ -148,11 +152,11 @@ public class StateService {
 
         entityService.save(comment);
         StateTransition stateTransition = getStateTransition(resource, action, comment);
-        
+
         if (stateTransition != null) {
             State transitionState = stateTransition.getTransitionState();
             StateDuration transitionStateDuration = getStateDuration(resource, transitionState);
-            
+
             resourceService.transitionResource(resource, comment, transitionState, transitionStateDuration);
             roleService.executeRoleTransitions(stateTransition, comment);
 
@@ -160,13 +164,14 @@ public class StateService {
                 StateTransitionPending transientTransitionPending = new StateTransitionPending().withResource(resource).withStateTransition(stateTransition);
                 entityService.getOrCreate(transientTransitionPending);
             }
-            
+
             notificationService.sendWorkflowNotifications(resource, action, comment.getUser());
         }
 
         return stateTransition;
     }
 
+    @Transactional
     public StateTransition getStateTransition(Resource resource, Action action, Comment comment) {
         Resource operative = resourceService.getOperativeResource(resource, action);
         List<StateTransition> potentialStateTransitions = stateDAO.getStateTransitions(operative, action);
@@ -183,14 +188,17 @@ public class StateService {
         return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);
     }
 
+    @Transactional
     public List<PrismState> getAvailableNextStates(Resource resource, PrismAction actionId) {
         return stateDAO.getAvailableNextStates(resource, actionId);
     }
 
+    @Transactional
     public StateTransition getApplicationEvaluatedOutcome(Resource resource, Comment comment) {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), comment.getTransitionState().getId());
     }
 
+    @Transactional
     public StateTransition getApplicationReviewedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
         PrismState transitionState = PrismState.APPLICATION_REVIEW_PENDING_FEEDBACK;
         if (roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_REVIEWER)).size() == 1) {
@@ -199,6 +207,7 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionState);
     }
 
+    @Transactional
     public StateTransition getApplicationInterviewRsvpedOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId = PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY;
         List<User> interviewees = roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE));
@@ -209,6 +218,7 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 
+    @Transactional
     public StateTransition getApplicationSupervisionConfirmedOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId = PrismState.APPLICATION_APPROVAL_PENDING_FEEDBACK;
         List<User> primarySupervisors = roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_PRIMARY_SUPERVISOR));
@@ -219,6 +229,7 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 
+    @Transactional
     public StateTransition getApplicationInterviewScheduledOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId;
         DateTime interviewDateTime = comment.getInterviewDateTime();
@@ -238,6 +249,7 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 
+    @Transactional
     public StateTransition getApplicationInterviewedOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId = PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
         if (roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_INTERVIEWER)).size() == 1) {
@@ -246,6 +258,7 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 
+    @Transactional
     public StateTransition getInstitutionCreatedOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId = PrismState.INSTITUTION_APPROVAL;
         if (roleService.hasUserRole(resource, comment.getUser(), PrismRole.SYSTEM_ADMINISTRATOR)) {
@@ -254,6 +267,7 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 
+    @Transactional
     public StateTransition getApplicationEligibilityAssessedOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId = PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION;
         if (comment.isApplicationCreatorEligibilityUncertain()) {
@@ -263,6 +277,7 @@ public class StateService {
     }
 
     // FIXME: completed the integration with the exporter
+    @Transactional
     public StateTransition getApplicationExportedOutcome(Resource resource, Comment comment) {
         State currentState = resource.getState();
         PrismState transitionStateId = currentState.getId();
@@ -275,6 +290,7 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 
+    @Transactional
     public StateTransition getApplicationProcessedOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId = PrismState.valueOf(resource.getState().getId().toString() + "_COMPLETED");
         if (comment.getAction().getId() == PrismAction.APPLICATION_WITHDRAW) {
@@ -310,22 +326,26 @@ public class StateService {
     }
 
     private void flushDeferredStateTransitions(final HashMap<Resource, Action> queue) {
-        final User user = systemService.getSystem().getUser();
         for (final Resource resource : queue.keySet()) {
             final Action action = queue.get(resource);
             transitionRunner.submit(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        Comment comment = new Comment().withResource(resource).withUser(user).withAction(action);
-                        executeStateTransition(resource, action, comment);
-                        queue.remove(resource);
+                        flushDeferredStateTransition(queue, resource, action);
                     } catch (WorkflowEngineException e) {
-                        throw new Error(e);
+                        throw new Error("Failed to execute deferred action " + action.getId().toString() + " on resource " + resource.getCode(), e);
                     }
                 }
             });
         }
+    }
+
+    @Transactional
+    private void flushDeferredStateTransition(HashMap<Resource, Action> queue, Resource resource, Action action) throws WorkflowEngineException {
+        Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action);
+        executeStateTransition(resource, action, comment);
+        queue.remove(resource);
     }
 
 }

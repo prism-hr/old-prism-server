@@ -134,7 +134,7 @@ public class ResourceService {
             applicationService.save((Application) resource);
             break;
         default:
-            throw new WorkflowEngineException("You attemped to persist a resource of invalid type " + resource.getResourceScope().getLowerCaseName());
+            throw new WorkflowEngineException("Attemped to persist a resource of invalid type " + resource.getResourceScope().getLowerCaseName());
         }
 
         resource.setCode(generateResoureCode(resource));
@@ -168,7 +168,12 @@ public class ResourceService {
             dueDate = dueDateBaseline.plusDays(stateDuration == null ? 0 : stateDuration.getDuration());
         }
         resource.setDueDate(dueDate);
-        resource.setUpdatedTimestamp(new DateTime());
+
+        DateTime baselineTime = new DateTime();
+        resource.setUpdatedTimestamp(baselineTime);
+        
+        LocalDate baselineDate = baselineTime.toLocalDate();
+        setSequenceIdentifier(resource, baselineDate);
     }
 
     public HashMap<Resource, Action> getResourceEscalations() {
@@ -221,4 +226,16 @@ public class ResourceService {
     public List<StateChangeDTO> getRecentStateChanges(Scope scope, LocalDate baseline) {
         return resourceDAO.getRecentStateChanges(scope, baseline);
     }
+    
+    private void setSequenceIdentifier(Resource resource, LocalDate baselineDate) {
+        String lastSequenceIdentifier = resourceDAO.getLastSequenceIdentifier(resource, baselineDate);
+        lastSequenceIdentifier = lastSequenceIdentifier == null ? baselineDate.toString("yyyyMMdd") + "-0000000001" : lastSequenceIdentifier;
+        String[] lastSequenceIdentifierParts = lastSequenceIdentifier.split("-");
+
+        Integer lastSequenceIdentifierIndex = Integer.parseInt(lastSequenceIdentifierParts[1].replaceAll("^0+(?!$)", ""));
+        Integer nextSequenceIdentifierIndex = lastSequenceIdentifierIndex + 1;
+
+        resource.setSequenceIdentifier(lastSequenceIdentifierParts[0] + String.format("%010d", nextSequenceIdentifierIndex));
+    }
+    
 }

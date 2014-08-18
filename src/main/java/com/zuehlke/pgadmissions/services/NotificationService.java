@@ -178,9 +178,10 @@ public class NotificationService {
 
     @Transactional
     private List<UserNotificationDefinition> getWorkflowNotifications(Resource resource, Action action, User invoker) {
+        LocalDate baseline = new LocalDate();
         List<UserNotificationDefinition> definitions = Lists.newLinkedList();
         definitions.addAll(notificationDAO.getRequestNotifications(resource, action, invoker));
-        definitions.addAll(notificationDAO.getUpdateNotifications(resource, action, invoker));
+        definitions.addAll(notificationDAO.getUpdateNotifications(resource, action, invoker, baseline));
         return definitions;
     }
 
@@ -213,7 +214,7 @@ public class NotificationService {
         Set<UserNotificationDefinition> definitions = Sets.newLinkedHashSet();
 
         for (StateChangeDTO update : updates) {
-            definitions.addAll(notificationDAO.getDeferredUpdateNotifications(update.getResource(), update.getAction(), invoker));
+            definitions.addAll(notificationDAO.getDeferredUpdateNotifications(update.getResource(), update.getAction(), invoker, baseline.minusDays(1)));
         }
 
         return Lists.newLinkedList(definitions);

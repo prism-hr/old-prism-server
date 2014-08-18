@@ -194,8 +194,8 @@ public class UserDAO {
     public List<UserRepresentation> getSimilarUsers(String searchTerm) {
         return (List<UserRepresentation>) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.property("firstName"), "firstName")
-                        .add(Projections.property("lastName"), "lastName")
+                        .add(Projections.property("firstName"), "firstName") //
+                        .add(Projections.property("lastName"), "lastName") //
                         .add(Projections.groupProperty("email"), "email")) //
                 .createAlias("userRoles", "userRole", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
@@ -209,7 +209,7 @@ public class UserDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.ilike("firstName", searchTerm, MatchMode.START)) //
                         .add(Restrictions.ilike("lastName", searchTerm, MatchMode.START)) //
-                        .add(Restrictions.sqlRestriction("CONCAT(first_name, \" \", last_name) LIKE \"" + searchTerm + "%\"")) //
+                        .add(Restrictions.ilike("fullName", searchTerm, MatchMode.START)) //
                         .add(Restrictions.ilike("email", searchTerm, MatchMode.START))) //
                 .setMaxResults(10) //
                 .setResultTransformer(Transformers.aliasToBean(UserRepresentation.class)) //

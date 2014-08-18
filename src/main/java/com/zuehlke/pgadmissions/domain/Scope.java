@@ -58,11 +58,11 @@ public class Scope extends WorkflowResource {
         this.precedence = precedence;
     }
     
-    public final Action getFallbackAction() {
+    public Action getFallbackAction() {
         return fallbackAction;
     }
 
-    public final void setFallbackAction(Action fallbackAction) {
+    public void setFallbackAction(Action fallbackAction) {
         this.fallbackAction = fallbackAction;
     }
 

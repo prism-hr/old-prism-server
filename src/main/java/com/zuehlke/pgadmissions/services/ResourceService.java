@@ -113,20 +113,6 @@ public class ResourceService {
         Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                 .withAssignedUser(user, roleService.getCreatorRole(resource));
 
-        // in case of applying to project assign supervisors
-        if(resource.getProject() != null) {
-            Role primarySupervisorRole = entityService.getById(Role.class, PrismRole.PROJECT_PRIMARY_SUPERVISOR);
-            Role secondarySupervisorRole = entityService.getById(Role.class, PrismRole.PROJECT_SECONDARY_SUPERVISOR);
-            List<User> primarySupervisors = roleService.getRoleUsers(resource.getProject(), primarySupervisorRole);
-            for (User primarySupervisor : primarySupervisors) {
-                comment.withAssignedUser(primarySupervisor, primarySupervisorRole);
-            }
-            List<User> secondarySupervisors = roleService.getRoleUsers(resource.getProject(), secondarySupervisorRole);
-            for (User secondarySupervisor : secondarySupervisors) {
-                comment.withAssignedUser(secondarySupervisor, secondarySupervisorRole);
-            }
-        }
-
         return actionService.executeUserAction(resource, action, comment);
     }
 

@@ -64,6 +64,9 @@ public class System extends Resource {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
     
+    @Column(name = "sequence_identifier", unique = true)
+    private String sequenceIdentifier;
+    
     @OneToMany(mappedBy = "system")
     private Set<UserNotification> userNotifications = Sets.newHashSet();
     
@@ -227,6 +230,16 @@ public class System extends Resource {
     @Override
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
+    }
+    
+    @Override
+    public String getSequenceIdentifier() {
+        return sequenceIdentifier;
+    }
+
+    @Override
+    public void setSequenceIdentifier(String sequenceIdentifier) {
+        this.sequenceIdentifier = sequenceIdentifier;
     }
 
     @Override

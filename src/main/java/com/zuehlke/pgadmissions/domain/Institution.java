@@ -105,6 +105,9 @@ public class Institution extends Resource {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
     
+    @Column(name = "sequence_identifier", unique = true)
+    private String sequenceIdentifier;
+    
     @OneToMany(mappedBy = "institution")
     private Set<ImportedEntityFeed> importedEntityFeeds = Sets.newHashSet();
 
@@ -343,6 +346,16 @@ public class Institution extends Resource {
         this.updatedTimestamp = updatedTimestamp;
     }
 
+    @Override
+    public String getSequenceIdentifier() {
+        return sequenceIdentifier;
+    }
+
+    @Override
+    public void setSequenceIdentifier(String sequenceIdentifier) {
+        this.sequenceIdentifier = sequenceIdentifier;
+    }
+    
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();

@@ -57,6 +57,10 @@ public abstract class Resource implements IUniqueEntity {
     public abstract DateTime getUpdatedTimestamp();
 
     public abstract void setUpdatedTimestamp(DateTime updatedTimestamp);
+    
+    public abstract String getSequenceIdentifier();
+    
+    public abstract void setSequenceIdentifier(String sequenceIdentifier);
 
     public LocalDate getDueDateBaseline() {
         return new LocalDate();

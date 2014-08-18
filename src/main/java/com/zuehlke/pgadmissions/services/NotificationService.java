@@ -249,7 +249,7 @@ public class NotificationService {
         NotificationTemplate notificationTemplate = getById(definition.getNotificationTemplateId());
         PrismNotificationType notificationType = notificationTemplate.getNotificationType();
 
-        Resource taskResource = resourceService.getById(definition.getResourceScopeId().getResourceClass(), definition.getResourceId());
+        Resource taskResource = resourceService.getById(notificationTemplate.getScope().getId().getResourceClass(), definition.getResourceId());
         Resource messageResource = taskResource.getEnclosingResource(notificationTemplate.getScope().getId());
 
         if (notificationType == PrismNotificationType.INDIVIDUAL && !sentIndividual.get(notificationTemplate).contains(user)) {

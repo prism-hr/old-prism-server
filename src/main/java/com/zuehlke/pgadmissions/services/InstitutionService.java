@@ -39,20 +39,10 @@ public class InstitutionService {
     private ImportedEntityService importedEntityService;
 
     @Autowired
-    private StateService stateService;
-
-    @Autowired
     private SystemService systemService;
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     public Institution getByCode(String institutionCode) {
         return institutionDAO.getByCode(institutionCode);
-    }
-
-    public List<ImportedInstitution> getEnabledImportedInstitutionsByDomicile(Domicile domicile) {
-        return institutionDAO.getEnabledImportedInstitutionsByDomicile(domicile);
     }
 
     public List<InstitutionDomicileRegion> getTopLevelRegions(InstitutionDomicile domicile) {
@@ -98,16 +88,6 @@ public class InstitutionService {
                 }
             }
         }
-    }
-
-    public List<String> getSimilarInsitutions(String searchTerm, String domicileCode) {
-        String trimmedSearchTerm = StringUtils.trim(searchTerm);
-        
-        if (trimmedSearchTerm.length() >= 3) {
-            return institutionDAO.getSimilarInsitutions(trimmedSearchTerm, domicileCode);
-        }
-        
-        return Lists.newArrayList();
     }
 
 }

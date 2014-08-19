@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import org.apache.lucene.search.Query;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -73,7 +74,9 @@ public class InstitutionDAO {
 
     public List<Institution> listByCountry(InstitutionDomicile domicile) {
         return sessionFactory.getCurrentSession().createCriteria(Institution.class).createAlias("address", "address")
-                .add(Restrictions.eq("address.country", domicile)).list();
+                .add(Restrictions.eq("address.country", domicile))
+                .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED))
+                .list();
     }
 
     public Institution getUclInstitution() {

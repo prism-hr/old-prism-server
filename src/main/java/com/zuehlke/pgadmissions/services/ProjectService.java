@@ -17,7 +17,7 @@ public class ProjectService {
     
     @Autowired
     private ResourceService resourceService;
-    
+
     public Project create(User user, ProjectDTO projectDTO) {
         return null;
     }

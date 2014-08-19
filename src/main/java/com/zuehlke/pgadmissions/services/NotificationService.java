@@ -61,11 +61,6 @@ public class NotificationService {
     }
 
     @Transactional
-    public NotificationTemplateVersion getVersionById(Integer id) {
-        return entityService.getById(NotificationTemplateVersion.class, id);
-    }
-
-    @Transactional
     public NotificationConfiguration getConfiguration(Resource resource, NotificationTemplate template) {
         return notificationDAO.getConfiguration(resource, template);
     }

@@ -26,12 +26,6 @@ public class ProgramService {
     private ProgramDAO programDAO;
 
     @Autowired
-    private InstitutionService qualificationInstitutionService;
-
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    @Autowired
     private RoleService roleService;
 
     @Autowired
@@ -39,9 +33,6 @@ public class ProgramService {
 
     @Autowired
     private ActionService actionService;
-
-    @Autowired
-    private ResourceService resourceService;
 
     @Autowired
     private InstitutionService institutionService;
@@ -55,10 +46,6 @@ public class ProgramService {
 
     public void save(Program program) {
         entityService.save(program);
-    }
-
-    public List<Program> getProgramsOpenForApplication() {
-        return programDAO.getProgramsOpenForApplication();
     }
 
     public Program getProgramByCode(String code) {
@@ -77,8 +64,9 @@ public class ProgramService {
 
     public Program create(User user, ProgramDTO programDTO) {
         Institution institution = entityService.getById(Institution.class, programDTO.getInstitutionId());
-        Program program = new Program().withTitle(programDTO.getTitle()).withInstitution(institution).withProgramType(programDTO.getProgramType())
-                .withRequireProjectDefinition(false);
+        Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withTitle(programDTO.getTitle()).withInstitution(institution).withProgramType(programDTO.getProgramType())
+                .withRequireProjectDefinition(programDTO.getRequireProjectDefinition()).withStartDate(programDTO.getStartDate().toLocalDate())
+                .withEndDate(programDTO.getEndDate().toLocalDate()).withImmediateStart(programDTO.getImmediateStart());
         return program;
     }
 
@@ -101,7 +89,7 @@ public class ProgramService {
     }
 
     public void saveProgramInstance(ProgramInstance transientProgramInstance) {
-        ProgramInstance persistentInstance = (ProgramInstance) entityService.createOrUpdate(transientProgramInstance);
+        ProgramInstance persistentInstance = entityService.createOrUpdate(transientProgramInstance);
         if (persistentInstance.isEnabled()) {
             Program transientProgram = transientProgramInstance.getProgram();
             Program persistentProgram = (Program) getById(transientProgram.getId());
@@ -111,107 +99,6 @@ public class ProgramService {
                 persistentProgram.setDueDate(instanceEndDate);
             }
         }
-    }
-
-    public CommentCustomQuestion getCustomQuestionsForProgram(Integer programId, PrismAction actionId) {
-        HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("program.id", programId);
-        properties.put("action.id", actionId);
-        properties.put("enabled", true);
-        return entityService.getByProperties(CommentCustomQuestion.class, properties);
-    }
-
-    public void createCustomQuestionsForProgram(Integer programId, PrismAction actionId, String definition) {
-        Program program = getById(programId).getProgram();
-        Action action = actionService.getById(actionId);
-        CommentCustomQuestion persistentCustomQuestionDefinition = entityService.getOrCreate(new CommentCustomQuestion().withProgram(program)
-                .withAction(action));
-        CommentCustomQuestionVersion version = new CommentCustomQuestionVersion().withCommentCustomQuestion(persistentCustomQuestionDefinition).withContent(
-                definition);
-        entityService.save(version);
-        persistentCustomQuestionDefinition.setVersion(version);
-        persistentCustomQuestionDefinition.setEnabled(true);
-    }
-
-    public void disableCustomQuestionsForProgram(Integer programId, PrismAction actionId) {
-        HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("program.id", programId);
-        properties.put("action.id", actionId);
-        CommentCustomQuestion customQuestions = entityService.getByProperties(CommentCustomQuestion.class, properties);
-        customQuestions.setEnabled(false);
-    }
-
-    public void removeProject(Integer projectId) {
-        Project project = (Project) getById(projectId);
-        if (project != null) {
-            // TODO - state transition project.setState(ProjectState.PROJECT_DISABLED);
-        }
-    }
-
-    public List<Project> listProjects(User user, Program program) {
-        // TODO implement
-        return null;
-    }
-
-    public String getDefaultClosingDate(Program program) {
-        LocalDate closingDate = programDAO.getNextClosingDate(program);
-        return closingDate != null ? closingDate.toString("dd MMM yyyy") : "null";
-    }
-
-    public void updateClosingDate(AdvertClosingDate closingDate) {
-        programDAO.updateClosingDate(closingDate);
-    }
-
-    public void addClosingDateToProgram(Program program, AdvertClosingDate programClosingDate) {
-        program.getClosingDates().add(programClosingDate);
-    }
-
-    // TODO: rewrite for new workflow paradigm
-
-    // protected Program getOrCreateProgram(Program program) {
-    // ProgramService thisBean = applicationContext.getBean(ProgramService.class);
-    //
-    // if (program != null) {
-    // program = (Program) merge(program);
-    // program.setUser(thisBean.getContactUserForProgram(program, program.getUser()));
-    // } else {
-    // program = new Program();
-    // // program.setState(ProgramState.PROGRAM_APPROVED);
-    // program.setUser(program.getUser());
-    // }
-    //
-    // if (program.isImported()) {
-    // if (program.getInstitution() == null || !HibernateUtils.sameEntities(program.getInstitution(), opportunityRequest.getInstitutionCode())) {
-    // Institution institution = qualificationInstitutionService.getOrCreate(opportunityRequest.getInstitutionCode(),
-    // opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
-    // program.setInstitution(institution);
-    // program.setCode(thisBean.generateNextProgramCode(institution));
-    // }
-    // program.setTitle(opportunityRequest.getProgramTitle());
-    // program.setRequireProjectDefinition(opportunityRequest.getAtasRequired());
-    // program.setProgramType(opportunityRequest.getProgramType());
-    // }
-    //
-    // program.setDescription(opportunityRequest.getProgramDescription());
-    // program.setStudyDuration(opportunityRequest.getStudyDuration());
-    // program.setFunding(opportunityRequest.getFunding());
-    // // FIXME set the right state, not that it can be overridden by programInstanceService#createRemoveProgramInstances() (when there are no active instanes)
-    // // program.setActive(opportunityRequest.getAcceptingApplications());
-    //
-    // save(program);
-    // return program;
-    // }
-
-    public void deleteInactiveAdverts() {
-        programDAO.deleteInactiveAdverts();
-    }
-
-    public List<ProgramInstance> getActiveProgramInstances(Program program, StudyOption studyOption) {
-        return programDAO.getActiveProgramInstances(program, studyOption);
-    }
-
-    public LocalDate getNextClosingDate(Program program) {
-        return programDAO.getNextClosingDate(program);
     }
 
     public List<Program> getPrograms() {

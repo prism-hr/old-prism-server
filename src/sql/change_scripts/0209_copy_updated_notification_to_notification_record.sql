@@ -1,0 +1,1 @@
+INSERT INTO NOTIFICATION_RECORD(application_form_id, notification_type, notification_date) SELECT APPLICATION_FORM.id, 'UPDATED_NOTIFICATION', last_submission_notification FROM APPLICATION_FORM WHERE last_submission_notification is NOT NULL;

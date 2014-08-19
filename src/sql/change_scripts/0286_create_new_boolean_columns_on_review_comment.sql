@@ -1,0 +1,1 @@
+ALTER TABLE REVIEW_COMMENT ADD COLUMN willing_to_interview tinyint(1), ADD COLUMN decline tinyint(1), ADD COLUMN suitable_candidate tinyint(1), ADD COLUMN admins_notified tinyint(1); 

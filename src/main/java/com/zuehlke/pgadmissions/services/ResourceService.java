@@ -231,7 +231,7 @@ public class ResourceService {
         Integer lastSequenceIdentifierIndex = Integer.parseInt(lastSequenceIdentifierParts[1].replaceAll("^0+(?!$)", ""));
         Integer nextSequenceIdentifierIndex = lastSequenceIdentifierIndex + 1;
 
-        resource.setSequenceIdentifier(lastSequenceIdentifierParts[0] + String.format("%010d", nextSequenceIdentifierIndex));
+        resource.setSequenceIdentifier(lastSequenceIdentifierParts[0] + "-" + String.format("%010d", nextSequenceIdentifierIndex));
     }
     
 }

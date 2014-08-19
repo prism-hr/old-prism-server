@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
-import com.zuehlke.pgadmissions.domain.User;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;

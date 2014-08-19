@@ -173,6 +173,7 @@ public class EntityImportService {
         thisBean.disableAllEntities(entityClass, institution);
         for (ImportedEntity entity : entities) {
             try {
+                // TODO: remove this stuff and use the duplicate checking functionality
                 thisBean.attemptInsert(entity);
             } catch (Exception e) {
                 try {

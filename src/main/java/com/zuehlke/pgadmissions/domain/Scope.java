@@ -5,8 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -29,10 +27,6 @@ public class Scope extends WorkflowResource {
     
     @Column(name = "short_code", nullable = false, unique = true)
     private String shortCode;
-    
-    @ManyToOne
-    @JoinColumn(name = "fallback_action_id")
-    private Action fallbackAction;
     
     public PrismScope getId() {
         return id;
@@ -57,14 +51,6 @@ public class Scope extends WorkflowResource {
     public void setPrecedence(Integer precedence) {
         this.precedence = precedence;
     }
-    
-    public Action getFallbackAction() {
-        return fallbackAction;
-    }
-
-    public void setFallbackAction(Action fallbackAction) {
-        this.fallbackAction = fallbackAction;
-    }
 
     public Scope withId(PrismScope id) {
         this.id = id;
@@ -78,11 +64,6 @@ public class Scope extends WorkflowResource {
     
     public Scope withShortCode(String shortCode) {
         this.shortCode = shortCode;
-        return this;
-    }
-    
-    public Scope withFallbackAction(Action fallbackAction) {
-        this.fallbackAction = fallbackAction;
         return this;
     }
     

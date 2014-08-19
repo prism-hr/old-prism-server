@@ -1,9 +1,11 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public enum PrismAction {
 
@@ -130,6 +132,30 @@ public enum PrismAction {
             }
         }
     }
+    
+    private static final HashMap<PrismAction, PrismAction> fallbackActions = Maps.newHashMap();
+    
+    static {
+        for (PrismAction action : PrismAction.values()) {
+            PrismScope scope = action.getScope();
+            PrismScope creationScope = action.getCreationScope();
+            switch (creationScope == null ? scope : creationScope) {
+            case SYSTEM:
+            case APPLICATION:
+                fallbackActions.put(action, PrismAction.SYSTEM_VIEW_APPLICATION_LIST);
+                break;
+            case INSTITUTION:
+                fallbackActions.put(action, PrismAction.SYSTEM_VIEW_INSTITUTION_LIST);
+                break;
+            case PROGRAM:
+                fallbackActions.put(action, PrismAction.SYSTEM_VIEW_PROGRAM_LIST);
+                break;
+            case PROJECT:
+                fallbackActions.put(action, PrismAction.SYSTEM_VIEW_PROJECT_LIST);
+                break;
+            }
+        }
+    }
 
     private PrismAction(PrismActionType actionType, PrismActionCategory actionCategory, PrismScope scope, PrismScope creationScope,
             List<PrismActionRedaction> redactions) {
@@ -162,6 +188,10 @@ public enum PrismAction {
 
     public static List<PrismAction> getCreationActions() {
         return creationActions;
+    }
+    
+    public static PrismAction getFallBackAction(PrismAction action) {
+        return fallbackActions.get(action);
     }
 
 }

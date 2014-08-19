@@ -1,33 +1,29 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.HashMap;
-import java.util.List;
-
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.dto.*;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
+import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
+import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.dao.ResourceDAO;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
-import com.zuehlke.pgadmissions.dto.ResourceActionDTO;
-import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
-import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
-import com.zuehlke.pgadmissions.dto.StateChangeDTO;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
-import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
+import java.util.HashMap;
+import java.util.List;
 
 @Service
 @Transactional
@@ -87,24 +83,26 @@ public class ResourceService {
         Resource resource = null;
 
         switch (action.getCreationScope().getId()) {
-        case INSTITUTION:
-            resource = institutionService.create(user, (InstitutionDTO) newResourceDTO);
-            break;
-        case PROGRAM:
-            resource = programService.create(user, (ProgramDTO) newResourceDTO);
-            break;
-        case PROJECT:
-            resource = projectService.create(user, (ProjectDTO) newResourceDTO);
-            break;
-        case APPLICATION:
-            resource = applicationService.create(user, (ApplicationDTO) newResourceDTO);
-            break;
-        default:
-            throw new WorkflowEngineException("Attempted to create a resource of invalid type " + action.getCreationScope().getId().toString());
+            case INSTITUTION:
+                resource = institutionService.create(user, (InstitutionDTO) newResourceDTO);
+                break;
+            case PROGRAM:
+                resource = programService.create(user, (ProgramDTO) newResourceDTO);
+                break;
+            case PROJECT:
+                resource = projectService.create(user, (ProjectDTO) newResourceDTO);
+                break;
+            case APPLICATION:
+                resource = applicationService.create(user, (ApplicationDTO) newResourceDTO);
+                break;
+            default:
+                throw new WorkflowEngineException("Attempted to create a resource of invalid type " + action.getCreationScope().getId().toString());
         }
 
         if (entityService.getDuplicateEntity(resource) != null && !user.isEnabled()) {
-            throw new WorkflowEngineException("Attempted to create a duplicate resource of type " + resource.getResourceScope().getLowerCaseName());
+            Action fallbackAction = action.getFallbackAction();
+            throw new WorkflowPermissionException(resource.getEnclosingResource(fallbackAction.getScope().getId()), fallbackAction.getId(),
+                    "Name of the " + resource.getResourceScope().getLowerCaseName() + " is already taken.");
         }
 
         Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
@@ -117,20 +115,20 @@ public class ResourceService {
         resource.setUpdatedTimestamp(new DateTime());
 
         switch (resource.getResourceScope()) {
-        case INSTITUTION:
-            institutionService.save((Institution) resource);
-            break;
-        case PROGRAM:
-            programService.save((Program) resource);
-            break;
-        case PROJECT:
-            projectService.save((Project) resource);
-            break;
-        case APPLICATION:
-            applicationService.save((Application) resource);
-            break;
-        default:
-            throw new WorkflowEngineException("Attempted to persist a resource of invalid type " + resource.getResourceScope().getLowerCaseName());
+            case INSTITUTION:
+                institutionService.save((Institution) resource);
+                break;
+            case PROGRAM:
+                programService.save((Program) resource);
+                break;
+            case PROJECT:
+                projectService.save((Project) resource);
+                break;
+            case APPLICATION:
+                applicationService.save((Application) resource);
+                break;
+            default:
+                throw new WorkflowEngineException("Attempted to persist a resource of invalid type " + resource.getResourceScope().getLowerCaseName());
         }
 
         resource.setCode(generateResourceCode(resource));
@@ -167,7 +165,7 @@ public class ResourceService {
 
         DateTime baselineTime = new DateTime();
         resource.setUpdatedTimestamp(baselineTime);
-        
+
         LocalDate baselineDate = baselineTime.toLocalDate();
         setSequenceIdentifier(resource, baselineDate);
     }
@@ -222,7 +220,7 @@ public class ResourceService {
     public List<StateChangeDTO> getRecentStateChanges(Scope scope, LocalDate baseline) {
         return resourceDAO.getRecentStateChanges(scope, baseline);
     }
-    
+
     private void setSequenceIdentifier(Resource resource, LocalDate baselineDate) {
         String lastSequenceIdentifier = resourceDAO.getLastSequenceIdentifier(resource, baselineDate);
         lastSequenceIdentifier = lastSequenceIdentifier == null ? baselineDate.toString("yyyyMMdd") + "-0000000001" : lastSequenceIdentifier;
@@ -233,5 +231,5 @@ public class ResourceService {
 
         resource.setSequenceIdentifier(lastSequenceIdentifierParts[0] + "-" + String.format("%010d", nextSequenceIdentifierIndex));
     }
-    
+
 }

@@ -1,9 +1,5 @@
 package com.zuehlke.pgadmissions.rest.validation;
 
-import java.util.List;
-import java.util.Map;
-
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
@@ -23,9 +19,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.google.common.collect.Lists;
-
-import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
 
 @ControllerAdvice
 public class PrismControllerExceptionHandler extends ResponseEntityExceptionHandler {
@@ -33,14 +28,19 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
     @Autowired
     private Mapper dozerBeanMapper;
 
-    @ExceptionHandler(value= WorkflowPermissionException.class)
+    @ExceptionHandler(value = WorkflowPermissionException.class)
     public final ResponseEntity<Object> handleWorkflowPermissionsException(WorkflowPermissionException ex, WebRequest request) {
         ResourceRepresentation resourceRepresentation = dozerBeanMapper.map(ex.getFallbackResource(), ResourceRepresentation.class);
-        Map<String, Object> body = ImmutableMap.of("fallbackAction", ex.getFallbackAction(), "fallbackResource", resourceRepresentation);
+        Map<String, Object> body = Maps.newHashMap();
+        body.put("fallbackAction", ex.getFallbackAction());
+        body.put("fallbackResource", resourceRepresentation);
+        if (ex.getMessage() != null) {
+            body.put("message", ex.getMessage());
+        }
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
-    @ExceptionHandler(value= PrismValidationException.class)
+    @ExceptionHandler(value = PrismValidationException.class)
     public final ResponseEntity<Object> handlePrismValidationException(PrismValidationException ex, WebRequest request) {
         return handleValidationErrors(ex, new HttpHeaders(), request, ex.getErrors());
     }

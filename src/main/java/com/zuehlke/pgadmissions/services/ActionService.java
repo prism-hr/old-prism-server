@@ -1,29 +1,20 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.StateTransition;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -40,7 +31,7 @@ public class ActionService {
 
     @Autowired
     private EntityService entityService;
-    
+
     @Autowired
     private UserService userService;
 
@@ -59,19 +50,22 @@ public class ActionService {
         } else if (delegateOwner != null && checkDelegateActionAvailable(operative, action, delegateOwner)) {
             return;
         }
-        
-        throw new WorkflowPermissionException(action.getId(), action.getFallbackAction().getId());
+
+        Action fallbackAction = action.getFallbackAction();
+        throw new WorkflowPermissionException(operative.getEnclosingResource(fallbackAction.getScope().getId()), fallbackAction.getId());
     }
-    
+
     public void validateUpdateAction(Comment comment) {
         Action action = comment.getAction();
+        Resource resource = comment.getResource();
         User currentUser = userService.getCurrentUser();
-        
-        if (comment.getUser() == currentUser || checkDelegateActionAvailable(comment.getResource(), action, currentUser)) {
+
+        if (comment.getUser() == currentUser || checkDelegateActionAvailable(resource, action, currentUser)) {
             return;
         }
-        
-        throw new WorkflowPermissionException(action.getId(), action.getFallbackAction().getId());
+
+        Action fallbackAction = action.getFallbackAction();
+        throw new WorkflowPermissionException(resource.getEnclosingResource(fallbackAction.getScope().getId()), fallbackAction.getId());
     }
 
     public List<PrismAction> getPermittedActions(Resource resource, User user) {
@@ -98,11 +92,7 @@ public class ActionService {
 
             if (duplicateResource != null) {
                 Action redirectAction = getRedirectAction(action, actionOwner, duplicateResource);
-                if (redirectAction != null) {
-                    comment = new Comment().withResource(duplicateResource).withUser(actionOwner).withAction(redirectAction);
-                    executeUserAction(duplicateResource, redirectAction, comment);
-                }
-                return new ActionOutcome().withUser(actionOwner).withResource(duplicateResource).withResource(duplicateResource).withTransitionAction(action);
+                return new ActionOutcome().withUser(actionOwner).withResource(duplicateResource).withTransitionResource(duplicateResource).withTransitionAction(redirectAction);
             }
         }
 
@@ -140,7 +130,7 @@ public class ActionService {
             Object operativeResourceDTO = registrationDTO.getAction().getOperativeResourceDTO();
             return resourceService.createResource(user, action, operativeResourceDTO);
         } else {
-            Resource resource = entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId()); 
+            Resource resource = entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId());
             return new ActionOutcome().withUser(user).withResource(resource).withTransitionResource(resource).withTransitionAction(action);
         }
     }

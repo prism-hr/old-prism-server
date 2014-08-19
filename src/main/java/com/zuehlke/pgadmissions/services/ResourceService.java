@@ -103,7 +103,7 @@ public class ResourceService {
             throw new WorkflowEngineException("Attempted to create a resource of invalid type " + action.getCreationScope().getId().toString());
         }
 
-        if (entityService.getDuplicateEntity(resource) != null) {
+        if (entityService.getDuplicateEntity(resource) != null && !user.isEnabled()) {
             throw new WorkflowEngineException("Attempted to create a duplicate resource of type " + resource.getResourceScope().getLowerCaseName());
         }
 

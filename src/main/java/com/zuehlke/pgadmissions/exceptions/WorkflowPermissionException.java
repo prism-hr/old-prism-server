@@ -1,24 +1,27 @@
 package com.zuehlke.pgadmissions.exceptions;
 
-import com.google.common.collect.ImmutableMap;
+import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
-public class WorkflowPermissionException extends PrismRequestException {
+public class WorkflowPermissionException extends RuntimeException {
 
     private static final long serialVersionUID = -116272246657153672L;
 
-    private PrismAction actionAttempted;
+    private Resource fallbackResource;
 
-    private PrismAction actionPermitted;
+    private PrismAction fallbackAction;
 
-    public WorkflowPermissionException(PrismAction actionAttempted, PrismAction actionPermitted) {
-        this.actionAttempted = actionAttempted;
-        this.actionPermitted = actionPermitted;
+    public WorkflowPermissionException(Resource fallbackResource, PrismAction fallbackAction) {
+        this.fallbackAction = fallbackAction;
+        this.fallbackResource = fallbackResource;
     }
-    
-    @Override
-    public Object getResponseData() {
-        return ImmutableMap.of("actionAttempted", actionAttempted, "actionPermitted", actionPermitted);
+
+    public Resource getFallbackResource() {
+        return fallbackResource;
+    }
+
+    public PrismAction getFallbackAction() {
+        return fallbackAction;
     }
 
 }

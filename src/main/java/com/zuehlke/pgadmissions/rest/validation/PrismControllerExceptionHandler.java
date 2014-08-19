@@ -3,8 +3,13 @@ package com.zuehlke.pgadmissions.rest.validation;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
+import com.zuehlke.pgadmissions.rest.representation.ResourceRepresentation;
+import org.dozer.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,8 +25,20 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.google.common.collect.Lists;
 
+import javax.servlet.http.HttpServletResponse;
+
 @ControllerAdvice
 public class PrismControllerExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @Autowired
+    private Mapper dozerBeanMapper;
+
+    @ExceptionHandler(value= WorkflowPermissionException.class)
+    public final ResponseEntity<Object> handleWorkflowPermissionsException(WorkflowPermissionException ex, WebRequest request) {
+        ResourceRepresentation resourceRepresentation = dozerBeanMapper.map(ex.getFallbackResource(), ResourceRepresentation.class);
+        Map<String, Object> body = ImmutableMap.of("fallbackAction", ex.getFallbackAction(), "fallbackResource", resourceRepresentation);
+        return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+    }
 
     @ExceptionHandler(value= PrismValidationException.class)
     public final ResponseEntity<Object> handlePrismValidationException(PrismValidationException ex, WebRequest request) {

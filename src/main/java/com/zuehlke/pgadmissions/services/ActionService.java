@@ -40,6 +40,9 @@ public class ActionService {
 
     @Autowired
     private EntityService entityService;
+    
+    @Autowired
+    private UserService userService;
 
     public Action getById(PrismAction id) {
         return entityService.getByProperty(Action.class, "id", id);
@@ -54,6 +57,17 @@ public class ActionService {
         } else if (delegateOwner != null && checkActionAvailable(operative, action, delegateOwner)) {
             return;
         } else if (delegateOwner != null && checkDelegateActionAvailable(operative, action, delegateOwner)) {
+            return;
+        }
+        
+        throw new WorkflowPermissionException(action.getId(), action.getFallbackAction().getId());
+    }
+    
+    public void validateUpdateAction(Comment comment) {
+        Action action = comment.getAction();
+        User currentUser = userService.getCurrentUser();
+        
+        if (comment.getUser() == currentUser || checkDelegateActionAvailable(comment.getResource(), action, currentUser)) {
             return;
         }
         

@@ -202,10 +202,12 @@ public class CommentService {
 
     public void updateComment(Integer commentId, CommentDTO commentDTO) {
         Comment comment = getById(commentId);
-
+        actionService.validateUpdateAction(comment);
+        
         comment.setDeclinedResponse(commentDTO.getDeclinedResponse());
         comment.setContent(commentDTO.getContent());
         comment.getDocuments().clear();
+        
         for (FileDTO fileDTO : commentDTO.getDocuments()) {
             Document document = entityService.getById(Document.class, fileDTO.getId());
             comment.getDocuments().add(document);

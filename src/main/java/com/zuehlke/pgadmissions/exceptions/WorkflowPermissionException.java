@@ -11,9 +11,16 @@ public class WorkflowPermissionException extends RuntimeException {
 
     private PrismAction fallbackAction;
 
+    private String message;
+
     public WorkflowPermissionException(Resource fallbackResource, PrismAction fallbackAction) {
         this.fallbackAction = fallbackAction;
         this.fallbackResource = fallbackResource;
+    }
+
+    public WorkflowPermissionException(Resource fallbackResource, PrismAction fallbackAction, String message) {
+        this(fallbackResource, fallbackAction);
+        this.message = message;
     }
 
     public Resource getFallbackResource() {
@@ -24,4 +31,8 @@ public class WorkflowPermissionException extends RuntimeException {
         return fallbackAction;
     }
 
+    @Override
+    public String getMessage() {
+        return message;
+    }
 }

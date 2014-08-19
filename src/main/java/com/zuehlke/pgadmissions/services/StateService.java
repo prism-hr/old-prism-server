@@ -112,7 +112,7 @@ public class StateService {
     }
 
     @Transactional
-    public void deleteObseleteStateDurations() {
+    public void deleteObsoleteStateDurations() {
         stateDAO.deleteObseleteStateDurations(getConfigurableStates());
     }
 
@@ -145,7 +145,7 @@ public class StateService {
         comment.setResource(resource);
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
-            resourceService.persistResource(resource, action, comment);
+            resourceService.persistResource(resource, comment);
         } else {
             resourceService.updateResource(resource, action, comment);
         }

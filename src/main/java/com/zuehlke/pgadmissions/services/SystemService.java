@@ -296,7 +296,7 @@ public class SystemService {
         System transientSystem = new System().withName(systemName).withUser(systemUser).withState(systemRunning).withCreatedTimestamp(startupTimestamp)
                 .withUpdatedTimestamp(startupTimestamp);
         System system = entityService.createOrUpdate(transientSystem);
-        system.setCode(resourceService.generateResoureCode(system));
+        system.setCode(resourceService.generateResourceCode(system));
         return system;
     }
 
@@ -386,7 +386,7 @@ public class SystemService {
                 }
             }
 
-            stateService.deleteObseleteStateDurations();
+            stateService.deleteObsoleteStateDurations();
             notificationService.deleteObseleteNotificationConfigurations();
             roleService.deleteInactiveRoles();
 

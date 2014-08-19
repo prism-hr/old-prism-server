@@ -22,9 +22,6 @@ public class RoleService {
     private RoleDAO roleDAO;
 
     @Autowired
-    private CommentService commentService;
-
-    @Autowired
     private EntityService entityService;
 
     @Autowired
@@ -32,9 +29,6 @@ public class RoleService {
 
     @Autowired
     private ResourceService resourceService;
-
-    @Autowired
-    private UserService userService;
 
     public Role getById(PrismRole roleId) {
         return entityService.getByProperty(Role.class, "id", roleId);

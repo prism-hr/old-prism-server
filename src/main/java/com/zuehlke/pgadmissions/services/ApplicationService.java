@@ -88,31 +88,16 @@ public class ApplicationService {
     private UserService userService;
 
     @Autowired
-    private StateService stateService;
-
-    @Autowired
     private ApplicationCopyHelper applicationCopyHelper;
 
     @Autowired
     private ProgramService programService;
 
     @Autowired
-    private ActionService actionService;
-
-    @Autowired
-    private RoleService roleService;
-
-    @Autowired
-    private SystemService systemService;
-
-    @Autowired
     private ResourceService resourceService;
 
     @Autowired
     private CompleteApplicationValidator completeApplicationValidator;
-
-    @Autowired
-    private Mapper mapper;
 
     public Application getById(Integer id) {
         return entityService.getById(Application.class, id);

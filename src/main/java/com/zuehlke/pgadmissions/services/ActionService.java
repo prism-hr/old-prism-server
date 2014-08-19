@@ -39,16 +39,7 @@ public class ActionService {
     private ResourceService resourceService;
 
     @Autowired
-    private RoleService roleService;
-
-    @Autowired
     private EntityService entityService;
-
-    @Autowired
-    private CommentService commentService;
-
-    @Autowired
-    private UserService userService;
 
     public Action getById(PrismAction id) {
         return entityService.getByProperty(Action.class, "id", id);

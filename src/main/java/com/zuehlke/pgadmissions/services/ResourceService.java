@@ -37,9 +37,6 @@ public class ResourceService {
     private ResourceDAO resourceDAO;
 
     @Autowired
-    private CommentService commentService;
-
-    @Autowired
     private ActionService actionService;
 
     @Autowired
@@ -116,7 +113,7 @@ public class ResourceService {
         return actionService.executeUserAction(resource, action, comment);
     }
 
-    public void persistResource(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
+    public void persistResource(Resource resource, Comment comment) throws WorkflowEngineException {
         resource.setCreatedTimestamp(new DateTime());
         resource.setUpdatedTimestamp(new DateTime());
 
@@ -134,15 +131,15 @@ public class ResourceService {
             applicationService.save((Application) resource);
             break;
         default:
-            throw new WorkflowEngineException("Attemped to persist a resource of invalid type " + resource.getResourceScope().getLowerCaseName());
+            throw new WorkflowEngineException("Attempted to persist a resource of invalid type " + resource.getResourceScope().getLowerCaseName());
         }
 
-        resource.setCode(generateResoureCode(resource));
+        resource.setCode(generateResourceCode(resource));
         entityService.save(resource);
         comment.setRole(roleService.getCreatorRole(resource).getId().toString());
     }
 
-    public String generateResoureCode(Resource resource) {
+    public String generateResourceCode(Resource resource) {
         return "PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId());
     }
 

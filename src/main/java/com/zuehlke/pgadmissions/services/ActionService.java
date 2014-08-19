@@ -57,8 +57,7 @@ public class ActionService {
             return;
         }
         
-        Action fallback = actionDAO.getFallbackAction(resource);
-        throw new WorkflowPermissionException(action.getId(), fallback.getId());
+        throw new WorkflowPermissionException(action.getId(), action.getFallbackAction().getId());
     }
 
     public List<PrismAction> getPermittedActions(Resource resource, User user) {

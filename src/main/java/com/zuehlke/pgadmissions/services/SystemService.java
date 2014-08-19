@@ -156,9 +156,6 @@ public class SystemService {
         logger.info("Initialising system");
         System system = initialiseSystemResource();
 
-        logger.info("Initialising fallback action definititions");
-        initialiseFallbackActions();
-
         logger.info("Initialising notification definitions");
         initialiseNotificationTemplates(system);
 
@@ -270,6 +267,12 @@ public class SystemService {
                 action.getRedactions().add(actionRedaction);
             }
         }
+        
+        for (PrismAction prismAction : PrismAction.values()) {
+            Action action = actionService.getById(prismAction);
+            Action fallbackAction = actionService.getById(PrismAction.getFallBackAction(prismAction));
+            action.setFallbackAction(fallbackAction);
+        }
     }
 
     private void initialiseStateGroups() {
@@ -298,13 +301,6 @@ public class SystemService {
         System system = entityService.createOrUpdate(transientSystem);
         system.setCode(resourceService.generateResourceCode(system));
         return system;
-    }
-
-    private void initialiseFallbackActions() {
-        for (Scope scope : scopeService.getScopesAscending()) {
-            Action fallbackAction = actionService.getById(PrismScope.getFallbackAction(scope.getId()));
-            scope.setFallbackAction(fallbackAction);
-        }
     }
 
     private void initialiseNotificationTemplates(System system) {

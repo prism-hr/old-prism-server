@@ -6,3 +6,5 @@ ALTER TABLE APPLICATION
 	ADD INDEX (user_id, sequence_identifier)
 ;
 
+ALTER TABLE 
+

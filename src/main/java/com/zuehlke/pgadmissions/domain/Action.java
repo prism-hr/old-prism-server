@@ -43,6 +43,10 @@ public class Action extends WorkflowResource {
     private Scope scope;
 
     @ManyToOne
+    @JoinColumn(name = "fallback_action_id")
+    private Action fallbackAction;
+    
+    @ManyToOne
     @JoinColumn(name = "creation_scope_id")
     private Scope creationScope;
 
@@ -72,6 +76,14 @@ public class Action extends WorkflowResource {
 
     public void setActionCategory(PrismActionCategory actionCategory) {
         this.actionCategory = actionCategory;
+    }
+
+    public final Action getFallbackAction() {
+        return fallbackAction;
+    }
+
+    public final void setFallbackAction(Action fallbackAction) {
+        this.fallbackAction = fallbackAction;
     }
 
     public Scope getScope() {
@@ -106,6 +118,11 @@ public class Action extends WorkflowResource {
     
     public Action withActionCategory(PrismActionCategory actionCategory) {
         this.actionCategory = actionCategory;
+        return this;
+    }
+    
+    public Action withFallbackAction(Action fallbackAction) {
+        this.fallbackAction = fallbackAction;
         return this;
     }
 

@@ -345,8 +345,8 @@ public class WorkflowConfigurationHelper {
     }
     
     private void verifyFallbackActions() {
-        for (Scope scope : scopeService.getScopesAscending()) {
-            assertEquals(PrismScope.SYSTEM, scope.getFallbackAction().getScope().getId());
+        for (Action action : actionService.getActions()) {
+            assertEquals(PrismScope.SYSTEM, action.getFallbackAction().getScope().getId());
         }
     }
 

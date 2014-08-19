@@ -77,6 +77,14 @@ public class Program extends Advert {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dueDate;
 
+    @Column(name = "start_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate startDate;
+
+    @Column(name = "end_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate endDate;
+
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
@@ -144,7 +152,23 @@ public class Program extends Advert {
     public void setProgramType(PrismProgramType programType) {
         this.programType = programType;
     }
-    
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
     public boolean isImported() {
         return importedCode != null;
     }
@@ -225,6 +249,16 @@ public class Program extends Advert {
 
     public Program withProgramType(PrismProgramType programType) {
         this.programType = programType;
+        return this;
+    }
+
+    public Program withStartDate(final LocalDate startDate) {
+        this.startDate = startDate;
+        return this;
+    }
+
+    public Program withEndDate(final LocalDate endDate) {
+        this.endDate = endDate;
         return this;
     }
 

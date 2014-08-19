@@ -112,10 +112,6 @@ public class ActionService {
         }
     }
 
-    public List<PrismRedactionType> getRedactions(User user, Resource resource, Action action) {
-        return actionDAO.getRedactions(user, resource, action);
-    }
-
     public List<Action> getActions() {
         return entityService.list(Action.class);
     }

@@ -56,9 +56,6 @@ public class EntityImportService {
     private ImportedEntityService importedEntityService;
 
     @Autowired
-    private ActionService actionService;
-
-    @Autowired
     private EntityService entityService;
 
     @Autowired
@@ -67,15 +64,6 @@ public class EntityImportService {
     @Autowired
     private InstitutionService institutionService;
 
-    @Autowired
-    private SystemService systemService;
-
-    @Autowired
-    private RoleService roleService;
-    
-    @Autowired
-    private UserService userService;
-    
     @Autowired private NotificationService notificationService;
     
     @Autowired

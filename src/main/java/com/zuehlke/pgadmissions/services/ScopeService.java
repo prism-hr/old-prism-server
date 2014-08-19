@@ -41,8 +41,4 @@ public class ScopeService {
         return scopeDAO.getParentScopes(getByResourceClass(resourceClass));
     }
     
-    public <T extends Resource> List<Scope> getChildScopes(Class<T> resourceClass) {
-        return scopeDAO.getChildScopes(getByResourceClass(resourceClass));
-    }
-    
 }

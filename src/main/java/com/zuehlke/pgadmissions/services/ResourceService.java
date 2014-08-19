@@ -60,9 +60,6 @@ public class ResourceService {
     private StateService stateService;
 
     @Autowired
-    private SystemService systemService;
-
-    @Autowired
     private UserService userService;
 
     public <T extends Resource> Resource getById(Class<T> resourceClass, Integer id) {

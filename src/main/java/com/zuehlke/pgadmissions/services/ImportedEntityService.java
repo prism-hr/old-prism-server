@@ -47,44 +47,12 @@ public class ImportedEntityService {
     public ImportedEntityFeed getOrCreateImportedEntityFeed(Institution institution, PrismImportedEntity importedEntityType, String location, String username,
             String password) {
         ImportedEntityFeed transientImportedEntityFeed = new ImportedEntityFeed().withImportedEntityType(importedEntityType).withLocation(location)
-                .withUserName(username).withPassword(password);
+                .withUserName(username).withPassword(password).withInstitution(institution);
         return entityService.getOrCreate(transientImportedEntityFeed);
-    }
-
-    public List<Disability> getAllDisabilities() {
-        return importedEntityDAO.getImportedEntities(Disability.class);
-    }
-
-    public List<Language> getAllLanguages(Institution institution) {
-        return importedEntityDAO.getImportedEntities(Language.class);
-    }
-
-    public List<ReferralSource> getAllSourcesOfInterest(Institution institution) {
-        return importedEntityDAO.getImportedEntities(ReferralSource.class);
-    }
-
-    public List<Ethnicity> getAllEthnicities(Institution institution) {
-        return importedEntityDAO.getImportedEntities(Ethnicity.class);
-    }
-
-    public List<Domicile> getAllDomiciles(Institution institution) {
-        return importedEntityDAO.getImportedEntities(Domicile.class);
-    }
-
-    public List<Country> getAllCountries(Institution institution) {
-        return importedEntityDAO.getImportedEntities(Country.class);
-    }
-
-    public List<QualificationType> getAllQualificationTypes(Institution institution) {
-        return importedEntityDAO.getImportedEntities(QualificationType.class);
     }
 
     public List<ImportedEntityFeed> getImportedEntityFeedsToImport() {
         return importedEntityDAO.getImportedEntityFeedsToImport();
-    }
-
-    public void disableAllEntities(Class<? extends ImportedEntity> entityClass) {
-        importedEntityDAO.disableAllEntities(entityClass);
     }
 
     public void disableAllEntities(Class<? extends ImportedEntity> entityClass, Institution institution) {

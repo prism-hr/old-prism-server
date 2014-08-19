@@ -49,9 +49,6 @@ public class StateService {
     private StateDAO stateDAO;
 
     @Autowired
-    private CommentService commentService;
-
-    @Autowired
     private EntityService entityService;
 
     @Autowired
@@ -68,9 +65,6 @@ public class StateService {
 
     @Autowired
     private SystemService systemService;
-
-    @Autowired
-    private UserService userService;
 
     @Transactional
     public State getById(PrismState id) {
@@ -298,6 +292,15 @@ public class StateService {
         }
         if (resource.getInstitution().isUclInstitution() && resource.getState().getStateGroup().getId() != PrismStateGroup.APPLICATION_UNSUBMITTED) {
             transitionStateId = PrismState.valueOf(transitionStateId.toString().replace("COMPLETED", "PENDING_EXPORT"));
+        }
+        return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
+    }
+
+    @Transactional
+    public StateTransition getProgramCreatedOutcome(Resource resource, Comment comment) {
+        PrismState transitionStateId = PrismState.PROGRAM_APPROVAL;
+        if (roleService.hasUserRole(resource, comment.getUser(), PrismRole.INSTITUTION_ADMINISTRATOR)) {
+            transitionStateId = PrismState.PROGRAM_APPROVED;
         }
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }

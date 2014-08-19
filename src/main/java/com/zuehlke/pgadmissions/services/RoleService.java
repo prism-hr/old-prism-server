@@ -52,12 +52,6 @@ public class RoleService {
                 + " due to existing permission conflicts");
     }
 
-    public void getOrCreateUserRoles(Resource resource, User user, PrismRole... rolesToCreate) throws WorkflowEngineException {
-        for (PrismRole roleToCreate : rolesToCreate) {
-            getOrCreateUserRole(resource, user, roleToCreate);
-        }
-    }
-
     public void updateRoles(Resource resource, User user, List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
         for (AbstractResourceRepresentation.RoleRepresentation role : roles) {
             if (role.getValue()) {

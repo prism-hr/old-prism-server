@@ -31,7 +31,6 @@ public class InstitutionCreationHelper {
         InstitutionAddressDTO institutionAddressDTO = new InstitutionAddressDTO();
         ActionDTO actionDTO = new ActionDTO();
 
-
         institutionAddressDTO.setAddressLine1("Address line 1");
         institutionAddressDTO.setAddressLine2("Address line 2");
         institutionAddressDTO.setAddressTown("Address town");
@@ -44,7 +43,6 @@ public class InstitutionCreationHelper {
         institutionDTO.setTitle("University College London");
         institutionDTO.setHomepage("http://www.ucl.ac.uk/");
         institutionDTO.setAddress(institutionAddressDTO);
-        institutionDTO.setUclInstitution(true);
 
         actionDTO.setActionId(PrismAction.SYSTEM_CREATE_INSTITUTION);
         actionDTO.setNewInstitution(institutionDTO);

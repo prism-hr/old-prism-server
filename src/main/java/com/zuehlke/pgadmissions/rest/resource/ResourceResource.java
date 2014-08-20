@@ -96,7 +96,8 @@ public class ResourceResource {
         // set list of available actions
         List<PrismAction> permittedActions = actionService.getPermittedActions(resource, currentUser);
         if (permittedActions.isEmpty()) {
-            throw new AccessDeniedException("You do not have permission to access the requested resource.");
+            Action viewEditAction = actionService.getViewEditAction(resource, currentUser);
+            actionService.throwWorkflowPermissionException(viewEditAction, resource);
         }
         representation.setActions(permittedActions);
 

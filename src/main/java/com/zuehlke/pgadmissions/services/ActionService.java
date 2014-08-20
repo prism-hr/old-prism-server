@@ -141,6 +141,10 @@ public class ActionService {
         }
     }
 
+    public Action getViewEditAction(Resource resource, User user) {
+        return actionDAO.getViewEditAction(resource, user);
+    }
+    
     public void throwWorkflowPermissionException(Action action, Resource resource) {
         Action fallbackAction = action.getFallbackAction();
         Resource fallbackResource = resource.getEnclosingResource(fallbackAction.getScope().getId());

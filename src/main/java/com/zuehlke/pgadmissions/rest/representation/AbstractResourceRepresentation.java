@@ -22,6 +22,8 @@ public class AbstractResourceRepresentation {
 
     private PrismScope resourceScope;
 
+    private UserExtendedRepresentation user;
+
     private LocalDate dueDate;
 
     private DateTime createdTimestamp;
@@ -68,6 +70,14 @@ public class AbstractResourceRepresentation {
 
     public void setResourceScope(PrismScope resourceScope) {
         this.resourceScope = resourceScope;
+    }
+
+    public UserExtendedRepresentation getUser() {
+        return user;
+    }
+
+    public void setUser(UserExtendedRepresentation user) {
+        this.user = user;
     }
 
     public LocalDate getDueDate() {

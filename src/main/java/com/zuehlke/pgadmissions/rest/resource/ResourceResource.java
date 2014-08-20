@@ -199,6 +199,10 @@ public class ResourceResource {
         applicationRepresentation.setSupervisors(commentService.getApplicationSupervisors(application));
     }
 
+    public void enrichInstitutionRepresentation(Institution institution, InstitutionExtendedRepresentation institutionRepresentation) {
+
+    }
+
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
         if ("applications".equals(resourceScope)) {

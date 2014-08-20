@@ -14,8 +14,6 @@ import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 
 public class ApplicationExtendedRepresentation extends AbstractResourceRepresentation {
 
-    private UserExtendedRepresentation user;
-
     private InstitutionRepresentation institution;
 
     private ProgramExtendedRepresentation program;
@@ -70,14 +68,6 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     public void setProgram(ProgramExtendedRepresentation program) {
         this.program = program;
-    }
-
-    public UserExtendedRepresentation getUser() {
-        return user;
-    }
-
-    public void setUser(UserExtendedRepresentation user) {
-        this.user = user;
     }
 
     public ProjectExtendedRepresentation getProject() {

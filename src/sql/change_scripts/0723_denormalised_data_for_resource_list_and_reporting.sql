@@ -614,4 +614,3 @@ SET COMMENT.created_timestamp = COMMENT.created_timestamp + INTERVAL 3 DAY
 WHERE COMMENT.application_id = 6752
 	AND COMMENT.action_id = "APPLICATION_EXPORT"
 ;
-

@@ -39,7 +39,7 @@ public class ActionService {
         return entityService.getByProperty(Action.class, "id", id);
     }
 
-    public void validateAction(Resource resource, Action action, Comment comment) {
+    public void validateInvokeAction(Resource resource, Action action, Comment comment) {
         User delegateOwner = comment.getDelegateUser();
         Resource operative = resourceService.getOperativeResource(resource, action);
 
@@ -80,7 +80,7 @@ public class ActionService {
     }
 
     public ActionOutcome executeUserAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
-        validateAction(resource, action, comment);
+        validateInvokeAction(resource, action, comment);
         return executeSystemAction(resource, action, comment);
     }
 

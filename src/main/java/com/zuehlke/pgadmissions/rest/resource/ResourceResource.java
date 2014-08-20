@@ -102,7 +102,7 @@ public class ResourceResource {
         representation.setActions(permittedActions);
 
         Optional<PrismAction> completeAction = Iterables.tryFind(permittedActions,
-                Predicates.compose(Predicates.containsPattern("^APPLICATION_COMPLETE_|APPLICATION_MOVE_TO_DIFFERENT_STAGE"), Functions.toStringFunction()));
+                Predicates.compose(Predicates.containsPattern("^(APPLICATION|INSTITUTION)_COMPLETE_|APPLICATION_MOVE_TO_DIFFERENT_STAGE"), Functions.toStringFunction()));
         if (completeAction.isPresent()) {
             representation.setNextStates(stateService.getAvailableNextStates(resource, completeAction.get()));
         }

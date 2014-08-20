@@ -21,9 +21,6 @@ public class InstitutionDTO {
     @NotNull
     private InstitutionAddressDTO address;
 
-    @NotNull
-    private Boolean uclInstitution = false;
-
     public String getDomicile() {
         return domicile;
     }
@@ -62,14 +59,6 @@ public class InstitutionDTO {
 
     public void setAddress(InstitutionAddressDTO address) {
         this.address = address;
-    }
-
-    public final Boolean getUclInstitution() {
-        return uclInstitution;
-    }
-
-    public final void setUclInstitution(Boolean uclInstitution) {
-        this.uclInstitution = uclInstitution;
     }
 
 }

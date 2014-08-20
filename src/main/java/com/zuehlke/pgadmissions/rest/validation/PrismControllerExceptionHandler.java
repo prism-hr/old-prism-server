@@ -6,6 +6,8 @@ import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import org.dozer.Mapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,11 +28,14 @@ import java.util.Map;
 @ControllerAdvice
 public class PrismControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(PrismControllerExceptionHandler.class);
+
     @Autowired
     private Mapper dozerBeanMapper;
 
     @ExceptionHandler(value = WorkflowPermissionException.class)
     public final ResponseEntity<Object> handleWorkflowPermissionsException(WorkflowPermissionException ex, WebRequest request) {
+        log.error("Problem", ex);
         Resource fallbackResource = ex.getFallbackResource();
         Map<String, Object> body = Maps.newHashMap();
         body.put("fallbackAction", ex.getFallbackAction().getId());

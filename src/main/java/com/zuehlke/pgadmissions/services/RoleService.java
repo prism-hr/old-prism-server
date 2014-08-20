@@ -1,18 +1,26 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.dao.RoleDAO;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
+import java.util.List;
+
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.RoleTransition;
+import com.zuehlke.pgadmissions.domain.StateTransition;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 
 @Service
 @Transactional
@@ -169,10 +177,17 @@ public class RoleService {
 
     private void executeRoleTransition(Comment comment, User user, RoleTransition roleTransition) throws WorkflowEngineException {
         DateTime baseline = new DateTime();
+
+        Role role = roleTransition.getRole();
+        Role transitionRole = roleTransition.getTransitionRole();
+
         Resource resource = comment.getResource();
         Resource operative = resourceService.getOperativeResource(resource, comment.getAction());
-        UserRole transientRole = new UserRole().withResource(operative).withUser(user).withRole(roleTransition.getRole()).withAssignedTimestamp(baseline);
-        UserRole transientTransitionRole = new UserRole().withResource(resource).withUser(user).withRole(roleTransition.getTransitionRole())
+        resource = role.getScope() == transitionRole.getScope() ? resource : operative;
+        Resource transitionResource = resource;
+
+        UserRole transientRole = new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(baseline);
+        UserRole transientTransitionRole = new UserRole().withResource(transitionResource).withUser(user).withRole(transitionRole)
                 .withAssignedTimestamp(baseline);
 
         switch (roleTransition.getRoleTransitionType()) {

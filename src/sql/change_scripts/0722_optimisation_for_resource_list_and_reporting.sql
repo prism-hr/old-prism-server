@@ -99,7 +99,7 @@ ALTER TABLE INSTITUTION
 	ADD INDEX (code, sequence_identifier),
 	ADD INDEX (user_id, sequence_identifier),
 	ADD INDEX (institution_domicile_id, sequence_identifier),
-	ADD INDEX (name, sequence_identifier),
+	ADD INDEX (title, sequence_identifier),
 	ADD INDEX (institution_address_id, sequence_identifier),
 	ADD INDEX (state_id, sequence_identifier),
 	ADD INDEX (created_timestamp, sequence_identifier),

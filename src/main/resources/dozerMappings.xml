@@ -90,6 +90,28 @@
     </mapping>
 
     <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.Institution</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.resource.InstitutionExtendedRepresentation</class-b>
+        <field>
+            <a>domicile.id</a>
+            <b>domicile</b>
+        </field>
+    </mapping>
+
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.InstitutionAddress</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation</class-b>
+        <field>
+            <a>country.id</a>
+            <b>country</b>
+        </field>
+        <field>
+            <a>region.id</a>
+            <b>region</b>
+        </field>
+    </mapping>
+
+    <mapping>
         <class-a>com.zuehlke.pgadmissions.domain.Comment</class-a>
         <class-b>com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation</class-b>
         <field>
@@ -126,15 +148,6 @@
         <field>
             <a>appointmentTimeslot.dateTime</a>
             <b>dateTime</b>
-        </field>
-    </mapping>
-
-    <mapping>
-        <class-a>com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailsDTO</class-a>
-        <class-b>com.zuehlke.pgadmissions.domain.ApplicationProgramDetails</class-b>
-        <field custom-converter-id="importedEntityConverter">
-            <a>studyOption</a>
-            <b>studyOption</b>
         </field>
     </mapping>
 

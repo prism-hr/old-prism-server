@@ -91,7 +91,7 @@ public class InstitutionAddress {
         return addressDistrict;
     }
 
-    public void setAddressRegion(String addressDistrict) {
+    public void setAddressDistrict(String addressDistrict) {
         this.addressDistrict = addressDistrict;
     }
 

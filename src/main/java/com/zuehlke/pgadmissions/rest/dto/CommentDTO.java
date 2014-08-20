@@ -72,6 +72,8 @@ public class CommentDTO {
 
     private Integer rejectionReason;
 
+    private InstitutionDTO institution;
+
     public Integer getUser() {
         return user;
     }
@@ -310,5 +312,13 @@ public class CommentDTO {
 
     public void setRejectionReason(Integer rejectionReason) {
         this.rejectionReason = rejectionReason;
+    }
+
+    public InstitutionDTO getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(InstitutionDTO institution) {
+        this.institution = institution;
     }
 }

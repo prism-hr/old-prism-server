@@ -4,15 +4,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
-import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationValidator;
 import org.apache.commons.lang.BooleanUtils;
-import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.ValidationUtils;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -54,6 +53,7 @@ import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.Title;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
+import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.AddressDTO;
@@ -68,8 +68,7 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailsDT
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.ValidationUtils;
+import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationValidator;
 
 @Service
 @Transactional
@@ -245,6 +244,7 @@ public class ApplicationService {
             ApplicationSupervisor supervisor = new ApplicationSupervisor().withAware(supervisorDTO.getAware()).withUser(user);
             programDetails.getSupervisors().add(supervisor);
         }
+        // TODO: store the referral URL
     }
 
     public void savePersonalDetails(Integer applicationId, ApplicationPersonalDetailsDTO personalDetailsDTO) {

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.definitions;
 
 public enum PrismProgramType {
 
+    // TODO: reduce this to a more sensible global set
     MRES("MRes"), //
     MDRES("MD(Res)"), //
     MSC("MSc"), //

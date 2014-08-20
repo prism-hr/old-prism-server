@@ -189,7 +189,8 @@ public class StateService {
 
     @Transactional
     public StateTransition getApplicationEvaluatedOutcome(Resource resource, Comment comment) {
-        return stateDAO.getStateTransition(resource.getState(), comment.getAction(), comment.getTransitionState().getId());
+        PrismState transitionStateId = comment.getTransitionState().getId();
+        return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 
     @Transactional
@@ -302,6 +303,12 @@ public class StateService {
         if (roleService.hasUserRole(resource, comment.getUser(), PrismRole.INSTITUTION_ADMINISTRATOR)) {
             transitionStateId = PrismState.PROGRAM_APPROVED;
         }
+        return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
+    }
+
+    @Transactional
+    public StateTransition getInstitutionApprovedOutcome(Resource resource, Comment comment) {
+        PrismState transitionStateId = comment.getTransitionState().getId();
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 

@@ -48,10 +48,15 @@ public class ActionService {
     }
 
     public void validateInvokeAction(Resource resource, Action action, Comment comment) {
+        User currentUser = userService.getCurrentUser();
+        
+        User owner = comment.getUser();
         User delegateOwner = comment.getDelegateUser();
+        
+        authenticateAction(currentUser, owner, delegateOwner);  
         Resource operative = resourceService.getOperativeResource(resource, action);
-
-        if (delegateOwner == null && checkActionAvailable(operative, action, comment.getUser())) {
+        
+        if (delegateOwner == null && checkActionAvailable(operative, action, owner)) {
             return;
         } else if (delegateOwner != null && checkActionAvailable(operative, action, delegateOwner)) {
             return;
@@ -63,11 +68,17 @@ public class ActionService {
     }
     
     public void validateUpdateAction(Comment comment) {
+        User currentUser = userService.getCurrentUser();
+        
+        User owner = comment.getUser();
+        User delegateOwner = comment.getDelegateUser();
+        
+        authenticateAction(currentUser, owner, delegateOwner);
+        
         Action action = comment.getAction();
         Resource resource = comment.getResource();
-        User currentUser = userService.getCurrentUser();
 
-        if (comment.getUser() == currentUser || checkDelegateActionAvailable(resource, action, currentUser)) {
+        if (owner == currentUser || checkDelegateActionAvailable(resource, action, delegateOwner)) {
             return;
         }
 
@@ -158,6 +169,14 @@ public class ActionService {
     private boolean checkDelegateActionAvailable(Resource resource, Action action, User invoker) {
         Action delegateAction = actionDAO.getDelegateAction(resource, action);
         return checkActionAvailable(resource, delegateAction, invoker);
+    }
+    
+    private void authenticateAction(User currentUser, User owner, User delegateOwner) throws Error {
+        if (delegateOwner == null && owner != currentUser) {
+            throw new Error();
+        } else if (delegateOwner != null && (owner != currentUser && delegateOwner != currentUser)) {
+            throw new Error();
+        }
     }
     
 }

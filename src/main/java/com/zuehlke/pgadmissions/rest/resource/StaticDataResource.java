@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 import java.util.List;
 import java.util.Map;
 
+import com.zuehlke.pgadmissions.rest.representation.InstitutionRepresentation;
 import org.apache.commons.lang.WordUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,6 +163,7 @@ public class StaticDataResource {
             staticData.put(pluralize(simpleName), entityRepresentations);
         }
 
+        staticData.put("institution", dozerBeanMapper.map(institution, InstitutionRepresentation.class));
         return staticData;
     }
 

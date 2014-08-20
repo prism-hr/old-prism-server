@@ -33,7 +33,7 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
     public final ResponseEntity<Object> handleWorkflowPermissionsException(WorkflowPermissionException ex, WebRequest request) {
         Resource fallbackResource = ex.getFallbackResource();
         Map<String, Object> body = Maps.newHashMap();
-        body.put("fallbackAction", ex.getFallbackAction());
+        body.put("fallbackAction", ex.getFallbackAction().getId());
         body.put("fallbackResource", ImmutableMap.of("id", fallbackResource.getId(), "resourceScope", fallbackResource.getResourceScope()));
         if (ex.getMessage() != null) {
             body.put("message", ex.getMessage());

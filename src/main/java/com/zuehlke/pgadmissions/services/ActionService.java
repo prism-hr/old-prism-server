@@ -1,20 +1,28 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.dao.ActionDAO;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
-import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Set;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.dao.ActionDAO;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.StateTransition;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
+import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
+import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 
 @Service
 @Transactional
@@ -51,10 +59,9 @@ public class ActionService {
             return;
         }
 
-        Action fallbackAction = action.getFallbackAction();
-        throw new WorkflowPermissionException(operative.getEnclosingResource(fallbackAction.getScope().getId()), fallbackAction.getId());
+        throwWorkflowPermissionException(action, operative);
     }
-
+    
     public void validateUpdateAction(Comment comment) {
         Action action = comment.getAction();
         Resource resource = comment.getResource();
@@ -64,8 +71,7 @@ public class ActionService {
             return;
         }
 
-        Action fallbackAction = action.getFallbackAction();
-        throw new WorkflowPermissionException(resource.getEnclosingResource(fallbackAction.getScope().getId()), fallbackAction.getId());
+        throwWorkflowPermissionException(action, resource);
     }
 
     public List<PrismAction> getPermittedActions(Resource resource, User user) {
@@ -87,12 +93,16 @@ public class ActionService {
     public ActionOutcome executeSystemAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
         User actionOwner = comment.getUser();
 
-        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
+        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE || action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE) {
             Resource duplicateResource = entityService.getDuplicateEntity(resource);
-
+            
             if (duplicateResource != null) {
-                Action redirectAction = getRedirectAction(action, actionOwner, duplicateResource);
-                return new ActionOutcome().withUser(actionOwner).withResource(duplicateResource).withTransitionResource(duplicateResource).withTransitionAction(redirectAction);
+                if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
+                    Action redirectAction = getRedirectAction(action, actionOwner, duplicateResource);
+                    return new ActionOutcome().withUser(actionOwner).withResource(duplicateResource).withTransitionResource(duplicateResource).withTransitionAction(redirectAction);
+                }
+                
+                throwWorkflowPermissionException(action, resource);
             }
         }
 
@@ -131,6 +141,12 @@ public class ActionService {
         }
     }
 
+    public void throwWorkflowPermissionException(Action action, Resource resource) {
+        Action fallbackAction = action.getFallbackAction();
+        Resource fallbackResource = resource.getEnclosingResource(fallbackAction.getScope().getId());
+        throw new WorkflowPermissionException(action, fallbackAction, resource, fallbackResource);
+    }
+    
     private boolean checkActionAvailable(Resource resource, Action action, User invoker) {
         return actionDAO.getPermittedAction(resource, action, invoker) != null;
     }
@@ -139,5 +155,5 @@ public class ActionService {
         Action delegateAction = actionDAO.getDelegateAction(resource, action);
         return checkActionAvailable(resource, delegateAction, invoker);
     }
-
+    
 }

@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
 
 public class InstitutionDTO {
 
@@ -10,17 +10,17 @@ public class InstitutionDTO {
     private String domicile;
 
     @NotEmpty
-    private String name;
+    private String title;
 
     @NotEmpty
     private String homepage;
-    
+
     @NotNull
     private Integer logoDocumentId;
 
     @NotNull
     private InstitutionAddressDTO address;
-    
+
     @NotNull
     private Boolean uclInstitution = false;
 
@@ -32,12 +32,12 @@ public class InstitutionDTO {
         this.domicile = domicile;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getHomepage() {
@@ -71,5 +71,5 @@ public class InstitutionDTO {
     public final void setUclInstitution(Boolean uclInstitution) {
         this.uclInstitution = uclInstitution;
     }
-    
+
 }

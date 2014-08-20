@@ -72,7 +72,7 @@ public class InstitutionService {
         Document logoDocument = documentService.getByid(institutionDTO.getLogoDocumentId());
         
         return new Institution().withSystem(systemService.getSystem()).withDomicile(institutionCountry).withAddress(institutionAddress)
-                .withName(institutionDTO.getName()).withHomepage(institutionDTO.getHomepage()).withLogoDocument(logoDocument).withUser(user);
+                .withTitle(institutionDTO.getTitle()).withHomepage(institutionDTO.getHomepage()).withLogoDocument(logoDocument).withUser(user);
     }
 
     public void save(Institution institution) {

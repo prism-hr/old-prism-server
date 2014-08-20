@@ -300,7 +300,7 @@ public class NotificationService {
         }
 
         if (institution != null) {
-            model.put("institutionName", institution.getName());
+            model.put("institutionName", institution.getTitle());
         }
 
         for (String parameter : extraParameters.keySet()) {

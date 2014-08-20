@@ -8,6 +8,9 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhanceme
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 public class AbstractResourceRepresentation {
 
@@ -18,6 +21,12 @@ public class AbstractResourceRepresentation {
     private PrismState state;
 
     private PrismScope resourceScope;
+
+    private LocalDate dueDate;
+
+    private DateTime createdTimestamp;
+
+    private DateTime updatedTimestamp;
 
     private List<PrismAction> actions;
     
@@ -59,6 +68,30 @@ public class AbstractResourceRepresentation {
 
     public void setResourceScope(PrismScope resourceScope) {
         this.resourceScope = resourceScope;
+    }
+
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public DateTime getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public void setCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+    }
+
+    public DateTime getUpdatedTimestamp() {
+        return updatedTimestamp;
+    }
+
+    public void setUpdatedTimestamp(DateTime updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
     }
 
     public List<PrismAction> getActions() {

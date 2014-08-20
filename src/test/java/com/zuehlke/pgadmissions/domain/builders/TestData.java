@@ -28,7 +28,7 @@ public class TestData {
     }
 
     public static Institution aInstitution(User user, System system, InstitutionDomicile domicile) {
-        return new Institution().withUser(user).withSystem(system).withName("Akademia G\u00F3rniczo-Hutnicza")
+        return new Institution().withUser(user).withSystem(system).withTitle("Akademia G\u00F3rniczo-Hutnicza")
                 .withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withHomepage("www.agh.edu.pl")
                 .withAddress(new InstitutionAddress().withCountry(domicile));
     }

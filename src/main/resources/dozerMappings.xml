@@ -23,7 +23,7 @@
 
     <mapping>
         <class-a>com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO</class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.representation.application.ResourceListRowRepresentation</class-b>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation</class-b>
         <field>
             <a>creatorFirstName</a>
             <b>user.firstName</b>
@@ -91,7 +91,7 @@
 
     <mapping>
         <class-a>com.zuehlke.pgadmissions.domain.Comment</class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.representation.CommentRepresentation</class-b>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation</class-b>
         <field>
             <a>action.id</a>
             <b>action</b>
@@ -113,7 +113,7 @@
 
     <mapping>
         <class-a>com.zuehlke.pgadmissions.domain.CommentAssignedUser</class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.representation.CommentAssignedUserRepresentation</class-b>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.comment.CommentAssignedUserRepresentation</class-b>
         <field>
             <a>role.id</a>
             <b>role</b>
@@ -122,7 +122,7 @@
 
     <mapping>
         <class-a>com.zuehlke.pgadmissions.domain.CommentAppointmentPreference</class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.representation.AppointmentPreferenceRepresentation</class-b>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.comment.AppointmentPreferenceRepresentation</class-b>
         <field>
             <a>appointmentTimeslot.dateTime</a>
             <b>dateTime</b>

@@ -101,21 +101,24 @@ public class InstitutionService {
 
         InstitutionAddress address = institution.getAddress();
         InstitutionDTO institutionDTO = commentDTO.getInstitution();
-        InstitutionAddressDTO addressDTO = institutionDTO.getAddress();
-        InstitutionDomicile domicile = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
-        InstitutionDomicileRegion region = entityService.getById(InstitutionDomicileRegion.class, addressDTO.getRegion());
+        if (institutionDTO != null) {
+            // modify institution
+            InstitutionAddressDTO addressDTO = institutionDTO.getAddress();
+            InstitutionDomicile domicile = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
+            InstitutionDomicileRegion region = entityService.getById(InstitutionDomicileRegion.class, addressDTO.getRegion());
 
-        institution.setDomicile(domicile);
-        institution.setTitle(institutionDTO.getTitle());
+            institution.setDomicile(domicile);
+            institution.setTitle(institutionDTO.getTitle());
 
-        address.setRegion(region);
-        address.setAddressLine1(addressDTO.getAddressLine1());
-        address.setAddressLine2(addressDTO.getAddressLine2());
-        address.setAddressTown(addressDTO.getAddressTown());
-        address.setAddressDistrict(addressDTO.getAddressDistrict());
-        address.setAddressCode(addressDTO.getAddressCode());
+            address.setRegion(region);
+            address.setAddressLine1(addressDTO.getAddressLine1());
+            address.setAddressLine2(addressDTO.getAddressLine2());
+            address.setAddressTown(addressDTO.getAddressTown());
+            address.setAddressDistrict(addressDTO.getAddressDistrict());
+            address.setAddressCode(addressDTO.getAddressCode());
 
-        institution.setHomepage(institutionDTO.getHomepage());
+            institution.setHomepage(institutionDTO.getHomepage());
+        }
 
         return actionService.executeUserAction(institution, action, comment);
     }

@@ -18,17 +18,17 @@
 			<td width="500">
 				<h1 style="font-size: 12pt;">
 					<font face="Arial, Helvetica, sans-serif" color="#0055A1">
-						Dear ${comment.opportunityRequest.author.firstName},
+						Dear ${user},
 					</font>
 				</h1>		
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
-						Thank you for your recent request to advertise the ${comment.opportunityRequest.programTitle} opportunity to our user network.  
+
 					</font>
 				</p>
 		<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
-						Your request has now been reviewed by our staff and ${(comment.commentType=="APPROVE")?string("we are happy to inform you that","unfortunately, the outcome is that")} the application has been ${(comment.commentType=="APPROVE")?string("successful","unsuccessful on this occasion")}.
+						Your request has now been reviewed by our staff and ...
 					</font>
 				</p>
 				<p>
@@ -42,18 +42,6 @@
 						for further details of this review and to access more detailed instructions on how to proceed.
 					</font>
 				</p>	
-				<p>
-					<!-- Button -->     
-					<a style="text-decoration:none;"
-						<#if user.enabled>
-							href="${host}/pgadmissions/applications?applyFilters=my&activationCode=${user.activationCode!}">
-							<img alt="Login" title="Login" width="64" height="33" src="${host}/pgadmissions/design/default/images/email/login.jpg"/>
-						<#else>
-							href="${host}/pgadmissions/register?activationCode=${user.activationCode!}&directToUrl=${"/applications?applyFilters=my"?url('ISO-8859-1')}">
-							<img alt="Register" title="Register" width="82" height="33" src="${host}/pgadmissions/design/default/images/email/register.jpg"/>
-						</#if>
-					</a>
-				</p>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>
 				</p>

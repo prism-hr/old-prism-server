@@ -147,9 +147,12 @@ public class ApplicationResource {
 
     @RequestMapping(value = "/{applicationId}/comments", method = RequestMethod.POST)
     public ActionOutcomeRepresentation performAction(@PathVariable Integer applicationId, @Valid @RequestBody CommentDTO commentDTO) {
-        applicationService.validateApplicationCompleteness(applicationId);
         Application application = entityService.getById(Application.class, applicationId);
         PrismAction actionId = commentDTO.getAction();
+
+        if(actionId == PrismAction.APPLICATION_COMPLETE) {
+            applicationService.validateApplicationCompleteness(applicationId);
+        }
 
         Action action = actionService.getById(actionId);
         User user = userService.getById(commentDTO.getUser());

@@ -135,6 +135,7 @@ public class UserService {
     }
 
     public void resetPassword(String email) {
+        // TODO send activation link if account disabled
         User storedUser = getUserByEmail(email);
         if (storedUser != null) {
             String newPassword = encryptionUtils.generateUserPassword();

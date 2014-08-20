@@ -1,1 +1,1 @@
-Application ${applicationCode} to create program for ${institutionName} - Outcome
+Institution ${institutionCode} approved.

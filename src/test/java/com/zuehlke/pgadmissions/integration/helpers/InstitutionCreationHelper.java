@@ -41,7 +41,7 @@ public class InstitutionCreationHelper {
         institutionAddressDTO.setRegion("GB-LND");
 
         institutionDTO.setDomicile("GB");
-        institutionDTO.setName("University College London");
+        institutionDTO.setTitle("University College London");
         institutionDTO.setHomepage("http://www.ucl.ac.uk/");
         institutionDTO.setAddress(institutionAddressDTO);
         institutionDTO.setUclInstitution(true);

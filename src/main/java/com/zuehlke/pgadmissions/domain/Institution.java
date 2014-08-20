@@ -44,7 +44,7 @@ import com.google.common.collect.Sets;
         @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
         @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class)})
 @Entity
-@Table(name = "INSTITUTION", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_domicile_id", "name"})})
+@Table(name = "INSTITUTION", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_domicile_id", "title"})})
 @Indexed
 public class Institution extends Resource {
 
@@ -67,9 +67,9 @@ public class Institution extends Resource {
     @JoinColumn(name = "institution_domicile_id", nullable = false)
     private InstitutionDomicile domicile;
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "title", nullable = false, unique = true)
     @Field(analyzer = @Analyzer(definition = "institutionNameAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
-    private String name;
+    private String title;
 
     @Column(name = "homepage", nullable = false)
     private String homepage;
@@ -131,12 +131,12 @@ public class Institution extends Resource {
         this.code = code;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public InstitutionDomicile getDomicile() {
@@ -203,8 +203,8 @@ public class Institution extends Resource {
         return this;
     }
 
-    public Institution withName(String name) {
-        this.name = name;
+    public Institution withTitle(final String title) {
+        this.title = title;
         return this;
     }
 
@@ -361,7 +361,7 @@ public class Institution extends Resource {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
         HashMap<String, Object> properties = Maps.newHashMap();
         properties.put("domicile", domicile);
-        properties.put("name", name);
+        properties.put("title", title);
         propertiesWrapper.add(properties);
         return new ResourceSignature(propertiesWrapper);
     }

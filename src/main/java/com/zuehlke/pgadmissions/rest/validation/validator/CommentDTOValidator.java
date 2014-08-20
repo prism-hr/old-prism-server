@@ -21,6 +21,7 @@ public class CommentDTOValidator extends AbstractValidator {
         CommentDTO comment = (CommentDTO) target;
         PrismAction action = comment.getAction();
 
+        // TODO finish validation
         if (Arrays.asList(PrismAction.APPLICATION_ASSESS_ELIGIBILITY, PrismAction.APPLICATION_CONFIRM_ELIGIBILITY).contains(action)) {
             ValidationUtils.rejectIfEmpty(errors, "qualified", EMPTY_DROPDOWN_ERROR_MESSAGE);
             ValidationUtils.rejectIfEmpty(errors, "competentInWorkLanguage", EMPTY_DROPDOWN_ERROR_MESSAGE);

@@ -80,7 +80,7 @@ public class IT4ImportInstitutionReferenceData implements IPrismIntegrationTest 
         entityService.save(address);
         
         User user = new User().withEmail("jerzy@urban.pl").withFirstName("Jerzy").withLastName("Urban").withActivationCode("jurekjurektrzymajsie");
-        Institution institution = new Institution().withName("University College London").withState(institutionState).withHomepage("www.agh.edu.pl")
+        Institution institution = new Institution().withTitle("University College London").withState(institutionState).withHomepage("www.agh.edu.pl")
                 .withSystem(system).withUser(user).withCreatedTimestamp(new DateTime()).withUpdatedTimestamp(new DateTime())
                 .withAddress(address).withUclInstitution(true).withDomicile(poland);
         entityService.getOrCreate(user);

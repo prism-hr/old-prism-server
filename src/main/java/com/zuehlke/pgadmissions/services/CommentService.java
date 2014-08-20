@@ -17,12 +17,12 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.rest.representation.AppointmentTimeslotRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.application.ApplicationAssignedSupervisorRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.application.OfferRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.application.UserAppointmentPreferencesRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.OfferRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.UserAppointmentPreferencesRepresentation;
 
 @Service
 @Transactional

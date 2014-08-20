@@ -4,6 +4,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Set;
 
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.rest.representation.*;
+import com.zuehlke.pgadmissions.rest.representation.resource.*;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
 import org.apache.commons.beanutils.MethodUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +28,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
@@ -39,14 +37,6 @@ import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.ActionDTO;
-import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.CommentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.application.ApplicationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.application.ProgramRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.application.ProjectRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.application.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -185,7 +175,7 @@ public class ResourceResource {
         // TODO: return validation error if workflow engine exception is thrown.
     }
 
-    public void enrichApplicationRepresentation(Application application, ApplicationRepresentation applicationRepresentation) {
+    public void enrichApplicationRepresentation(Application application, ApplicationExtendedRepresentation applicationRepresentation) {
         List<User> interested = userService.getUsersInterestedInApplication(application);
         List<User> potentiallyInterested = userService.getUsersPotentiallyInterestedInApplication(application, interested);
         List<UserExtendedRepresentation> interestedRepresentations = Lists.newArrayListWithCapacity(interested.size());
@@ -212,11 +202,13 @@ public class ResourceResource {
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
         if ("applications".equals(resourceScope)) {
-            return new ResourceDescriptor(Application.class, ApplicationRepresentation.class, "APPLICATION");
-        } else if ("programs".equals(resourceScope)) {
-            return new ResourceDescriptor(Program.class, ProgramRepresentation.class, "PROGRAM");
+            return new ResourceDescriptor(Application.class, ApplicationExtendedRepresentation.class, "APPLICATION");
         } else if("projects".equals(resourceScope))  {
-            return new ResourceDescriptor(Project.class, ProjectRepresentation.class, "PROJECT");
+            return new ResourceDescriptor(Project.class, ProjectExtendedRepresentation.class, "PROJECT");
+        } else if ("programs".equals(resourceScope)) {
+            return new ResourceDescriptor(Program.class, ProgramExtendedRepresentation.class, "PROGRAM");
+        }else if ("institutions".equals(resourceScope)) {
+            return new ResourceDescriptor(Institution.class, InstitutionExtendedRepresentation.class, "INSTITUTION");
         }
         throw new ResourceNotFoundException("Unknown resource type '" + resourceScope + "'.");
     }

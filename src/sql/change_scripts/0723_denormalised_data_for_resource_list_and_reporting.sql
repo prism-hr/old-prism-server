@@ -59,7 +59,7 @@ INNER JOIN (
 				0)
 			) AS rejected_count,
 		SUM(
-			IF(APPLICATION.state_id = "APPLICATION_WITHDRAWN_COMPLETED" AND APPLICATION.previous_state_id NOT LIKE "APPLICATION_UNSUBMITTED%",
+			IF(APPLICATION.state_id = "APPLICATION_WITHDRAWN_COMPLETED" AND APPLICATION.submitted_timestamp IS NOT NULL,
 				1,
 				0)
 			) AS withdrawn_count
@@ -126,7 +126,7 @@ INNER JOIN (
 				0)
 			) AS rejected_count,
 		SUM(
-			IF(APPLICATION.state_id = "APPLICATION_WITHDRAWN_COMPLETED" AND APPLICATION.previous_state_id NOT LIKE "APPLICATION_UNSUBMITTED%",
+			IF(APPLICATION.state_id = "APPLICATION_WITHDRAWN_COMPLETED" AND APPLICATION.submitted_timestamp IS NOT NULL,
 				1,
 				0)
 			) AS withdrawn_count
@@ -193,7 +193,7 @@ INNER JOIN (
 				0)
 			) AS rejected_count,
 		SUM(
-			IF(APPLICATION.state_id = "APPLICATION_WITHDRAWN_COMPLETED" AND APPLICATION.previous_state_id NOT LIKE "APPLICATION_UNSUBMITTED%",
+			IF(APPLICATION.state_id = "APPLICATION_WITHDRAWN_COMPLETED" AND APPLICATION.submitted_timestamp IS NOT NULL,
 				1,
 				0)
 			) AS withdrawn_count

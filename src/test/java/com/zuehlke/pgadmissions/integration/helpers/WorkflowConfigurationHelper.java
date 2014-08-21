@@ -85,7 +85,7 @@ public class WorkflowConfigurationHelper {
         verifyPropagatedActions();
         verifyCreatorRoles();
         verifyFallbackActions();
-        
+
         cleanUp();
     }
 
@@ -297,7 +297,8 @@ public class WorkflowConfigurationHelper {
                 Scope templateScope = template.getScope();
                 logger.info("Verifying notification: " + template.getId().toString());
 
-                assertTrue(state.getScope() == templateScope || stateAction.getAction().getCreationScope() == templateScope);
+                assertTrue(state.getScope() == templateScope || templateScope.getId() == PrismScope.SYSTEM
+                        || stateAction.getAction().getCreationScope() == templateScope);
                 assertTrue(actualRolesCreated.contains(notification.getRole().getId()));
             }
         }
@@ -343,7 +344,7 @@ public class WorkflowConfigurationHelper {
             assertEquals(1, actualCreatorRoles.get(scope).size());
         }
     }
-    
+
     private void verifyFallbackActions() {
         for (Action action : actionService.getActions()) {
             assertEquals(PrismScope.SYSTEM, action.getFallbackAction().getScope().getId());

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.GeneratedValue;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,10 +61,13 @@ public class EntityService {
         }
         
         try {
-            Object entityId = PropertyUtils.getSimpleProperty(entity, "id");
-            Object duplicateEntityId = PropertyUtils.getSimpleProperty(duplicateEntity, "id");
+            if (entity.getClass().getDeclaredField("id").isAnnotationPresent(GeneratedValue.class)) {
+                Object entityId = PropertyUtils.getSimpleProperty(entity, "id");
+                Object duplicateEntityId = PropertyUtils.getSimpleProperty(duplicateEntity, "id");
+                return Objects.equal(entityId, duplicateEntityId) ? null : duplicateEntity;
+            }
             
-            return Objects.equal(entityId, duplicateEntityId) ? null : duplicateEntity;
+            return duplicateEntity;
         } catch (Exception e) {
             throw new Error();
         }

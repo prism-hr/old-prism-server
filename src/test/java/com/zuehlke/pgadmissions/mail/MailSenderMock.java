@@ -11,6 +11,10 @@ public class MailSenderMock extends MailSender {
 
     private List<MailMessageDTO> sentMessages = Lists.newLinkedList();
 
+    public void sendEmail(final MailMessageDTO message) {
+        sentMessages.add(message);
+    }
+    
     public MailMessageDTO assertEmailSent(User recipient, PrismNotificationTemplate templateId) {
         for (MailMessageDTO message : sentMessages) {
             if (HibernateUtils.sameEntities(recipient, message.getTo().get(0)) && templateId == message.getTemplate().getNotificationTemplate().getId()) {

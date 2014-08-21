@@ -26,7 +26,6 @@ import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "SYSTEM")
-@Indexed
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class System extends Resource {
 

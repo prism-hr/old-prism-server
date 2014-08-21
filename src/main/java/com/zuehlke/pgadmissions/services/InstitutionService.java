@@ -99,28 +99,34 @@ public class InstitutionService {
         Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withAction(action)
                 .withTransitionState(transitionState).withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
 
-        InstitutionAddress address = institution.getAddress();
         InstitutionDTO institutionDTO = commentDTO.getInstitution();
         if (institutionDTO != null) {
             // modify institution
-            InstitutionAddressDTO addressDTO = institutionDTO.getAddress();
-            InstitutionDomicile domicile = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
-            InstitutionDomicileRegion region = entityService.getById(InstitutionDomicileRegion.class, addressDTO.getRegion());
-
-            institution.setDomicile(domicile);
-            institution.setTitle(institutionDTO.getTitle());
-
-            address.setRegion(region);
-            address.setAddressLine1(addressDTO.getAddressLine1());
-            address.setAddressLine2(addressDTO.getAddressLine2());
-            address.setAddressTown(addressDTO.getAddressTown());
-            address.setAddressDistrict(addressDTO.getAddressDistrict());
-            address.setAddressCode(addressDTO.getAddressCode());
-
-            institution.setHomepage(institutionDTO.getHomepage());
+            update(institutionId, institutionDTO);
         }
 
         return actionService.executeUserAction(institution, action, comment);
+    }
+
+    public void update(Integer institutionId, InstitutionDTO institutionDTO) {
+        Institution institution = entityService.getById(Institution.class, institutionId);
+
+        InstitutionAddress address = institution.getAddress();
+        InstitutionAddressDTO addressDTO = institutionDTO.getAddress();
+        InstitutionDomicile domicile = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
+        InstitutionDomicileRegion region = entityService.getById(InstitutionDomicileRegion.class, addressDTO.getRegion());
+
+        institution.setDomicile(domicile);
+        institution.setTitle(institutionDTO.getTitle());
+
+        address.setRegion(region);
+        address.setAddressLine1(addressDTO.getAddressLine1());
+        address.setAddressLine2(addressDTO.getAddressLine2());
+        address.setAddressTown(addressDTO.getAddressTown());
+        address.setAddressDistrict(addressDTO.getAddressDistrict());
+        address.setAddressCode(addressDTO.getAddressCode());
+
+        institution.setHomepage(institutionDTO.getHomepage());
     }
 
 }

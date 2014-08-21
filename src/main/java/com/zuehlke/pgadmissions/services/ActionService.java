@@ -1,20 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.StateTransition;
-import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
@@ -23,6 +12,12 @@ import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -49,13 +44,13 @@ public class ActionService {
 
     public void validateInvokeAction(Resource resource, Action action, Comment comment) {
         User currentUser = userService.getCurrentUser();
-        
+
         User owner = comment.getUser();
         User delegateOwner = comment.getDelegateUser();
-        
-        authenticateAction(currentUser, owner, delegateOwner);  
+
+        authenticateAction(currentUser, owner, delegateOwner);
         Resource operative = resourceService.getOperativeResource(resource, action);
-        
+
         if (delegateOwner == null && checkActionAvailable(operative, action, owner)) {
             return;
         } else if (delegateOwner != null && checkActionAvailable(operative, action, delegateOwner)) {
@@ -66,15 +61,15 @@ public class ActionService {
 
         throwWorkflowPermissionException(action, operative);
     }
-    
+
     public void validateUpdateAction(Comment comment) {
         User currentUser = userService.getCurrentUser();
-        
+
         User owner = comment.getUser();
         User delegateOwner = comment.getDelegateUser();
-        
+
         authenticateAction(currentUser, owner, delegateOwner);
-        
+
         Action action = comment.getAction();
         Resource resource = comment.getResource();
 
@@ -106,13 +101,13 @@ public class ActionService {
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE || action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE) {
             Resource duplicateResource = entityService.getDuplicateEntity(resource);
-            
+
             if (duplicateResource != null) {
                 if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
                     Action redirectAction = getRedirectAction(action, actionOwner, duplicateResource);
                     return new ActionOutcome().withUser(actionOwner).withResource(duplicateResource).withTransitionResource(duplicateResource).withTransitionAction(redirectAction);
                 }
-                
+
                 throwWorkflowPermissionException(action, resource);
             }
         }
@@ -155,13 +150,13 @@ public class ActionService {
     public Action getViewEditAction(Resource resource, User user) {
         return actionDAO.getViewEditAction(resource, user);
     }
-    
+
     public void throwWorkflowPermissionException(Action action, Resource resource) {
         Action fallbackAction = action.getFallbackAction();
         Resource fallbackResource = resource.getEnclosingResource(fallbackAction.getScope().getId());
         throw new WorkflowPermissionException(action, fallbackAction, resource, fallbackResource);
     }
-    
+
     private boolean checkActionAvailable(Resource resource, Action action, User invoker) {
         return actionDAO.getPermittedAction(resource, action, invoker) != null;
     }
@@ -170,13 +165,13 @@ public class ActionService {
         Action delegateAction = actionDAO.getDelegateAction(resource, action);
         return checkActionAvailable(resource, delegateAction, invoker);
     }
-    
+
     private void authenticateAction(User currentUser, User owner, User delegateOwner) throws Error {
-        if (delegateOwner == null && owner != currentUser) {
+        if (delegateOwner == null && !owner.getId().equals(currentUser.getId())) {
             throw new Error();
-        } else if (delegateOwner != null && (owner != currentUser && delegateOwner != currentUser)) {
+        } else if (delegateOwner != null && (!owner.getId().equals(currentUser.getId()) && !delegateOwner.getId().equals(currentUser.getId()))) {
             throw new Error();
         }
     }
-    
+
 }

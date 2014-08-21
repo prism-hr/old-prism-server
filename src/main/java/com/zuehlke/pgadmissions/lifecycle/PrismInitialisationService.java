@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.lifecycle;
 
+import com.zuehlke.pgadmissions.services.importers.CurrencyImportService;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class PrismInitialisationService implements InitializingBean {
 
     @Autowired
     private InstitutionDomicileImportService institutionDomicileImportService;
+
+    @Autowired
+    private CurrencyImportService currencyImportService;
     
     @Autowired
     private AdvertCategoryImportService advertCategoryImportService;
@@ -39,17 +43,18 @@ public class PrismInitialisationService implements InitializingBean {
         if (BooleanUtils.isTrue(initializeWorkflow)) {
             systemService.initialiseSystem();
         }
-        
-        if (BooleanUtils.isTrue(buildIndex)) {
-            systemService.initializeSearchIndexes();
-        }
-        
+
         if (BooleanUtils.isTrue(importInstitutionDomicile)) {
             institutionDomicileImportService.importEntities();
+            currencyImportService.importEntities();
         }
-        
+
         if (BooleanUtils.isTrue(importAdvertCategory)) {
             advertCategoryImportService.importEntities();
+        }
+
+        if (BooleanUtils.isTrue(buildIndex)) {
+            systemService.initializeSearchIndexes();
         }
     }
 

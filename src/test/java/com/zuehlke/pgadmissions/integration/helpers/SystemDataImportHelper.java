@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
+import com.zuehlke.pgadmissions.services.importers.CurrencyImportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,17 +16,18 @@ public class SystemDataImportHelper {
     private AdvertCategoryImportService advertCategoryImportService;
     
     @Autowired
-    private EntityService entityService;
-    
-    @Autowired
     private InstitutionDomicileImportService institutionDomicileImportService;
+
+    @Autowired
+    private CurrencyImportService currencyImportService;
 
     public void verifyInstitutionDomicileImport() throws Exception {
         institutionDomicileImportService.importEntities();
+//        currencyImportService.importEntities();
     }
     
     public void verifyOpportunityCategoryImport() throws DataImportException {
         advertCategoryImportService.importEntities();
     }
-    
+
 }

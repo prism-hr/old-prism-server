@@ -81,12 +81,14 @@ public class MailSender {
                         messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");
                     }
 
-                    Template subjectTemplate = new Template(null, new StringReader(notificationTemplate.getSubject()), freemarkerConfig.getConfiguration());
+                    String templateName = notificationTemplate.getNotificationTemplate().getId().name() + "_subject_" + notificationTemplate.getId();
+                    Template subjectTemplate = new Template(templateName, new StringReader(notificationTemplate.getSubject()), freemarkerConfig.getConfiguration());
                     String subject = FreeMarkerTemplateUtils.processTemplateIntoString(subjectTemplate, message.getModel());
 
                     messageHelper.setSubject(subject);
 
-                    Template contentTemplate = new Template(null, new StringReader(notificationTemplate.getContent()), freemarkerConfig.getConfiguration());
+                    templateName = notificationTemplate.getNotificationTemplate().getId().name() + "_content_" + notificationTemplate.getId();
+                    Template contentTemplate = new Template(templateName, new StringReader(notificationTemplate.getContent()), freemarkerConfig.getConfiguration());
                     MailToPlainTextConverter htmlFormatter = new MailToPlainTextConverter();
                     String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(contentTemplate, message.getModel());
                     String plainText = htmlFormatter.getPlainText(htmlText);

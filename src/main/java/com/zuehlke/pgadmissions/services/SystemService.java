@@ -1,9 +1,20 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Set;
-
+import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.common.io.Resources;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.System;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
+import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationExportService;
+import com.zuehlke.pgadmissions.services.importers.EntityImportService;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.search.FullTextSession;
@@ -17,49 +28,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.ActionRedaction;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
-import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
-import com.zuehlke.pgadmissions.domain.NotificationTemplate;
-import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.RoleTransition;
-import com.zuehlke.pgadmissions.domain.Scope;
-import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.StateAction;
-import com.zuehlke.pgadmissions.domain.StateActionAssignment;
-import com.zuehlke.pgadmissions.domain.StateActionNotification;
-import com.zuehlke.pgadmissions.domain.StateDuration;
-import com.zuehlke.pgadmissions.domain.StateGroup;
-import com.zuehlke.pgadmissions.domain.StateTransition;
-import com.zuehlke.pgadmissions.domain.System;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
-import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.services.exporters.ApplicationExportService;
-import com.zuehlke.pgadmissions.services.importers.EntityImportService;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Set;
 
 @Service
 public class SystemService {
@@ -173,9 +144,9 @@ public class SystemService {
     }
 
     @Transactional
-    public void initializeSearchIndexes() {
+    public void initializeSearchIndexes() throws InterruptedException {
         FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
-        fullTextSession.createIndexer().start();
+        fullTextSession.createIndexer().startAndWait();
     }
 
     @Scheduled(cron = "${maintenance.ongoing}")
@@ -267,7 +238,7 @@ public class SystemService {
                 action.getRedactions().add(actionRedaction);
             }
         }
-        
+
         for (PrismAction prismAction : PrismAction.values()) {
             Action action = actionService.getById(prismAction);
             Action fallbackAction = actionService.getById(PrismAction.getFallBackAction(prismAction));
@@ -457,8 +428,8 @@ public class SystemService {
             Action action = actionService.getById(PrismAction.SYSTEM_STARTUP);
             Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                     .withAssignedUser(user, roleService.getCreatorRole(system));
-            actionService.executeUserAction(system, action, comment);
-            notificationService.sendNotification(user, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+            ActionOutcome outcome = actionService.executeSystemAction(system, action, comment);
+            notificationService.sendNotification(user, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST, ImmutableMap.of("action", outcome.getTransitionAction().getId().name()));
         }
     }
 

@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.lifecycle;
 
-import com.zuehlke.pgadmissions.services.importers.CurrencyImportService;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.importers.AdvertCategoryImportService;
+import com.zuehlke.pgadmissions.services.importers.CurrencyImportService;
 import com.zuehlke.pgadmissions.services.importers.InstitutionDomicileImportService;
 
 @Service

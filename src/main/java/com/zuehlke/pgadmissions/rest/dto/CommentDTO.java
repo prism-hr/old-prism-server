@@ -74,6 +74,8 @@ public class CommentDTO {
 
     private InstitutionDTO institution;
 
+    private ProgramDTO program;
+
     public Integer getUser() {
         return user;
     }
@@ -320,5 +322,13 @@ public class CommentDTO {
 
     public void setInstitution(InstitutionDTO institution) {
         this.institution = institution;
+    }
+
+    public ProgramDTO getProgram() {
+        return program;
+    }
+
+    public void setProgram(ProgramDTO program) {
+        this.program = program;
     }
 }

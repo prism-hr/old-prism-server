@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<residenceStates>
+  <residenceState>
+    <code>HOME_EU</code>
+    <name>Home/EU</name>
+  </residenceState>
+  <residenceState>
+    <code>OVERSEAS</code>
+    <name>Overseas</name>
+  </residenceState>
+  <residenceState>
+    <code>UNSURE</code>
+    <name>Unsure</name>
+  </residenceState>
+</residenceStates>

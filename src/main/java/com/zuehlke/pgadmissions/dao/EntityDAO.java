@@ -98,7 +98,9 @@ public class EntityDAO {
     @SuppressWarnings("unchecked")
     public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) {
         IUniqueEntity.ResourceSignature signature = uniqueResource.getResourceSignature();
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(uniqueResource.getClass());
+        Class<T> resourceClass = (Class<T>) uniqueResource.getClass();
+        
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceClass);
         Disjunction indices = Restrictions.disjunction();
 
         List<HashMap<String, Object>> propertyWrapper = signature.getProperties();
@@ -106,8 +108,9 @@ public class EntityDAO {
             for (HashMap<String, Object> properties : propertyWrapper) {
                 Conjunction index = Restrictions.conjunction();
                 for (Map.Entry<String, Object> property : properties.entrySet()) {
-                    if (property.getKey() == null) {
-                        throw new Error(IUniqueEntity.UNIQUE_IDENTIFICATION_ERROR);
+                    String key = property.getKey(); 
+                    if (key == null) {
+                        throw new Error("Tried to deduplicate entity with null property key " + property.getKey());
                     }
                     if (property.getValue() == null) {
                         index.add(Restrictions.isNull(property.getKey()));
@@ -128,7 +131,7 @@ public class EntityDAO {
             return (T) criteria.uniqueResult();
         }
 
-        throw new Error(IUniqueEntity.UNIQUE_IDENTIFICATION_ERROR);
+        throw new Error("Tried to deduplicate entity " + resourceClass.getSimpleName() + " with empty resource signature");
     }
 
     public void delete(Object entity) {

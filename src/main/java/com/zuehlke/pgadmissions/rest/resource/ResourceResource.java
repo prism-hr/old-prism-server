@@ -96,7 +96,7 @@ public class ResourceResource {
         // set list of available actions
         List<PrismAction> permittedActions = actionService.getPermittedActions(resource, currentUser);
         if (permittedActions.isEmpty()) {
-            Action viewEditAction = actionService.getViewEditAction(resource, currentUser);
+            Action viewEditAction = actionService.getViewEditAction(resource);
             actionService.throwWorkflowPermissionException(viewEditAction, resource);
         }
         representation.setActions(permittedActions);

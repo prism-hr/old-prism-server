@@ -45,12 +45,10 @@ public class ActionService {
     }
 
     public void validateInvokeAction(Resource resource, Action action, Comment comment) {
-        User currentUser = userService.getCurrentUser();
-
         User owner = comment.getUser();
         User delegateOwner = comment.getDelegateUser();
 
-        authenticateAction(currentUser, owner, delegateOwner);
+        authenticateAction(action, owner, delegateOwner);
         Resource operative = resourceService.getOperativeResource(resource, action);
 
         if (delegateOwner == null && checkActionAvailable(operative, action, owner)) {
@@ -70,7 +68,7 @@ public class ActionService {
         User owner = comment.getUser();
         User delegateOwner = comment.getDelegateUser();
 
-        authenticateAction(currentUser, owner, delegateOwner);
+        authenticateAction(comment.getAction(), owner, delegateOwner);
 
         Action action = comment.getAction();
         Resource resource = comment.getResource();
@@ -168,7 +166,13 @@ public class ActionService {
         return checkActionAvailable(resource, delegateAction, invoker);
     }
 
-    private void authenticateAction(User currentUser, User owner, User delegateOwner) throws Error {
+    private void authenticateAction(Action action, User owner, User delegateOwner) throws Error {
+        User currentUser = userService.getCurrentUser();
+
+        if (currentUser == null && action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
+            return;
+        }
+
         if (delegateOwner == null && !owner.getId().equals(currentUser.getId())) {
             throw new Error();
         } else if (delegateOwner != null && (!owner.getId().equals(currentUser.getId()) && !delegateOwner.getId().equals(currentUser.getId()))) {

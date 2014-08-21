@@ -48,7 +48,7 @@ public enum PrismAction {
     APPLICATION_CONFIRM_SUPERVISION(PrismActionType.USER_INVOCATION, PrismActionCategory.PROCESS_RESOURCE, PrismScope.APPLICATION, null, //
             Arrays.asList(new PrismActionRedaction().withRole(PrismRole.APPLICATION_CREATOR).withRedactionType(PrismRedactionType.ALL_CONTENT), //
                     new PrismActionRedaction().withRole(PrismRole.APPLICATION_REFEREE).withRedactionType(PrismRedactionType.ALL_CONTENT))), //
-    APPLICATION_CORRECT(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_EDIT_RESOURCE, PrismScope.APPLICATION, null, null), //
+    APPLICATION_CORRECT(PrismActionType.USER_INVOCATION, PrismActionCategory.PROCESS_RESOURCE, PrismScope.APPLICATION, null, null), //
     APPLICATION_EMAIL_CREATOR(PrismActionType.USER_INVOCATION, PrismActionCategory.EMAIL_RESOURCE_CREATOR, PrismScope.APPLICATION, null, null), //
     APPLICATION_ESCALATE(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.ESCALATE_RESOURCE, PrismScope.APPLICATION, null, null), //
     APPLICATION_EXPORT(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.EXPORT_RESOURCE, PrismScope.APPLICATION, null, null), //

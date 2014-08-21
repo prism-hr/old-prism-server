@@ -4,14 +4,11 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.GeneratedValue;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 
@@ -54,23 +51,8 @@ public class EntityService {
         return entityDAO.listByProperties(klass, properties);
     }
 
-    public <T extends IUniqueEntity> T getDuplicateEntity(T entity) {
-        T duplicateEntity = entityDAO.getDuplicateEntity(entity);
-        if (duplicateEntity == null) {
-            return null;
-        }
-        
-        try {
-            if (entity.getClass().getDeclaredField("id").isAnnotationPresent(GeneratedValue.class)) {
-                Object entityId = PropertyUtils.getSimpleProperty(entity, "id");
-                Object duplicateEntityId = PropertyUtils.getSimpleProperty(duplicateEntity, "id");
-                return Objects.equal(entityId, duplicateEntityId) ? null : duplicateEntity;
-            }
-            
-            return duplicateEntity;
-        } catch (Exception e) {
-            throw new Error();
-        }
+    public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) {
+        return (T) entityDAO.getDuplicateEntity(uniqueResource);
     }
 
     public <T extends IUniqueEntity> T getOrCreate(T transientResource) {

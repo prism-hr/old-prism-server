@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
@@ -12,6 +13,7 @@ import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -106,9 +108,9 @@ public class ActionService {
                 if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
                     Action redirectAction = getRedirectAction(action, actionOwner, duplicateResource);
                     return new ActionOutcome().withUser(actionOwner).withResource(duplicateResource).withTransitionResource(duplicateResource).withTransitionAction(redirectAction);
+                } else if (!Objects.equal(resource.getId(), duplicateResource.getId())) {
+                    throwWorkflowPermissionException(action, resource);
                 }
-
-                throwWorkflowPermissionException(action, resource);
             }
         }
 
@@ -147,8 +149,8 @@ public class ActionService {
         }
     }
 
-    public Action getViewEditAction(Resource resource, User user) {
-        return actionDAO.getViewEditAction(resource, user);
+    public Action getViewEditAction(Resource resource) {
+        return actionDAO.getViewEditAction(resource);
     }
 
     public void throwWorkflowPermissionException(Action action, Resource resource) {

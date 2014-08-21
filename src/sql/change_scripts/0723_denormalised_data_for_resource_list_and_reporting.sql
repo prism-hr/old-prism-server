@@ -59,7 +59,7 @@ INNER JOIN (
 				0)
 			) AS rejected_count,
 		SUM(
-			IF(APPLICATION.state_id = "APPLICATION_WITHDRAWN_COMPLETED",
+			IF(APPLICATION.state_id = "APPLICATION_WITHDRAWN_COMPLETED" AND APPLICATION.previous_state_id NOT LIKE "APPLICATION_UNSUBMITTED%",
 				1,
 				0)
 			) AS withdrawn_count
@@ -126,7 +126,7 @@ INNER JOIN (
 				0)
 			) AS rejected_count,
 		SUM(
-			IF(APPLICATION.state_id = "APPLICATION_WITHDRAWN_COMPLETED",
+			IF(APPLICATION.state_id = "APPLICATION_WITHDRAWN_COMPLETED" AND APPLICATION.previous_state_id NOT LIKE "APPLICATION_UNSUBMITTED%",
 				1,
 				0)
 			) AS withdrawn_count
@@ -614,4 +614,3 @@ SET COMMENT.created_timestamp = COMMENT.created_timestamp + INTERVAL 3 DAY
 WHERE COMMENT.application_id = 6752
 	AND COMMENT.action_id = "APPLICATION_EXPORT"
 ;
-

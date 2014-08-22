@@ -200,6 +200,9 @@ public class ResourceResource {
         applicationRepresentation.setSupervisors(commentService.getApplicationSupervisors(application));
     }
 
+    public void enrichProgramRepresentation(Program program, ProgramExtendedRepresentation programRepresentation) {
+    }
+
     public void enrichInstitutionRepresentation(Institution institution, InstitutionExtendedRepresentation institutionRepresentation) {
 
     }

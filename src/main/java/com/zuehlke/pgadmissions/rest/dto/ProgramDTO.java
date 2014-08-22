@@ -35,7 +35,7 @@ public class ProgramDTO {
     private Boolean immediateStart;
 
     @Size(min = 1)
-    private String[] studyOptions;
+    private Integer[] studyOptions;
 
     public final Integer getInstitutionId() {
         return institutionId;
@@ -101,11 +101,11 @@ public class ProgramDTO {
         this.immediateStart = immediateStart;
     }
 
-    public String[] getStudyOptions() {
+    public Integer[] getStudyOptions() {
         return studyOptions;
     }
 
-    public void setStudyOptions(String[] studyOptions) {
+    public void setStudyOptions(Integer[] studyOptions) {
         this.studyOptions = studyOptions;
     }
 }

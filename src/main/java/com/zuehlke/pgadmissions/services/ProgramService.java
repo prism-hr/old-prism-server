@@ -2,6 +2,9 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +49,9 @@ public class ProgramService {
 
     @Autowired
     private SystemService systemService;
+
+    @Autowired
+    private UserService userService;
 
     public Advert getById(Integer id) {
         return entityService.getById(Advert.class, id);
@@ -148,4 +154,36 @@ public class ProgramService {
         return programDAO.getLatestProgramInstance(program);
     }
 
+    public ActionOutcome performAction(Integer programId, CommentDTO commentDTO) {
+        Program program = entityService.getById(Program.class, programId);
+        PrismAction actionId = commentDTO.getAction();
+
+        Action action = actionService.getById(actionId);
+        User user = userService.getById(commentDTO.getUser());
+        State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
+        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withAction(action)
+                .withTransitionState(transitionState).withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
+
+        ProgramDTO programDTO = commentDTO.getProgram();
+        if (programDTO != null) {
+            // modify program
+            update(programId, programDTO);
+        }
+
+        return actionService.executeUserAction(program, action, comment);
+    }
+
+    public void update(Integer programId, ProgramDTO programDTO) {
+        Program program = entityService.getById(Program.class, programId);
+
+        program.setProgramType(programDTO.getProgramType());
+        program.setTitle(programDTO.getTitle());
+        program.setDescription(programDTO.getDescription());
+
+        // TODO set study options, start date and end date
+
+        program.setRequireProjectDefinition(programDTO.getRequireProjectDefinition());
+        program.setImmediateStart(programDTO.getImmediateStart());
+
+    }
 }

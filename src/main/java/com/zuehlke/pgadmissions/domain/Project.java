@@ -51,6 +51,9 @@ public class Project extends Advert {
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
     
+    @Column(name = "referrer")
+    private String referrer;
+    
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
@@ -361,6 +364,21 @@ public class Project extends Advert {
     }
 
     @Override
+    public Application getApplication() {
+        return null;
+    }
+    
+    @Override
+    public String getReferrer() {
+        return referrer;
+    }
+    
+    @Override
+    public void setReferrer (String referrer) {
+        this.referrer = referrer;
+    }
+
+    @Override
     public State getPreviousState() {
         return previousState;
     }
@@ -408,11 +426,6 @@ public class Project extends Advert {
     @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
-    }
-    
-    @Override
-    public Application getApplication() {
-        return null;
     }
     
     @Override

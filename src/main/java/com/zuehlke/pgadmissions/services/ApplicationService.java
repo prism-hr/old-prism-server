@@ -261,7 +261,6 @@ public class ApplicationService {
             ApplicationSupervisor supervisor = new ApplicationSupervisor().withAware(supervisorDTO.getAware()).withUser(user);
             programDetails.getSupervisors().add(supervisor);
         }
-        // TODO: store the referral URL
     }
 
     public void savePersonalDetails(Integer applicationId, ApplicationPersonalDetailsDTO personalDetailsDTO) {

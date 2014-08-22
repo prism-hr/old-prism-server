@@ -58,6 +58,9 @@ public class Program extends Advert {
     @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
+    
+    @Column(name = "referrer")
+    private String referrer;
 
     @Column(name = "program_type", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -473,6 +476,22 @@ public class Program extends Advert {
     @Override
     public void setProject(Project project) {
     }
+    
+    
+    @Override
+    public Application getApplication() {
+        return null;
+    }
+    
+    @Override
+    public String getReferrer() {
+        return referrer;
+    }
+    
+    @Override
+    public void setReferrer (String referrer) {
+        this.referrer = referrer;
+    }
 
     @Override
     public State getState() {
@@ -532,11 +551,6 @@ public class Program extends Advert {
     @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
-    }
-    
-    @Override
-    public Application getApplication() {
-        return null;
     }
     
     @Override

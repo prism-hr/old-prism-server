@@ -37,6 +37,10 @@ public abstract class Resource implements IUniqueEntity {
     public abstract void setProject(Project project);
 
     public abstract Application getApplication();
+    
+    public abstract String getReferrer();
+    
+    public abstract void setReferrer(String referrer);
 
     public abstract State getState();
 

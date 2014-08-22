@@ -57,6 +57,9 @@ public class Institution extends ParentResource {
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
     
+    @Column(name = "referrer")
+    private String referrer;
+    
     @Column(name = "code")
     private String code;
 
@@ -466,6 +469,16 @@ public class Institution extends ParentResource {
     @Override
     public Application getApplication() {
         return null;
+    }
+    
+    @Override
+    public String getReferrer() {
+        return referrer;
+    }
+    
+    @Override
+    public void setReferrer (String referrer) {
+        this.referrer = referrer;
     }
 
     @Override

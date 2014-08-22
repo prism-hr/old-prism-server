@@ -560,8 +560,10 @@ public class ApplicationService {
             try {
                 String parentReference = parentScope.getLowerCaseName();
                 ParentResource parentResource = (ParentResource) PropertyUtils.getSimpleProperty(application, parentReference);
+                
                 for (String property : properties) {
                     Integer notNullValueCount = entityService.getNotNullValueCount(Application.class, property, ImmutableMap.of(parentReference, (Object) parentResource));
+                    
                     for (Integer percentile : percentiles) {
                         Integer actualPercentile = new BigDecimal(percentile * (notNullValueCount / 100.0)).setScale(0, RoundingMode.HALF_UP).intValue();
                         Object actualPercentileValue = applicationDAO.getPercentileValue(parentResource, property, actualPercentile);

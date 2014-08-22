@@ -65,11 +65,6 @@ public class ApplicationSupervisor {
         return this;
     }
 
-    public ApplicationSupervisor withProgramDetails(ApplicationProgramDetails programDetails) {
-        this.programDetails = programDetails;
-        return this;
-    }
-
     public ApplicationSupervisor withUser(User user) {
         this.user = user;
         return this;

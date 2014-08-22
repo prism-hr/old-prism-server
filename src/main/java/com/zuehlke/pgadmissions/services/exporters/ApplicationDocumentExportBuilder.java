@@ -66,20 +66,15 @@ public class ApplicationDocumentExportBuilder {
 
     private void buildReferences(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
         List<ApplicationReferee> referees = applicationService.getApplicationExportReferees(application);
-        int refereeCount = referees.size();
 
-        if (refereeCount == 2) {
-            for (int i = 0; i < refereeCount; i++) {
-                String filename = getRandomFilename();
-                zos.putNextEntry(new ZipEntry(filename));
-                combinedReferenceBuilder.build(referees.get(i).getComment(), zos);
-                zos.closeEntry();
-                int referenceNumberId = i + 1;
-                contentsProperties.put("reference." + referenceNumberId + ".serverFilename", filename);
-                contentsProperties.put("reference." + referenceNumberId + ".applicationFilename", "References.2.pdf");
-            }
-        } else {
-            throw new Error("Wrong number of references (" + refereeCount + ") for export of application: " + application.getCode());
+        for (int i = 0; i < 2; i++) {
+            String filename = getRandomFilename();
+            zos.putNextEntry(new ZipEntry(filename));
+            combinedReferenceBuilder.build(application, referees.get(i).getComment(), zos);
+            zos.closeEntry();
+            int referenceNumberId = i + 1;
+            contentsProperties.put("reference." + referenceNumberId + ".serverFilename", filename);
+            contentsProperties.put("reference." + referenceNumberId + ".applicationFilename", "References.2.pdf");
         }
     }
 
@@ -127,7 +122,7 @@ public class ApplicationDocumentExportBuilder {
         List<ApplicationQualification> qualifications = applicationService.getApplicationExportQualifications(application);
         int qualificationCount = qualifications.size();
         
-        if (qualificationCount > 1) {
+        if (qualificationCount > 0) {
             for (int i = 0; i < qualificationCount; i ++) {
                 String filename = getRandomFilename();
                 zos.putNextEntry(new ZipEntry(filename));
@@ -158,7 +153,7 @@ public class ApplicationDocumentExportBuilder {
                     new PdfModelBuilder().includeCriminialConvictions(true).includeDisability(true).includeEthnicity(true).includeAttachments(false), zos,
                     application);
         } catch (Exception e) {
-            zos.write(getAlternativeMergedFileContents(application).getBytes());
+            throw new Error("Unable to build application document for " + application.getCode(), e);
         }
         zos.closeEntry();
         contentsProperties.put("applicationForm.1.serverFilename", serverfilename);
@@ -173,7 +168,7 @@ public class ApplicationDocumentExportBuilder {
         try {
             pdfDocumentBuilder.build(new PdfModelBuilder().includeReferences(true), zos, application);
         } catch (Exception e) {
-            zos.write(getAlternativeMergedFileContents(application).getBytes());
+           throw new Error ("Unable to merged application document for " + application.getCode(), e);
         }
         zos.closeEntry();
         contentsProperties.put("mergedApplication.1.serverFilename", serverfilename);
@@ -189,11 +184,6 @@ public class ApplicationDocumentExportBuilder {
             return document.getContent();
         }
         throw new Error("Document was missing for export of application: " + application.getCode());
-    }
-
-    private String getAlternativeMergedFileContents(Application application) {
-        return ("Due to a technical error were unable to read and merge the contents of this document. Please contact us at "
-                + application.getProgram().getUser() + " to obtain an original copy, quoting our application reference number: " + application.getCode() + ".");
     }
 
 }

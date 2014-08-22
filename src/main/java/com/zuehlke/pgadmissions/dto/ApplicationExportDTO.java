@@ -22,7 +22,7 @@ public class ApplicationExportDTO {
     
     private ProgramInstance exportProgramInstance;
     
-    private List<ApplicationReferee> exportReferees;
+    private List<ApplicationReferee> applicationReferees;
 
     public final Application getApplication() {
         return application;
@@ -47,11 +47,15 @@ public class ApplicationExportDTO {
     public final ProgramInstance getExportProgramInstance() {
         return exportProgramInstance;
     }
-
-    public final List<ApplicationReferee> getExportReferees() {
-        return exportReferees;
-    }
     
+    public final List<ApplicationReferee> getApplicationReferees() {
+        return applicationReferees;
+    }
+
+    public final void setApplicationReferees(List<ApplicationReferee> applicationReferees) {
+        this.applicationReferees = applicationReferees;
+    }
+
     public ApplicationExportDTO withApplication(Application application) {
         this.application = application;
         return this;
@@ -82,8 +86,8 @@ public class ApplicationExportDTO {
         return this;
     }
     
-    public ApplicationExportDTO withExportReferees(List<ApplicationReferee> exportReferees) {
-        this.exportReferees = exportReferees;
+    public ApplicationExportDTO withApplicationReferees(List<ApplicationReferee> applicationReferees) {
+        this.applicationReferees = applicationReferees;
         return this;
     }
     

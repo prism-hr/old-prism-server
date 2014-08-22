@@ -277,3 +277,15 @@ ALTER TABLE INSTITUTION
 	ADD COLUMN referrer VARCHAR(255) AFTER system_id,
 	ADD INDEX (referrer)
 ;
+
+ALTER TABLE COMMENT
+	DROP COLUMN application_equivalent_experience
+;
+
+ALTER TABLE APPLICATION_REFEREE
+	DROP COLUMN include_in_export
+;
+
+ALTER TABLE APPLICATION_QUALIFICATION
+	DROP COLUMN include_in_export
+;

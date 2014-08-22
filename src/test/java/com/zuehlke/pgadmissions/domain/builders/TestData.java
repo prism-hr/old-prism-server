@@ -63,7 +63,7 @@ public class TestData {
             ImportedInstitution institution) {
         return new ApplicationQualification().withAwardDate(new LocalDate()).withGrade("").withTitle("").withLanguage("Abkhazian").withSubject("")
                 .withCompleted(true).withStartDate(new LocalDate()).withType(qualificationType).withApplication(application).withDocument(document)
-                .withIncludeInExport(false).withInstitution(institution);
+                .withInstitution(institution);
     }
 
 }

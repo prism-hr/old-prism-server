@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -49,7 +47,7 @@ public class ApplicationProgramDetails {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_program_detail_id", nullable = false)
-    private List<ApplicationSupervisor> supervisors = new ArrayList<ApplicationSupervisor>();
+    private Set<ApplicationSupervisor> supervisors = Sets.newHashSet();
     
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "APPLICATION_OTHER_PROJECT", joinColumns = @JoinColumn(name = "application_program_detail_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "project_id", nullable = false))
@@ -99,12 +97,8 @@ public class ApplicationProgramDetails {
         this.sourceOfInterestText = sourceOfInterest;
     }
 
-    public List<ApplicationSupervisor> getSupervisors() {
+    public Set<ApplicationSupervisor> getSupervisors() {
         return supervisors;
-    }
-
-    public void setSupervisors(List<ApplicationSupervisor> supervisors) {
-        this.supervisors = supervisors;
     }
 
     public Application getApplication() {

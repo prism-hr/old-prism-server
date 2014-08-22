@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -89,19 +88,19 @@ public class Application extends Resource {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
-    private List<ApplicationQualification> qualifications = new ArrayList<ApplicationQualification>();
+    private Set<ApplicationQualification> qualifications = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
-    private List<ApplicationEmploymentPosition> employmentPositions = new ArrayList<ApplicationEmploymentPosition>();
+    private Set<ApplicationEmploymentPosition> employmentPositions = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
-    private List<ApplicationFunding> fundings = new ArrayList<ApplicationFunding>();
+    private Set<ApplicationFunding> fundings = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
-    private List<ApplicationReferee> referees = new ArrayList<ApplicationReferee>();
+    private Set<ApplicationReferee> referees = Sets.newHashSet();
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_document_id", unique = true)
@@ -149,6 +148,9 @@ public class Application extends Resource {
     
     @OneToMany(mappedBy = "application")
     private Set<UserRole> userRoles = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "application")
+    private Set<Comment> comments = Sets.newHashSet();
 
     @Transient
     private Boolean acceptedTerms;
@@ -293,24 +295,28 @@ public class Application extends Resource {
         this.doRetain = doRetain;
     }
 
-    public List<ApplicationQualification> getQualifications() {
+    public Set<ApplicationQualification> getQualifications() {
         return qualifications;
     }
 
-    public List<ApplicationFunding> getFundings() {
+    public Set<ApplicationFunding> getFundings() {
         return fundings;
     }
 
-    public List<ApplicationEmploymentPosition> getEmploymentPositions() {
+    public Set<ApplicationEmploymentPosition> getEmploymentPositions() {
         return employmentPositions;
     }
 
-    public List<ApplicationReferee> getReferees() {
+    public Set<ApplicationReferee> getReferees() {
         return referees;
     }
 
     public final Set<UserRole> getUserRoles() {
         return userRoles;
+    }
+
+    public final Set<Comment> getComments() {
+        return comments;
     }
 
     public Application withId(Integer id) {

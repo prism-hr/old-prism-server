@@ -165,12 +165,7 @@ public class StateService {
             notificationService.sendWorkflowNotifications(resource, comment);
         }
 
-        resourceService.updateResource(resource);
-        
-        if (comment.isContainsNewSummaryInformation()) {
-            resourceService.summariseResource(resource);
-        }
-        
+        resourceService.updateResource(resource, comment);
         return stateTransition;
     }
 

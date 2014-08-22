@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services.exporters;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -284,7 +285,7 @@ public class ApplicationExportBuilder {
         String creatorIpAddress = applicationExportDTO.getCreatorIpAddress();
         applicationTp.setIpAddress(creatorIpAddress == null ? exportIpNotProvided : creatorIpAddress);
         applicationTp.setCreationDate(applicationExportBuilderHelper.buildXmlDate(application.getSubmittedTimestamp()));
-        applicationTp.setRefereeList(buildReferee(applicationExportDTO.getExportReferees()));
+        applicationTp.setRefereeList(buildReferee(applicationExportDTO.getApplicationReferees()));
 
         switch (application.getState().getStateGroup().getId()) {
         case APPLICATION_WITHDRAWN:
@@ -368,7 +369,7 @@ public class ApplicationExportBuilder {
     private QualificationDetailsTp buildQualificationDetails(Application application) {
         QualificationDetailsTp resultList = objectFactory.createQualificationDetailsTp();
 
-        List<ApplicationQualification> qualifications = application.getQualifications();
+        Set<ApplicationQualification> qualifications = application.getQualifications();
         if (!qualifications.isEmpty()) {
             for (ApplicationQualification qualification : qualifications) {
                 QualificationsTp qualificationsTp = objectFactory.createQualificationsTp();
@@ -429,7 +430,7 @@ public class ApplicationExportBuilder {
 
     private EmploymentDetailsTp buildEmployer(Application application) {
         EmploymentDetailsTp resultList = objectFactory.createEmploymentDetailsTp();
-        List<ApplicationEmploymentPosition> employmentPositions = application.getEmploymentPositions();
+        Set<ApplicationEmploymentPosition> employmentPositions = application.getEmploymentPositions();
         if (!employmentPositions.isEmpty()) {
             for (ApplicationEmploymentPosition employmentPosition : employmentPositions) {
                 AppointmentTp appointmentTp = objectFactory.createAppointmentTp();
@@ -451,7 +452,8 @@ public class ApplicationExportBuilder {
 
     private RefereeListTp buildReferee(List<ApplicationReferee> exportReferees) {
         RefereeListTp resultList = objectFactory.createRefereeListTp();
-        for (ApplicationReferee referee : exportReferees) {
+        for (int i = 0; i < 2; i++) {
+            ApplicationReferee referee = exportReferees.get(i);
             RefereeTp refereeTp = objectFactory.createRefereeTp();
             refereeTp.setPosition(referee.getJobTitle());
             NameTp nameTp = objectFactory.createNameTp();

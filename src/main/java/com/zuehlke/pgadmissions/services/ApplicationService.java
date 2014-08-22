@@ -1,9 +1,12 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -48,12 +51,15 @@ import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.ParentResource;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.ReferralSource;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.Title;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.dto.ApplicationRatingDTO;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
@@ -92,7 +98,13 @@ public class ApplicationService {
     private ApplicationCopyHelper applicationCopyHelper;
 
     @Autowired
+    private ProjectService projectService;
+    
+    @Autowired
     private ProgramService programService;
+    
+    @Autowired
+    private InstitutionService institutionService;
 
     @Autowired
     private ResourceService resourceService;
@@ -518,22 +530,49 @@ public class ApplicationService {
     }
 
     public LocalDate resolveDueDateBaseline(Application application) {
-        PrismState stateId = application.getState().getId();
         LocalDate baseline = new LocalDate();
         
-        if (stateId == PrismState.APPLICATION_REVIEW_PENDING_FEEDBACK) {
+        if (application.getState().getId() == PrismState.APPLICATION_REVIEW_PENDING_FEEDBACK) {
             LocalDate closingDate = application.getClosingDate();
             
             if (closingDate != null) {
                 if (closingDate.isAfter(baseline)) {
                     baseline = closingDate;
                 }
+                
                 application.setPreviousClosingDate(closingDate);
                 application.setClosingDate(null);
             }
             
         }
         return baseline;
+    }
+    
+    public void summariseApplication(Application application) {
+        ApplicationRatingDTO ratingSummary = applicationDAO.getApplicationRatingSummary(application);
+        application.setRatingCount(ratingSummary.getRatingCount());
+        application.setRatingAverage(ratingSummary.getRatingAverage().setScale(2, RoundingMode.HALF_UP));
+        
+        Integer[] percentiles = new Integer[]{5, 20, 35, 50, 65, 80, 95};
+        PrismScope[] parentScopes = new PrismScope[]{PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION};
+        String[] properties = new String[]{"ratingCount", "ratingAverage"};
+        
+        for (PrismScope parentScope : parentScopes) {
+            try {
+                String parentReference = parentScope.getLowerCaseName();
+                ParentResource parentResource = (ParentResource) PropertyUtils.getSimpleProperty(application, parentReference);
+                for (String property : properties) {
+                    Integer notNullValueCount = entityService.getNotNullValueCount(Application.class, property, ImmutableMap.of(parentReference, (Object) parentResource));
+                    for (Integer percentile : percentiles) {
+                        Integer actualPercentile = new BigDecimal(percentile * (notNullValueCount / 100.0)).setScale(0, RoundingMode.HALF_UP).intValue();
+                        Object actualPercentileValue = applicationDAO.getPercentileValue(parentResource, property, actualPercentile);
+                        parentResource.setPercentileValue(application.getResourceScope().getLowerCaseName(), percentile, actualPercentileValue);
+                    }
+                }
+            } catch (Exception e) {
+                throw new Error(e);
+            }
+        }
     }
     
     private void copyAddress(Institution institution, Address to, AddressDTO from) {

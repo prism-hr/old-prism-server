@@ -12,6 +12,10 @@ public abstract class Resource implements IUniqueEntity {
 
     public abstract void setId(Integer id);
     
+    public abstract User getUser();
+
+    public abstract void setUser(User user);
+    
     public abstract String getCode();
     
     public abstract void setCode(String code);
@@ -37,10 +41,6 @@ public abstract class Resource implements IUniqueEntity {
     public abstract State getState();
 
     public abstract void setState(State state);
-
-    public abstract User getUser();
-
-    public abstract void setUser(User user);
 
     public abstract State getPreviousState();
 

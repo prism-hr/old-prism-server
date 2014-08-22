@@ -50,7 +50,7 @@ import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 @Table(name = "ADVERT")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Indexed
-public abstract class Advert extends Resource {
+public abstract class Advert extends ParentResource {
 
     @Id
     @GeneratedValue

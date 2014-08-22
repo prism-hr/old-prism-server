@@ -119,4 +119,8 @@ public class EntityService {
         entityDAO.deleteAll(classReference);
     }
     
+    public <T> Integer getNotNullValueCount(Class<T> entityClass, String property, Map<String, Object> filters) {
+        return entityDAO.getNotNullValueCount(entityClass, property, filters);
+    }
+    
 }

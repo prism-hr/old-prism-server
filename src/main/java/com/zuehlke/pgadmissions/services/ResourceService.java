@@ -180,6 +180,16 @@ public class ResourceService {
         
         resource.setUpdatedTimestamp(baselineTime);
     }
+    
+    public void summariseResource(Resource resource) {
+        switch (resource.getResourceScope()) {
+        case APPLICATION:
+            applicationService.summariseApplication((Application) resource);
+            break;
+        default:
+            break;
+        }
+    }
 
     public HashMap<Resource, Action> getResourceEscalations() {
         LocalDate baseline = new LocalDate();

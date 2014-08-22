@@ -617,6 +617,15 @@ public class Comment {
         return delegateUser == null ? user : delegateUser;
     }
     
+    public boolean isContainsNewSummaryInformation() {
+        switch (getResource().getResourceScope()) {
+        case APPLICATION:
+            return rating != null;
+        default:
+            return false;
+        }
+    }
+    
     public Comment withId(Integer id) {
         this.id = id;
         return this;

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<institutions>
+  <institution>
+    <code>PL0045</code>
+    <name>Akademia Gorniczo-Hutnicza, Krakow</name>
+    <domicile>PL</domicile>
+  </institution>
+  <institution>
+    <code>PL0046</code>
+    <name>University of Rzeszów</name>
+    <domicile>PL</domicile>
+  </institution>
+  <institution>
+    <code>PL0047</code>
+    <name>University of Silesia, Katowice</name>
+    <domicile>PL</domicile>
+  </institution>
+  <institution>
+    <code>PL0048</code>
+    <name>University of Szczecin</name>
+    <domicile>PL</domicile>
+  </institution>
+  <institution>
+    <code>PL0049</code>
+    <name>University of Warsaw</name>
+    <domicile>PL</domicile>
+  </institution>
+  <institution>
+    <code>PL0050</code>
+    <name>University of Wroclaw</name>
+    <domicile>PL</domicile>
+  </institution>
+  <institution>
+    <code>PL0051</code>
+    <name>University of Zielona Gora</name>
+    <domicile>PL</domicile>
+  </institution>
+</institutions>
+

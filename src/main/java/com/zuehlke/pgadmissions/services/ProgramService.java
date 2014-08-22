@@ -187,8 +187,4 @@ public class ProgramService {
 
     }
 
-    public void buildApplicationSummary(Program program) {
-        // TODO Auto-generated method stub
-        
-    }
 }

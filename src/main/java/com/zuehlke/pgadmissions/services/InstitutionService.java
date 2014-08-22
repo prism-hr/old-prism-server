@@ -116,7 +116,6 @@ public class InstitutionService {
 
         InstitutionDTO institutionDTO = commentDTO.getInstitution();
         if (institutionDTO != null) {
-            // modify institution
             update(institutionId, institutionDTO);
         }
 

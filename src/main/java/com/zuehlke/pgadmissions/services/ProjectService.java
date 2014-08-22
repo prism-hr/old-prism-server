@@ -33,10 +33,5 @@ public class ProjectService {
         AdvertClosingDate closingDate = project.getClosingDate();
         return closingDate == null ? new LocalDate() : closingDate.getClosingDate();
     }
-
-    public void buildApplicationSummary() {
-        // TODO Auto-generated method stub
-        
-    }
     
 }

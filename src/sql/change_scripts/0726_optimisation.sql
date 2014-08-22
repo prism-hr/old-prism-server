@@ -259,3 +259,21 @@ SET INSTITUTION.application_rating_count_percentile_05 = APPLICATION_RATING_COUN
 	INSTITUTION.application_rating_count_percentile_95 = APPLICATION_RATING_COUNT.percentile_95
 ;
 
+ALTER TABLE APPLICATION
+	CHANGE COLUMN referrer_url referrer VARCHAR(255)
+;
+
+ALTER TABLE PROJECT
+	ADD COLUMN referrer VARCHAR(255) AFTER program_id,
+	ADD INDEX (referrer)
+;
+
+ALTER TABLE PROGRAM
+	ADD COLUMN referrer VARCHAR(255) AFTER institution_id,
+	ADD INDEX (referrer)
+;
+
+ALTER TABLE INSTITUTION
+	ADD COLUMN referrer VARCHAR(255) AFTER system_id,
+	ADD INDEX (referrer)
+;

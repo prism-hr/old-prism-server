@@ -4,10 +4,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +19,8 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
-import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
@@ -59,7 +55,6 @@ import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.Title;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -115,6 +110,9 @@ public class ApplicationService {
 
     @Autowired
     private ResourceService resourceService;
+    
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
     private CompleteApplicationValidator completeApplicationValidator;
@@ -188,50 +186,12 @@ public class ApplicationService {
         return applicationDAO.getPrimarySupervisor(offerRecommendationComment);
     }
 
+    public List<ApplicationQualification> getApplicationExportQualifications(Application application) {
+        return applicationDAO.getApplicationExportQualifications(application);
+    }
+    
     public List<ApplicationReferee> getApplicationExportReferees(Application application) {
         return applicationDAO.getApplicationExportReferees(application);
-    }
-
-    // FIXME: default message when referees are less than 2
-    public List<ApplicationReferee> setApplicationExportReferees(Application application) {
-        if (getApplicationExportReferees(application).size() < 2) {
-            Set<Integer> refereesToSend = Sets.newHashSet();
-
-            for (ApplicationReferee referee : application.getReferees()) {
-                if (refereesToSend.size() == 2) {
-                    break;
-                }
-
-                if (BooleanUtils.isTrue(referee.isIncludeInExport())) {
-                    refereesToSend.add(referee.getId());
-                } else if (referee.getComment() != null && !referee.getComment().isDeclinedResponse()) {
-                    referee.setIncludeInExport(true);
-                    refereesToSend.add(referee.getId());
-                }
-            }
-
-            for (ApplicationReferee referee : application.getReferees()) {
-                if (refereesToSend.size() == 2) {
-                    break;
-                }
-
-                Action provideReferenceAction = actionService.getById(PrismAction.APPLICATION_PROVIDE_REFERENCE);
-
-                if (!refereesToSend.contains(referee.getId())) {
-
-                    Comment comment = new Comment().withResource(application).withUser(referee.getUser()).withRole(PrismRole.APPLICATION_REFEREE.name())
-                            .withDelegateUser(application.getProgram().getUser()).withDelegateRole(PrismRole.PROGRAM_ADMINISTRATOR.name())
-                            .withAction(provideReferenceAction).withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
-                    referee.setIncludeInExport(true);
-                    refereesToSend.add(referee.getId());
-                }
-            }
-        }
-        return getApplicationExportReferees(application);
-    }
-
-    public List<ApplicationQualification> getApplicationExportQualifications(Application application) {
-        return applicationDAO.getApplicationExportQualification(application);
     }
 
     public List<Application> getUclApplicationsForExport() {
@@ -491,7 +451,7 @@ public class ApplicationService {
         if (refereeId != null) {
             referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
         } else {
-            referee = new ApplicationReferee().withIncludeInExport(false);
+            referee = new ApplicationReferee();
             application.getReferees().add(referee);
         }
 
@@ -560,8 +520,40 @@ public class ApplicationService {
         }
         return baseline;
     }
+    
+    public void postProcessApplication(Application application, Comment comment) {
+        switch (comment.getAction().getId()) {
+        case PROJECT_CREATE_APPLICATION:
+            prepopulateApplicationSupervisors(application);
+            break;
+        case APPLICATION_PROVIDE_REFERENCE:
+            synchroniseApplicationReferees(application, comment);
+            break;
+        default:
+            break;
+        }
+        
+        if (comment.isContainsNewSummaryInformation()) {
+            summariseApplication(application);
+        }
+        
+    }
 
-    public void summariseApplication(Application application) {
+    private void prepopulateApplicationSupervisors(Application application) {
+        Role supervisorRole = roleService.getById(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR);
+        List<User> supervisorUsers = roleService.getRoleUsers(application, supervisorRole);
+
+        for (User supervisorUser : supervisorUsers) {
+            application.getProgramDetails().getSupervisors().add(new ApplicationSupervisor().withUser(supervisorUser).withAware(true));
+        }
+    }
+    
+    private void synchroniseApplicationReferees(Application application, Comment comment) {
+        ApplicationReferee referee = applicationDAO.getRefereeByUser(application, comment.getUser());
+        referee.setComment(comment);
+    }
+
+    private void summariseApplication(Application application) {
         ApplicationRatingDTO ratingSummary = applicationDAO.getApplicationRatingSummary(application);
         application.setRatingCount(ratingSummary.getRatingCount());
         application.setRatingAverage(ratingSummary.getRatingAverage().setScale(2, RoundingMode.HALF_UP));

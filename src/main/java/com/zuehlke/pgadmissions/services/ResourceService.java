@@ -165,7 +165,7 @@ public class ResourceService {
         
     }
     
-    public void updateResource(Resource resource) {     
+    public void updateResource(Resource resource, Comment comment) {     
         DateTime baselineTime = new DateTime();
         LocalDate baselineDate = baselineTime.toLocalDate();
         
@@ -179,16 +179,7 @@ public class ResourceService {
         resource.setSequenceIdentifier(lastSequenceIdentifierParts[0] + "-" + String.format("%010d", nextSequenceIdentifierIndex));
         
         resource.setUpdatedTimestamp(baselineTime);
-    }
-    
-    public void summariseResource(Resource resource) {
-        switch (resource.getResourceScope()) {
-        case APPLICATION:
-            applicationService.summariseApplication((Application) resource);
-            break;
-        default:
-            break;
-        }
+        postProcessResource(resource, comment);
     }
 
     public HashMap<Resource, Action> getResourceEscalations() {
@@ -241,5 +232,15 @@ public class ResourceService {
     public List<StateChangeDTO> getRecentStateChanges(Scope scope, LocalDate baseline) {
         return resourceDAO.getRecentStateChanges(scope, baseline);
     }
-
+    
+    private void postProcessResource(Resource resource, Comment comment) {
+        switch (resource.getResourceScope()) {
+        case APPLICATION:
+            applicationService.postProcessApplication((Application) resource, comment);
+            break;
+        default:
+            return;
+        }
+    }
+    
 }

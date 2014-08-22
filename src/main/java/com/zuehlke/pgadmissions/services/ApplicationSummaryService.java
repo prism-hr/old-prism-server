@@ -3,8 +3,8 @@ package com.zuehlke.pgadmissions.services;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -96,7 +96,7 @@ public class ApplicationSummaryService {
     }
 
     private void addQualifications(Application application, Map<String, String> result) {
-        List<ApplicationQualification> qualifications = application.getQualifications();
+        Set<ApplicationQualification> qualifications = application.getQualifications();
         if (qualifications.isEmpty()) {
             result.put("mostRecentQualification", NONE_PROVIDED);
             return;

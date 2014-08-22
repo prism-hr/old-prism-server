@@ -77,15 +77,19 @@ public class ApplicationDAO {
     
     public List<ApplicationReferee> getApplicationExportReferees(Application application) {
         return (List<ApplicationReferee>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
+                .createAlias("application", "application", JoinType.INNER_JOIN) //
+                .createAlias("comment", "comment", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("application", application)) //
-                .add(Restrictions.eq("includeInExport", true)) //
+                .addOrder(Order.desc("comment.rating")) //
+                .addOrder(Order.asc("comment.createdTimestamp")) //
                 .list();
     }
     
-    public List<ApplicationQualification> getApplicationExportQualification(Application application) {
+    public List<ApplicationQualification> getApplicationExportQualifications(Application application) {
         return (List<ApplicationQualification>) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
                 .add(Restrictions.eq("application", application)) //
-                .add(Restrictions.eq("includeInExport", true)) //
+                .addOrder(Order.desc("awardDate")) //
+                .addOrder(Order.desc("startDate")) //
                 .list();
     }
     
@@ -119,6 +123,13 @@ public class ApplicationDAO {
                 .addOrder(Order.asc(property)) //
                 .setFirstResult(percentile) //
                 .setMaxResults(1) //
+                .uniqueResult();
+    }
+    
+    public ApplicationReferee getRefereeByUser(Application application, User user) {
+        return (ApplicationReferee) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
+                .add(Restrictions.eq("application", application)) //
+                .add(Restrictions.eq("user", user)) //
                 .uniqueResult();
     }
     

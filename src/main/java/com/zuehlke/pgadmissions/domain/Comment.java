@@ -126,9 +126,6 @@ public class Comment {
     @Column(name = "application_interview_location")
     private String interviewLocation;
 
-    @Column(name = "application_equivalent_experience")
-    private String equivalentExperience;
-
     @Column(name = "application_position_title")
     private String positionTitle;
 
@@ -417,14 +414,6 @@ public class Comment {
 
     public void setInterviewLocation(String interviewLocation) {
         this.interviewLocation = interviewLocation;
-    }
-
-    public String getEquivalentExperience() {
-        return equivalentExperience;
-    }
-
-    public void setEquivalentExperience(String equivalentExperience) {
-        this.equivalentExperience = equivalentExperience;
     }
 
     public String getPositionTitle() {

@@ -220,7 +220,6 @@ public class ApplicationResource {
     public void updateComment(@PathVariable Integer applicationId, @PathVariable Integer commentId, @Valid @RequestBody CommentDTO commentDTO) {
         Comment comment = commentService.getById(commentId);
         Preconditions.checkArgument(comment.getApplication().getId() == applicationId);
-        // TODO add permissions check for updating comment
         commentService.updateComment(commentId, commentDTO);
     }
 

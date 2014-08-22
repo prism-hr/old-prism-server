@@ -166,6 +166,11 @@ public class StateService {
         }
 
         resourceService.updateResource(resource);
+        
+        if (comment.isContainsNewSummaryInformation()) {
+            resourceService.summariseResource(resource);
+        }
+        
         return stateTransition;
     }
 

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
@@ -29,7 +30,13 @@ public class ProjectService {
     }
 
     public LocalDate resolveDueDateBaseline(Project project) {
-        return null;
+        AdvertClosingDate closingDate = project.getClosingDate();
+        return closingDate == null ? new LocalDate() : closingDate.getClosingDate();
+    }
+
+    public void buildApplicationSummary() {
+        // TODO Auto-generated method stub
+        
     }
     
 }

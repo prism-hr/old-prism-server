@@ -186,4 +186,9 @@ public class ProgramService {
         program.setImmediateStart(programDTO.getImmediateStart());
 
     }
+
+    public void buildApplicationSummary(Program program) {
+        // TODO Auto-generated method stub
+        
+    }
 }

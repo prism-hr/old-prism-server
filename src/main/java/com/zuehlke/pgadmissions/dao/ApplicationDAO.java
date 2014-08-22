@@ -7,6 +7,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -15,9 +16,11 @@ import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.ParentResource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.dto.ApplicationRatingDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -96,4 +99,27 @@ public class ApplicationDAO {
                .add(Restrictions.eq("action.actionCategory", PrismActionCategory.EXPORT_RESOURCE)) //
                .list();
     }
+    
+    public ApplicationRatingDTO getApplicationRatingSummary(Application application) {
+        return (ApplicationRatingDTO) sessionFactory.getCurrentSession().createCriteria(Comment.class, "comment") //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.count("id"), "ratingCount") //
+                        .add(Projections.avg("rating"), "ratingAverage")) //
+                .add(Restrictions.eq("application", application)) //
+                .add(Restrictions.isNotNull("rating")) //
+                .setResultTransformer(Transformers.aliasToBean(ApplicationRatingDTO.class)) //
+                .uniqueResult();
+    }
+
+    public Object getPercentileValue(ParentResource parentResource, String property, Integer percentile) {
+        return (Object) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .setProjection(Projections.property(property)) //
+                .add(Restrictions.eq(parentResource.getResourceScope().getLowerCaseName(), parentResource)) //
+                .add(Restrictions.isNotNull(property)) //
+                .addOrder(Order.asc(property)) //
+                .setFirstResult(percentile) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+    
 }

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -106,6 +107,12 @@ public class Application extends Resource {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_additional_information_id", unique = true)
     private ApplicationAdditionalInformation additionalInformation;
+    
+    @Column(name = "rating_count")
+    private Integer ratingCount;
+    
+    @Column(name = "rating_average")
+    private BigDecimal ratingAverage;
     
     @Column(name = "do_retain", nullable = false)
     private Boolean doRetain;
@@ -257,6 +264,22 @@ public class Application extends Resource {
 
     public void setAdditionalInformation(ApplicationAdditionalInformation additionalInformation) {
         this.additionalInformation = additionalInformation;
+    }
+
+    public final Integer getRatingCount() {
+        return ratingCount;
+    }
+
+    public final void setRatingCount(Integer ratingCount) {
+        this.ratingCount = ratingCount;
+    }
+
+    public final BigDecimal getRatingAverage() {
+        return ratingAverage;
+    }
+
+    public final void setRatingAverage(BigDecimal ratingAverage) {
+        this.ratingAverage = ratingAverage;
     }
 
     public final Boolean isDoRetain() {

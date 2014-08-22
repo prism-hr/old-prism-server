@@ -190,7 +190,6 @@ public class NotificationDAO {
         return (List<UserNotificationDefinition>) sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass(), scopeId.getLowerCaseName()) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
-                        .add(Projections.groupProperty("role.id"), "roleId") //
                         .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId") //
                         .add(Projections.property("userNotification.lastSentDate"), "lastSentDate")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
@@ -226,7 +225,6 @@ public class NotificationDAO {
         return (List<UserNotificationDefinition>) sessionFactory.getCurrentSession().createCriteria(Comment.class, "comment") //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
-                        .add(Projections.groupProperty("role.id"), "roleId") //
                         .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId") //
                         .add(Projections.property("userNotification.lastSentDate"), "lastSentDate")) //
                 .createAlias("comment.transitionState", "state", JoinType.INNER_JOIN) //

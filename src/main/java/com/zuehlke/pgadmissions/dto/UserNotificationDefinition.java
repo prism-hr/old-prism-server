@@ -1,15 +1,38 @@
 package com.zuehlke.pgadmissions.dto;
 
+import org.joda.time.LocalDate;
+
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 
 public class UserNotificationDefinition {
 
     private Integer resourceId;
 
-    private Integer userRoleId;
+    private Integer userId;
+
+    private PrismRole roleId;
 
     private PrismNotificationTemplate notificationTemplateId;
+    
+    private LocalDate lastSentDate;
+
+    public final Integer getUserId() {
+        return userId;
+    }
+
+    public final void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public final PrismRole getRoleId() {
+        return roleId;
+    }
+
+    public final void setRoleId(PrismRole roleId) {
+        this.roleId = roleId;
+    }
 
     public final Integer getResourceId() {
         return resourceId;
@@ -17,14 +40,6 @@ public class UserNotificationDefinition {
 
     public final void setResourceId(Integer resourceId) {
         this.resourceId = resourceId;
-    }
-
-    public Integer getUserRoleId() {
-        return userRoleId;
-    }
-
-    public void setUserRoleId(Integer userRoleId) {
-        this.userRoleId = userRoleId;
     }
 
     public PrismNotificationTemplate getNotificationTemplateId() {
@@ -35,19 +50,17 @@ public class UserNotificationDefinition {
         this.notificationTemplateId = notificationTemplateId;
     }
 
-    public UserNotificationDefinition withUserRoleId(Integer userRoleId) {
-        this.userRoleId = userRoleId;
-        return this;
+    public final LocalDate getLastSentDate() {
+        return lastSentDate;
     }
 
-    public UserNotificationDefinition withNotificationTemplateId(PrismNotificationTemplate notificationTemplateId) {
-        this.notificationTemplateId = notificationTemplateId;
-        return this;
+    public final void setLastSentDate(LocalDate lastSentDate) {
+        this.lastSentDate = lastSentDate;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(resourceId, userRoleId, notificationTemplateId);
+        return Objects.hashCode(resourceId, userId, roleId, notificationTemplateId);
     }
 
     @Override
@@ -59,7 +72,7 @@ public class UserNotificationDefinition {
             return false;
         }
         final UserNotificationDefinition other = (UserNotificationDefinition) object;
-        return Objects.equal(resourceId, other.getResourceId()) && Objects.equal(userRoleId, other)
+        return Objects.equal(resourceId, other.getResourceId()) && Objects.equal(userId, other.getUserId()) && Objects.equal(roleId, other.getRoleId())
                 && Objects.equal(notificationTemplateId, other.getNotificationTemplateId());
     }
 

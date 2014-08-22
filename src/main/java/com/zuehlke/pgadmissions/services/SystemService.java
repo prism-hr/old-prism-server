@@ -105,6 +105,9 @@ public class SystemService {
     private ActionService actionService;
 
     @Autowired
+    private ProgramService programService;
+    
+    @Autowired
     private ResourceService resourceService;
 
     @Autowired
@@ -195,6 +198,13 @@ public class SystemService {
                 entityImportService.importReferenceData();
             } catch (Exception e) {
                 logger.info("Error importing reference data", e);
+            }
+            
+            try {
+                logger.info("Updating program closing dates");
+                programService.updateProgramClosingDates();
+            } catch (Exception e) {
+                logger.info("Error updating program closing dates");
             }
 
             try {

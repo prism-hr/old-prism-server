@@ -232,15 +232,6 @@ public class Project extends Advert {
     public Application getApplication() {
         return null;
     }
-
-    @Override
-    public LocalDate getDueDateBaseline() {
-        AdvertClosingDate closingDate = getClosingDate();
-        if (closingDate != null) {
-            return closingDate.getClosingDate();
-        }
-        return new LocalDate();
-    }
     
     @Override
     public ResourceSignature getResourceSignature() {

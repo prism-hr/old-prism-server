@@ -66,6 +66,10 @@ public class Application extends Resource {
     @Column(name = "closing_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate closingDate;
+    
+    @Column(name = "previous_closing_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate previousClosingDate;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_personal_detail_id", unique = true)
@@ -217,6 +221,14 @@ public class Application extends Resource {
 
     public void setClosingDate(LocalDate closingDate) {
         this.closingDate = closingDate;
+    }
+
+    public final LocalDate getPreviousClosingDate() {
+        return previousClosingDate;
+    }
+
+    public final void setPreviousClosingDate(LocalDate previousClosingDate) {
+        this.previousClosingDate = previousClosingDate;
     }
 
     public Advert getAdvert() {
@@ -476,22 +488,15 @@ public class Application extends Resource {
         HashMap<String, Object> properties = Maps.newHashMap();
         properties.put("user", user);
         properties.put("program", program);
-        properties.put("project", project);
+        if (project != null) {
+            properties.put("project", project);
+        }
         propertiesWrapper.add(properties);
         HashMultimap<String, Object> exclusions = HashMultimap.create();
         exclusions.put("state.id", PrismState.APPLICATION_APPROVED_COMPLETED);
         exclusions.put("state.id", PrismState.APPLICATION_REJECTED_COMPLETED);
         exclusions.put("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED);
         return new ResourceSignature(propertiesWrapper, exclusions);
-    }
-
-    @Override
-    public LocalDate getDueDateBaseline() {
-        LocalDate dueDateBaseline = new LocalDate();
-        if (state.getId() == PrismState.APPLICATION_REVIEW_PENDING_FEEDBACK && closingDate != null && closingDate.isAfter(dueDateBaseline)) {
-            return closingDate;
-        }
-        return dueDateBaseline;
     }
 
 }

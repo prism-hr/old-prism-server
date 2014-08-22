@@ -49,6 +49,9 @@ public class StateService {
     private StateDAO stateDAO;
 
     @Autowired
+    private CommentService commentService;
+    
+    @Autowired
     private EntityService entityService;
 
     @Autowired
@@ -139,29 +142,30 @@ public class StateService {
         comment.setResource(resource);
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
-            resourceService.persistResource(resource, comment);
-        } else {
-            resourceService.updateResource(resource, action, comment);
+            resourceService.persistResource(resource);
         }
 
-        entityService.save(comment);
+        commentService.save(comment);
         StateTransition stateTransition = getStateTransition(resource, action, comment);
-
-        if (stateTransition != null) {
-            State transitionState = stateTransition.getTransitionState();
-            StateDuration transitionStateDuration = getStateDuration(resource, transitionState);
-
-            resourceService.transitionResource(resource, comment, transitionState, transitionStateDuration);
+        
+        State state = resource.getState();
+        State transitionState = stateTransition == null ? state : stateTransition.getTransitionState();
+        
+        if (state != transitionState) {
+            comment.setTransitionState(transitionState);
+            
+            resourceService.processResource(resource, transitionState);
             roleService.executeRoleTransitions(stateTransition, comment);
-
+            
             if (stateTransition.getPropagatedActions().size() > 0) {
                 StateTransitionPending transientTransitionPending = new StateTransitionPending().withResource(resource).withStateTransition(stateTransition);
                 entityService.getOrCreate(transientTransitionPending);
             }
 
-            notificationService.sendWorkflowNotifications(resource, action, comment.getUser());
+            notificationService.sendWorkflowNotifications(resource, comment);
         }
 
+        resourceService.updateResource(resource);
         return stateTransition;
     }
 

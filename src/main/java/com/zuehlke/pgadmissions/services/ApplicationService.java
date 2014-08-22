@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
@@ -52,6 +53,7 @@ import com.zuehlke.pgadmissions.domain.ReferralSource;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.Title;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
@@ -110,6 +112,9 @@ public class ApplicationService {
         if (previousApplication != null) {
             applicationCopyHelper.copyApplicationFormData(application, previousApplication);
         }
+        
+        AdvertClosingDate closingDate = advert.getClosingDate();
+        application.setClosingDate(closingDate == null ? null : closingDate.getClosingDate());
 
         return application;
     }
@@ -502,7 +507,35 @@ public class ApplicationService {
 
         additionalInformation.setConvictionsText(Strings.emptyToNull(additionalInformationDTO.getConvictionsText()));
     }
+    
+    public void validateApplicationCompleteness(Integer applicationId) {
+        Application application = entityService.getById(Application.class, applicationId);
+        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(application, "application");
+        ValidationUtils.invokeValidator(completeApplicationValidator, application, errors);
+        if(errors.hasErrors()){
+            throw new PrismValidationException("Application not completed", errors);
+        }
+    }
 
+    public LocalDate resolveDueDateBaseline(Application application) {
+        PrismState stateId = application.getState().getId();
+        LocalDate baseline = new LocalDate();
+        
+        if (stateId == PrismState.APPLICATION_REVIEW_PENDING_FEEDBACK) {
+            LocalDate closingDate = application.getClosingDate();
+            
+            if (closingDate != null) {
+                if (closingDate.isAfter(baseline)) {
+                    baseline = closingDate;
+                }
+                application.setPreviousClosingDate(closingDate);
+                application.setClosingDate(null);
+            }
+            
+        }
+        return baseline;
+    }
+    
     private void copyAddress(Institution institution, Address to, AddressDTO from) {
         Domicile currentAddressDomicile = importedEntityService.getById(Domicile.class, institution, from.getDomicile());
         to.setDomicile(currentAddressDomicile);
@@ -525,12 +558,4 @@ public class ApplicationService {
         return dateFrom.plusDays(8 - dateFrom.getDayOfWeek());
     }
 
-    public void validateApplicationCompleteness(Integer applicationId) {
-        Application application = entityService.getById(Application.class, applicationId);
-        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(application, "application");
-        ValidationUtils.invokeValidator(completeApplicationValidator, application, errors);
-        if(errors.hasErrors()){
-            throw new PrismValidationException("Application not completed", errors);
-        }
-    }
 }

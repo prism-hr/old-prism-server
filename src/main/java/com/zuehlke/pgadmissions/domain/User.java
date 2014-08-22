@@ -75,6 +75,9 @@ public class User implements UserDetails, IUniqueEntity {
 
     @OneToMany(mappedBy = "user")
     private Set<UserRole> userRoles = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "user")
+    private Set<UserNotification> userNotifications = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
     private Set<ProgramExport> programExports = Sets.newHashSet();
@@ -164,6 +167,14 @@ public class User implements UserDetails, IUniqueEntity {
     
     public Set<UserRole> getUserRoles() {
         return userRoles;
+    }
+
+    public final Set<UserNotification> getUserNotifications() {
+        return userNotifications;
+    }
+
+    public final void setUserNotifications(Set<UserNotification> userNotifications) {
+        this.userNotifications = userNotifications;
     }
 
     public Set<ProgramExport> getProgramExports() {

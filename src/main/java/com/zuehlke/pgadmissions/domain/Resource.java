@@ -61,11 +61,7 @@ public abstract class Resource implements IUniqueEntity {
     public abstract String getSequenceIdentifier();
     
     public abstract void setSequenceIdentifier(String sequenceIdentifier);
-
-    public LocalDate getDueDateBaseline() {
-        return new LocalDate();
-    }
-
+    
     public Resource getParentResource() {
         PrismScope resourceScope = PrismScope.getResourceScope(this.getClass());
         switch (resourceScope) {

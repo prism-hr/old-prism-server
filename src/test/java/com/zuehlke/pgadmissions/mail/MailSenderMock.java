@@ -13,6 +13,7 @@ public class MailSenderMock extends MailSender {
 
     public void sendEmail(final MailMessageDTO message) {
         sentMessages.add(message);
+        super.sendEmail(message);
     }
     
     public MailMessageDTO assertEmailSent(User recipient, PrismNotificationTemplate templateId) {

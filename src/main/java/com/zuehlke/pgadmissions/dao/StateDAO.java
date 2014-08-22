@@ -58,17 +58,13 @@ public class StateDAO {
     public StateDuration getStateDuration(Resource resource, State state) {
         return (StateDuration) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
                 .add(Restrictions.eq("state", state)) //
-                .add(Restrictions.disjunction().add(Restrictions.conjunction() //
+                .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("system", resource.getSystem())) //
-                        .add(Restrictions.isNull("institution")) //
-                        .add(Restrictions.isNull("program"))) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("institution", resource.getInstitution())) //
-                                .add(Restrictions.isNull("program"))) //
+                        .add(Restrictions.eq("institution", resource.getInstitution())) //
                         .add(Restrictions.eq("program", resource.getProgram()))) //
-                .addOrder(Order.desc("system")) //
-                .addOrder(Order.desc("institution")) //
                 .addOrder(Order.desc("program")) //
+                .addOrder(Order.desc("institution")) //
+                .addOrder(Order.desc("system")) //
                 .setMaxResults(1) //
                 .uniqueResult();
     }

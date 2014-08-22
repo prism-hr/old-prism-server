@@ -1,22 +1,29 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.collect.Maps;
+import java.util.List;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
-import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashMap;
-import java.util.List;
 
 @Service
 @Transactional
@@ -64,9 +71,10 @@ public class ProgramService {
 
     public Program create(User user, ProgramDTO programDTO) {
         Institution institution = entityService.getById(Institution.class, programDTO.getInstitutionId());
-        Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withTitle(programDTO.getTitle()).withInstitution(institution).withProgramType(programDTO.getProgramType())
-                .withRequireProjectDefinition(programDTO.getRequireProjectDefinition()).withStartDate(programDTO.getStartDate().toLocalDate())
-                .withEndDate(programDTO.getEndDate().toLocalDate()).withImmediateStart(programDTO.getImmediateStart());
+        Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withTitle(programDTO.getTitle()).withInstitution(institution)
+                .withProgramType(programDTO.getProgramType()).withRequireProjectDefinition(programDTO.getRequireProjectDefinition())
+                .withPublishDate(programDTO.getStartDate().toLocalDate()).withDueDate(programDTO.getEndDate().toLocalDate())
+                .withImmediateStart(programDTO.getImmediateStart());
         return program;
     }
 
@@ -93,14 +101,33 @@ public class ProgramService {
         if (persistentInstance.isEnabled()) {
             Program transientProgram = transientProgramInstance.getProgram();
             Program persistentProgram = (Program) getById(transientProgram.getId());
+            
             LocalDate programDueDate = persistentProgram.getDueDate();
             LocalDate instanceEndDate = persistentInstance.getApplicationDeadline();
+            
             if (programDueDate == null || programDueDate.isBefore(instanceEndDate)) {
                 persistentProgram.setDueDate(instanceEndDate);
+            }
+            
+            LocalDate programPublishDate = persistentProgram.getPublishDate();
+            LocalDate instanceStartDate = persistentInstance.getApplicationStartDate();
+            
+            if (programPublishDate == null || programPublishDate.isAfter(instanceStartDate)) {
+                persistentProgram.setPublishDate(instanceStartDate);
             }
         }
     }
 
+    public void updateProgramClosingDates() {
+        List<Program> programs = programDAO.getProgramsWithElapsedClosingDates();
+        
+        for (Program program : programs) {
+            AdvertClosingDate nextClosingDate = programDAO.getNextClosingDate(program);
+            program.setClosingDate(nextClosingDate);
+        }
+        
+    }
+    
     public List<Program> getPrograms() {
         return programDAO.getPrograms();
     }

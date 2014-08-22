@@ -35,15 +35,11 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
-import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
 public class EntityImportService {
@@ -127,7 +123,6 @@ public class EntityImportService {
                 }
 
                 Iterable<ImportedEntity> newEntities = Iterables.transform(unmarshalled, entityConverter);
-
                 thisBean.mergeImportedEntities(entityClass, importedEntityFeed.getInstitution(), newEntities);
             }
             

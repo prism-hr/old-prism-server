@@ -39,7 +39,7 @@ public class RoleDAO {
         return (UserRole) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("role", role)) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
@@ -50,7 +50,7 @@ public class RoleDAO {
         return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.in("role.id", authorities)) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
@@ -62,7 +62,7 @@ public class RoleDAO {
                 .setProjection(Projections.property("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
                 .add(Restrictions.eq("role", role)) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();

@@ -42,8 +42,8 @@ public class RoleService {
         return entityService.getByProperty(Role.class, "id", roleId);
     }
 
-    public UserRole getUserRoleById(Integer id) {
-        return entityService.getById(UserRole.class, id);
+    public UserRole getUserRole(Resource resource, User user, Role role) {
+        return roleDAO.getUserRole(resource, user, role);
     }
 
     public List<Role> getRoles() {
@@ -251,7 +251,6 @@ public class RoleService {
     private void deleteUserRoles(Resource resource, User user, PrismRole... rolesToRemove) {
         for (UserRole roleToRemove : roleDAO.getUserRoles(resource, user, rolesToRemove)) {
             validateUserRoleRemoval(resource, roleToRemove.getRole());
-            notificationService.deleteUserNotification(roleToRemove);
             entityService.delete(roleToRemove);
         }
         reassignResourceOwner(resource);

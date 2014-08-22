@@ -88,6 +88,7 @@ public class InstitutionDAO {
     public List<Institution> getInstitutionsWithoutImportedEntityFeeds() {
         return (List<Institution>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
                 .add(Restrictions.isEmpty("importedEntityFeeds")) //
+                .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED)) //
                 .list();
     }
 

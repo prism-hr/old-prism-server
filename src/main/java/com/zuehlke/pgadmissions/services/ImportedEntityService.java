@@ -8,16 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
-import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.Disability;
-import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.QualificationType;
-import com.zuehlke.pgadmissions.domain.ReferralSource;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 
 @Service

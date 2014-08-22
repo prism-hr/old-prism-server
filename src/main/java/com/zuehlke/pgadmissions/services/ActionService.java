@@ -1,10 +1,21 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
-import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.StateTransition;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
@@ -13,13 +24,6 @@ import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Set;
 
 @Service
 @Transactional
@@ -45,12 +49,12 @@ public class ActionService {
     }
 
     public void validateInvokeAction(Resource resource, Action action, Comment comment) {
-        User currentUser = userService.getCurrentUser();
-
         User owner = comment.getUser();
         User delegateOwner = comment.getDelegateUser();
 
-        authenticateAction(currentUser, owner, delegateOwner);
+        User currentUser = userService.getCurrentUser();
+        authenticateActionInvocation(currentUser, action, owner, delegateOwner);
+
         Resource operative = resourceService.getOperativeResource(resource, action);
 
         if (delegateOwner == null && checkActionAvailable(operative, action, owner)) {
@@ -65,14 +69,14 @@ public class ActionService {
     }
 
     public void validateUpdateAction(Comment comment) {
-        User currentUser = userService.getCurrentUser();
-
+        Action action = comment.getAction();
+        
         User owner = comment.getUser();
         User delegateOwner = comment.getDelegateUser();
 
-        authenticateAction(currentUser, owner, delegateOwner);
+        User currentUser = userService.getCurrentUser();
+        authenticateActionInvocation(currentUser, action, owner, delegateOwner);
 
-        Action action = comment.getAction();
         Resource resource = comment.getResource();
 
         if (owner == currentUser || checkDelegateActionAvailable(resource, action, delegateOwner)) {
@@ -107,7 +111,8 @@ public class ActionService {
             if (duplicateResource != null) {
                 if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
                     Action redirectAction = getRedirectAction(action, actionOwner, duplicateResource);
-                    return new ActionOutcome().withUser(actionOwner).withResource(duplicateResource).withTransitionResource(duplicateResource).withTransitionAction(redirectAction);
+                    return new ActionOutcome().withUser(actionOwner).withResource(duplicateResource).withTransitionResource(duplicateResource)
+                            .withTransitionAction(redirectAction);
                 } else if (!Objects.equal(resource.getId(), duplicateResource.getId())) {
                     throwWorkflowPermissionException(action, resource);
                 }
@@ -168,10 +173,9 @@ public class ActionService {
         return checkActionAvailable(resource, delegateAction, invoker);
     }
 
-    private void authenticateAction(User currentUser, User owner, User delegateOwner) throws Error {
-        if (delegateOwner == null && !owner.getId().equals(currentUser.getId())) {
-            throw new Error();
-        } else if (delegateOwner != null && (!owner.getId().equals(currentUser.getId()) && !delegateOwner.getId().equals(currentUser.getId()))) {
+    private void authenticateActionInvocation(User currentUser, Action action, User owner, User delegateOwner) {
+        if (!(currentUser == null && action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE || //
+                Objects.equal(owner.getId(), currentUser.getId()) || Objects.equal(delegateOwner.getId(), currentUser.getId()))) {
             throw new Error();
         }
     }

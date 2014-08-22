@@ -24,6 +24,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
+import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
@@ -54,9 +55,12 @@ import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.ParentResource;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.ReferralSource;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.Title;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ApplicationRatingDTO;
@@ -86,6 +90,9 @@ public class ApplicationService {
     private ApplicationDAO applicationDAO;
 
     @Autowired
+    private ActionService actionService;
+
+    @Autowired
     private EntityService entityService;
 
     @Autowired
@@ -99,10 +106,10 @@ public class ApplicationService {
 
     @Autowired
     private ProjectService projectService;
-    
+
     @Autowired
     private ProgramService programService;
-    
+
     @Autowired
     private InstitutionService institutionService;
 
@@ -124,7 +131,7 @@ public class ApplicationService {
         if (previousApplication != null) {
             applicationCopyHelper.copyApplicationFormData(application, previousApplication);
         }
-        
+
         AdvertClosingDate closingDate = advert.getClosingDate();
         application.setClosingDate(closingDate == null ? null : closingDate.getClosingDate());
 
@@ -208,7 +215,13 @@ public class ApplicationService {
                     break;
                 }
 
+                Action provideReferenceAction = actionService.getById(PrismAction.APPLICATION_PROVIDE_REFERENCE);
+
                 if (!refereesToSend.contains(referee.getId())) {
+
+                    Comment comment = new Comment().withResource(application).withUser(referee.getUser()).withRole(PrismRole.APPLICATION_REFEREE.name())
+                            .withDelegateUser(application.getProgram().getUser()).withDelegateRole(PrismRole.PROGRAM_ADMINISTRATOR.name())
+                            .withAction(provideReferenceAction).withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
                     referee.setIncludeInExport(true);
                     refereesToSend.add(referee.getId());
                 }
@@ -257,7 +270,8 @@ public class ApplicationService {
             }
         }
         for (ApplicationSupervisorDTO supervisorDTO : programDetailsDTO.getSupervisors()) {
-            User user = userService.getOrCreateUser(supervisorDTO.getUser().getFirstName(), supervisorDTO.getUser().getLastName(), supervisorDTO.getUser().getEmail());
+            User user = userService.getOrCreateUser(supervisorDTO.getUser().getFirstName(), supervisorDTO.getUser().getLastName(), supervisorDTO.getUser()
+                    .getEmail());
             ApplicationSupervisor supervisor = new ApplicationSupervisor().withAware(supervisorDTO.getAware()).withUser(user);
             programDetails.getSupervisors().add(supervisor);
         }
@@ -282,7 +296,7 @@ public class ApplicationService {
         Gender gender = importedEntityService.getById(Gender.class, institution, personalDetailsDTO.getGender());
         Country country = importedEntityService.getById(Country.class, institution, personalDetailsDTO.getCountry());
         Language firstNationality = importedEntityService.getById(Language.class, institution, personalDetailsDTO.getFirstNationality());
-        Language secondNationality = personalDetailsDTO.getSecondNationality() != null ? importedEntityService.<Language>getById(Language.class, institution,
+        Language secondNationality = personalDetailsDTO.getSecondNationality() != null ? importedEntityService.<Language> getById(Language.class, institution,
                 personalDetailsDTO.getSecondNationality()) : null;
         Domicile residenceCountry = importedEntityService.getById(Domicile.class, institution, personalDetailsDTO.getResidenceCountry());
         Ethnicity ethnicity = importedEntityService.getById(Ethnicity.class, institution, personalDetailsDTO.getEthnicity());
@@ -403,7 +417,7 @@ public class ApplicationService {
     }
 
     public ApplicationEmploymentPosition saveEmploymentPosition(Integer applicationId, Integer employmentPositionId,
-                                                                ApplicationEmploymentPositionDTO employmentPositionDTO) {
+            ApplicationEmploymentPositionDTO employmentPositionDTO) {
         Application application = entityService.getById(Application.class, applicationId);
 
         ApplicationEmploymentPosition employmentPosition;
@@ -518,52 +532,53 @@ public class ApplicationService {
 
         additionalInformation.setConvictionsText(Strings.emptyToNull(additionalInformationDTO.getConvictionsText()));
     }
-    
+
     public void validateApplicationCompleteness(Integer applicationId) {
         Application application = entityService.getById(Application.class, applicationId);
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(application, "application");
         ValidationUtils.invokeValidator(completeApplicationValidator, application, errors);
-        if(errors.hasErrors()){
+        if (errors.hasErrors()) {
             throw new PrismValidationException("Application not completed", errors);
         }
     }
 
     public LocalDate resolveDueDateBaseline(Application application) {
         LocalDate baseline = new LocalDate();
-        
+
         if (application.getState().getId() == PrismState.APPLICATION_REVIEW_PENDING_FEEDBACK) {
             LocalDate closingDate = application.getClosingDate();
-            
+
             if (closingDate != null) {
                 if (closingDate.isAfter(baseline)) {
                     baseline = closingDate;
                 }
-                
+
                 application.setPreviousClosingDate(closingDate);
                 application.setClosingDate(null);
             }
-            
+
         }
         return baseline;
     }
-    
+
     public void summariseApplication(Application application) {
         ApplicationRatingDTO ratingSummary = applicationDAO.getApplicationRatingSummary(application);
         application.setRatingCount(ratingSummary.getRatingCount());
         application.setRatingAverage(ratingSummary.getRatingAverage().setScale(2, RoundingMode.HALF_UP));
-        
-        Integer[] percentiles = new Integer[]{5, 20, 35, 50, 65, 80, 95};
-        PrismScope[] parentScopes = new PrismScope[]{PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION};
-        String[] properties = new String[]{"ratingCount", "ratingAverage"};
-        
+
+        Integer[] percentiles = new Integer[] { 5, 20, 35, 50, 65, 80, 95 };
+        PrismScope[] parentScopes = new PrismScope[] { PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION };
+        String[] properties = new String[] { "ratingCount", "ratingAverage" };
+
         for (PrismScope parentScope : parentScopes) {
             try {
                 String parentReference = parentScope.getLowerCaseName();
                 ParentResource parentResource = (ParentResource) PropertyUtils.getSimpleProperty(application, parentReference);
-                
+
                 for (String property : properties) {
-                    Integer notNullValueCount = entityService.getNotNullValueCount(Application.class, property, ImmutableMap.of(parentReference, (Object) parentResource));
-                    
+                    Integer notNullValueCount = entityService.getNotNullValueCount(Application.class, property,
+                            ImmutableMap.of(parentReference, (Object) parentResource));
+
                     for (Integer percentile : percentiles) {
                         Integer actualPercentile = new BigDecimal(percentile * (notNullValueCount / 100.0)).setScale(0, RoundingMode.HALF_UP).intValue();
                         Object actualPercentileValue = applicationDAO.getPercentileValue(parentResource, property, actualPercentile);
@@ -575,7 +590,7 @@ public class ApplicationService {
             }
         }
     }
-    
+
     private void copyAddress(Institution institution, Address to, AddressDTO from) {
         Domicile currentAddressDomicile = importedEntityService.getById(Domicile.class, institution, from.getDomicile());
         to.setDomicile(currentAddressDomicile);

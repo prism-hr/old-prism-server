@@ -88,7 +88,7 @@ public class ResourceService {
         return Lists.newArrayList();
     }
 
-    public ActionOutcome createResource(User user, Action action, Object newResourceDTO) throws WorkflowEngineException {
+    public ActionOutcome createResource(User user, Action action, Object newResourceDTO, String referer) throws WorkflowEngineException {
         Resource resource = null;
 
         switch (action.getCreationScope().getId()) {

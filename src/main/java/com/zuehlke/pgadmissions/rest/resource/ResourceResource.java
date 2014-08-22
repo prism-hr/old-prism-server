@@ -4,11 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Set;
 
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.rest.representation.*;
-import com.zuehlke.pgadmissions.rest.representation.resource.*;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
 import org.apache.commons.beanutils.MethodUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +23,28 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.ActionDTO;
+import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionExtendedRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ProgramExtendedRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ProjectExtendedRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -46,7 +54,7 @@ import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
-@RequestMapping(value = {"api/{resourceScope}"})
+@RequestMapping(value = { "api/{resourceScope}" })
 public class ResourceResource {
 
     @Autowired
@@ -88,7 +96,7 @@ public class ResourceResource {
 
         // set visible comments
         List<Comment> comments = commentService.getVisibleComments(resource, currentUser);
-        representation.setComments(Lists.<CommentRepresentation>newArrayListWithExpectedSize(comments.size()));
+        representation.setComments(Lists.<CommentRepresentation> newArrayListWithExpectedSize(comments.size()));
         for (Comment comment : comments) {
             representation.getComments().add(dozerBeanMapper.map(comment, CommentRepresentation.class));
         }
@@ -101,8 +109,10 @@ public class ResourceResource {
         }
         representation.setActions(permittedActions);
 
-        Optional<PrismAction> completeAction = Iterables.tryFind(permittedActions,
-                Predicates.compose(Predicates.containsPattern("^(APPLICATION|INSTITUTION)_COMPLETE_|APPLICATION_MOVE_TO_DIFFERENT_STAGE"), Functions.toStringFunction()));
+        Optional<PrismAction> completeAction = Iterables.tryFind(
+                permittedActions,
+                Predicates.compose(Predicates.containsPattern("^(APPLICATION|INSTITUTION)_COMPLETE_|APPLICATION_MOVE_TO_DIFFERENT_STAGE"),
+                        Functions.toStringFunction()));
         if (completeAction.isPresent()) {
             representation.setNextStates(stateService.getAvailableNextStates(resource, completeAction.get()));
         }
@@ -127,12 +137,13 @@ public class ResourceResource {
             userRolesRepresentations.add(userRolesRepresentation);
         }
         representation.setUsers(userRolesRepresentations);
-        MethodUtils.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", new Object[]{resource, representation});
+        MethodUtils.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", new Object[] { resource, representation });
         return representation;
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam(value = "page") Integer loadIndex) {
+    public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
+            @RequestParam(value = "page") Integer loadIndex) {
         List<ResourceConsoleListRowDTO> consoleListBlock = resourceService.getConsoleListBlock(resourceDescriptor.getType(), loadIndex);
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
         for (ResourceConsoleListRowDTO appDTO : consoleListBlock) {
@@ -143,22 +154,9 @@ public class ResourceResource {
         return representations;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ActionOutcomeRepresentation createResource(@ModelAttribute ResourceDescriptor resourceDescriptor, @RequestBody ActionDTO actionDTO) throws WorkflowEngineException {
-        if (actionDTO.getActionId().getActionCategory() != PrismActionCategory.CREATE_RESOURCE) {
-            throw new Error(actionDTO.getActionId().name() + " is not a creation action.");
-        }
-        User user = userService.getCurrentUser();
-        Object newResourceDTO = actionDTO.getOperativeResourceDTO();
-        Action action = actionService.getById(actionDTO.getActionId());
-        ActionOutcome actionOutcome = resourceService.createResource(user, action, newResourceDTO);
-
-        return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
-    }
-
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.PUT)
     public void changeRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                           @RequestBody List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
+            @RequestBody List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
 
@@ -168,7 +166,7 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     public void addUserToResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                                  @RequestBody AbstractResourceRepresentation.UserRolesRepresentation userRolesRepresentation) throws WorkflowEngineException {
+            @RequestBody AbstractResourceRepresentation.UserRolesRepresentation userRolesRepresentation) throws WorkflowEngineException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
 
         userService.getOrCreateUserWithRoles(userRolesRepresentation.getFirstName(), userRolesRepresentation.getLastName(), userRolesRepresentation.getEmail(),
@@ -211,11 +209,11 @@ public class ResourceResource {
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
         if ("applications".equals(resourceScope)) {
             return new ResourceDescriptor(Application.class, ApplicationExtendedRepresentation.class, "APPLICATION");
-        } else if("projects".equals(resourceScope))  {
+        } else if ("projects".equals(resourceScope)) {
             return new ResourceDescriptor(Project.class, ProjectExtendedRepresentation.class, "PROJECT");
         } else if ("programs".equals(resourceScope)) {
             return new ResourceDescriptor(Program.class, ProgramExtendedRepresentation.class, "PROGRAM");
-        }else if ("institutions".equals(resourceScope)) {
+        } else if ("institutions".equals(resourceScope)) {
             return new ResourceDescriptor(Institution.class, InstitutionExtendedRepresentation.class, "INSTITUTION");
         }
         throw new ResourceNotFoundException("Unknown resource type '" + resourceScope + "'.");

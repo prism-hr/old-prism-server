@@ -143,11 +143,11 @@ public class ActionService {
         return actionDAO.getEscalationActions();
     }
 
-    public ActionOutcome getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO) throws WorkflowEngineException {
+    public ActionOutcome getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO, String referrer) throws WorkflowEngineException {
         Action action = getById(registrationDTO.getAction().getActionId());
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             Object operativeResourceDTO = registrationDTO.getAction().getOperativeResourceDTO();
-            return resourceService.createResource(user, action, operativeResourceDTO);
+            return resourceService.createResource(user, action, operativeResourceDTO, referrer);
         } else {
             Resource resource = entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId());
             return new ActionOutcome().withUser(user).withResource(resource).withTransitionResource(resource).withTransitionAction(action);

@@ -150,7 +150,7 @@ public class ApplicationResource {
         Application application = entityService.getById(Application.class, applicationId);
         PrismAction actionId = commentDTO.getAction();
 
-        if(actionId == PrismAction.APPLICATION_COMPLETE) {
+        if (actionId == PrismAction.APPLICATION_COMPLETE) {
             applicationService.validateApplicationCompleteness(applicationId);
         }
 

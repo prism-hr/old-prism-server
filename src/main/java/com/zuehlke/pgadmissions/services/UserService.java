@@ -104,7 +104,7 @@ public class UserService {
         return user;
     }
 
-    public User registerUser(UserRegistrationDTO registrationDTO) throws WorkflowEngineException {
+    public User registerUser(UserRegistrationDTO registrationDTO, String referrer) throws WorkflowEngineException {
         User user = getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail());
         if ((registrationDTO.getActivationCode() != null && !user.getActivationCode().equals(registrationDTO.getActivationCode()))
                 || user.getUserAccount() != null) {
@@ -113,7 +113,7 @@ public class UserService {
 
         user.setUserAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(registrationDTO.getPassword())).withEnabled(false));
 
-        ActionOutcome outcome = actionService.getRegistrationOutcome(user, registrationDTO);
+        ActionOutcome outcome = actionService.getRegistrationOutcome(user, registrationDTO, referrer);
         notificationService.sendNotification(user, outcome.getTransitionResource(), PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST,
                 ImmutableMap.<String, String>of("action", outcome.getTransitionAction().getId().name()));
         return user;

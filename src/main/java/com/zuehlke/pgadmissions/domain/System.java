@@ -16,7 +16,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.Indexed;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -177,6 +176,16 @@ public class System extends Resource {
         return null;
     }
 
+    @Override
+    public String getReferrer() {
+        return null;
+    }
+    
+    @Override
+    public void setReferrer (String referrer) {
+    }
+
+    
     @Override
     public User getUser() {
         return user;

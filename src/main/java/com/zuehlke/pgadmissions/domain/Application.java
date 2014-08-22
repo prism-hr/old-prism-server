@@ -63,6 +63,9 @@ public class Application extends Resource {
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
+    
+    @Column(name = "referrer")
+    private String referrer;
 
     @Column(name = "closing_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -451,6 +454,21 @@ public class Application extends Resource {
     }
 
     @Override
+    public Application getApplication() {
+        return this;
+    }
+    
+    @Override
+    public String getReferrer() {
+        return referrer;
+    }
+    
+    @Override
+    public void setReferrer (String referrer) {
+        this.referrer = referrer;
+    }
+    
+    @Override
     public State getState() {
         return state;
     }
@@ -478,11 +496,6 @@ public class Application extends Resource {
     @Override
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
-    }
-
-    @Override
-    public Application getApplication() {
-        return this;
     }
 
     @Override

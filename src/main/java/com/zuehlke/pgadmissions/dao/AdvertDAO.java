@@ -49,6 +49,7 @@ public class AdvertDAO {
                 .createAlias("recommendedAdvert.project", "project", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.ne("application.user", user)) //
+                .add(Restrictions.isNotNull("application.submittedTimestamp")) //
                 .add(Restrictions.neProperty("advert", "application.advert")) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.disjunction() //
@@ -58,6 +59,7 @@ public class AdvertDAO {
                                 .add(Restrictions.isNull("recommendedAdvert.project"))
                                 .add(Restrictions.in("project.state", activeProjectStates)))
                 .add(Restrictions.ge("recommendedAdvert.publishDate", new LocalDate()))) //
+                .addOrder(Order.desc("application.submittedTimestamp")) //
                 .addOrder(Order.desc("recommendedAdvert.sequenceIdentifier")) //
                 .setMaxResults(25) //
                 .list();

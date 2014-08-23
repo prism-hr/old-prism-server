@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
@@ -113,7 +113,7 @@ public class UserService {
 
         user.setUserAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(registrationDTO.getPassword())).withEnabled(false));
 
-        ActionOutcome outcome = actionService.getRegistrationOutcome(user, registrationDTO, referrer);
+        ActionOutcomeDTO outcome = actionService.getRegistrationOutcome(user, registrationDTO, referrer);
         notificationService.sendNotification(user, outcome.getTransitionResource(), PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST,
                 ImmutableMap.<String, String>of("action", outcome.getTransitionAction().getId().name()));
         return user;

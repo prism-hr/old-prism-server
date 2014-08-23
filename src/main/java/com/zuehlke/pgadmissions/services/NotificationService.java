@@ -36,7 +36,7 @@ import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationPurpose;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.dto.UserNotificationDefinition;
+import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
 import com.zuehlke.pgadmissions.mail.MailMessageDTO;
 import com.zuehlke.pgadmissions.mail.MailSender;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
@@ -129,13 +129,13 @@ public class NotificationService {
         User invoker = comment.getAuthor();
         LocalDate baseline = new LocalDate();
 
-        List<UserNotificationDefinition> definitions = Lists.newLinkedList();
+        List<UserNotificationDefinitionDTO> definitions = Lists.newLinkedList();
         definitions.addAll(notificationDAO.getRequestNotifications(resource, invoker));
         definitions.addAll(notificationDAO.getUpdateNotifications(resource, comment.getAction(), invoker));
 
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
-        for (UserNotificationDefinition definition : definitions) {
+        for (UserNotificationDefinitionDTO definition : definitions) {
             User user = userService.getById(definition.getUserId());
 
             NotificationTemplate notificationTemplate = getById(definition.getNotificationTemplateId());
@@ -181,29 +181,29 @@ public class NotificationService {
     }
 
     private void sendRequestReminders(Scope scope, User invoker, LocalDate baseline) {
-        List<UserNotificationDefinition> definitions = notificationDAO.getRequestReminders(scope, baseline);
+        List<UserNotificationDefinitionDTO> definitions = notificationDAO.getRequestReminders(scope, baseline);
         HashMultimap<String, User> sent = HashMultimap.create();
 
-        for (UserNotificationDefinition definition : definitions) {
+        for (UserNotificationDefinitionDTO definition : definitions) {
             sendRequestReminder(definition, invoker, baseline, sent);
         }
     }
 
     private void sendSyndicatedWorkflowNotifications(Scope scope, User invoker, LocalDate baseline) {
-        List<UserNotificationDefinition> definitions = Lists.newLinkedList();
+        List<UserNotificationDefinitionDTO> definitions = Lists.newLinkedList();
         definitions.addAll(notificationDAO.getSyndicatedRequestNotifications(scope, baseline));
         definitions.addAll(notificationDAO.getSyndicatedUpdateNotifications(scope, baseline));
 
         Set<User> sent = Sets.newHashSet();
 
-        for (UserNotificationDefinition definition : definitions) {
+        for (UserNotificationDefinitionDTO definition : definitions) {
             sendSyndicatedWorkflowNotification(definition, invoker, baseline, sent);
         }
 
     }
 
     @Transactional
-    private void sendRequestReminder(UserNotificationDefinition definition, User invoker, LocalDate baseline, HashMultimap<String, User> sent) {
+    private void sendRequestReminder(UserNotificationDefinitionDTO definition, User invoker, LocalDate baseline, HashMultimap<String, User> sent) {
         User user = userService.getById(definition.getUserId());
 
         PrismNotificationTemplate notificationTemplateId = definition.getNotificationTemplateId();
@@ -224,7 +224,7 @@ public class NotificationService {
     }
 
     @Transactional
-    private void sendSyndicatedWorkflowNotification(UserNotificationDefinition definition, User invoker, LocalDate baseline, Set<User> sent) {
+    private void sendSyndicatedWorkflowNotification(UserNotificationDefinitionDTO definition, User invoker, LocalDate baseline, Set<User> sent) {
         User user = userService.getById(definition.getUserId());
 
         NotificationTemplate notificationTemplate = getById(definition.getNotificationTemplateId());

@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
@@ -104,7 +104,7 @@ public class InstitutionService {
         }
     }
 
-    public ActionOutcome performAction(Integer institutionId, CommentDTO commentDTO) {
+    public ActionOutcomeDTO performAction(Integer institutionId, CommentDTO commentDTO) {
         Institution institution = entityService.getById(Institution.class, institutionId);
         PrismAction actionId = commentDTO.getAction();
 

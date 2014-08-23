@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
@@ -97,12 +97,12 @@ public class ActionService {
         return Lists.newArrayList(enhancements);
     }
 
-    public ActionOutcome executeUserAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
+    public ActionOutcomeDTO executeUserAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
         validateInvokeAction(resource, action, comment);
         return executeSystemAction(resource, action, comment);
     }
 
-    public ActionOutcome executeSystemAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
+    public ActionOutcomeDTO executeSystemAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
         User actionOwner = comment.getUser();
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE || action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE) {
@@ -111,7 +111,7 @@ public class ActionService {
             if (duplicateResource != null) {
                 if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
                     Action redirectAction = getRedirectAction(action, actionOwner, duplicateResource);
-                    return new ActionOutcome().withUser(actionOwner).withResource(duplicateResource).withTransitionResource(duplicateResource)
+                    return new ActionOutcomeDTO().withUser(actionOwner).withResource(duplicateResource).withTransitionResource(duplicateResource)
                             .withTransitionAction(redirectAction);
                 } else if (!Objects.equal(resource.getId(), duplicateResource.getId())) {
                     throwWorkflowPermissionException(action, resource);
@@ -123,7 +123,7 @@ public class ActionService {
         Action transitionAction = stateTransition == null ? action : stateTransition.getTransitionAction();
         Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
-        return new ActionOutcome().withUser(actionOwner).withResource(resource).withTransitionResource(transitionResource)
+        return new ActionOutcomeDTO().withUser(actionOwner).withResource(resource).withTransitionResource(transitionResource)
                 .withTransitionAction(transitionAction);
     }
 
@@ -143,14 +143,14 @@ public class ActionService {
         return actionDAO.getEscalationActions();
     }
 
-    public ActionOutcome getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO, String referrer) throws WorkflowEngineException {
+    public ActionOutcomeDTO getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO, String referrer) throws WorkflowEngineException {
         Action action = getById(registrationDTO.getAction().getActionId());
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             Object operativeResourceDTO = registrationDTO.getAction().getOperativeResourceDTO();
             return resourceService.createResource(user, action, operativeResourceDTO, referrer);
         } else {
             Resource resource = entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId());
-            return new ActionOutcome().withUser(user).withResource(resource).withTransitionResource(resource).withTransitionAction(action);
+            return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(resource).withTransitionAction(action);
         }
     }
 

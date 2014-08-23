@@ -56,7 +56,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNoti
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationExportService;
@@ -469,7 +469,7 @@ public class SystemService {
             Action action = actionService.getById(PrismAction.SYSTEM_STARTUP);
             Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                     .withAssignedUser(user, roleService.getCreatorRole(system));
-            ActionOutcome outcome = actionService.executeSystemAction(system, action, comment);
+            ActionOutcomeDTO outcome = actionService.executeSystemAction(system, action, comment);
             notificationService.sendNotification(user, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST, ImmutableMap.of("action", outcome.getTransitionAction().getId().name()));
         }
     }

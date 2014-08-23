@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceActionDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
@@ -88,7 +88,7 @@ public class ResourceService {
         return Lists.newArrayList();
     }
 
-    public ActionOutcome createResource(User user, Action action, Object newResourceDTO, String referer) throws WorkflowEngineException {
+    public ActionOutcomeDTO createResource(User user, Action action, Object newResourceDTO, String referer) throws WorkflowEngineException {
         Resource resource = null;
 
         switch (action.getCreationScope().getId()) {

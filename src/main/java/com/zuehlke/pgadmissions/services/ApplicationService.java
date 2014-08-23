@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.joda.time.DateTime;
@@ -19,6 +20,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.domain.Address;
@@ -58,6 +60,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.dto.ApplicationRatingDTO;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
@@ -110,7 +113,7 @@ public class ApplicationService {
 
     @Autowired
     private ResourceService resourceService;
-    
+
     @Autowired
     private RoleService roleService;
 
@@ -189,7 +192,7 @@ public class ApplicationService {
     public List<ApplicationQualification> getApplicationExportQualifications(Application application) {
         return applicationDAO.getApplicationExportQualifications(application);
     }
-    
+
     public List<ApplicationReferee> getApplicationExportReferees(Application application) {
         return applicationDAO.getApplicationExportReferees(application);
     }
@@ -520,7 +523,7 @@ public class ApplicationService {
         }
         return baseline;
     }
-    
+
     public void postProcessApplication(Application application, Comment comment) {
         switch (comment.getAction().getId()) {
         case PROJECT_CREATE_APPLICATION:
@@ -532,11 +535,15 @@ public class ApplicationService {
         default:
             break;
         }
-        
+
         if (comment.isContainsNewSummaryInformation()) {
             summariseApplication(application);
         }
-        
+
+        if (comment.isStateGroupTransition()) {
+            summariseApplicationProcessing(application);
+        }
+
     }
 
     private void prepopulateApplicationSupervisors(Application application) {
@@ -547,7 +554,7 @@ public class ApplicationService {
             application.getProgramDetails().getSupervisors().add(new ApplicationSupervisor().withUser(supervisorUser).withAware(true));
         }
     }
-    
+
     private void synchroniseApplicationReferees(Application application, Comment comment) {
         ApplicationReferee referee = applicationDAO.getRefereeByUser(application, comment.getUser());
         referee.setComment(comment);
@@ -581,6 +588,23 @@ public class ApplicationService {
                 throw new Error(e);
             }
         }
+    }
+
+    private void summariseApplicationProcessing(Application application) {
+        PrismStateGroup stateGroupId = application.getState().getStateGroup().getId();
+        PrismStateGroup previousStateGroupId = application.getPreviousState().getStateGroup().getId();
+        
+        Set<PrismStateGroup> assessments = Sets.newHashSet(PrismStateGroup.APPLICATION_VALIDATION, PrismStateGroup.APPLICATION_REVIEW,
+                PrismStateGroup.APPLICATION_INTERVIEW, PrismStateGroup.APPLICATION_APPROVAL);
+        
+        if (assessments.contains(stateGroupId)) {
+            
+        }
+        
+        if (assessments.contains(previousStateGroupId)) {
+            
+        }
+
     }
 
     private void copyAddress(Institution institution, Address to, AddressDTO from) {

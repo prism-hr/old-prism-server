@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
@@ -27,10 +26,8 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.ResourceActionDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
-import com.zuehlke.pgadmissions.dto.StateChangeDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
@@ -224,24 +221,16 @@ public class ResourceService {
     public Resource getOperativeResource(Resource resource, Action action) {
         return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
     }
-
-    public List<ResourceActionDTO> getResoucesFlaggedAsUrgent(Scope scope) {
-        return resourceDAO.getResourcesFlaggedAsUrgent(scope);
-    }
-
-    public List<StateChangeDTO> getRecentStateChanges(Scope scope, LocalDate baseline) {
-        return resourceDAO.getRecentStateChanges(scope, baseline);
-    }
     
     private void postProcessResource(Resource resource, Comment comment) {
         switch (resource.getResourceScope()) {
-        case APPLICATION:
-            applicationService.postProcessApplication((Application) resource, comment);
+        case PROGRAM:
+            programService.postProcessProgram((Program) resource, comment);
         case PROJECT:
             projectService.postProcessProject((Project) resource, comment);
             break;
-        case PROGRAM:
-            programService.postProcessProgram((Program) resource, comment);
+        case APPLICATION:
+            applicationService.postProcessApplication((Application) resource, comment);
             break;
         default:
             return;

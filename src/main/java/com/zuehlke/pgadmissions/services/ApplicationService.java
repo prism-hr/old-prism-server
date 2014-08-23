@@ -86,9 +86,9 @@ import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationVal
 @Service
 @Transactional
 public class ApplicationService {
-    
+
     private final Integer[] summaryPercentiles = new Integer[] { 5, 20, 35, 50, 65, 80, 95 };
-    
+
     private final PrismScope[] summaryScopes = new PrismScope[] { PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION };
 
     @Autowired
@@ -136,8 +136,8 @@ public class ApplicationService {
 
     public Application create(User user, ApplicationDTO applicationDTO) {
         Advert advert = advertService.getById(applicationDTO.getAdvertId());
-        Application application = new Application().withUser(user).withParentResource(advert.getParentResource()).withDoRetain(false)
-                .withCreatedTimestamp(new DateTime());
+        Application application = new Application().withUser(user).withParentResource(advert.getParentResource()).withDoRetain(applicationDTO.getDoRetain())
+                .withAdvert(advert).withCreatedTimestamp(new DateTime());
 
         Application previousApplication = getPreviousApplication(application);
         if (previousApplication != null) {
@@ -618,8 +618,8 @@ public class ApplicationService {
     }
 
     private void createOrUpdateApplicationProcessing(Application application, StateGroup stateGroup, LocalDate baseline) {
-        ApplicationProcessing transientProcessing = new ApplicationProcessing().withApplication(application).withStateGroup(stateGroup)
-                .withInstanceCount(1).withDayDurationSum(0).withLastUpdateDate(baseline);
+        ApplicationProcessing transientProcessing = new ApplicationProcessing().withApplication(application).withStateGroup(stateGroup).withInstanceCount(1)
+                .withDayDurationSum(0).withLastUpdateDate(baseline);
 
         ApplicationProcessing persistentProcessing = entityService.getDuplicateEntity(transientProcessing);
         if (persistentProcessing == null) {

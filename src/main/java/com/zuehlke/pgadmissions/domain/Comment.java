@@ -18,7 +18,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -602,19 +601,6 @@ public class Comment {
         }
     }
 
-    public User getAuthor() {
-        return delegateUser == null ? user : delegateUser;
-    }
-    
-    public boolean isContainsNewSummaryInformation() {
-        switch (getResource().getResourceScope()) {
-        case APPLICATION:
-            return rating != null;
-        default:
-            return false;
-        }
-    }
-    
     public Comment withId(Integer id) {
         this.id = id;
         return this;
@@ -816,9 +802,43 @@ public class Comment {
     public boolean isApplicationCreatorEligibilityUncertain() {
         return getQualified() == YesNoUnsureResponse.UNSURE || getCompetentInWorkLanguage() == YesNoUnsureResponse.UNSURE;
     }
-
-    public String getTooltipMessage(final String role) {
-        return String.format("%s %s (%s) as: %s", user.getFirstName(), user.getLastName(), user.getEmail(), StringUtils.capitalize(role));
+    
+    public User getAuthor() {
+        return delegateUser == null ? user : delegateUser;
+    }
+    
+    public State getCurrentResourceState() {
+        return getResource().getState();
+    }
+    
+    public State getPreviousResourceState() {
+        return getResource().getPreviousState();
+    }
+    
+    public boolean isContainsNewSummaryInformation() {
+        switch (getResource().getResourceScope()) {
+        case APPLICATION:
+            return rating != null;
+        default:
+            return false;
+        }
+    }
+    
+    public boolean isStateGroupTransition() {
+        State state = getCurrentResourceState();
+        State previousState = getPreviousResourceState();
+        
+        StateGroup stateGroup = state.getStateGroup();
+        
+        if (stateGroup != previousState.getStateGroup()) {
+            return true;
+        } else if (state != previousState && stateGroup.getId().name() == state.getId().name()) {
+            return true;
+        } else if (getResource().getResourceScope() != action.getScope().getId()) {
+            return true;
+        }
+        
+        return false;
     }
 
 }

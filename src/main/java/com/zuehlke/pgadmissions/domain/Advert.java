@@ -105,6 +105,9 @@ public class Advert {
     @OneToOne(mappedBy = "advert")
     private Project project;
     
+    @OneToMany(mappedBy = "advert")
+    private Set<Application> applications = Sets.newHashSet();
+
     public final Integer getId() {
         return id;
     }
@@ -254,6 +257,10 @@ public class Advert {
 
     public final Project getProject() {
         return project;
+    }
+    
+    public final Set<Application> getApplications() {
+        return applications;
     }
 
     public Set<AdvertClosingDate> getClosingDates() {

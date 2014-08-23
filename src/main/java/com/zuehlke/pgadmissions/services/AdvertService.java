@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.User;
 
 @Service
 @Transactional
@@ -32,6 +33,12 @@ public class AdvertService {
         List<State> activeProgramStates = stateService.getActiveProgramStates();
         List<State> activeProjectStates = stateService.getActiveProjectStates();
         return advertDAO.getActiveAdverts(activeProgramStates, activeProjectStates);
+    }
+    
+    public List<Advert> getRecommendedAdverts(User user) {
+        List<State> activeProgramStates = stateService.getActiveProgramStates();
+        List<State> activeProjectStates = stateService.getActiveProjectStates();
+        return advertDAO.getRecommendedAdverts(user, activeProgramStates, activeProjectStates);
     }
     
 }

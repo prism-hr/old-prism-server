@@ -8,7 +8,7 @@ import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 
-public class ActionOutcome {
+public class ActionOutcomeDTO {
 
     private User user;
 
@@ -34,22 +34,22 @@ public class ActionOutcome {
         return transitionAction;
     }
     
-    public ActionOutcome withUser(User user) {
+    public ActionOutcomeDTO withUser(User user) {
         this.user = user;
         return this;
     }
     
-    public ActionOutcome withResource(Resource resource) {
+    public ActionOutcomeDTO withResource(Resource resource) {
         this.resource = resource;
         return this;
     }
     
-    public ActionOutcome withTransitionResource(Resource transitionResource) {
+    public ActionOutcomeDTO withTransitionResource(Resource transitionResource) {
         this.transitionResource = transitionResource;
         return this;
     }
     
-    public ActionOutcome withTransitionAction(Action transitionAction) {
+    public ActionOutcomeDTO withTransitionAction(Action transitionAction) {
         this.transitionAction = transitionAction;
         return this;
     }

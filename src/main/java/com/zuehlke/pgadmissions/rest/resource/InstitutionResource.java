@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.CommentDTOValidator;
@@ -33,7 +33,7 @@ public class InstitutionResource {
 
     @RequestMapping(value = "/{institutionId}/comments", method = RequestMethod.POST)
     public ActionOutcomeRepresentation performAction(@PathVariable Integer institutionId, @Valid @RequestBody CommentDTO commentDTO) {
-        ActionOutcome actionOutcome = institutionService.performAction(institutionId, commentDTO);
+        ActionOutcomeDTO actionOutcome = institutionService.performAction(institutionId, commentDTO);
         return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
     }
 

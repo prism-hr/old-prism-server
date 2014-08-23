@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.dto.UserNotificationDefinition;
+import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -78,10 +78,10 @@ public class NotificationDAO {
                 .uniqueResult();
     }
 
-    public List<UserNotificationDefinition> getRequestNotifications(Resource resource, User invoker) {
+    public List<UserNotificationDefinitionDTO> getRequestNotifications(Resource resource, User invoker) {
         String resourceReference = resource.getResourceScope().getLowerCaseName();
 
-        return (List<UserNotificationDefinition>) sessionFactory.getCurrentSession().createCriteria(resource.getClass(), resourceReference) //
+        return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(resource.getClass(), resourceReference) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty(resourceReference + ".id"), "resourceId") //
                         .add(Projections.groupProperty("user.id"), "userId") //
@@ -108,14 +108,14 @@ public class NotificationDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("user.userAccount")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
-                .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinition.class)) //
+                .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
     
-    public List<UserNotificationDefinition> getUpdateNotifications(Resource resource, Action action, User invoker) {
+    public List<UserNotificationDefinitionDTO> getUpdateNotifications(Resource resource, Action action, User invoker) {
         String resourceReference = resource.getResourceScope().getLowerCaseName();
 
-        return (List<UserNotificationDefinition>) sessionFactory.getCurrentSession().createCriteria(resource.getClass(), resourceReference) //
+        return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(resource.getClass(), resourceReference) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty(resourceReference + ".id"), "resourceId") //
                         .add(Projections.groupProperty("user.id"), "userId") //
@@ -145,16 +145,16 @@ public class NotificationDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("user.userAccount")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
-                .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinition.class)) //
+                .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
     
-    public List<UserNotificationDefinition> getRequestReminders(Scope scope, LocalDate baseline) {
+    public List<UserNotificationDefinitionDTO> getRequestReminders(Scope scope, LocalDate baseline) {
         PrismScope scopeId = scope.getId();
         Class<? extends Resource> resourceClass = scopeId.getResourceClass();
         String resourceReference = scope.getId().getLowerCaseName();
 
-        return (List<UserNotificationDefinition>) sessionFactory.getCurrentSession().createCriteria(resourceClass, resourceReference) //
+        return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(resourceClass, resourceReference) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty(scope.getId().getLowerCaseName() + ".id"), "resourceId") //
                         .add(Projections.groupProperty("user.id"), "userId") //
@@ -181,13 +181,13 @@ public class NotificationDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("user.userAccount")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
-                .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinition.class)) //
+                .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
     
-    public List<UserNotificationDefinition> getSyndicatedRequestNotifications(Scope scope, LocalDate baseline) {
+    public List<UserNotificationDefinitionDTO> getSyndicatedRequestNotifications(Scope scope, LocalDate baseline) {
         PrismScope scopeId = scope.getId();
-        return (List<UserNotificationDefinition>) sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass(), scopeId.getLowerCaseName()) //
+        return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass(), scopeId.getLowerCaseName()) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
                         .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId") //
@@ -214,15 +214,15 @@ public class NotificationDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("user.userAccount")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
-                .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinition.class)) //
+                .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
 
-    public List<UserNotificationDefinition> getSyndicatedUpdateNotifications(Scope scope, LocalDate baseline) {
+    public List<UserNotificationDefinitionDTO> getSyndicatedUpdateNotifications(Scope scope, LocalDate baseline) {
         DateTime updateRangeStart = baseline.minusDays(1).toDateTimeAtStartOfDay();
         DateTime updateRangeClose = updateRangeStart.plusDays(1).minusSeconds(1);
         
-        return (List<UserNotificationDefinition>) sessionFactory.getCurrentSession().createCriteria(Comment.class, "comment") //
+        return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class, "comment") //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
                         .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId") //

@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -103,6 +104,15 @@ public class ProgramDAO {
         return (List<Program>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
                 .createAlias("closingDate", "closingDate", JoinType.INNER_JOIN) //
                 .add(Restrictions.lt("closingDate.closingDate", new LocalDate())) //
+                .list();
+    }
+
+    public List<Integer> getActiveProgramIds() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("stateAction.action.id", PrismAction.PROGRAM_CREATE_APPLICATION)) //
                 .list();
     }
 

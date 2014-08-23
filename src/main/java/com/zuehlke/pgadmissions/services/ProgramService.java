@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
@@ -154,7 +154,7 @@ public class ProgramService {
         return programDAO.getLatestProgramInstance(program);
     }
 
-    public ActionOutcome performAction(Integer programId, CommentDTO commentDTO) {
+    public ActionOutcomeDTO performAction(Integer programId, CommentDTO commentDTO) {
         Program program = entityService.getById(Program.class, programId);
         PrismAction actionId = commentDTO.getAction();
 
@@ -185,6 +185,10 @@ public class ProgramService {
         program.setRequireProjectDefinition(programDTO.getRequireProjectDefinition());
         program.setImmediateStart(programDTO.getImmediateStart());
 
+    }
+
+    public List<Integer> getActiveProgramIds() {
+        return programDAO.getActiveProgramIds();
     }
 
 }

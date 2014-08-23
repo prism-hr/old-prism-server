@@ -6,7 +6,7 @@ import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 
-public class UserNotificationDefinition {
+public class UserNotificationDefinitionDTO {
 
     private Integer resourceId;
 
@@ -71,7 +71,7 @@ public class UserNotificationDefinition {
         if (getClass() != object.getClass()) {
             return false;
         }
-        final UserNotificationDefinition other = (UserNotificationDefinition) object;
+        final UserNotificationDefinitionDTO other = (UserNotificationDefinitionDTO) object;
         return Objects.equal(resourceId, other.getResourceId()) && Objects.equal(userId, other.getUserId()) && Objects.equal(roleId, other.getRoleId())
                 && Objects.equal(notificationTemplateId, other.getNotificationTemplateId());
     }

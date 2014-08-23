@@ -26,7 +26,7 @@ public class OpportunityResource {
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     public List<OpportunityRepresentation> getOpportunities() {
-        List<Advert> adverts = advertService.getAdverts();
+        List<Advert> adverts = advertService.getActiveAdverts();
         List<OpportunityRepresentation> representations = Lists.newArrayListWithExpectedSize(adverts.size());
         for (Advert advert : adverts) {
             OpportunityRepresentation representation = dozerBeanMapper.map(advert, OpportunityRepresentation.class);

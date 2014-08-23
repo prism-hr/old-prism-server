@@ -40,7 +40,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentAssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
@@ -247,7 +247,7 @@ public class ApplicationResource {
 
         comment.getAssignedUsers().addAll(assignedUsers);
 
-        ActionOutcome actionOutcome = actionService.executeUserAction(application, action, comment);
+        ActionOutcomeDTO actionOutcome = actionService.executeUserAction(application, action, comment);
         return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
     }
 

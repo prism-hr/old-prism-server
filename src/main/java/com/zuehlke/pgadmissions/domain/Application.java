@@ -62,6 +62,10 @@ public class Application extends Resource {
     @JoinColumn(name = "project_id")
     private Project project;
     
+    @ManyToOne
+    @JoinColumn(name = "advert_id", nullable = false)
+    private Advert advert;
+    
     @Column(name = "referrer")
     private String referrer;
 
@@ -172,6 +176,76 @@ public class Application extends Resource {
     @Override
     public void setCode(String code) {
         this.code = code;
+    }
+    
+    @Override
+    public User getUser() {
+        return user;
+    }
+
+    @Override
+    public void setUser(User user) {
+        this.user = user;
+    }
+    
+    
+    @Override
+    public System getSystem() {
+        return system;
+    }
+
+    @Override
+    public void setSystem(System system) {
+        this.system = system;
+    }
+
+    @Override
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    @Override
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
+
+    @Override
+    public Program getProgram() {
+        return program;
+    }
+
+    @Override
+    public void setProgram(Program program) {
+        this.program = program;
+    }
+
+    @Override
+    public Project getProject() {
+        return project;
+    }
+
+    @Override
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public final void setAdvert(Advert advert) {
+        this.advert = advert;
+    }
+
+    @Override
+    public Application getApplication() {
+        return this;
+    }
+    
+    @Override
+    public String getReferrer() {
+        return referrer;
+    }
+    
+    @Override
+    public void setReferrer (String referrer) {
+        this.referrer = referrer;
     }
 
     public ApplicationAddress getAddress() {
@@ -413,60 +487,10 @@ public class Application extends Resource {
         setParentResource(parentResource);
         return this;
     }
-
-    @Override
-    public System getSystem() {
-        return system;
-    }
-
-    @Override
-    public void setSystem(System system) {
-        this.system = system;
-    }
-
-    @Override
-    public Institution getInstitution() {
-        return institution;
-    }
-
-    @Override
-    public void setInstitution(Institution institution) {
-        this.institution = institution;
-    }
-
-    @Override
-    public Program getProgram() {
-        return program;
-    }
-
-    @Override
-    public void setProgram(Program program) {
-        this.program = program;
-    }
-
-    @Override
-    public Project getProject() {
-        return project;
-    }
-
-    @Override
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
-    @Override
-    public Application getApplication() {
+    
+    public Application withAdvert(Advert advert) {
+        this.advert = advert;
         return this;
-    }
-    
-    @Override
-    public String getReferrer() {
-        return referrer;
-    }
-    
-    @Override
-    public void setReferrer (String referrer) {
-        this.referrer = referrer;
     }
     
     @Override
@@ -499,16 +523,6 @@ public class Application extends Resource {
         this.dueDate = dueDate;
     }
 
-    @Override
-    public User getUser() {
-        return user;
-    }
-
-    @Override
-    public void setUser(User user) {
-        this.user = user;
-    }
-    
     @Override
     public String getSequenceIdentifier() {
         return sequenceIdentifier;

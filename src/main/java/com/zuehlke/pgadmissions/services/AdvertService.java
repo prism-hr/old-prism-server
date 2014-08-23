@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.State;
 
 @Service
 @Transactional
@@ -17,16 +18,20 @@ public class AdvertService {
     private AdvertDAO advertDAO;
     
     @Autowired
-    private ProgramService programService;
+    private EntityService entityService;
     
     @Autowired
-    private ProjectService projectService;
+    private StateService stateService;
+    
+    public Advert getById(Integer id) {
+        return entityService.getById(Advert.class, id);
+    }
     
     // TODO: user filters
     public List<Advert> getActiveAdverts() {
-        List<Integer> activeProgramIds = programService.getActiveProgramIds();
-        List<Integer> activeProjectIds = projectService.getActiveProjectIds();
-        return advertDAO.getActiveAdverts(activeProgramIds, activeProjectIds);
+        List<State> activeProgramStates = stateService.getActiveProgramStates();
+        List<State> activeProjectStates = stateService.getActiveProjectStates();
+        return advertDAO.getActiveAdverts(activeProgramStates, activeProjectStates);
     }
     
 }

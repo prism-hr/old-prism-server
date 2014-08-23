@@ -8,9 +8,12 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -34,7 +37,19 @@ import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 @Entity
 @Table(name = "PROJECT")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Project extends Advert {
+public class Project extends ParentResource {
+    
+    @Id
+    @GeneratedValue
+    private Integer id;
+    
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "advert_id")
+    private Advert advert;
+    
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    private User user;
     
     @Column(name = "code")
     private String code;
@@ -132,7 +147,35 @@ public class Project extends Advert {
     
     @OneToMany(mappedBy = "project")
     private Set<UserRole> userRoles = Sets.newHashSet();
+    
+    @Override
+    public Integer getId() {
+        return id;
+    }
 
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    
+    public Advert getAdvert() {
+        return advert;
+    }
+    
+    public void setAdvert(Advert advert) {
+        this.advert = advert;
+    }
+    
+    @Override
+    public User getUser() {
+        return user;
+    }
+
+    @Override
+    public void setUser(User user) {
+        this.user = user;
+    }
+    
     @Override
     public String getCode() {
         return code;
@@ -143,15 +186,14 @@ public class Project extends Advert {
         this.code = code;
     }
 
-    @Override
     public String getTitle() {
         return title;
     }
 
-    @Override
     public void setTitle(String title) {
         this.title = title;
     }
+    
     @Override
     public final Integer getApplicationRatingCount05() {
         return applicationRatingCount05;
@@ -315,12 +357,7 @@ public class Project extends Advert {
     }
 
     public Project withId(Integer id) {
-        setId(id);
-        return this;
-    }
-    
-    public Project withImmediateStart(boolean immediateStart) {
-        setImmediateStart(immediateStart);
+        this.id = id;
         return this;
     }
 

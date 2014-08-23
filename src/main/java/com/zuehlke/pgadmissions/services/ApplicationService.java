@@ -91,6 +91,9 @@ public class ApplicationService {
     private ActionService actionService;
 
     @Autowired
+    private AdvertService advertService;
+
+    @Autowired
     private EntityService entityService;
 
     @Autowired
@@ -125,8 +128,9 @@ public class ApplicationService {
     }
 
     public Application create(User user, ApplicationDTO applicationDTO) {
-        Advert advert = programService.getById(applicationDTO.getAdvertId());
-        Application application = new Application().withUser(user).withParentResource(advert).withDoRetain(false).withCreatedTimestamp(new DateTime());
+        Advert advert = advertService.getById(applicationDTO.getAdvertId());
+        Application application = new Application().withUser(user).withParentResource(advert.getParentResource()).withDoRetain(false)
+                .withCreatedTimestamp(new DateTime());
 
         Application previousApplication = getPreviousApplication(application);
         if (previousApplication != null) {
@@ -593,16 +597,16 @@ public class ApplicationService {
     private void summariseApplicationProcessing(Application application) {
         PrismStateGroup stateGroupId = application.getState().getStateGroup().getId();
         PrismStateGroup previousStateGroupId = application.getPreviousState().getStateGroup().getId();
-        
+
         Set<PrismStateGroup> assessments = Sets.newHashSet(PrismStateGroup.APPLICATION_VALIDATION, PrismStateGroup.APPLICATION_REVIEW,
                 PrismStateGroup.APPLICATION_INTERVIEW, PrismStateGroup.APPLICATION_APPROVAL);
-        
+
         if (assessments.contains(stateGroupId)) {
-            
+
         }
-        
+
         if (assessments.contains(previousStateGroupId)) {
-            
+
         }
 
     }

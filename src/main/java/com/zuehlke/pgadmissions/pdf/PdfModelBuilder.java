@@ -11,6 +11,7 @@ import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +48,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
@@ -191,7 +191,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             submittedDateHeader = new Chunk("", SMALLER_FONT);
         }
 
-        headerEvent = new HeaderEvent(new Chunk(form.getAdvert().getTitle(), SMALLER_FONT), new Chunk(form.getCode(), SMALLER_FONT),
+        headerEvent = new HeaderEvent(new Chunk(form.getAdvertTitle(), SMALLER_FONT), new Chunk(form.getCode(), SMALLER_FONT),
                 submittedDateHeader);
         writer.setPageEvent(headerEvent);
     }
@@ -226,7 +226,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 .join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3(), applicant.getLastName());
         table.addCell(newTableCell(fullName, SMALL_FONT));
         table.addCell(newTableCell("Programme", SMALL_BOLD_FONT));
-        table.addCell(newTableCell(form.getAdvert().getTitle(), SMALL_FONT));
+        table.addCell(newTableCell(form.getAdvertTitle(), SMALL_FONT));
 
         addProjectTitleToTable(table, form);
         addClosingDateToTable(table, form);
@@ -254,7 +254,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newTableCell("Programme", SMALL_BOLD_FONT));
-        table.addCell(newTableCell(form.getAdvert().getTitle(), SMALL_FONT));
+        table.addCell(newTableCell(form.getAdvertTitle(), SMALL_FONT));
 
         table.addCell(newTableCell("Study Option", SMALL_BOLD_FONT));
         table.addCell(createPropertyCell(form, "programmeDetails.studyOption"));
@@ -1023,12 +1023,8 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
     private void addClosingDateToTable(PdfPTable table, final Application form) {
         table.addCell(newTableCell("Closing date", SMALL_BOLD_FONT));
-        Project project = form.getProject();
-        String closingDate = NOT_REQUIRED;
-        if (project != null && project.getClosingDate() != null) {
-            closingDate = dateFormat.format(project.getClosingDate());
-        }
-        table.addCell(newTableCell(closingDate, SMALL_FONT));
+        LocalDate closingDate = form.getClosingDate();
+        table.addCell(newTableCell(closingDate == null ? NOT_REQUIRED : dateFormat.format(closingDate), SMALL_FONT));
     }
 
     private void addProjectTitleToTable(PdfPTable table, final Application form) {

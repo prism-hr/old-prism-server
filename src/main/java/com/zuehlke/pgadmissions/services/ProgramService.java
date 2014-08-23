@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -22,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
@@ -53,8 +55,8 @@ public class ProgramService {
     @Autowired
     private UserService userService;
 
-    public Advert getById(Integer id) {
-        return entityService.getById(Advert.class, id);
+    public Program getById(Integer id) {
+        return entityService.getById(Program.class, id);
     }
 
     public void save(Program program) {
@@ -76,11 +78,16 @@ public class ProgramService {
     }
 
     public Program create(User user, ProgramDTO programDTO) {
-        Institution institution = entityService.getById(Institution.class, programDTO.getInstitutionId());
-        Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withTitle(programDTO.getTitle()).withInstitution(institution)
-                .withProgramType(programDTO.getProgramType()).withRequireProjectDefinition(programDTO.getRequireProjectDefinition())
-                .withPublishDate(programDTO.getStartDate().toLocalDate()).withDueDate(programDTO.getEndDate().toLocalDate())
+        String title = programDTO.getTitle();
+
+        Advert advert = new Advert().withTitle(title).withPublishDate(programDTO.getStartDate().toLocalDate())
                 .withImmediateStart(programDTO.getImmediateStart());
+
+        Institution institution = entityService.getById(Institution.class, programDTO.getInstitutionId());
+
+        Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withTitle(title).withInstitution(institution)
+                .withProgramType(programDTO.getProgramType()).withRequireProjectDefinition(programDTO.getRequireProjectDefinition()).withAdvert(advert)
+                .withDueDate(programDTO.getEndDate().toLocalDate());
         return program;
     }
 
@@ -88,9 +95,13 @@ public class ProgramService {
         User proxyCreator = institution.getUser();
 
         PrismProgramType programType = PrismProgramType.findValueFromString(programme.getName());
+
+        String title = programme.getName();
+        Advert transientAdvert = new Advert().withTitle(title).withImmediateStart(false);
+
         Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withImportedCode(programme.getCode())
-                .withTitle(programme.getName()).withRequireProjectDefinition(programme.isAtasRegistered()).withImmediateStart(false)
-                .withProgramType(programType).withUser(proxyCreator);
+                .withTitle(title).withRequireProjectDefinition(programme.isAtasRegistered()).withAdvert(transientAdvert).withProgramType(programType)
+                .withUser(proxyCreator);
 
         Action importAction = actionService.getById(PrismAction.INSTITUTION_IMPORT_PROGRAM);
         Role proxyCreatorRole = roleService.getCreatorRole(transientProgram);
@@ -106,34 +117,36 @@ public class ProgramService {
         ProgramInstance persistentInstance = entityService.createOrUpdate(transientProgramInstance);
         if (persistentInstance.isEnabled()) {
             Program transientProgram = transientProgramInstance.getProgram();
-            Program persistentProgram = (Program) getById(transientProgram.getId());
-            
+            Program persistentProgram = getById(transientProgram.getId());
+            Advert persistentAdvert = persistentProgram.getAdvert();
+
             LocalDate programDueDate = persistentProgram.getDueDate();
             LocalDate instanceEndDate = persistentInstance.getApplicationDeadline();
-            
+
             if (programDueDate == null || programDueDate.isBefore(instanceEndDate)) {
                 persistentProgram.setDueDate(instanceEndDate);
             }
-            
-            LocalDate programPublishDate = persistentProgram.getPublishDate();
+
+            LocalDate programPublishDate = persistentAdvert.getPublishDate();
             LocalDate instanceStartDate = persistentInstance.getApplicationStartDate();
-            
+
             if (programPublishDate == null || programPublishDate.isAfter(instanceStartDate)) {
-                persistentProgram.setPublishDate(instanceStartDate);
+                persistentAdvert.setPublishDate(instanceStartDate);
             }
         }
     }
 
     public void updateProgramClosingDates() {
         List<Program> programs = programDAO.getProgramsWithElapsedClosingDates();
-        
+
         for (Program program : programs) {
             AdvertClosingDate nextClosingDate = programDAO.getNextClosingDate(program);
-            program.setClosingDate(nextClosingDate);
+            Advert advert = program.getAdvert();
+            advert.setClosingDate(nextClosingDate);
         }
-        
+
     }
-    
+
     public List<Program> getPrograms() {
         return programDAO.getPrograms();
     }
@@ -161,8 +174,8 @@ public class ProgramService {
         Action action = actionService.getById(actionId);
         User user = userService.getById(commentDTO.getUser());
         State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
-        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withAction(action)
-                .withTransitionState(transitionState).withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
+        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withAction(action).withTransitionState(transitionState)
+                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
 
         ProgramDTO programDTO = commentDTO.getProgram();
         if (programDTO != null) {
@@ -174,21 +187,27 @@ public class ProgramService {
     }
 
     public void update(Integer programId, ProgramDTO programDTO) {
+        String title = programDTO.getTitle();
         Program program = entityService.getById(Program.class, programId);
+        Advert advert = program.getAdvert();
 
         program.setProgramType(programDTO.getProgramType());
-        program.setTitle(programDTO.getTitle());
-        program.setDescription(programDTO.getDescription());
+        program.setTitle(title);
+        advert.setDescription(programDTO.getDescription());
 
         // TODO set study options, start date and end date
 
         program.setRequireProjectDefinition(programDTO.getRequireProjectDefinition());
-        program.setImmediateStart(programDTO.getImmediateStart());
+        advert.setImmediateStart(programDTO.getImmediateStart());
+        advert.setTitle(title);
 
     }
 
-    public List<Integer> getActiveProgramIds() {
-        return programDAO.getActiveProgramIds();
+    public void postProcessProgram(Program program, Comment comment) {
+        PrismActionCategory actionCategory = comment.getAction().getActionCategory();
+        if (Arrays.asList(PrismActionCategory.CREATE_RESOURCE, PrismActionCategory.VIEW_EDIT_RESOURCE).contains(actionCategory)) {
+            program.setSequenceIdentifier(program.getSequenceIdentifier() + "-" + program.getResourceScope().getShortCode());
+        } 
     }
 
 }

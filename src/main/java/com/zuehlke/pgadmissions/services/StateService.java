@@ -330,6 +330,16 @@ public class StateService {
             flushDeferredStateTransitions(propagationQueue);
         }
     }
+    
+    @Transactional
+    public List<State> getActiveProgramStates() {
+        return stateDAO.getActiveProgramStates();
+    }
+    
+    @Transactional
+    public List<State> getActiveProjectStates() {
+        return stateDAO.getActiveProjectStates();
+    }
 
     private void marshalDeferredStateTransitions(HashMap<Resource, Action> queue, HashMap<Resource, Action> transitions) {
         for (Resource resource : transitions.keySet()) {

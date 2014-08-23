@@ -10,8 +10,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -38,7 +36,6 @@ import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 import org.joda.time.LocalDate;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 
@@ -48,17 +45,15 @@ import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
         @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class) })
 @Entity
 @Table(name = "ADVERT")
-@Inheritance(strategy = InheritanceType.JOINED)
 @Indexed
-public abstract class Advert extends ParentResource {
+public class Advert {
 
     @Id
     @GeneratedValue
     private Integer id;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    
+    @Column(name = "title", nullable = false)
+    private String title;
 
     @Column(name = "description")
     @Field(analyzer = @Analyzer(definition = "advertAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
@@ -100,6 +95,31 @@ public abstract class Advert extends ParentResource {
 
     @Column(name = "pay_annualised")
     private BigDecimal payAnnualised;
+    
+    @Column(name = "sequence_identifier", nullable = false)
+    private String sequenceIdentifier;
+
+    @OneToOne(mappedBy = "advert")
+    private Program program;
+    
+    @OneToOne(mappedBy = "advert")
+    private Project project;
+    
+    public final Integer getId() {
+        return id;
+    }
+
+    public final void setId(Integer id) {
+        this.id = id;
+    }
+
+    public final String getTitle() {
+        return title;
+    }
+
+    public final void setTitle(String title) {
+        this.title = title;
+    }
 
     @OneToOne
     @JoinColumn(name = "advert_closing_date_id", unique = true)
@@ -110,31 +130,11 @@ public abstract class Advert extends ParentResource {
     private Set<AdvertClosingDate> closingDates = Sets.newHashSet();
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "OPPORTUNITY_CATEGORY", joinColumns = @JoinColumn(name = "advert_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "advert_opportunity_category_id", nullable = false))
+    @JoinTable(name = "ADVERT_CATEGORY", joinColumns = @JoinColumn(name = "advert_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "advert_opportunity_category_id", nullable = false))
     private Set<OpportunityCategory> categories = Sets.newHashSet();
 
     @OneToMany(mappedBy = "advert")
     private Set<AdvertRecruitmentPreference> recruitmentPreferences = Sets.newHashSet();
-
-    @Override
-    public Integer getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    @Override
-    public User getUser() {
-        return user;
-    }
-
-    @Override
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     public String getDescription() {
         return description;
@@ -228,6 +228,14 @@ public abstract class Advert extends ParentResource {
         this.payAnnualised = payAnnualised;
     }
 
+    public final String getSequenceIdentifier() {
+        return sequenceIdentifier;
+    }
+
+    public final void setSequenceIdentifier(String sequenceIdentifier) {
+        this.sequenceIdentifier = sequenceIdentifier;
+    }
+
     public void setStudyDuration(Integer studyDuration) {
         this.studyDuration = studyDuration;
     }
@@ -238,6 +246,14 @@ public abstract class Advert extends ParentResource {
 
     public void setClosingDate(AdvertClosingDate closingDate) {
         this.closingDate = closingDate;
+    }
+    
+    public final Program getProgram() {
+        return program;
+    }
+
+    public final Project getProject() {
+        return project;
     }
 
     public Set<AdvertClosingDate> getClosingDates() {
@@ -251,26 +267,24 @@ public abstract class Advert extends ParentResource {
     public Set<AdvertRecruitmentPreference> getRecruitmentPreferences() {
         return recruitmentPreferences;
     }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
+    
+    public Advert withTitle(String title) {
+        this.title = title;
+        return this;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Advert other = (Advert) obj;
-        return Objects.equal(id, other.getId());
+    
+    public Advert withPublishDate(LocalDate publishDate) {
+        this.publishDate = publishDate;
+        return this;
     }
-
-    public abstract String getTitle();
-
-    public abstract void setTitle(String title);
+    
+    public Advert withImmediateStart(Boolean immediateStart) {
+        this.immediateStart = immediateStart;
+        return this;
+    }
+    
+    public ParentResource getParentResource() {
+        return project == null ? program : project;
+    }
 
 }

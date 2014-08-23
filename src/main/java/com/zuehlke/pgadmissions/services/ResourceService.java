@@ -237,6 +237,11 @@ public class ResourceService {
         switch (resource.getResourceScope()) {
         case APPLICATION:
             applicationService.postProcessApplication((Application) resource, comment);
+        case PROJECT:
+            projectService.postProcessProject((Project) resource, comment);
+            break;
+        case PROGRAM:
+            programService.postProcessProgram((Program) resource, comment);
             break;
         default:
             return;

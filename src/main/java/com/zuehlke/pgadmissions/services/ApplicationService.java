@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationPassport;
 import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationProcessing;
 import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
@@ -54,6 +56,7 @@ import com.zuehlke.pgadmissions.domain.ParentResource;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.ReferralSource;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.Title;
 import com.zuehlke.pgadmissions.domain.User;
@@ -83,6 +86,10 @@ import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationVal
 @Service
 @Transactional
 public class ApplicationService {
+    
+    private final Integer[] summaryPercentiles = new Integer[] { 5, 20, 35, 50, 65, 80, 95 };
+    
+    private final PrismScope[] summaryScopes = new PrismScope[] { PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION };
 
     @Autowired
     private ApplicationDAO applicationDAO;
@@ -569,23 +576,21 @@ public class ApplicationService {
         application.setRatingCount(ratingSummary.getRatingCount());
         application.setRatingAverage(ratingSummary.getRatingAverage().setScale(2, RoundingMode.HALF_UP));
 
-        Integer[] percentiles = new Integer[] { 5, 20, 35, 50, 65, 80, 95 };
-        PrismScope[] parentScopes = new PrismScope[] { PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION };
         String[] properties = new String[] { "ratingCount", "ratingAverage" };
 
-        for (PrismScope parentScope : parentScopes) {
+        for (PrismScope summaryScope : summaryScopes) {
             try {
-                String parentReference = parentScope.getLowerCaseName();
-                ParentResource parentResource = (ParentResource) PropertyUtils.getSimpleProperty(application, parentReference);
+                String parentReference = summaryScope.getLowerCaseName();
+                ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, parentReference);
 
                 for (String property : properties) {
                     Integer notNullValueCount = entityService.getNotNullValueCount(Application.class, property,
-                            ImmutableMap.of(parentReference, (Object) parentResource));
+                            ImmutableMap.of(parentReference, (Object) summaryResource));
 
-                    for (Integer percentile : percentiles) {
+                    for (Integer percentile : summaryPercentiles) {
                         Integer actualPercentile = new BigDecimal(percentile * (notNullValueCount / 100.0)).setScale(0, RoundingMode.HALF_UP).intValue();
-                        Object actualPercentileValue = applicationDAO.getPercentileValue(parentResource, property, actualPercentile);
-                        parentResource.setPercentileValue(application.getResourceScope().getLowerCaseName(), percentile, actualPercentileValue);
+                        Object actualPercentileValue = applicationDAO.getPercentileValue(summaryResource, property, actualPercentile);
+                        summaryResource.setPercentileValue(application.getResourceScope().getLowerCaseName(), percentile, actualPercentileValue);
                     }
                 }
             } catch (Exception e) {
@@ -595,20 +600,41 @@ public class ApplicationService {
     }
 
     private void summariseApplicationProcessing(Application application) {
-        PrismStateGroup stateGroupId = application.getState().getStateGroup().getId();
-        PrismStateGroup previousStateGroupId = application.getPreviousState().getStateGroup().getId();
+        StateGroup stateGroup = application.getState().getStateGroup();
+        StateGroup previousStateGroup = application.getPreviousState().getStateGroup();
 
-        Set<PrismStateGroup> assessments = Sets.newHashSet(PrismStateGroup.APPLICATION_VALIDATION, PrismStateGroup.APPLICATION_REVIEW,
+        Set<PrismStateGroup> processingStateGroups = Sets.newHashSet(PrismStateGroup.APPLICATION_VALIDATION, PrismStateGroup.APPLICATION_REVIEW,
                 PrismStateGroup.APPLICATION_INTERVIEW, PrismStateGroup.APPLICATION_APPROVAL);
+        LocalDate baseline = new LocalDate();
 
-        if (assessments.contains(stateGroupId)) {
-
+        if (processingStateGroups.contains(stateGroup.getId())) {
+            createOrUpdateApplicationProcessing(application, stateGroup, baseline);
         }
 
-        if (assessments.contains(previousStateGroupId)) {
-
+        if (processingStateGroups.contains(previousStateGroup.getId())) {
+            updateApplicationProcessing(application, previousStateGroup, baseline);
         }
 
+    }
+
+    private void createOrUpdateApplicationProcessing(Application application, StateGroup stateGroup, LocalDate baseline) {
+        ApplicationProcessing transientProcessing = new ApplicationProcessing().withApplication(application).withStateGroup(stateGroup)
+                .withInstanceCount(1).withDayDurationSum(0).withLastUpdateDate(baseline);
+
+        ApplicationProcessing persistentProcessing = entityService.getDuplicateEntity(transientProcessing);
+        if (persistentProcessing == null) {
+            entityService.save(transientProcessing);
+        } else {
+            persistentProcessing.setInstanceCount(persistentProcessing.getInstanceCount() + 1);
+            persistentProcessing.setLastUpdatedDate(baseline);
+        }
+    }
+
+    private void updateApplicationProcessing(Application application, StateGroup stateGroup, LocalDate baseline) {
+        ApplicationProcessing processing = applicationDAO.getApplicationProcessing(application, stateGroup);
+        Integer actualStateDuration = Days.daysBetween(baseline, processing.getLastUpdatedDate()).getDays();
+        processing.setDayDurationSum(processing.getDayDurationSum() + actualStateDuration);
+        processing.setLastUpdatedDate(baseline);
     }
 
     private void copyAddress(Institution institution, Address to, AddressDTO from) {

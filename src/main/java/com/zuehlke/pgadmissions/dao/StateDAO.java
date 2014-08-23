@@ -131,4 +131,18 @@ public class StateDAO {
                 .list();
     }
 
+    public List<State> getActiveProgramStates() {
+        return (List<State>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.groupProperty("state")) //
+                .add(Restrictions.eq("action.id", PrismAction.PROGRAM_CREATE_APPLICATION)) //
+                .list();
+    }
+    
+    public List<State> getActiveProjectStates() {
+        return (List<State>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.groupProperty("state")) //
+                .add(Restrictions.eq("action.id", PrismAction.PROJECT_CREATE_APPLICATION)) //
+                .list();
+    }
+
 }

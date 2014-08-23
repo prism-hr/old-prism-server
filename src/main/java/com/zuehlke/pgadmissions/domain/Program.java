@@ -6,13 +6,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
@@ -38,7 +42,19 @@ import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 @Entity
 @Table(name = "PROGRAM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Program extends Advert {
+public class Program extends ParentResource {
+    
+    @Id
+    @GeneratedValue
+    private Integer id;
+    
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "advert_id")
+    private Advert advert;
+    
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "code")
     private String code;
@@ -148,6 +164,34 @@ public class Program extends Advert {
     private Set<Comment> comments = Sets.newHashSet();
 
     @Override
+    public Integer getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    
+    public Advert getAdvert() {
+        return advert;
+    }
+    
+    public void setAdvert(Advert advert) {
+        this.advert = advert;
+    }
+    
+    @Override
+    public User getUser() {
+        return user;
+    }
+
+    @Override
+    public void setUser(User user) {
+        this.user = user;
+    }
+    
+    @Override
     public String getCode() {
         return code;
     }
@@ -157,12 +201,10 @@ public class Program extends Advert {
         this.code = code;
     }
     
-    @Override
     public String getTitle() {
         return title;
     }
 
-    @Override
     public void setTitle(String title) {
         this.title = title;
     }
@@ -340,7 +382,12 @@ public class Program extends Advert {
     }
 
     public Program withId(Integer id) {
-        setId(id);
+        this.id = id;
+        return this;
+    }
+    
+    public Program withAdvert(Advert advert) {
+        this.advert = advert;
         return this;
     }
     
@@ -358,34 +405,19 @@ public class Program extends Advert {
         setTitle(title);
         return this;
     }
-
-    public Program withDescription(String description) {
-        setDescription(description);
-        return this;
-    }
-    
-    public Program withPublishDate(LocalDate publishDate) {
-        setPublishDate(publishDate);
-        return this;
-    }
     
     public Program withDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
         return this;
     }
     
-    public Program withImmediateStart(boolean immediateStart) {
-        setImmediateStart(immediateStart);
-        return this;
-    }
-
     public Program withState(State state) {
         this.state = state;
         return this;
     }
 
     public Program withUser(User user) {
-        setUser(user);
+        this.user = user;
         return this;
     }
 
@@ -396,11 +428,6 @@ public class Program extends Advert {
 
     public Program withInstances(ProgramInstance... instances) {
         this.programInstances.addAll(Arrays.asList(instances));
-        return this;
-    }
-
-    public Program withClosingDates(AdvertClosingDate... closingDates) {
-        getClosingDates().addAll(Arrays.asList(closingDates));
         return this;
     }
 
@@ -423,12 +450,7 @@ public class Program extends Advert {
         this.programType = programType;
         return this;
     }
-
-    public Program withStudyDuration(Integer studyDuration) {
-        setStudyDuration(studyDuration);
-        return this;
-    }
-
+    
     public Program withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
         return this;

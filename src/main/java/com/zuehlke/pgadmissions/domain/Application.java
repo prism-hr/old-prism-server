@@ -24,7 +24,6 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -242,11 +241,7 @@ public class Application extends Resource {
     public final void setPreviousClosingDate(LocalDate previousClosingDate) {
         this.previousClosingDate = previousClosingDate;
     }
-
-    public Advert getAdvert() {
-        return Objects.firstNonNull(getProject(), getProgram());
-    }
-
+    
     public ApplicationPersonalDetails getPersonalDetails() {
         return personalDetails;
     }
@@ -522,6 +517,18 @@ public class Application extends Resource {
     @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
+    }
+    
+    public Advert getAdvert() {
+        return project == null ? program.getAdvert() : project.getAdvert();
+    }
+    
+    public String getAdvertTitle() {
+        return project == null ? program.getTitle() : project.getTitle();
+    }
+    
+    public LocalDate getAdvertClosingDate() {
+        return closingDate == null ? previousClosingDate : closingDate;
     }
 
     @Override

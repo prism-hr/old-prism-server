@@ -289,3 +289,119 @@ ALTER TABLE APPLICATION_REFEREE
 ALTER TABLE APPLICATION_QUALIFICATION
 	DROP COLUMN include_in_export
 ;
+
+ALTER TABLE PROJECT
+	DROP FOREIGN KEY project_ibfk_1,
+	ADD COLUMN advert_id INT(10) UNSIGNED AFTER id,
+	ADD INDEX (advert_id),
+	ADD FOREIGN KEY (advert_id) REFERENCES ADVERT (id)
+;
+
+UPDATE PROJECT
+SET advert_id = id
+;
+
+ALTER TABLE PROGRAM
+	DROP FOREIGN KEY program_ibfk_2,
+	ADD COLUMN advert_id INT(10) UNSIGNED AFTER id,
+	ADD INDEX (advert_id),
+	ADD FOREIGN KEY (advert_id) REFERENCES ADVERT (id)
+;
+
+UPDATE PROGRAM
+SET advert_id = id
+;
+
+ALTER TABLE PROGRAM
+	ADD COLUMN user_id INT(10) UNSIGNED AFTER advert_id,
+	ADD INDEX (user_id),
+	ADD FOREIGN KEY (user_id) REFERENCES USER (id)
+;
+
+UPDATE PROGRAM INNER JOIN ADVERT
+	ON PROGRAM.id = ADVERT.id
+SET PROGRAM.user_id = ADVERT.user_id
+;
+
+ALTER TABLE PROJECT
+	ADD COLUMN user_id INT(10) UNSIGNED AFTER advert_id,
+	ADD INDEX (user_id),
+	ADD FOREIGN KEY (user_id) REFERENCES USER (id)
+;
+
+UPDATE PROJECT INNER JOIN ADVERT
+	ON PROJECT.id = ADVERT.id
+SET PROJECT.user_id = ADVERT.user_id
+;
+
+ALTER TABLE ADVERT
+	DROP FOREIGN KEY fk_advert_user_id,
+	DROP COLUMN user_id
+;
+
+ALTER TABLE ADVERT
+	ADD COLUMN title VARCHAR(255) AFTER id,
+	ADD COLUMN sequence_identifier VARCHAR(25),
+	DROP INDEX institution_address_id,
+	DROP INDEX publish_date,
+	DROP INDEX immediate_start,
+	DROP INDEX month_study_duration_minimum,
+	DROP INDEX month_study_duration_maximum,
+	DROP INDEX month_fee_minimum_specified,
+	DROP INDEX month_fee_maximum_specified,
+	DROP INDEX year_fee_minimum_specified,
+	DROP INDEX year_fee_maximum_specified,
+	DROP INDEX month_fee_minimum_at_locale,
+	DROP INDEX month_fee_maximum_at_locale,
+	DROP INDEX year_fee_minimum_at_locale,
+	DROP INDEX year_fee_maximum_at_locale,
+	DROP INDEX month_pay_minimum_specified,
+	DROP INDEX month_pay_maximum_specified,
+	DROP INDEX year_pay_minimum_specified,
+	DROP INDEX year_pay_maximum_specified,
+	DROP INDEX month_pay_minimum_at_locale,
+	DROP INDEX month_pay_maximum_at_locale,
+	DROP INDEX year_pay_minimum_at_locale,
+	DROP INDEX year_pay_maximum_at_locale,
+	DROP INDEX advert_closing_date_id,
+	ADD INDEX (title, sequence_identifier),
+	ADD INDEX (publish_date, sequence_identifier),
+	ADD INDEX (immediate_start, sequence_identifier),
+	ADD INDEX (institution_address_id, sequence_identifier),
+	ADD INDEX (month_study_duration_minimum, sequence_identifier),
+	ADD INDEX (month_study_duration_maximum, sequence_identifier),
+	ADD INDEX (month_fee_minimum_specified, sequence_identifier),
+	ADD INDEX (month_fee_maximum_specified, sequence_identifier),
+	ADD INDEX (year_fee_minimum_specified, sequence_identifier),
+	ADD INDEX (year_fee_maximum_specified, sequence_identifier),
+	ADD INDEX (month_fee_minimum_at_locale, sequence_identifier),
+	ADD INDEX (month_fee_maximum_at_locale, sequence_identifier),
+	ADD INDEX (year_fee_minimum_at_locale, sequence_identifier),
+	ADD INDEX (year_fee_maximum_at_locale, sequence_identifier),
+	ADD INDEX (month_pay_minimum_specified, sequence_identifier),
+	ADD INDEX (month_pay_maximum_specified, sequence_identifier),
+	ADD INDEX (year_pay_minimum_specified, sequence_identifier),
+	ADD INDEX (year_pay_maximum_specified, sequence_identifier),
+	ADD INDEX (month_pay_minimum_at_locale, sequence_identifier),
+	ADD INDEX (month_pay_maximum_at_locale, sequence_identifier),
+	ADD INDEX (year_pay_minimum_at_locale, sequence_identifier),
+	ADD INDEX (year_pay_maximum_at_locale, sequence_identifier),
+	ADD INDEX (advert_closing_date_id, sequence_identifier)
+;
+
+UPDATE ADVERT INNER JOIN PROGRAM
+	ON ADVERT.id = PROGRAM.advert_id
+SET ADVERT.title = PROGRAM.title,
+	ADVERT.sequence_identifier = CONCAT(PROGRAM.sequence_identifier, "-PM")
+;
+
+UPDATE ADVERT INNER JOIN PROJECT
+	ON ADVERT.id = PROJECT.advert_id
+SET ADVERT.title = PROJECT.title,
+	ADVERT.sequence_identifier = CONCAT(PROJECT.sequence_identifier, "-PT")
+;
+
+ALTER TABLE ADVERT
+	MODIFY title VARCHAR(255) NOT NULL,
+	MODIFY sequence_identifier VARCHAR(25) NOT NULL
+;

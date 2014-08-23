@@ -51,8 +51,8 @@ public class TestData {
     }
 
     public static Program aProgram(PrismProgramType programType, Institution institution, User user, State state) {
-        return new Program().withCode("AAA").withTitle("Amazing program!").withState(state).withRequireProjectDefinition(false).withStudyDuration(20)
-                .withProgramType(programType).withUser(user).withInstitution(institution);
+        return new Program().withCode("AAA").withTitle("Amazing program!").withState(state).withRequireProjectDefinition(false).withProgramType(programType)
+                .withUser(user).withInstitution(institution);
     }
 
     public static State aState(PrismState stateValue) {

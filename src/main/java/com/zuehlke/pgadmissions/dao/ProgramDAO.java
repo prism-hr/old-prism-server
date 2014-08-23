@@ -17,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -43,9 +42,10 @@ public class ProgramDAO {
 
     public AdvertClosingDate getNextClosingDate(Program program) {
         return (AdvertClosingDate) sessionFactory.getCurrentSession().createCriteria(Program.class) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .setProjection(Projections.min("futureClosingDate.closingDate")) //
-                .createAlias("closingDate", "currentClosingDate") //
-                .createAlias("closingDates", "futureClosingDate") //
+                .createAlias("advert.closingDate", "currentClosingDate") //
+                .createAlias("advert.closingDates", "futureClosingDate") //
                 .add(Restrictions.eq("id", program.getId())) //
                 .add(Restrictions.gtProperty("futureClosingDate.closingDate", "currentClosingDate.closingDate")) //
                 .uniqueResult();
@@ -102,17 +102,9 @@ public class ProgramDAO {
 
     public List<Program> getProgramsWithElapsedClosingDates() {
         return (List<Program>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .createAlias("closingDate", "closingDate", JoinType.INNER_JOIN) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.closingDate", "closingDate", JoinType.INNER_JOIN) //
                 .add(Restrictions.lt("closingDate.closingDate", new LocalDate())) //
-                .list();
-    }
-
-    public List<Integer> getActiveProgramIds() {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .setProjection(Projections.groupProperty("id")) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("stateAction.action.id", PrismAction.PROGRAM_CREATE_APPLICATION)) //
                 .list();
     }
 

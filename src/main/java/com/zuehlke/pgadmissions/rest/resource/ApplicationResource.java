@@ -180,6 +180,7 @@ public class ApplicationResource {
         applicationService.saveAdditionalInformation(applicationId, additionalInformationDTO);
     }
 
+    // TODO: set values for "doRetain" (application) and "sendRecommendationEmail" (user account)
     @RequestMapping(value = "/{applicationId}/comments", method = RequestMethod.POST)
     public ActionOutcomeRepresentation performAction(@PathVariable Integer applicationId, @Valid @RequestBody CommentDTO commentDTO) {
         Application application = entityService.getById(Application.class, applicationId);

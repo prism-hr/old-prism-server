@@ -136,8 +136,8 @@ public class ApplicationService {
 
     public Application create(User user, ApplicationDTO applicationDTO) {
         Advert advert = advertService.getById(applicationDTO.getAdvertId());
-        Application application = new Application().withUser(user).withParentResource(advert.getParentResource()).withDoRetain(applicationDTO.getDoRetain())
-                .withAdvert(advert).withCreatedTimestamp(new DateTime());
+        Application application = new Application().withUser(user).withParentResource(advert.getParentResource()).withDoRetain(false).withAdvert(advert)
+                .withCreatedTimestamp(new DateTime());
 
         Application previousApplication = getPreviousApplication(application);
         if (previousApplication != null) {

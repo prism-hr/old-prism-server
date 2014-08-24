@@ -26,6 +26,9 @@ public class UserAccount {
     @Column(name = "temporary_password_expiry_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime temporaryPasswordExpiryTimestamp;
+    
+    @Column(name = "send_recommendation_email", nullable = false)
+    private Boolean sendRecommendationEmail;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
@@ -67,6 +70,14 @@ public class UserAccount {
         this.enabled = enabled;
     }
 
+    public final Boolean getSendRecommendationEmail() {
+        return sendRecommendationEmail;
+    }
+
+    public final void setSendRecommendationEmail(Boolean sendRecommendationEmail) {
+        this.sendRecommendationEmail = sendRecommendationEmail;
+    }
+
     public Map<Scope, Filter> getFilters() {
         return filters;
     }
@@ -76,6 +87,11 @@ public class UserAccount {
         return this;
     }
 
+    public UserAccount withSendRecommendationEmail(Boolean sendRecommendationEmail) {
+        this.sendRecommendationEmail = sendRecommendationEmail;
+        return this;
+    }
+    
     public UserAccount withEnabled(boolean enabled) {
         this.enabled = enabled;
         return this;

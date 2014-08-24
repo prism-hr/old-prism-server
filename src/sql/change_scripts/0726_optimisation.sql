@@ -431,3 +431,12 @@ SET APPLICATION.advert_id = PROJECT.advert_id
 ALTER TABLE APPLICATION
 	MODIFY COLUMN advert_id INT(10) UNSIGNED NOT NULL
 ;
+
+ALTER TABLE USER_ACCOUNT
+	ADD COLUMN send_recommendation_email INT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER temporary_password_expiry_timestamp,
+	ADD INDEX (send_recommendation_email)
+;
+
+ALTER TABLE USER_ACCOUNT
+	MODIFY COLUMN send_recommendation_email INT(1) NOT NULL
+;

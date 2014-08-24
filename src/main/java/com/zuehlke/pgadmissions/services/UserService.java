@@ -111,16 +111,17 @@ public class UserService {
             throw new ResourceNotFoundException();
         }
 
-        user.setUserAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(registrationDTO.getPassword())).withEnabled(false));
+        user.setUserAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(registrationDTO.getPassword())).withSendRecommendationEmail(false)
+                .withEnabled(false));
 
         ActionOutcomeDTO outcome = actionService.getRegistrationOutcome(user, registrationDTO, referrer);
         notificationService.sendNotification(user, outcome.getTransitionResource(), PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST,
-                ImmutableMap.<String, String>of("action", outcome.getTransitionAction().getId().name()));
+                ImmutableMap.<String, String> of("action", outcome.getTransitionAction().getId().name()));
         return user;
     }
 
     public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource,
-                                         List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
+            List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
         User user = getOrCreateUser(firstName, lastName, email);
         roleService.updateRoles(resource, user, roles);
         return user;

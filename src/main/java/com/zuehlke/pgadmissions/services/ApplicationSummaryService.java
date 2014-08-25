@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +28,6 @@ public class ApplicationSummaryService {
     private final Integer[] summaryPercentiles = new Integer[] { 5, 20, 35, 50, 65, 80, 95 };
 
     private final PrismScope[] summaryScopes = new PrismScope[] { PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION };
-    
-    private final String[] summaryPropertiesRating = new String[] { "ratingCount", "ratingAverage" };
-    
-    private final String[] summaryPropertiesProcessing = new String[] { "instanceCount", "dayDurationSum" };
 
     @Autowired
     private ApplicationDAO applicationDAO;
@@ -65,6 +62,8 @@ public class ApplicationSummaryService {
         String summaryReference = summaryScope.getLowerCaseName();
         ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, summaryReference);
 
+        String[] summaryPropertiesRating = new String[] { "ratingCount", "ratingAverage" };
+
         for (String summaryProperty : summaryPropertiesRating) {
             Integer notNullValueCount = entityService.getNotNullValueCount(Application.class, summaryProperty,
                     ImmutableMap.of(summaryReference, (Object) summaryResource));
@@ -72,22 +71,24 @@ public class ApplicationSummaryService {
             for (Integer percentile : summaryPercentiles) {
                 Integer valuesInSet = getActualPercentile(notNullValueCount, percentile);
                 Object actualValue = applicationDAO.getPercentileValue(summaryResource, summaryProperty, valuesInSet);
-                summaryResource.setPercentileValue(summaryProperty, percentile, actualValue);
+                String propertyToSet = application.getResourceScope().getLowerCaseName() + WordUtils.capitalize(summaryProperty);
+                summaryResource.setPercentileValue(propertyToSet, percentile, actualValue);
             }
         }
     }
 
     private void createOrUpdateApplicationProcessing(Application application, StateGroup stateGroup, LocalDate baseline) {
-        ApplicationProcessing transientCurrentProcessing = new ApplicationProcessing().withApplication(application).withStateGroup(stateGroup)
-                .withInstanceCount(1).withDayDurationSum(0).withLastUpdateDate(baseline);
+        ApplicationProcessing transientProcessing = new ApplicationProcessing().withApplication(application).withStateGroup(stateGroup);
+        ApplicationProcessing persistentProcessing = entityService.getDuplicateEntity(transientProcessing);
 
-        ApplicationProcessing persistentCurrentProcessing = entityService.getDuplicateEntity(transientCurrentProcessing);
-
-        if (persistentCurrentProcessing == null) {
-            entityService.save(transientCurrentProcessing);
+        if (persistentProcessing == null) {
+            transientProcessing.setInstanceCount(1);
+            transientProcessing.setDayDurationSum(0);
+            transientProcessing.setLastUpdatedDate(baseline);
+            entityService.save(transientProcessing);
         } else {
-            persistentCurrentProcessing.setInstanceCount(persistentCurrentProcessing.getInstanceCount() + 1);
-            persistentCurrentProcessing.setLastUpdatedDate(baseline);
+            persistentProcessing.setInstanceCount(persistentProcessing.getInstanceCount() + 1);
+            persistentProcessing.setLastUpdatedDate(baseline);
         }
 
         createOrUpdateApplicationProcessingSummary(application, stateGroup);
@@ -122,35 +123,6 @@ public class ApplicationSummaryService {
         }
     }
 
-    private void updateApplicationProcessingSummary(ParentResource summaryResource, StateGroup stateGroup, ApplicationProcessingSummary persistentSummary) {
-        persistentSummary.setInstanceTotal(persistentSummary.getInstanceTotal() + 1);
-        persistentSummary.setInstanceTotalLive(persistentSummary.getInstanceTotalLive() + 1);
-
-        for (String property : summaryPropertiesProcessing) {
-            Integer valuesInSet = applicationDAO.getNotNullProcessingCount(summaryResource, stateGroup);
-
-            for (Integer percentile : summaryPercentiles) {
-                Integer actualPercentile = getActualPercentile(valuesInSet, percentile);
-                Object actualValue = applicationDAO.getProcessingPercentileValue(summaryResource, stateGroup, property, actualPercentile);
-                persistentSummary.setPercentileValue(property, actualPercentile, actualValue);
-            }
-        }
-    }
-    
-    private void updateApplicationProcessingSummary(Application application, StateGroup stateGroup) {
-        for (PrismScope summaryScope : summaryScopes) {
-            try {
-                ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, summaryScope.getLowerCaseName());
-                ApplicationProcessingSummary summary = applicationDAO.getProcessingSummary(summaryResource, stateGroup);
-
-                summary.setInstanceTotalLive(summary.getInstanceTotalLive() - 1);
-
-            } catch (Exception e) {
-                throw new Error(e);
-            }
-        }
-    }
-
     private void createApplicationProcessingSummary(ApplicationProcessingSummary transientProcessingSummary) {
         transientProcessingSummary.setInstanceTotal(1);
         transientProcessingSummary.setInstanceTotalLive(1);
@@ -172,6 +144,39 @@ public class ApplicationSummaryService {
         transientProcessingSummary.setDayDurationSum95(0);
 
         entityService.save(transientProcessingSummary);
+    }
+
+    private void updateApplicationProcessingSummary(ParentResource summaryResource, StateGroup stateGroup, ApplicationProcessingSummary persistentSummary) {
+        persistentSummary.setInstanceTotal(persistentSummary.getInstanceTotal() + 1);
+        persistentSummary.setInstanceTotalLive(persistentSummary.getInstanceTotalLive() + 1);
+
+        updateApplicationProcessingSummaryPercentile(summaryResource, stateGroup, persistentSummary, "instanceCount");
+    }
+
+    private void updateApplicationProcessingSummary(Application application, StateGroup previousStateGroup) {
+        for (PrismScope summaryScope : summaryScopes) {
+            try {
+                ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, summaryScope.getLowerCaseName());
+                ApplicationProcessingSummary processingSummary = applicationDAO.getProcessingSummary(summaryResource, previousStateGroup);
+
+                processingSummary.setInstanceTotalLive(processingSummary.getInstanceTotalLive() - 1);
+                updateApplicationProcessingSummaryPercentile(summaryResource, previousStateGroup, processingSummary, "dayDurationSum");
+            } catch (Exception e) {
+                throw new Error(e);
+
+            }
+        }
+    }
+
+    private void updateApplicationProcessingSummaryPercentile(ParentResource summaryResource, StateGroup stateGroup,
+            ApplicationProcessingSummary processingSummary, String property) {
+        Integer valuesInSet = applicationDAO.getNotNullProcessingCount(summaryResource, stateGroup);
+
+        for (Integer percentile : summaryPercentiles) {
+            Integer actualPercentile = getActualPercentile(valuesInSet, percentile);
+            Object actualValue = applicationDAO.getProcessingPercentileValue(summaryResource, stateGroup, property, actualPercentile);
+            processingSummary.setPercentileValue(property, actualPercentile, actualValue);
+        }
     }
 
     private int getActualPercentile(Integer valuesInSet, Integer percentile) {

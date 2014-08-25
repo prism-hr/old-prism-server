@@ -1,14 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +16,6 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.domain.Address;
@@ -35,8 +29,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationPassport;
 import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
-import com.zuehlke.pgadmissions.domain.ApplicationProcessing;
-import com.zuehlke.pgadmissions.domain.ApplicationProcessingSummary;
 import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
@@ -53,19 +45,14 @@ import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.ParentResource;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.ReferralSource;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.Title;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.dto.ApplicationRatingDTO;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
@@ -87,11 +74,7 @@ import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationVal
 @Service
 @Transactional
 public class ApplicationService {
-
-    private final Integer[] summaryPercentiles = new Integer[] { 5, 20, 35, 50, 65, 80, 95 };
-
-    private final PrismScope[] summaryScopes = new PrismScope[] { PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION };
-
+    
     @Autowired
     private ApplicationDAO applicationDAO;
 
@@ -100,6 +83,9 @@ public class ApplicationService {
 
     @Autowired
     private AdvertService advertService;
+    
+    @Autowired
+    private ApplicationSummaryService applicationSummaryService;
 
     @Autowired
     private EntityService entityService;
@@ -549,11 +535,11 @@ public class ApplicationService {
         }
 
         if (comment.isContainsNewSummaryInformation()) {
-            summariseApplication(application);
+            applicationSummaryService.summariseApplication(application);
         }
 
         if (comment.isStateGroupTransition()) {
-            summariseApplicationProcessing(application);
+            applicationSummaryService.summariseApplicationProcessing(application);
         }
 
     }
@@ -570,109 +556,6 @@ public class ApplicationService {
     private void synchroniseApplicationReferees(Application application, Comment comment) {
         ApplicationReferee referee = applicationDAO.getRefereeByUser(application, comment.getUser());
         referee.setComment(comment);
-    }
-
-    private void summariseApplication(Application application) {
-        ApplicationRatingDTO ratingSummary = applicationDAO.getApplicationRatingSummary(application);
-        application.setRatingCount(ratingSummary.getRatingCount());
-        application.setRatingAverage(ratingSummary.getRatingAverage().setScale(2, RoundingMode.HALF_UP));
-
-        String[] properties = new String[] { "ratingCount", "ratingAverage" };
-
-        for (PrismScope summaryScope : summaryScopes) {
-            try {
-                String summaryReference = summaryScope.getLowerCaseName();
-                ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, summaryReference);
-
-                for (String property : properties) {
-                    Integer notNullValueCount = entityService.getNotNullValueCount(Application.class, property,
-                            ImmutableMap.of(summaryReference, (Object) summaryResource));
-
-                    for (Integer percentile : summaryPercentiles) {
-                        Integer actualPercentile = new BigDecimal(percentile * (notNullValueCount / 100.0)).setScale(0, RoundingMode.HALF_UP).intValue();
-                        Object actualPercentileValue = applicationDAO.getPercentileValue(summaryResource, property, actualPercentile);
-                        summaryResource.setPercentileValue(application.getResourceScope().getLowerCaseName(), percentile, actualPercentileValue);
-                    }
-                }
-            } catch (Exception e) {
-                throw new Error(e);
-            }
-        }
-    }
-
-    private void summariseApplicationProcessing(Application application) {
-        StateGroup stateGroup = application.getState().getStateGroup();
-        StateGroup previousStateGroup = application.getPreviousState().getStateGroup();
-
-        Set<PrismStateGroup> processingStateGroups = Sets.newHashSet(PrismStateGroup.APPLICATION_VALIDATION, PrismStateGroup.APPLICATION_REVIEW,
-                PrismStateGroup.APPLICATION_INTERVIEW, PrismStateGroup.APPLICATION_APPROVAL);
-        LocalDate baseline = new LocalDate();
-
-        if (processingStateGroups.contains(stateGroup.getId())) {
-            createOrUpdateApplicationProcessing(application, stateGroup, baseline);
-        }
-
-        if (processingStateGroups.contains(previousStateGroup.getId())) {
-            updateApplicationProcessing(application, previousStateGroup, baseline);
-        }
-    }
-
-    private void createOrUpdateApplicationProcessing(Application application, StateGroup stateGroup, LocalDate baseline) {
-        ApplicationProcessing transientProcessing = new ApplicationProcessing().withApplication(application).withStateGroup(stateGroup).withInstanceCount(1)
-                .withDayDurationSum(0).withLastUpdateDate(baseline);
-
-        ApplicationProcessing persistentProcessing = entityService.getDuplicateEntity(transientProcessing);
-        if (persistentProcessing == null) {
-            entityService.save(transientProcessing);
-        } else {
-            persistentProcessing.setInstanceCount(persistentProcessing.getInstanceCount() + 1);
-            persistentProcessing.setLastUpdatedDate(baseline);
-        }
-        
-        createOrUpdateApplicationProcessingSummary(application, stateGroup);
-    }
-
-    private void updateApplicationProcessing(Application application, StateGroup stateGroup, LocalDate baseline) {
-        ApplicationProcessing processing = applicationDAO.getApplicationProcessing(application, stateGroup);
-        Integer actualStateDuration = Days.daysBetween(baseline, processing.getLastUpdatedDate()).getDays();
-        processing.setDayDurationSum(processing.getDayDurationSum() + actualStateDuration);
-        processing.setLastUpdatedDate(baseline);
-        
-        createOrUpdateApplicationProcessingSummary(application, stateGroup);
-    }
-    
-    private void createOrUpdateApplicationProcessingSummary(Application application, StateGroup stateGroup) throws Error {
-        String[] properties = new String[] { "instanceCount", "dayDurationSum" };
-
-        for (PrismScope summaryScope : summaryScopes) {
-            try {
-                String summaryReference = summaryScope.getLowerCaseName();
-                ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, summaryReference);
-                
-                ApplicationProcessingSummary transientProcessingSummary = new ApplicationProcessingSummary().withResource(summaryResource).withStateGroup(stateGroup);
-                ApplicationProcessingSummary persistentProcessingSummary = null;
-
-                for (String property : properties) {
-                    Integer notNullApplicationProcessingCount = applicationDAO.getNotNullApplicationProcessingCount(summaryResource, stateGroup);
-
-                    for (Integer percentile : summaryPercentiles) {
-                        Integer actualPercentile = new BigDecimal(percentile * (notNullApplicationProcessingCount / 100.0)).setScale(0, RoundingMode.HALF_UP).intValue();
-                        Object actualPercentileValue = applicationDAO.getApplicationProcessingPercentileValue(summaryResource, stateGroup, property, actualPercentile);
-
-                        persistentProcessingSummary = entityService.getDuplicateEntity(transientProcessingSummary);
-                        if (persistentProcessingSummary == null) {
-                            transientProcessingSummary.setPercentileValue(property, actualPercentile, actualPercentileValue);
-                        }   
-                    }
-                }
-                
-                if (persistentProcessingSummary == null) {
-                    entityService.save(transientProcessingSummary);
-                }
-            } catch (Exception e) {
-                throw new Error(e);
-            }
-        }
     }
 
     private void copyAddress(Institution institution, Address to, AddressDTO from) {

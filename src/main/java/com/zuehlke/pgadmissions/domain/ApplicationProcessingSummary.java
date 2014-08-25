@@ -47,46 +47,52 @@ public class ApplicationProcessingSummary implements IUniqueEntity {
     @JoinColumn(name = "state_group_id", nullable = false)
     private StateGroup stateGroup;
     
-    @Column(name = "instance_count_percentile_05")
+    @Column(name = "instance_total", nullable = false)
+    private Integer instanceTotal;
+    
+    @Column(name = "instance_total_live", nullable = false)
+    private Integer instanceTotalLive;
+    
+    @Column(name = "instance_count_percentile_05", nullable = false)
     private Integer instanceCountCount05;
     
-    @Column(name = "instance_count_percentile_20")
+    @Column(name = "instance_count_percentile_20", nullable = false)
     private Integer instanceCountCount20;
 
-    @Column(name = "instance_count_percentile_35")
+    @Column(name = "instance_count_percentile_35", nullable = false)
     private Integer instanceCountCount35;
     
-    @Column(name = "instance_count_percentile_50")
+    @Column(name = "instance_count_percentile_50", nullable = false)
     private Integer instanceCountCount50;
     
-    @Column(name = "instance_count_percentile_65")
+    @Column(name = "instance_count_percentile_65", nullable = false)
     private Integer instanceCountCount65;
     
-    @Column(name = "instance_count_percentile_80")
+    @Column(name = "instance_count_percentile_80", nullable = false)
     private Integer instanceCountCount80;
     
-    @Column(name = "instance_count_percentile_95")
+    @Column(name = "instance_count_percentile_95", nullable = false)
     private Integer instanceCountCount95;
     
-    @Column(name = "day_duration_sum_percentile_05")
+    @Column(name = "day_duration_sum_percentile_05", nullable = false)
     private Integer dayDurationSum05;
     
-    @Column(name = "day_duration_sum_percentile_20")
+    @Column(name = "day_duration_sum_percentile_20", nullable = false)
     private Integer dayDurationSum20;
 
-    @Column(name = "day_duration_sum_percentile_35")
+    @Column(name = "day_duration_sum_percentile_35", nullable = false)
     private Integer dayDurationSum35;
     
-    @Column(name = "day_duration_sum_percentile_50")
+    @Column(name = "day_duration_sum_percentile_50", nullable = false)
     private Integer dayDurationSum50;
     
-    @Column(name = "day_duration_sum_percentile_65")
+    @Column(name = "day_duration_sum_percentile_65", nullable = false)
     private Integer dayDurationSum65;
     
-    @Column(name = "day_duration_sum_percentile_80")
+    @Column(name = "day_duration_sum_percentile_80", nullable = false)
     private Integer dayDurationSum80;
     
-    @Column(name = "day_duration_sum_percentile_95")
+    @Column(name = "day_duration_sum_percentile_95", nullable = false)
     private Integer dayDurationSum95;
     
     public final Integer getId() {
@@ -127,6 +133,22 @@ public class ApplicationProcessingSummary implements IUniqueEntity {
 
     public final void setStateGroup(StateGroup stateGroup) {
         this.stateGroup = stateGroup;
+    }
+
+    public final Integer getInstanceTotal() {
+        return instanceTotal;
+    }
+
+    public final void setInstanceTotal(Integer instanceTotal) {
+        this.instanceTotal = instanceTotal;
+    }
+
+    public final Integer getInstanceTotalLive() {
+        return instanceTotalLive;
+    }
+
+    public final void setInstanceTotalLive(Integer instanceTotalLive) {
+        this.instanceTotalLive = instanceTotalLive;
     }
 
     public final Integer getInstanceCountCount05() {

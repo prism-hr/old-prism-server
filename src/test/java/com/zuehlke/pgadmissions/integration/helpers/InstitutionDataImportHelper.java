@@ -131,7 +131,7 @@ public class InstitutionDataImportHelper {
         Program program1 = programService.getProgramByImportedCode(institution, "1");
         Program otherProgram = programService.getProgramByImportedCode(institution, "99");
         assertEquals("MRes program1", program1.getTitle());
-        assertSame(PrismProgramType.MRES, program1.getProgramType());
+        assertSame(PrismProgramType.POSTGRADUATE_STUDY, program1.getProgramType());
         assertEquals("Internship otherProgram", otherProgram.getTitle());
         assertSame(PrismProgramType.INTERNSHIP, otherProgram.getProgramType());
         assertTrue(program1.getRequireProjectDefinition());
@@ -155,7 +155,7 @@ public class InstitutionDataImportHelper {
         program1 = programService.getProgramByImportedCode(institution, "1");
         otherProgram = programService.getProgramByImportedCode(institution, "99");
         assertEquals("MRes new_program1", program1.getTitle());
-        assertSame(PrismProgramType.MRES, program1.getProgramType());
+        assertSame(PrismProgramType.POSTGRADUATE_STUDY, program1.getProgramType());
         assertEquals("Internship otherProgram", otherProgram.getTitle());
         assertSame(PrismProgramType.INTERNSHIP, otherProgram.getProgramType());
         assertEquals(program1.getState().getId(), PrismState.PROGRAM_APPROVED);

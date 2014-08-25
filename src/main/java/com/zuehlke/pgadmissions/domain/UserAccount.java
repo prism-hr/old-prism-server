@@ -70,7 +70,7 @@ public class UserAccount {
         this.enabled = enabled;
     }
 
-    public final Boolean getSendRecommendationEmail() {
+    public final Boolean isSendRecommendationEmail() {
         return sendRecommendationEmail;
     }
 

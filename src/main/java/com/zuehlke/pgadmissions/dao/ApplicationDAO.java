@@ -32,8 +32,7 @@ public class ApplicationDAO {
     private SessionFactory sessionFactory;
 
     public Application getPreviousSubmittedApplication(Application application) {
-        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class)
-                .add(Restrictions.eq("user", application.getUser())) //
+        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class).add(Restrictions.eq("user", application.getUser())) //
                 .add(Restrictions.isNotNull("submittedTimestamp")) //
                 .add(Restrictions.ne("id", application.getId())) //
                 .addOrder(Order.desc("submittedTimestamp")) //
@@ -41,10 +40,9 @@ public class ApplicationDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-    
+
     public Application getPreviousUnsubmittedApplication(Application application) {
-        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class)
-                .add(Restrictions.eq("user", application.getUser())) //
+        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class).add(Restrictions.eq("user", application.getUser())) //
                 .add(Restrictions.isNull("submittedTimestamp")) //
                 .add(Restrictions.ne("id", application.getId())) //
                 .addOrder(Order.desc("createdTimestamp")) //
@@ -52,7 +50,7 @@ public class ApplicationDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-    
+
     public String getApplicationExportReference(Application application) {
         return (String) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.property("exportReference")) //
@@ -68,7 +66,7 @@ public class ApplicationDAO {
                 .add(Restrictions.isNotNull("creatorIpAddress")) //
                 .uniqueResult();
     }
-    
+
     public User getPrimarySupervisor(Comment offerRecommendationComment) {
         return (User) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .setProjection(Projections.property("user")) //
@@ -76,7 +74,7 @@ public class ApplicationDAO {
                 .add(Restrictions.eq("role.id", PrismRole.APPLICATION_PRIMARY_SUPERVISOR)) //
                 .uniqueResult();
     }
-    
+
     public List<ApplicationReferee> getApplicationExportReferees(Application application) {
         return (List<ApplicationReferee>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
                 .createAlias("application", "application", JoinType.INNER_JOIN) //
@@ -86,7 +84,7 @@ public class ApplicationDAO {
                 .addOrder(Order.asc("comment.createdTimestamp")) //
                 .list();
     }
-    
+
     public List<ApplicationQualification> getApplicationExportQualifications(Application application) {
         return (List<ApplicationQualification>) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
                 .add(Restrictions.eq("application", application)) //
@@ -94,18 +92,18 @@ public class ApplicationDAO {
                 .addOrder(Order.desc("startDate")) //
                 .list();
     }
-    
+
     public List<Application> getUclApplicationsForExport() {
         return (List<Application>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
-               .createAlias("state", "state", JoinType.INNER_JOIN) //
-               .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-               .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-               .createAlias("institution", "institution", JoinType.INNER_JOIN) //
-               .add(Restrictions.eq("institution.uclInstitution", true)) //
-               .add(Restrictions.eq("action.actionCategory", PrismActionCategory.EXPORT_RESOURCE)) //
-               .list();
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("institution.uclInstitution", true)) //
+                .add(Restrictions.eq("action.actionCategory", PrismActionCategory.EXPORT_RESOURCE)) //
+                .list();
     }
-    
+
     public ApplicationRatingDTO getApplicationRatingSummary(Application application) {
         return (ApplicationRatingDTO) sessionFactory.getCurrentSession().createCriteria(Comment.class, "comment") //
                 .setProjection(Projections.projectionList() //
@@ -123,11 +121,11 @@ public class ApplicationDAO {
                 .add(Restrictions.eq(parentResource.getResourceScope().getLowerCaseName(), parentResource)) //
                 .add(Restrictions.isNotNull(property)) //
                 .addOrder(Order.asc(property)) //
-                .setFirstResult(percentile) //
+                .setFirstResult(percentile - 1) //
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-    
+
     public ApplicationReferee getRefereeByUser(Application application, User user) {
         return (ApplicationReferee) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
                 .add(Restrictions.eq("application", application)) //
@@ -141,5 +139,29 @@ public class ApplicationDAO {
                 .add(Restrictions.eq("stateGroup", stateGroup)) //
                 .uniqueResult();
     }
-    
+
+    public Integer getNotNullApplicationProcessingCount(ParentResource parentResource, StateGroup stateGroup) {
+        String parentResourceReference = parentResource.getResourceScope().getLowerCaseName();
+        return (Integer) sessionFactory.getCurrentSession().createCriteria(ApplicationProcessing.class) //
+                .setProjection(Projections.count("application")) //
+                .createAlias("application", "application", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("application." + parentResourceReference, parentResource)) //
+                .add(Restrictions.eq("stateGroup", stateGroup)) //
+                .uniqueResult();
+    }
+
+    public Object getApplicationProcessingPercentileValue(ParentResource parentResource, StateGroup stateGroup, String property,
+            Integer percentile) {
+        String parentResourceReference = parentResource.getResourceScope().getLowerCaseName();
+        return (ApplicationProcessing) sessionFactory.getCurrentSession().createCriteria(ApplicationProcessing.class) //
+                .setProjection(Projections.property(property)) //
+                .createAlias("application", "application", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("application." + parentResourceReference, parentResource)) //
+                .add(Restrictions.eq("stateGroup", stateGroup)) //
+                .addOrder(Order.asc(property)) //
+                .setFirstResult(percentile - 1) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+
 }

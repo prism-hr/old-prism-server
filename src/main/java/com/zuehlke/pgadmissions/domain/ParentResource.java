@@ -65,7 +65,7 @@ public abstract class ParentResource extends Resource {
     
     public void setPercentileValue(String property, Integer percentile, Object value) {
         try {
-            MethodUtils.invokeMethod(this, "set" + WordUtils.capitalize(property), value);
+            MethodUtils.invokeMethod(this, "set" + WordUtils.capitalize(property) + String.format("%02d", percentile), value);
         } catch (Exception e) {
             throw new Error(e);
         }

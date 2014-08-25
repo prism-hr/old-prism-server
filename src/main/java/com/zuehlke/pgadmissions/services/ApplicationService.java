@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationPassport;
 import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
 import com.zuehlke.pgadmissions.domain.ApplicationProcessing;
+import com.zuehlke.pgadmissions.domain.ApplicationProcessingSummary;
 import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
@@ -580,12 +581,12 @@ public class ApplicationService {
 
         for (PrismScope summaryScope : summaryScopes) {
             try {
-                String parentReference = summaryScope.getLowerCaseName();
-                ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, parentReference);
+                String summaryReference = summaryScope.getLowerCaseName();
+                ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, summaryReference);
 
                 for (String property : properties) {
                     Integer notNullValueCount = entityService.getNotNullValueCount(Application.class, property,
-                            ImmutableMap.of(parentReference, (Object) summaryResource));
+                            ImmutableMap.of(summaryReference, (Object) summaryResource));
 
                     for (Integer percentile : summaryPercentiles) {
                         Integer actualPercentile = new BigDecimal(percentile * (notNullValueCount / 100.0)).setScale(0, RoundingMode.HALF_UP).intValue();
@@ -614,7 +615,6 @@ public class ApplicationService {
         if (processingStateGroups.contains(previousStateGroup.getId())) {
             updateApplicationProcessing(application, previousStateGroup, baseline);
         }
-
     }
 
     private void createOrUpdateApplicationProcessing(Application application, StateGroup stateGroup, LocalDate baseline) {
@@ -628,6 +628,8 @@ public class ApplicationService {
             persistentProcessing.setInstanceCount(persistentProcessing.getInstanceCount() + 1);
             persistentProcessing.setLastUpdatedDate(baseline);
         }
+        
+        createOrUpdateApplicationProcessingSummary(application, stateGroup);
     }
 
     private void updateApplicationProcessing(Application application, StateGroup stateGroup, LocalDate baseline) {
@@ -635,6 +637,42 @@ public class ApplicationService {
         Integer actualStateDuration = Days.daysBetween(baseline, processing.getLastUpdatedDate()).getDays();
         processing.setDayDurationSum(processing.getDayDurationSum() + actualStateDuration);
         processing.setLastUpdatedDate(baseline);
+        
+        createOrUpdateApplicationProcessingSummary(application, stateGroup);
+    }
+    
+    private void createOrUpdateApplicationProcessingSummary(Application application, StateGroup stateGroup) throws Error {
+        String[] properties = new String[] { "instanceCount", "dayDurationSum" };
+
+        for (PrismScope summaryScope : summaryScopes) {
+            try {
+                String summaryReference = summaryScope.getLowerCaseName();
+                ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, summaryReference);
+                
+                ApplicationProcessingSummary transientProcessingSummary = new ApplicationProcessingSummary().withResource(summaryResource).withStateGroup(stateGroup);
+                ApplicationProcessingSummary persistentProcessingSummary = null;
+
+                for (String property : properties) {
+                    Integer notNullApplicationProcessingCount = applicationDAO.getNotNullApplicationProcessingCount(summaryResource, stateGroup);
+
+                    for (Integer percentile : summaryPercentiles) {
+                        Integer actualPercentile = new BigDecimal(percentile * (notNullApplicationProcessingCount / 100.0)).setScale(0, RoundingMode.HALF_UP).intValue();
+                        Object actualPercentileValue = applicationDAO.getApplicationProcessingPercentileValue(summaryResource, stateGroup, property, actualPercentile);
+
+                        persistentProcessingSummary = entityService.getDuplicateEntity(transientProcessingSummary);
+                        if (persistentProcessingSummary == null) {
+                            transientProcessingSummary.setPercentileValue(property, actualPercentile, actualPercentileValue);
+                        }   
+                    }
+                }
+                
+                if (persistentProcessingSummary == null) {
+                    entityService.save(transientProcessingSummary);
+                }
+            } catch (Exception e) {
+                throw new Error(e);
+            }
+        }
     }
 
     private void copyAddress(Institution institution, Address to, AddressDTO from) {

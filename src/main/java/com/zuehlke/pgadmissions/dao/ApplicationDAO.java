@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationProcessing;
+import com.zuehlke.pgadmissions.domain.ApplicationProcessingSummary;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -133,14 +134,21 @@ public class ApplicationDAO {
                 .uniqueResult();
     }
 
-    public ApplicationProcessing getApplicationProcessing(Application application, StateGroup stateGroup) {
+    public ApplicationProcessing getProcessing(Application application, StateGroup stateGroup) {
         return (ApplicationProcessing) sessionFactory.getCurrentSession().createCriteria(ApplicationProcessing.class) //
                 .add(Restrictions.eq("application", application)) //
                 .add(Restrictions.eq("stateGroup", stateGroup)) //
                 .uniqueResult();
     }
+    
+    public ApplicationProcessingSummary getProcessingSummary(ParentResource summaryResource, StateGroup stateGroup) {
+        return (ApplicationProcessingSummary) sessionFactory.getCurrentSession().createCriteria(ApplicationProcessingSummary.class) //
+                .add(Restrictions.eq(summaryResource.getResourceScope().getLowerCaseName(), summaryResource)) //
+                .add(Restrictions.eq("stateGroup", stateGroup)) //
+                .uniqueResult();
+    }
 
-    public Integer getNotNullApplicationProcessingCount(ParentResource parentResource, StateGroup stateGroup) {
+    public Integer getNotNullProcessingCount(ParentResource parentResource, StateGroup stateGroup) {
         String parentResourceReference = parentResource.getResourceScope().getLowerCaseName();
         return (Integer) sessionFactory.getCurrentSession().createCriteria(ApplicationProcessing.class) //
                 .setProjection(Projections.count("application")) //
@@ -150,8 +158,7 @@ public class ApplicationDAO {
                 .uniqueResult();
     }
 
-    public Object getApplicationProcessingPercentileValue(ParentResource parentResource, StateGroup stateGroup, String property,
-            Integer percentile) {
+    public Object getProcessingPercentileValue(ParentResource parentResource, StateGroup stateGroup, String property, Integer percentile) {
         String parentResourceReference = parentResource.getResourceScope().getLowerCaseName();
         return (ApplicationProcessing) sessionFactory.getCurrentSession().createCriteria(ApplicationProcessing.class) //
                 .setProjection(Projections.property(property)) //

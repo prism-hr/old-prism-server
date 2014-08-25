@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,8 +58,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvalu
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.services.exporters.ApplicationExportService;
-import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
@@ -96,16 +93,10 @@ public class SystemService {
     private EntityService entityService;
 
     @Autowired
-    private EntityImportService entityImportService;
-
-    @Autowired
     private NotificationService notificationService;
 
     @Autowired
     private ActionService actionService;
-
-    @Autowired
-    private ProgramService programService;
     
     @Autowired
     private ResourceService resourceService;
@@ -121,12 +112,6 @@ public class SystemService {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private ApplicationExportService applicationExportService;
-
-    @Autowired
-    private DocumentService documentService;
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -181,53 +166,6 @@ public class SystemService {
     public void initializeSearchIndexes() throws InterruptedException {
         FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
         fullTextSession.createIndexer().startAndWait();
-    }
-
-    @Scheduled(cron = "${maintenance.ongoing}")
-    public void maintainSystem() {
-        try {
-            logger.info("Executing pending state transitions");
-            stateService.executePendingStateTransitions();
-        } catch (Exception e) {
-            logger.info("Error executing pending state transitions", e);
-        }
-
-        if (!stateService.hasPendingStateTransitions()) {
-            try {
-                logger.info("Importing reference data");
-                entityImportService.importReferenceData();
-            } catch (Exception e) {
-                logger.info("Error importing reference data", e);
-            }
-            
-            try {
-                logger.info("Updating program closing dates");
-                programService.updateProgramClosingDates();
-            } catch (Exception e) {
-                logger.info("Error updating program closing dates");
-            }
-
-            try {
-                logger.trace("Exporting applications");
-                applicationExportService.exportUclApplications();
-            } catch (Exception e) {
-                logger.info("Error exporting applications", e);
-            }
-
-            try {
-                logger.info("Sending deferred workflow notifications.");
-                notificationService.sendDeferredWorkflowNotifications();
-            } catch (Exception e) {
-                logger.info("Error sending deferred workflow notifications", e);
-            }
-        }
-
-        try {
-            logger.info("Deleting unused documents");
-            documentService.deleteOrphanDocuments();
-        } catch (Exception e) {
-            logger.info("Error deleting unused documents", e);
-        }
     }
 
     private void initialiseScopes() {

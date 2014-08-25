@@ -51,6 +51,9 @@ public class NotificationService {
     private NotificationDAO notificationDAO;
 
     @Autowired
+    private AdvertService advertService;
+
+    @Autowired
     private CommentService commentService;
 
     @Autowired
@@ -154,6 +157,18 @@ public class NotificationService {
         }
     }
 
+    public void sendRecommendationNotifications() {
+        LocalDate baseline = new LocalDate();
+        List<User> users = notificationDAO.getRecommendationNotifications(baseline);
+
+        System system = systemService.getSystem();
+        NotificationTemplate template = getById(PrismNotificationTemplate.SYSTEM_RECOMMENDATION_NOTIFICATION);
+
+        for (User user : users) {
+            sendRecommendationNotification(system, user, template, baseline);
+        }
+    }
+
     @Transactional
     public void sendNotification(User user, Resource resource, PrismNotificationTemplate notificationTemplateId, Map<String, String> extraParameters) {
         NotificationTemplate notificationTemplate = getById(notificationTemplateId);
@@ -250,6 +265,13 @@ public class NotificationService {
             createOrUpdateUserNotification(user, notificationTemplate, baseline);
         }
 
+    }
+
+    @Transactional
+    private void sendRecommendationNotification(System system, User user, NotificationTemplate template, LocalDate baseline) {
+        String recommendations = advertService.getRecommendedAdvertsForEmail(user);
+        sendNotification(user, system, template, ImmutableMap.of("author", system.getUser().getDisplayName(), "recommendations", recommendations));
+        createOrUpdateUserNotification(user, template, baseline);
     }
 
     @Transactional

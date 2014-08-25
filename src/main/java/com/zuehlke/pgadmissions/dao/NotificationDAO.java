@@ -253,5 +253,18 @@ public class NotificationDAO {
                         .add(Restrictions.eq("userAccount.enabled", true))) //
                 .list();
     }
+    
+    public List<User> getRecommendationNotifications(LocalDate baseline) {
+        LocalDate lastSentBaseline = baseline.minusDays(7);
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .setProjection(Projections.property("id")) //
+                .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN) //
+                .add(Restrictions.eq("userAccount.sendRecommendationEmail", true)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("userNotification.id")) //
+                        .add(Restrictions.lt("lastSentDate", lastSentBaseline))) //
+                .list();
+    }
 
 }

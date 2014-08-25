@@ -548,3 +548,48 @@ ALTER TABLE APPLICATION_PROCESSING_SUMMARY
 	MODIFY COLUMN instance_total INT(10) UNSIGNED NOT NULL,
 	MODIFY COLUMN instance_total_live INT(10) UNSIGNED NOT NULL
 ;
+
+ALTER TABLE ADVERT
+	ADD COLUMN currency_at_locale VARCHAR(10) AFTER currency,
+	ADD INDEX (currency),
+	ADD INDEX (currency_at_locale)
+;
+
+ALTER TABLE APPLICATION
+	ADD COLUMN confirmed_start_date DATE AFTER rating_average,
+	ADD COLUMN confirmed_supervisor_user_id INT(10) UNSIGNED AFTER confirmed_start_date,
+	ADD COLUMN confirmed_offer_type VARCHAR(50) AFTER confirmed_supervisor_user_id,
+	ADD INDEX (confirmed_start_date, sequence_identifier),
+	ADD INDEX (confirmed_supervisor_user_id, sequence_identifier),
+	ADD INDEX (confirmed_offer_type, sequence_identifier),
+	ADD FOREIGN KEY (confirmed_supervisor_user_id) REFERENCES USER (id)
+;
+
+UPDATE APPLICATION INNER JOIN (
+	SELECT COMMENT.application_id AS application_id,
+		COMMENT.id AS comment_id,
+		COMMENT.application_position_provisional_start_date AS confirmed_start_date,
+		COMMENT_ASSIGNED_USER.user_id AS confirmed_supervisor_user_id,
+		IF(COMMENT.application_appointment_conditions IS NOT NULL,
+			"CONDITIONAL",
+			"UNCONDITIONAL") AS confirmed_offer_type
+	FROM COMMENT INNER JOIN (
+		SELECT COMMENT.application_id AS application_id,
+			MAX(COMMENT.created_timestamp) AS created_timestamp
+		FROM COMMENT
+		WHERE COMMENT.action_id = "APPLICATION_CONFIRM_OFFER_RECOMMENDATION"
+		GROUP BY COMMENT.application_id) AS CONFIRMATION
+		ON COMMENT.application_id = CONFIRMATION.application_id
+			AND COMMENT.created_timestamp = CONFIRMATION.created_timestamp
+			AND COMMENT.action_id = "APPLICATION_CONFIRM_OFFER_RECOMMENDATION"
+	INNER JOIN COMMENT_ASSIGNED_USER
+		ON COMMENT.id = COMMENT_ASSIGNED_USER.comment_id
+	AND COMMENT_ASSIGNED_USER.role_id = "APPLICATION_PRIMARY_SUPERVISOR") AS OFFER_SUMMARY
+	ON APPLICATION.id = OFFER_SUMMARY.application_id
+SET APPLICATION.confirmed_start_date = OFFER_SUMMARY.confirmed_start_date,
+	APPLICATION.confirmed_supervisor_user_id = OFFER_SUMMARY.confirmed_supervisor_user_id,
+	APPLICATION.confirmed_offer_type = OFFER_SUMMARY.confirmed_offer_type
+;
+
+
+	

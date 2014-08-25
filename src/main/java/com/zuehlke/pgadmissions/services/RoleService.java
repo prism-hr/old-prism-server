@@ -90,6 +90,11 @@ public class RoleService {
     public List<User> getRoleUsers(Resource resource, Role role) {
         return roleDAO.getRoleUsers(resource, role);
     }
+    
+    public List<User> getRoleUsers(Resource resource, PrismRole roleId) {
+        Role role = getById(roleId);
+        return roleDAO.getRoleUsers(resource, role);
+    }
 
     public List<PrismRole> getRoles(Class<? extends Resource> resourceClass) {
         return roleDAO.getRoles(resourceClass);

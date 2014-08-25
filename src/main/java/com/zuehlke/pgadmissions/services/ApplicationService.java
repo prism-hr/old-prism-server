@@ -51,6 +51,7 @@ import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.Title;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
@@ -74,7 +75,7 @@ import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationVal
 @Service
 @Transactional
 public class ApplicationService {
-    
+
     @Autowired
     private ApplicationDAO applicationDAO;
 
@@ -83,7 +84,7 @@ public class ApplicationService {
 
     @Autowired
     private AdvertService advertService;
-    
+
     @Autowired
     private ApplicationSummaryService applicationSummaryService;
 
@@ -525,11 +526,13 @@ public class ApplicationService {
     public void postProcessApplication(Application application, Comment comment) {
         switch (comment.getAction().getId()) {
         case PROJECT_CREATE_APPLICATION:
-            prepopulateApplicationSupervisors(application);
+            synchroniseProjectSupervisors(application);
             break;
         case APPLICATION_PROVIDE_REFERENCE:
-            synchroniseApplicationReferees(application, comment);
+            synchroniseReferees(application, comment);
             break;
+        case APPLICATION_CONFIRM_OFFER_RECOMMENDATION:
+            synchroniseOffer(application, comment);
         default:
             break;
         }
@@ -544,7 +547,7 @@ public class ApplicationService {
 
     }
 
-    private void prepopulateApplicationSupervisors(Application application) {
+    private void synchroniseProjectSupervisors(Application application) {
         Role supervisorRole = roleService.getById(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR);
         List<User> supervisorUsers = roleService.getRoleUsers(application, supervisorRole);
 
@@ -553,9 +556,15 @@ public class ApplicationService {
         }
     }
 
-    private void synchroniseApplicationReferees(Application application, Comment comment) {
+    private void synchroniseReferees(Application application, Comment comment) {
         ApplicationReferee referee = applicationDAO.getRefereeByUser(application, comment.getUser());
         referee.setComment(comment);
+    }
+
+    private void synchroniseOffer(Application application, Comment comment) {
+        application.setConfirmedStartDate(comment.getPositionProvisionalStartDate());
+        application.setConfirmedSupervisor(roleService.getRoleUsers(application, PrismRole.APPLICATION_PRIMARY_SUPERVISOR).get(0));
+        application.setConfirmedOfferType(comment.getAppointmentConditions() == null ? PrismOfferType.UNCONDITIONAL : PrismOfferType.CONDITIONAL);
     }
 
     private void copyAddress(Institution institution, Address to, AddressDTO from) {

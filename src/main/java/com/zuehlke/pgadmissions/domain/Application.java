@@ -9,6 +9,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -28,6 +30,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Entity
@@ -118,6 +121,18 @@ public class Application extends Resource {
     
     @Column(name = "rating_average")
     private BigDecimal ratingAverage;
+    
+    @Column(name = "confirmed_start_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate confirmedStartDate;
+    
+    @ManyToOne
+    @JoinColumn(name = "confirmed_supervisor_user_id")
+    private User confirmedSupervisor;
+    
+    @Column(name = "confirmed_offer_type")
+    @Enumerated(EnumType.STRING)
+    private PrismOfferType confirmedOfferType;
     
     @Column(name = "do_retain", nullable = false)
     private Boolean doRetain;
@@ -354,6 +369,30 @@ public class Application extends Resource {
 
     public final void setRatingAverage(BigDecimal ratingAverage) {
         this.ratingAverage = ratingAverage;
+    }
+
+    public final LocalDate getConfirmedStartDate() {
+        return confirmedStartDate;
+    }
+
+    public final void setConfirmedStartDate(LocalDate confirmedStartDate) {
+        this.confirmedStartDate = confirmedStartDate;
+    }
+
+    public final User getConfirmedSupervisor() {
+        return confirmedSupervisor;
+    }
+
+    public final void setConfirmedSupervisor(User confirmedSupervisor) {
+        this.confirmedSupervisor = confirmedSupervisor;
+    }
+
+    public final PrismOfferType getConfirmedOfferType() {
+        return confirmedOfferType;
+    }
+
+    public final void setConfirmedOfferType(PrismOfferType confirmedOfferType) {
+        this.confirmedOfferType = confirmedOfferType;
     }
 
     public final Boolean isDoRetain() {

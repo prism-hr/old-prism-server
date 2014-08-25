@@ -3,28 +3,29 @@ package com.zuehlke.pgadmissions.domain.definitions;
 
 public enum PrismProgramType {
 
-    // TODO: reduce this to a more sensible global set
-    MRES("MRes"), //
-    MDRES("MD(Res)"), //
-    MSC("MSc"), //
-    RESEARCH_DEGREE("Research Degree"), //
-    ENGINEERING_DOCTORATE("Engineering Doctorate"), //
-    INTERNSHIP("Internship"), //
-    VISITING_RESEARCH("Research Visit"), //
-    UNCLASSIFIED("Unclassified");
+    UNDERGRADUATE_STUDY(new String[]{}),
+    POSTGRADUATE_STUDY(new String[]{"mres", "md(res)"}),
+    POSTGRADUATE_RESEARCH(new String[]{"research degree", "engineering doctorate"}),
+    INTERNSHIP(new String[]{"visiting research"}),
+    EMPLOYMENT(new String[]{}),
+    UNCLASSIFIED(new String[]{});
     
-    private String prefix;
+    private String[] prefixes;
     
-    private PrismProgramType(String prefix) {
-        this.prefix = prefix;
+    private PrismProgramType(String[] prefixes) {
+        this.prefixes = prefixes;
     }
 
     public static PrismProgramType findValueFromString(String toSearchIn) {
         for (PrismProgramType value : PrismProgramType.values()) {
-            toSearchIn = toSearchIn.trim().replaceAll("\\s+", " ").toLowerCase();
-            String prefixForSearch = value.prefix.toLowerCase();
-            if (value != UNCLASSIFIED && toSearchIn.toLowerCase().startsWith(prefixForSearch)) {
-                return value;
+            if (value.prefixes.length > 0) {
+                toSearchIn = toSearchIn.trim().replaceAll("\\s+", " ").toLowerCase();
+                
+                for (String prefix : value.prefixes) {
+                    if (toSearchIn.startsWith(prefix)) {
+                        return value;
+                    }
+                }
             }
         }
         return UNCLASSIFIED;

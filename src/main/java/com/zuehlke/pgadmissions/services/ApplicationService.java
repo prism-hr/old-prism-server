@@ -644,7 +644,7 @@ public class ApplicationService {
         to.setAddressLine2(Strings.emptyToNull(from.getAddressLine2()));
         to.setAddressTown(from.getAddressTown());
         to.setAddressRegion(Strings.emptyToNull(from.getAddressRegion()));
-        to.setAddressCode(Strings.isNullOrEmpty(from.getAddressCode()) ? "Not Provided" : from.getAddressCode());
+        to.setAddressCode(Strings.emptyToNull(from.getAddressCode()));
     }
 
     private Application getPreviousApplication(Application application) {

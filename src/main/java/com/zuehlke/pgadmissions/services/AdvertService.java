@@ -44,7 +44,7 @@ public class AdvertService {
         return advertDAO.getRecommendedAdverts(user, activeProgramStates, activeProjectStates);
     }
 
-    // TODO: internal application link and other summary information (e.g. pay/fee according to requirements)
+    // TODO: internal application link and other summary information (e.g. pay/fee according to user requirements)
     public String getRecommendedAdvertsForEmail(User user) {
         List<Advert> adverts = getRecommendedAdverts(user);
         List<String> recommendations = Lists.newLinkedList();

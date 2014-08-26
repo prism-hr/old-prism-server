@@ -43,7 +43,7 @@ public class ProjectService {
     public void postProcessProject(Project project, Comment comment) {
         PrismActionCategory actionCategory = comment.getAction().getActionCategory();
         if (Arrays.asList(PrismActionCategory.CREATE_RESOURCE, PrismActionCategory.VIEW_EDIT_RESOURCE).contains(actionCategory)) {
-            project.setSequenceIdentifier(project.getSequenceIdentifier() + "-" + project.getResourceScope().getShortCode());
+            project.getAdvert().setSequenceIdentifier(project.getSequenceIdentifier() + "-" + project.getResourceScope().getShortCode());
         }
     }
 

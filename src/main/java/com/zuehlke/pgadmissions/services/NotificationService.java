@@ -136,16 +136,16 @@ public class NotificationService {
         definitions.addAll(notificationDAO.getRequestNotifications(resource, invoker));
         definitions.addAll(notificationDAO.getUpdateNotifications(resource, comment.getAction(), invoker));
 
-        HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
+        HashMultimap<Resource, User> sent = HashMultimap.create();
 
         for (UserNotificationDefinitionDTO definition : definitions) {
             User user = userService.getById(definition.getUserId());
 
             NotificationTemplate notificationTemplate = getById(definition.getNotificationTemplateId());
 
-            if (!sent.get(notificationTemplate).contains(user)) {
+            if (!sent.get(resource).contains(user)) {
                 sendNotification(user, resource, notificationTemplate, ImmutableMap.of("author", invoker.getDisplayName()));
-                sent.put(notificationTemplate, user);
+                sent.put(resource, user);
             }
 
             if (notificationTemplate.getNotificationPurpose() == PrismNotificationPurpose.REQUEST) {

@@ -60,5 +60,36 @@ public class ImportedEntityService {
     public ImportedEntity getByName(Class<ImportedEntity> entityClass, Institution institution, String name) {
         return importedEntityDAO.getByName(entityClass, institution, name);
     }
+    
+    public void getOrImportEntity(Class<ImportedEntity> entityClass, Institution institution, ImportedEntity transientEntity) {
+        ImportedEntity persistentEntity = entityService.getDuplicateEntity(transientEntity);
+        
+        if (persistentEntity == null) {
+            entityService.save(transientEntity);
+        } else {
+            String transientCode = transientEntity.getCode();
+            String transientName = transientEntity.getName();
+            
+            String persistentCode = persistentEntity.getCode();
+            String persistentName = persistentEntity.getName();
+            
+            if (transientCode == persistentCode && transientName == persistentName) {
+                persistentEntity.setEnabled(true);
+            } else {
+                if (transientName != persistentName) {
+                    ImportedEntity otherPersistentEntity = getByName(entityClass, institution, transientName);
+                    if (otherPersistentEntity == null) {
+                        persistentEntity.setName(transientName);
+                    }
+                } else {
+                    ImportedEntity otherPersistentEntity = getByCode(entityClass, institution, transientCode);
+                    if (otherPersistentEntity == null) {
+                        persistentEntity.setCode(transientCode);
+                    }
+                }
+                persistentEntity.setEnabled(true);
+            }
+        }
+    }
 
 }

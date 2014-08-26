@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.ImmutableMap;
-import com.zuehlke.pgadmissions.dao.ApplicationDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationSummaryDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationProcessing;
 import com.zuehlke.pgadmissions.domain.ApplicationProcessingSummary;
@@ -30,13 +30,13 @@ public class ApplicationSummaryService {
     private final PrismScope[] summaryScopes = new PrismScope[] { PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION };
 
     @Autowired
-    private ApplicationDAO applicationDAO;
+    private ApplicationSummaryDAO applicationSummaryDAO;
 
     @Autowired
     private EntityService entityService;
 
     public void summariseApplication(Application application) {
-        ApplicationRatingDTO ratingSummary = applicationDAO.getApplicationRatingSummary(application);
+        ApplicationRatingDTO ratingSummary = applicationSummaryDAO.getApplicationRatingSummary(application);
         application.setRatingCount(ratingSummary.getRatingCount());
         application.setRatingAverage(ratingSummary.getRatingAverage().setScale(2, RoundingMode.HALF_UP));
 
@@ -55,7 +55,7 @@ public class ApplicationSummaryService {
 
         LocalDate baseline = new LocalDate();
         createOrUpdateApplicationProcessing(application, stateGroup, baseline);
-        updateApplicationProcessing(application, previousStateGroup, baseline);
+        updatePreviousApplicationProcessing(application, previousStateGroup, baseline);
     }
 
     private void updateApplicationSummary(Application application, PrismScope summaryScope) throws Exception {
@@ -70,7 +70,7 @@ public class ApplicationSummaryService {
 
             for (Integer percentile : summaryPercentiles) {
                 Integer valuesInSet = getActualPercentile(notNullValueCount, percentile);
-                Object actualValue = applicationDAO.getPercentileValue(summaryResource, summaryProperty, valuesInSet);
+                Object actualValue = applicationSummaryDAO.getPercentileValue(summaryResource, summaryProperty, valuesInSet);
                 String propertyToSet = application.getResourceScope().getLowerCaseName() + WordUtils.capitalize(summaryProperty);
                 summaryResource.setPercentileValue(propertyToSet, percentile, actualValue);
             }
@@ -82,26 +82,34 @@ public class ApplicationSummaryService {
         ApplicationProcessing persistentProcessing = entityService.getDuplicateEntity(transientProcessing);
 
         if (persistentProcessing == null) {
-            transientProcessing.setInstanceCount(1);
-            transientProcessing.setDayDurationSum(0);
-            transientProcessing.setLastUpdatedDate(baseline);
+            createApplicationProcessing(transientProcessing, baseline);
             entityService.save(transientProcessing);
         } else {
-            persistentProcessing.setInstanceCount(persistentProcessing.getInstanceCount() + 1);
-            persistentProcessing.setLastUpdatedDate(baseline);
+            updateApplicationProcessing(baseline, persistentProcessing);
         }
 
         createOrUpdateApplicationProcessingSummary(application, stateGroup);
     }
 
-    private void updateApplicationProcessing(Application application, StateGroup stateGroup, LocalDate baseline) {
-        ApplicationProcessing persistentPreviousProcessing = applicationDAO.getProcessing(application, stateGroup);
+    private void createApplicationProcessing(ApplicationProcessing transientProcessing, LocalDate baseline) {
+        transientProcessing.setInstanceCount(1);
+        transientProcessing.setDayDurationSum(0);
+        transientProcessing.setLastUpdatedDate(baseline);
+    }
+    
+    private void updateApplicationProcessing(LocalDate baseline, ApplicationProcessing persistentProcessing) {
+        persistentProcessing.setInstanceCount(persistentProcessing.getInstanceCount() + 1);
+        persistentProcessing.setLastUpdatedDate(baseline);
+    }
+
+    private void updatePreviousApplicationProcessing(Application application, StateGroup previousStateGroup, LocalDate baseline) {
+        ApplicationProcessing persistentPreviousProcessing = applicationSummaryDAO.getProcessing(application, previousStateGroup);
         Integer actualStateDuration = Days.daysBetween(baseline, persistentPreviousProcessing.getLastUpdatedDate()).getDays();
 
         persistentPreviousProcessing.setDayDurationSum(persistentPreviousProcessing.getDayDurationSum() + actualStateDuration);
         persistentPreviousProcessing.setLastUpdatedDate(baseline);
 
-        updateApplicationProcessingSummary(application, stateGroup);
+        updatePreviousApplicationProcessingSummary(application, previousStateGroup);
     }
 
     private void createOrUpdateApplicationProcessingSummary(Application application, StateGroup stateGroup) {
@@ -123,44 +131,54 @@ public class ApplicationSummaryService {
         }
     }
 
-    private void createApplicationProcessingSummary(ApplicationProcessingSummary transientProcessingSummary) {
-        transientProcessingSummary.setInstanceTotal(1);
-        transientProcessingSummary.setInstanceTotalLive(1);
+    private void createApplicationProcessingSummary(ApplicationProcessingSummary transientSummary) {
+        transientSummary.setInstanceSum(1);
+        transientSummary.setInstanceSumLive(1);
 
-        transientProcessingSummary.setInstanceCountCount05(1);
-        transientProcessingSummary.setInstanceCountCount20(1);
-        transientProcessingSummary.setInstanceCountCount35(1);
-        transientProcessingSummary.setInstanceCountCount50(1);
-        transientProcessingSummary.setInstanceCountCount65(1);
-        transientProcessingSummary.setInstanceCountCount80(1);
-        transientProcessingSummary.setInstanceCountCount95(1);
+        transientSummary.setInstanceCountAverage(new BigDecimal(1.00));
+        
+        transientSummary.setInstanceCount05(1);
+        transientSummary.setInstanceCount20(1);
+        transientSummary.setInstanceCount35(1);
+        transientSummary.setInstanceCount50(1);
+        transientSummary.setInstanceCount65(1);
+        transientSummary.setInstanceCount80(1);
+        transientSummary.setInstanceCount95(1);
+        
+        transientSummary.setDayDurationSumAverage(new BigDecimal(0.00));
 
-        transientProcessingSummary.setDayDurationSum05(0);
-        transientProcessingSummary.setDayDurationSum20(0);
-        transientProcessingSummary.setDayDurationSum35(0);
-        transientProcessingSummary.setDayDurationSum50(0);
-        transientProcessingSummary.setDayDurationSum65(0);
-        transientProcessingSummary.setDayDurationSum80(0);
-        transientProcessingSummary.setDayDurationSum95(0);
+        transientSummary.setDayDurationSum05(0);
+        transientSummary.setDayDurationSum20(0);
+        transientSummary.setDayDurationSum35(0);
+        transientSummary.setDayDurationSum50(0);
+        transientSummary.setDayDurationSum65(0);
+        transientSummary.setDayDurationSum80(0);
+        transientSummary.setDayDurationSum95(0);
 
-        entityService.save(transientProcessingSummary);
+        entityService.save(transientSummary);
     }
 
     private void updateApplicationProcessingSummary(ParentResource summaryResource, StateGroup stateGroup, ApplicationProcessingSummary persistentSummary) {
-        persistentSummary.setInstanceTotal(persistentSummary.getInstanceTotal() + 1);
-        persistentSummary.setInstanceTotalLive(persistentSummary.getInstanceTotalLive() + 1);
+        BigDecimal instanceCountAverage = applicationSummaryDAO.getInstanceCountAverage(summaryResource, stateGroup);
+        persistentSummary.setInstanceCountAverage(instanceCountAverage.setScale(2, RoundingMode.HALF_UP));
+        
+        persistentSummary.setInstanceSum(persistentSummary.getInstanceSum() + 1);
+        persistentSummary.setInstanceSumLive(persistentSummary.getInstanceSumLive() + 1);
 
         updateApplicationProcessingSummaryPercentile(summaryResource, stateGroup, persistentSummary, "instanceCount");
     }
 
-    private void updateApplicationProcessingSummary(Application application, StateGroup previousStateGroup) {
+    private void updatePreviousApplicationProcessingSummary(Application application, StateGroup previousStateGroup) {
         for (PrismScope summaryScope : summaryScopes) {
             try {
                 ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, summaryScope.getLowerCaseName());
-                ApplicationProcessingSummary processingSummary = applicationDAO.getProcessingSummary(summaryResource, previousStateGroup);
-
-                processingSummary.setInstanceTotalLive(processingSummary.getInstanceTotalLive() - 1);
-                updateApplicationProcessingSummaryPercentile(summaryResource, previousStateGroup, processingSummary, "dayDurationSum");
+                ApplicationProcessingSummary summary = applicationSummaryDAO.getProcessingSummary(summaryResource, previousStateGroup);
+                
+                BigDecimal instanceCountAverage = applicationSummaryDAO.getDayDurationSumAverage(summaryResource, previousStateGroup);
+                summary.setDayDurationSumAverage(instanceCountAverage.setScale(2, RoundingMode.HALF_UP));
+                
+                summary.setInstanceSumLive(summary.getInstanceSumLive() - 1);
+                updateApplicationProcessingSummaryPercentile(summaryResource, previousStateGroup, summary, "dayDurationSum");
             } catch (Exception e) {
                 throw new Error(e);
 
@@ -170,11 +188,11 @@ public class ApplicationSummaryService {
 
     private void updateApplicationProcessingSummaryPercentile(ParentResource summaryResource, StateGroup stateGroup,
             ApplicationProcessingSummary processingSummary, String property) {
-        Integer valuesInSet = applicationDAO.getNotNullProcessingCount(summaryResource, stateGroup);
+        Integer valuesInSet = applicationSummaryDAO.getNotNullProcessingCount(summaryResource, stateGroup);
 
         for (Integer percentile : summaryPercentiles) {
             Integer actualPercentile = getActualPercentile(valuesInSet, percentile);
-            Object actualValue = applicationDAO.getProcessingPercentileValue(summaryResource, stateGroup, property, actualPercentile);
+            Object actualValue = applicationSummaryDAO.getProcessingPercentileValue(summaryResource, stateGroup, property, actualPercentile);
             processingSummary.setPercentileValue(property, actualPercentile, actualValue);
         }
     }

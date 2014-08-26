@@ -97,7 +97,7 @@ public class SystemService {
 
     @Autowired
     private ActionService actionService;
-    
+
     @Autowired
     private ResourceService resourceService;
 
@@ -205,7 +205,8 @@ public class SystemService {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismAction.getScope());
             Scope creationScope = entityService.getByProperty(Scope.class, "id", prismAction.getCreationScope());
             Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType())
-                    .withActionCategory(prismAction.getActionCategory()).withScope(scope).withCreationScope(creationScope);
+                    .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
+                    .withTransitionAction(prismAction.isTransitionAction()).withScope(scope).withCreationScope(creationScope);
             Action action = entityService.createOrUpdate(transientAction);
             action.getRedactions().clear();
 
@@ -408,7 +409,8 @@ public class SystemService {
             Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                     .withAssignedUser(user, roleService.getCreatorRole(system));
             ActionOutcomeDTO outcome = actionService.executeSystemAction(system, action, comment);
-            notificationService.sendNotification(user, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST, ImmutableMap.of("action", outcome.getTransitionAction().getId().name()));
+            notificationService.sendNotification(user, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST,
+                    ImmutableMap.of("action", outcome.getTransitionAction().getId().name()));
         }
     }
 

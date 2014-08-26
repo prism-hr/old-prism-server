@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
@@ -47,32 +48,38 @@ public class ApplicationProcessingSummary implements IUniqueEntity {
     @JoinColumn(name = "state_group_id", nullable = false)
     private StateGroup stateGroup;
     
-    @Column(name = "instance_total", nullable = false)
-    private Integer instanceTotal;
+    @Column(name = "instance_sum", nullable = false)
+    private Integer instanceSum;
     
-    @Column(name = "instance_total_live", nullable = false)
-    private Integer instanceTotalLive;
+    @Column(name = "instance_sum_live", nullable = false)
+    private Integer instanceSumLive;
+    
+    @Column(name = "instance_count_average", nullable = false)
+    private BigDecimal instanceCountAverage;
     
     @Column(name = "instance_count_percentile_05", nullable = false)
-    private Integer instanceCountCount05;
+    private Integer instanceCount05;
     
     @Column(name = "instance_count_percentile_20", nullable = false)
-    private Integer instanceCountCount20;
+    private Integer instanceCount20;
 
     @Column(name = "instance_count_percentile_35", nullable = false)
-    private Integer instanceCountCount35;
+    private Integer instanceCount35;
     
     @Column(name = "instance_count_percentile_50", nullable = false)
-    private Integer instanceCountCount50;
+    private Integer instanceCount50;
     
     @Column(name = "instance_count_percentile_65", nullable = false)
-    private Integer instanceCountCount65;
+    private Integer instanceCount65;
     
     @Column(name = "instance_count_percentile_80", nullable = false)
-    private Integer instanceCountCount80;
+    private Integer instanceCount80;
     
     @Column(name = "instance_count_percentile_95", nullable = false)
-    private Integer instanceCountCount95;
+    private Integer instanceCount95;
+    
+    @Column(name = "day_duration_sum_average", nullable = false)
+    private BigDecimal dayDurationSumAverage;
     
     @Column(name = "day_duration_sum_percentile_05", nullable = false)
     private Integer dayDurationSum05;
@@ -135,76 +142,92 @@ public class ApplicationProcessingSummary implements IUniqueEntity {
         this.stateGroup = stateGroup;
     }
 
-    public final Integer getInstanceTotal() {
-        return instanceTotal;
+    public final BigDecimal getInstanceCountAverage() {
+        return instanceCountAverage;
     }
 
-    public final void setInstanceTotal(Integer instanceTotal) {
-        this.instanceTotal = instanceTotal;
+    public final void setInstanceCountAverage(BigDecimal instanceCountAverage) {
+        this.instanceCountAverage = instanceCountAverage;
     }
 
-    public final Integer getInstanceTotalLive() {
-        return instanceTotalLive;
+    public final Integer getInstanceSum() {
+        return instanceSum;
     }
 
-    public final void setInstanceTotalLive(Integer instanceTotalLive) {
-        this.instanceTotalLive = instanceTotalLive;
+    public final void setInstanceSum(Integer instanceSum) {
+        this.instanceSum = instanceSum;
     }
 
-    public final Integer getInstanceCountCount05() {
-        return instanceCountCount05;
+    public final Integer getInstanceSumLive() {
+        return instanceSumLive;
     }
 
-    public final void setInstanceCountCount05(Integer instanceCountCount05) {
-        this.instanceCountCount05 = instanceCountCount05;
+    public final void setInstanceSumLive(Integer instanceSumLive) {
+        this.instanceSumLive = instanceSumLive;
     }
 
-    public final Integer getInstanceCountCount20() {
-        return instanceCountCount20;
+    public final Integer getInstanceCount05() {
+        return instanceCount05;
     }
 
-    public final void setInstanceCountCount20(Integer instanceCountCount20) {
-        this.instanceCountCount20 = instanceCountCount20;
+    public final void setInstanceCount05(Integer instanceCount05) {
+        this.instanceCount05 = instanceCount05;
     }
 
-    public final Integer getInstanceCountCount35() {
-        return instanceCountCount35;
+    public final Integer getInstanceCount20() {
+        return instanceCount20;
     }
 
-    public final void setInstanceCountCount35(Integer instanceCountCount35) {
-        this.instanceCountCount35 = instanceCountCount35;
+    public final void setInstanceCount20(Integer instanceCount20) {
+        this.instanceCount20 = instanceCount20;
     }
 
-    public final Integer getInstanceCountCount50() {
-        return instanceCountCount50;
+    public final Integer getInstanceCount35() {
+        return instanceCount35;
     }
 
-    public final void setInstanceCountCount50(Integer instanceCountCount50) {
-        this.instanceCountCount50 = instanceCountCount50;
+    public final void setInstanceCount35(Integer instanceCount35) {
+        this.instanceCount35 = instanceCount35;
     }
 
-    public final Integer getInstanceCountCount65() {
-        return instanceCountCount65;
+    public final Integer getInstanceCount50() {
+        return instanceCount50;
     }
 
-    public final void setInstanceCountCount65(Integer instanceCountCount65) {
-        this.instanceCountCount65 = instanceCountCount65;
+    public final void setInstanceCount50(Integer instanceCount50) {
+        this.instanceCount50 = instanceCount50;
     }
 
-    public final Integer getInstanceCountCount80() {
-        return instanceCountCount80;
+    public final Integer getInstanceCount65() {
+        return instanceCount65;
     }
 
-    public final void setInstanceCountCount80(Integer instanceCountCount80) {
-        this.instanceCountCount80 = instanceCountCount80;
+    public final void setInstanceCount65(Integer instanceCount65) {
+        this.instanceCount65 = instanceCount65;
     }
 
-    public final Integer getInstanceCountCount95() {
-        return instanceCountCount95;
+    public final Integer getInstanceCount80() {
+        return instanceCount80;
     }
 
-    public final void setInstanceCountCount95(Integer instanceCountCount95) {
-        this.instanceCountCount95 = instanceCountCount95;
+    public final void setInstanceCount80(Integer instanceCount80) {
+        this.instanceCount80 = instanceCount80;
+    }
+
+    public final Integer getInstanceCount95() {
+        return instanceCount95;
+    }
+
+    public final void setInstanceCount95(Integer instanceCount95) {
+        this.instanceCount95 = instanceCount95;
+    }
+
+    public final BigDecimal getDayDurationSumAverage() {
+        return dayDurationSumAverage;
+    }
+
+    public final void setDayDurationSumAverage(BigDecimal dayDurationSumAverage) {
+        this.dayDurationSumAverage = dayDurationSumAverage;
     }
 
     public final Integer getDayDurationSum05() {

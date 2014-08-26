@@ -30,6 +30,7 @@ import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 
 import com.google.common.base.Objects;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 
 @AnalyzerDef(name = "importedEntityNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
@@ -41,7 +42,7 @@ import com.google.common.base.Objects;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "imported_entity_type", discriminatorType = DiscriminatorType.STRING)
 @Indexed
-public abstract class AbstractImportedEntity implements ImportedEntity {
+public abstract class SimpleImportedEntity extends ImportedEntity {
 
     @Id
     @GeneratedValue
@@ -50,6 +51,9 @@ public abstract class AbstractImportedEntity implements ImportedEntity {
     @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
+    
+    @Column(name = "imported_entity_type", nullable = false)
+    private PrismImportedEntity type;
 
     @Column(name = "code", nullable = false)
     private String code;
@@ -77,6 +81,16 @@ public abstract class AbstractImportedEntity implements ImportedEntity {
         this.institution = institution;
     }
 
+    @Override
+    public final PrismImportedEntity getType() {
+        return type;
+    }
+
+    @Override
+    public final void setType(PrismImportedEntity type) {
+        this.type = type;
+    }
+
     public String getCode() {
         return code;
     }
@@ -93,11 +107,11 @@ public abstract class AbstractImportedEntity implements ImportedEntity {
         this.name = name;
     }
 
-    public boolean isEnabled() {
+    public Boolean isEnabled() {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -114,9 +128,9 @@ public abstract class AbstractImportedEntity implements ImportedEntity {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final AbstractImportedEntity other = (AbstractImportedEntity) obj;
+        final SimpleImportedEntity other = (SimpleImportedEntity) obj;
         return Objects.equal(this.code, other.code) && Objects.equal(this.name, other.name)
                 && Objects.equal(this.enabled, other.enabled);
     }
-    
+   
 }

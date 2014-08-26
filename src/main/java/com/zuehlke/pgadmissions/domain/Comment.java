@@ -24,6 +24,8 @@ import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 @Entity
 @Table(name = "COMMENT")
@@ -807,38 +809,24 @@ public class Comment {
         return delegateUser == null ? user : delegateUser;
     }
     
-    public State getCurrentResourceState() {
-        return getResource().getState();
+    public boolean isProjectCreationComment() {
+        return action.getCreationScope().getId() == PrismScope.PROJECT;
     }
     
-    public State getPreviousResourceState() {
-        return getResource().getPreviousState();
+    public boolean isReferenceComment() {
+        return action.getId() == PrismAction.APPLICATION_PROVIDE_REFERENCE;
     }
     
-    public boolean isContainsNewSummaryInformation() {
-        switch (getResource().getResourceScope()) {
-        case APPLICATION:
-            return rating != null;
-        default:
-            return false;
-        }
+    public boolean isOfferRecommendationComment() {
+        return action.getId() == PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
     }
     
-    public boolean isStateGroupTransition() {
-        State state = getCurrentResourceState();
-        State previousState = getPreviousResourceState();
-        
-        StateGroup stateGroup = state.getStateGroup();
-        
-        if (stateGroup != previousState.getStateGroup()) {
-            return true;
-        } else if (state != previousState && stateGroup.getId().name() == state.getId().name()) {
-            return true;
-        } else if (getResource().getResourceScope() != action.getScope().getId()) {
-            return true;
-        }
-        
-        return false;
+    public boolean isRatingAction() {
+        return action.isRatingAction();
+    }
+    
+    public boolean isTransitionAction() {
+        return action.isTransitionAction();
     }
 
 }

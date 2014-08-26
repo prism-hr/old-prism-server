@@ -1,13 +1,10 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.math.BigDecimal;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -37,7 +34,6 @@ import org.hibernate.search.annotations.TokenizerDef;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 
 @AnalyzerDef(name = "advertAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
@@ -72,31 +68,8 @@ public class Advert {
     @ManyToOne
     @JoinColumn(name = "institution_address_id")
     private InstitutionAddress address;
-
-    @Column(name = "month_study_duration")
-    private Integer studyDuration;
-
-    @Column(name = "fee_interval")
-    @Enumerated(EnumType.STRING)
-    private DurationUnit feeInterval;
-
-    @Column(name = "fee_value")
-    private BigDecimal feeValue;
-
-    @Column(name = "fee_annualised")
-    private BigDecimal feeAnnualised;
-
-    @Column(name = "pay_interval")
-    @Enumerated(EnumType.STRING)
-    private DurationUnit payInterval;
-
-    @Column(name = "pay_value")
-    private BigDecimal payValue;
-
-    @Column(name = "pay_annualised")
-    private BigDecimal payAnnualised;
     
-    @Column(name = "sequence_identifier", nullable = false)
+    @Column(name = "sequence_identifier")
     private String sequenceIdentifier;
 
     @OneToOne(mappedBy = "advert")
@@ -179,68 +152,12 @@ public class Advert {
         this.address = address;
     }
 
-    public Integer getStudyDuration() {
-        return studyDuration;
-    }
-
-    public DurationUnit getFeeInterval() {
-        return feeInterval;
-    }
-
-    public void setFeeInterval(DurationUnit feeInterval) {
-        this.feeInterval = feeInterval;
-    }
-
-    public BigDecimal getFeeValue() {
-        return feeValue;
-    }
-
-    public void setFeeValue(BigDecimal feeValue) {
-        this.feeValue = feeValue;
-    }
-
-    public BigDecimal getFeeAnnualised() {
-        return feeAnnualised;
-    }
-
-    public void setFeeAnnualised(BigDecimal feeAnnualised) {
-        this.feeAnnualised = feeAnnualised;
-    }
-
-    public DurationUnit getPayInterval() {
-        return payInterval;
-    }
-
-    public void setPayInterval(DurationUnit payInterval) {
-        this.payInterval = payInterval;
-    }
-
-    public BigDecimal getPayValue() {
-        return payValue;
-    }
-
-    public void setPayValue(BigDecimal payValue) {
-        this.payValue = payValue;
-    }
-
-    public BigDecimal getPayAnnualised() {
-        return payAnnualised;
-    }
-
-    public void setPayAnnualised(BigDecimal payAnnualised) {
-        this.payAnnualised = payAnnualised;
-    }
-
     public final String getSequenceIdentifier() {
         return sequenceIdentifier;
     }
 
     public final void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
-    }
-
-    public void setStudyDuration(Integer studyDuration) {
-        this.studyDuration = studyDuration;
     }
 
     public AdvertClosingDate getClosingDate() {

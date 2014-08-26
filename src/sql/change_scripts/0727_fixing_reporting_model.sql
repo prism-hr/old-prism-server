@@ -461,10 +461,10 @@ ALTER TABLE INSTITUTION
 ;
 
 ALTER TABLE APPLICATION_PROCESSING_SUMMARY
-	ADD COLUMN instance_total INT(10) UNSIGNED AFTER state_group_id,
-	ADD COLUMN instance_total_live INT(10) UNSIGNED AFTER instance_total,
-	ADD INDEX (instance_total),
-	ADD INDEX (instance_total_live)
+	ADD COLUMN instance_sum INT(10) UNSIGNED AFTER state_group_id,
+	ADD COLUMN instance_sum_live INT(10) UNSIGNED AFTER instance_sum,
+	ADD INDEX (instance_sum),
+	ADD INDEX (instance_sum_live)
 ;
 
 UPDATE APPLICATION_PROCESSING_SUMMARY INNER JOIN (
@@ -476,7 +476,7 @@ UPDATE APPLICATION_PROCESSING_SUMMARY INNER JOIN (
 	GROUP BY APPLICATION.institution_id, STATE.state_group_id) AS INSTANCE
 	ON APPLICATION_PROCESSING_SUMMARY.institution_id = INSTANCE.institution_id
 	AND APPLICATION_PROCESSING_SUMMARY.state_group_id = INSTANCE.state_group_id
-SET APPLICATION_PROCESSING_SUMMARY.instance_total_live = INSTANCE.total_live
+SET APPLICATION_PROCESSING_SUMMARY.instance_sum_live = INSTANCE.total_live
 ;
 
 UPDATE APPLICATION_PROCESSING_SUMMARY INNER JOIN (
@@ -488,7 +488,7 @@ UPDATE APPLICATION_PROCESSING_SUMMARY INNER JOIN (
 	GROUP BY APPLICATION.program_id, STATE.state_group_id) AS INSTANCE
 	ON APPLICATION_PROCESSING_SUMMARY.program_id = INSTANCE.program_id
 	AND APPLICATION_PROCESSING_SUMMARY.state_group_id = INSTANCE.state_group_id
-SET APPLICATION_PROCESSING_SUMMARY.instance_total_live = INSTANCE.total_live
+SET APPLICATION_PROCESSING_SUMMARY.instance_sum_live = INSTANCE.total_live
 ;
 
 UPDATE APPLICATION_PROCESSING_SUMMARY INNER JOIN (
@@ -500,53 +500,53 @@ UPDATE APPLICATION_PROCESSING_SUMMARY INNER JOIN (
 	GROUP BY APPLICATION.project_id, STATE.state_group_id) AS INSTANCE
 	ON APPLICATION_PROCESSING_SUMMARY.project_id = INSTANCE.project_id
 	AND APPLICATION_PROCESSING_SUMMARY.state_group_id = INSTANCE.state_group_id
-SET APPLICATION_PROCESSING_SUMMARY.instance_total_live = INSTANCE.total_live
+SET APPLICATION_PROCESSING_SUMMARY.instance_sum_live = INSTANCE.total_live
 ;
 
 UPDATE APPLICATION_PROCESSING_SUMMARY
-SET instance_total_live = 0
-WHERE instance_total_live IS NULL
+SET instance_sum_live = 0
+WHERE instance_sum_live IS NULL
 ;
 
 UPDATE APPLICATION_PROCESSING_SUMMARY INNER JOIN (
 	SELECT APPLICATION.institution_id AS institution_id,
 		APPLICATION_PROCESSING.state_group_id,
-		SUM(APPLICATION_PROCESSING.instance_count) AS instance_total
+		SUM(APPLICATION_PROCESSING.instance_count) AS instance_sum
 	FROM APPLICATION INNER JOIN APPLICATION_PROCESSING
 		ON APPLICATION.id = APPLICATION_PROCESSING.application_id
 	GROUP BY APPLICATION.institution_id, APPLICATION_PROCESSING.state_group_id) AS INSTANCE
 	ON APPLICATION_PROCESSING_SUMMARY.institution_id = INSTANCE.institution_id
 	AND APPLICATION_PROCESSING_SUMMARY.state_group_id = INSTANCE.state_group_id
-SET APPLICATION_PROCESSING_SUMMARY.instance_total = INSTANCE.instance_total
+SET APPLICATION_PROCESSING_SUMMARY.instance_sum = INSTANCE.instance_sum
 ;
 
 UPDATE APPLICATION_PROCESSING_SUMMARY INNER JOIN (
 	SELECT APPLICATION.program_id AS program_id,
 		APPLICATION_PROCESSING.state_group_id,
-		SUM(APPLICATION_PROCESSING.instance_count) AS instance_total
+		SUM(APPLICATION_PROCESSING.instance_count) AS instance_sum
 	FROM APPLICATION INNER JOIN APPLICATION_PROCESSING
 		ON APPLICATION.id = APPLICATION_PROCESSING.application_id
 	GROUP BY APPLICATION.program_id, APPLICATION_PROCESSING.state_group_id) AS INSTANCE
 	ON APPLICATION_PROCESSING_SUMMARY.program_id = INSTANCE.program_id
 	AND APPLICATION_PROCESSING_SUMMARY.state_group_id = INSTANCE.state_group_id
-SET APPLICATION_PROCESSING_SUMMARY.instance_total = INSTANCE.instance_total
+SET APPLICATION_PROCESSING_SUMMARY.instance_sum = INSTANCE.instance_sum
 ;
 
 UPDATE APPLICATION_PROCESSING_SUMMARY INNER JOIN (
 	SELECT APPLICATION.project_id AS project_id,
 		APPLICATION_PROCESSING.state_group_id,
-		SUM(APPLICATION_PROCESSING.instance_count) AS instance_total
+		SUM(APPLICATION_PROCESSING.instance_count) AS instance_sum
 	FROM APPLICATION INNER JOIN APPLICATION_PROCESSING
 		ON APPLICATION.id = APPLICATION_PROCESSING.application_id
 	GROUP BY APPLICATION.project_id, APPLICATION_PROCESSING.state_group_id) AS INSTANCE
 	ON APPLICATION_PROCESSING_SUMMARY.project_id = INSTANCE.project_id
 	AND APPLICATION_PROCESSING_SUMMARY.state_group_id = INSTANCE.state_group_id
-SET APPLICATION_PROCESSING_SUMMARY.instance_total = INSTANCE.instance_total
+SET APPLICATION_PROCESSING_SUMMARY.instance_sum = INSTANCE.instance_sum
 ;
 
 ALTER TABLE APPLICATION_PROCESSING_SUMMARY
-	MODIFY COLUMN instance_total INT(10) UNSIGNED NOT NULL,
-	MODIFY COLUMN instance_total_live INT(10) UNSIGNED NOT NULL
+	MODIFY COLUMN instance_sum INT(10) UNSIGNED NOT NULL,
+	MODIFY COLUMN instance_sum_live INT(10) UNSIGNED NOT NULL
 ;
 
 ALTER TABLE ADVERT
@@ -591,5 +591,38 @@ SET APPLICATION.confirmed_start_date = OFFER_SUMMARY.confirmed_start_date,
 	APPLICATION.confirmed_offer_type = OFFER_SUMMARY.confirmed_offer_type
 ;
 
+ALTER TABLE ADVERT
+	MODIFY sequence_identifier VARCHAR(25)
+;
 
-	
+ALTER TABLE ACTION	
+	ADD COLUMN rating_action INT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER action_category,
+	ADD COLUMN transition_action INT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER rating_action
+;
+
+ALTER TABLE ACTION
+	MODIFY COLUMN rating_action INT(1) UNSIGNED NOT NULL,
+	MODIFY COLUMN transition_action INT(1) UNSIGNED NOT NULL
+;
+
+ALTER TABLE APPLICATION_PROCESSING_SUMMARY
+	ADD COLUMN instance_count_average DECIMAL(10,2) UNSIGNED AFTER instance_sum_live,
+	ADD COLUMN day_duration_sum_average DECIMAL(10,2) UNSIGNED AFTER instance_count_percentile_95,
+	DROP INDEX instance_count_percentile_05,
+	DROP INDEX instance_count_percentile_20,
+	DROP INDEX instance_count_percentile_35,
+	DROP INDEX instance_count_percentile_50,
+	DROP INDEX instance_count_percentile_65,
+	DROP INDEX instance_count_percentile_80,
+	DROP INDEX instance_count_percentile_95,
+	DROP INDEX day_duration_sum_percentile_05,
+	DROP INDEX day_duration_sum_percentile_20,
+	DROP INDEX day_duration_sum_percentile_35,
+	DROP INDEX day_duration_sum_percentile_50,
+	DROP INDEX day_duration_sum_percentile_65,
+	DROP INDEX day_duration_sum_percentile_80,
+	DROP INDEX day_duration_sum_percentile_95,
+	DROP INDEX instance_sum,
+	DROP INDEX instance_sum_live
+;
+

@@ -22,5 +22,4 @@ public class InstitutionImportConverter extends GenericEntityImportConverter<Imp
         result.setDomicile(domicile);
     }
 
-
 }

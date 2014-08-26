@@ -20,7 +20,8 @@ public enum PrismImportedEntity {
     GENDER(Genders.class, "gender", Gender.class, "xml/defaultEntities/gender.xml"),
     REJECTION_REASON(RejectionReasons.class, "rejectionReason", RejectionReason.class, "xml/defaultEntities/rejectionReason.xml"),
     RESIDENCE_STATE(ResidenceStates.class, "residenceState", ResidenceState.class, "xml/defaultEntities/residenceState.xml"),
-    STUDY_OPTION(StudyOptions.class, "studyOption", StudyOption.class, "xml/defaultEntities/studyOption.xml");
+    STUDY_OPTION(StudyOptions.class, "studyOption", StudyOption.class, "xml/defaultEntities/studyOption.xml"),
+    PROGRAM_TYPE(ProgramTypes.class, "programType", ProgramType.class, "xml/defaultEntities/programType.xml");
 
     private Class<?> jaxbClass;
 

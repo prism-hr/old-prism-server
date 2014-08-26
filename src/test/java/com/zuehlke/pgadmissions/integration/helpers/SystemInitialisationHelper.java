@@ -35,6 +35,7 @@ import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -133,10 +134,16 @@ public class SystemInitialisationHelper {
         for (Action action : actionService.getActions()) {
             assertEquals(action.getId().getActionType(), action.getActionType());
             assertEquals(action.getId().getActionCategory(), action.getActionCategory());
+            assertEquals(action.getId().isRatingAction(), action.isRatingAction());
+            assertEquals(action.getId().isTransitionAction(), action.isTransitionAction());
             assertEquals(PrismAction.getFallBackAction(action.getId()), action.getFallbackAction().getId());    
             assertEquals(action.getId().getScope(), action.getScope().getId());
             assertEquals(action.getId().getCreationScope(), action.getCreationScope() == null ? null : action.getCreationScope().getId());
 
+            if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
+                assertEquals(action.isTransitionAction(), true);
+            }
+            
             Set<ActionRedaction> redactions = action.getRedactions();
             List<PrismActionRedaction> prismActionRedactions = action.getId().getRedactions();
 

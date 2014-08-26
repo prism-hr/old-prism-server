@@ -20,12 +20,15 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
@@ -112,8 +115,15 @@ public class ProgramService {
         Program persistentProgram = (Program) actionService.executeSystemAction(transientProgram, importAction, comment).getResource();
         return persistentProgram.withTitle(programme.getName()).withRequireProjectDefinition(programme.isAtasRegistered());
     }
+    
+    public StudyOption getOrImportProgramStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) {
+        String externalcode = modeOfAttendance.getCode();
+        PrismStudyOption internalCode = PrismStudyOption.findValueFromString(externalcode);
+        StudyOption transientStudyOption = new StudyOption().withInstitution(institution).withCode(internalCode).withName(externalcode).withEnabled(true);
+        return entityService.createOrUpdate(transientStudyOption);
+    }
 
-    public void saveProgramInstance(ProgramInstance transientProgramInstance) {
+    public void getOrImportProgramInstance(ProgramInstance transientProgramInstance) {
         ProgramInstance persistentInstance = entityService.createOrUpdate(transientProgramInstance);
         if (persistentInstance.isEnabled()) {
             Program transientProgram = transientProgramInstance.getProgram();
@@ -206,7 +216,7 @@ public class ProgramService {
     public void postProcessProgram(Program program, Comment comment) {
         PrismActionCategory actionCategory = comment.getAction().getActionCategory();
         if (Arrays.asList(PrismActionCategory.CREATE_RESOURCE, PrismActionCategory.VIEW_EDIT_RESOURCE).contains(actionCategory)) {
-            program.setSequenceIdentifier(program.getSequenceIdentifier() + "-" + program.getResourceScope().getShortCode());
+            program.getAdvert().setSequenceIdentifier(program.getSequenceIdentifier() + "-" + program.getResourceScope().getShortCode());
         } 
     }
 

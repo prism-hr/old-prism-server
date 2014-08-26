@@ -3,28 +3,28 @@ package com.zuehlke.pgadmissions.domain;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 
 @Entity
-@DiscriminatorValue("STUDY_OPTION")
-public class StudyOption extends SimpleImportedEntity {
+@DiscriminatorValue("PROGRAM_TYPE")
+public class ProgramType extends SimpleImportedEntity {
 
-    public StudyOption withInstitution(Institution institution) {
+    public ProgramType withInstitution(Institution institution) {
         setInstitution(institution);
         return this;
     }
 
-    public StudyOption withCode(PrismStudyOption code) {
+    public ProgramType withCode(PrismProgramType code) {
         setCode(code.toString());
         return this;
     }
 
-    public StudyOption withName(String name) {
+    public ProgramType withName(String name) {
         setName(name);
         return this;
     }
 
-    public StudyOption withEnabled(boolean enabled) {
+    public ProgramType withEnabled(boolean enabled) {
         setEnabled(enabled);
         return this;
     }

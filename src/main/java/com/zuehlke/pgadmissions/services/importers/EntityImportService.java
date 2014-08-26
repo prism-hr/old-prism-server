@@ -56,21 +56,22 @@ public class EntityImportService {
 
     @Autowired
     private ProgramService programService;
-    
+
     @Autowired
     private InstitutionService institutionService;
 
-    @Autowired private NotificationService notificationService;
-    
+    @Autowired
+    private NotificationService notificationService;
+
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     public void importReferenceData() {
         institutionService.populateDefaultImportedEntityFeeds();
-        
-        for (ImportedEntityFeed importedEntityFeed : getImportedEntityFeedsToImport()) {   
+
+        for (ImportedEntityFeed importedEntityFeed : getImportedEntityFeedsToImport()) {
             String maxRedirects = null;
-            
+
             try {
                 maxRedirects = System.getProperty("http.maxRedirects");
                 System.setProperty("http.maxRedirects", "5");
@@ -102,7 +103,7 @@ public class EntityImportService {
         EntityImportService thisBean = applicationContext.getBean(EntityImportService.class);
         String fileLocation = importedEntityFeed.getLocation();
         logger.info("Starting the import from file: " + fileLocation);
-        
+
         try {
             thisBean.setLastImportedDate(importedEntityFeed);
             List unmarshalled = thisBean.unmarshall(importedEntityFeed);
@@ -111,7 +112,7 @@ public class EntityImportService {
 
             Institution institution = importedEntityFeed.getInstitution();
             if (entityClass.equals(Program.class)) {
-                thisBean.mergePrograms((List<ProgrammeOccurrence>) unmarshalled, institution);
+                thisBean.mergeImportedPrograms((List<ProgrammeOccurrence>) unmarshalled, institution);
             } else {
                 Function<Object, ? extends ImportedEntity> entityConverter;
                 if (entityClass.equals(LanguageQualificationType.class)) {
@@ -125,7 +126,7 @@ public class EntityImportService {
                 Iterable<ImportedEntity> newEntities = Iterables.transform(unmarshalled, entityConverter);
                 thisBean.mergeImportedEntities(entityClass, importedEntityFeed.getInstitution(), newEntities);
             }
-            
+
             // TODO: state change to institution ready to use.
         } catch (Exception e) {
             throw new DataImportException("Error during the import of file: " + fileLocation, e);
@@ -151,30 +152,15 @@ public class EntityImportService {
         }
     }
 
-    public void mergeImportedEntities(Class<ImportedEntity> entityClass, Institution institution, Iterable<ImportedEntity> entities) {
+    public void mergeImportedEntities(Class<ImportedEntity> entityClass, Institution institution, Iterable<ImportedEntity> transientEntities) {
         EntityImportService thisBean = applicationContext.getBean(EntityImportService.class);
         thisBean.disableAllEntities(entityClass, institution);
-        for (ImportedEntity entity : entities) {
-            try {
-                // TODO: remove this stuff and use the duplicate checking functionality
-                thisBean.attemptInsert(entity);
-            } catch (Exception e) {
-                try {
-                    thisBean.attemptUpdateByCode(entityClass, institution, entity);
-                } catch (Exception e1) {
-                    try {
-                        thisBean.attemptUpdateByName(entityClass, institution, entity);
-                    } catch (Exception e2) {
-                        logger.error("Couldn't insert entity", e);
-                        logger.error("Couldn't update entity by code", e1);
-                        logger.error("Couldn't update entity by name", e2);
-                    }
-                }
-            }
+        for (ImportedEntity transientEntity : transientEntities) {
+            importedEntityService.getOrImportEntity(entityClass, institution, transientEntity);
         }
     }
 
-    public void mergePrograms(List<ProgrammeOccurrence> programOccurrences, Institution institution) throws DataImportException, WorkflowEngineException {
+    public void mergeImportedPrograms(List<ProgrammeOccurrence> programOccurrences, Institution institution) throws DataImportException, WorkflowEngineException {
         LocalDate currentDate = new LocalDate();
 
         EntityImportService thisBean = applicationContext.getBean(EntityImportService.class);
@@ -185,7 +171,7 @@ public class EntityImportService {
             ModeOfAttendance modeOfAttendance = occurrence.getModeOfAttendance();
 
             Program program = programService.getOrImportProgram(occurrenceProgram, institution);
-            StudyOption studyOption = thisBean.getOrCreateStudyOption(institution, modeOfAttendance);
+            StudyOption studyOption = programService.getOrImportProgramStudyOption(institution, modeOfAttendance);
 
             LocalDate applicationStartDate = dtFormatter.parseLocalDate(occurrence.getStartDate());
             LocalDate applicationDeadline = dtFormatter.parseLocalDate(occurrence.getEndDate());
@@ -194,7 +180,7 @@ public class EntityImportService {
                     .withApplicationStartDate(applicationStartDate).withApplicationDeadline(applicationDeadline)
                     .withEnabled(currentDate.isBefore(applicationDeadline));
 
-            programService.saveProgramInstance(transientProgramInstance);
+            programService.getOrImportProgramInstance(transientProgramInstance);
         }
     }
 
@@ -203,7 +189,7 @@ public class EntityImportService {
         ImportedEntityFeed persistentImportedEntityFeed = entityService.getById(ImportedEntityFeed.class, detachedImportedEntityFeed.getId());
         persistentImportedEntityFeed.setLastImportedDate(new LocalDate());
     }
-    
+
     @Transactional
     public void disableAllEntities(Class<? extends ImportedEntity> entityClass, Institution institution) {
         importedEntityService.disableAllEntities(entityClass, institution);
@@ -217,31 +203,6 @@ public class EntityImportService {
     @Transactional
     public void attemptInsert(Object entity) {
         entityService.save(entity);
-    }
-
-    @Transactional
-    public void attemptUpdateByCode(Class<ImportedEntity> entityClass, Institution institution, ImportedEntity entity) {
-        ImportedEntity entityByCode = importedEntityService.getByCode(entityClass, institution, entity.getCode());
-        entityByCode.setName(entity.getName());
-        entityByCode.setEnabled(true);
-    }
-
-    @Transactional
-    public void attemptUpdateByName(Class<ImportedEntity> entityClass, Institution institution, ImportedEntity entity) {
-        ImportedEntity entityByName = importedEntityService.getByName(entityClass, institution, entity.getName());
-        entityByName.setCode(entity.getCode());
-        entityByName.setEnabled(true);
-    }
-
-    @Transactional
-    public StudyOption getOrCreateStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) {
-        StudyOption studyOption = entityService.getByProperty(StudyOption.class, "code", modeOfAttendance.getCode());
-        if (studyOption == null) {
-            studyOption = new StudyOption().withInstitution(institution).withCode(modeOfAttendance.getCode()).withName(modeOfAttendance.getName())
-                    .withEnabled(true);
-            entityService.save(studyOption);
-        }
-        return studyOption;
     }
 
     @Transactional

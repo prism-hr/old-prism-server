@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashMap;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,6 +28,9 @@ import org.hibernate.search.annotations.Store;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 @AnalyzerDef(name = "importedInstitutionNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
         @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
@@ -33,7 +39,7 @@ import org.hibernate.search.annotations.TokenizerDef;
 @Table(name = "IMPORTED_INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "domicile_id", "code" }),
         @UniqueConstraint(columnNames = { "institution_id", "domicile_id", "name" }) })
 @Indexed
-public class ImportedInstitution implements ImportedEntity{
+public class ImportedInstitution extends ImportedEntity {
 
     @Id
     @GeneratedValue
@@ -97,11 +103,11 @@ public class ImportedInstitution implements ImportedEntity{
         this.name = name;
     }
 
-    public boolean isEnabled() {
+    public Boolean isEnabled() {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -134,4 +140,19 @@ public class ImportedInstitution implements ImportedEntity{
         this.code = code;
         return this;
     }
+    
+    @Override
+    public ResourceSignature getResourceSignature() {
+        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
+        HashMap<String, Object> properties1 = Maps.newHashMap();
+        properties1.put("institution", institution);      
+        properties1.put("code", code);
+        propertiesWrapper.add(properties1);
+        HashMap<String, Object> properties2 = Maps.newHashMap();
+        properties2.put("institution", institution);  
+        properties2.put("name", name);
+        propertiesWrapper.add(properties2);
+        return new ResourceSignature(propertiesWrapper);
+    }
+    
 }

@@ -6,8 +6,10 @@ public enum PrismProgramType {
     UNDERGRADUATE_STUDY(new String[]{}),
     POSTGRADUATE_STUDY(new String[]{"mres", "md(res)"}),
     POSTGRADUATE_RESEARCH(new String[]{"research degree", "engineering doctorate"}),
-    INTERNSHIP(new String[]{"visiting research"}),
+    INTERNSHIP(new String[]{}),
+    SECONDMENT(new String[]{"visiting research"}),
     EMPLOYMENT(new String[]{}),
+    CONTINUING_PROFESSIONAL_DEVELOPMENT(new String[]{}),
     UNCLASSIFIED(new String[]{});
     
     private String[] prefixes;
@@ -20,7 +22,6 @@ public enum PrismProgramType {
         for (PrismProgramType value : PrismProgramType.values()) {
             if (value.prefixes.length > 0) {
                 toSearchIn = toSearchIn.trim().replaceAll("\\s+", " ").toLowerCase();
-                
                 for (String prefix : value.prefixes) {
                     if (toSearchIn.startsWith(prefix)) {
                         return value;

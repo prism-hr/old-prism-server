@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
@@ -140,13 +141,13 @@ public class InstitutionDataImportHelper {
         assertThat(
                 program1.getProgramInstances(),
                 contains(equalTo(new ProgramInstance().withIdentifier("0009").withAcademicYear("2013")
-                        .withStudyOption(new StudyOption().withInstitution(institution).withCode("F+++++").withName("Full-time").withEnabled(true))
+                        .withStudyOption(new StudyOption().withInstitution(institution).withCode(PrismStudyOption.FULL_TIME).withName("F+++++").withEnabled(true))
                         .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(true))));
 
         assertThat(
                 otherProgram.getProgramInstances(),
                 contains(equalTo(new ProgramInstance().withIdentifier("0014").withAcademicYear("2013")
-                        .withStudyOption(new StudyOption().withInstitution(institution).withCode("F+++++").withName("Full-time").withEnabled(true))
+                        .withStudyOption(new StudyOption().withInstitution(institution).withCode(PrismStudyOption.FULL_TIME).withName("F+++++").withEnabled(true))
                         .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(true))));
 
         importedEntityFeed.setLocation("reference_data/conflicts/programs/updatedPrograms.xml");
@@ -167,16 +168,16 @@ public class InstitutionDataImportHelper {
                 program1.getProgramInstances(),
                 containsInAnyOrder(
                         equalTo(new ProgramInstance().withIdentifier("0009").withAcademicYear("2013")
-                                .withStudyOption(new StudyOption().withInstitution(institution).withCode("F+++++").withName("Full-time").withEnabled(true))
+                                .withStudyOption(new StudyOption().withInstitution(institution).withCode(PrismStudyOption.FULL_TIME).withName("F+++++").withEnabled(true))
                                 .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(true)),
                         equalTo(new ProgramInstance().withIdentifier("0008").withAcademicYear("2013")
-                                .withStudyOption(new StudyOption().withInstitution(institution).withCode("P+++++").withName("Fart-time").withEnabled(true))
+                                .withStudyOption(new StudyOption().withInstitution(institution).withCode(PrismStudyOption.PART_TIME).withName("P+++++").withEnabled(true))
                                 .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(true))));
 
         assertThat(
                 otherProgram.getProgramInstances(),
                 contains(equalTo(new ProgramInstance().withIdentifier("0014").withAcademicYear("2013")
-                        .withStudyOption(new StudyOption().withInstitution(institution).withCode("F+++++").withName("Full-time").withEnabled(true))
+                        .withStudyOption(new StudyOption().withInstitution(institution).withCode(PrismStudyOption.FULL_TIME).withName("F+++++").withEnabled(true))
                         .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(false))));
     }
     

@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("REJECTION_REASON")
-public class RejectionReason extends AbstractImportedEntity {
+public class RejectionReason extends SimpleImportedEntity {
 
     public RejectionReason withInstitution(Institution institution) {
         setInstitution(institution);

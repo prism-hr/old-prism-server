@@ -524,27 +524,25 @@ public class ApplicationService {
     }
 
     public void postProcessApplication(Application application, Comment comment) {
-        switch (comment.getAction().getId()) {
-        case PROJECT_CREATE_APPLICATION:
+        if (comment.isProjectCreationComment()) {
             synchroniseProjectSupervisors(application);
-            break;
-        case APPLICATION_PROVIDE_REFERENCE:
-            synchroniseReferees(application, comment);
-            break;
-        case APPLICATION_CONFIRM_OFFER_RECOMMENDATION:
-            synchroniseOffer(application, comment);
-        default:
-            break;
         }
-
-        if (comment.isContainsNewSummaryInformation()) {
+        
+        if (comment.isReferenceComment()) {
+            synchroniseReferees(application, comment);
+        }
+        
+        if (comment.isOfferRecommendationComment()) {
+            synchroniseOfferRecommendation(application, comment);
+        }
+ 
+        if (comment.isRatingAction()) {
             applicationSummaryService.summariseApplication(application);
         }
 
-        if (comment.isStateGroupTransition()) {
+        if (comment.isTransitionAction()) {
             applicationSummaryService.summariseApplicationProcessing(application);
         }
-
     }
 
     private void synchroniseProjectSupervisors(Application application) {
@@ -561,7 +559,7 @@ public class ApplicationService {
         referee.setComment(comment);
     }
 
-    private void synchroniseOffer(Application application, Comment comment) {
+    private void synchroniseOfferRecommendation(Application application, Comment comment) {
         application.setConfirmedStartDate(comment.getPositionProvisionalStartDate());
         application.setConfirmedSupervisor(roleService.getRoleUsers(application, PrismRole.APPLICATION_PRIMARY_SUPERVISOR).get(0));
         application.setConfirmedOfferType(comment.getAppointmentConditions() == null ? PrismOfferType.UNCONDITIONAL : PrismOfferType.CONDITIONAL);

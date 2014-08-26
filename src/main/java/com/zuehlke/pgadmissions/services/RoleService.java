@@ -188,8 +188,9 @@ public class RoleService {
 
         Resource resource = comment.getResource();
         Resource operative = resourceService.getOperativeResource(resource, comment.getAction());
+        
         resource = role.getScope() == transitionRole.getScope() ? resource : operative;
-        Resource transitionResource = resource;
+        Resource transitionResource = comment.getResource();
 
         UserRole transientRole = new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(baseline);
         UserRole transientTransitionRole = new UserRole().withResource(transitionResource).withUser(user).withRole(transitionRole)

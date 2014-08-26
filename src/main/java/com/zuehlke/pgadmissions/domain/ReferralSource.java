@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("REFERRAL_SOURCE")
-public class ReferralSource extends AbstractImportedEntity {
+public class ReferralSource extends SimpleImportedEntity {
 
     public ReferralSource withInstitution(Institution institution) {
         setInstitution(institution);

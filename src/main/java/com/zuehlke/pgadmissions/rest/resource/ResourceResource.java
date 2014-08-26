@@ -9,6 +9,7 @@ import com.zuehlke.pgadmissions.rest.representation.*;
 import com.zuehlke.pgadmissions.rest.representation.resource.*;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
+import com.zuehlke.pgadmissions.services.*;
 import org.apache.commons.beanutils.MethodUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +38,6 @@ import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.ActionDTO;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.CommentService;
-import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.StateService;
-import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
 @RequestMapping(value = {"api/{resourceScope}"})
@@ -69,6 +63,9 @@ public class ResourceResource {
 
     @Autowired
     private StateService stateService;
+
+    @Autowired
+    private ProgramService programService;
 
     @Autowired
     private Mapper dozerBeanMapper;
@@ -102,7 +99,7 @@ public class ResourceResource {
         representation.setActions(permittedActions);
 
         Optional<PrismAction> completeAction = Iterables.tryFind(permittedActions,
-                Predicates.compose(Predicates.containsPattern("^(APPLICATION|INSTITUTION)_COMPLETE_|APPLICATION_MOVE_TO_DIFFERENT_STAGE"), Functions.toStringFunction()));
+                Predicates.compose(Predicates.containsPattern("^((\\w+)_COMPLETE_(\\w+)_STAGE|APPLICATION_MOVE_TO_DIFFERENT_STAGE)$"), Functions.toStringFunction()));
         if (completeAction.isPresent()) {
             representation.setNextStates(stateService.getAvailableNextStates(resource, completeAction.get()));
         }
@@ -201,6 +198,7 @@ public class ResourceResource {
     }
 
     public void enrichProgramRepresentation(Program program, ProgramExtendedRepresentation programRepresentation) {
+        // TODO set study options in programRepresentation
     }
 
     public void enrichInstitutionRepresentation(Institution institution, InstitutionExtendedRepresentation institutionRepresentation) {

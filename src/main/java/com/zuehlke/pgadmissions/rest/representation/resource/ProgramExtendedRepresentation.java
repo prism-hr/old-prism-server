@@ -1,10 +1,16 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
+
+import javax.validation.constraints.NotNull;
+
 public class ProgramExtendedRepresentation extends AbstractResourceRepresentation {
+
+    private InstitutionRepresentation institution;
 
     private PrismProgramType programType;
 
@@ -21,6 +27,14 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
     private Boolean requireProjectDefinition;
 
     private Boolean immediateStart;
+
+    public InstitutionRepresentation getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(InstitutionRepresentation institution) {
+        this.institution = institution;
+    }
 
     public PrismProgramType getProgramType() {
         return programType;

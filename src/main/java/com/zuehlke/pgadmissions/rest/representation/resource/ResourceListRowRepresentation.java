@@ -142,30 +142,4 @@ public class ResourceListRowRepresentation {
         this.resourceScope = resourceScope;
     }
 
-    public static class ProjectRepresentation {
-
-        private String title;
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-    }
-
-    public static class ProgramRepresentation {
-
-        private String title;
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-    }
-
 }

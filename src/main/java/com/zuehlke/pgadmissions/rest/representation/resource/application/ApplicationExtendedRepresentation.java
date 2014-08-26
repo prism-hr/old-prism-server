@@ -1,24 +1,23 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
-import java.util.List;
-
-import com.zuehlke.pgadmissions.rest.representation.resource.ProgramExtendedRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ProjectExtendedRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ProjectRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
+import java.util.List;
 
 public class ApplicationExtendedRepresentation extends AbstractResourceRepresentation {
 
     private InstitutionRepresentation institution;
 
-    private ProgramExtendedRepresentation program;
+    private ProgramRepresentation program;
 
-    private ProjectExtendedRepresentation project;
+    private ProjectRepresentation project;
 
     private LocalDate closingDate;
 
@@ -62,19 +61,19 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
         this.institution = institution;
     }
 
-    public ProgramExtendedRepresentation getProgram() {
+    public ProgramRepresentation getProgram() {
         return program;
     }
 
-    public void setProgram(ProgramExtendedRepresentation program) {
+    public void setProgram(ProgramRepresentation program) {
         this.program = program;
     }
 
-    public ProjectExtendedRepresentation getProject() {
+    public ProjectRepresentation getProject() {
         return project;
     }
 
-    public void setProject(ProjectExtendedRepresentation project) {
+    public void setProject(ProjectRepresentation project) {
         this.project = project;
     }
 

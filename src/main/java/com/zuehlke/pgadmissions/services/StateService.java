@@ -312,6 +312,12 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 
+    @Transactional
+    public StateTransition getProgramApprovedOutcome(Resource resource, Comment comment) {
+        PrismState transitionStateId = comment.getTransitionState().getId();
+        return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
+    }
+
     public boolean hasPendingStateTransitions() {
         return !escalationQueue.isEmpty() || !propagationQueue.isEmpty();
     }

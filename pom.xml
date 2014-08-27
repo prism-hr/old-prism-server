@@ -589,7 +589,7 @@
             <id>sit</id>
             <properties>
                 <sql.host>localhost</sql.host>
-                <sql.db>pgadmissions</sql.db>
+                <sql.db>pgadmissions_sit</sql.db>
             </properties>
             <build>
                 <plugins>

@@ -318,6 +318,12 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 
+    @Transactional
+    public StateTransition getProgramConfiguredOutcome(Resource resource, Comment comment) {
+        // TODO implement
+        return null;
+    }
+
     public boolean hasPendingStateTransitions() {
         return !escalationQueue.isEmpty() || !propagationQueue.isEmpty();
     }

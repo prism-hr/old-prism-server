@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.integration;
 
 import org.joda.time.DateTime;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import com.zuehlke.pgadmissions.services.importers.InstitutionDomicileImportServ
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
+@Ignore
 public class IT4ImportInstitutionReferenceData implements IPrismIntegrationTest {
 
     @Autowired

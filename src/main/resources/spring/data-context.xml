@@ -27,7 +27,7 @@
     </bean>
     
     <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:jboss/datasources/pgadmissions"/>
+        <property name="jndiName" value="${data.source}"/>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager"/>

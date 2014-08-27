@@ -44,7 +44,7 @@ public class Project extends ParentResource {
     private Integer id;
     
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "advert_id")
+    @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
     
     @OneToMany
@@ -85,6 +85,9 @@ public class Project extends ParentResource {
     @Column(name = "title", nullable = false)
     @Field(analyzer = @Analyzer(definition = "advertAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String title;
+    
+    @Column(name = "immediate_start", nullable = false)
+    private Boolean immediateStart;
 
     @Column(name = "application_rating_count_percentile_05")
     private Integer applicationRatingCount05;
@@ -193,7 +196,15 @@ public class Project extends ParentResource {
     public void setTitle(String title) {
         this.title = title;
     }
-    
+        
+    public final Boolean isImmediateStart() {
+        return immediateStart;
+    }
+
+    public final void setImmediateStart(Boolean immediateStart) {
+        this.immediateStart = immediateStart;
+    }
+
     @Override
     public final Integer getApplicationRatingCount05() {
         return applicationRatingCount05;
@@ -354,11 +365,6 @@ public class Project extends ParentResource {
     
     public final Set<UserRole> getUserRoles() {
         return userRoles;
-    }
-
-    public Project withId(Integer id) {
-        this.id = id;
-        return this;
     }
 
     @Override

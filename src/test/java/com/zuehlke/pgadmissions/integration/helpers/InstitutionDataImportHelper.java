@@ -20,7 +20,8 @@ import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.ProgramStudyOption;
+import com.zuehlke.pgadmissions.domain.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
@@ -40,31 +41,31 @@ import com.zuehlke.pgadmissions.services.importers.InstitutionDomicileImportServ
 
 @Service
 public class InstitutionDataImportHelper {
-    
+
     @Autowired
     private EntityService entityService;
-    
+
     @Autowired
     private EntityImportService entityImportService;
-    
+
     @Autowired
     private InstitutionDomicileImportService institutionDomicileImportService;
-    
+
     @Autowired
     private ImportedEntityService importedEntityService;
-    
+
     @Autowired
     private AdvertCategoryImportService opportunityCategoryImportService;
-    
+
     @Autowired
     private ProgramService programService;
-    
+
     @Autowired
     private RoleService roleService;
-    
+
     @Autowired
     private StateService stateService;
-    
+
     public void verifyEntityImport(Institution institution) throws DataImportException {
         for (String code : new String[] { "1", "99" }) {
             Disability disability = entityService.getByCode(Disability.class, code);
@@ -109,14 +110,17 @@ public class InstitutionDataImportHelper {
         assertTrue(importedEntityService.getByCode(Disability.class, institution, "1").isEnabled());
         assertFalse(importedEntityService.getByCode(Disability.class, institution, "99").isEnabled());
     }
-    
+
     @SuppressWarnings("unchecked")
     public void verifyProgramImport(Institution institution) throws DataImportException {
         for (String code : new String[] { "AGH-1", "AGH-99" }) {
             Program program = programService.getProgramByCode(code);
             if (program != null) {
-                for (ProgramInstance programInstance : program.getProgramInstances()) {
-                    entityService.delete(programInstance);
+                for (ProgramStudyOption studyOption : program.getStudyOptions()) {
+                    for (ProgramStudyOptionInstance instance : studyOption.getInstances()) {
+                        entityService.delete(instance);
+                    }
+                    entityService.delete(studyOption);
                 }
                 entityService.delete(program);
             }
@@ -135,19 +139,22 @@ public class InstitutionDataImportHelper {
         assertSame(PrismProgramType.POSTGRADUATE_STUDY, program1.getProgramType());
         assertEquals("Internship otherProgram", otherProgram.getTitle());
         assertSame(PrismProgramType.INTERNSHIP, otherProgram.getProgramType());
-        assertTrue(program1.getRequireProjectDefinition());
-        assertTrue(otherProgram.getRequireProjectDefinition());
+        assertTrue(program1.isRequireProjectDefinition());
+        assertTrue(otherProgram.isRequireProjectDefinition());
+        
+        for ()
+        
 
         assertThat(
                 program1.getProgramInstances(),
-                contains(equalTo(new ProgramInstance().withIdentifier("0009").withAcademicYear("2013")
-                        .withStudyOption(new StudyOption().withInstitution(institution).withCode(PrismStudyOption.FULL_TIME).withName("F+++++").withEnabled(true))
+                contains(equalTo(new ProgramStudyOptionInstance().withIdentifier("0009").withAcademicYear("2013")
+                        .withStudyOption(new StudyOption().withInstitution(institution).withCode(PrismStudyOption.FULL_TIME.name()).withName("F+++++").withEnabled(true))
                         .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(true))));
 
         assertThat(
                 otherProgram.getProgramInstances(),
-                contains(equalTo(new ProgramInstance().withIdentifier("0014").withAcademicYear("2013")
-                        .withStudyOption(new StudyOption().withInstitution(institution).withCode(PrismStudyOption.FULL_TIME).withName("F+++++").withEnabled(true))
+                contains(equalTo(new ProgramStudyOptionInstance().withIdentifier("0014").withAcademicYear("2013")
+                        .withStudyOption(new StudyOption().withInstitution(institution).withCode(PrismStudyOption.FULL_TIME.name()).withName("F+++++").withEnabled(true))
                         .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(true))));
 
         importedEntityFeed.setLocation("reference_data/conflicts/programs/updatedPrograms.xml");
@@ -161,26 +168,26 @@ public class InstitutionDataImportHelper {
         assertSame(PrismProgramType.INTERNSHIP, otherProgram.getProgramType());
         assertEquals(program1.getState().getId(), PrismState.PROGRAM_APPROVED);
         assertEquals(otherProgram.getState().getId(), PrismState.PROGRAM_APPROVED);
-        assertFalse(program1.getRequireProjectDefinition());
-        assertTrue(otherProgram.getRequireProjectDefinition());
+        assertFalse(program1.isRequireProjectDefinition());
+        assertTrue(otherProgram.isRequireProjectDefinition());
 
         assertThat(
                 program1.getProgramInstances(),
                 containsInAnyOrder(
-                        equalTo(new ProgramInstance().withIdentifier("0009").withAcademicYear("2013")
+                        equalTo(new ProgramStudyOptionInstance().withIdentifier("0009").withAcademicYear("2013")
                                 .withStudyOption(new StudyOption().withInstitution(institution).withCode(PrismStudyOption.FULL_TIME).withName("F+++++").withEnabled(true))
                                 .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(true)),
-                        equalTo(new ProgramInstance().withIdentifier("0008").withAcademicYear("2013")
+                        equalTo(new ProgramStudyOptionInstance().withIdentifier("0008").withAcademicYear("2013")
                                 .withStudyOption(new StudyOption().withInstitution(institution).withCode(PrismStudyOption.PART_TIME).withName("P+++++").withEnabled(true))
                                 .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(true))));
 
         assertThat(
                 otherProgram.getProgramInstances(),
-                contains(equalTo(new ProgramInstance().withIdentifier("0014").withAcademicYear("2013")
+                contains(equalTo(new ProgramStudyOptionInstance().withIdentifier("0014").withAcademicYear("2013")
                         .withStudyOption(new StudyOption().withInstitution(institution).withCode(PrismStudyOption.FULL_TIME).withName("F+++++").withEnabled(true))
                         .withApplicationStartDate(new LocalDate(2013, 9, 23)).withApplicationDeadline(new LocalDate(2014, 9, 15)).withEnabled(false))));
     }
-    
+
     public void verifyProductionDataImport(Institution institution) throws DataImportException {
         ImportedEntityFeed importedEntityFeed = new ImportedEntityFeed();
         importedEntityFeed.setInstitution(institution);
@@ -224,7 +231,7 @@ public class InstitutionDataImportHelper {
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.TITLE);
         importedEntityFeed.setLocation("xml/defaultEntities/title.xml");
         entityImportService.importReferenceEntities(importedEntityFeed);
-        
+
         importedEntityFeed.setImportedEntityType(PrismImportedEntity.GENDER);
         importedEntityFeed.setLocation("xml/defaultEntities/gender.xml");
         entityImportService.importReferenceEntities(importedEntityFeed);
@@ -237,34 +244,67 @@ public class InstitutionDataImportHelper {
         importedEntityFeed.setLocation("reference_data/2014-05-08/program.xml");
         entityImportService.importReferenceEntities(importedEntityFeed);
     }
-    
+
     @Transactional
     public void verifyImportedProgramInitialisation() {
         List<Program> programs = programService.getPrograms();
         for (Program program : programs) {
-            ProgramInstance latestEnabledInstance = programService.getLatestProgramInstance(program);
-            LocalDate dueDate = program.getDueDate();
-            LocalDate currentDate = new LocalDate();
-            if (latestEnabledInstance == null) {
-                assertTrue(dueDate.isEqual(currentDate) || dueDate.isBefore(currentDate));
-            } else {
-                assertEquals(latestEnabledInstance.getApplicationDeadline(), program.getDueDate());
+            int enabledOptions = 0;
+            
+            for (ProgramStudyOption studyOption : program.getStudyOptions()) {
+                LocalDate startDateExpected = null;
+                LocalDate closeDateExpected = null;
+
+                LocalDate startDateActual = studyOption.getApplicationStartDate();
+                LocalDate closeDateActual = studyOption.getApplicationCloseDate();
+
+                ProgramStudyOptionInstance earliestEnabledInstance = null;
+                for (ProgramStudyOptionInstance instance : studyOption.getInstances()) {
+                    LocalDate startDateInstance = instance.getApplicationStartDate();
+                    LocalDate closeDateInstance = instance.getApplicationCloseDate();
+
+                    earliestEnabledInstance = instance.isEnabled() && earliestEnabledInstance == null
+                            || (startDateExpected == null || startDateInstance.isBefore(startDateExpected)) ? instance : earliestEnabledInstance;
+
+                    startDateExpected = startDateExpected == null || startDateExpected.isAfter(startDateInstance) ? startDateInstance : startDateExpected;
+                    closeDateExpected = closeDateExpected == null || closeDateExpected.isBefore(closeDateInstance) ? closeDateInstance : closeDateExpected;
+                }
+                
+                assertEquals(startDateActual, startDateExpected);
+                assertEquals(closeDateActual, closeDateExpected);
+                
+                if (studyOption.isEnabled()) {
+                    assertEquals(studyOption.getDefaultStartDate(), earliestEnabledInstance.getApplicationCloseDate());
+                    enabledOptions++;
+                } else {
+                    assertTrue(studyOption.getDefaultStartDate() == null);
+                }
             }
+
             User programUser = program.getUser();
             assertEquals(program.getInstitution().getUser(), program.getUser());
             assertTrue(roleService.hasUserRole(program, programUser, PrismRole.PROGRAM_ADMINISTRATOR));
+            
+            LocalDate dueDate = program.getDueDate();
+            
+            if (enabledOptions == 0) {
+                LocalDate baseline = new LocalDate();
+                assertTrue(baseline.equals(dueDate) || baseline.isAfter(dueDate));
+            } else {
+                assertEquals(dueDate, programService.getProgramClosureDate(program));
+            }
         }
     }
-    
+
     @Transactional
     public void verifyImportedProgramReactivation() {
         Program programToDisable1 = programService.getProgramByImportedCode(null, "RRDMECSING01");
         Program programToDisable2 = programService.getProgramByImportedCode(null, "RRDMPHSING01");
-        
+
         programToDisable1.setState(stateService.getById(PrismState.PROGRAM_DISABLED_PENDING_IMPORT_REACTIVATION));
         programToDisable2.setState(stateService.getById(PrismState.PROGRAM_DISABLED_COMPLETED));
-        
-        
+
+        // TODO confirm that this is working
     }
-    
+
 }

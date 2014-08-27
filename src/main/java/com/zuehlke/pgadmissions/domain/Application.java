@@ -41,7 +41,7 @@ public class Application extends Resource {
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @Column(name = "code")
     private String code;
 
@@ -64,29 +64,29 @@ public class Application extends Resource {
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
-    
+
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
-    
+
     @Column(name = "referrer")
     private String referrer;
 
     @Column(name = "closing_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate closingDate;
-    
+
     @Column(name = "previous_closing_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate previousClosingDate;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_personal_detail_id", unique = true)
-    private ApplicationPersonalDetails personalDetails;
+    private ApplicationPersonalDetail personalDetail;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_program_detail_id", unique = true)
-    private ApplicationProgramDetails programDetails;
+    private ApplicationProgramDetail programDetail;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_address_id", unique = true)
@@ -115,32 +115,32 @@ public class Application extends Resource {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_additional_information_id", unique = true)
     private ApplicationAdditionalInformation additionalInformation;
-    
+
     @Column(name = "rating_count")
     private Integer ratingCount;
-    
+
     @Column(name = "rating_average")
     private BigDecimal ratingAverage;
-    
+
     @Column(name = "confirmed_start_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate confirmedStartDate;
-    
+
     @ManyToOne
     @JoinColumn(name = "confirmed_supervisor_user_id")
     private User confirmedSupervisor;
-    
+
     @Column(name = "confirmed_offer_type")
     @Enumerated(EnumType.STRING)
     private PrismOfferType confirmedOfferType;
-    
+
     @Column(name = "do_retain", nullable = false)
     private Boolean doRetain;
 
     @Column(name = "submitted_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime submittedTimestamp;
-    
+
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
 
@@ -163,10 +163,10 @@ public class Application extends Resource {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
-    
+
     @OneToMany(mappedBy = "application")
     private Set<UserRole> userRoles = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "application")
     private Set<Comment> comments = Sets.newHashSet();
 
@@ -182,17 +182,17 @@ public class Application extends Resource {
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     @Override
     public String getCode() {
         return code;
     }
-    
+
     @Override
     public void setCode(String code) {
         this.code = code;
     }
-    
+
     @Override
     public User getUser() {
         return user;
@@ -202,8 +202,7 @@ public class Application extends Resource {
     public void setUser(User user) {
         this.user = user;
     }
-    
-    
+
     @Override
     public System getSystem() {
         return system;
@@ -252,14 +251,14 @@ public class Application extends Resource {
     public Application getApplication() {
         return this;
     }
-    
+
     @Override
     public String getReferrer() {
         return referrer;
     }
-    
+
     @Override
-    public void setReferrer (String referrer) {
+    public void setReferrer(String referrer) {
         this.referrer = referrer;
     }
 
@@ -330,21 +329,21 @@ public class Application extends Resource {
     public final void setPreviousClosingDate(LocalDate previousClosingDate) {
         this.previousClosingDate = previousClosingDate;
     }
-    
-    public ApplicationPersonalDetails getPersonalDetails() {
-        return personalDetails;
+
+    public ApplicationPersonalDetail getPersonalDetail() {
+        return personalDetail;
     }
 
-    public void setPersonalDetails(ApplicationPersonalDetails personalDetails) {
-        this.personalDetails = personalDetails;
+    public void setPersonalDetail(ApplicationPersonalDetail personalDetail) {
+        this.personalDetail = personalDetail;
     }
 
-    public ApplicationProgramDetails getProgramDetails() {
-        return programDetails;
+    public ApplicationProgramDetail getProgramDetail() {
+        return programDetail;
     }
 
-    public void setProgramDetails(ApplicationProgramDetails programDetails) {
-        this.programDetails = programDetails;
+    public void setProgramDetail(ApplicationProgramDetail programDetail) {
+        this.programDetail = programDetail;
     }
 
     public ApplicationAdditionalInformation getAdditionalInformation() {
@@ -477,13 +476,13 @@ public class Application extends Resource {
         return this;
     }
 
-    public Application withPersonalDetails(ApplicationPersonalDetails personalDetails) {
-        this.personalDetails = personalDetails;
+    public Application withPersonalDetails(ApplicationPersonalDetail personalDetails) {
+        this.personalDetail = personalDetails;
         return this;
     }
 
-    public Application withProgramDetails(ApplicationProgramDetails programDetails) {
-        this.programDetails = programDetails;
+    public Application withProgramDetails(ApplicationProgramDetail programDetails) {
+        this.programDetail = programDetails;
         return this;
     }
 
@@ -501,7 +500,7 @@ public class Application extends Resource {
         this.additionalInformation = additionalInformation;
         return this;
     }
-    
+
     public Application withDoRetain(Boolean doRetain) {
         this.doRetain = doRetain;
         return this;
@@ -526,12 +525,12 @@ public class Application extends Resource {
         setParentResource(parentResource);
         return this;
     }
-    
+
     public Application withAdvert(Advert advert) {
         this.advert = advert;
         return this;
     }
-    
+
     @Override
     public State getState() {
         return state;
@@ -571,17 +570,21 @@ public class Application extends Resource {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
-    
+
     public Advert getAdvert() {
         return project == null ? program.getAdvert() : project.getAdvert();
     }
-    
+
     public String getAdvertTitle() {
         return project == null ? program.getTitle() : project.getTitle();
     }
-    
+
     public LocalDate getAdvertClosingDate() {
         return closingDate == null ? previousClosingDate : closingDate;
+    }
+
+    public boolean isImmediateStart() {
+        return project != null && project.isImmediateStart() || program.getGroupStartFrequency() == null;
     }
 
     @Override

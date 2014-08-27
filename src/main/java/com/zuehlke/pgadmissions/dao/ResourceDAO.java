@@ -59,9 +59,9 @@ public class ResourceDAO {
         model.put("queryScope", PrismScope.getResourceScope(resourceClass).getLowerCaseName());
         model.put("parentScopes", parentScopes);
         model.put("queryRangeValue", resourceListYearsToRetrieve);
-        model.put("queryRangeUnit", DurationUnit.YEARS.getSqlValue());
+        model.put("queryRangeUnit", DurationUnit.YEAR.name());
         model.put("queryRangeValue", resourceListYearsToRetrieve);
-        model.put("queryRangeUnit", DurationUnit.YEARS.getSqlValue());
+        model.put("queryRangeUnit", DurationUnit.YEAR.name());
         model.put("rowIndex", loadIndex * resourceListRecordsToRetrieve);
         model.put("rowCount", resourceListRecordsToRetrieve);
         

@@ -143,23 +143,30 @@ public class ResourceService {
         return "PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId());
     }
 
-    public void processResource(Resource resource, State transitionState) {
+    public void processResource(Resource resource, Comment comment) {
+        State transitionState = comment.getTransitionState();
+        
         resource.setPreviousState(resource.getState());
         resource.setState(transitionState);
+
+        LocalDate baselineCustom;
+        LocalDate baseline = new LocalDate();
         
-        LocalDate dueDateBaseline;
         switch (resource.getResourceScope()) {
+        case PROGRAM:
+            baselineCustom = programService.resolveDueDateBaseline((Program) resource, comment);
         case PROJECT:
-            dueDateBaseline = projectService.resolveDueDateBaseline((Project) resource);
+            baselineCustom = projectService.resolveDueDateBaseline((Project) resource, comment);
         case APPLICATION:
-            dueDateBaseline = applicationService.resolveDueDateBaseline((Application) resource);
+            baselineCustom = applicationService.resolveDueDateBaseline((Application) resource, comment);
         default:
-            dueDateBaseline = new LocalDate();
+            baselineCustom = null;
         }
         
-        StateDuration stateDuration = stateService.getStateDuration(resource, transitionState);
-        resource.setDueDate(dueDateBaseline.plusDays(stateDuration == null ? 0 : stateDuration.getDuration()));
+        baselineCustom = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
         
+        StateDuration stateDuration = stateService.getStateDuration(resource, transitionState);
+        resource.setDueDate(baseline.plusDays(stateDuration == null ? 0 : stateDuration.getDuration()));
     }
     
     public void updateResource(Resource resource, Comment comment) {     

@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
 public class LanguageQualificationTypeImportConverter extends GenericEntityImportConverter<LanguageQualificationType> {
 
     public LanguageQualificationTypeImportConverter(Institution institution) {
-        super(LanguageQualificationType.class, institution);
+        super(institution, LanguageQualificationType.class);
     }
 
     protected void setCustomProperties(Object input, LanguageQualificationType result) throws Exception {

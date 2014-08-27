@@ -43,7 +43,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationPassport;
-import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
@@ -264,15 +264,15 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         addClosingDateToTable(table, form);
 
         table.addCell(newTableCell("Start Date", SMALL_BOLD_FONT));
-        if (form.getProgramDetails().getStartDate() != null) {
-            table.addCell(newTableCell(dateFormat.format(form.getProgramDetails().getStartDate()), SMALL_FONT));
+        if (form.getProgramDetail().getStartDate() != null) {
+            table.addCell(newTableCell(dateFormat.format(form.getProgramDetail().getStartDate()), SMALL_FONT));
         } else {
             table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
         }
 
         table.addCell(newTableCell("How did you find us?", SMALL_BOLD_FONT));
-        if (form.getProgramDetails().getReferralSource() != null) {
-            table.addCell(newTableCell(form.getProgramDetails().getReferralSource().getName(), SMALL_FONT));
+        if (form.getProgramDetail().getReferralSource() != null) {
+            table.addCell(newTableCell(form.getProgramDetail().getReferralSource().getName(), SMALL_FONT));
         } else {
             table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
         }
@@ -280,7 +280,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        if (form.getProgramDetails().getSupervisors().isEmpty()) {
+        if (form.getProgramDetail().getSupervisors().isEmpty()) {
             table = new PdfPTable(2);
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             table.addCell(newTableCell("Supervisor", SMALL_BOLD_FONT));
@@ -289,7 +289,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             pdfDocument.add(addSectionSeparators());
         } else {
             int counter = 1;
-            for (ApplicationSupervisor supervisor : form.getProgramDetails().getSupervisors()) {
+            for (ApplicationSupervisor supervisor : form.getProgramDetail().getSupervisors()) {
                 table = new PdfPTable(2);
                 table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                 PdfPCell headerCell = newTableCell("Supervisor (" + counter++ + ")", SMALL_BOLD_FONT);
@@ -325,7 +325,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        ApplicationPersonalDetails personalDetails = form.getPersonalDetails();
+        ApplicationPersonalDetail personalDetails = form.getPersonalDetail();
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
 

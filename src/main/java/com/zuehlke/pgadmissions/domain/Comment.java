@@ -25,6 +25,7 @@ import org.joda.time.LocalDate;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 @Entity
@@ -83,7 +84,7 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "transition_state_id")
     private State transitionState;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "application_qualified")
     private YesNoUnsureResponse qualified;
@@ -142,7 +143,7 @@ public class Comment {
 
     @Column(name = "application_recruiter_accept_appointment")
     private Boolean recruiterAcceptAppointment;
-    
+
     @ManyToOne
     @JoinColumn(name = "application_rejection_reason_id")
     private RejectionReason rejectionReason;
@@ -197,7 +198,7 @@ public class Comment {
     @JoinColumn(name = "comment_id", nullable = false, unique = true)
     private Set<CommentAppointmentPreference> appointmentPreferences = Sets.newHashSet();
 
-    @OneToMany(cascade= CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false, unique = true)
     private Set<Document> documents = Sets.newHashSet();
 
@@ -312,7 +313,7 @@ public class Comment {
     public void setTransitionState(State transitionState) {
         this.transitionState = transitionState;
     }
-    
+
     public YesNoUnsureResponse getQualified() {
         return qualified;
     }
@@ -682,7 +683,7 @@ public class Comment {
         this.positionTitle = positionTitle;
         return this;
     }
-    
+
     public Comment withRejectionReason(RejectionReason rejectionReason) {
         this.rejectionReason = rejectionReason;
         return this;
@@ -804,27 +805,51 @@ public class Comment {
     public boolean isApplicationCreatorEligibilityUncertain() {
         return getQualified() == YesNoUnsureResponse.UNSURE || getCompetentInWorkLanguage() == YesNoUnsureResponse.UNSURE;
     }
-    
+
     public User getAuthor() {
         return delegateUser == null ? user : delegateUser;
     }
-    
-    public boolean isProjectCreationComment() {
+
+    public boolean isProgramCreateComment() {
+        return action.getCreationScope().getId() == PrismScope.PROGRAM;
+    }
+
+    public boolean isProgramUpdateComment() {
+        return action.getScope().getId() == PrismScope.PROGRAM && action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE;
+    }
+
+    public boolean isProgramCreateOrUpdateComment() {
+        return isProgramCreateComment() || isProgramUpdateComment();
+    }
+
+    public boolean isProjectCreateComment() {
         return action.getCreationScope().getId() == PrismScope.PROJECT;
     }
-    
+
+    public boolean isProjectUpdateComment() {
+        return action.getScope().getId() == PrismScope.PROJECT && action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE;
+    }
+
+    public boolean isProjectCreateOrUpdateComment() {
+        return isProjectCreateComment() || isProjectUpdateComment();
+    }
+
+    public boolean isAssignReviewersComment() {
+        return action.getId() == PrismAction.APPLICATION_ASSIGN_REVIEWERS;
+    }
+
     public boolean isReferenceComment() {
         return action.getId() == PrismAction.APPLICATION_PROVIDE_REFERENCE;
     }
-    
+
     public boolean isOfferRecommendationComment() {
         return action.getId() == PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
     }
-    
+
     public boolean isRatingAction() {
         return action.isRatingAction();
     }
-    
+
     public boolean isTransitionAction() {
         return action.isTransitionAction();
     }

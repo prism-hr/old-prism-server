@@ -9,13 +9,23 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 @DiscriminatorValue("PROGRAM_TYPE")
 public class ProgramType extends SimpleImportedEntity {
 
+    @Override
+    public void setCode(String code) {
+        try {
+            PrismProgramType.valueOf(code);
+            super.setCode(code);
+        } catch (IllegalArgumentException e) {
+            throw new Error("Invalid code for imported program type", e);
+        }
+    }
+    
     public ProgramType withInstitution(Institution institution) {
         setInstitution(institution);
         return this;
     }
 
-    public ProgramType withCode(PrismProgramType code) {
-        setCode(code.toString());
+    public ProgramType withCode(String code) {
+        setCode(code);
         return this;
     }
 

@@ -55,8 +55,12 @@ public class InstitutionService {
     @Autowired
     private ResourceService resourceService;
 
-    public Institution getByCode(String institutionCode) {
-        return institutionDAO.getByCode(institutionCode);
+    public Institution getById(Integer id) {
+        return entityService.getById(Institution.class, id);
+    }
+    
+    public Institution getByCode(String code) {
+        return entityService.getByProperty(Institution.class, "code", code);
     }
 
     public List<InstitutionDomicileRegion> getTopLevelRegions(InstitutionDomicile domicile) {

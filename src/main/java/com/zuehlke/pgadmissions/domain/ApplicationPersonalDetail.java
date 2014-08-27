@@ -18,7 +18,7 @@ import org.joda.time.LocalDate;
 
 @Entity
 @Table(name = "APPLICATION_PERSONAL_DETAIL")
-public class ApplicationPersonalDetails {
+public class ApplicationPersonalDetail {
 
     @Id
     @GeneratedValue
@@ -246,97 +246,97 @@ public class ApplicationPersonalDetails {
         this.languageQualification = languageQualification;
     }
 
-    public ApplicationPersonalDetails withId(Integer id) {
+    public ApplicationPersonalDetail withId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public ApplicationPersonalDetails withApplication(Application application) {
+    public ApplicationPersonalDetail withApplication(Application application) {
         this.application = application;
         return this;
     }
 
-    public ApplicationPersonalDetails withTitle(Title title) {
+    public ApplicationPersonalDetail withTitle(Title title) {
         this.title = title;
         return this;
     }
 
-    public ApplicationPersonalDetails withGender(Gender gender) {
+    public ApplicationPersonalDetail withGender(Gender gender) {
         this.gender = gender;
         return this;
     }
 
-    public ApplicationPersonalDetails withDateOfBirth(LocalDate dateOfBirth) {
+    public ApplicationPersonalDetail withDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
         return this;
     }
 
-    public ApplicationPersonalDetails withCountry(Country country) {
+    public ApplicationPersonalDetail withCountry(Country country) {
         this.country = country;
         return this;
     }
 
-    public ApplicationPersonalDetails withFirstNationality(Language firstNationality) {
+    public ApplicationPersonalDetail withFirstNationality(Language firstNationality) {
         this.firstNationality = firstNationality;
         return this;
     }
 
-    public ApplicationPersonalDetails withSecondNationality(Language secondNationality) {
+    public ApplicationPersonalDetail withSecondNationality(Language secondNationality) {
         this.secondNationality = secondNationality;
         return this;
     }
 
-    public ApplicationPersonalDetails withEnglishFirstLanguage(Boolean englishFirstLanguage) {
+    public ApplicationPersonalDetail withEnglishFirstLanguage(Boolean englishFirstLanguage) {
         this.firstLanguageEnglish = englishFirstLanguage;
         return this;
     }
 
-    public ApplicationPersonalDetails withLanguageQualificationAvailable(Boolean flag) {
+    public ApplicationPersonalDetail withLanguageQualificationAvailable(Boolean flag) {
         this.languageQualificationAvailable = flag;
         return this;
     }
 
-    public ApplicationPersonalDetails withLanguageQualification(ApplicationLanguageQualification languageQualification) {
+    public ApplicationPersonalDetail withLanguageQualification(ApplicationLanguageQualification languageQualification) {
         this.languageQualification = languageQualification;
         return this;
     }
 
-    public ApplicationPersonalDetails withResidenceCountry(Domicile residenceCountry) {
+    public ApplicationPersonalDetail withResidenceCountry(Domicile residenceCountry) {
         this.residenceCountry = residenceCountry;
         return this;
     }
 
-    public ApplicationPersonalDetails withRequiresVisa(Boolean requiresVisa) {
+    public ApplicationPersonalDetail withRequiresVisa(Boolean requiresVisa) {
         this.visaRequired = requiresVisa;
         return this;
     }
 
-    public ApplicationPersonalDetails withPassportAvailable(Boolean passportAvailable) {
+    public ApplicationPersonalDetail withPassportAvailable(Boolean passportAvailable) {
         this.passportAvailable = passportAvailable;
         return this;
     }
 
-    public ApplicationPersonalDetails withPassportInformation(ApplicationPassport passportInformation) {
+    public ApplicationPersonalDetail withPassportInformation(ApplicationPassport passportInformation) {
         this.passport = passportInformation;
         return this;
     }
 
-    public ApplicationPersonalDetails withPhoneNumber(String phoneNumber) {
+    public ApplicationPersonalDetail withPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
         return this;
     }
 
-    public ApplicationPersonalDetails withMessenger(String messenger) {
+    public ApplicationPersonalDetail withMessenger(String messenger) {
         this.messenger = messenger;
         return this;
     }
 
-    public ApplicationPersonalDetails withEthnicity(Ethnicity eth) {
+    public ApplicationPersonalDetail withEthnicity(Ethnicity eth) {
         ethnicity = eth;
         return this;
     }
 
-    public ApplicationPersonalDetails withDisability(Disability dis) {
+    public ApplicationPersonalDetail withDisability(Disability dis) {
         this.disability = dis;
         return this;
     }

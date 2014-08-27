@@ -79,28 +79,44 @@ public class ImportedEntityDAO {
                 .setParameter("institution", institution) // 
                 .executeUpdate();
     }
-
-    public void disableAllImportedPrograms(Institution institution) {
+    
+    public void disableAllImportedPrograms(Institution institution, LocalDate baseline) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update Program "
                     + "set dueDate = :dueDate "
                     + "where institution = :institution "
-                        + "and importedCode is not null")
+                        + "and imported is true")
                 .setParameter("institution", institution)
-                .setParameter("dueDate", new LocalDate())
+                .setParameter("dueDate", baseline)
                 .executeUpdate();
     }
     
-    public void disableAllImportedProgramInstances(Institution institution) {
+    public void disableAllImportedProgramStudyOptions(Institution institution) {
         sessionFactory.getCurrentSession().createQuery( //
-                "update ProgramInstance " //
-                    + "set enabled = false " //
+                "update ProgramStudyOption " //
+                    + "set enabled = false, "
+                        + "defaultStartDate = null " //
                     + "where program in (" //
-                        + "select id from Program " //
+                        + "select id "
+                            + "from Program " //
                         + "where institution = :institution "
-                            + "and importedCode is not null)") //
+                            + "and imported is true)") //
                 .setParameter("institution", institution) //
                 .executeUpdate();
+    }
+
+    public void disableAllImportedProgramStudyOptionInstances(Institution institution) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update ProgramStudyOptionInstance " //
+                    + "set enabled = false " //
+                    + "where programStudyOption in (" //
+                        + "select programStudyOption.id "
+                            + "from Program join programStudyOptions programStudyOption "
+                        + "where institution = :institution "
+                            + "and imported is true)") //
+                .setParameter("institution", institution) //
+                .executeUpdate();
+        
     }
     
 }

@@ -15,13 +15,13 @@ public class GenericEntityImportConverter<E extends ImportedEntity> implements F
     
     private Institution institution;
 
-    protected GenericEntityImportConverter(Class<E> importedEntityType, Institution institution) {
+    protected GenericEntityImportConverter(Institution institution, Class<E> importedEntityType) {
         this.importedEntityType = importedEntityType;
         this.institution = institution;
     }
 
-    public static <E extends ImportedEntity> GenericEntityImportConverter<E> create(Class<E> importedEntityType, Institution institution) {
-        return new GenericEntityImportConverter<E>(importedEntityType, institution);
+    public static <E extends ImportedEntity> GenericEntityImportConverter<E> create(Institution institution, Class<E> importedEntityType) {
+        return new GenericEntityImportConverter<E>(institution, importedEntityType);
     }
     
     @Override

@@ -9,13 +9,24 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 @DiscriminatorValue("STUDY_OPTION")
 public class StudyOption extends SimpleImportedEntity {
 
+    @Override
+    public void setCode(String code) {
+        try {
+            PrismStudyOption.valueOf(code);
+            super.setCode(code);
+        } catch (IllegalArgumentException e) {
+            throw new Error("Invalid code for imported study option", e);
+        }
+    }
+    
+    
     public StudyOption withInstitution(Institution institution) {
         setInstitution(institution);
         return this;
     }
 
-    public StudyOption withCode(PrismStudyOption code) {
-        setCode(code.toString());
+    public StudyOption withCode(String code) {
+        setCode(code);
         return this;
     }
 

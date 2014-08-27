@@ -28,8 +28,8 @@ import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationPassport;
-import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
-import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetail;
+import com.zuehlke.pgadmissions.domain.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
@@ -45,6 +45,7 @@ import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.ReferralSource;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -53,7 +54,6 @@ import com.zuehlke.pgadmissions.domain.Title;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
@@ -152,28 +152,22 @@ public class ApplicationService {
 
     public LocalDate getEarliestStartDate(Application application) {
         LocalDate currentDate = new LocalDate();
-        LocalDate earliestStartDate = programService.getEarliestProgramInstance(application).getApplicationStartDate();
-        if (earliestStartDate.isBefore(currentDate)) {
-            return getNextMonday(currentDate);
-        }
-        return getNextMonday(earliestStartDate);
+        ProgramStudyOption studyOption = programService.getProgramStudyOption(application.getProgram(), application.getProgramDetail().getStudyOption());
+        LocalDate earliestStartDate = studyOption.getApplicationStartDate();
+        return getNextMonday(earliestStartDate.isBefore(currentDate) ? currentDate : earliestStartDate);
     }
 
     public LocalDate getLatestStartDate(Application application) {
-        LocalDate latestStartDate = programService.getLatestProgramInstance(application).getApplicationDeadline();
-        return getNextMonday(latestStartDate);
+        ProgramStudyOption studyOption = programService.getProgramStudyOption(application.getProgram(), application.getProgramDetail().getStudyOption());
+        return getNextMonday(studyOption.getApplicationCloseDate());
     }
 
     public LocalDate getRecommendedStartDate(Application application) {
-        LocalDate recommendedStartDate = null;
-        if (application.getAdvert().isImmediateStart()) {
-            recommendedStartDate = new LocalDate().plusWeeks(4);
-        } else {
-            recommendedStartDate = programService.getEarliestProgramInstance(application).getApplicationDeadline();
-        }
-        recommendedStartDate = getNextMonday(recommendedStartDate);
-        LocalDate latestStartDate = getLatestStartDate(application);
-        return recommendedStartDate.isAfter(latestStartDate) ? latestStartDate : recommendedStartDate;
+        ProgramStudyOption studyOption = programService.getProgramStudyOption(application.getProgram(), application.getProgramDetail().getStudyOption());
+        LocalDate applicationCloseDate = studyOption.getApplicationCloseDate();
+        LocalDate defaultStartDate = application.isImmediateStart() ? new LocalDate().plusWeeks(4) : studyOption.getDefaultStartDate();
+        defaultStartDate = defaultStartDate.isBefore(applicationCloseDate) ? defaultStartDate : applicationCloseDate;
+        return defaultStartDate;
     }
 
     public String getApplicationExportReference(Application application) {
@@ -203,10 +197,10 @@ public class ApplicationService {
     public void saveProgramDetails(Integer applicationId, ApplicationProgramDetailsDTO programDetailsDTO) {
         Application application = entityService.getById(Application.class, applicationId);
         Institution institution = application.getInstitution();
-        ApplicationProgramDetails programDetails = application.getProgramDetails();
+        ApplicationProgramDetail programDetails = application.getProgramDetail();
         if (programDetails == null) {
-            programDetails = new ApplicationProgramDetails();
-            application.setProgramDetails(programDetails);
+            programDetails = new ApplicationProgramDetail();
+            application.setProgramDetail(programDetails);
         }
 
         StudyOption studyOption = importedEntityService.getById(StudyOption.class, institution, programDetailsDTO.getStudyOption());
@@ -242,10 +236,10 @@ public class ApplicationService {
     public void savePersonalDetails(Integer applicationId, ApplicationPersonalDetailsDTO personalDetailsDTO) {
         Application application = entityService.getById(Application.class, applicationId);
         Institution institution = application.getInstitution();
-        ApplicationPersonalDetails personalDetails = application.getPersonalDetails();
+        ApplicationPersonalDetail personalDetails = application.getPersonalDetail();
         if (personalDetails == null) {
-            personalDetails = new ApplicationPersonalDetails();
-            application.setPersonalDetails(personalDetails);
+            personalDetails = new ApplicationPersonalDetail();
+            application.setPersonalDetail(personalDetails);
         }
 
         User user = application.getUser();
@@ -504,38 +498,32 @@ public class ApplicationService {
         }
     }
 
-    public LocalDate resolveDueDateBaseline(Application application) {
-        LocalDate baseline = new LocalDate();
-
-        if (application.getState().getId() == PrismState.APPLICATION_REVIEW_PENDING_FEEDBACK) {
+    public LocalDate resolveDueDateBaseline(Application application, Comment comment) {
+        if (comment.isAssignReviewersComment()) {
             LocalDate closingDate = application.getClosingDate();
 
             if (closingDate != null) {
-                if (closingDate.isAfter(baseline)) {
-                    baseline = closingDate;
-                }
-
-                application.setPreviousClosingDate(closingDate);
                 application.setClosingDate(null);
+                application.setPreviousClosingDate(closingDate);
+                return closingDate;
             }
-
         }
-        return baseline;
+        return null;
     }
 
     public void postProcessApplication(Application application, Comment comment) {
-        if (comment.isProjectCreationComment()) {
+        if (comment.isProjectCreateComment()) {
             synchroniseProjectSupervisors(application);
         }
-        
+
         if (comment.isReferenceComment()) {
             synchroniseReferees(application, comment);
         }
-        
+
         if (comment.isOfferRecommendationComment()) {
             synchroniseOfferRecommendation(application, comment);
         }
- 
+
         if (comment.isRatingAction()) {
             applicationSummaryService.summariseApplication(application);
         }
@@ -550,7 +538,7 @@ public class ApplicationService {
         List<User> supervisorUsers = roleService.getRoleUsers(application, supervisorRole);
 
         for (User supervisorUser : supervisorUsers) {
-            application.getProgramDetails().getSupervisors().add(new ApplicationSupervisor().withUser(supervisorUser).withAware(true));
+            application.getProgramDetail().getSupervisors().add(new ApplicationSupervisor().withUser(supervisorUser).withAware(true));
         }
     }
 

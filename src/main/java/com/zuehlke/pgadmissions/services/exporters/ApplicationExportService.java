@@ -38,7 +38,7 @@ import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
@@ -177,8 +177,9 @@ public class ApplicationExportService {
         String creatorIpAddress = applicationService.getApplicationCreatorIpAddress(application);
         Comment offerRecommendationComment = commentService.getLatestComment(application, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
         User primarySupervisor = applicationService.getPrimarySupervisor(offerRecommendationComment);
-        ProgramInstance exportProgramInstance = programService.getExportProgramInstance(application);
-        
+        ProgramStudyOptionInstance exportProgramInstance = programService.getProgramStudyOptionInstance(application.getProgram(), application
+                .getProgramDetail().getStudyOption(), application.getConfirmedStartDate());
+
         return exportProgramInstance == null ? null : applicationExportBuilder.build(new ApplicationExportDTO().withApplication(application)
                 .withCreatorExportId(creatorExportId).withCreatorIpAddress(creatorIpAddress).withOfferRecommendationComment(offerRecommendationComment)
                 .withPrimarySupervisor(primarySupervisor).withExportProgramInstance(exportProgramInstance));
@@ -233,5 +234,5 @@ public class ApplicationExportService {
         marshaller.marshal(jaxbObject, writer);
         return writer.toString();
     }
-    
+
 }

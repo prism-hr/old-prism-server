@@ -154,7 +154,7 @@ public class StateService {
         if (state != transitionState) {
             comment.setTransitionState(transitionState);
             
-            resourceService.processResource(resource, transitionState);
+            resourceService.processResource(resource, comment);
             roleService.executeRoleTransitions(stateTransition, comment);
             
             if (stateTransition.getPropagatedActions().size() > 0) {

@@ -92,7 +92,7 @@ public class ApplicationDocumentExportBuilder {
 
     private void buildLanguageQualification(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException {
-        Document document = application.getPersonalDetails().getLanguageQualification().getDocument();
+        Document document = application.getPersonalDetail().getLanguageQualification().getDocument();
         if (document != null) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));

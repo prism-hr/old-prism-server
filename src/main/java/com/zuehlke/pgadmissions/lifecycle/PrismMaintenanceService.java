@@ -38,55 +38,89 @@ public class PrismMaintenanceService {
 
     @Scheduled(cron = "${maintenance.ongoing}")
     public void maintainSystem() {
-        try {
-            logger.info("Executing pending state transitions");
-            stateService.executePendingStateTransitions();
-        } catch (Exception e) {
-            logger.info("Error executing pending state transitions", e);
-        }
+        executePendingStateTransitions();
 
         if (!stateService.hasPendingStateTransitions()) {
-            try {
-                logger.info("Importing reference data");
-                entityImportService.importReferenceData();
-            } catch (Exception e) {
-                logger.info("Error importing reference data", e);
-            }
-            
-            try {
-                logger.info("Updating program closing dates");
-                programService.updateProgramClosingDates();
-            } catch (Exception e) {
-                logger.info("Error updating program closing dates");
-            }
-
-            try {
-                logger.trace("Exporting applications");
-                applicationExportService.exportUclApplications();
-            } catch (Exception e) {
-                logger.info("Error exporting applications", e);
-            }
-
-            try {
-                logger.info("Sending deferred workflow notifications.");
-                notificationService.sendDeferredWorkflowNotifications();
-            } catch (Exception e) {
-                logger.info("Error sending deferred workflow notifications", e);
-            }
+            importReferenceData();
+            updateProgramClosingDates();
+            updateProgramDefaultStartDates();
+            exportUclApplications();
+            sendDeferredWorkflowNotifications();
         }
 
+        sendRecommendationNotifications();
+        deleteUnusedDocuments();
+    }
+
+    private void deleteUnusedDocuments() {
+        try {
+            logger.info("Deleting unused documents");
+            documentService.deleteOrphanDocuments();
+        } catch (Exception e) {
+            logger.info("Error deleting unused documents", e);
+        }
+    }
+
+    private void sendRecommendationNotifications() {
         try {
             logger.info("Sending recommendation notifications");
             notificationService.sendRecommendationNotifications();     
         }  catch (Exception e) {
             logger.info("Error sending recommendation notifications", e);
         }
-        
+    }
+
+    private void sendDeferredWorkflowNotifications() {
         try {
-            logger.info("Deleting unused documents");
-            documentService.deleteOrphanDocuments();
+            logger.info("Sending deferred workflow notifications.");
+            notificationService.sendDeferredWorkflowNotifications();
         } catch (Exception e) {
-            logger.info("Error deleting unused documents", e);
+            logger.info("Error sending deferred workflow notifications", e);
+        }
+    }
+
+    private void exportUclApplications() {
+        try {
+            logger.trace("Exporting applications");
+            applicationExportService.exportUclApplications();
+        } catch (Exception e) {
+            logger.info("Error exporting applications", e);
+        }
+    }
+
+    private void updateProgramDefaultStartDates() {
+        try {
+            logger.info("Updating program default start dates");
+            programService.updateProgramDefaultStartDates();
+        } catch (Exception e) {
+            logger.info("Error updating program default start dates");
+        }
+    }
+
+    private void updateProgramClosingDates() {
+        try {
+            logger.info("Updating program closing dates");
+            programService.updateProgramClosingDates();
+        } catch (Exception e) {
+            logger.info("Error updating program closing dates");
+        }
+    }
+
+    private void importReferenceData() {
+        try {
+            logger.info("Importing reference data");
+            entityImportService.importReferenceData();
+        } catch (Exception e) {
+            logger.info("Error importing reference data", e);
+        }
+    }
+
+    private void executePendingStateTransitions() {
+        try {
+            logger.info("Executing pending state transitions");
+            stateService.executePendingStateTransitions();
+        } catch (Exception e) {
+            logger.info("Error executing pending state transitions", e);
         }
     }
     

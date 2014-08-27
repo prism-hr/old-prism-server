@@ -24,7 +24,7 @@ import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "APPLICATION_PROGRAM_DETAIL")
-public class ApplicationProgramDetails {
+public class ApplicationProgramDetail {
 
     @Id
     @GeneratedValue
@@ -109,37 +109,37 @@ public class ApplicationProgramDetails {
         this.application = application;
     }
 
-    public ApplicationProgramDetails withId(Integer id) {
+    public ApplicationProgramDetail withId(Integer id) {
         this.id = id;
         return this;
     }
     
-    public ApplicationProgramDetails withStudyOption(StudyOption studyOption) {
+    public ApplicationProgramDetail withStudyOption(StudyOption studyOption) {
         this.studyOption = studyOption;
         return this;
     }
     
-    public ApplicationProgramDetails withStartDate(LocalDate startDate) {
+    public ApplicationProgramDetail withStartDate(LocalDate startDate) {
         this.startDate = startDate;
         return this;
     }
     
-    public ApplicationProgramDetails withReferralSource(ReferralSource referralSource) {
+    public ApplicationProgramDetail withReferralSource(ReferralSource referralSource) {
         this.referralSource = referralSource;
         return this;
     }
     
-    public ApplicationProgramDetails withSourceOfInterestText(String sourceOfInterestText) {
+    public ApplicationProgramDetail withSourceOfInterestText(String sourceOfInterestText) {
         this.sourceOfInterestText = sourceOfInterestText;
         return this;
     }
     
-    public ApplicationProgramDetails withSuggestedSupervisors(ApplicationSupervisor... suggestedSupervisors) {
+    public ApplicationProgramDetail withSuggestedSupervisors(ApplicationSupervisor... suggestedSupervisors) {
         this.supervisors.addAll(Arrays.asList(suggestedSupervisors));
         return this;
     }
     
-    public ApplicationProgramDetails withApplication(Application application) {
+    public ApplicationProgramDetail withApplication(Application application) {
         this.application = application;
         return this;
     }

@@ -1,39 +1,14 @@
 package com.zuehlke.pgadmissions.components;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.zuehlke.pgadmissions.domain.*;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.zuehlke.pgadmissions.domain.Address;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.ApplicationPassport;
-import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
-import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
-import com.zuehlke.pgadmissions.domain.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.services.DocumentService;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
 
 @Component
 public class ApplicationCopyHelper {
 
-    @Autowired
-    private DocumentService documentService;
-    
-    @Autowired
-    private ImportedEntityService importedEntityService;
-    
     @Transactional
-    public void copyApplicationFormData(Application to, Application from) {  
+    public void copyApplicationFormData(Application to, Application from) {
         if (from.getPersonalDetails() != null) {
             ApplicationPersonalDetails personalDetails = new ApplicationPersonalDetails();
             to.setPersonalDetails(personalDetails);
@@ -233,7 +208,7 @@ public class ApplicationCopyHelper {
         to.setExpiryDate(from.getExpiryDate());
         return to;
     }
-    
+
     private <T extends ImportedEntity> T getEnabledImportedObject(Institution toInstitution, T fromEntity) {
         if (fromEntity == null || (fromEntity.isEnabled() && fromEntity.getInstitution() == toInstitution)) {
             return fromEntity;

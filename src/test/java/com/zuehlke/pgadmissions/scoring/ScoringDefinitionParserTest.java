@@ -1,8 +1,11 @@
 package com.zuehlke.pgadmissions.scoring;
 
 import java.io.File;
+import java.net.URL;
 import java.util.List;
 
+import com.google.common.io.Resources;
+import com.zuehlke.pgadmissions.domain.Resource;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,8 +22,7 @@ public class ScoringDefinitionParserTest {
 
 	@Test
 	public void shouldValidateSingleTextWithoutTooltip() throws Exception {
-		File f = new File("src/test/resources/scoring/simpleText.xml");
-		String xmlContent = Files.toString(f, Charsets.UTF_8);
+        String xmlContent = Resources.toString(Resources.getResource("scoring/simpleText.xml"), Charsets.UTF_8);
 		try {
 			parser.parseScoringDefinition(xmlContent);
 			Assert.fail();
@@ -32,9 +34,7 @@ public class ScoringDefinitionParserTest {
 
 	@Test
 	public void shouldInvalidateSingleTextWithoutLabel() throws Exception {
-		File f = new File("src/test/resources/scoring/simpleTextWithoutLabel.xml");
-		String xmlContent = Files.toString(f, Charsets.UTF_8);
-
+        String xmlContent = Resources.toString(Resources.getResource("scoring/simpleTextWithoutLabel.xml"), Charsets.UTF_8);
 		try {
 			parser.parseScoringDefinition(xmlContent);
 			Assert.fail();
@@ -46,9 +46,7 @@ public class ScoringDefinitionParserTest {
 
 	@Test
 	public void shouldInvalidateSingleTextWithoutRequiredField() throws Exception {
-		File f = new File("src/test/resources/scoring/simpleTextWithoutRequiredField.xml");
-		String xmlContent = Files.toString(f, Charsets.UTF_8);
-
+        String xmlContent = Resources.toString(Resources.getResource("scoring/simpleTextWithoutRequiredField.xml"), Charsets.UTF_8);
 		try {
 			parser.parseScoringDefinition(xmlContent);
 			Assert.fail();

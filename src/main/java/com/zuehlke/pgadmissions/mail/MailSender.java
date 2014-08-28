@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.mail;
 
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import freemarker.template.Template;
@@ -20,6 +21,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 
 @Service
 public class MailSender {
@@ -55,38 +57,12 @@ public class MailSender {
                 public void prepare(final MimeMessage mimeMessage) throws Exception {
                     final MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
 
-                    if (!productionContext) {
-                        flagAsDevelopmentEmail(message, messageHelper);
-                    }
-
-                    messageHelper.setFrom(emailAddressFrom);
-
-                    for (InternetAddress addresses : message.getToAsInternetAddresses()) {
-                        messageHelper.addTo(addresses);
-                    }
-
-                    for (InternetAddress addresses : message.getCcAsInternetAddresses()) {
-                        messageHelper.addCc(addresses);
-                    }
-
-                    for (InternetAddress addresses : message.getBccAsInternetAddresses()) {
-                        messageHelper.addBcc(addresses);
-                    }
-
-                    if (StringUtils.isNotBlank(message.getReplyToAddress())) {
-                        messageHelper.setReplyTo(message.getReplyToAddress());
-                    }
-
-                    for (PdfAttachmentInputSource attachment : message.getAttachments()) {
-                        messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");
-                    }
-
+                    // generate subject
                     String templateName = notificationTemplate.getNotificationTemplate().getId().name() + "_subject_" + notificationTemplate.getId();
                     Template subjectTemplate = new Template(templateName, new StringReader(notificationTemplate.getSubject()), freemarkerConfig.getConfiguration());
                     String subject = FreeMarkerTemplateUtils.processTemplateIntoString(subjectTemplate, message.getModel());
 
-                    messageHelper.setSubject(subject);
-
+                    // generate content
                     templateName = notificationTemplate.getNotificationTemplate().getId().name() + "_content_" + notificationTemplate.getId();
                     Template contentTemplate = new Template(templateName, new StringReader(notificationTemplate.getContent()), freemarkerConfig.getConfiguration());
                     MailToPlainTextConverter htmlFormatter = new MailToPlainTextConverter();
@@ -94,7 +70,19 @@ public class MailSender {
                     String plainText = htmlFormatter.getPlainText(htmlText);
                     plainText = plainText + "\n\n" + emailBrokenLinkMessage;
 
+                    // populate messageHelper
+                    if (productionContext) {
+                        messageHelper.setTo(convertToInternetAddresses(message.getTo()));
+                        messageHelper.setSubject(subject);
+                    } else {
+                        messageHelper.setTo(emailAddressTo);
+                        messageHelper.setSubject("NON-PROD-Message; TO: " + convertToInternetAddresses(message.getTo()) + "; SUBJECT: " + subject);
+                    }
                     messageHelper.setText(plainText, htmlText);
+                    messageHelper.setFrom(emailAddressFrom);
+                    for (PdfAttachmentInputSource attachment : message.getAttachments()) {
+                        messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");
+                    }
                 }
             });
         } catch (Exception e) {
@@ -106,13 +94,20 @@ public class MailSender {
         }
     }
 
-    private void flagAsDevelopmentEmail(final MailMessageDTO message, final MimeMessageHelper messageHelper) throws MessagingException {
-        messageHelper.setTo(emailAddressTo);
-        StringBuilder subjectBuilder = new StringBuilder();
-        subjectBuilder.append("<NON-PROD-Message: TO: ").append(message.getToAsInternetAddresses().toString());
-        subjectBuilder.append(" CC: ").append(message.getCcAsInternetAddresses().toString());
-        subjectBuilder.append(" BCC: ").append(message.getBccAsInternetAddresses().toString());
-        messageHelper.setSubject(subjectBuilder.toString());
+    private InternetAddress convertToInternetAddresses(User user) {
+        try {
+            StringBuilder stringBuilder = new StringBuilder(user.getFirstName());
+            if (!StringUtils.isEmpty(user.getFirstName2())) {
+                stringBuilder.append(" ").append(user.getFirstName2());
+            }
+            if (!StringUtils.isEmpty(user.getFirstName3())) {
+                stringBuilder.append(" ").append(user.getFirstName3());
+            }
+            stringBuilder.append(" ").append(user.getLastName());
+            return new InternetAddress(user.getEmail(), stringBuilder.toString());
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
 }

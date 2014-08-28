@@ -259,7 +259,7 @@ public class NotificationService {
         NotificationTemplateVersion templateVersion = getActiveVersion(resource, notificationTemplate);
         MailMessageDTO message = new MailMessageDTO();
 
-        message.setTo(Collections.singletonList(user));
+        message.setTo(user);
         message.setTemplate(templateVersion);
         message.setModel(createNotificationModel(user, resource, templateVersion, extraParameters));
         message.setAttachments(Lists.<PdfAttachmentInputSource>newArrayList());

@@ -255,7 +255,7 @@ public class NotificationDAO {
     }
     
     public List<User> getRecommendationNotifications(LocalDate baseline) {
-        LocalDate lastSentBaseline = baseline.minusDays(7);
+        LocalDate lastSentBaseline = baseline.minusWeeks(1);
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .setProjection(Projections.property("id")) //
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //

@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -86,52 +85,24 @@ public class ProgramService {
     public Program create(User user, ProgramDTO programDTO) {
         String title = programDTO.getTitle();
 
-        Advert advert = new Advert().withTitle(title).withPublishDate(programDTO.getStartDate().toLocalDate());
-
+        Advert advert = new Advert().withTitle(title);
         Institution institution = entityService.getById(Institution.class, programDTO.getInstitutionId());
-
         ProgramType programType = importedEntityService.getByCode(ProgramType.class, institution, programDTO.getProgramType().name());
+        
         Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withTitle(title).withInstitution(institution)
                 .withProgramType(programType).withRequireProjectDefinition(programDTO.getRequireProjectDefinition()).withImported(false).withAdvert(advert)
                 .withDueDate(programDTO.getCloseDate().toLocalDate());
 
         // TODO: study options
-        // TODO: group start frequency
-
         return program;
-    }
-    
-    public void updateProgramClosingDates() {
-        LocalDate baseline = new LocalDate();
-        List<Program> programs = programDAO.getProgramsWithElapsedClosingDates(baseline);
-
-        for (Program program : programs) {
-            AdvertClosingDate nextClosingDate = programDAO.getNextClosingDate(program, baseline);
-            Advert advert = program.getAdvert();
-            advert.setClosingDate(nextClosingDate);
-        }
-
-    }
-    
-    public void updateProgramDefaultStartDates() {
-        LocalDate baseline = new LocalDate();
-        List<Program> programs = programDAO.getProgramsWithElapsedDefaultStartDates(baseline);
-        
-        for (Program program: programs) {
-            for (ProgramStudyOption studyOption : program.getStudyOptions()) {
-                LocalDate defaultStartDate = studyOption.getDefaultStartDate().plusMonths(program.getGroupStartFrequency());
-                LocalDate applicationCloseDate = studyOption.getApplicationCloseDate();
-                studyOption.setDefaultStartDate(defaultStartDate.isBefore(applicationCloseDate) ? defaultStartDate : applicationCloseDate);
-            }
-        }
     }
 
     public List<Program> getPrograms() {
         return programDAO.getPrograms();
     }
 
-    public ProgramStudyOptionInstance getProgramStudyOptionInstance(Program program, StudyOption studyOption, LocalDate startDate) {
-        return programDAO.getProgramStudyOptionInstance(program, studyOption, startDate);
+    public ProgramStudyOptionInstance getFirstEnabledProgramStudyOptionInstance(Program program, StudyOption studyOption) {
+        return programDAO.getFirstEnabledProgramStudyOptionInstance(program, studyOption);
     }
 
     public ActionOutcomeDTO performAction(Integer programId, CommentDTO commentDTO) {
@@ -177,8 +148,13 @@ public class ProgramService {
         }
     }
 
-    public ProgramStudyOption getProgramStudyOption(Program program, StudyOption studyOption) {
-        return programDAO.getProgramStudyOption(program, studyOption);
+    // TODO handle case where there are no enabled study options
+    public List<ProgramStudyOption> getEnabledProgramStudyOptions(Program program) {
+        return programDAO.getEnabledProgramStudyOptions(program);
+    }
+    
+    public ProgramStudyOption getEnabledProgramStudyOption(Program program, StudyOption studyOption) {
+        return programDAO.getEnabledProgramStudyOption(program, studyOption);
     }
 
     public LocalDate getProgramClosureDate(Program program) {
@@ -190,6 +166,27 @@ public class ProgramService {
             return getProgramClosureDate(program);
         }
         return null;
+    }
+    
+    public void updateProgramStudyOptions() {
+        LocalDate baseline = new LocalDate();
+        List<Program> programs = programDAO.getProgramsWithElapsedStudyOptions(baseline);
+        
+        for (Program program : programs) {
+            List<ProgramStudyOption> elapsedOptions = programDAO.getElapsedStudyOptions(program, baseline);
+            
+            for (ProgramStudyOption elapsedOption : elapsedOptions) {
+                elapsedOption.setEnabled(false);
+            }
+            
+            if (program.getStudyOptions().size() == elapsedOptions.size()) {
+                program.setDueDate(baseline);
+            }
+        }
+    }
+    
+    public List<ProgramStudyOptionInstance> getProgramStudyOptionInstances(Program program) {
+        return programDAO.getProgramStudyOptionInstances(program);
     }
      
 }

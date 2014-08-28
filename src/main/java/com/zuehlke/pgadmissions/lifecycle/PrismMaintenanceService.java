@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -25,6 +26,9 @@ public class PrismMaintenanceService {
     private EntityImportService entityImportService;
     
     @Autowired
+    private AdvertService advertService;
+    
+    @Autowired
     private ProgramService programService;
 
     @Autowired
@@ -39,80 +43,13 @@ public class PrismMaintenanceService {
     @Scheduled(cron = "${maintenance.ongoing}")
     public void maintainSystem() {
         executePendingStateTransitions();
-
-        if (!stateService.hasPendingStateTransitions()) {
-            importReferenceData();
-            updateProgramClosingDates();
-            updateProgramDefaultStartDates();
-            exportUclApplications();
-            sendDeferredWorkflowNotifications();
-        }
-
+        importReferenceData();
+        exportUclApplications();
+        updateProgamStudyOptions();
+        updateAdvertClosingDates();
+        sendDeferredWorkflowNotifications();
         sendRecommendationNotifications();
         deleteUnusedDocuments();
-    }
-
-    private void deleteUnusedDocuments() {
-        try {
-            logger.info("Deleting unused documents");
-            documentService.deleteOrphanDocuments();
-        } catch (Exception e) {
-            logger.info("Error deleting unused documents", e);
-        }
-    }
-
-    private void sendRecommendationNotifications() {
-        try {
-            logger.info("Sending recommendation notifications");
-            notificationService.sendRecommendationNotifications();     
-        }  catch (Exception e) {
-            logger.info("Error sending recommendation notifications", e);
-        }
-    }
-
-    private void sendDeferredWorkflowNotifications() {
-        try {
-            logger.info("Sending deferred workflow notifications.");
-            notificationService.sendDeferredWorkflowNotifications();
-        } catch (Exception e) {
-            logger.info("Error sending deferred workflow notifications", e);
-        }
-    }
-
-    private void exportUclApplications() {
-        try {
-            logger.trace("Exporting applications");
-            applicationExportService.exportUclApplications();
-        } catch (Exception e) {
-            logger.info("Error exporting applications", e);
-        }
-    }
-
-    private void updateProgramDefaultStartDates() {
-        try {
-            logger.info("Updating program default start dates");
-            programService.updateProgramDefaultStartDates();
-        } catch (Exception e) {
-            logger.info("Error updating program default start dates");
-        }
-    }
-
-    private void updateProgramClosingDates() {
-        try {
-            logger.info("Updating program closing dates");
-            programService.updateProgramClosingDates();
-        } catch (Exception e) {
-            logger.info("Error updating program closing dates");
-        }
-    }
-
-    private void importReferenceData() {
-        try {
-            logger.info("Importing reference data");
-            entityImportService.importReferenceData();
-        } catch (Exception e) {
-            logger.info("Error importing reference data", e);
-        }
     }
 
     private void executePendingStateTransitions() {
@@ -121,6 +58,69 @@ public class PrismMaintenanceService {
             stateService.executePendingStateTransitions();
         } catch (Exception e) {
             logger.info("Error executing pending state transitions", e);
+        }
+    }
+    
+    private void importReferenceData() {
+        try {
+            logger.info("Importing reference data");
+            entityImportService.importReferenceData();
+        } catch (Exception e) {
+            logger.info("Error importing reference data", e);
+        }
+    }
+    
+    private void updateProgamStudyOptions() {
+        try {
+            logger.info("Updating program study options");
+            programService.updateProgramStudyOptions();
+        } catch (Exception e) {
+            logger.info("Error updating program study options", e);
+        }
+    }
+    
+    private void updateAdvertClosingDates() {
+        try {
+            logger.info("Updating advert closing dates");
+            advertService.updateAdvertClosingDates();
+        } catch (Exception e) {
+            logger.info("Error updating advert closing dates", e);
+        }
+    }
+    
+    private void exportUclApplications() {
+        try {
+            logger.trace("Exporting applications");
+            applicationExportService.exportUclApplications();
+        } catch (Exception e) {
+            logger.info("Error exporting applications", e);
+        }
+    }
+    
+    private void sendDeferredWorkflowNotifications() {
+        try {
+            logger.info("Sending deferred workflow notifications.");
+            notificationService.sendDeferredWorkflowNotifications();
+        } catch (Exception e) {
+            logger.info("Error sending deferred workflow notifications", e);
+        }
+    }
+    
+    private void sendRecommendationNotifications() {
+        try {
+            logger.info("Sending recommendation notifications");
+            notificationService.sendRecommendationNotifications();     
+        }  catch (Exception e) {
+            logger.info("Error sending recommendation notifications", e);
+        }
+    }
+    
+    private void deleteUnusedDocuments() {
+        try {
+            logger.info("Deleting unused documents");
+            documentService.deleteOrphanDocuments();
+        } catch (Exception e) {
+            logger.info("Error deleting unused documents", e);
         }
     }
     

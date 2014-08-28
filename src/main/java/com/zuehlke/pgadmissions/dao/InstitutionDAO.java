@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import org.apache.lucene.search.Query;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -22,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Repository
 @SuppressWarnings("unchecked")

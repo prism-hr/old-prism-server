@@ -215,3 +215,18 @@ ALTER TABLE PROJECT
 ALTER TABLE PROGRAM
 	ADD COLUMN month_group_start_frequency INT(10) UNSIGNED AFTER require_project_definition
 ;
+
+ALTER TABLE PROJECT
+	DROP COLUMN immediate_start,
+	DROP COLUMN default_start_date,
+	DROP INDEX default_start_date
+;
+
+ALTER TABLE ADVERT
+	DROP COLUMN publish_date,
+	DROP INDEX publish_date
+;
+
+ALTER TABLE PROGRAM_STUDY_OPTION
+	DROP COLUMN default_start_date
+;

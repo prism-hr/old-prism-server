@@ -177,8 +177,8 @@ public class ApplicationExportService {
         String creatorIpAddress = applicationService.getApplicationCreatorIpAddress(application);
         Comment offerRecommendationComment = commentService.getLatestComment(application, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
         User primarySupervisor = applicationService.getPrimarySupervisor(offerRecommendationComment);
-        ProgramStudyOptionInstance exportProgramInstance = programService.getProgramStudyOptionInstance(application.getProgram(), application
-                .getProgramDetail().getStudyOption(), application.getConfirmedStartDate());
+        ProgramStudyOptionInstance exportProgramInstance = programService.getFirstEnabledProgramStudyOptionInstance(application.getProgram(), application
+                .getProgramDetail().getStudyOption());
 
         return exportProgramInstance == null ? null : applicationExportBuilder.build(new ApplicationExportDTO().withApplication(application)
                 .withCreatorExportId(creatorExportId).withCreatorIpAddress(creatorIpAddress).withOfferRecommendationComment(offerRecommendationComment)

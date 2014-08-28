@@ -43,7 +43,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
@@ -226,49 +225,49 @@ public class EntityImportService {
     @Transactional
     private void mergeBatchedProgrammeOccurrences(Institution institution, Set<ProgrammeOccurrence> occurrencesInBatch, LocalDate baseline) {
         Programme programme = occurrencesInBatch.iterator().next().getProgramme();
-        Program program = mergeProgram(programme, institution);
+        Program persistentProgram = mergeProgram(institution, programme);
 
         for (ProgrammeOccurrence occurrence : occurrencesInBatch) {
-            StudyOption studyOption = mergeStudyOption(institution, program, occurrence.getModeOfAttendance());
+            StudyOption studyOption = mergeStudyOption(institution, occurrence.getModeOfAttendance());
 
             LocalDate transientStartDate = datetFormatter.parseLocalDate(occurrence.getStartDate());
             LocalDate transientCloseDate = datetFormatter.parseLocalDate(occurrence.getEndDate());
 
-            ProgramStudyOption transientProgramStudyOption = new ProgramStudyOption().withProgram(program).withStudyOption(studyOption)
+            ProgramStudyOption transientProgramStudyOption = new ProgramStudyOption().withProgram(persistentProgram).withStudyOption(studyOption)
                     .withApplicationStartDate(transientStartDate).withApplicationCloseDate(transientCloseDate)
-                    .withEnabled(transientCloseDate.isBefore(baseline) && transientCloseDate.isAfter(baseline));
+                    .withEnabled(transientCloseDate.isAfter(baseline));
 
-            ProgramStudyOption persistentProgramStudyOption = mergeProgramStudyOption(program, transientProgramStudyOption, baseline);
+            ProgramStudyOption persistentProgramStudyOption = mergeProgramStudyOption(transientProgramStudyOption, baseline);
+            persistentProgram.getStudyOptions().add(persistentProgramStudyOption);
 
             ProgramStudyOptionInstance transientProgramStudyOptionInstance = new ProgramStudyOptionInstance()
-                    .withProgramStudyOption(persistentProgramStudyOption).withApplicationStartDate(transientStartDate)
+                    .withStudyOption(persistentProgramStudyOption).withApplicationStartDate(transientStartDate)
                     .withApplicationCloseDate(transientCloseDate).withAcademicYear(Integer.toString(transientStartDate.getYear()))
-                    .withIdentifier(occurrence.getIdentifier()).withEnabled(transientCloseDate.isBefore(baseline) && transientCloseDate.isAfter(baseline));
+                    .withIdentifier(occurrence.getIdentifier()).withEnabled(transientCloseDate.isAfter(baseline));
 
-            mergeImportedStudyOptionInstance(program, transientProgramStudyOptionInstance, baseline);
-            executeProgramImportAction(program);
+            ProgramStudyOptionInstance persistentProgramStudyOptionInstance = entityService.createOrUpdate(transientProgramStudyOptionInstance);
+            persistentProgramStudyOption.getStudyOptionInstances().add(persistentProgramStudyOptionInstance);
+            
+            executeProgramImportAction(persistentProgram);
         }
     }
 
     @Transactional
-    private Program mergeProgram(Programme importProgram, Institution institution) throws WorkflowEngineException {
-        institution = institutionService.getById(institution.getId());
+    private Program mergeProgram(Institution institution, Programme importProgram) {
         User proxyCreator = institution.getUser();
 
-        String title = importProgram.getName();
-        Advert transientAdvert = new Advert().withTitle(title);
+        String transientTitle = importProgram.getName();
+        Advert transientAdvert = new Advert().withTitle(transientTitle);
 
-        DateTime importTimestamp = new DateTime();
+        DateTime baseline = new DateTime();
         String programTypeCode = PrismProgramType.findValueFromString(importProgram.getName()).name();
 
-        String transientTitle = importProgram.getName();
         boolean transientRequireProjectDefinition = importProgram.isAtasRegistered();
 
         ProgramType programType = importedEntityService.getByCode(ProgramType.class, institution, programTypeCode);
         Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withImportedCode(importProgram.getCode())
-                .withTitle(transientTitle).withRequireProjectDefinition(transientRequireProjectDefinition)
-                .withGroupStartFrequency(PrismProgramType.valueOf(programTypeCode).getGroupStartFrequency()).withImported(true).withAdvert(transientAdvert)
-                .withProgramType(programType).withUser(proxyCreator).withCreatedTimestamp(importTimestamp).withUpdatedTimestamp(importTimestamp);
+                .withTitle(transientTitle).withRequireProjectDefinition(transientRequireProjectDefinition).withImported(true).withAdvert(transientAdvert)
+                .withProgramType(programType).withUser(proxyCreator).withCreatedTimestamp(baseline).withUpdatedTimestamp(baseline);
 
         Program persistentProgram = entityService.getDuplicateEntity(transientProgram);
 
@@ -278,14 +277,13 @@ public class EntityImportService {
         } else {
             persistentProgram.setTitle(transientTitle);
             persistentProgram.setRequireProjectDefinition(transientRequireProjectDefinition);
-            persistentProgram.setUpdatedTimestamp(importTimestamp);
+            persistentProgram.setUpdatedTimestamp(baseline);
             return persistentProgram;
         }
     }
 
     @Transactional
-    private ProgramStudyOption mergeProgramStudyOption(Program program, ProgramStudyOption transientProgramStudyOption, LocalDate baseline) {
-        program = programService.getById(program.getId());
+    private ProgramStudyOption mergeProgramStudyOption(ProgramStudyOption transientProgramStudyOption, LocalDate baseline) {
         ProgramStudyOption persistentProgramStudyOption = entityService.getDuplicateEntity(transientProgramStudyOption);
 
         if (persistentProgramStudyOption == null) {
@@ -304,39 +302,13 @@ public class EntityImportService {
             persistentProgramStudyOption.setApplicationStartDate(persistentStartDate);
             persistentProgramStudyOption.setApplicationCloseDate(persistentCloseDate);
 
-            persistentProgramStudyOption.setEnabled(persistentStartDate.isBefore(baseline) && persistentCloseDate.isAfter(baseline));
+            persistentProgramStudyOption.setEnabled(persistentCloseDate.isAfter(baseline));
             return persistentProgramStudyOption;
         }
     }
 
     @Transactional
-    private void mergeImportedStudyOptionInstance(Program program, ProgramStudyOptionInstance transientProgramStudyOptionInstance, LocalDate baseline) {
-        program = programService.getById(program.getId());
-        Advert advert = program.getAdvert();
-
-        ProgramStudyOption programStudyOption = transientProgramStudyOptionInstance.getProgramStudyOption();
-        programStudyOption = programService.getProgramStudyOptionById(programStudyOption.getId());
-
-        entityService.createOrUpdate(transientProgramStudyOptionInstance);
-
-        LocalDate transientStartDate = transientProgramStudyOptionInstance.getApplicationStartDate();
-        LocalDate transientCloseDate = transientProgramStudyOptionInstance.getApplicationCloseDate();
-
-        LocalDate programPublishDate = advert.getPublishDate();
-
-        if (programPublishDate == null || transientStartDate.isBefore(programPublishDate)) {
-            advert.setPublishDate(transientStartDate);
-        }
-
-        if (transientStartDate.isBefore(baseline) && transientCloseDate.isAfter(baseline)) {
-            programStudyOption.setDefaultStartDate(transientCloseDate);
-        }
-    }
-
-    @Transactional
-    private StudyOption mergeStudyOption(Institution institution, Program program, ModeOfAttendance modeOfAttendance) {
-        institution = institutionService.getById(institution.getId());
-        program = programService.getById(program.getId());
+    private StudyOption mergeStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) {
         String externalcode = modeOfAttendance.getCode();
         PrismStudyOption internalCode = PrismStudyOption.findValueFromString(externalcode);
         StudyOption studyOption = new StudyOption().withInstitution(institution).withCode(internalCode.name()).withName(externalcode).withEnabled(true);

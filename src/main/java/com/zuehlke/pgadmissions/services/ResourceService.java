@@ -183,7 +183,19 @@ public class ResourceService {
         resource.setSequenceIdentifier(lastSequenceIdentifierParts[0] + "-" + String.format("%010d", nextSequenceIdentifierIndex));
         
         resource.setUpdatedTimestamp(baselineTime);
-        postProcessResource(resource, comment);
+        
+        switch (resource.getResourceScope()) {
+        case PROGRAM:
+            programService.postProcessProgram((Program) resource, comment);
+        case PROJECT:
+            projectService.postProcessProject((Project) resource, comment);
+            break;
+        case APPLICATION:
+            applicationService.postProcessApplication((Application) resource, comment);
+            break;
+        default:
+            break;
+        }
     }
 
     public HashMap<Resource, Action> getResourceEscalations() {
@@ -197,7 +209,6 @@ public class ResourceService {
                 escalations.put(resource, action);
             }
         }
-
         return escalations;
     }
 
@@ -221,27 +232,11 @@ public class ResourceService {
                 }
             }
         }
-
         return propagations;
     }
-
+    
     public Resource getOperativeResource(Resource resource, Action action) {
         return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
-    }
-    
-    private void postProcessResource(Resource resource, Comment comment) {
-        switch (resource.getResourceScope()) {
-        case PROGRAM:
-            programService.postProcessProgram((Program) resource, comment);
-        case PROJECT:
-            projectService.postProcessProject((Project) resource, comment);
-            break;
-        case APPLICATION:
-            applicationService.postProcessApplication((Application) resource, comment);
-            break;
-        default:
-            return;
-        }
     }
     
 }

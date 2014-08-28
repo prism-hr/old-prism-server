@@ -28,7 +28,7 @@ public class ProgramStudyOptionInstance implements IUniqueEntity {
     
     @ManyToOne
     @JoinColumn(name = "program_study_option_id", nullable = false)
-    private ProgramStudyOption programStudyOption;
+    private ProgramStudyOption studyOption;
 
     @Column(name = "application_start_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -55,12 +55,12 @@ public class ProgramStudyOptionInstance implements IUniqueEntity {
         this.id = id;
     }
 
-    public final ProgramStudyOption getProgramStudyOption() {
-        return programStudyOption;
+    public final ProgramStudyOption getStudyOption() {
+        return studyOption;
     }
 
-    public final void setProgramStudyOption(ProgramStudyOption programStudyOption) {
-        this.programStudyOption = programStudyOption;
+    public final void setStudyOption(ProgramStudyOption studyOption) {
+        this.studyOption = studyOption;
     }
 
     public final LocalDate getApplicationStartDate() {
@@ -103,8 +103,8 @@ public class ProgramStudyOptionInstance implements IUniqueEntity {
         this.enabled = enabled;
     }
 
-    public ProgramStudyOptionInstance withProgramStudyOption(ProgramStudyOption programStudyOption) {
-        this.programStudyOption = programStudyOption;
+    public ProgramStudyOptionInstance withStudyOption(ProgramStudyOption studyOption) {
+        this.studyOption = studyOption;
         return this;
     }
     
@@ -137,7 +137,7 @@ public class ProgramStudyOptionInstance implements IUniqueEntity {
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
         HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("programStudyOption", programStudyOption);
+        properties.put("programStudyOption", studyOption);
         properties.put("academicYear", academicYear);
         propertiesWrapper.add(properties);
         return new ResourceSignature(propertiesWrapper);

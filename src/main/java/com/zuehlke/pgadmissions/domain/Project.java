@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 @Entity
 @Table(name = "PROJECT")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Project extends ParentResource {
+public class Project extends RecruiterResource {
     
     @Id
     @GeneratedValue
@@ -86,9 +86,6 @@ public class Project extends ParentResource {
     @Field(analyzer = @Analyzer(definition = "advertAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String title;
     
-    @Column(name = "immediate_start", nullable = false)
-    private Boolean immediateStart;
-
     @Column(name = "application_rating_count_percentile_05")
     private Integer applicationRatingCount05;
     
@@ -195,14 +192,6 @@ public class Project extends ParentResource {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-        
-    public final Boolean isImmediateStart() {
-        return immediateStart;
-    }
-
-    public final void setImmediateStart(Boolean immediateStart) {
-        this.immediateStart = immediateStart;
     }
 
     @Override
@@ -469,6 +458,11 @@ public class Project extends ParentResource {
     @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
+    }
+    
+    @Override
+    public LocalDate getRecommendedStartDate() {
+        return program.getProgramType().getPrismProgramType().getImmediateStartDate();
     }
     
     @Override

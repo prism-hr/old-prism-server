@@ -47,16 +47,12 @@ public class ProgramStudyOption implements IUniqueEntity {
     @Column(name = "application_close_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate applicationCloseDate;
-
-    @Column(name = "default_start_date")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate defaultStartDate;
-
+    
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
     @OneToMany(mappedBy = "programStudyOption")
-    private Set<ProgramStudyOptionInstance> instances = Sets.newHashSet();
+    private Set<ProgramStudyOptionInstance> studyOptionInstances = Sets.newHashSet();
 
     public final Integer getId() {
         return id;
@@ -98,14 +94,6 @@ public class ProgramStudyOption implements IUniqueEntity {
         this.applicationCloseDate = applicationCloseDate;
     }
 
-    public final LocalDate getDefaultStartDate() {
-        return defaultStartDate;
-    }
-
-    public final void setDefaultStartDate(LocalDate defaultStartDate) {
-        this.defaultStartDate = defaultStartDate;
-    }
-
     public final Boolean isEnabled() {
         return enabled;
     }
@@ -114,8 +102,8 @@ public class ProgramStudyOption implements IUniqueEntity {
         this.enabled = enabled;
     }
 
-    public final Set<ProgramStudyOptionInstance> getInstances() {
-        return instances;
+    public final Set<ProgramStudyOptionInstance> getStudyOptionInstances() {
+        return studyOptionInstances;
     }
 
     public ProgramStudyOption withProgram(Program program) {
@@ -137,7 +125,7 @@ public class ProgramStudyOption implements IUniqueEntity {
         this.applicationCloseDate = applicationCloseDate;
         return this;
     }
-
+    
     public ProgramStudyOption withEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;

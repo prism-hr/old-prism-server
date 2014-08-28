@@ -15,10 +15,9 @@ public class StudyOption extends SimpleImportedEntity {
             PrismStudyOption.valueOf(code);
             super.setCode(code);
         } catch (IllegalArgumentException e) {
-            throw new Error("Invalid code for imported study option", e);
+            throw new Error(e);
         }
     }
-    
     
     public StudyOption withInstitution(Institution institution) {
         setInstitution(institution);
@@ -38,6 +37,10 @@ public class StudyOption extends SimpleImportedEntity {
     public StudyOption withEnabled(boolean enabled) {
         setEnabled(enabled);
         return this;
+    }
+    
+    public PrismStudyOption getPrismStudyOption() {
+        return PrismStudyOption.valueOf(getCode());
     }
 
 }

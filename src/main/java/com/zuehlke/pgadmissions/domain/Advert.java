@@ -23,7 +23,6 @@ import org.apache.solr.analysis.LowerCaseFilterFactory;
 import org.apache.solr.analysis.SnowballPorterFilterFactory;
 import org.apache.solr.analysis.StandardTokenizerFactory;
 import org.apache.solr.analysis.StopFilterFactory;
-import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.AnalyzerDef;
@@ -34,7 +33,6 @@ import org.hibernate.search.annotations.Parameter;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
-import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
@@ -66,10 +64,6 @@ public class Advert {
 
     @Column(name = "apply_link")
     private String applyLink;
-
-    @Column(name = "publish_timestamp")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate publishDate;  
 
     @ManyToOne
     @JoinColumn(name = "institution_address_id")
@@ -208,14 +202,6 @@ public class Advert {
 
     public final void setApplyLink(String applyLink) {
         this.applyLink = applyLink;
-    }
-
-    public final LocalDate getPublishDate() {
-        return publishDate;
-    }
-
-    public final void setPublishDate(LocalDate publishDate) {
-        this.publishDate = publishDate;
     }
 
     public InstitutionAddress getAddress() {
@@ -447,13 +433,15 @@ public class Advert {
         return this;
     }
     
-    public Advert withPublishDate(LocalDate publishDate) {
-        this.publishDate = publishDate;
-        return this;
-    }
-    
     public ParentResource getParentResource() {
         return project == null ? program : project;
     }
+    
+    public boolean isProgramAdvert() {
+        return program != null;
+    }
 
+    public boolean isProjectAdvert() {
+        return project != null;
+    }
 }

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +11,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
@@ -58,6 +60,20 @@ public class AdvertService {
         }
 
         return Joiner.on("<br/>").join(recommendations);
+    }
+    
+    public void updateAdvertClosingDates() {
+        LocalDate baseline = new LocalDate();
+        List<Advert> adverts = advertDAO.getAdvertsWithElapsedClosingDates(baseline);
+
+        for (Advert advert : adverts) {
+            AdvertClosingDate nextClosingDate = advertDAO.getNextAdvertClosingDate(advert, baseline);
+            advert.setClosingDate(nextClosingDate);
+            
+            if (advert.isProjectAdvert() && nextClosingDate == null) {
+                advert.getProject().setDueDate(new LocalDate());
+            }
+        }
     }
 
 }

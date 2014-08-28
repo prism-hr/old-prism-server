@@ -15,7 +15,7 @@ public class ProgramType extends SimpleImportedEntity {
             PrismProgramType.valueOf(code);
             super.setCode(code);
         } catch (IllegalArgumentException e) {
-            throw new Error("Invalid code for imported program type", e);
+            throw new Error(e);
         }
     }
     
@@ -37,6 +37,10 @@ public class ProgramType extends SimpleImportedEntity {
     public ProgramType withEnabled(boolean enabled) {
         setEnabled(enabled);
         return this;
+    }
+    
+    public PrismProgramType getPrismProgramType() {
+        return PrismProgramType.valueOf(getCode());
     }
 
 }

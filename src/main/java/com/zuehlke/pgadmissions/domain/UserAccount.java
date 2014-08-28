@@ -1,12 +1,22 @@
 package com.zuehlke.pgadmissions.domain;
 
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
+import java.util.Map;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
-import java.util.Map;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 
 @Entity
 @Table(name = "USER_ACCOUNT")

@@ -570,21 +570,9 @@ public class Application extends Resource {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
-
-    public Advert getAdvert() {
-        return project == null ? program.getAdvert() : project.getAdvert();
-    }
-
-    public String getAdvertTitle() {
-        return project == null ? program.getTitle() : project.getTitle();
-    }
-
-    public LocalDate getAdvertClosingDate() {
-        return closingDate == null ? previousClosingDate : closingDate;
-    }
-
-    public boolean isImmediateStart() {
-        return project != null && project.isImmediateStart() || program.getGroupStartFrequency() == null;
+    
+    public LocalDate getRecommendedStartDate() {
+        return project == null ? program.getRecommendedStartDate() : project.getRecommendedStartDate();
     }
 
     @Override

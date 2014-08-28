@@ -12,7 +12,6 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramStudyOption;
@@ -28,14 +27,14 @@ public class ProgramDAO {
     
     public Program getProgramByCode(String code) {
         return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .setFetchMode("programInstances", FetchMode.JOIN) //
+                .setFetchMode("studyOptions", FetchMode.JOIN) //
                 .add(Restrictions.eq("code", code)) //
                 .uniqueResult();
     }
     
     public Program getProgramByImportedCode(Institution institution, String importedCode) {
         return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .setFetchMode("programInstances", FetchMode.JOIN) //
+                .setFetchMode("studyOptions", FetchMode.JOIN) //
                 .add(Restrictions.eq("institution", institution)) //
                 .add(Restrictions.eq("importedCode", importedCode))
                 .uniqueResult();
@@ -46,50 +45,38 @@ public class ProgramDAO {
                 .list();
     }
     
-    public ProgramStudyOption getProgramStudyOption(Program program, StudyOption studyOption) {
+    public ProgramStudyOption getEnabledProgramStudyOption(Program program, StudyOption studyOption) {
         return (ProgramStudyOption) sessionFactory.getCurrentSession().createCriteria(ProgramStudyOption.class) //
                 .add(Restrictions.eq("program", program)) //
                 .add(Restrictions.eq("studyOption", studyOption)) //
+                .add(Restrictions.eq("enabled", true)) //
                 .uniqueResult();
     }
     
-    public ProgramStudyOptionInstance getProgramStudyOptionInstance(Program program, StudyOption studyOption, LocalDate startDate) {
-        return (ProgramStudyOptionInstance) sessionFactory.getCurrentSession().createCriteria(ProgramStudyOptionInstance.class) //
-                .add(Restrictions.eq("programStudyOption.program", program)) //
-                .add(Restrictions.eq("programStudyOption.studyOption", studyOption)) //
-                .add(Restrictions.le("applicationStartDate", startDate)) //
-                .add(Restrictions.ge("applicationCloseDate", startDate)) //
+    public List<ProgramStudyOption> getEnabledProgramStudyOptions(Program program) {
+        return (List<ProgramStudyOption>) sessionFactory.getCurrentSession().createCriteria(ProgramStudyOption.class) //
+                .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("program", program)) //
                 .add(Restrictions.eq("enabled", true)) //
-                .createAlias("programStudyOption", "programStudyOption", JoinType.INNER_JOIN) //
+                .addOrder(Order.asc("studyOption.code")) //
+                .list();
+    }
+    
+    public ProgramStudyOptionInstance getFirstEnabledProgramStudyOptionInstance(Program program, StudyOption studyOption) {
+        return (ProgramStudyOptionInstance) sessionFactory.getCurrentSession().createCriteria(ProgramStudyOptionInstance.class) //
+                .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("studyOption.program", program)) //
+                .add(Restrictions.eq("studyOption.studyOption", studyOption)) //
+                .add(Restrictions.eq("enabled", true)) //
                 .addOrder(Order.asc("applicationStartDate")) //
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-
-    public List<Program> getProgramsWithElapsedClosingDates(LocalDate baseline) {
-        return (List<Program>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.closingDate", "closingDate", JoinType.INNER_JOIN) //
-                .add(Restrictions.lt("closingDate.closingDate", baseline)) //
-                .list();
-    }
     
-    public AdvertClosingDate getNextClosingDate(Program program, LocalDate baseline) {
-        return (AdvertClosingDate) sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .setProjection(Projections.min("closingDate.closingDate")) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.closingDates", "closingDate", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("id", program.getId())) //
-                .add(Restrictions.ge("closingDate.closingDate", baseline)) //
-                .uniqueResult();
-    }
-    
-    public List<Program> getProgramsWithElapsedDefaultStartDates(LocalDate baseline) {
-        return (List<Program>) sessionFactory.getCurrentSession().createCriteria(ProgramStudyOption.class) //
-                .createAlias("program", "program", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("imported", false)) //
-                .add(Restrictions.isNotNull("groupStartFrequency")) //
-                .add(Restrictions.lt("defaultStartDate", baseline)) //
+    public List<ProgramStudyOptionInstance> getProgramStudyOptionInstances(Program program) {
+        return (List<ProgramStudyOptionInstance>) sessionFactory.getCurrentSession().createCriteria(ProgramStudyOptionInstance.class) //
+                .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("studyOption.program", "program")) //
                 .list();
     }
     
@@ -97,7 +84,28 @@ public class ProgramDAO {
         return (LocalDate) sessionFactory.getCurrentSession().createCriteria(ProgramStudyOption.class) //
                 .setProjection(Projections.max("applicationCloseDate")) //
                 .add(Restrictions.eq("program", program)) //
+                .add(Restrictions.eq("enabled", true)) //
                 .uniqueResult();
+    }
+    
+    public List<Program> getProgramsWithElapsedStudyOptions(LocalDate baseline) {
+        return (List<Program>) sessionFactory.getCurrentSession().createCriteria(ProgramStudyOption.class) //
+                .setProjection(Projections.groupProperty("program")) //
+                .createAlias("program", "program", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("program.imported", false)) //
+                .add(Restrictions.lt("applicationCloseDate", baseline)) //
+                .add(Restrictions.eq("enabled", true)) //
+                .list();
+    }
+    
+    public List<ProgramStudyOption> getElapsedStudyOptions(Program program, LocalDate baseline) {
+        return (List<ProgramStudyOption>) sessionFactory.getCurrentSession().createCriteria(ProgramStudyOption.class) //
+                .createAlias("program", "program", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("program", program)) //
+                .add(Restrictions.eq("program.imported", false)) //
+                .add(Restrictions.lt("applicationCloseDate", baseline)) //
+                .add(Restrictions.eq("enabled", true)) //
+                .list();
     }
     
 }

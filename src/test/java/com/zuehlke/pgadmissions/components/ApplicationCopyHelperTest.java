@@ -1,11 +1,10 @@
 package com.zuehlke.pgadmissions.components;
 
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.integration.providers.ApplicationTestDataProvider;
-import com.zuehlke.pgadmissions.services.DocumentService;
-import com.zuehlke.pgadmissions.services.UserService;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+
+import javax.validation.Validator;
+
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,10 +14,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.unitils.inject.util.InjectionUtils;
 
-import javax.validation.Validator;
-
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.integration.providers.ApplicationTestDataProvider;
+import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")

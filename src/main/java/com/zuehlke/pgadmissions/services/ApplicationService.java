@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -149,25 +150,48 @@ public class ApplicationService {
     public List<ResourceReportListRowDTO> getReportList() {
         return resourceService.getReportList(Application.class);
     }
-
+    
+    // TODO: handle null response - study option expired
     public LocalDate getEarliestStartDate(Application application) {
-        LocalDate currentDate = new LocalDate();
-        ProgramStudyOption studyOption = programService.getProgramStudyOption(application.getProgram(), application.getProgramDetail().getStudyOption());
-        LocalDate earliestStartDate = studyOption.getApplicationStartDate();
-        return getNextMonday(earliestStartDate.isBefore(currentDate) ? currentDate : earliestStartDate);
+        ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(application.getProgram(), application.getProgramDetail().getStudyOption());
+        
+        if (studyOption != null) {
+            LocalDate baseline = new LocalDate();
+            LocalDate studyOptionStart = studyOption.getApplicationStartDate();
+            
+            LocalDate earliestStartDate = studyOptionStart.isBefore(baseline) ? baseline : studyOptionStart;
+            return earliestStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
+        }
+        
+        return null;
     }
 
-    public LocalDate getLatestStartDate(Application application) {
-        ProgramStudyOption studyOption = programService.getProgramStudyOption(application.getProgram(), application.getProgramDetail().getStudyOption());
-        return getNextMonday(studyOption.getApplicationCloseDate());
-    }
-
+    // TODO: handle null response - study option expired
     public LocalDate getRecommendedStartDate(Application application) {
-        ProgramStudyOption studyOption = programService.getProgramStudyOption(application.getProgram(), application.getProgramDetail().getStudyOption());
-        LocalDate applicationCloseDate = studyOption.getApplicationCloseDate();
-        LocalDate defaultStartDate = application.isImmediateStart() ? new LocalDate().plusWeeks(4) : studyOption.getDefaultStartDate();
-        defaultStartDate = defaultStartDate.isBefore(applicationCloseDate) ? defaultStartDate : applicationCloseDate;
-        return defaultStartDate;
+        ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(application.getProgram(), application.getProgramDetail().getStudyOption());
+        
+        if (studyOption != null) {
+            LocalDate studyOptionStart = studyOption.getApplicationStartDate();
+            LocalDate studyOptionClose = studyOption.getApplicationCloseDate();
+            
+            LocalDate recommendedStartDate = application.getRecommendedStartDate();
+            
+            if (recommendedStartDate.isAfter(studyOptionClose)) {
+                recommendedStartDate = studyOptionClose;
+            } else if (recommendedStartDate.isBefore(studyOptionStart)) {
+                recommendedStartDate = studyOptionStart;
+            }
+            
+            return recommendedStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
+        }
+        
+        return null;
+    }
+    
+    // TODO: handle null response - study option expired
+    public LocalDate getLatestStartDate(Application application) {
+        ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(application.getProgram(), application.getProgramDetail().getStudyOption());
+        return studyOption == null ? null : studyOption.getApplicationCloseDate().withDayOfWeek(DateTimeConstants.MONDAY);
     }
 
     public String getApplicationExportReference(Application application) {
@@ -569,10 +593,6 @@ public class ApplicationService {
             previousApplication = applicationDAO.getPreviousUnsubmittedApplication(application);
         }
         return previousApplication;
-    }
-
-    private LocalDate getNextMonday(LocalDate dateFrom) {
-        return dateFrom.plusDays(8 - dateFrom.getDayOfWeek());
     }
 
 }

@@ -138,7 +138,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
             addHeaderEvent(form, pdfWriter);
 
-            addProgrammeSection(form, pdfDocument);
+            addProgramSection(form, pdfDocument);
 
             pdfDocument.add(addSectionSeparators());
 
@@ -191,7 +191,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             submittedDateHeader = new Chunk("", SMALLER_FONT);
         }
 
-        headerEvent = new HeaderEvent(new Chunk(form.getAdvertTitle(), SMALLER_FONT), new Chunk(form.getCode(), SMALLER_FONT),
+        headerEvent = new HeaderEvent(new Chunk(form.getProgram().getTitle(), SMALLER_FONT), new Chunk(form.getCode(), SMALLER_FONT),
                 submittedDateHeader);
         writer.setPageEvent(headerEvent);
     }
@@ -225,8 +225,8 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         String fullName = Joiner.on(" ").skipNulls()
                 .join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3(), applicant.getLastName());
         table.addCell(newTableCell(fullName, SMALL_FONT));
-        table.addCell(newTableCell("Programme", SMALL_BOLD_FONT));
-        table.addCell(newTableCell(form.getAdvertTitle(), SMALL_FONT));
+        table.addCell(newTableCell("Program", SMALL_BOLD_FONT));
+        table.addCell(newTableCell(form.getProgram().getTitle(), SMALL_FONT));
 
         addProjectTitleToTable(table, form);
         addClosingDateToTable(table, form);
@@ -243,7 +243,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.newPage();
     }
 
-    protected void addProgrammeSection(final Application form, Document pdfDocument) throws DocumentException {
+    protected void addProgramSection(final Application form, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newGrayTableCell("PROGRAMME", BOLD_FONT));
@@ -253,11 +253,11 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-        table.addCell(newTableCell("Programme", SMALL_BOLD_FONT));
-        table.addCell(newTableCell(form.getAdvertTitle(), SMALL_FONT));
+        table.addCell(newTableCell("Program", SMALL_BOLD_FONT));
+        table.addCell(newTableCell(form.getProgram().getTitle(), SMALL_FONT));
 
         table.addCell(newTableCell("Study Option", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "programmeDetails.studyOption"));
+        table.addCell(createPropertyCell(form, "programDetails.studyOption"));
 
         addProjectTitleToTable(table, form);
 
@@ -989,7 +989,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                     } else {
                         table.addCell(newTableCell("No", SMALL_FONT));
                     }
-                    table.addCell(newTableCell("Is the applicant suitable for their chosen postgraduate study programme?", SMALL_BOLD_FONT));
+                    table.addCell(newTableCell("Is the applicant suitable for their chosen postgraduate study program?", SMALL_BOLD_FONT));
                     if (BooleanUtils.isTrue(reference.getSuitableForOpportunity())) {
                         table.addCell(newTableCell("Yes", SMALL_FONT));
                     } else {
@@ -1057,14 +1057,14 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
     }
 
     class HeaderEvent extends PdfPageEventHelper {
-        private final Chunk programmeHeader;
+        private final Chunk programHeader;
         private final Chunk applicationHeader;
         private final Chunk submittedDateHeader;
         private boolean addHeaderAndFooter = true;
         private boolean first = true;
 
-        public HeaderEvent(Chunk programmeHeader, Chunk applicationHeader, Chunk submittedDateHeader) {
-            this.programmeHeader = programmeHeader;
+        public HeaderEvent(Chunk programHeader, Chunk applicationHeader, Chunk submittedDateHeader) {
+            this.programHeader = programHeader;
             this.applicationHeader = applicationHeader;
             this.submittedDateHeader = submittedDateHeader;
         }
@@ -1097,12 +1097,12 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             table.setTotalWidth(0.75f * document.getPageSize().getWidth());
             table.setWidths(new float[] { 25f, 75f });
 
-            PdfPCell c1 = new PdfPCell(new Phrase("Programme", SMALLER_BOLD_FONT));
+            PdfPCell c1 = new PdfPCell(new Phrase("Program", SMALLER_BOLD_FONT));
             c1.setBorder(0);
             c1.setHorizontalAlignment(Element.ALIGN_LEFT);
             table.addCell(c1);
 
-            c1 = new PdfPCell(new Phrase(programmeHeader));
+            c1 = new PdfPCell(new Phrase(programHeader));
             c1.setBorder(0);
             c1.setHorizontalAlignment(Element.ALIGN_LEFT);
             table.addCell(c1);

@@ -314,39 +314,30 @@ public class SystemService {
     }
 
     private void initialiseStateActions() throws WorkflowConfigurationException {
-        if (!stateService.hasPendingStateTransitions()) {
-            stateService.deleteStateActions();
+        stateService.executePendingStateTransitions();
+        stateService.deleteStateActions();
 
-            for (State state : stateService.getStates()) {
-                for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
-                    Action action = actionService.getById(prismStateAction.getAction());
-                    NotificationTemplate template = notificationService.getById(prismStateAction.getNotificationTemplate());
-                    StateAction stateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag())
-                            .withDefaultAction(prismStateAction.isDefaultAction()).withActionEnhancement(prismStateAction.getActionEnhancement())
-                            .withNotificationTemplate(template);
-                    entityService.save(stateAction);
-                    state.getStateActions().add(stateAction);
+        for (State state : stateService.getStates()) {
+            for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
+                Action action = actionService.getById(prismStateAction.getAction());
+                NotificationTemplate template = notificationService.getById(prismStateAction.getNotificationTemplate());
+                StateAction stateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag())
+                        .withDefaultAction(prismStateAction.isDefaultAction()).withActionEnhancement(prismStateAction.getActionEnhancement())
+                        .withNotificationTemplate(template);
+                entityService.save(stateAction);
+                state.getStateActions().add(stateAction);
 
-                    initialiseStateActionAssignments(prismStateAction, stateAction);
-                    initialiseStateActionNotifications(prismStateAction, stateAction);
-                    initialiseStateTransitions(prismStateAction, stateAction);
-                }
-            }
-
-            stateService.deleteObsoleteStateDurations();
-            notificationService.deleteObseleteNotificationConfigurations();
-            roleService.deleteInactiveRoles();
-
-            verifyBackwardResourceCompatibility();
-        } else {
-            try {
-                stateService.executePendingStateTransitions();
-                Thread.sleep(100);
-                initialiseStateActions();
-            } catch (InterruptedException e) {
-                throw new Error(e);
+                initialiseStateActionAssignments(prismStateAction, stateAction);
+                initialiseStateActionNotifications(prismStateAction, stateAction);
+                initialiseStateTransitions(prismStateAction, stateAction);
             }
         }
+
+        stateService.deleteObsoleteStateDurations();
+        notificationService.deleteObseleteNotificationConfigurations();
+        roleService.deleteInactiveRoles();
+
+        verifyBackwardResourceCompatibility();
     }
 
     private void initialiseStateActionAssignments(PrismStateAction prismStateAction, StateAction stateAction) {

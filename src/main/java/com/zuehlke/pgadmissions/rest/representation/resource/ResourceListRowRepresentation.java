@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
 
 public class ResourceListRowRepresentation {
 

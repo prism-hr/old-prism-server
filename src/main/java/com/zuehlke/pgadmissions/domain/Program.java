@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 @Entity
 @Table(name = "PROGRAM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Program extends ParentResource {
+public class Program extends RecruiterResource {
     
     @Id
     @GeneratedValue
@@ -282,7 +282,7 @@ public class Program extends ParentResource {
         this.groupStartFrequency = groupStartFrequency;
     }
 
-    public final Boolean getImported() {
+    public final Boolean isImported() {
         return imported;
     }
 
@@ -582,8 +582,9 @@ public class Program extends ParentResource {
         return this;
     }
     
-    public boolean isImported() {
-        return importedCode != null;
+    @Override
+    public LocalDate getRecommendedStartDate() {
+        return programType.getPrismProgramType().getRecommendedStartDate();
     }
     
     @Override

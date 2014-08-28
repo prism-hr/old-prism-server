@@ -37,6 +37,12 @@ public class Action extends WorkflowResource {
     @Column(name = "action_category", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismActionCategory actionCategory;
+    
+    @Column(name = "rating_action", nullable = false)
+    private Boolean ratingAction;
+    
+    @Column(name = "transition_action", nullable = false)
+    private Boolean transitionAction;
 
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
@@ -76,6 +82,22 @@ public class Action extends WorkflowResource {
 
     public void setActionCategory(PrismActionCategory actionCategory) {
         this.actionCategory = actionCategory;
+    }
+
+    public final Boolean isRatingAction() {
+        return ratingAction;
+    }
+
+    public final void setRatingAction(Boolean ratingAction) {
+        this.ratingAction = ratingAction;
+    }
+
+    public final Boolean isTransitionAction() {
+        return transitionAction;
+    }
+
+    public final void setTransitionAction(Boolean transitionAction) {
+        this.transitionAction = transitionAction;
     }
 
     public final Action getFallbackAction() {
@@ -118,6 +140,16 @@ public class Action extends WorkflowResource {
     
     public Action withActionCategory(PrismActionCategory actionCategory) {
         this.actionCategory = actionCategory;
+        return this;
+    }
+    
+    public Action withRatingAction(Boolean ratingAction) {
+        this.ratingAction = ratingAction;
+        return this;
+    }
+    
+    public Action withTransitionAction(Boolean transitionAction) {
+        this.transitionAction = transitionAction;
         return this;
     }
     

@@ -5,7 +5,6 @@ import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 import java.util.List;
 import java.util.Map;
 
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
 import org.apache.commons.lang.WordUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +41,7 @@ import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.Title;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
+import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedEntityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedInstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.LanguageQualificationTypeRepresentation;

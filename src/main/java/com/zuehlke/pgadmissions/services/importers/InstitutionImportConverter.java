@@ -12,7 +12,7 @@ public class InstitutionImportConverter extends GenericEntityImportConverter<Imp
     private final EntityService entityService;
 
     public InstitutionImportConverter(Institution institution, EntityService entityService) {
-        super(ImportedInstitution.class, institution);
+        super(institution, ImportedInstitution.class);
         this.entityService = entityService;
     }
 
@@ -21,6 +21,5 @@ public class InstitutionImportConverter extends GenericEntityImportConverter<Imp
         Domicile domicile = entityService.getByCode(Domicile.class, domicileCode);
         result.setDomicile(domicile);
     }
-
 
 }

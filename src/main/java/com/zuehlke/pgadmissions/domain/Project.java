@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -7,9 +8,12 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -33,7 +37,19 @@ import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 @Entity
 @Table(name = "PROJECT")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Project extends Advert {
+public class Project extends RecruiterResource {
+    
+    @Id
+    @GeneratedValue
+    private Integer id;
+    
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "advert_id", nullable = false)
+    private Advert advert;
+    
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    private User user;
     
     @Column(name = "code")
     private String code;
@@ -49,6 +65,9 @@ public class Project extends Advert {
     @ManyToOne
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
+    
+    @Column(name = "referrer")
+    private String referrer;
     
     @ManyToOne
     @JoinColumn(name = "state_id")
@@ -66,7 +85,49 @@ public class Project extends Advert {
     @Column(name = "title", nullable = false)
     @Field(analyzer = @Analyzer(definition = "advertAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String title;
+    
+    @Column(name = "application_rating_count_percentile_05")
+    private Integer applicationRatingCount05;
+    
+    @Column(name = "application_rating_count_percentile_20")
+    private Integer applicationRatingCount20;
 
+    @Column(name = "application_rating_count_percentile_35")
+    private Integer applicationRatingCount35;
+    
+    @Column(name = "application_rating_count_percentile_50")
+    private Integer applicationRatingCount50;
+    
+    @Column(name = "application_rating_count_percentile_65")
+    private Integer applicationRatingCount65;
+    
+    @Column(name = "application_rating_count_percentile_80")
+    private Integer applicationRatingCount80;
+    
+    @Column(name = "application_rating_count_percentile_95")
+    private Integer applicationRatingCount95;
+    
+    @Column(name = "application_rating_average_percentile_05")
+    private BigDecimal applicationRatingAverage05;
+    
+    @Column(name = "application_rating_average_percentile_20")
+    private BigDecimal applicationRatingAverage20;
+
+    @Column(name = "application_rating_average_percentile_35")
+    private BigDecimal applicationRatingAverage35;
+    
+    @Column(name = "application_rating_average_percentile_50")
+    private BigDecimal applicationRatingAverage50;
+    
+    @Column(name = "application_rating_average_percentile_65")
+    private BigDecimal applicationRatingAverage65;
+    
+    @Column(name = "application_rating_average_percentile_80")
+    private BigDecimal applicationRatingAverage80;
+    
+    @Column(name = "application_rating_average_percentile_95")
+    private BigDecimal applicationRatingAverage95;
+    
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
@@ -86,7 +147,35 @@ public class Project extends Advert {
     
     @OneToMany(mappedBy = "project")
     private Set<UserRole> userRoles = Sets.newHashSet();
+    
+    @Override
+    public Integer getId() {
+        return id;
+    }
 
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    
+    public Advert getAdvert() {
+        return advert;
+    }
+    
+    public void setAdvert(Advert advert) {
+        this.advert = advert;
+    }
+    
+    @Override
+    public User getUser() {
+        return user;
+    }
+
+    @Override
+    public void setUser(User user) {
+        this.user = user;
+    }
+    
     @Override
     public String getCode() {
         return code;
@@ -97,16 +186,154 @@ public class Project extends Advert {
         this.code = code;
     }
 
-    @Override
     public String getTitle() {
         return title;
     }
 
-    @Override
     public void setTitle(String title) {
         this.title = title;
     }
 
+    @Override
+    public final Integer getApplicationRatingCount05() {
+        return applicationRatingCount05;
+    }
+
+    @Override
+    public final void setApplicationRatingCount05(Integer applicationRatingCount05) {
+        this.applicationRatingCount05 = applicationRatingCount05;
+    }
+
+    @Override
+    public final Integer getApplicationRatingCount20() {
+        return applicationRatingCount20;
+    }
+
+    @Override
+    public final void setApplicationRatingCount20(Integer applicationRatingCount20) {
+        this.applicationRatingCount20 = applicationRatingCount20;
+    }
+
+    @Override
+    public final Integer getApplicationRatingCount35() {
+        return applicationRatingCount35;
+    }
+
+    @Override
+    public final void setApplicationRatingCount35(Integer applicationRatingCount35) {
+        this.applicationRatingCount35 = applicationRatingCount35;
+    }
+
+    @Override
+    public final Integer getApplicationRatingCount50() {
+        return applicationRatingCount50;
+    }
+
+    @Override
+    public final void setApplicationRatingCount50(Integer applicationRatingCount50) {
+        this.applicationRatingCount50 = applicationRatingCount50;
+    }
+
+    @Override
+    public final Integer getApplicationRatingCount65() {
+        return applicationRatingCount65;
+    }
+
+    @Override
+    public final void setApplicationRatingCount65(Integer applicationRatingCount65) {
+        this.applicationRatingCount65 = applicationRatingCount65;
+    }
+
+    @Override
+    public final Integer getApplicationRatingCount80() {
+        return applicationRatingCount80;
+    }
+
+    @Override
+    public final void setApplicationRatingCount80(Integer applicationRatingCount80) {
+        this.applicationRatingCount80 = applicationRatingCount80;
+    }
+
+    @Override
+    public final Integer getApplicationRatingCount95() {
+        return applicationRatingCount95;
+    }
+
+    @Override
+    public final void setApplicationRatingCount95(Integer applicationRatingCount95) {
+        this.applicationRatingCount95 = applicationRatingCount95;
+    }
+    
+    @Override
+    public final BigDecimal getApplicationRatingAverage05() {
+        return applicationRatingAverage05;
+    }
+
+    @Override
+    public final void setApplicationRatingAverage05(BigDecimal applicationRatingAverage05) {
+        this.applicationRatingAverage05 = applicationRatingAverage05;
+    }
+
+    @Override
+    public final BigDecimal getApplicationRatingAverage20() {
+        return applicationRatingAverage20;
+    }
+
+    @Override
+    public final void setApplicationRatingAverage20(BigDecimal applicationRatingAverage20) {
+        this.applicationRatingAverage20 = applicationRatingAverage20;
+    }
+
+    @Override
+    public final BigDecimal getApplicationRatingAverage35() {
+        return applicationRatingAverage35;
+    }
+
+    @Override
+    public final void setApplicationRatingAverage35(BigDecimal applicationRatingAverage35) {
+        this.applicationRatingAverage35 = applicationRatingAverage35;
+    }
+
+    @Override
+    public final BigDecimal getApplicationRatingAverage50() {
+        return applicationRatingAverage50;
+    }
+
+    @Override
+    public final void setApplicationRatingAverage50(BigDecimal applicationRatingAverage50) {
+        this.applicationRatingAverage50 = applicationRatingAverage50;
+    }
+
+    @Override
+    public final BigDecimal getApplicationRatingAverage65() {
+        return applicationRatingAverage65;
+    }
+
+    @Override
+    public final void setApplicationRatingAverage65(BigDecimal applicationRatingAverage65) {
+        this.applicationRatingAverage65 = applicationRatingAverage65;
+    }
+
+    @Override
+    public final BigDecimal getApplicationRatingAverage80() {
+        return applicationRatingAverage80;
+    }
+
+    @Override
+    public final void setApplicationRatingAverage80(BigDecimal applicationRatingAverage80) {
+        this.applicationRatingAverage80 = applicationRatingAverage80;
+    }
+
+    @Override
+    public final BigDecimal getApplicationRatingAverage95() {
+        return applicationRatingAverage95;
+    }
+
+    @Override
+    public final void setApplicationRatingAverage95(BigDecimal applicationRatingAverage95) {
+        this.applicationRatingAverage95 = applicationRatingAverage95;
+    }
+    
     @Override
     public State getState() {
         return state;
@@ -127,16 +354,6 @@ public class Project extends Advert {
     
     public final Set<UserRole> getUserRoles() {
         return userRoles;
-    }
-
-    public Project withId(Integer id) {
-        setId(id);
-        return this;
-    }
-    
-    public Project withImmediateStart(boolean immediateStart) {
-        setImmediateStart(immediateStart);
-        return this;
     }
 
     @Override
@@ -176,6 +393,21 @@ public class Project extends Advert {
 
     @Override
     public void setProject(Project project) {
+    }
+
+    @Override
+    public Application getApplication() {
+        return null;
+    }
+    
+    @Override
+    public String getReferrer() {
+        return referrer;
+    }
+    
+    @Override
+    public void setReferrer (String referrer) {
+        this.referrer = referrer;
     }
 
     @Override
@@ -229,17 +461,8 @@ public class Project extends Advert {
     }
     
     @Override
-    public Application getApplication() {
-        return null;
-    }
-
-    @Override
-    public LocalDate getDueDateBaseline() {
-        AdvertClosingDate closingDate = getClosingDate();
-        if (closingDate != null) {
-            return closingDate.getClosingDate();
-        }
-        return new LocalDate();
+    public LocalDate getRecommendedStartDate() {
+        return program.getProgramType().getPrismProgramType().getImmediateStartDate();
     }
     
     @Override

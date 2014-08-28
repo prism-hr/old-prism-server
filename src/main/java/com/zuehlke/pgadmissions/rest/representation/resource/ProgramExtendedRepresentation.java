@@ -1,8 +1,9 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 

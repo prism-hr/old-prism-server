@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("DOMICILE")
-public class Domicile extends AbstractImportedEntity {
+public class Domicile extends SimpleImportedEntity {
 
     public Domicile withCode(String code) {
         setCode(code);

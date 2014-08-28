@@ -27,8 +27,7 @@ public class ApplicationDAO {
     private SessionFactory sessionFactory;
 
     public Application getPreviousSubmittedApplication(Application application) {
-        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class)
-                .add(Restrictions.eq("user", application.getUser())) //
+        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class).add(Restrictions.eq("user", application.getUser())) //
                 .add(Restrictions.isNotNull("submittedTimestamp")) //
                 .add(Restrictions.ne("id", application.getId())) //
                 .addOrder(Order.desc("submittedTimestamp")) //
@@ -36,10 +35,9 @@ public class ApplicationDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-    
+
     public Application getPreviousUnsubmittedApplication(Application application) {
-        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class)
-                .add(Restrictions.eq("user", application.getUser())) //
+        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class).add(Restrictions.eq("user", application.getUser())) //
                 .add(Restrictions.isNull("submittedTimestamp")) //
                 .add(Restrictions.ne("id", application.getId())) //
                 .addOrder(Order.desc("createdTimestamp")) //
@@ -47,7 +45,7 @@ public class ApplicationDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-    
+
     public String getApplicationExportReference(Application application) {
         return (String) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.property("exportReference")) //
@@ -63,7 +61,7 @@ public class ApplicationDAO {
                 .add(Restrictions.isNotNull("creatorIpAddress")) //
                 .uniqueResult();
     }
-    
+
     public User getPrimarySupervisor(Comment offerRecommendationComment) {
         return (User) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .setProjection(Projections.property("user")) //
@@ -71,29 +69,41 @@ public class ApplicationDAO {
                 .add(Restrictions.eq("role.id", PrismRole.APPLICATION_PRIMARY_SUPERVISOR)) //
                 .uniqueResult();
     }
-    
+
     public List<ApplicationReferee> getApplicationExportReferees(Application application) {
         return (List<ApplicationReferee>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
+                .createAlias("application", "application", JoinType.INNER_JOIN) //
+                .createAlias("comment", "comment", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("application", application)) //
-                .add(Restrictions.eq("includeInExport", true)) //
+                .addOrder(Order.desc("comment.rating")) //
+                .addOrder(Order.asc("comment.createdTimestamp")) //
                 .list();
     }
-    
-    public List<ApplicationQualification> getApplicationExportQualification(Application application) {
+
+    public List<ApplicationQualification> getApplicationExportQualifications(Application application) {
         return (List<ApplicationQualification>) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
                 .add(Restrictions.eq("application", application)) //
-                .add(Restrictions.eq("includeInExport", true)) //
+                .addOrder(Order.desc("awardDate")) //
+                .addOrder(Order.desc("startDate")) //
+                .list();
+    }
+
+    public List<Application> getUclApplicationsForExport() {
+        return (List<Application>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("institution.uclInstitution", true)) //
+                .add(Restrictions.eq("action.actionCategory", PrismActionCategory.EXPORT_RESOURCE)) //
                 .list();
     }
     
-    public List<Application> getUclApplicationsForExport() {
-        return (List<Application>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
-               .createAlias("state", "state", JoinType.INNER_JOIN) //
-               .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-               .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-               .createAlias("institution", "institution", JoinType.INNER_JOIN) //
-               .add(Restrictions.eq("institution.uclInstitution", true)) //
-               .add(Restrictions.eq("action.actionCategory", PrismActionCategory.EXPORT_RESOURCE)) //
-               .list();
+    public ApplicationReferee getRefereeByUser(Application application, User user) {
+        return (ApplicationReferee) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
+                .add(Restrictions.eq("application", application)) //
+                .add(Restrictions.eq("user", user)) //
+                .uniqueResult();
     }
+
 }

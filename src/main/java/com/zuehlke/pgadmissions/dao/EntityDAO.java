@@ -9,6 +9,7 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -162,6 +163,18 @@ public class EntityDAO {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete " + classReference.getSimpleName()) //
                 .executeUpdate();
+    }
+    
+    public <T> Integer getNotNullValueCount(Class<T> entityClass, String property, Map<String, Object> filters) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(entityClass) //
+                .setProjection(Projections.count("id"));
+        
+        for (String filter : filters.keySet()) {
+            criteria.add(Restrictions.eq(filter, filters.get(filter)));
+        }
+                
+        return (Integer) criteria.add(Restrictions.isNotNull(property)) //
+                .uniqueResult();
     }
 
 }

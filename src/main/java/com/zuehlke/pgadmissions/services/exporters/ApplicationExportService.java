@@ -36,10 +36,9 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResp
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
@@ -172,17 +171,18 @@ public class ApplicationExportService {
         return exportReference;
     }
 
+    @Transactional
     protected SubmitAdmissionsApplicationRequest buildDataExportRequest(Application application) throws DatatypeConfigurationException {
         String creatorExportId = userService.getUserInstitutionId(application.getUser(), application.getInstitution(), PrismUserIdentity.STUDY_APPLICANT);
         String creatorIpAddress = applicationService.getApplicationCreatorIpAddress(application);
         Comment offerRecommendationComment = commentService.getLatestComment(application, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
         User primarySupervisor = applicationService.getPrimarySupervisor(offerRecommendationComment);
-        ProgramInstance exportProgramInstance = programService.getExportProgramInstance(application);
-        List<ApplicationReferee> exportReferees = applicationService.setApplicationExportReferees(application);
+        ProgramStudyOptionInstance exportProgramInstance = programService.getFirstEnabledProgramStudyOptionInstance(application.getProgram(), application
+                .getProgramDetail().getStudyOption());
 
         return exportProgramInstance == null ? null : applicationExportBuilder.build(new ApplicationExportDTO().withApplication(application)
                 .withCreatorExportId(creatorExportId).withCreatorIpAddress(creatorIpAddress).withOfferRecommendationComment(offerRecommendationComment)
-                .withPrimarySupervisor(primarySupervisor).withExportProgramInstance(exportProgramInstance).withExportReferees(exportReferees));
+                .withPrimarySupervisor(primarySupervisor).withExportProgramInstance(exportProgramInstance));
     }
 
     protected String sendDocumentExportRequest(Application application, String exportReference) throws Exception {

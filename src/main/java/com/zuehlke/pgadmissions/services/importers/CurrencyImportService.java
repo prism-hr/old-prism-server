@@ -1,16 +1,15 @@
 package com.zuehlke.pgadmissions.services.importers;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
-import com.zuehlke.pgadmissions.exceptions.DataImportException;
-import com.zuehlke.pgadmissions.iso.jaxb.*;
-import com.zuehlke.pgadmissions.services.EntityService;
+import java.net.Authenticator;
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +19,23 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
-import java.net.Authenticator;
-import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
+import com.zuehlke.pgadmissions.exceptions.DataImportException;
+import com.zuehlke.pgadmissions.iso.jaxb.CategoryNameType;
+import com.zuehlke.pgadmissions.iso.jaxb.CategoryType;
+import com.zuehlke.pgadmissions.iso.jaxb.CountryCodesType;
+import com.zuehlke.pgadmissions.iso.jaxb.CountryType;
+import com.zuehlke.pgadmissions.iso.jaxb.ShortNameType;
+import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionLocaleType;
+import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionType;
+import com.zuehlke.pgadmissions.services.EntityService;
 
 @Service
 public class CurrencyImportService {

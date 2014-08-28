@@ -3,13 +3,13 @@ package com.zuehlke.pgadmissions.rest.representation.comment;
 import java.util.Set;
 import java.util.TimeZone;
 
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.FileRepresentation;
 
 public class CommentRepresentation {

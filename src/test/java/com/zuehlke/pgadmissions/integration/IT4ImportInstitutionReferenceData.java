@@ -68,8 +68,6 @@ public class IT4ImportInstitutionReferenceData implements IPrismIntegrationTest 
         it1.run();
         Institution institution = createTestInstitution();
         referenceDataImportHelper.verifyEntityImport(institution);
-        referenceDataImportHelper.verifyProgramImport(institution);
-        referenceDataImportHelper.verifyProductionDataImport(institution);
         referenceDataImportHelper.verifyImportedProgramInitialisation();
     }
 

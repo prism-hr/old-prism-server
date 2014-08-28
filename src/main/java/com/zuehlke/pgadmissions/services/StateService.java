@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.joda.time.DateTime;
@@ -39,14 +37,14 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 @Service
 public class StateService {
 
-    private final HashMap<Resource, Action> escalationQueue = Maps.newLinkedHashMap();
-
-    private final HashMap<Resource, Action> propagationQueue = Maps.newLinkedHashMap();
-
-    private final ThreadPoolExecutor transitionRunner = (ThreadPoolExecutor) Executors.newFixedThreadPool(1000);
-
     @Autowired
     private StateDAO stateDAO;
+
+    @Autowired
+    private ActionService actionService;
+
+    @Autowired
+    private CommentService commentService;
 
     @Autowired
     private EntityService entityService;
@@ -139,19 +137,19 @@ public class StateService {
         comment.setResource(resource);
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
-            resourceService.persistResource(resource, comment);
-        } else {
-            resourceService.updateResource(resource, action, comment);
+            resourceService.persistResource(resource);
         }
 
-        entityService.save(comment);
+        commentService.save(comment);
         StateTransition stateTransition = getStateTransition(resource, action, comment);
 
-        if (stateTransition != null) {
-            State transitionState = stateTransition.getTransitionState();
-            StateDuration transitionStateDuration = getStateDuration(resource, transitionState);
+        State state = resource.getState();
+        State transitionState = stateTransition == null ? state : stateTransition.getTransitionState();
 
-            resourceService.transitionResource(resource, comment, transitionState, transitionStateDuration);
+        if (state != transitionState) {
+            comment.setTransitionState(transitionState);
+
+            resourceService.processResource(resource, comment);
             roleService.executeRoleTransitions(stateTransition, comment);
 
             if (stateTransition.getPropagatedActions().size() > 0) {
@@ -159,9 +157,10 @@ public class StateService {
                 entityService.getOrCreate(transientTransitionPending);
             }
 
-            notificationService.sendWorkflowNotifications(resource, action, comment.getUser());
+            notificationService.sendWorkflowNotifications(resource, comment);
         }
 
+        resourceService.updateResource(resource, comment);
         return stateTransition;
     }
 
@@ -307,6 +306,16 @@ public class StateService {
     }
 
     @Transactional
+    public List<State> getActiveProgramStates() {
+        return stateDAO.getActiveProgramStates();
+    }
+
+    @Transactional
+    public List<State> getActiveProjectStates() {
+        return stateDAO.getActiveProjectStates();
+    }
+
+    @Transactional
     public StateTransition getInstitutionApprovedOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId = comment.getTransitionState().getId();
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
@@ -324,50 +333,22 @@ public class StateService {
         return null;
     }
 
-    public boolean hasPendingStateTransitions() {
-        return !escalationQueue.isEmpty() || !propagationQueue.isEmpty();
-    }
-
     public void executePendingStateTransitions() {
-        marshalDeferredStateTransitions(escalationQueue, resourceService.getResourceEscalations());
-        marshalDeferredStateTransitions(propagationQueue, resourceService.getResourcePropagations());
+        HashMap<Resource, Action> transitions = Maps.newHashMap();
+        transitions.putAll(resourceService.getResourcePropagations());
+        transitions.putAll(resourceService.getResourceEscalations());
 
-        if (propagationQueue.isEmpty()) {
-            flushDeferredStateTransitions(escalationQueue);
-        } else if (escalationQueue.isEmpty()) {
-            flushDeferredStateTransitions(propagationQueue);
-        }
-    }
-
-    private void marshalDeferredStateTransitions(HashMap<Resource, Action> queue, HashMap<Resource, Action> transitions) {
         for (Resource resource : transitions.keySet()) {
-            if (!queue.containsKey(resource)) {
-                queue.put(resource, transitions.get(resource));
-            }
-        }
-    }
-
-    private void flushDeferredStateTransitions(final HashMap<Resource, Action> queue) {
-        for (final Resource resource : queue.keySet()) {
-            final Action action = queue.get(resource);
-            transitionRunner.submit(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        flushDeferredStateTransition(queue, resource, action);
-                    } catch (WorkflowEngineException e) {
-                        throw new Error("Failed to execute deferred action " + action.getId().toString() + " on resource " + resource.getCode(), e);
-                    }
-                }
-            });
+            executePendingStateTransition(resource, transitions.get(resource));
         }
     }
 
     @Transactional
-    private void flushDeferredStateTransition(HashMap<Resource, Action> queue, Resource resource, Action action) throws WorkflowEngineException {
-        Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action);
+    private void executePendingStateTransition(Resource resource, Action action) {
+        resource = resourceService.getById(resource.getClass(), resource.getId());
+        action = actionService.getById(action.getId());
+        Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action).withDeclinedResponse(false);
         executeStateTransition(resource, action, comment);
-        queue.remove(resource);
     }
 
 }

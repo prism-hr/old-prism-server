@@ -42,8 +42,8 @@ public class RoleService {
         return entityService.getByProperty(Role.class, "id", roleId);
     }
 
-    public UserRole getUserRoleById(Integer id) {
-        return entityService.getById(UserRole.class, id);
+    public UserRole getUserRole(Resource resource, User user, Role role) {
+        return roleDAO.getUserRole(resource, user, role);
     }
 
     public List<Role> getRoles() {
@@ -88,6 +88,11 @@ public class RoleService {
     }
 
     public List<User> getRoleUsers(Resource resource, Role role) {
+        return roleDAO.getRoleUsers(resource, role);
+    }
+    
+    public List<User> getRoleUsers(Resource resource, PrismRole roleId) {
+        Role role = getById(roleId);
         return roleDAO.getRoleUsers(resource, role);
     }
 
@@ -183,8 +188,9 @@ public class RoleService {
 
         Resource resource = comment.getResource();
         Resource operative = resourceService.getOperativeResource(resource, comment.getAction());
+        
         resource = role.getScope() == transitionRole.getScope() ? resource : operative;
-        Resource transitionResource = resource;
+        Resource transitionResource = comment.getResource();
 
         UserRole transientRole = new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(baseline);
         UserRole transientTransitionRole = new UserRole().withResource(transitionResource).withUser(user).withRole(transitionRole)
@@ -251,7 +257,6 @@ public class RoleService {
     private void deleteUserRoles(Resource resource, User user, PrismRole... rolesToRemove) {
         for (UserRole roleToRemove : roleDAO.getUserRoles(resource, user, rolesToRemove)) {
             validateUserRoleRemoval(resource, roleToRemove.getRole());
-            notificationService.deleteUserNotification(roleToRemove);
             entityService.delete(roleToRemove);
         }
         reassignResourceOwner(resource);

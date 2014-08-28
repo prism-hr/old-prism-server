@@ -22,6 +22,10 @@ public class ApplicationQualification {
     @Id
     @GeneratedValue
     private Integer id;
+    
+    @ManyToOne
+    @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
+    private Application application;
 
     @Column(name = "subject", nullable = false)
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
@@ -59,15 +63,8 @@ public class ApplicationQualification {
     @JoinColumn(name = "institution_id", nullable = false)
     private ImportedInstitution institution;
 
-    @ManyToOne
-    @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
-    private Application application;
-
     @Column(name = "completed", nullable = false)
     private Boolean completed;
-
-    @Column(name = "include_in_export", nullable = false)
-    private Boolean includeInExport = false;
 
     public Integer getId() {
         return id;
@@ -157,14 +154,6 @@ public class ApplicationQualification {
         this.completed = completed;
     }
 
-    public Boolean isIncludeInExport() {
-        return includeInExport;
-    }
-
-    public void setIncludeInExport(Boolean export) {
-        this.includeInExport = export;
-    }
-
     public Application getApplication() {
         return application;
     }
@@ -230,11 +219,6 @@ public class ApplicationQualification {
 
     public ApplicationQualification withCompleted(Boolean completed) {
         this.completed = completed;
-        return this;
-    }
-
-    public ApplicationQualification withIncludeInExport(Boolean export) {
-        this.includeInExport = export;
         return this;
     }
 

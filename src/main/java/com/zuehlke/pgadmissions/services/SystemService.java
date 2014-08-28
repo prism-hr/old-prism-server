@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,11 +55,9 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNoti
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.services.exporters.ApplicationExportService;
-import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
@@ -96,9 +93,6 @@ public class SystemService {
     private EntityService entityService;
 
     @Autowired
-    private EntityImportService entityImportService;
-
-    @Autowired
     private NotificationService notificationService;
 
     @Autowired
@@ -118,12 +112,6 @@ public class SystemService {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private ApplicationExportService applicationExportService;
-
-    @Autowired
-    private DocumentService documentService;
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -180,46 +168,6 @@ public class SystemService {
         fullTextSession.createIndexer().startAndWait();
     }
 
-    @Scheduled(cron = "${maintenance.ongoing}")
-    public void maintainSystem() {
-        try {
-            logger.info("Executing pending state transitions");
-            stateService.executePendingStateTransitions();
-        } catch (Exception e) {
-            logger.info("Error executing pending state transitions", e);
-        }
-
-        if (!stateService.hasPendingStateTransitions()) {
-            try {
-                logger.info("Importing reference data");
-                entityImportService.importReferenceData();
-            } catch (Exception e) {
-                logger.info("Error importing reference data", e);
-            }
-
-            try {
-                logger.trace("Exporting applications");
-                applicationExportService.exportUclApplications();
-            } catch (Exception e) {
-                logger.info("Error exporting applications", e);
-            }
-
-            try {
-                logger.info("Sending deferred workflow notifications.");
-                notificationService.sendDeferredWorkflowNotifications();
-            } catch (Exception e) {
-                logger.info("Error sending deferred workflow notifications", e);
-            }
-        }
-
-        try {
-            logger.info("Deleting unused documents");
-            documentService.deleteOrphanDocuments();
-        } catch (Exception e) {
-            logger.info("Error deleting unused documents", e);
-        }
-    }
-
     private void initialiseScopes() {
         for (PrismScope prismScope : PrismScope.values()) {
             Scope transientScope = new Scope().withId(prismScope).withPrecedence(prismScope.getPrecedence()).withShortCode(prismScope.getShortCode());
@@ -257,7 +205,8 @@ public class SystemService {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismAction.getScope());
             Scope creationScope = entityService.getByProperty(Scope.class, "id", prismAction.getCreationScope());
             Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType())
-                    .withActionCategory(prismAction.getActionCategory()).withScope(scope).withCreationScope(creationScope);
+                    .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
+                    .withTransitionAction(prismAction.isTransitionAction()).withScope(scope).withCreationScope(creationScope);
             Action action = entityService.createOrUpdate(transientAction);
             action.getRedactions().clear();
 
@@ -365,39 +314,30 @@ public class SystemService {
     }
 
     private void initialiseStateActions() throws WorkflowConfigurationException {
-        if (!stateService.hasPendingStateTransitions()) {
-            stateService.deleteStateActions();
+        stateService.executePendingStateTransitions();
+        stateService.deleteStateActions();
 
-            for (State state : stateService.getStates()) {
-                for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
-                    Action action = actionService.getById(prismStateAction.getAction());
-                    NotificationTemplate template = notificationService.getById(prismStateAction.getNotificationTemplate());
-                    StateAction stateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag())
-                            .withDefaultAction(prismStateAction.isDefaultAction()).withActionEnhancement(prismStateAction.getActionEnhancement())
-                            .withNotificationTemplate(template);
-                    entityService.save(stateAction);
-                    state.getStateActions().add(stateAction);
+        for (State state : stateService.getStates()) {
+            for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
+                Action action = actionService.getById(prismStateAction.getAction());
+                NotificationTemplate template = notificationService.getById(prismStateAction.getNotificationTemplate());
+                StateAction stateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag())
+                        .withDefaultAction(prismStateAction.isDefaultAction()).withActionEnhancement(prismStateAction.getActionEnhancement())
+                        .withNotificationTemplate(template);
+                entityService.save(stateAction);
+                state.getStateActions().add(stateAction);
 
-                    initialiseStateActionAssignments(prismStateAction, stateAction);
-                    initialiseStateActionNotifications(prismStateAction, stateAction);
-                    initialiseStateTransitions(prismStateAction, stateAction);
-                }
-            }
-
-            stateService.deleteObsoleteStateDurations();
-            notificationService.deleteObseleteNotificationConfigurations();
-            roleService.deleteInactiveRoles();
-
-            verifyBackwardResourceCompatibility();
-        } else {
-            try {
-                stateService.executePendingStateTransitions();
-                Thread.sleep(100);
-                initialiseStateActions();
-            } catch (InterruptedException e) {
-                throw new Error(e);
+                initialiseStateActionAssignments(prismStateAction, stateAction);
+                initialiseStateActionNotifications(prismStateAction, stateAction);
+                initialiseStateTransitions(prismStateAction, stateAction);
             }
         }
+
+        stateService.deleteObsoleteStateDurations();
+        notificationService.deleteObseleteNotificationConfigurations();
+        roleService.deleteInactiveRoles();
+
+        verifyBackwardResourceCompatibility();
     }
 
     private void initialiseStateActionAssignments(PrismStateAction prismStateAction, StateAction stateAction) {
@@ -459,8 +399,9 @@ public class SystemService {
             Action action = actionService.getById(PrismAction.SYSTEM_STARTUP);
             Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                     .withAssignedUser(user, roleService.getCreatorRole(system));
-            ActionOutcome outcome = actionService.executeSystemAction(system, action, comment);
-            notificationService.sendNotification(user, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST, ImmutableMap.of("action", outcome.getTransitionAction().getId().name()));
+            ActionOutcomeDTO outcome = actionService.executeSystemAction(system, action, comment);
+            notificationService.sendNotification(user, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST,
+                    ImmutableMap.of("action", outcome.getTransitionAction().getId().name()));
         }
     }
 

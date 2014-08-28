@@ -1,18 +1,24 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
 @Entity
 @DiscriminatorValue("STUDY_OPTION")
-public class StudyOption extends AbstractImportedEntity implements IUniqueEntity {
+public class StudyOption extends SimpleImportedEntity {
 
+    @Override
+    public void setCode(String code) {
+        try {
+            PrismStudyOption.valueOf(code);
+            super.setCode(code);
+        } catch (IllegalArgumentException e) {
+            throw new Error(e);
+        }
+    }
+    
     public StudyOption withInstitution(Institution institution) {
         setInstitution(institution);
         return this;
@@ -32,15 +38,9 @@ public class StudyOption extends AbstractImportedEntity implements IUniqueEntity
         setEnabled(enabled);
         return this;
     }
-
-    @Override
-    public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("institution", getInstitution());
-        properties.put("code", getCode());
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
+    
+    public PrismStudyOption getPrismStudyOption() {
+        return PrismStudyOption.valueOf(getCode());
     }
 
 }

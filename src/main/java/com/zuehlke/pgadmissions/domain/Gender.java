@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("GENDER")
-public class Gender extends AbstractImportedEntity {
+public class Gender extends SimpleImportedEntity {
 
     public Gender withInstitution(Institution institution) {
         setInstitution(institution);

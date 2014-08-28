@@ -1,198 +1,204 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.joda.time.DateTime;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.text.WordUtils;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Strings;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
+import com.google.common.collect.ImmutableMap;
+import com.zuehlke.pgadmissions.dao.ApplicationSummaryDAO;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.domain.ApplicationProcessing;
+import com.zuehlke.pgadmissions.domain.ApplicationProcessingSummary;
+import com.zuehlke.pgadmissions.domain.ParentResource;
+import com.zuehlke.pgadmissions.domain.StateGroup;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.dto.ApplicationRatingDTO;
 
 @Service
+@Transactional
 public class ApplicationSummaryService {
 
-    private static final String NONE_PROVIDED = "None provided";
+    private final Integer[] summaryPercentiles = new Integer[] { 5, 20, 35, 50, 65, 80, 95 };
 
-    private static final String DATE_FORMAT = "dd MMM yyyy";
-
-    @Autowired
-    private ApplicationService applicationsService;
+    private final PrismScope[] summaryScopes = new PrismScope[] { PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION };
 
     @Autowired
-    private UserService userService;
+    private ApplicationSummaryDAO applicationSummaryDAO;
 
     @Autowired
-    private EncryptionHelper encryptionHelper;
+    private EntityService entityService;
 
-    @Autowired
-    private CommentService commentService;
-    
-    @Autowired
-    private StateService stateService;
+    public void summariseApplication(Application application) {
+        ApplicationRatingDTO ratingSummary = applicationSummaryDAO.getApplicationRatingSummary(application);
+        application.setRatingCount(ratingSummary.getRatingCount());
+        application.setRatingAverage(ratingSummary.getRatingAverage().setScale(2, RoundingMode.HALF_UP));
 
-    public Map<String, String> getSummary(Integer applicationId) {
-        Application application = applicationsService.getById(applicationId);
-
-        if (application.getSubmittedTimestamp() == null) {
-            return Collections.emptyMap();
-        }
-
-        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-        Map<String, String> result = new HashMap<String, String>();
-        Map<String, String> applicantResult = new HashMap<String, String>();
-
-        addApplicationProperties(application, result);
-        addActiveApplications(application.getUser(), result);
-        addApplicantDetails(application, applicantResult);
-        addQualifications(application, applicantResult);
-        addEmployments(application, applicantResult);
-        addFundings(application, applicantResult, gson);
-        addReferences(application, result);
-        addPersonalStatement(application, result);
-        addSkype(application, applicantResult);
-        result.put("applicant", gson.toJson(applicantResult));
-        return result;
-    }
-    
-    private void addApplicationProperties(Application application, Map<String, String> result) {
-        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-        DateTime updatedTimeStamp = commentService.getLatestComment(application).getCreatedTimestamp();
-
-        result.put("applicationCreatedDate", dateFormat.format(application.getCreatedTimestamp()));
-        result.put("applicationSubmissionDate", dateFormat.format(application.getSubmittedTimestamp()));
-        result.put("applicationUpdateDate", dateFormat.format(updatedTimeStamp));
-        result.put("applicationNumber", application.getCode());
-    }
-
-    private void addActiveApplications(User applicant, Map<String, String> result) {
-        result.put("numberOfActiveApplications", userService.getNumberOfActiveApplicationsForApplicant(applicant).toString());
-    }
-
-    private void addApplicantDetails(Application application, Map<String, String> result) {
-        result.put("title", application.getPersonalDetails() == null ? "" : application.getPersonalDetails().getTitle().getName());
-        result.put("name", application.getUser().getDisplayName());
-        result.put("phoneNumber", application.getPersonalDetails() == null ? "" : application.getPersonalDetails().getPhoneNumber());
-        result.put("email", application.getUser().getEmail());
-        result.put("applicationStatus", application.getState().getId().name());
-    }
-
-    private void addQualifications(Application application, Map<String, String> result) {
-        List<ApplicationQualification> qualifications = application.getQualifications();
-        if (qualifications.isEmpty()) {
-            result.put("mostRecentQualification", NONE_PROVIDED);
-            return;
-        }
-
-        ApplicationQualification mostRecentQualification = Collections.max(qualifications, new Comparator<ApplicationQualification>() {
-            @Override
-            public int compare(ApplicationQualification o1, ApplicationQualification o2) {
-                return o1.getAwardDate().compareTo(o2.getAwardDate());
-            }
-        });
-
-        String title = mostRecentQualification.getTitle();
-        String subject = mostRecentQualification.getSubject();
-        String grade = mostRecentQualification.getGrade();
-        String institution = mostRecentQualification.getInstitution().getName();
-
-        StringBuilder builder = new StringBuilder();
-        trimToEmptyAndJoin(builder, title, false);
-        trimToEmptyAndJoin(builder, subject, false);
-        trimToEmptyAndJoin(builder, grade, false);
-        trimToEmptyAndJoin(builder, institution, true);
-        result.put("mostRecentQualification", builder.toString());
-    }
-
-    private void trimToEmptyAndJoin(StringBuilder builder, String input, boolean addBracket) {
-        String separator = " ";
-        if (input != null) {
-            if (addBracket) {
-                builder.append("(" + input + ")");
-                builder.append(separator);
-            } else {
-                builder.append(input);
-                builder.append(separator);
+        for (PrismScope summaryScope : summaryScopes) {
+            try {
+                updateApplicationSummary(application, summaryScope);
+            } catch (Exception e) {
+                throw new Error(e);
             }
         }
     }
 
-    private void addEmployments(final Application form, Map<String, String> result) {
-        // TODO implement query
-        ApplicationEmploymentPosition recentEmployment = null;
-        result.put("mostRecentEmployment", recentEmployment.getEmployerName());
+    public void summariseApplicationProcessing(Application application) {
+        StateGroup stateGroup = application.getState().getStateGroup();
+        StateGroup previousStateGroup = application.getPreviousState().getStateGroup();
+
+        LocalDate baseline = new LocalDate();
+        createOrUpdateApplicationProcessing(application, stateGroup, baseline);
+        updatePreviousApplicationProcessing(application, previousStateGroup, baseline);
     }
 
-    private void addFundings(final Application form, Map<String, String> result, final Gson gson) {
-        Integer fundingSum = 0;
-        for (ApplicationFunding funding : form.getFundings()) {
-            fundingSum = fundingSum + funding.getValueAsInteger();
+    private void updateApplicationSummary(Application application, PrismScope summaryScope) throws Exception {
+        String summaryReference = summaryScope.getLowerCaseName();
+        ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, summaryReference);
+
+        String[] summaryPropertiesRating = new String[] { "ratingCount", "ratingAverage" };
+
+        for (String summaryProperty : summaryPropertiesRating) {
+            Integer notNullValueCount = entityService.getNotNullValueCount(Application.class, summaryProperty,
+                    ImmutableMap.of(summaryReference, (Object) summaryResource));
+
+            for (Integer percentile : summaryPercentiles) {
+                Integer valuesInSet = getActualPercentile(notNullValueCount, percentile);
+                Object actualValue = applicationSummaryDAO.getPercentileValue(summaryResource, summaryProperty, valuesInSet);
+                String propertyToSet = application.getResourceScope().getLowerCaseName() + WordUtils.capitalize(summaryProperty);
+                summaryResource.setPercentileValue(propertyToSet, percentile, actualValue);
+            }
         }
-        result.put("fundingRequirements", fundingSum.toString());
     }
 
-    private void addSkype(final Application form, Map<String, String> result) {
-        String skype;
-        if (form.getPersonalDetails() == null || Strings.isNullOrEmpty(form.getPersonalDetails().getMessenger())) {
-            skype = "Not Provided";
+    private void createOrUpdateApplicationProcessing(Application application, StateGroup stateGroup, LocalDate baseline) {
+        ApplicationProcessing transientProcessing = new ApplicationProcessing().withApplication(application).withStateGroup(stateGroup);
+        ApplicationProcessing persistentProcessing = entityService.getDuplicateEntity(transientProcessing);
+
+        if (persistentProcessing == null) {
+            createApplicationProcessing(transientProcessing, baseline);
+            entityService.save(transientProcessing);
         } else {
-            skype = form.getPersonalDetails().getMessenger();
+            updateApplicationProcessing(baseline, persistentProcessing);
         }
-        result.put("skype", skype);
+
+        createOrUpdateApplicationProcessingSummary(application, stateGroup);
     }
 
-    private void addReferences(Application form, Map<String, String> result) {
-        Integer numberOfResponsed = CollectionUtils.countMatches(form.getReferees(), new Predicate() {
-            @Override
-            public boolean evaluate(Object object) {
-                return ((ApplicationReferee) object).getComment() != null;
-            }
-        });
-        result.put("numberOfReferences", numberOfResponsed.toString());
+    private void createApplicationProcessing(ApplicationProcessing transientProcessing, LocalDate baseline) {
+        transientProcessing.setInstanceCount(1);
+        transientProcessing.setDayDurationSum(0);
+        transientProcessing.setLastUpdatedDate(baseline);
+    }
+    
+    private void updateApplicationProcessing(LocalDate baseline, ApplicationProcessing persistentProcessing) {
+        persistentProcessing.setInstanceCount(persistentProcessing.getInstanceCount() + 1);
+        persistentProcessing.setLastUpdatedDate(baseline);
     }
 
-    private void addPersonalStatement(Application form, Map<String, String> result) {
-        ApplicationDocument applicationFormDocument = form.getDocument();
-        if (applicationFormDocument == null) {
-            result.put("personalStatementProvided", "false");
-            result.put("cvProvided", "false");
-        } else {
-            Document personalStatement = applicationFormDocument.getPersonalStatement();
-            if (personalStatement != null) {
-                result.put("personalStatementProvided", "true");
-                result.put("personalStatementId", encryptionHelper.encrypt(personalStatement.getId()));
-                result.put("personalStatementFilename", personalStatement.getFileName());
-            } else {
-                result.put("personalStatementProvided", "false");
-            }
+    private void updatePreviousApplicationProcessing(Application application, StateGroup previousStateGroup, LocalDate baseline) {
+        ApplicationProcessing persistentPreviousProcessing = applicationSummaryDAO.getProcessing(application, previousStateGroup);
+        Integer actualStateDuration = Days.daysBetween(baseline, persistentPreviousProcessing.getLastUpdatedDate()).getDays();
 
-            Document cv = applicationFormDocument.getCv();
-            if (cv != null) {
-                result.put("cvProvided", "true");
-                result.put("cvId", encryptionHelper.encrypt(cv.getId()));
-                result.put("cvFilename", cv.getFileName());
-            } else {
-                result.put("cvProvided", "false");
+        persistentPreviousProcessing.setDayDurationSum(persistentPreviousProcessing.getDayDurationSum() + actualStateDuration);
+        persistentPreviousProcessing.setLastUpdatedDate(baseline);
+
+        updatePreviousApplicationProcessingSummary(application, previousStateGroup);
+    }
+
+    private void createOrUpdateApplicationProcessingSummary(Application application, StateGroup stateGroup) {
+        for (PrismScope summaryScope : summaryScopes) {
+            try {
+                ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, summaryScope.getLowerCaseName());
+                ApplicationProcessingSummary transientSummary = new ApplicationProcessingSummary().withResource(summaryResource).withStateGroup(stateGroup);
+                ApplicationProcessingSummary persistentSummary = entityService.getDuplicateEntity(transientSummary);
+
+                if (persistentSummary == null) {
+                    createApplicationProcessingSummary(transientSummary);
+                } else {
+                    updateApplicationProcessingSummary(summaryResource, stateGroup, persistentSummary);
+                }
+
+            } catch (Exception e) {
+                throw new Error(e);
             }
         }
+    }
+
+    private void createApplicationProcessingSummary(ApplicationProcessingSummary transientSummary) {
+        transientSummary.setInstanceSum(1);
+        transientSummary.setInstanceSumLive(1);
+
+        transientSummary.setInstanceCountAverage(new BigDecimal(1.00));
+        
+        transientSummary.setInstanceCount05(1);
+        transientSummary.setInstanceCount20(1);
+        transientSummary.setInstanceCount35(1);
+        transientSummary.setInstanceCount50(1);
+        transientSummary.setInstanceCount65(1);
+        transientSummary.setInstanceCount80(1);
+        transientSummary.setInstanceCount95(1);
+        
+        transientSummary.setDayDurationSumAverage(new BigDecimal(0.00));
+
+        transientSummary.setDayDurationSum05(0);
+        transientSummary.setDayDurationSum20(0);
+        transientSummary.setDayDurationSum35(0);
+        transientSummary.setDayDurationSum50(0);
+        transientSummary.setDayDurationSum65(0);
+        transientSummary.setDayDurationSum80(0);
+        transientSummary.setDayDurationSum95(0);
+
+        entityService.save(transientSummary);
+    }
+
+    private void updateApplicationProcessingSummary(ParentResource summaryResource, StateGroup stateGroup, ApplicationProcessingSummary persistentSummary) {
+        BigDecimal instanceCountAverage = applicationSummaryDAO.getInstanceCountAverage(summaryResource, stateGroup);
+        persistentSummary.setInstanceCountAverage(instanceCountAverage.setScale(2, RoundingMode.HALF_UP));
+        
+        persistentSummary.setInstanceSum(persistentSummary.getInstanceSum() + 1);
+        persistentSummary.setInstanceSumLive(persistentSummary.getInstanceSumLive() + 1);
+
+        updateApplicationProcessingSummaryPercentile(summaryResource, stateGroup, persistentSummary, "instanceCount");
+    }
+
+    private void updatePreviousApplicationProcessingSummary(Application application, StateGroup previousStateGroup) {
+        for (PrismScope summaryScope : summaryScopes) {
+            try {
+                ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, summaryScope.getLowerCaseName());
+                ApplicationProcessingSummary summary = applicationSummaryDAO.getProcessingSummary(summaryResource, previousStateGroup);
+                
+                BigDecimal instanceCountAverage = applicationSummaryDAO.getDayDurationSumAverage(summaryResource, previousStateGroup);
+                summary.setDayDurationSumAverage(instanceCountAverage.setScale(2, RoundingMode.HALF_UP));
+                
+                summary.setInstanceSumLive(summary.getInstanceSumLive() - 1);
+                updateApplicationProcessingSummaryPercentile(summaryResource, previousStateGroup, summary, "dayDurationSum");
+            } catch (Exception e) {
+                throw new Error(e);
+
+            }
+        }
+    }
+
+    private void updateApplicationProcessingSummaryPercentile(ParentResource summaryResource, StateGroup stateGroup,
+            ApplicationProcessingSummary processingSummary, String property) {
+        Integer valuesInSet = applicationSummaryDAO.getNotNullProcessingCount(summaryResource, stateGroup);
+
+        for (Integer percentile : summaryPercentiles) {
+            Integer actualPercentile = getActualPercentile(valuesInSet, percentile);
+            Object actualValue = applicationSummaryDAO.getProcessingPercentileValue(summaryResource, stateGroup, property, actualPercentile);
+            processingSummary.setPercentileValue(property, actualPercentile, actualValue);
+        }
+    }
+
+    private int getActualPercentile(Integer valuesInSet, Integer percentile) {
+        return new BigDecimal(percentile * (valuesInSet / 100.0)).setScale(0, RoundingMode.HALF_UP).intValue();
     }
 
 }

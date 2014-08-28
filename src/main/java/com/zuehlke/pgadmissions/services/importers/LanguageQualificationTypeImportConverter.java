@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
 public class LanguageQualificationTypeImportConverter extends GenericEntityImportConverter<LanguageQualificationType> {
 
     public LanguageQualificationTypeImportConverter(Institution institution) {
-        super(LanguageQualificationType.class, institution);
+        super(institution, LanguageQualificationType.class);
     }
 
     protected void setCustomProperties(Object input, LanguageQualificationType result) throws Exception {
@@ -28,8 +28,8 @@ public class LanguageQualificationTypeImportConverter extends GenericEntityImpor
     }
 
     private void convertFloatToBigDecimal(Object input, LanguageQualificationType result, String propertyName) throws Exception {
-        Float maximumListeningScore = (Float) PropertyUtils.getSimpleProperty(input, propertyName);
-        result.setMaximumListeningScore(maximumListeningScore != null ? BigDecimal.valueOf(maximumListeningScore) : null);
+        Float propertyValue = (Float) PropertyUtils.getSimpleProperty(input, propertyName);
+        result.setMaximumListeningScore(propertyValue != null ? BigDecimal.valueOf(propertyValue) : null);
     }
 
 }

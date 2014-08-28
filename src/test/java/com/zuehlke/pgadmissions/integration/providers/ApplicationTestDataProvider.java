@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationPassport;
-import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Country;
@@ -59,7 +59,7 @@ public class ApplicationTestDataProvider {
     }
 
     private void createPersonalDetails(Application application) {
-        ApplicationPersonalDetails personalDetails = new ApplicationPersonalDetails();
+        ApplicationPersonalDetail personalDetails = new ApplicationPersonalDetail();
         personalDetails.setGender(testObjectProvider.get(Gender.class));
         personalDetails.setDateOfBirth(new LocalDate().minusYears(28));
         personalDetails.setCountry(testObjectProvider.get(Country.class));
@@ -88,7 +88,7 @@ public class ApplicationTestDataProvider {
         personalDetails.setMessenger("dupajasia");
         personalDetails.setEthnicity(testObjectProvider.get(Ethnicity.class));
         personalDetails.setDisability(testObjectProvider.get(Disability.class));
-        application.setPersonalDetails(personalDetails);
+        application.setPersonalDetail(personalDetails);
         entityService.save(personalDetails);
     }
 

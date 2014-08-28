@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.integration;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
+@Ignore
 public class IT5AssignInstitutionUsers implements IPrismIntegrationTest {
 
     @Autowired

@@ -286,7 +286,7 @@ public class NotificationService {
         NotificationTemplateVersion templateVersion = getActiveVersion(resource, notificationTemplate);
         MailMessageDTO message = new MailMessageDTO();
 
-        message.setTo(Collections.singletonList(user));
+        message.setTo(user);
         message.setTemplate(templateVersion);
         message.setModel(createNotificationModel(user, resource, templateVersion, extraParameters));
         message.setAttachments(Lists.<PdfAttachmentInputSource> newArrayList());
@@ -303,7 +303,7 @@ public class NotificationService {
     private Map<String, Object> createNotificationModel(User user, Resource resource, NotificationTemplateVersion notificationTemplate,
             Map<String, String> extraParameters) {
         Map<String, Object> model = Maps.newHashMap();
-        model.put("user", user);
+        model.put("user", user.getDisplayName());
         model.put("userFirstName", user.getFirstName());
         model.put("userLastName", user.getLastName());
         model.put("userEmail", user.getEmail());
@@ -319,16 +319,27 @@ public class NotificationService {
 
         if (application != null) {
             model.put("applicant", application.getUser().getDisplayName());
+            model.put("applicationId", application.getId().toString());
             model.put("applicationCode", application.getCode());
-        }
-
-        if (program != null) {
             model.put("projectOrProgramTitle", project == null ? program.getTitle() : project.getTitle());
         }
 
+        if (program != null) {
+            model.put("programId", program.getId().toString());
+            model.put("programCode", program.getCode());
+            model.put("programTitle", program.getTitle());
+        }
+
+        if(project != null) {
+            model.put("projectId", project.getId().toString());
+            model.put("projectCode", project.getCode());
+            model.put("projectTitle", project.getTitle());
+        }
+
         if (institution != null) {
-            model.put("institutionName", institution.getTitle());
+            model.put("institutionId", institution.getId().toString());
             model.put("institutionCode", institution.getCode());
+            model.put("institutionTitle", institution.getTitle());
         }
 
         for (String parameter : extraParameters.keySet()) {

@@ -62,14 +62,14 @@ VALUES(5243, "PROGRAM_TYPE", "xml/defaultEntities/programType.xml", "2014-08-20"
 
 UPDATE IMPORTED_ENTITY
 SET name = code,
-	code = "MODULAR_FLEXIBLE",
+	code = "MODULAR_FLEXIBLE"
 WHERE imported_entity_type = "STUDY_OPTION"
 	AND code = "B+++++"
 ;
 
 UPDATE IMPORTED_ENTITY
 SET name = code, 
-	code = "FULL_TIME",
+	code = "FULL_TIME"
 WHERE imported_entity_type = "STUDY_OPTION"
 	AND code = "F+++++"
 ;
@@ -184,10 +184,6 @@ ALTER TABLE ADVERT
 ;
 
 ALTER TABLE PROGRAM
-	ADD COLUMN imported INT(1) UNSIGNED AFTER require_project_definition
-;
-
-ALTER TABLE PROGRAM
 	ADD COLUMN imported INT(1) UNSIGNED AFTER require_project_definition,
 	ADD INDEX (imported)
 ;
@@ -217,9 +213,7 @@ ALTER TABLE PROGRAM
 ;
 
 ALTER TABLE PROJECT
-	DROP COLUMN immediate_start,
-	DROP COLUMN default_start_date,
-	DROP INDEX default_start_date
+	DROP COLUMN immediate_start
 ;
 
 ALTER TABLE ADVERT

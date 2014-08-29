@@ -126,15 +126,10 @@ public class StateService {
             resourceService.persistResource(resource);
         }
 
-        commentService.save(comment);
+        entityService.save(comment);
         StateTransition stateTransition = getStateTransition(resource, action, comment);
 
-        State state = resource.getState();
-        State transitionState = stateTransition == null ? state : stateTransition.getTransitionState();
-
-        if (state != transitionState) {
-            comment.setTransitionState(transitionState);
-
+        if (stateTransition != null) {
             resourceService.processResource(resource, comment);
             roleService.executeRoleTransitions(stateTransition, comment);
 

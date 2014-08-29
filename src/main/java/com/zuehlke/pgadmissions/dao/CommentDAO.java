@@ -138,4 +138,12 @@ public class CommentDAO {
                 .list();
     }
 
+    public List<Comment> getComments(Resource resource, DateTime rangeStart, DateTime rangeClose) {
+        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.between("createdTimestamp", rangeStart, rangeClose)) //
+                .add(Restrictions.isNotNull("transitionState")) //
+                .list();        
+    }
+
 }

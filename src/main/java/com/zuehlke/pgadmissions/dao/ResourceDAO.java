@@ -153,5 +153,11 @@ public class ResourceDAO {
                 .add(Restrictions.between("updatedTimestamp", rangeStart, rangeClose)) //
                 .uniqueResult();
     }
+    
+    public <T extends Resource> List<Resource> getRecentlyUpdatedResources(Class<T> resourceClass, DateTime rangeStart, DateTime rangeClose) {
+        return (List<Resource>) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
+                .add(Restrictions.between("updatedTimestamp", rangeStart, rangeClose)) //
+                .list();
+    }
 
 }

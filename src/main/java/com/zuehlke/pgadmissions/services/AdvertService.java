@@ -62,17 +62,16 @@ public class AdvertService {
         return Joiner.on("<br/>").join(recommendations);
     }
     
-    public void updateAdvertClosingDates() {
-        LocalDate baseline = new LocalDate();
-        List<Advert> adverts = advertDAO.getAdvertsWithElapsedClosingDates(baseline);
-
-        for (Advert advert : adverts) {
-            AdvertClosingDate nextClosingDate = advertDAO.getNextAdvertClosingDate(advert, baseline);
-            advert.setClosingDate(nextClosingDate);
-            
-            if (advert.isProjectAdvert() && nextClosingDate == null) {
-                advert.getProject().setDueDate(new LocalDate());
-            }
+    public List<Advert> getAdvertsWithElapsedClosingDates(LocalDate baseline) {
+        return advertDAO.getAdvertsWithElapsedClosingDates(baseline);
+    }
+    
+    public void updateAdvertClosingDate(LocalDate baseline, Advert advert) {
+        AdvertClosingDate nextClosingDate = advertDAO.getNextAdvertClosingDate(advert, baseline);
+        advert.setClosingDate(nextClosingDate);
+        
+        if (advert.isProjectAdvert() && nextClosingDate == null) {
+            advert.getProject().setDueDate(baseline);
         }
     }
 

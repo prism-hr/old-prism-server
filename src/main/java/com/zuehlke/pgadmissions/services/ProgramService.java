@@ -168,25 +168,23 @@ public class ProgramService {
         return null;
     }
     
-    public void updateProgramStudyOptions() {
-        LocalDate baseline = new LocalDate();
-        List<Program> programs = programDAO.getProgramsWithElapsedStudyOptions(baseline);
-        
-        for (Program program : programs) {
-            List<ProgramStudyOption> elapsedOptions = programDAO.getElapsedStudyOptions(program, baseline);
-            
-            for (ProgramStudyOption elapsedOption : elapsedOptions) {
-                elapsedOption.setEnabled(false);
-            }
-            
-            if (program.getStudyOptions().size() == elapsedOptions.size()) {
-                program.setDueDate(baseline);
-            }
-        }
-    }
-    
     public List<ProgramStudyOptionInstance> getProgramStudyOptionInstances(Program program) {
         return programDAO.getProgramStudyOptionInstances(program);
     }
-     
+    
+    public List<Program> getProgramsWithElapsedStudyOptions(LocalDate baseline) {
+        return programDAO.getProgramsWithElapsedStudyOptions(baseline);
+    }
+    
+    public void updateProgramStudyOptions(Program program, LocalDate baseline) {
+        List<ProgramStudyOption> elapsedOptions = programDAO.getElapsedStudyOptions(program, baseline);
+        
+        for (ProgramStudyOption elapsedOption : elapsedOptions) {
+            elapsedOption.setEnabled(false);
+        }
+        
+        if (program.getStudyOptions().size() == elapsedOptions.size()) {
+            program.setDueDate(baseline);
+        }
+    }
 }

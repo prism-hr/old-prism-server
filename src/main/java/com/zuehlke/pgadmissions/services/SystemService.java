@@ -58,6 +58,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvalu
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.lifecycle.StateTransitionHelper;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
@@ -109,6 +110,9 @@ public class SystemService {
 
     @Autowired
     private StateService stateService;
+    
+    @Autowired
+    private StateTransitionHelper stateTransitionHelper;
 
     @Autowired
     private UserService userService;
@@ -314,7 +318,7 @@ public class SystemService {
     }
 
     private void initialiseStateActions() throws WorkflowConfigurationException {
-        stateService.executePendingStateTransitions();
+        stateTransitionHelper.executePendingStateTransitions();
         stateService.deleteStateActions();
 
         for (State state : stateService.getStates()) {

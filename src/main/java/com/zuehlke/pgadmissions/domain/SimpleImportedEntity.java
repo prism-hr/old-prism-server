@@ -52,7 +52,7 @@ public abstract class SimpleImportedEntity extends ImportedEntity {
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
     
-    @Column(name = "imported_entity_type", nullable = false)
+    @Column(name = "imported_entity_type", insertable = false, updatable = false)
     private PrismImportedEntity type;
 
     @Column(name = "code", nullable = false)

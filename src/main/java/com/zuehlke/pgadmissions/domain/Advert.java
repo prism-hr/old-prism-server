@@ -149,9 +149,6 @@ public class Advert {
     
     @OneToOne(mappedBy = "advert")
     private Project project;
-    
-    @OneToMany(mappedBy = "advert")
-    private Set<Application> applications = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
@@ -410,10 +407,6 @@ public class Advert {
 
     public final Project getProject() {
         return project;
-    }
-    
-    public final Set<Application> getApplications() {
-        return applications;
     }
 
     public Set<AdvertClosingDate> getClosingDates() {

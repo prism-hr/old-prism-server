@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.exporters;
+package com.zuehlke.pgadmissions.lifecycle;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -13,21 +13,22 @@ import org.apache.commons.io.IOUtils;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.lifecycle.ApplicationExportHelper;
 
-public class ApplicationExportServiceMock extends ApplicationExportService {
+public class ApplicationExportHelperMock extends ApplicationExportHelper {
 
     private final HashMap<Application, ApplicationExportRequest> exportRequests = Maps.newHashMap();
 
     @Override
     public void exportUclApplications() {
-        List<Application> applications = getUclApplicationsForExport();
+        List<Application> applications = applicationExportService.getUclApplicationsForExport();
         for (Application application : applications) {
             OutputStream outputStream = null;
             try {
-                SubmitAdmissionsApplicationRequest dataExportRequest = buildDataExportRequest(application);
+                SubmitAdmissionsApplicationRequest dataExportRequest = applicationExportService.buildDataExportRequest(application);
 
                 byte[] documentExportRequest = null;
-                outputStream = buildDocumentExportRequest(application, application.getCode(), new ByteArrayOutputStream());
+                outputStream = applicationExportService.buildDocumentExportRequest(application, application.getCode(), new ByteArrayOutputStream());
                 outputStream.write(documentExportRequest);
 
                 ApplicationExportRequest exportRequest = new ApplicationExportRequest().withDataExportRequest(dataExportRequest). //
@@ -42,7 +43,7 @@ public class ApplicationExportServiceMock extends ApplicationExportService {
     }
 
     public void verify() {
-        List<Application> applications = getUclApplicationsForExport();
+        List<Application> applications = applicationExportService.getUclApplicationsForExport();
         for (Application application : applications) {
             assertTrue(exportRequests.containsKey(application));
             ApplicationExportRequest request = exportRequests.get(application);
@@ -79,12 +80,12 @@ public class ApplicationExportServiceMock extends ApplicationExportService {
             return documentExportRequest;
         }
 
-        public ApplicationExportServiceMock.ApplicationExportRequest withDataExportRequest(SubmitAdmissionsApplicationRequest dataExportRequest) {
+        public ApplicationExportHelperMock.ApplicationExportRequest withDataExportRequest(SubmitAdmissionsApplicationRequest dataExportRequest) {
             this.dataExportRequest = dataExportRequest;
             return this;
         }
 
-        public ApplicationExportServiceMock.ApplicationExportRequest withDocumentExportRequest(byte[] documentExportRequest) {
+        public ApplicationExportHelperMock.ApplicationExportRequest withDocumentExportRequest(byte[] documentExportRequest) {
             this.documentExportRequest = documentExportRequest;
             return this;
         }

@@ -82,6 +82,10 @@ public class Comment {
     private String content;
 
     @ManyToOne
+    @JoinColumn(name = "state_id")
+    private State state;
+    
+    @ManyToOne
     @JoinColumn(name = "transition_state_id")
     private State transitionState;
 
@@ -304,6 +308,14 @@ public class Comment {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public final State getState() {
+        return state;
+    }
+
+    public final void setState(State state) {
+        this.state = state;
     }
 
     public State getTransitionState() {
@@ -671,6 +683,11 @@ public class Comment {
 
     public Comment withContent(String content) {
         this.content = content;
+        return this;
+    }
+    
+    public Comment withState(State state) {
+        this.state = state;
         return this;
     }
 

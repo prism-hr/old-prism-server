@@ -233,6 +233,10 @@ public class CommentService {
         return supervisors;
     }
 
+    public List<Comment> getComments(Resource resource, DateTime rangeStart, DateTime rangeClose) {
+        return commentDAO.getComments(resource, rangeStart, rangeClose);
+    }
+    
     private Comment getLatestAppointmentPreferenceComment(Application application, Comment schedulingComment, User user) {
         DateTime baseline = schedulingComment.getCreatedTimestamp();
         Comment preferenceComment = getLatestComment(application, PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY, user, baseline);

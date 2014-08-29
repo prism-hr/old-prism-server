@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -174,7 +176,20 @@ public class NotificationService {
     }
     
     public List<UserNotificationDefinitionDTO> getSyndicatedUpdateNotifications(Scope scope, LocalDate baseline) {
-        return notificationDAO.getSyndicatedUpdateNotifications(scope, baseline);
+        DateTime rangeStart = baseline.minusDays(1).toDateTimeAtStartOfDay();
+        DateTime rangeClose = rangeStart.plusDays(1).minusSeconds(1);
+        
+        List<Resource> updatedResources = resourceService.getRecentlyUpdatedResources(scope.getId().getResourceClass(), rangeStart, rangeClose);
+        Set<UserNotificationDefinitionDTO> definitions = Sets.newHashSet();
+        
+        for (Resource resource : updatedResources) {
+            List<Comment> updateComments = commentService.getComments(resource, rangeStart, rangeClose);
+            for (Comment updateComment : updateComments) {
+                definitions.addAll(notificationDAO.getDeferredUpdateNotifications(resource, updateComment.getState(), updateComment.getAction()));
+            }
+        }
+        
+        return Lists.newArrayList(definitions);
     }
 
     public void sendRequestReminder(UserNotificationDefinitionDTO definition, User invoker, LocalDate baseline, HashMultimap<String, User> sent) {

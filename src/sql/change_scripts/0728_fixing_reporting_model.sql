@@ -230,3 +230,40 @@ ALTER TABLE APPLICATION
 	DROP INDEX advert_id,
 	DROP COLUMN advert_id
 ;
+
+ALTER TABLE INSTITUTION
+	CHANGE COLUMN application_rating_average_percentile05 application_rating_average_percentile_05 DECIMAL(3,2) UNSIGNED,
+	CHANGE COLUMN application_rating_average_percentile20 application_rating_average_percentile_20 DECIMAL(3,2) UNSIGNED,
+	CHANGE COLUMN application_rating_average_percentile35 application_rating_average_percentile_35 DECIMAL(3,2) UNSIGNED,
+	CHANGE COLUMN application_rating_average_percentile50 application_rating_average_percentile_50 DECIMAL(3,2) UNSIGNED,
+	CHANGE COLUMN application_rating_average_percentile65 application_rating_average_percentile_65 DECIMAL(3,2) UNSIGNED,
+	CHANGE COLUMN application_rating_average_percentile80 application_rating_average_percentile_80 DECIMAL(3,2) UNSIGNED,
+	CHANGE COLUMN application_rating_average_percentile95 application_rating_average_percentile_95 DECIMAL(3,2) UNSIGNED
+;
+
+ALTER TABLE PROGRAM
+	CHANGE COLUMN application_rating_average_percentile05 application_rating_average_percentile_05 DECIMAL(3,2) UNSIGNED,
+	CHANGE COLUMN application_rating_average_percentile20 application_rating_average_percentile_20 DECIMAL(3,2) UNSIGNED,
+	CHANGE COLUMN application_rating_average_percentile35 application_rating_average_percentile_35 DECIMAL(3,2) UNSIGNED,
+	CHANGE COLUMN application_rating_average_percentile50 application_rating_average_percentile_50 DECIMAL(3,2) UNSIGNED,
+	CHANGE COLUMN application_rating_average_percentile65 application_rating_average_percentile_65 DECIMAL(3,2) UNSIGNED,
+	CHANGE COLUMN application_rating_average_percentile80 application_rating_average_percentile_80 DECIMAL(3,2) UNSIGNED,
+	CHANGE COLUMN application_rating_average_percentile95 application_rating_average_percentile_95 DECIMAL(3,2) UNSIGNED
+;
+
+ALTER TABLE PROJECT
+	CHANGE COLUMN application_rating_average_percentile05 application_rating_average_percentile_05 DECIMAL(3,2) UNSIGNED,
+	CHANGE COLUMN application_rating_average_percentile20 application_rating_average_percentile_20 DECIMAL(3,2) UNSIGNED,
+	CHANGE COLUMN application_rating_average_percentile35 application_rating_average_percentile_35 DECIMAL(3,2) UNSIGNED,
+	CHANGE COLUMN application_rating_average_percentile50 application_rating_average_percentile_50 DECIMAL(3,2) UNSIGNED,
+	CHANGE COLUMN application_rating_average_percentile65 application_rating_average_percentile_65 DECIMAL(3,2) UNSIGNED,
+	CHANGE COLUMN application_rating_average_percentile80 application_rating_average_percentile_80 DECIMAL(3,2) UNSIGNED,
+	CHANGE COLUMN application_rating_average_percentile95 application_rating_average_percentile_95 DECIMAL(3,2) UNSIGNED
+;
+
+ALTER TABLE COMMENT 
+	ADD COLUMN state_id VARCHAR(50) AFTER content,
+	ADD INDEX (state_id),
+	ADD FOREIGN KEY (state_id) REFERENCES STATE (id)
+;
+

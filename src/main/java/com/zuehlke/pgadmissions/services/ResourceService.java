@@ -239,4 +239,8 @@ public class ResourceService {
         return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
     }
     
+    public <T extends Resource> List<Resource> getRecentlyUpdatedResources(Class<T> resourceClass, DateTime rangeStart, DateTime rangeClose) {
+        return resourceDAO.getRecentlyUpdatedResources(resourceClass, rangeStart, rangeClose);
+    }
+    
 }

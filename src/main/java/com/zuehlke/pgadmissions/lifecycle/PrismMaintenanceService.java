@@ -6,13 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.DocumentService;
-import com.zuehlke.pgadmissions.services.NotificationService;
-import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.services.StateService;
-import com.zuehlke.pgadmissions.services.exporters.ApplicationExportService;
-import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 
 @Service
 public class PrismMaintenanceService {
@@ -20,22 +14,22 @@ public class PrismMaintenanceService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     @Autowired
-    private StateService stateService;
+    private StateTransitionHelper stateTransitionHelper;
     
     @Autowired
-    private EntityImportService entityImportService;
+    private EntityImportHelper entityImportHelper;
     
     @Autowired
-    private AdvertService advertService;
+    private AdvertHelper advertHelper;
     
     @Autowired
-    private ProgramService programService;
+    private ProgramHelper programHelper;
 
     @Autowired
-    private ApplicationExportService applicationExportService;
+    private ApplicationExportHelper applicationExportHelper;
     
     @Autowired
-    private NotificationService notificationService;
+    private NotificationHelper notificationHelper;
 
     @Autowired
     private DocumentService documentService;
@@ -55,7 +49,7 @@ public class PrismMaintenanceService {
     private void executePendingStateTransitions() {
         try {
             logger.info("Executing pending state transitions");
-            stateService.executePendingStateTransitions();
+            stateTransitionHelper.executePendingStateTransitions();
         } catch (Exception e) {
             logger.info("Error executing pending state transitions", e);
         }
@@ -64,7 +58,7 @@ public class PrismMaintenanceService {
     private void importReferenceData() {
         try {
             logger.info("Importing reference data");
-            entityImportService.importReferenceData();
+            entityImportHelper.importReferenceData();
         } catch (Exception e) {
             logger.info("Error importing reference data", e);
         }
@@ -73,7 +67,7 @@ public class PrismMaintenanceService {
     private void updateProgamStudyOptions() {
         try {
             logger.info("Updating program study options");
-            programService.updateProgramStudyOptions();
+            programHelper.updateProgramStudyOptions();
         } catch (Exception e) {
             logger.info("Error updating program study options", e);
         }
@@ -82,7 +76,7 @@ public class PrismMaintenanceService {
     private void updateAdvertClosingDates() {
         try {
             logger.info("Updating advert closing dates");
-            advertService.updateAdvertClosingDates();
+            advertHelper.updateAdvertClosingDates();
         } catch (Exception e) {
             logger.info("Error updating advert closing dates", e);
         }
@@ -91,7 +85,7 @@ public class PrismMaintenanceService {
     private void exportUclApplications() {
         try {
             logger.trace("Exporting applications");
-            applicationExportService.exportUclApplications();
+            applicationExportHelper.exportUclApplications();
         } catch (Exception e) {
             logger.info("Error exporting applications", e);
         }
@@ -100,7 +94,7 @@ public class PrismMaintenanceService {
     private void sendDeferredWorkflowNotifications() {
         try {
             logger.info("Sending deferred workflow notifications.");
-            notificationService.sendDeferredWorkflowNotifications();
+            notificationHelper.sendDeferredWorkflowNotifications();
         } catch (Exception e) {
             logger.info("Error sending deferred workflow notifications", e);
         }
@@ -109,7 +103,7 @@ public class PrismMaintenanceService {
     private void sendRecommendationNotifications() {
         try {
             logger.info("Sending recommendation notifications");
-            notificationService.sendRecommendationNotifications();     
+            notificationHelper.sendRecommendationNotifications();     
         }  catch (Exception e) {
             logger.info("Error sending recommendation notifications", e);
         }

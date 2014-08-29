@@ -54,7 +54,7 @@ public class ApplicationProgramDetail {
     private Set<OpportunityCategory> categories = Sets.newHashSet();
 
 
-    @OneToOne(mappedBy = "programDetails")
+    @OneToOne(mappedBy = "programDetail")
     private Application application;
 
     public Integer getId() {

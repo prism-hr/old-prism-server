@@ -51,7 +51,7 @@ public class ProgramStudyOption implements IUniqueEntity {
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
-    @OneToMany(mappedBy = "programStudyOption")
+    @OneToMany(mappedBy = "studyOption")
     private Set<ProgramStudyOptionInstance> studyOptionInstances = Sets.newHashSet();
 
     public final Integer getId() {

@@ -42,7 +42,7 @@ public class Program extends RecruiterResource {
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
     
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 

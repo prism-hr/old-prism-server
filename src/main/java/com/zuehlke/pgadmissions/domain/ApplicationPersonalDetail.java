@@ -88,7 +88,7 @@ public class ApplicationPersonalDetail {
     @JoinColumn(name = "domicile_id", nullable = false)
     private Domicile residenceCountry;
 
-    @OneToOne(mappedBy = "personalDetails")
+    @OneToOne(mappedBy = "personalDetail")
     private Application application;
 
     public void setId(Integer id) {

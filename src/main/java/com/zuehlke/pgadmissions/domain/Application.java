@@ -65,10 +65,6 @@ public class Application extends Resource {
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @ManyToOne
-    @JoinColumn(name = "advert_id", nullable = false)
-    private Advert advert;
-
     @Column(name = "referrer")
     private String referrer;
 
@@ -241,10 +237,6 @@ public class Application extends Resource {
     @Override
     public void setProject(Project project) {
         this.project = project;
-    }
-
-    public final void setAdvert(Advert advert) {
-        this.advert = advert;
     }
 
     @Override
@@ -523,11 +515,6 @@ public class Application extends Resource {
 
     public Application withParentResource(Resource parentResource) {
         setParentResource(parentResource);
-        return this;
-    }
-
-    public Application withAdvert(Advert advert) {
-        this.advert = advert;
         return this;
     }
 

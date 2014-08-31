@@ -125,9 +125,8 @@ public class NotificationService {
             NotificationTemplate notificationTemplate = getById(reminder.getNotificationTemplateId());
             
             Integer reminderInterval = getReminderInterval(resource, notificationTemplate);
-            boolean doSendReminder = baseline.minusDays(reminderInterval) == reminder.getLastNotifiedDate();
 
-            if (!sent.get(notificationTemplate).contains(user) && doSendReminder) {
+            if (!sent.get(notificationTemplate).contains(user) && baseline.minusDays(reminderInterval) == reminder.getLastNotifiedDate()) {
                 sendNotification(user, resource, notificationTemplate.getReminderTemplate(), ImmutableMap.of("author", invoker.getDisplayName()));
                 sent.put(notificationTemplate, user);
             }
@@ -154,11 +153,8 @@ public class NotificationService {
             boolean doSendReminder = baseline.minusDays(reminderInterval) == definition.getLastNotifiedDate();
 
             if (!sent.get(notificationTemplate).contains(user) && (lastNotifiedDate == null || doSendReminder)) {
-                if (doSendReminder) {
-                    notificationTemplate = notificationTemplate.getReminderTemplate();
-                }
-                
-                sendNotification(user, resource, notificationTemplate, ImmutableMap.of("author", invoker.getDisplayName()));
+                NotificationTemplate sendTemplate = doSendReminder ? notificationTemplate.getReminderTemplate() : notificationTemplate;
+                sendNotification(user, resource, sendTemplate, ImmutableMap.of("author", invoker.getDisplayName()));
                 user.setLastNotifiedDate(resource.getClass(), baseline);
                 sent.put(notificationTemplate, user);
             }

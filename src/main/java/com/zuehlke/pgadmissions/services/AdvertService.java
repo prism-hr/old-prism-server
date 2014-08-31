@@ -1,18 +1,20 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.definitions.OpportunityListType;
-import com.zuehlke.pgadmissions.dto.AdvertDTO;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.User;
 
 @Service
 @Transactional
@@ -21,31 +23,56 @@ public class AdvertService {
     @Autowired
     private AdvertDAO advertDAO;
 
-    public List<AdvertDTO> getAdvertFeed(OpportunityListType feedKey, String feedKeyValue, String advertId) {
-        List<AdvertDTO> advertDTOs = new ArrayList<AdvertDTO>();
+    @Autowired
+    private EntityService entityService;
 
-        if (advertId != null) {
-            advertDTOs.addAll(advertDAO.getAdvertFeed(OpportunityListType.CURRENTOPPORTUNITYBYADVERTID, advertId, null));
-        }
-        
-        Integer selectedAdvertId = null;
-        if (!advertDTOs.isEmpty() && !OpportunityListType.neverHasSelectedAdvertListType(feedKey)) {
-            selectedAdvertId = advertDTOs.get(0).getId();
-        }
-        
-        List<AdvertDTO> feedAdvertDTOs = advertDAO.getAdvertFeed(feedKey, feedKeyValue, selectedAdvertId);
-        
-        if (BooleanUtils.isTrue(OpportunityListType.shouldBeRandomisedForDisplay(feedKey))) {
-            Collections.shuffle(feedAdvertDTOs);
-        }
-        
-        advertDTOs.addAll(feedAdvertDTOs);
-        return advertDTOs;
+    @Autowired
+    private StateService stateService;
 
+    public Advert getById(Integer id) {
+        return entityService.getById(Advert.class, id);
     }
 
-    public List<Advert> getAdverts() {
-        return advertDAO.getAdverts();
+    // TODO: user filters
+    public List<Advert> getActiveAdverts() {
+        List<State> activeProgramStates = stateService.getActiveProgramStates();
+        List<State> activeProjectStates = stateService.getActiveProjectStates();
+        return advertDAO.getActiveAdverts(activeProgramStates, activeProjectStates);
+    }
+
+    public List<Advert> getRecommendedAdverts(User user) {
+        List<State> activeProgramStates = stateService.getActiveProgramStates();
+        List<State> activeProjectStates = stateService.getActiveProjectStates();
+        return advertDAO.getRecommendedAdverts(user, activeProgramStates, activeProjectStates);
+    }
+
+    // TODO: internal application link and other summary information (e.g. pay/fee according to user requirements)
+    public String getRecommendedAdvertsForEmail(User user) {
+        List<Advert> adverts = getRecommendedAdverts(user);
+        List<String> recommendations = Lists.newLinkedList();
+
+        for (Advert advert : adverts) {
+            Project project = advert.getProject();
+            String applyLink = advert.getApplyLink();
+
+            recommendations.add(advert.getProgram().getTitle() + "<br/>" + project == null ? ""
+                    : project.getTitle() + "<br/>" + applyLink == null ? "whatever the internal application link is" : applyLink);
+        }
+
+        return Joiner.on("<br/>").join(recommendations);
     }
     
+    public List<Advert> getAdvertsWithElapsedClosingDates(LocalDate baseline) {
+        return advertDAO.getAdvertsWithElapsedClosingDates(baseline);
+    }
+    
+    public void updateAdvertClosingDate(LocalDate baseline, Advert advert) {
+        AdvertClosingDate nextClosingDate = advertDAO.getNextAdvertClosingDate(advert, baseline);
+        advert.setClosingDate(nextClosingDate);
+        
+        if (advert.isProjectAdvert() && nextClosingDate == null) {
+            advert.getProject().setDueDate(baseline);
+        }
+    }
+
 }

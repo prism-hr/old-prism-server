@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,17 +9,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "USER_ROLE", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_id", "role_id" }),
@@ -60,12 +58,17 @@ public class UserRole implements IUniqueEntity {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
+    @ManyToOne
+    @JoinColumn(name = "notification_template_id")
+    private NotificationTemplate notificationTemplate;
+    
+    @Column(name = "notification_last_sent_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastNotifiedDate;
+    
     @Column(name = "assigned_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime assignedTimestamp;
-    
-    @OneToMany(mappedBy = "userRole")
-    private Set<UserNotification> userNotifications = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -131,16 +134,28 @@ public class UserRole implements IUniqueEntity {
         this.role = role;
     }
 
+    public final NotificationTemplate getNotificationTemplate() {
+        return notificationTemplate;
+    }
+
+    public final void setNotificationTemplate(NotificationTemplate notificationTemplate) {
+        this.notificationTemplate = notificationTemplate;
+    }
+
+    public final LocalDate getLastNotifiedDate() {
+        return lastNotifiedDate;
+    }
+
+    public final void setLastNotifiedDate(LocalDate lastNotifiedDate) {
+        this.lastNotifiedDate = lastNotifiedDate;
+    }
+
     public DateTime getAssignedTimestamp() {
         return assignedTimestamp;
     }
 
     public void setAssignedTimestamp(DateTime assignedTimestamp) {
         this.assignedTimestamp = assignedTimestamp;
-    }
-
-    public Set<UserNotification> getUserNotifications() {
-        return userNotifications;
     }
     
     public UserRole withResource(Resource resource) {

@@ -1,25 +1,29 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.dao.ProgramDAO;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
-import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
+import java.util.List;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramStudyOption;
+import com.zuehlke.pgadmissions.domain.ProgramStudyOptionInstance;
+import com.zuehlke.pgadmissions.domain.ProgramType;
+import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.StudyOption;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 
 @Service
 @Transactional
@@ -35,19 +39,29 @@ public class ProgramService {
     private EntityService entityService;
 
     @Autowired
+    private ImportedEntityService importedEntityService;
+
+    @Autowired
     private ActionService actionService;
 
     @Autowired
-    private InstitutionService institutionService;
-
-    @Autowired
     private SystemService systemService;
+    
+    @Autowired
+    private InstitutionService institutionService;
+    
+    @Autowired
+    private ProjectService projectService;
 
     @Autowired
     private UserService userService;
 
-    public Advert getById(Integer id) {
-        return entityService.getById(Advert.class, id);
+    public Program getById(Integer id) {
+        return entityService.getById(Program.class, id);
+    }
+
+    public ProgramStudyOption getProgramStudyOptionById(Integer id) {
+        return entityService.getById(ProgramStudyOption.class, id);
     }
 
     public void save(Program program) {
@@ -69,73 +83,37 @@ public class ProgramService {
     }
 
     public Program create(User user, ProgramDTO programDTO) {
+        String title = programDTO.getTitle();
+
+        Advert advert = new Advert().withTitle(title);
         Institution institution = entityService.getById(Institution.class, programDTO.getInstitutionId());
-        Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withTitle(programDTO.getTitle()).withInstitution(institution).withProgramType(programDTO.getProgramType())
-                .withRequireProjectDefinition(programDTO.getRequireProjectDefinition()).withStartDate(programDTO.getStartDate().toLocalDate())
-                .withEndDate(programDTO.getEndDate().toLocalDate()).withImmediateStart(programDTO.getImmediateStart());
+        ProgramType programType = importedEntityService.getByCode(ProgramType.class, institution, programDTO.getProgramType().name());
+        
+        Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withTitle(title).withInstitution(institution)
+                .withProgramType(programType).withRequireProjectDefinition(programDTO.getRequireProjectDefinition()).withImported(false).withAdvert(advert)
+                .withDueDate(programDTO.getCloseDate().toLocalDate());
+
+        // TODO: study options
         return program;
-    }
-
-    public Program getOrImportProgram(Programme programme, Institution institution) throws WorkflowEngineException {
-        User proxyCreator = institution.getUser();
-
-        PrismProgramType programType = PrismProgramType.findValueFromString(programme.getName());
-        Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withImportedCode(programme.getCode())
-                .withTitle(programme.getName()).withRequireProjectDefinition(programme.isAtasRegistered()).withImmediateStart(false)
-                .withProgramType(programType).withUser(proxyCreator);
-
-        Action importAction = actionService.getById(PrismAction.INSTITUTION_IMPORT_PROGRAM);
-        Role proxyCreatorRole = roleService.getCreatorRole(transientProgram);
-
-        Comment comment = new Comment().withUser(proxyCreator).withCreatedTimestamp(new DateTime()).withAction(importAction).withDeclinedResponse(false)
-                .withAssignedUser(proxyCreator, proxyCreatorRole);
-
-        Program persistentProgram = (Program) actionService.executeSystemAction(transientProgram, importAction, comment).getResource();
-        return persistentProgram.withTitle(programme.getName()).withRequireProjectDefinition(programme.isAtasRegistered());
-    }
-
-    public void saveProgramInstance(ProgramInstance transientProgramInstance) {
-        ProgramInstance persistentInstance = entityService.createOrUpdate(transientProgramInstance);
-        if (persistentInstance.isEnabled()) {
-            Program transientProgram = transientProgramInstance.getProgram();
-            Program persistentProgram = (Program) getById(transientProgram.getId());
-            LocalDate programDueDate = persistentProgram.getDueDate();
-            LocalDate instanceEndDate = persistentInstance.getApplicationDeadline();
-            if (programDueDate == null || programDueDate.isBefore(instanceEndDate)) {
-                persistentProgram.setDueDate(instanceEndDate);
-            }
-        }
     }
 
     public List<Program> getPrograms() {
         return programDAO.getPrograms();
     }
 
-    public ProgramInstance getExportProgramInstance(Application application) {
-        return programDAO.getExportProgramInstance(application);
+    public ProgramStudyOptionInstance getFirstEnabledProgramStudyOptionInstance(Program program, StudyOption studyOption) {
+        return programDAO.getFirstEnabledProgramStudyOptionInstance(program, studyOption);
     }
 
-    public ProgramInstance getEarliestProgramInstance(Application application) {
-        return programDAO.getEarliestProgramInstance(application);
-    }
-
-    public ProgramInstance getLatestProgramInstance(Application application) {
-        return programDAO.getLatestProgramInstance(application);
-    }
-
-    public ProgramInstance getLatestProgramInstance(Program program) {
-        return programDAO.getLatestProgramInstance(program);
-    }
-
-    public ActionOutcome performAction(Integer programId, CommentDTO commentDTO) {
+    public ActionOutcomeDTO performAction(Integer programId, CommentDTO commentDTO) {
         Program program = entityService.getById(Program.class, programId);
         PrismAction actionId = commentDTO.getAction();
 
         Action action = actionService.getById(actionId);
         User user = userService.getById(commentDTO.getUser());
         State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
-        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withAction(action)
-                .withTransitionState(transitionState).withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
+        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withAction(action).withTransitionState(transitionState)
+                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
 
         ProgramDTO programDTO = commentDTO.getProgram();
         if (programDTO != null) {
@@ -147,16 +125,66 @@ public class ProgramService {
     }
 
     public void update(Integer programId, ProgramDTO programDTO) {
+        String title = programDTO.getTitle();
         Program program = entityService.getById(Program.class, programId);
+        Advert advert = program.getAdvert();
 
-        program.setProgramType(programDTO.getProgramType());
-        program.setTitle(programDTO.getTitle());
-        program.setDescription(programDTO.getDescription());
+        ProgramType programType = importedEntityService.getByCode(ProgramType.class, program.getInstitution(), programDTO.getProgramType().name());
+
+        program.setProgramType(programType);
+        program.setTitle(title);
+        advert.setDescription(programDTO.getDescription());
 
         // TODO set study options, start date and end date
 
         program.setRequireProjectDefinition(programDTO.getRequireProjectDefinition());
-        program.setImmediateStart(programDTO.getImmediateStart());
+        advert.setTitle(title);
+    }
 
+    public void postProcessProgram(Program program, Comment comment) {        
+        if (comment.isProgramCreateOrUpdateComment()) {
+            program.getAdvert().setSequenceIdentifier(program.getSequenceIdentifier() + "-" + program.getResourceScope().getShortCode());
+            projectService.updateProjectsLinkedToProgramDueDate(program);
+        }
+    }
+
+    // TODO handle case where there are no enabled study options
+    public List<ProgramStudyOption> getEnabledProgramStudyOptions(Program program) {
+        return programDAO.getEnabledProgramStudyOptions(program);
+    }
+    
+    public ProgramStudyOption getEnabledProgramStudyOption(Program program, StudyOption studyOption) {
+        return programDAO.getEnabledProgramStudyOption(program, studyOption);
+    }
+
+    public LocalDate getProgramClosureDate(Program program) {
+        return programDAO.getProgramClosureDate(program);
+    }
+    
+    public LocalDate resolveDueDateBaseline(Program program, Comment comment) {
+        if (comment.isProgramCreateOrUpdateComment()) {
+            return getProgramClosureDate(program);
+        }
+        return null;
+    }
+    
+    public List<ProgramStudyOptionInstance> getProgramStudyOptionInstances(Program program) {
+        return programDAO.getProgramStudyOptionInstances(program);
+    }
+    
+    public List<Program> getProgramsWithElapsedStudyOptions(LocalDate baseline) {
+        return programDAO.getProgramsWithElapsedStudyOptions(baseline);
+    }
+    
+    public void updateProgramStudyOptions(Program program, LocalDate baseline) {
+        List<ProgramStudyOption> elapsedOptions = programDAO.getElapsedStudyOptions(program, baseline);
+        
+        for (ProgramStudyOption elapsedOption : elapsedOptions) {
+            elapsedOption.setEnabled(false);
+        }
+        
+        if (program.getStudyOptions().size() == elapsedOptions.size()) {
+            program.setDueDate(baseline);
+        }
     }
 }

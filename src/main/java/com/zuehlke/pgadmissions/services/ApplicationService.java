@@ -2,10 +2,9 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,11 +17,11 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
@@ -30,8 +29,8 @@ import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationPassport;
-import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
-import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetail;
+import com.zuehlke.pgadmissions.domain.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
@@ -47,11 +46,15 @@ import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.ReferralSource;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.Title;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
@@ -78,6 +81,15 @@ public class ApplicationService {
     private ApplicationDAO applicationDAO;
 
     @Autowired
+    private ActionService actionService;
+
+    @Autowired
+    private AdvertService advertService;
+
+    @Autowired
+    private ApplicationSummaryService applicationSummaryService;
+
+    @Autowired
     private EntityService entityService;
 
     @Autowired
@@ -90,10 +102,19 @@ public class ApplicationService {
     private ApplicationCopyHelper applicationCopyHelper;
 
     @Autowired
+    private ProjectService projectService;
+
+    @Autowired
     private ProgramService programService;
 
     @Autowired
+    private InstitutionService institutionService;
+
+    @Autowired
     private ResourceService resourceService;
+
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
     private CompleteApplicationValidator completeApplicationValidator;
@@ -103,13 +124,17 @@ public class ApplicationService {
     }
 
     public Application create(User user, ApplicationDTO applicationDTO) {
-        Advert advert = programService.getById(applicationDTO.getAdvertId());
-        Application application = new Application().withUser(user).withParentResource(advert).withDoRetain(false).withCreatedTimestamp(new DateTime());
+        Advert advert = advertService.getById(applicationDTO.getAdvertId());
+        Application application = new Application().withUser(user).withParentResource(advert.getParentResource()).withDoRetain(false)
+                .withCreatedTimestamp(new DateTime());
 
         Application previousApplication = getPreviousApplication(application);
         if (previousApplication != null) {
             applicationCopyHelper.copyApplicationFormData(application, previousApplication);
         }
+
+        AdvertClosingDate closingDate = advert.getClosingDate();
+        application.setClosingDate(closingDate == null ? null : closingDate.getClosingDate());
 
         return application;
     }
@@ -126,30 +151,47 @@ public class ApplicationService {
         return resourceService.getReportList(Application.class);
     }
 
+    // TODO: handle null response - study option expired
     public LocalDate getEarliestStartDate(Application application) {
-        LocalDate currentDate = new LocalDate();
-        LocalDate earliestStartDate = programService.getEarliestProgramInstance(application).getApplicationStartDate();
-        if (earliestStartDate.isBefore(currentDate)) {
-            return getNextMonday(currentDate);
+        ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(application.getProgram(), application.getProgramDetail().getStudyOption());
+
+        if (studyOption == null) {
+            return null;
         }
-        return getNextMonday(earliestStartDate);
+        
+        LocalDate baseline = new LocalDate();
+        LocalDate studyOptionStart = studyOption.getApplicationStartDate();
+
+        LocalDate earliestStartDate = studyOptionStart.isBefore(baseline) ? baseline : studyOptionStart;
+        return earliestStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
     }
 
-    public LocalDate getLatestStartDate(Application application) {
-        LocalDate latestStartDate = programService.getLatestProgramInstance(application).getApplicationDeadline();
-        return getNextMonday(latestStartDate);
-    }
-
+    // TODO: handle null response - study option expired
     public LocalDate getRecommendedStartDate(Application application) {
-        LocalDate recommendedStartDate = null;
-        if (application.getAdvert().isImmediateStart()) {
-            recommendedStartDate = new LocalDate().plusWeeks(4);
-        } else {
-            recommendedStartDate = programService.getEarliestProgramInstance(application).getApplicationDeadline();
+        ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(application.getProgram(), application.getProgramDetail().getStudyOption());
+
+        if (studyOption == null) {
+            return null;
         }
-        recommendedStartDate = getNextMonday(recommendedStartDate);
-        LocalDate latestStartDate = getLatestStartDate(application);
-        return recommendedStartDate.isAfter(latestStartDate) ? latestStartDate : recommendedStartDate;
+        
+        LocalDate studyOptionStart = studyOption.getApplicationStartDate();
+        LocalDate studyOptionClose = studyOption.getApplicationCloseDate();
+
+        LocalDate recommendedStartDate = application.getRecommendedStartDate();
+
+        if (recommendedStartDate.isAfter(studyOptionClose)) {
+            recommendedStartDate = studyOptionClose;
+        } else if (recommendedStartDate.isBefore(studyOptionStart)) {
+            recommendedStartDate = studyOptionStart;
+        }
+
+        return recommendedStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
+    }
+
+    // TODO: handle null response - study option expired
+    public LocalDate getLatestStartDate(Application application) {
+        ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(application.getProgram(), application.getProgramDetail().getStudyOption());
+        return studyOption == null ? null : studyOption.getApplicationCloseDate().withDayOfWeek(DateTimeConstants.MONDAY);
     }
 
     public String getApplicationExportReference(Application application) {
@@ -164,44 +206,12 @@ public class ApplicationService {
         return applicationDAO.getPrimarySupervisor(offerRecommendationComment);
     }
 
+    public List<ApplicationQualification> getApplicationExportQualifications(Application application) {
+        return applicationDAO.getApplicationExportQualifications(application);
+    }
+
     public List<ApplicationReferee> getApplicationExportReferees(Application application) {
         return applicationDAO.getApplicationExportReferees(application);
-    }
-
-    // FIXME: default message when referees are less than 2
-    public List<ApplicationReferee> setApplicationExportReferees(Application application) {
-        if (getApplicationExportReferees(application).size() < 2) {
-            Set<Integer> refereesToSend = Sets.newHashSet();
-
-            for (ApplicationReferee referee : application.getReferees()) {
-                if (refereesToSend.size() == 2) {
-                    break;
-                }
-
-                if (BooleanUtils.isTrue(referee.isIncludeInExport())) {
-                    refereesToSend.add(referee.getId());
-                } else if (referee.getComment() != null && !referee.getComment().isDeclinedResponse()) {
-                    referee.setIncludeInExport(true);
-                    refereesToSend.add(referee.getId());
-                }
-            }
-
-            for (ApplicationReferee referee : application.getReferees()) {
-                if (refereesToSend.size() == 2) {
-                    break;
-                }
-
-                if (!refereesToSend.contains(referee.getId())) {
-                    referee.setIncludeInExport(true);
-                    refereesToSend.add(referee.getId());
-                }
-            }
-        }
-        return getApplicationExportReferees(application);
-    }
-
-    public List<ApplicationQualification> getApplicationExportQualifications(Application application) {
-        return applicationDAO.getApplicationExportQualification(application);
     }
 
     public List<Application> getUclApplicationsForExport() {
@@ -211,10 +221,10 @@ public class ApplicationService {
     public void saveProgramDetails(Integer applicationId, ApplicationProgramDetailsDTO programDetailsDTO) {
         Application application = entityService.getById(Application.class, applicationId);
         Institution institution = application.getInstitution();
-        ApplicationProgramDetails programDetails = application.getProgramDetails();
+        ApplicationProgramDetail programDetails = application.getProgramDetail();
         if (programDetails == null) {
-            programDetails = new ApplicationProgramDetails();
-            application.setProgramDetails(programDetails);
+            programDetails = new ApplicationProgramDetail();
+            application.setProgramDetail(programDetails);
         }
 
         StudyOption studyOption = importedEntityService.getById(StudyOption.class, institution, programDetailsDTO.getStudyOption());
@@ -240,20 +250,20 @@ public class ApplicationService {
             }
         }
         for (ApplicationSupervisorDTO supervisorDTO : programDetailsDTO.getSupervisors()) {
-            User user = userService.getOrCreateUser(supervisorDTO.getUser().getFirstName(), supervisorDTO.getUser().getLastName(), supervisorDTO.getUser().getEmail());
+            User user = userService.getOrCreateUser(supervisorDTO.getUser().getFirstName(), supervisorDTO.getUser().getLastName(), supervisorDTO.getUser()
+                    .getEmail());
             ApplicationSupervisor supervisor = new ApplicationSupervisor().withAware(supervisorDTO.getAware()).withUser(user);
             programDetails.getSupervisors().add(supervisor);
         }
-        // TODO: store the referral URL
     }
 
     public void savePersonalDetails(Integer applicationId, ApplicationPersonalDetailsDTO personalDetailsDTO) {
         Application application = entityService.getById(Application.class, applicationId);
         Institution institution = application.getInstitution();
-        ApplicationPersonalDetails personalDetails = application.getPersonalDetails();
+        ApplicationPersonalDetail personalDetails = application.getPersonalDetail();
         if (personalDetails == null) {
-            personalDetails = new ApplicationPersonalDetails();
-            application.setPersonalDetails(personalDetails);
+            personalDetails = new ApplicationPersonalDetail();
+            application.setPersonalDetail(personalDetails);
         }
 
         User user = application.getUser();
@@ -266,7 +276,7 @@ public class ApplicationService {
         Gender gender = importedEntityService.getById(Gender.class, institution, personalDetailsDTO.getGender());
         Country country = importedEntityService.getById(Country.class, institution, personalDetailsDTO.getCountry());
         Language firstNationality = importedEntityService.getById(Language.class, institution, personalDetailsDTO.getFirstNationality());
-        Language secondNationality = personalDetailsDTO.getSecondNationality() != null ? importedEntityService.<Language>getById(Language.class, institution,
+        Language secondNationality = personalDetailsDTO.getSecondNationality() != null ? importedEntityService.<Language> getById(Language.class, institution,
                 personalDetailsDTO.getSecondNationality()) : null;
         Domicile residenceCountry = importedEntityService.getById(Domicile.class, institution, personalDetailsDTO.getResidenceCountry());
         Ethnicity ethnicity = importedEntityService.getById(Ethnicity.class, institution, personalDetailsDTO.getEthnicity());
@@ -387,7 +397,7 @@ public class ApplicationService {
     }
 
     public ApplicationEmploymentPosition saveEmploymentPosition(Integer applicationId, Integer employmentPositionId,
-                                                                ApplicationEmploymentPositionDTO employmentPositionDTO) {
+            ApplicationEmploymentPositionDTO employmentPositionDTO) {
         Application application = entityService.getById(Application.class, applicationId);
 
         ApplicationEmploymentPosition employmentPosition;
@@ -461,7 +471,7 @@ public class ApplicationService {
         if (refereeId != null) {
             referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
         } else {
-            referee = new ApplicationReferee().withIncludeInExport(false);
+            referee = new ApplicationReferee();
             application.getReferees().add(referee);
         }
 
@@ -503,6 +513,70 @@ public class ApplicationService {
         additionalInformation.setConvictionsText(Strings.emptyToNull(additionalInformationDTO.getConvictionsText()));
     }
 
+    public void validateApplicationCompleteness(Integer applicationId) {
+        Application application = entityService.getById(Application.class, applicationId);
+        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(application, "application");
+        ValidationUtils.invokeValidator(completeApplicationValidator, application, errors);
+        if (errors.hasErrors()) {
+            throw new PrismValidationException("Application not completed", errors);
+        }
+    }
+
+    public LocalDate resolveDueDateBaseline(Application application, Comment comment) {
+        if (comment.isApplicationAssignReviewersComment()) {
+            LocalDate closingDate = application.getClosingDate();
+
+            if (closingDate != null) {
+                application.setClosingDate(null);
+                application.setPreviousClosingDate(closingDate);
+                return closingDate;
+            }
+        }
+        return null;
+    }
+
+    public void postProcessApplication(Application application, Comment comment) {
+        if (comment.isProjectCreateComment()) {
+            synchroniseProjectSupervisors(application);
+        }
+
+        if (comment.isApplicationProvideReferenceComment()) {
+            synchroniseReferees(application, comment);
+        }
+
+        if (comment.isApplicationConfirmOfferRecommendationComment()) {
+            synchroniseOfferRecommendation(application, comment);
+        }
+
+        if (comment.isRatingComment()) {
+            applicationSummaryService.summariseApplication(application);
+        }
+
+        if (comment.isTransitionComment()) {
+            applicationSummaryService.summariseApplicationProcessing(application);
+        }
+    }
+
+    private void synchroniseProjectSupervisors(Application application) {
+        Role supervisorRole = roleService.getById(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR);
+        List<User> supervisorUsers = roleService.getRoleUsers(application, supervisorRole);
+
+        for (User supervisorUser : supervisorUsers) {
+            application.getProgramDetail().getSupervisors().add(new ApplicationSupervisor().withUser(supervisorUser).withAware(true));
+        }
+    }
+
+    private void synchroniseReferees(Application application, Comment comment) {
+        ApplicationReferee referee = applicationDAO.getRefereeByUser(application, comment.getUser());
+        referee.setComment(comment);
+    }
+
+    private void synchroniseOfferRecommendation(Application application, Comment comment) {
+        application.setConfirmedStartDate(comment.getPositionProvisionalStartDate());
+        application.setConfirmedSupervisor(roleService.getRoleUsers(application, PrismRole.APPLICATION_PRIMARY_SUPERVISOR).get(0));
+        application.setConfirmedOfferType(comment.getAppointmentConditions() == null ? PrismOfferType.UNCONDITIONAL : PrismOfferType.CONDITIONAL);
+    }
+
     private void copyAddress(Institution institution, Address to, AddressDTO from) {
         Domicile currentAddressDomicile = importedEntityService.getById(Domicile.class, institution, from.getDomicile());
         to.setDomicile(currentAddressDomicile);
@@ -510,7 +584,7 @@ public class ApplicationService {
         to.setAddressLine2(Strings.emptyToNull(from.getAddressLine2()));
         to.setAddressTown(from.getAddressTown());
         to.setAddressRegion(Strings.emptyToNull(from.getAddressRegion()));
-        to.setAddressCode(Strings.isNullOrEmpty(from.getAddressCode()) ? "Not Provided" : from.getAddressCode());
+        to.setAddressCode(Strings.emptyToNull(from.getAddressCode()));
     }
 
     private Application getPreviousApplication(Application application) {
@@ -521,16 +595,4 @@ public class ApplicationService {
         return previousApplication;
     }
 
-    private LocalDate getNextMonday(LocalDate dateFrom) {
-        return dateFrom.plusDays(8 - dateFrom.getDayOfWeek());
-    }
-
-    public void validateApplicationCompleteness(Integer applicationId) {
-        Application application = entityService.getById(Application.class, applicationId);
-        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(application, "application");
-        ValidationUtils.invokeValidator(completeApplicationValidator, application, errors);
-        if(errors.hasErrors()){
-            throw new PrismValidationException("Application not completed", errors);
-        }
-    }
 }

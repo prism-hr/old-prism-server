@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigInteger;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -12,8 +10,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -38,101 +34,157 @@ import org.hibernate.search.annotations.Store;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 
 @AnalyzerDef(name = "advertAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
-    @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
-    @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
-    @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class)})
-
+        @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
+        @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
+        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class) })
 @Entity
 @Table(name = "ADVERT")
-@Inheritance(strategy = InheritanceType.JOINED)
 @Indexed
-public abstract class Advert extends Resource {
-    
+public class Advert {
+
     @Id
     @GeneratedValue
     private Integer id;
     
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name = "title", nullable = false)
+    @Field(analyzer = @Analyzer(definition = "advertAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    private String title;
+    
+    @Column(name = "summary")
+    @Field(analyzer = @Analyzer(definition = "advertAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    private String summary;
 
     @Column(name = "description")
     @Field(analyzer = @Analyzer(definition = "advertAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String description;
-    
+
     @Column(name = "apply_link")
     private String applyLink;
-    
-    @Column(name = "immediate_start", nullable = false)
-    private Boolean immediateStart;
-    
+
     @ManyToOne
     @JoinColumn(name = "institution_address_id")
     private InstitutionAddress address;
-
-    @Column(name = "month_study_duration")
-    private Integer studyDuration;
+    
+    @Column(name = "month_study_duration_minimum")
+    private Integer studyDurationMinimum;
+    
+    @Column(name = "month_study_duration_maximum")
+    private Integer studyDurationMaximum;
+    
+    @Column(name = "currency")
+    private String currency;
+    
+    @Column(name = "currency_at_locale")
+    private String currencyAtLocale;
     
     @Column(name = "fee_interval")
     @Enumerated(EnumType.STRING)
     private DurationUnit feeInterval;
     
-    @Column(name = "fee_value")
-    private BigDecimal feeValue;
+    @Column(name = "month_fee_minimum_specified")
+    private BigInteger monthFeeMinimumSpecified;
     
-    @Column(name = "fee_annualised")
-    private BigDecimal feeAnnualised;
+    @Column(name = "month_fee_maximum_specified")
+    private BigInteger monthFeeMaximumSpecified;
+    
+    @Column(name = "year_fee_minimum_specified")
+    private BigInteger yearFeeMinimumSpecified;
+    
+    @Column(name = "year_fee_maximum_specified")
+    private BigInteger yearFeeMaximumSpecified;
+    
+    @Column(name = "month_fee_minimum_at_locale")
+    private BigInteger monthFeeMinimumAtLocale;
+    
+    @Column(name = "month_fee_maximum_at_locale")
+    private BigInteger monthFeeMaximumAtLocale;
+    
+    @Column(name = "year_fee_minimum_at_locale")
+    private BigInteger yearFeeMinimumAtLocale;
+    
+    @Column(name = "year_fee_maximum_at_locale")
+    private BigInteger yearFeeMaximumAtLocale;
     
     @Column(name = "pay_interval")
     @Enumerated(EnumType.STRING)
     private DurationUnit payInterval;
     
-    @Column(name = "pay_value")
-    private BigDecimal payValue;
+    @Column(name = "month_pay_minimum_specified")
+    private BigInteger monthPayMinimumSpecified;
     
-    @Column(name = "pay_annualised")
-    private BigDecimal payAnnualised;
+    @Column(name = "month_pay_maximum_specified")
+    private BigInteger monthPayMaximumSpecified;
+    
+    @Column(name = "year_pay_minimum_specified")
+    private BigInteger yearPayMinimumSpecified;
+    
+    @Column(name = "year_pay_maximum_specified")
+    private BigInteger yearPayMaximumSpecified;
+    
+    @Column(name = "month_pay_minimum_at_locale")
+    private BigInteger monthPayMinimumAtLocale;
+    
+    @Column(name = "month_pay_maximum_at_locale")
+    private BigInteger monthPayMaximumAtLocale;
+    
+    @Column(name = "year_pay_minimum_at_locale")
+    private BigInteger yearPayMinimumAtLocale;
+    
+    @Column(name = "year_pay_maximum_at_locale")
+    private BigInteger yearPayMaximumAtLocale;
     
     @OneToOne
     @JoinColumn(name = "advert_closing_date_id", unique = true)
     private AdvertClosingDate closingDate;
     
+    @Column(name = "sequence_identifier")
+    private String sequenceIdentifier;
+
+    @OneToOne(mappedBy = "advert")
+    private Program program;
+    
+    @OneToOne(mappedBy = "advert")
+    private Project project;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
-    private List<AdvertClosingDate> closingDates = new ArrayList<AdvertClosingDate>();
+    private Set<AdvertClosingDate> closingDates = Sets.newHashSet();
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "OPPORTUNITY_CATEGORY", joinColumns = @JoinColumn(name = "advert_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "advert_opportunity_category_id", nullable = false))
+    @JoinTable(name = "ADVERT_CATEGORY", joinColumns = @JoinColumn(name = "advert_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "advert_opportunity_category_id", nullable = false))
     private Set<OpportunityCategory> categories = Sets.newHashSet();
 
     @OneToMany(mappedBy = "advert")
-    private Set<AdvertRecruitmentPreference> recruitmentPreferences = Sets.newHashSet();
-    
-    @Override
-    public Integer getId() {
+    private Set<AdvertRecruitmentPreference> preferences = Sets.newHashSet();
+
+    public final Integer getId() {
         return id;
     }
 
-    @Override
-    public void setId(Integer id) {
+    public final void setId(Integer id) {
         this.id = id;
     }
 
-    @Override
-    public User getUser() {
-        return user;
+    public final String getTitle() {
+        return title;
     }
 
-    @Override
-    public void setUser(User user) {
-        this.user = user;
+    public final void setTitle(String title) {
+        this.title = title;
     }
     
+    public final String getSummary() {
+        return summary;
+    }
+
+    public final void setSummary(String summary) {
+        this.summary = summary;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -149,14 +201,6 @@ public abstract class Advert extends Resource {
         this.applyLink = applyLink;
     }
 
-    public boolean isImmediateStart() {
-        return immediateStart;
-    }
-
-    public void setImmediateStart(boolean immediateStart) {
-        this.immediateStart = immediateStart;
-    }
-
     public InstitutionAddress getAddress() {
         return address;
     }
@@ -165,60 +209,180 @@ public abstract class Advert extends Resource {
         this.address = address;
     }
 
-    public Integer getStudyDuration() {
-        return studyDuration;
+    public final Integer getStudyDurationMinimum() {
+        return studyDurationMinimum;
     }
 
-    public DurationUnit getFeeInterval() {
+    public final void setStudyDurationMinimum(Integer studyDurationMinimum) {
+        this.studyDurationMinimum = studyDurationMinimum;
+    }
+
+    public final Integer getStudyDurationMaximum() {
+        return studyDurationMaximum;
+    }
+
+    public final void setStudyDurationMaximum(Integer studyDurationMaximum) {
+        this.studyDurationMaximum = studyDurationMaximum;
+    }
+
+    public final String getCurrency() {
+        return currency;
+    }
+
+    public final void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public final String getCurrencyAtLocale() {
+        return currencyAtLocale;
+    }
+
+    public final void setCurrencyAtLocale(String currencyAtLocale) {
+        this.currencyAtLocale = currencyAtLocale;
+    }
+
+    public final DurationUnit getFeeInterval() {
         return feeInterval;
     }
 
-    public void setFeeInterval(DurationUnit feeInterval) {
+    public final void setFeeInterval(DurationUnit feeInterval) {
         this.feeInterval = feeInterval;
     }
 
-    public BigDecimal getFeeValue() {
-        return feeValue;
+    public final BigInteger getMonthFeeMinimumSpecified() {
+        return monthFeeMinimumSpecified;
     }
 
-    public void setFeeValue(BigDecimal feeValue) {
-        this.feeValue = feeValue;
+    public final void setMonthFeeMinimumSpecified(BigInteger monthFeeMinimumSpecified) {
+        this.monthFeeMinimumSpecified = monthFeeMinimumSpecified;
     }
 
-    public BigDecimal getFeeAnnualised() {
-        return feeAnnualised;
+    public final BigInteger getMonthFeeMaximumSpecified() {
+        return monthFeeMaximumSpecified;
     }
 
-    public void setFeeAnnualised(BigDecimal feeAnnualised) {
-        this.feeAnnualised = feeAnnualised;
+    public final void setMonthFeeMaximumSpecified(BigInteger monthFeeMaximumSpecified) {
+        this.monthFeeMaximumSpecified = monthFeeMaximumSpecified;
     }
 
-    public DurationUnit getPayInterval() {
+    public final BigInteger getYearFeeMinimumSpecified() {
+        return yearFeeMinimumSpecified;
+    }
+
+    public final void setYearFeeMinimumSpecified(BigInteger yearFeeMinimumSpecified) {
+        this.yearFeeMinimumSpecified = yearFeeMinimumSpecified;
+    }
+
+    public final BigInteger getYearFeeMaximumSpecified() {
+        return yearFeeMaximumSpecified;
+    }
+
+    public final void setYearFeeMaximumSpecified(BigInteger yearFeeMaximumSpecified) {
+        this.yearFeeMaximumSpecified = yearFeeMaximumSpecified;
+    }
+
+    public final BigInteger getMonthFeeMinimumAtLocale() {
+        return monthFeeMinimumAtLocale;
+    }
+
+    public final void setMonthFeeMinimumAtLocale(BigInteger monthFeeMinimumAtLocale) {
+        this.monthFeeMinimumAtLocale = monthFeeMinimumAtLocale;
+    }
+
+    public final BigInteger getMonthFeeMaximumAtLocale() {
+        return monthFeeMaximumAtLocale;
+    }
+
+    public final void setMonthFeeMaximumAtLocale(BigInteger monthFeeMaximumAtLocale) {
+        this.monthFeeMaximumAtLocale = monthFeeMaximumAtLocale;
+    }
+
+    public final BigInteger getYearFeeMinimumAtLocale() {
+        return yearFeeMinimumAtLocale;
+    }
+
+    public final void setYearFeeMinimumAtLocale(BigInteger yearFeeMinimumAtLocale) {
+        this.yearFeeMinimumAtLocale = yearFeeMinimumAtLocale;
+    }
+
+    public final BigInteger getYearFeeMaximumAtLocale() {
+        return yearFeeMaximumAtLocale;
+    }
+
+    public final void setYearFeeMaximumAtLocale(BigInteger yearFeeMaximumAtLocale) {
+        this.yearFeeMaximumAtLocale = yearFeeMaximumAtLocale;
+    }
+
+    public final DurationUnit getPayInterval() {
         return payInterval;
     }
 
-    public void setPayInterval(DurationUnit payInterval) {
+    public final void setPayInterval(DurationUnit payInterval) {
         this.payInterval = payInterval;
     }
 
-    public BigDecimal getPayValue() {
-        return payValue;
+    public final BigInteger getMonthPayMinimumSpecified() {
+        return monthPayMinimumSpecified;
     }
 
-    public void setPayValue(BigDecimal payValue) {
-        this.payValue = payValue;
+    public final void setMonthPayMinimumSpecified(BigInteger monthPayMinimumSpecified) {
+        this.monthPayMinimumSpecified = monthPayMinimumSpecified;
     }
 
-    public BigDecimal getPayAnnualised() {
-        return payAnnualised;
+    public final BigInteger getMonthPayMaximumSpecified() {
+        return monthPayMaximumSpecified;
     }
 
-    public void setPayAnnualised(BigDecimal payAnnualised) {
-        this.payAnnualised = payAnnualised;
+    public final void setMonthPayMaximumSpecified(BigInteger monthPayMaximumSpecified) {
+        this.monthPayMaximumSpecified = monthPayMaximumSpecified;
     }
 
-    public void setStudyDuration(Integer studyDuration) {
-        this.studyDuration = studyDuration;
+    public final BigInteger getYearPayMinimumSpecified() {
+        return yearPayMinimumSpecified;
+    }
+
+    public final void setYearPayMinimumSpecified(BigInteger yearPayMinimumSpecified) {
+        this.yearPayMinimumSpecified = yearPayMinimumSpecified;
+    }
+
+    public final BigInteger getYearPayMaximumSpecified() {
+        return yearPayMaximumSpecified;
+    }
+
+    public final void setYearPayMaximumSpecified(BigInteger yearPayMaximumSpecified) {
+        this.yearPayMaximumSpecified = yearPayMaximumSpecified;
+    }
+
+    public final BigInteger getMonthPayMinimumAtLocale() {
+        return monthPayMinimumAtLocale;
+    }
+
+    public final void setMonthPayMinimumAtLocale(BigInteger monthPayMinimumAtLocale) {
+        this.monthPayMinimumAtLocale = monthPayMinimumAtLocale;
+    }
+
+    public final BigInteger getMonthPayMaximumAtLocale() {
+        return monthPayMaximumAtLocale;
+    }
+
+    public final void setMonthPayMaximumAtLocale(BigInteger monthPayMaximumAtLocale) {
+        this.monthPayMaximumAtLocale = monthPayMaximumAtLocale;
+    }
+
+    public final BigInteger getYearPayMinimumAtLocale() {
+        return yearPayMinimumAtLocale;
+    }
+
+    public final void setYearPayMinimumAtLocale(BigInteger yearPayMinimumAtLocale) {
+        this.yearPayMinimumAtLocale = yearPayMinimumAtLocale;
+    }
+
+    public final BigInteger getYearPayMaximumAtLocale() {
+        return yearPayMaximumAtLocale;
+    }
+
+    public final void setYearPayMaximumAtLocale(BigInteger yearPayMaximumAtLocale) {
+        this.yearPayMaximumAtLocale = yearPayMaximumAtLocale;
     }
 
     public AdvertClosingDate getClosingDate() {
@@ -228,38 +392,49 @@ public abstract class Advert extends Resource {
     public void setClosingDate(AdvertClosingDate closingDate) {
         this.closingDate = closingDate;
     }
+    
+    public final String getSequenceIdentifier() {
+        return sequenceIdentifier;
+    }
 
-    public List<AdvertClosingDate> getClosingDates() {
-        return closingDates;
+    public final void setSequenceIdentifier(String sequenceIdentifier) {
+        this.sequenceIdentifier = sequenceIdentifier;
     }
     
+    public final Program getProgram() {
+        return program;
+    }
+
+    public final Project getProject() {
+        return project;
+    }
+
+    public Set<AdvertClosingDate> getClosingDates() {
+        return closingDates;
+    }
+
     public Set<OpportunityCategory> getCategories() {
         return categories;
     }
 
-    public Set<AdvertRecruitmentPreference> getRecruitmentPreferences() {
-        return recruitmentPreferences;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Advert other = (Advert) obj;
-        return Objects.equal(id, other.getId());
+    public Set<AdvertRecruitmentPreference> getPreferences() {
+        return preferences;
     }
     
-    public abstract String getTitle();
+    public Advert withTitle(String title) {
+        this.title = title;
+        return this;
+    }
     
-    public abstract void setTitle(String title);
+    public ParentResource getParentResource() {
+        return project == null ? program : project;
+    }
+    
+    public boolean isProgramAdvert() {
+        return program != null;
+    }
 
+    public boolean isProjectAdvert() {
+        return project != null;
+    }
 }

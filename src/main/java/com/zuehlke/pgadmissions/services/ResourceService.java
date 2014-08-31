@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
@@ -20,20 +19,14 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Scope;
-import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
-import com.zuehlke.pgadmissions.dto.ResourceActionDTO;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
-import com.zuehlke.pgadmissions.dto.StateChangeDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
@@ -91,7 +84,7 @@ public class ResourceService {
         return Lists.newArrayList();
     }
 
-    public ActionOutcome createResource(User user, Action action, Object newResourceDTO) throws WorkflowEngineException {
+    public ActionOutcomeDTO createResource(User user, Action action, Object newResourceDTO, String referrer) throws WorkflowEngineException {
         Resource resource = null;
 
         switch (action.getCreationScope().getId()) {
@@ -120,7 +113,7 @@ public class ResourceService {
         return actionService.executeUserAction(resource, action, comment);
     }
 
-    public void persistResource(Resource resource, Comment comment) throws WorkflowEngineException {
+    public void persistResource(Resource resource) throws WorkflowEngineException {
         resource.setCreatedTimestamp(new DateTime());
         resource.setUpdatedTimestamp(new DateTime());
 
@@ -143,41 +136,60 @@ public class ResourceService {
 
         resource.setCode(generateResourceCode(resource));
         entityService.save(resource);
-        comment.setRole(roleService.getCreatorRole(resource).getId().toString());
     }
 
     public String generateResourceCode(Resource resource) {
         return "PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId());
     }
 
-    public void updateResource(Resource resource, Action action, Comment comment) {
-        if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
-            comment.setRole(PrismRole.SYSTEM_ADMINISTRATOR.toString());
-        } else {
-            comment.setRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action)));
-            if (comment.getDelegateUser() != null) {
-                comment.setDelegateRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getDelegateUser(), resource, action)));
-            }
+    public void processResource(Resource resource, Comment comment) {
+        LocalDate baselineCustom;
+        LocalDate baseline = new LocalDate();
+        
+        switch (resource.getResourceScope()) {
+        case PROGRAM:
+            baselineCustom = programService.resolveDueDateBaseline((Program) resource, comment);
+        case PROJECT:
+            baselineCustom = projectService.resolveDueDateBaseline((Project) resource, comment);
+        case APPLICATION:
+            baselineCustom = applicationService.resolveDueDateBaseline((Application) resource, comment);
+        default:
+            baselineCustom = null;
         }
+        
+        baselineCustom = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
+        
+        StateDuration stateDuration = stateService.getStateDuration(resource);
+        resource.setDueDate(baseline.plusDays(stateDuration == null ? 0 : stateDuration.getDuration()));
     }
-
-    public void transitionResource(Resource resource, Comment comment, State transitionState, StateDuration stateDuration) {
-        resource.setPreviousState(resource.getState());
-        resource.setState(transitionState);
-        comment.setTransitionState(transitionState);
-
-        LocalDate dueDate = comment.getUserSpecifiedDueDate();
-        if (dueDate == null && comment.getAction().getActionCategory() == PrismActionCategory.ESCALATE_RESOURCE) {
-            LocalDate dueDateBaseline = resource.getDueDateBaseline();
-            dueDate = dueDateBaseline.plusDays(stateDuration == null ? 0 : stateDuration.getDuration());
-        }
-        resource.setDueDate(dueDate);
-
+    
+    public void updateResource(Resource resource, Comment comment) {     
         DateTime baselineTime = new DateTime();
-        resource.setUpdatedTimestamp(baselineTime);
-
         LocalDate baselineDate = baselineTime.toLocalDate();
-        setSequenceIdentifier(resource, baselineDate);
+        
+        String lastSequenceIdentifier = resourceDAO.getLastSequenceIdentifier(resource, baselineDate);
+        
+        lastSequenceIdentifier = lastSequenceIdentifier == null ? baselineDate.toString("yyyyMMdd") + "-0000000001" : lastSequenceIdentifier;
+        String[] lastSequenceIdentifierParts = lastSequenceIdentifier.split("-");
+        Integer lastSequenceIdentifierIndex = Integer.parseInt(lastSequenceIdentifierParts[1].replaceAll("^0+(?!$)", ""));
+        
+        Integer nextSequenceIdentifierIndex = lastSequenceIdentifierIndex + 1;
+        resource.setSequenceIdentifier(lastSequenceIdentifierParts[0] + "-" + String.format("%010d", nextSequenceIdentifierIndex));
+        
+        resource.setUpdatedTimestamp(baselineTime);
+        
+        switch (resource.getResourceScope()) {
+        case PROGRAM:
+            programService.postProcessProgram((Program) resource, comment);
+        case PROJECT:
+            projectService.postProcessProject((Project) resource, comment);
+            break;
+        case APPLICATION:
+            applicationService.postProcessApplication((Application) resource, comment);
+            break;
+        default:
+            break;
+        }
     }
 
     public HashMap<Resource, Action> getResourceEscalations() {
@@ -191,7 +203,6 @@ public class ResourceService {
                 escalations.put(resource, action);
             }
         }
-
         return escalations;
     }
 
@@ -215,31 +226,19 @@ public class ResourceService {
                 }
             }
         }
-
         return propagations;
     }
-
+    
     public Resource getOperativeResource(Resource resource, Action action) {
         return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
     }
-
-    public List<ResourceActionDTO> getResoucesFlaggedAsUrgent(Scope scope) {
-        return resourceDAO.getResourcesFlaggedAsUrgent(scope);
+    
+    public <T extends Resource> List<Resource> getResourcesRequiringAttention(Class<T> resourceClass) {
+        return resourceDAO.getResourcesRequiringAttention(resourceClass);
     }
-
-    public List<StateChangeDTO> getRecentStateChanges(Scope scope, LocalDate baseline) {
-        return resourceDAO.getRecentStateChanges(scope, baseline);
+    
+    public <T extends Resource> List<Resource> getRecentlyUpdatedResources(Class<T> resourceClass, DateTime rangeStart, DateTime rangeClose) {
+        return resourceDAO.getRecentlyUpdatedResources(resourceClass, rangeStart, rangeClose);
     }
-
-    private void setSequenceIdentifier(Resource resource, LocalDate baselineDate) {
-        String lastSequenceIdentifier = resourceDAO.getLastSequenceIdentifier(resource, baselineDate);
-        lastSequenceIdentifier = lastSequenceIdentifier == null ? baselineDate.toString("yyyyMMdd") + "-0000000001" : lastSequenceIdentifier;
-        String[] lastSequenceIdentifierParts = lastSequenceIdentifier.split("-");
-
-        Integer lastSequenceIdentifierIndex = Integer.parseInt(lastSequenceIdentifierParts[1].replaceAll("^0+(?!$)", ""));
-        Integer nextSequenceIdentifierIndex = lastSequenceIdentifierIndex + 1;
-
-        resource.setSequenceIdentifier(lastSequenceIdentifierParts[0] + "-" + String.format("%010d", nextSequenceIdentifierIndex));
-    }
-
+    
 }

@@ -11,6 +11,7 @@ import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,12 +43,11 @@ import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationPassport;
-import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
@@ -138,7 +138,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
             addHeaderEvent(form, pdfWriter);
 
-            addProgrammeSection(form, pdfDocument);
+            addProgramSection(form, pdfDocument);
 
             pdfDocument.add(addSectionSeparators());
 
@@ -191,7 +191,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             submittedDateHeader = new Chunk("", SMALLER_FONT);
         }
 
-        headerEvent = new HeaderEvent(new Chunk(form.getAdvert().getTitle(), SMALLER_FONT), new Chunk(form.getCode(), SMALLER_FONT),
+        headerEvent = new HeaderEvent(new Chunk(form.getProgram().getTitle(), SMALLER_FONT), new Chunk(form.getCode(), SMALLER_FONT),
                 submittedDateHeader);
         writer.setPageEvent(headerEvent);
     }
@@ -225,8 +225,8 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         String fullName = Joiner.on(" ").skipNulls()
                 .join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3(), applicant.getLastName());
         table.addCell(newTableCell(fullName, SMALL_FONT));
-        table.addCell(newTableCell("Programme", SMALL_BOLD_FONT));
-        table.addCell(newTableCell(form.getAdvert().getTitle(), SMALL_FONT));
+        table.addCell(newTableCell("Program", SMALL_BOLD_FONT));
+        table.addCell(newTableCell(form.getProgram().getTitle(), SMALL_FONT));
 
         addProjectTitleToTable(table, form);
         addClosingDateToTable(table, form);
@@ -243,7 +243,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.newPage();
     }
 
-    protected void addProgrammeSection(final Application form, Document pdfDocument) throws DocumentException {
+    protected void addProgramSection(final Application form, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newGrayTableCell("PROGRAMME", BOLD_FONT));
@@ -253,26 +253,26 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-        table.addCell(newTableCell("Programme", SMALL_BOLD_FONT));
-        table.addCell(newTableCell(form.getAdvert().getTitle(), SMALL_FONT));
+        table.addCell(newTableCell("Program", SMALL_BOLD_FONT));
+        table.addCell(newTableCell(form.getProgram().getTitle(), SMALL_FONT));
 
         table.addCell(newTableCell("Study Option", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "programmeDetails.studyOption"));
+        table.addCell(createPropertyCell(form, "programDetails.studyOption"));
 
         addProjectTitleToTable(table, form);
 
         addClosingDateToTable(table, form);
 
         table.addCell(newTableCell("Start Date", SMALL_BOLD_FONT));
-        if (form.getProgramDetails().getStartDate() != null) {
-            table.addCell(newTableCell(dateFormat.format(form.getProgramDetails().getStartDate()), SMALL_FONT));
+        if (form.getProgramDetail().getStartDate() != null) {
+            table.addCell(newTableCell(dateFormat.format(form.getProgramDetail().getStartDate()), SMALL_FONT));
         } else {
             table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
         }
 
         table.addCell(newTableCell("How did you find us?", SMALL_BOLD_FONT));
-        if (form.getProgramDetails().getReferralSource() != null) {
-            table.addCell(newTableCell(form.getProgramDetails().getReferralSource().getName(), SMALL_FONT));
+        if (form.getProgramDetail().getReferralSource() != null) {
+            table.addCell(newTableCell(form.getProgramDetail().getReferralSource().getName(), SMALL_FONT));
         } else {
             table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
         }
@@ -280,7 +280,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        if (form.getProgramDetails().getSupervisors().isEmpty()) {
+        if (form.getProgramDetail().getSupervisors().isEmpty()) {
             table = new PdfPTable(2);
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             table.addCell(newTableCell("Supervisor", SMALL_BOLD_FONT));
@@ -289,7 +289,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             pdfDocument.add(addSectionSeparators());
         } else {
             int counter = 1;
-            for (ApplicationSupervisor supervisor : form.getProgramDetails().getSupervisors()) {
+            for (ApplicationSupervisor supervisor : form.getProgramDetail().getSupervisors()) {
                 table = new PdfPTable(2);
                 table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                 PdfPCell headerCell = newTableCell("Supervisor (" + counter++ + ")", SMALL_BOLD_FONT);
@@ -325,7 +325,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        ApplicationPersonalDetails personalDetails = form.getPersonalDetails();
+        ApplicationPersonalDetail personalDetails = form.getPersonalDetail();
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
 
@@ -989,7 +989,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                     } else {
                         table.addCell(newTableCell("No", SMALL_FONT));
                     }
-                    table.addCell(newTableCell("Is the applicant suitable for their chosen postgraduate study programme?", SMALL_BOLD_FONT));
+                    table.addCell(newTableCell("Is the applicant suitable for their chosen postgraduate study program?", SMALL_BOLD_FONT));
                     if (BooleanUtils.isTrue(reference.getSuitableForOpportunity())) {
                         table.addCell(newTableCell("Yes", SMALL_FONT));
                     } else {
@@ -1023,12 +1023,8 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
     private void addClosingDateToTable(PdfPTable table, final Application form) {
         table.addCell(newTableCell("Closing date", SMALL_BOLD_FONT));
-        Project project = form.getProject();
-        String closingDate = NOT_REQUIRED;
-        if (project != null && project.getClosingDate() != null) {
-            closingDate = dateFormat.format(project.getClosingDate());
-        }
-        table.addCell(newTableCell(closingDate, SMALL_FONT));
+        LocalDate closingDate = form.getClosingDate();
+        table.addCell(newTableCell(closingDate == null ? NOT_REQUIRED : dateFormat.format(closingDate), SMALL_FONT));
     }
 
     private void addProjectTitleToTable(PdfPTable table, final Application form) {
@@ -1061,14 +1057,14 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
     }
 
     class HeaderEvent extends PdfPageEventHelper {
-        private final Chunk programmeHeader;
+        private final Chunk programHeader;
         private final Chunk applicationHeader;
         private final Chunk submittedDateHeader;
         private boolean addHeaderAndFooter = true;
         private boolean first = true;
 
-        public HeaderEvent(Chunk programmeHeader, Chunk applicationHeader, Chunk submittedDateHeader) {
-            this.programmeHeader = programmeHeader;
+        public HeaderEvent(Chunk programHeader, Chunk applicationHeader, Chunk submittedDateHeader) {
+            this.programHeader = programHeader;
             this.applicationHeader = applicationHeader;
             this.submittedDateHeader = submittedDateHeader;
         }
@@ -1101,12 +1097,12 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             table.setTotalWidth(0.75f * document.getPageSize().getWidth());
             table.setWidths(new float[] { 25f, 75f });
 
-            PdfPCell c1 = new PdfPCell(new Phrase("Programme", SMALLER_BOLD_FONT));
+            PdfPCell c1 = new PdfPCell(new Phrase("Program", SMALLER_BOLD_FONT));
             c1.setBorder(0);
             c1.setHorizontalAlignment(Element.ALIGN_LEFT);
             table.addCell(c1);
 
-            c1 = new PdfPCell(new Phrase(programmeHeader));
+            c1 = new PdfPCell(new Phrase(programHeader));
             c1.setBorder(0);
             c1.setHorizontalAlignment(Element.ALIGN_LEFT);
             table.addCell(c1);

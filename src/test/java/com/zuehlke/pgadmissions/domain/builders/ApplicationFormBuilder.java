@@ -12,8 +12,8 @@ import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
-import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetail;
+import com.zuehlke.pgadmissions.domain.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -23,8 +23,8 @@ import com.zuehlke.pgadmissions.domain.User;
 public class ApplicationFormBuilder {
 
     private State status;
-    private ApplicationProgramDetails programmeDetails;
-    private ApplicationPersonalDetails personalDetails;
+    private ApplicationProgramDetail programmeDetails;
+    private ApplicationPersonalDetail personalDetails;
     private ApplicationAddress applicationFormAddress;
     private Integer id;
     private User applicant;
@@ -51,12 +51,12 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder personalDetails(ApplicationPersonalDetails personalDetails) {
+    public ApplicationFormBuilder personalDetails(ApplicationPersonalDetail personalDetails) {
         this.personalDetails = personalDetails;
         return this;
     }
 
-    public ApplicationFormBuilder programmeDetails(ApplicationProgramDetails programmeDetails) {
+    public ApplicationFormBuilder programmeDetails(ApplicationProgramDetail programmeDetails) {
         this.programmeDetails = programmeDetails;
         return this;
     }
@@ -160,11 +160,11 @@ public class ApplicationFormBuilder {
         application.getReferees().addAll(referees);
         application.setCreatedTimestamp(createdTimestamp);
         application.getQualifications().addAll(qualifications);
-        application.setProgramDetails(programmeDetails);
+        application.setProgramDetail(programmeDetails);
         application.getFundings().addAll(fundings);
         application.setAddress(applicationFormAddress);
         application.setDocument(applicationFormDocument);
-        application.setPersonalDetails(personalDetails);
+        application.setPersonalDetail(personalDetails);
         application.setDueDate(dueDate);
         application.setState(status);
         application.setAdditionalInformation(info);

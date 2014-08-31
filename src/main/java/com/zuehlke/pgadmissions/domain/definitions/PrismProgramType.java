@@ -1,33 +1,55 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
+import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
+
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramTypeConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramTypeImmediate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramTypeScheduled;
 
 public enum PrismProgramType {
 
-    // TODO: reduce this to a more sensible global set
-    MRES("MRes"), //
-    MDRES("MD(Res)"), //
-    MSC("MSc"), //
-    RESEARCH_DEGREE("Research Degree"), //
-    ENGINEERING_DOCTORATE("Engineering Doctorate"), //
-    INTERNSHIP("Internship"), //
-    VISITING_RESEARCH("Research Visit"), //
-    UNCLASSIFIED("Unclassified");
-    
-    private String prefix;
-    
-    private PrismProgramType(String prefix) {
-        this.prefix = prefix;
+    UNDERGRADUATE_STUDY(new PrismProgramTypeScheduled().withStartMonth(DateTimeConstants.SEPTEMBER).withStartWeek(3).withStartDay(DateTimeConstants.MONDAY), //
+            new String[] {}), //
+    POSTGRADUATE_STUDY(new PrismProgramTypeScheduled().withStartMonth(DateTimeConstants.SEPTEMBER).withStartWeek(3).withStartDay(DateTimeConstants.MONDAY), //
+            new String[] { "mres", "md(res)" }), //
+    POSTGRADUATE_RESEARCH(new PrismProgramTypeScheduled().withStartMonth(DateTimeConstants.SEPTEMBER).withStartWeek(3).withStartDay(DateTimeConstants.MONDAY), //
+            new String[] { "research degree", "engineering doctorate" }), //
+    INTERNSHIP(new PrismProgramTypeImmediate().withStartDay(DateTimeConstants.MONDAY), new String[] {}), //
+    SECONDMENT(new PrismProgramTypeImmediate().withStartDay(DateTimeConstants.MONDAY), new String[] { "visiting research" }), //
+    EMPLOYMENT(new PrismProgramTypeImmediate().withStartDay(DateTimeConstants.MONDAY), new String[] {}), //
+    CONTINUING_PROFESSIONAL_DEVELOPMENT(new PrismProgramTypeImmediate().withStartDay(DateTimeConstants.MONDAY), new String[] {}), //
+    UNCLASSIFIED(new PrismProgramTypeImmediate().withStartDay(DateTimeConstants.MONDAY), new String[] {});
+
+    private PrismProgramTypeConfiguration configuration;
+
+    private String[] prefixes;
+
+    private PrismProgramType(PrismProgramTypeConfiguration configuration, String[] prefixes) {
+        this.configuration = configuration;
+        this.prefixes = prefixes;
     }
 
     public static PrismProgramType findValueFromString(String toSearchIn) {
         for (PrismProgramType value : PrismProgramType.values()) {
-            toSearchIn = toSearchIn.trim().replaceAll("\\s+", " ").toLowerCase();
-            String prefixForSearch = value.prefix.toLowerCase();
-            if (value != UNCLASSIFIED && toSearchIn.toLowerCase().startsWith(prefixForSearch)) {
-                return value;
+            if (value.prefixes.length > 0) {
+                toSearchIn = toSearchIn.trim().replaceAll("\\s+", " ").toLowerCase();
+                for (String prefix : value.prefixes) {
+                    if (toSearchIn.startsWith(prefix)) {
+                        return value;
+                    }
+                }
             }
         }
         return UNCLASSIFIED;
     }
 
+    public LocalDate getImmediateStartDate() {
+        return configuration.getImmediateStartDate();
+    }
+    
+    public LocalDate getRecommendedStartDate() {
+        return configuration.getRecommendedStartDate();
+    }
+    
 }

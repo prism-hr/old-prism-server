@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
@@ -104,23 +104,24 @@ public class UserService {
         return user;
     }
 
-    public User registerUser(UserRegistrationDTO registrationDTO) throws WorkflowEngineException {
+    public User registerUser(UserRegistrationDTO registrationDTO, String referrer) throws WorkflowEngineException {
         User user = getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail());
         if ((registrationDTO.getActivationCode() != null && !user.getActivationCode().equals(registrationDTO.getActivationCode()))
                 || user.getUserAccount() != null) {
             throw new ResourceNotFoundException();
         }
 
-        user.setUserAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(registrationDTO.getPassword())).withEnabled(false));
+        user.setUserAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(registrationDTO.getPassword())).withSendRecommendationNotification(false)
+                .withEnabled(false));
 
-        ActionOutcome outcome = actionService.getRegistrationOutcome(user, registrationDTO);
+        ActionOutcomeDTO outcome = actionService.getRegistrationOutcome(user, registrationDTO, referrer);
         notificationService.sendNotification(user, outcome.getTransitionResource(), PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST,
-                ImmutableMap.<String, String>of("action", outcome.getTransitionAction().getId().name()));
+                ImmutableMap.<String, String> of("action", outcome.getTransitionAction().getId().name()));
         return user;
     }
 
     public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource,
-                                         List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
+            List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
         User user = getOrCreateUser(firstName, lastName, email);
         roleService.updateRoles(resource, user, roles);
         return user;
@@ -243,6 +244,10 @@ public class UserService {
         boolean wasEnabled = user.getUserAccount().getEnabled();
         user.getUserAccount().setEnabled(true);
         return !wasEnabled;
+    }
+
+    public List<User> getEnabledResourceUsers(Resource resource) {
+        return userDAO.getEnabledResourceUsers(resource);
     }
 
 }

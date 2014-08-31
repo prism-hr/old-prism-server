@@ -36,6 +36,8 @@ public enum PrismRole {
     private PrismScope scope;
     
     private static final HashMultimap<PrismRole, PrismRole> excludedRoles = HashMultimap.create();
+    
+    private static HashMultimap<PrismScope, PrismRole> scopeOwners = HashMultimap.create();
 
     static {
         excludedRoles.put(PrismRole.APPLICATION_ADMINISTRATOR, PrismRole.APPLICATION_CREATOR);
@@ -48,11 +50,7 @@ public enum PrismRole {
         excludedRoles.put(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR, PrismRole.APPLICATION_CREATOR);
         excludedRoles.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROJECT_SECONDARY_SUPERVISOR);
         excludedRoles.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.PROJECT_PRIMARY_SUPERVISOR);
-    }
-    
-    private static HashMultimap<PrismScope, PrismRole> scopeOwners = HashMultimap.create();
-    
-    static {
+        
         for (PrismRole role : PrismRole.values()) {
             if (role.isScopeOwner()) {
                 scopeOwners.put(role.getScope(), role);

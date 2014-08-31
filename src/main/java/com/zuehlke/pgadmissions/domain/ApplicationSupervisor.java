@@ -19,7 +19,7 @@ public class ApplicationSupervisor {
 
     @ManyToOne
     @JoinColumn(name = "application_program_detail_id", insertable = false, updatable = false)
-    private ApplicationProgramDetails programDetails;
+    private ApplicationProgramDetail programDetails;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -36,11 +36,11 @@ public class ApplicationSupervisor {
         this.id = id;
     }
 
-    public ApplicationProgramDetails getProgramDetails() {
+    public ApplicationProgramDetail getProgramDetails() {
         return programDetails;
     }
 
-    public void setProgramDetails(ApplicationProgramDetails programDetails) {
+    public void setProgramDetails(ApplicationProgramDetail programDetails) {
         this.programDetails = programDetails;
     }
 
@@ -62,11 +62,6 @@ public class ApplicationSupervisor {
 
     public ApplicationSupervisor withId(Integer id) {
         this.id = id;
-        return this;
-    }
-
-    public ApplicationSupervisor withProgramDetails(ApplicationProgramDetails programDetails) {
-        this.programDetails = programDetails;
         return this;
     }
 

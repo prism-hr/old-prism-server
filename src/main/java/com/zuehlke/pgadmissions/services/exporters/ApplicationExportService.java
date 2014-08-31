@@ -16,11 +16,8 @@ import javax.xml.transform.TransformerException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,10 +33,9 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResp
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
@@ -57,8 +53,6 @@ import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
 public class ApplicationExportService {
-
-    private final Logger logger = LoggerFactory.getLogger(ApplicationExportService.class);
 
     @Value("${xml.data.export.sftp.privatekeyfile}")
     private Resource privateKeyFile;
@@ -108,33 +102,13 @@ public class ApplicationExportService {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    public void exportUclApplications() {
-        List<Application> applications = getUclApplicationsForExport();
-        for (Application application : applications) {
-            try {
-                ApplicationExportService thisBean = applicationContext.getBean(this.getClass());
-                String applicationCode = application.getCode();
-                logger.info("Exporting data for application: " + applicationCode);
-                String exportReference = thisBean.sendDataExportRequest(application);
-                if (exportReference != null) {
-                    logger.info("Exporting documents for application: " + applicationCode);
-                    thisBean.sendDocumentExportRequest(application, exportReference);
-                }
-            } catch (Exception e) {
-                throw new Error(e);
-            }
-        }
-    }
-
-    protected List<Application> getUclApplicationsForExport() {
+    @Transactional
+    public List<Application> getUclApplicationsForExport() {
         return applicationService.getUclApplicationsForExport();
     }
 
     @Transactional
-    protected String sendDataExportRequest(Application transientApplication) throws DatatypeConfigurationException, JAXBException, WorkflowEngineException {
+    public String sendDataExportRequest(Application transientApplication) throws DatatypeConfigurationException, JAXBException, WorkflowEngineException {
         Application persistentApplication = applicationService.getById(transientApplication.getId());
         SubmitAdmissionsApplicationRequest exportRequest = buildDataExportRequest(transientApplication);
 
@@ -172,20 +146,7 @@ public class ApplicationExportService {
         return exportReference;
     }
 
-    protected SubmitAdmissionsApplicationRequest buildDataExportRequest(Application application) throws DatatypeConfigurationException {
-        String creatorExportId = userService.getUserInstitutionId(application.getUser(), application.getInstitution(), PrismUserIdentity.STUDY_APPLICANT);
-        String creatorIpAddress = applicationService.getApplicationCreatorIpAddress(application);
-        Comment offerRecommendationComment = commentService.getLatestComment(application, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
-        User primarySupervisor = applicationService.getPrimarySupervisor(offerRecommendationComment);
-        ProgramInstance exportProgramInstance = programService.getExportProgramInstance(application);
-        List<ApplicationReferee> exportReferees = applicationService.setApplicationExportReferees(application);
-
-        return exportProgramInstance == null ? null : applicationExportBuilder.build(new ApplicationExportDTO().withApplication(application)
-                .withCreatorExportId(creatorExportId).withCreatorIpAddress(creatorIpAddress).withOfferRecommendationComment(offerRecommendationComment)
-                .withPrimarySupervisor(primarySupervisor).withExportProgramInstance(exportProgramInstance).withExportReferees(exportReferees));
-    }
-
-    protected String sendDocumentExportRequest(Application application, String exportReference) throws Exception {
+    public String sendDocumentExportRequest(Application application, String exportReference) throws Exception {
         OutputStream outputStream = null;
         try {
             Session session = getSftpSession();
@@ -204,8 +165,22 @@ public class ApplicationExportService {
             IOUtils.closeQuietly(outputStream);
         }
     }
+    
+    @Transactional
+    public SubmitAdmissionsApplicationRequest buildDataExportRequest(Application application) throws DatatypeConfigurationException {
+        String creatorExportId = userService.getUserInstitutionId(application.getUser(), application.getInstitution(), PrismUserIdentity.STUDY_APPLICANT);
+        String creatorIpAddress = applicationService.getApplicationCreatorIpAddress(application);
+        Comment offerRecommendationComment = commentService.getLatestComment(application, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
+        User primarySupervisor = applicationService.getPrimarySupervisor(offerRecommendationComment);
+        ProgramStudyOptionInstance exportProgramInstance = programService.getFirstEnabledProgramStudyOptionInstance(application.getProgram(), application
+                .getProgramDetail().getStudyOption());
 
-    protected OutputStream buildDocumentExportRequest(Application application, String exportReference, OutputStream outputStream) throws IOException {
+        return exportProgramInstance == null ? null : applicationExportBuilder.build(new ApplicationExportDTO().withApplication(application)
+                .withCreatorExportId(creatorExportId).withCreatorIpAddress(creatorIpAddress).withOfferRecommendationComment(offerRecommendationComment)
+                .withPrimarySupervisor(primarySupervisor).withExportProgramInstance(exportProgramInstance));
+    }
+
+    public OutputStream buildDocumentExportRequest(Application application, String exportReference, OutputStream outputStream) throws IOException {
         applicationDocumentExportBuilder.getDocuments(application, exportReference, outputStream);
         return outputStream;
     }

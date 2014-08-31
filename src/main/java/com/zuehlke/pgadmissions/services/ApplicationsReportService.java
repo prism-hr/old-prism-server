@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
 @Transactional
 public class ApplicationsReportService {
 
-    private static final String N_R = "N/R";
+//    private static final String N_R = "N/R";
 
     private static Logger logger = LoggerFactory.getLogger(ClassName.class.getName());
 

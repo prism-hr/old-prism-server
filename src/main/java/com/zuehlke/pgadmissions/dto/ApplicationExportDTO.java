@@ -5,7 +5,7 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.User;
 
 public class ApplicationExportDTO {
@@ -20,9 +20,9 @@ public class ApplicationExportDTO {
     
     private User primarySupervisor;
     
-    private ProgramInstance exportProgramInstance;
+    private ProgramStudyOptionInstance exportProgramInstance;
     
-    private List<ApplicationReferee> exportReferees;
+    private List<ApplicationReferee> applicationReferees;
 
     public final Application getApplication() {
         return application;
@@ -44,14 +44,18 @@ public class ApplicationExportDTO {
         return primarySupervisor;
     }
 
-    public final ProgramInstance getExportProgramInstance() {
+    public final ProgramStudyOptionInstance getExportProgramInstance() {
         return exportProgramInstance;
     }
-
-    public final List<ApplicationReferee> getExportReferees() {
-        return exportReferees;
-    }
     
+    public final List<ApplicationReferee> getApplicationReferees() {
+        return applicationReferees;
+    }
+
+    public final void setApplicationReferees(List<ApplicationReferee> applicationReferees) {
+        this.applicationReferees = applicationReferees;
+    }
+
     public ApplicationExportDTO withApplication(Application application) {
         this.application = application;
         return this;
@@ -77,13 +81,13 @@ public class ApplicationExportDTO {
         return this;
     }
     
-    public ApplicationExportDTO withExportProgramInstance(ProgramInstance exportProgramInstance) {
+    public ApplicationExportDTO withExportProgramInstance(ProgramStudyOptionInstance exportProgramInstance) {
         this.exportProgramInstance = exportProgramInstance;
         return this;
     }
     
-    public ApplicationExportDTO withExportReferees(List<ApplicationReferee> exportReferees) {
-        this.exportReferees = exportReferees;
+    public ApplicationExportDTO withApplicationReferees(List<ApplicationReferee> applicationReferees) {
+        this.applicationReferees = applicationReferees;
         return this;
     }
     

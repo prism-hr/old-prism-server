@@ -23,7 +23,7 @@ public class GenericEntityImportConverterTest {
         Institution institution = new Institution();
         
         GenericEntityImportConverter<com.zuehlke.pgadmissions.domain.Disability> converter = GenericEntityImportConverter
-                .create(com.zuehlke.pgadmissions.domain.Disability.class, institution);
+                .create(institution, com.zuehlke.pgadmissions.domain.Disability.class);
         com.zuehlke.pgadmissions.domain.Disability converted = converter.apply(disability);
         
         assertEquals("kod", converted.getCode());

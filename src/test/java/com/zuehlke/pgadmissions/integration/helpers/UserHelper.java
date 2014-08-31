@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -14,11 +15,13 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
 import com.zuehlke.pgadmissions.rest.ActionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
+import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -26,9 +29,14 @@ import com.zuehlke.pgadmissions.services.UserService;
 @Transactional
 public class UserHelper {
 
+    private final String testContextReferrer = "http://www.testcontextreferrer.com";
+    
     @Autowired
     private MailSenderMock mailSenderMock;
 
+    @Autowired
+    private ResourceService resourceService;
+    
     @Autowired
     private RoleService roleService;
     
@@ -44,9 +52,14 @@ public class UserHelper {
 
         userService.registerUser(new UserRegistrationDTO().withFirstName(user.getFirstName())
                 .withLastName(user.getLastName()).withEmail(user.getEmail()).withActivationCode(user.getActivationCode())
-                .withPassword("password").withResourceId(resourceId).withAction(new ActionDTO().withAction(actionId)));
+                .withPassword("password").withResourceId(resourceId).withAction(new ActionDTO().withAction(actionId)),
+                "http://www.testcontext.com");
 
         mailSenderMock.assertEmailSent(user, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+        
+        PrismScope resourceScope = actionId.getCreationScope() == null ? actionId.getScope() : actionId.getCreationScope();
+        Resource resource = resourceService.getById(resourceScope.getResourceClass(), resourceId);
+        assertEquals(testContextReferrer, resource.getReferrer());
 
         userService.activateUser(user.getId());
         assertTrue(user.isEnabled());

@@ -4,9 +4,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import org.joda.time.DateTime;
 
 public class ProgramDTO {
     
@@ -29,10 +29,7 @@ public class ProgramDTO {
     private DateTime startDate;
 
     @NotNull
-    private DateTime endDate;
-
-    @NotNull
-    private Boolean immediateStart;
+    private DateTime closeDate;
 
     @Size(min = 1)
     private Integer[] studyOptions;
@@ -85,20 +82,12 @@ public class ProgramDTO {
         this.startDate = startDate;
     }
 
-    public DateTime getEndDate() {
-        return endDate;
+    public DateTime getCloseDate() {
+        return closeDate;
     }
 
-    public void setEndDate(DateTime endDate) {
-        this.endDate = endDate;
-    }
-
-    public Boolean getImmediateStart() {
-        return immediateStart;
-    }
-
-    public void setImmediateStart(Boolean immediateStart) {
-        this.immediateStart = immediateStart;
+    public void setCloseDate(DateTime closeDate) {
+        this.closeDate = closeDate;
     }
 
     public Integer[] getStudyOptions() {

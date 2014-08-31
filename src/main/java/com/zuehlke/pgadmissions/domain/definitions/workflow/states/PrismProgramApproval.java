@@ -20,7 +20,7 @@ public class PrismProgramApproval extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_COMPLETE_APPROVAL_STAGE) //
             .withRaisesUrgentFlag(true) //
-            .withDefaultAction(false)
+            .withDefaultAction(false) //
             .withNotificationTemplate(PrismNotificationTemplate.SYSTEM_PROGRAM_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 

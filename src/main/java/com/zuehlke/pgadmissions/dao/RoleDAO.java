@@ -15,7 +15,6 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
@@ -37,34 +36,25 @@ public class RoleDAO {
 
     public UserRole getUserRole(Resource resource, User user, Role role) {
         return (UserRole) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("role", role)) //
-                .add(Restrictions.eq("userAccount.enabled", true)) //
                 .uniqueResult();
     }
     
     public List<UserRole> getUserRoles(Resource resource, User user, PrismRole... authorities) {
         return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.in("role.id", authorities)) //
-                .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();
     }
     
     public List<User> getRoleUsers(Resource resource, Role role) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.property("user")) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
                 .add(Restrictions.eq("role", role)) //
-                .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();
     }
 
@@ -169,16 +159,6 @@ public class RoleDAO {
         return (List<User>) criteria.add(Restrictions.eq("role", role)).list();
     }
 
-    public List<User> getUsers(Resource resource) {
-        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("user"))
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
-                .add(Restrictions.eq("userAccount.enabled", true)) //
-                .list();
-    }
-
     public List<PrismRole> getUserRoles(Resource resource, User user) {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("role.id"))
@@ -202,35 +182,10 @@ public class RoleDAO {
 
     public void deleteObseleteUserRoles(List<Role> activeRoles) {
         sessionFactory.getCurrentSession().createQuery( //
-                "delete UserNotification " //
-                        + "where userRole not in ( "
-                        + "from UserRole " //
-                        + "where role not in (:activeRoles))") //
-                .setParameterList("activeRoles", activeRoles) //
-                .executeUpdate(); //
-
-        sessionFactory.getCurrentSession().createQuery( //
                 "delete UserRole " //
                         + "where role not in (:activeRoles)") //
                 .setParameterList("activeRoles", activeRoles) //
                 .executeUpdate();
-    }
-
-    public List<UserRole> getUpdateNotificationRoles(User user, Resource resource, NotificationTemplate template) {
-        return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .createAlias("userNotifications", "userNotification", JoinType.INNER_JOIN) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("userNotification.user", user)) //
-                .add(Restrictions.eq("userNotification.notificationTemplate", template)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
-                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
-                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
-                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
-                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
-                .add(Restrictions.eq("userAccount.enabled", true)) //
-                .list();
     }
     
     private void getExcludedRoleDisjunction(UserRole userRole, Criteria criteria) {

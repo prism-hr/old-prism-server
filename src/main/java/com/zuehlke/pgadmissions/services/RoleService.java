@@ -74,10 +74,6 @@ public class RoleService {
         return roleDAO.getActionOwnerRoles(user, resource, action);
     }
 
-    public List<User> getUsers(Resource resource) {
-        return roleDAO.getUsers(resource);
-    }
-
     public boolean hasUserRole(Resource resource, User user, PrismRole roleId) {
         Role role = getById(roleId);
         return roleDAO.getUserRole(resource, user, role) != null;
@@ -141,21 +137,6 @@ public class RoleService {
         }
     }
 
-    private HashMultimap<User, RoleTransition> getRoleUpdateTransitions(StateTransition stateTransition, Comment comment, List<RoleTransition> roleTransitions) {
-        HashMultimap<User, RoleTransition> userRoleTransitions = HashMultimap.create();
-
-        for (RoleTransition roleTransition : roleTransitions) {
-            User restrictedToUser = roleTransition.isRestrictToActionOwner() ? comment.getUser() : null;
-            List<User> users = roleDAO.getRoleTransitionUsers(comment.getResource(), roleTransition, restrictedToUser);
-
-            for (User user : users) {
-                userRoleTransitions.put(user, roleTransition);
-            }
-        }
-
-        return userRoleTransitions;
-    }
-
     private HashMultimap<User, RoleTransition> getRoleCreateTransitions(StateTransition stateTransition, Comment comment, List<RoleTransition> roleTransitions)
             throws WorkflowEngineException {
         HashMultimap<User, RoleTransition> userRoleTransitions = HashMultimap.create();
@@ -179,6 +160,21 @@ public class RoleService {
 
         return userRoleTransitions;
     }
+    
+    private HashMultimap<User, RoleTransition> getRoleUpdateTransitions(StateTransition stateTransition, Comment comment, List<RoleTransition> roleTransitions) {
+        HashMultimap<User, RoleTransition> userRoleTransitions = HashMultimap.create();
+
+        for (RoleTransition roleTransition : roleTransitions) {
+            User restrictedToUser = roleTransition.isRestrictToActionOwner() ? comment.getUser() : null;
+            List<User> users = roleDAO.getRoleTransitionUsers(comment.getResource(), roleTransition, restrictedToUser);
+
+            for (User user : users) {
+                userRoleTransitions.put(user, roleTransition);
+            }
+        }
+
+        return userRoleTransitions;
+    }
 
     private void executeRoleTransition(Comment comment, User user, RoleTransition roleTransition) throws WorkflowEngineException {
         DateTime baseline = new DateTime();
@@ -186,10 +182,7 @@ public class RoleService {
         Role role = roleTransition.getRole();
         Role transitionRole = roleTransition.getTransitionRole();
 
-        Resource resource = comment.getResource();
-        Resource operative = resourceService.getOperativeResource(resource, comment.getAction());
-        
-        resource = role.getScope() == transitionRole.getScope() ? resource : operative;
+        Resource resource = resourceService.getOperativeResource(comment.getResource(), comment.getAction());
         Resource transitionResource = comment.getResource();
 
         UserRole transientRole = new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(baseline);
@@ -201,10 +194,10 @@ public class RoleService {
             executeBranchUserRole(transientRole, transientTransitionRole, comment);
             break;
         case CREATE:
-            executeCreateUserRole(transientRole, comment);
+            executeCreateUserRole(transientTransitionRole, comment);
             break;
         case REMOVE:
-            executeRemoveUserRole(transientRole);
+            executeRemoveUserRole(transientTransitionRole);
             break;
         case UPDATE:
             executeUpdateUserRole(transientRole, transientTransitionRole);

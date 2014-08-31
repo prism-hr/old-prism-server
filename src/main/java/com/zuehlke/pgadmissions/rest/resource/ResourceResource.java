@@ -131,7 +131,7 @@ public class ResourceResource {
         representation.setActionEnhancements(permittedActionEnhancements);
 
         // set list of user to roles mappings
-        List<User> users = roleService.getUsers(resource);
+        List<User> users = userService.getEnabledResourceUsers(resource);
         List<AbstractResourceRepresentation.UserRolesRepresentation> userRolesRepresentations = Lists.newArrayListWithCapacity(users.size());
         for (User user : users) {
             List<PrismRole> availableRoles = roleService.getRoles(resourceDescriptor.getType());

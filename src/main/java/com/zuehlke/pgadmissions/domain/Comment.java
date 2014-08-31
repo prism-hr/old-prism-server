@@ -851,23 +851,23 @@ public class Comment {
         return isProjectCreateComment() || isProjectUpdateComment();
     }
 
-    public boolean isAssignReviewersComment() {
+    public boolean isApplicationAssignReviewersComment() {
         return action.getId() == PrismAction.APPLICATION_ASSIGN_REVIEWERS;
     }
 
-    public boolean isReferenceComment() {
+    public boolean isApplicationProvideReferenceComment() {
         return action.getId() == PrismAction.APPLICATION_PROVIDE_REFERENCE;
     }
 
-    public boolean isOfferRecommendationComment() {
+    public boolean isApplicationConfirmOfferRecommendationComment() {
         return action.getId() == PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
     }
 
-    public boolean isRatingAction() {
+    public boolean isRatingComment() {
         return action.isRatingAction();
     }
 
-    public boolean isTransitionAction() {
+    public boolean isTransitionComment() {
         return action.isTransitionAction();
     }
 

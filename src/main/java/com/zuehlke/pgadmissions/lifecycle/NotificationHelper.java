@@ -1,22 +1,19 @@
 package com.zuehlke.pgadmissions.lifecycle;
 
 import java.util.List;
-import java.util.Set;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Scope;
-import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
+import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.NotificationService;
+import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
@@ -24,7 +21,13 @@ import com.zuehlke.pgadmissions.services.SystemService;
 public class NotificationHelper {
 
     @Autowired
+    private CommentService commentService;
+    
+    @Autowired
     private NotificationService notificationService;
+    
+    @Autowired
+    private ResourceService resourceService;
     
     @Autowired
     private ScopeService scopeService;
@@ -32,46 +35,46 @@ public class NotificationHelper {
     @Autowired
     private SystemService systemService;
     
-    public void sendDeferredWorkflowNotifications() {        
-        User invoker = systemService.getSystem().getUser();
+    public void sendDeferredWorkflowNotifications() {
         LocalDate baseline = new LocalDate();
-
         for (Scope scope : scopeService.getScopesAscending()) {
-            sendRequestReminders(scope, invoker, baseline);
-            sendSyndicatedWorkflowNotifications(scope, invoker, baseline);
+            sendIndividualRequestReminders(scope, baseline);
+            sendSyndicatedRequestNotifications(scope, baseline);
+            sendSyndicatedUpdateNotifications(scope, baseline);
         }
     }
     
     public void sendRecommendationNotifications() {
         LocalDate baseline = new LocalDate();
         List<User> users = notificationService.getRecommendationNotifications(baseline);
-
-        System system = systemService.getSystem();
-        NotificationTemplate template = notificationService.getById(PrismNotificationTemplate.SYSTEM_RECOMMENDATION_NOTIFICATION);
-
         for (User user : users) {
-            notificationService.sendRecommendationNotification(system, user, template, baseline);
+            notificationService.sendRecommendationNotification(user, baseline);
         }
     }
     
-    private void sendRequestReminders(Scope scope, User invoker, LocalDate baseline) {
-        List<UserNotificationDefinitionDTO> definitions = notificationService.getRequestReminders(scope, baseline);
-        HashMultimap<String, User> sent = HashMultimap.create();
-
-        for (UserNotificationDefinitionDTO definition : definitions) {
-            notificationService.sendRequestReminder(definition, invoker, baseline, sent);
+    private void sendIndividualRequestReminders(Scope scope, LocalDate baseline) {
+        List<Resource> resources = resourceService.getResourcesRequiringAttention(scope.getId().getResourceClass());
+        for (Resource resource : resources) {
+            notificationService.sendIndividualRequestReminders(resource, baseline);
         }
     }
     
-    private void sendSyndicatedWorkflowNotifications(Scope scope, User invoker, LocalDate baseline) {
-        List<UserNotificationDefinitionDTO> definitions = Lists.newLinkedList();
-        definitions.addAll(notificationService.getSyndicatedRequestNotifications(scope, baseline));
-        definitions.addAll(notificationService.getSyndicatedUpdateNotifications(scope, baseline));
-
-        Set<User> sent = Sets.newHashSet();
-
-        for (UserNotificationDefinitionDTO definition : definitions) {
-            notificationService.sendSyndicatedWorkflowNotification(definition, invoker, baseline, sent);
+    private void sendSyndicatedRequestNotifications(Scope scope, LocalDate baseline) {
+        List<Resource> resources = resourceService.getResourcesRequiringAttention(scope.getId().getResourceClass());
+        for (Resource resource : resources) {
+            notificationService.sendSyndicatedRequestNotifications(resource, baseline);
+        }
+    }
+    
+    private void sendSyndicatedUpdateNotifications(Scope scope, LocalDate baseline) {
+        DateTime rangeStart = baseline.minusDays(1).toDateTimeAtStartOfDay();
+        DateTime rangeClose = rangeStart.plusDays(1).minusSeconds(1);
+        List<Resource> resources = resourceService.getRecentlyUpdatedResources(scope.getId().getResourceClass(), rangeStart, rangeClose);
+        for (Resource resource : resources) {
+            List<Comment> transitionComments = commentService.getTransitionComments(resource, rangeStart, rangeClose);
+            for (Comment transitionComment : transitionComments) {
+                notificationService.sendSyndicatedUpdateNotifications(resource, transitionComment, baseline);
+            }
         }
     }
     

@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 @Entity
 @Table(name = "PROJECT")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Project extends RecruiterResource {
+public class Project extends ParentResource {
     
     @Id
     @GeneratedValue
@@ -460,7 +460,6 @@ public class Project extends RecruiterResource {
         this.sequenceIdentifier = sequenceIdentifier;
     }
     
-    @Override
     public LocalDate getRecommendedStartDate() {
         return program.getProgramType().getPrismProgramType().getImmediateStartDate();
     }

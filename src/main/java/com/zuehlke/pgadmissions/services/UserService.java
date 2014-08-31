@@ -111,7 +111,7 @@ public class UserService {
             throw new ResourceNotFoundException();
         }
 
-        user.setUserAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(registrationDTO.getPassword())).withSendRecommendationEmail(false)
+        user.setUserAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(registrationDTO.getPassword())).withSendRecommendationNotification(false)
                 .withEnabled(false));
 
         ActionOutcomeDTO outcome = actionService.getRegistrationOutcome(user, registrationDTO, referrer);
@@ -244,6 +244,10 @@ public class UserService {
         boolean wasEnabled = user.getUserAccount().getEnabled();
         user.getUserAccount().setEnabled(true);
         return !wasEnabled;
+    }
+
+    public List<User> getEnabledResourceUsers(Resource resource) {
+        return userDAO.getEnabledResourceUsers(resource);
     }
 
 }

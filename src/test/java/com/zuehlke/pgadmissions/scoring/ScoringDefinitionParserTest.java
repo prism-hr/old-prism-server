@@ -1,17 +1,13 @@
 package com.zuehlke.pgadmissions.scoring;
 
-import java.io.File;
-import java.net.URL;
 import java.util.List;
 
-import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.Resource;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.base.Charsets;
-import com.google.common.io.Files;
+import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;

@@ -3,11 +3,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import org.joda.time.DateTime;
-
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
-
-import javax.validation.constraints.NotNull;
 
 public class ProgramExtendedRepresentation extends AbstractResourceRepresentation {
 

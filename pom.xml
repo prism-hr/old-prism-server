@@ -616,10 +616,10 @@
         </profile>
 
         <profile>
-            <id>ci</id>
+            <id>uat</id>
             <properties>
                 <sql.host>localhost</sql.host>
-                <sql.db>pgadmissions_ci</sql.db>
+                <sql.db>pgadmissions_uat</sql.db>
             </properties>
             <build>
                 <plugins>
@@ -634,7 +634,7 @@
                                 <configuration>
                                     <tasks>
                                         <delete file="${project.build.outputDirectory}/environment.properties"/>
-                                        <copy file="src/environments/environment.ci.properties"
+                                        <copy file="src/environments/environment.uat.properties"
                                               tofile="${project.build.outputDirectory}/environment.properties"/>
                                     </tasks>
                                 </configuration>

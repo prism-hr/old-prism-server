@@ -8,15 +8,13 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 
 public class UserNotificationDefinitionDTO {
 
-    private Integer resourceId;
-
     private Integer userId;
 
     private PrismRole roleId;
 
     private PrismNotificationTemplate notificationTemplateId;
     
-    private LocalDate lastSentDate;
+    private LocalDate lastNotifiedDate;
 
     public final Integer getUserId() {
         return userId;
@@ -34,14 +32,6 @@ public class UserNotificationDefinitionDTO {
         this.roleId = roleId;
     }
 
-    public final Integer getResourceId() {
-        return resourceId;
-    }
-
-    public final void setResourceId(Integer resourceId) {
-        this.resourceId = resourceId;
-    }
-
     public PrismNotificationTemplate getNotificationTemplateId() {
         return notificationTemplateId;
     }
@@ -50,17 +40,17 @@ public class UserNotificationDefinitionDTO {
         this.notificationTemplateId = notificationTemplateId;
     }
 
-    public final LocalDate getLastSentDate() {
-        return lastSentDate;
+    public final LocalDate getLastNotifiedDate() {
+        return lastNotifiedDate;
     }
 
-    public final void setLastSentDate(LocalDate lastSentDate) {
-        this.lastSentDate = lastSentDate;
+    public final void setLastNotifiedDate(LocalDate lastNotifiedDate) {
+        this.lastNotifiedDate = lastNotifiedDate;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(resourceId, userId, roleId, notificationTemplateId);
+        return Objects.hashCode(userId, roleId, notificationTemplateId);
     }
 
     @Override
@@ -72,7 +62,7 @@ public class UserNotificationDefinitionDTO {
             return false;
         }
         final UserNotificationDefinitionDTO other = (UserNotificationDefinitionDTO) object;
-        return Objects.equal(resourceId, other.getResourceId()) && Objects.equal(userId, other.getUserId()) && Objects.equal(roleId, other.getRoleId())
+        return Objects.equal(userId, other.getUserId()) && Objects.equal(roleId, other.getRoleId())
                 && Objects.equal(notificationTemplateId, other.getNotificationTemplateId());
     }
 

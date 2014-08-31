@@ -14,6 +14,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
@@ -37,8 +38,12 @@ public class UserAccount {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime temporaryPasswordExpiryTimestamp;
     
-    @Column(name = "send_recommendation_email", nullable = false)
-    private Boolean sendRecommendationEmail;
+    @Column(name = "send_recommendation_notification", nullable = false)
+    private Boolean sendRecommendationNotification;
+    
+    @Column(name = "last_notified_date_recommendation")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastNotifiedDateRecommendation;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
@@ -80,12 +85,20 @@ public class UserAccount {
         this.enabled = enabled;
     }
 
-    public final Boolean isSendRecommendationEmail() {
-        return sendRecommendationEmail;
+    public final Boolean isSendRecommendationNotification() {
+        return sendRecommendationNotification;
     }
 
-    public final void setSendRecommendationEmail(Boolean sendRecommendationEmail) {
-        this.sendRecommendationEmail = sendRecommendationEmail;
+    public final void setSendRecommendationNotification(Boolean sendRecommendationNotification) {
+        this.sendRecommendationNotification = sendRecommendationNotification;
+    }
+
+    public final LocalDate getLastNotifiedDateRecommendation() {
+        return lastNotifiedDateRecommendation;
+    }
+
+    public final void setLastNotifiedDateRecommendation(LocalDate lastNotifiedDateRecommendation) {
+        this.lastNotifiedDateRecommendation = lastNotifiedDateRecommendation;
     }
 
     public Map<Scope, Filter> getFilters() {
@@ -97,8 +110,8 @@ public class UserAccount {
         return this;
     }
 
-    public UserAccount withSendRecommendationEmail(Boolean sendRecommendationEmail) {
-        this.sendRecommendationEmail = sendRecommendationEmail;
+    public UserAccount withSendRecommendationNotification(Boolean sendRecommendationNotification) {
+        this.sendRecommendationNotification = sendRecommendationNotification;
         return this;
     }
     

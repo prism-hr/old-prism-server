@@ -233,8 +233,8 @@ public class CommentService {
         return supervisors;
     }
 
-    public List<Comment> getComments(Resource resource, DateTime rangeStart, DateTime rangeClose) {
-        return commentDAO.getComments(resource, rangeStart, rangeClose);
+    public List<Comment> getTransitionComments(Resource resource, DateTime rangeStart, DateTime rangeClose) {
+        return commentDAO.getTransitionComments(resource, rangeStart, rangeClose);
     }
     
     private Comment getLatestAppointmentPreferenceComment(Application application, Comment schedulingComment, User user) {

@@ -83,6 +83,10 @@ public class StateService {
         return stateDAO.getWorkflowStates();
     }
 
+    public StateDuration getStateDuration(Resource resource) {
+        return stateDAO.getStateDuration(resource, resource.getState());
+    }
+    
     public StateDuration getStateDuration(Resource resource, State state) {
         return stateDAO.getStateDuration(resource, state);
     }
@@ -128,9 +132,18 @@ public class StateService {
 
         entityService.save(comment);
         StateTransition stateTransition = getStateTransition(resource, action, comment);
-
+        
         if (stateTransition != null) {
-            resourceService.processResource(resource, comment);
+            State oldState = resource.getState();
+            State newState = stateTransition.getTransitionState();
+            
+            resource.setState(newState);
+            resource.setPreviousState(oldState);
+            
+            comment.setState(oldState);
+            comment.setTransitionState(newState);
+            
+            resourceService.processResource(resource, comment); 
             roleService.executeRoleTransitions(stateTransition, comment);
 
             if (stateTransition.getPropagatedActions().size() > 0) {

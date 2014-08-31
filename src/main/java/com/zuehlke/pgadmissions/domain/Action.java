@@ -58,6 +58,9 @@ public class Action extends WorkflowResource {
 
     @OneToMany(mappedBy = "action")
     private Set<ActionRedaction> redactions = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "action")
+    private Set<StateAction> stateActions = Sets.newHashSet();
 
     @Override
     public PrismAction getId() {
@@ -126,6 +129,14 @@ public class Action extends WorkflowResource {
 
     public Set<ActionRedaction> getRedactions() {
         return redactions;
+    }
+
+    public final Set<StateAction> getStateActions() {
+        return stateActions;
+    }
+
+    public final void setStateActions(Set<StateAction> stateActions) {
+        this.stateActions = stateActions;
     }
 
     public Action withId(PrismAction id) {

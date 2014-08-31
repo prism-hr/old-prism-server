@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
@@ -213,6 +214,16 @@ public class UserDAO {
                         .add(Restrictions.ilike("email", searchTerm, MatchMode.START))) //
                 .setMaxResults(10) //
                 .setResultTransformer(Transformers.aliasToBean(UserRepresentation.class)) //
+                .list();
+    }
+    
+    public List<User> getEnabledResourceUsers(Resource resource) {
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("user"))
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();
     }
 

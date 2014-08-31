@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 @Entity
 @Table(name = "PROGRAM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Program extends RecruiterResource {
+public class Program extends ParentResource {
     
     @Id
     @GeneratedValue
@@ -582,7 +582,6 @@ public class Program extends RecruiterResource {
         return this;
     }
     
-    @Override
     public LocalDate getRecommendedStartDate() {
         return programType.getPrismProgramType().getRecommendedStartDate();
     }

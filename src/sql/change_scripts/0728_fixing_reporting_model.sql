@@ -267,3 +267,85 @@ ALTER TABLE COMMENT
 	ADD FOREIGN KEY (state_id) REFERENCES STATE (id)
 ;
 
+CREATE PROCEDURE SP_POPULATE_COMMENT_STATE ()
+BEGIN
+
+	SET @comment_id = (
+		SELECT id
+		FROM COMMENT
+		ORDER BY id
+		LIMIT 1);
+		
+	WHILE @comment_id IS NOT NULL DO
+			
+		SET @previous_state_id = (
+			SELECT COMMENT.transition_state_id
+			FROM COMMENT INNER JOIN (
+				SELECT id,
+					system_id,
+					institution_id,
+					program_id,
+					project_id,
+					application_id,
+					created_timestamp
+				FROM COMMENT
+				WHERE id = @comment_id) AS CURRENT_COMMENT
+				ON COMMENT.system_id = CURRENT_COMMENT.system_id
+					OR COMMENT.institution_id = CURRENT_COMMENT.institution_id
+					OR COMMENT.program_id = CURRENT_COMMENT.program_id
+					OR COMMENT.project_id = CURRENT_COMMENT.project_id
+					OR COMMENT.application_id = CURRENT_COMMENT.application_id
+			WHERE COMMENT.created_timestamp <= CURRENT_COMMENT.created_timestamp
+				AND COMMENT.id != @comment_id
+			ORDER BY COMMENT.created_timestamp DESC, COMMENT.id DESC
+			LIMIT 1);
+			
+		IF @previous_state_id IS NOT NULL THEN
+			UPDATE COMMENT
+			SET state_id = @previous_state_id
+			WHERE id = @comment_id;
+		END IF;
+	
+		SET @comment_id = (
+			SELECT id
+			FROM COMMENT
+			WHERE id > @comment_id
+			ORDER BY id
+			LIMIT 1);	
+	END WHILE;
+
+END
+;
+
+CALL SP_POPULATE_COMMENT_STATE ()
+;
+
+DROP PROCEDURE SP_POPULATE_COMMENT_STATE
+;
+
+ALTER TABLE USER
+	MODIFY COLUMN user_account_id INT(10) UNSIGNED AFTER activation_code,
+	ADD COLUMN last_notified_date_system DATE AFTER user_account_id,
+	ADD COLUMN last_notified_date_institution DATE AFTER last_notified_date_system,
+	ADD COLUMN last_notified_date_program DATE AFTER last_notified_date_institution,
+	ADD COLUMN last_notified_date_project DATE AFTER last_notified_date_program,
+	ADD COLUMN last_notified_date_application DATE AFTER last_notified_date_project,
+	ADD INDEX (last_notified_date_system),
+	ADD INDEX (last_notified_date_institution),
+	ADD INDEX (last_notified_date_program),
+	ADD INDEX (last_notified_date_project),
+	ADD INDEX (last_notified_date_application)
+;
+
+DROP TABLE USER_NOTIFICATION
+;
+
+ALTER TABLE USER_ROLE
+	CHANGE COLUMN notification_last_sent_date last_notified_date DATE
+;
+
+ALTER TABLE USER_ACCOUNT
+	CHANGE COLUMN send_recommendation_email send_recommendation_notification INT(1) UNSIGNED NOT NULL,
+	ADD COLUMN last_notified_date_recommendation DATE AFTER send_recommendation_notification,
+	ADD INDEX (last_notified_date_recommendation)
+;

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.dao;
 import java.util.HashMap;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -152,6 +153,15 @@ public class ResourceDAO {
                 .setProjection(Projections.max("sequenceIdentifier")) //
                 .add(Restrictions.between("updatedTimestamp", rangeStart, rangeClose)) //
                 .uniqueResult();
+    }
+    
+    public <T extends Resource> List<Resource> getResourcesRequiringAttention(Class<T> resourceClass) {
+        return (List<Resource>) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("stateAction.raisesUrgentFlag", true)) //
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY) //
+                .list();
     }
     
     public <T extends Resource> List<Resource> getRecentlyUpdatedResources(Class<T> resourceClass, DateTime rangeStart, DateTime rangeClose) {

@@ -155,37 +155,37 @@ public class ApplicationService {
     public LocalDate getEarliestStartDate(Application application) {
         ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(application.getProgram(), application.getProgramDetail().getStudyOption());
 
-        if (studyOption != null) {
-            LocalDate baseline = new LocalDate();
-            LocalDate studyOptionStart = studyOption.getApplicationStartDate();
-
-            LocalDate earliestStartDate = studyOptionStart.isBefore(baseline) ? baseline : studyOptionStart;
-            return earliestStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
+        if (studyOption == null) {
+            return null;
         }
+        
+        LocalDate baseline = new LocalDate();
+        LocalDate studyOptionStart = studyOption.getApplicationStartDate();
 
-        return null;
+        LocalDate earliestStartDate = studyOptionStart.isBefore(baseline) ? baseline : studyOptionStart;
+        return earliestStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
     }
 
     // TODO: handle null response - study option expired
     public LocalDate getRecommendedStartDate(Application application) {
         ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(application.getProgram(), application.getProgramDetail().getStudyOption());
 
-        if (studyOption != null) {
-            LocalDate studyOptionStart = studyOption.getApplicationStartDate();
-            LocalDate studyOptionClose = studyOption.getApplicationCloseDate();
+        if (studyOption == null) {
+            return null;
+        }
+        
+        LocalDate studyOptionStart = studyOption.getApplicationStartDate();
+        LocalDate studyOptionClose = studyOption.getApplicationCloseDate();
 
-            LocalDate recommendedStartDate = application.getRecommendedStartDate();
+        LocalDate recommendedStartDate = application.getRecommendedStartDate();
 
-            if (recommendedStartDate.isAfter(studyOptionClose)) {
-                recommendedStartDate = studyOptionClose;
-            } else if (recommendedStartDate.isBefore(studyOptionStart)) {
-                recommendedStartDate = studyOptionStart;
-            }
-
-            return recommendedStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
+        if (recommendedStartDate.isAfter(studyOptionClose)) {
+            recommendedStartDate = studyOptionClose;
+        } else if (recommendedStartDate.isBefore(studyOptionStart)) {
+            recommendedStartDate = studyOptionStart;
         }
 
-        return null;
+        return recommendedStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
     }
 
     // TODO: handle null response - study option expired
@@ -523,7 +523,7 @@ public class ApplicationService {
     }
 
     public LocalDate resolveDueDateBaseline(Application application, Comment comment) {
-        if (comment.isAssignReviewersComment()) {
+        if (comment.isApplicationAssignReviewersComment()) {
             LocalDate closingDate = application.getClosingDate();
 
             if (closingDate != null) {
@@ -540,19 +540,19 @@ public class ApplicationService {
             synchroniseProjectSupervisors(application);
         }
 
-        if (comment.isReferenceComment()) {
+        if (comment.isApplicationProvideReferenceComment()) {
             synchroniseReferees(application, comment);
         }
 
-        if (comment.isOfferRecommendationComment()) {
+        if (comment.isApplicationConfirmOfferRecommendationComment()) {
             synchroniseOfferRecommendation(application, comment);
         }
 
-        if (comment.isRatingAction()) {
+        if (comment.isRatingComment()) {
             applicationSummaryService.summariseApplication(application);
         }
 
-        if (comment.isTransitionAction()) {
+        if (comment.isTransitionComment()) {
             applicationSummaryService.summariseApplicationProcessing(application);
         }
     }

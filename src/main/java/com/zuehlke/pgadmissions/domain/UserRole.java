@@ -64,7 +64,7 @@ public class UserRole implements IUniqueEntity {
     
     @Column(name = "notification_last_sent_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate notificationLastSentDate;
+    private LocalDate lastNotifiedDate;
     
     @Column(name = "assigned_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -142,12 +142,12 @@ public class UserRole implements IUniqueEntity {
         this.notificationTemplate = notificationTemplate;
     }
 
-    public final LocalDate getNotificationLastSentDate() {
-        return notificationLastSentDate;
+    public final LocalDate getLastNotifiedDate() {
+        return lastNotifiedDate;
     }
 
-    public final void setNotificationLastSentDate(LocalDate notificationLastSentDate) {
-        this.notificationLastSentDate = notificationLastSentDate;
+    public final void setLastNotifiedDate(LocalDate lastNotifiedDate) {
+        this.lastNotifiedDate = lastNotifiedDate;
     }
 
     public DateTime getAssignedTimestamp() {

@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
@@ -144,11 +143,6 @@ public class ResourceService {
     }
 
     public void processResource(Resource resource, Comment comment) {
-        State transitionState = comment.getTransitionState();
-        
-        resource.setPreviousState(resource.getState());
-        resource.setState(transitionState);
-
         LocalDate baselineCustom;
         LocalDate baseline = new LocalDate();
         
@@ -165,7 +159,7 @@ public class ResourceService {
         
         baselineCustom = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
         
-        StateDuration stateDuration = stateService.getStateDuration(resource, transitionState);
+        StateDuration stateDuration = stateService.getStateDuration(resource);
         resource.setDueDate(baseline.plusDays(stateDuration == null ? 0 : stateDuration.getDuration()));
     }
     
@@ -237,6 +231,10 @@ public class ResourceService {
     
     public Resource getOperativeResource(Resource resource, Action action) {
         return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
+    }
+    
+    public <T extends Resource> List<Resource> getResourcesRequiringAttention(Class<T> resourceClass) {
+        return resourceDAO.getResourcesRequiringAttention(resourceClass);
     }
     
     public <T extends Resource> List<Resource> getRecentlyUpdatedResources(Class<T> resourceClass, DateTime rangeStart, DateTime rangeClose) {

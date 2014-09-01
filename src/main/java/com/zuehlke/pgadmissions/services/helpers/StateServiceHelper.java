@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services.helpers;
 
 import java.util.HashMap;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,7 @@ import com.zuehlke.pgadmissions.services.SystemService;
 
 @Component
 public class StateServiceHelper {
-
+    
     @Autowired
     private ActionService actionService;
 
@@ -29,14 +30,15 @@ public class StateServiceHelper {
     @Autowired
     private SystemService systemService;
 
-    public void executePendingStateTransitions() {
+    public void executePendingStateTransitions() throws Exception {
         HashMap<Resource, Action> transitions = Maps.newHashMap();
         transitions.putAll(resourceService.getResourcePropagations());
         transitions.putAll(resourceService.getResourceEscalations());
 
         for (Resource resource : transitions.keySet()) {
             Action action = transitions.get(resource);
-            Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action).withDeclinedResponse(false);
+            Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action).withDeclinedResponse(false)
+                    .withCreatedTimestamp(new DateTime());
             stateService.executeStateTransition(resource, action, comment);
         }
     }

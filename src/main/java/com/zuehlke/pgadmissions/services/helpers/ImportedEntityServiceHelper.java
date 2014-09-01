@@ -69,7 +69,7 @@ public class ImportedEntityServiceHelper {
     @Autowired
     private NotificationService notificationService;
 
-    public void importReferenceData() {
+    public void importReferenceData() throws Exception {
         institutionService.populateDefaultImportedEntityFeeds();
 
         for (ImportedEntityFeed importedEntityFeed : importedEntityService.getImportedEntityFeedsToImport()) {
@@ -106,7 +106,6 @@ public class ImportedEntityServiceHelper {
         logger.info("Starting the import from file: " + fileLocation);
 
         try {
-            importedEntityService.setLastImportedDate(importedEntityFeed);
             List unmarshalled = unmarshallEntities(importedEntityFeed);
 
             Class<ImportedEntity> entityClass = (Class<ImportedEntity>) importedEntityFeed.getImportedEntityType().getEntityClass();
@@ -128,6 +127,7 @@ public class ImportedEntityServiceHelper {
                 mergeEntities(entityClass, importedEntityFeed.getInstitution(), newEntities);
             }
 
+            importedEntityService.setLastImportedDate(importedEntityFeed);
             // TODO: state change to institution ready to use.
         } catch (Exception e) {
             throw new DataImportException("Error during the import of file: " + fileLocation, e);
@@ -186,7 +186,7 @@ public class ImportedEntityServiceHelper {
         }
     }
     
-    private void mergeEntities(Class<ImportedEntity> entityClass, Institution institution, Iterable<ImportedEntity> transientEntities) {
+    private void mergeEntities(Class<ImportedEntity> entityClass, Institution institution, Iterable<ImportedEntity> transientEntities) throws Exception {
         importedEntityService.disableAllEntities(entityClass, institution);
         for (ImportedEntity transientEntity : transientEntities) {
             importedEntityService.mergeEntity(entityClass, institution, transientEntity);

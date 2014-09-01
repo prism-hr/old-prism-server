@@ -46,4 +46,11 @@ public class ScopeDAO {
                 .list();
     }
     
+    public List<Scope> getEnclosingScopes(Scope scope) {
+        return (List<Scope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
+                .add(Restrictions.le("precedence", scope.getPrecedence())) //
+                .addOrder(Order.desc("precedence")) //
+                .list();
+    }
+    
 }

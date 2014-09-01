@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.CommentDTOValidator;
@@ -33,8 +34,12 @@ public class ProgramResource {
 
     @RequestMapping(value = "/{programId}/comments", method = RequestMethod.POST)
     public ActionOutcomeRepresentation performAction(@PathVariable Integer programId, @Valid @RequestBody CommentDTO commentDTO) {
-        ActionOutcomeDTO actionOutcome = programService.performAction(programId, commentDTO);
-        return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
+        try {
+            ActionOutcomeDTO actionOutcome = programService.performAction(programId, commentDTO);
+            return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException();
+        }
     }
 
     @InitBinder(value = "commentDTO")

@@ -84,24 +84,24 @@ public class ResourceService {
         return Lists.newArrayList();
     }
 
-    public ActionOutcomeDTO createResource(User user, Action action, Object newResourceDTO, String referrer) throws WorkflowEngineException {
+    public ActionOutcomeDTO createResource(User user, Action action, Object newResourceDTO, String referrer) throws Exception {
         Resource resource = null;
 
         switch (action.getCreationScope().getId()) {
-            case INSTITUTION:
-                resource = institutionService.create(user, (InstitutionDTO) newResourceDTO);
-                break;
-            case PROGRAM:
-                resource = programService.create(user, (ProgramDTO) newResourceDTO);
-                break;
-            case PROJECT:
-                resource = projectService.create(user, (ProjectDTO) newResourceDTO);
-                break;
-            case APPLICATION:
-                resource = applicationService.create(user, (ApplicationDTO) newResourceDTO);
-                break;
-            default:
-                throw new WorkflowEngineException("Attempted to create a resource of invalid type " + action.getCreationScope().getId().toString());
+        case INSTITUTION:
+            resource = institutionService.create(user, (InstitutionDTO) newResourceDTO);
+            break;
+        case PROGRAM:
+            resource = programService.create(user, (ProgramDTO) newResourceDTO);
+            break;
+        case PROJECT:
+            resource = projectService.create(user, (ProjectDTO) newResourceDTO);
+            break;
+        case APPLICATION:
+            resource = applicationService.create(user, (ApplicationDTO) newResourceDTO);
+            break;
+        default:
+            throw new WorkflowEngineException("Attempted to create a resource of invalid type " + action.getCreationScope().getId().toString());
         }
 
         if (entityService.getDuplicateEntity(resource) != null && !user.isEnabled()) {
@@ -118,20 +118,20 @@ public class ResourceService {
         resource.setUpdatedTimestamp(new DateTime());
 
         switch (resource.getResourceScope()) {
-            case INSTITUTION:
-                institutionService.save((Institution) resource);
-                break;
-            case PROGRAM:
-                programService.save((Program) resource);
-                break;
-            case PROJECT:
-                projectService.save((Project) resource);
-                break;
-            case APPLICATION:
-                applicationService.save((Application) resource);
-                break;
-            default:
-                throw new WorkflowEngineException("Attempted to persist a resource of invalid type " + resource.getResourceScope().getLowerCaseName());
+        case INSTITUTION:
+            institutionService.save((Institution) resource);
+            break;
+        case PROGRAM:
+            programService.save((Program) resource);
+            break;
+        case PROJECT:
+            projectService.save((Project) resource);
+            break;
+        case APPLICATION:
+            applicationService.save((Application) resource);
+            break;
+        default:
+            throw new WorkflowEngineException("Attempted to persist a resource of invalid type " + resource.getResourceScope().getLowerCaseName());
         }
 
         resource.setCode(generateResourceCode(resource));
@@ -145,39 +145,43 @@ public class ResourceService {
     public void processResource(Resource resource, Comment comment) {
         LocalDate baselineCustom;
         LocalDate baseline = new LocalDate();
-        
+
         switch (resource.getResourceScope()) {
         case PROGRAM:
             baselineCustom = programService.resolveDueDateBaseline((Program) resource, comment);
+            break;
         case PROJECT:
             baselineCustom = projectService.resolveDueDateBaseline((Project) resource, comment);
+            break;
         case APPLICATION:
             baselineCustom = applicationService.resolveDueDateBaseline((Application) resource, comment);
+            break;
         default:
             baselineCustom = null;
+            break;
         }
-        
+
         baselineCustom = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
-        
+
         StateDuration stateDuration = stateService.getStateDuration(resource);
         resource.setDueDate(baseline.plusDays(stateDuration == null ? 0 : stateDuration.getDuration()));
     }
-    
-    public void updateResource(Resource resource, Comment comment) {     
+
+    public void updateResource(Resource resource, Comment comment) throws Exception {
         DateTime baselineTime = new DateTime();
         LocalDate baselineDate = baselineTime.toLocalDate();
-        
+
         String lastSequenceIdentifier = resourceDAO.getLastSequenceIdentifier(resource, baselineDate);
-        
+
         lastSequenceIdentifier = lastSequenceIdentifier == null ? baselineDate.toString("yyyyMMdd") + "-0000000001" : lastSequenceIdentifier;
         String[] lastSequenceIdentifierParts = lastSequenceIdentifier.split("-");
         Integer lastSequenceIdentifierIndex = Integer.parseInt(lastSequenceIdentifierParts[1].replaceAll("^0+(?!$)", ""));
-        
+
         Integer nextSequenceIdentifierIndex = lastSequenceIdentifierIndex + 1;
         resource.setSequenceIdentifier(lastSequenceIdentifierParts[0] + "-" + String.format("%010d", nextSequenceIdentifierIndex));
-        
+
         resource.setUpdatedTimestamp(baselineTime);
-        
+
         switch (resource.getResourceScope()) {
         case PROGRAM:
             programService.postProcessProgram((Program) resource, comment);
@@ -203,6 +207,7 @@ public class ResourceService {
                 escalations.put(resource, action);
             }
         }
+
         return escalations;
     }
 
@@ -213,7 +218,7 @@ public class ResourceService {
         for (StateTransitionPending stateTransitionPending : stateTransitionsPending) {
 
             for (Action action : stateTransitionPending.getStateTransition().getPropagatedActions()) {
-                List<Resource> resources = resourceDAO.getResourcesToPropagate(stateTransitionPending.getResource(), action);
+                List<Resource> resources = resourceDAO.getResourcesToPropagate(stateTransitionPending.getResource(), action, action.getScope().getId());
 
                 for (Resource resource : resources) {
                     if (!propagations.containsKey(resource)) {
@@ -226,19 +231,20 @@ public class ResourceService {
                 }
             }
         }
+
         return propagations;
     }
-    
+
     public Resource getOperativeResource(Resource resource, Action action) {
         return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
     }
-    
+
     public <T extends Resource> List<Resource> getResourcesRequiringAttention(Class<T> resourceClass) {
         return resourceDAO.getResourcesRequiringAttention(resourceClass);
     }
-    
+
     public <T extends Resource> List<Resource> getRecentlyUpdatedResources(Class<T> resourceClass, DateTime rangeStart, DateTime rangeClose) {
         return resourceDAO.getRecentlyUpdatedResources(resourceClass, rangeStart, rangeClose);
     }
-    
+
 }

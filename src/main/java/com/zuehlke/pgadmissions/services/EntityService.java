@@ -51,11 +51,11 @@ public class EntityService {
         return entityDAO.listByProperties(klass, properties);
     }
 
-    public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) {
+    public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) throws Exception {
         return (T) entityDAO.getDuplicateEntity(uniqueResource);
     }
 
-    public <T extends IUniqueEntity> T getOrCreate(T transientResource) {
+    public <T extends IUniqueEntity> T getOrCreate(T transientResource) throws Exception {
         T persistentResource = (T) getDuplicateEntity(transientResource);
         if (persistentResource == null) {
             save(transientResource);
@@ -64,7 +64,7 @@ public class EntityService {
         return persistentResource;
     }
 
-    public <T extends IUniqueEntity> T createOrUpdate(T transientResource) {
+    public <T extends IUniqueEntity> T createOrUpdate(T transientResource) throws Exception {
         T persistentResource = (T) getDuplicateEntity(transientResource);
         if (persistentResource == null) {
             save(transientResource);

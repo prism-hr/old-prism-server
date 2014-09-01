@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,9 +26,6 @@ import org.hibernate.search.annotations.Parameter;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 @AnalyzerDef(name = "importedLanguageQualificationTypeNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
@@ -223,20 +218,6 @@ public class LanguageQualificationType extends ImportedEntity {
     public LanguageQualificationType withName(String name) {
         this.name = name;
         return this;
-    }
-    
-    @Override
-    public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties1 = Maps.newHashMap();
-        properties1.put("institution", institution);    
-        properties1.put("code", code);
-        propertiesWrapper.add(properties1);
-        HashMap<String, Object> properties2 = Maps.newHashMap();
-        properties2.put("institution", institution); 
-        properties2.put("name", name);
-        propertiesWrapper.add(properties2);
-        return new ResourceSignature(propertiesWrapper);
     }
 
 }

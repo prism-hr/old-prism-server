@@ -828,7 +828,7 @@ public class Comment {
     }
 
     public boolean isProgramCreateComment() {
-        return action.getCreationScope().getId() == PrismScope.PROGRAM;
+        return action.getCreationScope() == null ? false : action.getCreationScope().getId() == PrismScope.PROGRAM ? true : false;
     }
 
     public boolean isProgramUpdateComment() {
@@ -840,7 +840,7 @@ public class Comment {
     }
 
     public boolean isProjectCreateComment() {
-        return action.getCreationScope().getId() == PrismScope.PROJECT;
+        return action.getCreationScope() == null ? false : action.getCreationScope().getId() == PrismScope.PROJECT ? true : false;
     }
 
     public boolean isProjectUpdateComment() {
@@ -868,7 +868,9 @@ public class Comment {
     }
 
     public boolean isTransitionComment() {
-        return action.isTransitionAction();
+        StateGroup previousStateGroup = state.getStateGroup();
+        StateGroup currentStateGroup = transitionState.getStateGroup();
+        return action.isTransitionAction() && previousStateGroup.getId() == currentStateGroup.getId() || previousStateGroup.isRepeatable();
     }
 
 }

@@ -66,8 +66,8 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositi
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationFundingDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationLanguageQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPassportDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailsDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
@@ -218,7 +218,7 @@ public class ApplicationService {
         return applicationDAO.getUclApplicationsForExport();
     }
 
-    public void saveProgramDetails(Integer applicationId, ApplicationProgramDetailsDTO programDetailsDTO) {
+    public void saveProgramDetails(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) throws Exception {
         Application application = entityService.getById(Application.class, applicationId);
         Institution institution = application.getInstitution();
         ApplicationProgramDetail programDetails = application.getProgramDetail();
@@ -227,29 +227,29 @@ public class ApplicationService {
             application.setProgramDetail(programDetails);
         }
 
-        StudyOption studyOption = importedEntityService.getById(StudyOption.class, institution, programDetailsDTO.getStudyOption());
-        ReferralSource referralSource = importedEntityService.getById(ReferralSource.class, institution, programDetailsDTO.getReferralSource());
+        StudyOption studyOption = importedEntityService.getById(StudyOption.class, institution, programDetailDTO.getStudyOption());
+        ReferralSource referralSource = importedEntityService.getById(ReferralSource.class, institution, programDetailDTO.getReferralSource());
         programDetails.setStudyOption(studyOption);
-        programDetails.setStartDate(programDetailsDTO.getStartDate().toLocalDate());
+        programDetails.setStartDate(programDetailDTO.getStartDate().toLocalDate());
         programDetails.setReferralSource(referralSource);
 
         Iterator<ApplicationSupervisor> supervisorsIterator = programDetails.getSupervisors().iterator();
         while (supervisorsIterator.hasNext()) {
             final ApplicationSupervisor supervisor = supervisorsIterator.next();
-            Optional<ApplicationSupervisorDTO> supervisorDTO = Iterables.tryFind(programDetailsDTO.getSupervisors(), new Predicate<ApplicationSupervisorDTO>() {
+            Optional<ApplicationSupervisorDTO> supervisorDTO = Iterables.tryFind(programDetailDTO.getSupervisors(), new Predicate<ApplicationSupervisorDTO>() {
                 @Override
                 public boolean apply(ApplicationSupervisorDTO dto) {
                     return supervisor.getUser().getEmail().equals(dto.getUser().getEmail());
                 }
             });
             if (supervisorDTO.isPresent()) {
-                programDetailsDTO.getSupervisors().remove(supervisorDTO.get());
+                programDetailDTO.getSupervisors().remove(supervisorDTO.get());
                 supervisor.setAware(supervisorDTO.get().getAware());
             } else {
                 supervisorsIterator.remove();
             }
         }
-        for (ApplicationSupervisorDTO supervisorDTO : programDetailsDTO.getSupervisors()) {
+        for (ApplicationSupervisorDTO supervisorDTO : programDetailDTO.getSupervisors()) {
             User user = userService.getOrCreateUser(supervisorDTO.getUser().getFirstName(), supervisorDTO.getUser().getLastName(), supervisorDTO.getUser()
                     .getEmail());
             ApplicationSupervisor supervisor = new ApplicationSupervisor().withAware(supervisorDTO.getAware()).withUser(user);
@@ -257,7 +257,7 @@ public class ApplicationService {
         }
     }
 
-    public void savePersonalDetails(Integer applicationId, ApplicationPersonalDetailsDTO personalDetailsDTO) {
+    public void savePersonalDetails(Integer applicationId, ApplicationPersonalDetailDTO personalDetailDTO) {
         Application application = entityService.getById(Application.class, applicationId);
         Institution institution = application.getInstitution();
         ApplicationPersonalDetail personalDetails = application.getPersonalDetail();
@@ -267,35 +267,35 @@ public class ApplicationService {
         }
 
         User user = application.getUser();
-        user.setFirstName(personalDetailsDTO.getUser().getFirstName());
-        user.setFirstName2(Strings.emptyToNull(personalDetailsDTO.getUser().getFirstName2()));
-        user.setFirstName3(Strings.emptyToNull(personalDetailsDTO.getUser().getFirstName3()));
-        user.setLastName(personalDetailsDTO.getUser().getLastName());
+        user.setFirstName(personalDetailDTO.getUser().getFirstName());
+        user.setFirstName2(Strings.emptyToNull(personalDetailDTO.getUser().getFirstName2()));
+        user.setFirstName3(Strings.emptyToNull(personalDetailDTO.getUser().getFirstName3()));
+        user.setLastName(personalDetailDTO.getUser().getLastName());
 
-        Title title = importedEntityService.getById(Title.class, institution, personalDetailsDTO.getTitle());
-        Gender gender = importedEntityService.getById(Gender.class, institution, personalDetailsDTO.getGender());
-        Country country = importedEntityService.getById(Country.class, institution, personalDetailsDTO.getCountry());
-        Language firstNationality = importedEntityService.getById(Language.class, institution, personalDetailsDTO.getFirstNationality());
-        Language secondNationality = personalDetailsDTO.getSecondNationality() != null ? importedEntityService.<Language> getById(Language.class, institution,
-                personalDetailsDTO.getSecondNationality()) : null;
-        Domicile residenceCountry = importedEntityService.getById(Domicile.class, institution, personalDetailsDTO.getResidenceCountry());
-        Ethnicity ethnicity = importedEntityService.getById(Ethnicity.class, institution, personalDetailsDTO.getEthnicity());
-        Disability disability = importedEntityService.getById(Disability.class, institution, personalDetailsDTO.getDisability());
+        Title title = importedEntityService.getById(Title.class, institution, personalDetailDTO.getTitle());
+        Gender gender = importedEntityService.getById(Gender.class, institution, personalDetailDTO.getGender());
+        Country country = importedEntityService.getById(Country.class, institution, personalDetailDTO.getCountry());
+        Language firstNationality = importedEntityService.getById(Language.class, institution, personalDetailDTO.getFirstNationality());
+        Language secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.<Language> getById(Language.class, institution,
+                personalDetailDTO.getSecondNationality()) : null;
+        Domicile residenceCountry = importedEntityService.getById(Domicile.class, institution, personalDetailDTO.getResidenceCountry());
+        Ethnicity ethnicity = importedEntityService.getById(Ethnicity.class, institution, personalDetailDTO.getEthnicity());
+        Disability disability = importedEntityService.getById(Disability.class, institution, personalDetailDTO.getDisability());
         personalDetails.setTitle(title);
         personalDetails.setGender(gender);
-        personalDetails.setDateOfBirth(personalDetailsDTO.getDateOfBirth().toLocalDate());
+        personalDetails.setDateOfBirth(personalDetailDTO.getDateOfBirth().toLocalDate());
         personalDetails.setCountry(country);
         personalDetails.setFirstNationality(firstNationality);
         personalDetails.setSecondNationality(secondNationality);
-        personalDetails.setFirstLanguageEnglish(personalDetailsDTO.getFirstLanguageEnglish());
+        personalDetails.setFirstLanguageEnglish(personalDetailDTO.getFirstLanguageEnglish());
         personalDetails.setResidenceCountry(residenceCountry);
-        personalDetails.setVisaRequired(personalDetailsDTO.getVisaRequired());
-        personalDetails.setPhoneNumber(personalDetailsDTO.getPhoneNumber());
-        personalDetails.setMessenger(Strings.emptyToNull(personalDetailsDTO.getMessenger()));
+        personalDetails.setVisaRequired(personalDetailDTO.getVisaRequired());
+        personalDetails.setPhoneNumber(personalDetailDTO.getPhoneNumber());
+        personalDetails.setMessenger(Strings.emptyToNull(personalDetailDTO.getMessenger()));
         personalDetails.setEthnicity(ethnicity);
         personalDetails.setDisability(disability);
 
-        ApplicationLanguageQualificationDTO languageQualificationDTO = personalDetailsDTO.getLanguageQualification();
+        ApplicationLanguageQualificationDTO languageQualificationDTO = personalDetailDTO.getLanguageQualification();
         if (languageQualificationDTO == null) {
             personalDetails.setLanguageQualification(null);
         } else {
@@ -317,7 +317,7 @@ public class ApplicationService {
             languageQualification.setDocument(proofOfAward);
         }
 
-        ApplicationPassportDTO passportDTO = personalDetailsDTO.getPassport();
+        ApplicationPassportDTO passportDTO = personalDetailDTO.getPassport();
         if (passportDTO == null) {
             personalDetails.setPassport(null);
         } else {
@@ -464,7 +464,7 @@ public class ApplicationService {
         application.getFundings().remove(funding);
     }
 
-    public ApplicationReferee saveReferee(Integer applicationId, Integer refereeId, ApplicationRefereeDTO refereeDTO) {
+    public ApplicationReferee saveReferee(Integer applicationId, Integer refereeId, ApplicationRefereeDTO refereeDTO) throws Exception {
         Application application = entityService.getById(Application.class, applicationId);
 
         ApplicationReferee referee;
@@ -535,7 +535,7 @@ public class ApplicationService {
         return null;
     }
 
-    public void postProcessApplication(Application application, Comment comment) {
+    public void postProcessApplication(Application application, Comment comment) throws Exception {
         if (comment.isProjectCreateComment()) {
             synchroniseProjectSupervisors(application);
         }

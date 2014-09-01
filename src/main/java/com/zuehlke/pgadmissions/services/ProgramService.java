@@ -105,7 +105,7 @@ public class ProgramService {
         return programDAO.getFirstEnabledProgramStudyOptionInstance(program, studyOption);
     }
 
-    public ActionOutcomeDTO performAction(Integer programId, CommentDTO commentDTO) {
+    public ActionOutcomeDTO performAction(Integer programId, CommentDTO commentDTO) throws Exception {
         Program program = entityService.getById(Program.class, programId);
         PrismAction actionId = commentDTO.getAction();
 

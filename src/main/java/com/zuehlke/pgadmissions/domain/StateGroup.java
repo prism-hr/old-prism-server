@@ -28,6 +28,9 @@ public class StateGroup extends WorkflowResource {
     @Column(name = "sequence_order", nullable = false)
     private Integer sequenceOrder;
     
+    @Column(name = "repeatable", nullable = false)
+    private Boolean repeatable;
+    
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
@@ -45,8 +48,16 @@ public class StateGroup extends WorkflowResource {
         return sequenceOrder;
     }
 
-    public void setSequenceOrder(int sequenceOrder) {
+    public void setSequenceOrder(Integer sequenceOrder) {
         this.sequenceOrder = sequenceOrder;
+    }
+
+    public final Boolean isRepeatable() {
+        return repeatable;
+    }
+
+    public final void setRepeatable(Boolean repeatable) {
+        this.repeatable = repeatable;
     }
 
     public Scope getScope() {
@@ -64,6 +75,11 @@ public class StateGroup extends WorkflowResource {
     
     public StateGroup withSequenceOrder(int sequenceOrder) {
         this.sequenceOrder = sequenceOrder;
+        return this;
+    }
+    
+    public StateGroup withRepeatable(Boolean repeatable) {
+        this.repeatable = repeatable;
         return this;
     }
     

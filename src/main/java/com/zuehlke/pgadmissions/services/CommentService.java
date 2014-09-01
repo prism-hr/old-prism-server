@@ -200,7 +200,6 @@ public class CommentService {
                 }
             }
         }
-        
         entityService.save(comment);
     }
 

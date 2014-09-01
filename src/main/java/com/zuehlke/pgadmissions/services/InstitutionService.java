@@ -98,7 +98,7 @@ public class InstitutionService {
         entityService.save(institutionAddress, institution);
     }
 
-    public void populateDefaultImportedEntityFeeds() {
+    public void populateDefaultImportedEntityFeeds() throws Exception {
         for (Institution institution : institutionDAO.getInstitutionsWithoutImportedEntityFeeds()) {
             for (PrismImportedEntity importedEntityType : PrismImportedEntity.values()) {
                 if (importedEntityType.getDefaultLocation() != null) {
@@ -108,7 +108,7 @@ public class InstitutionService {
         }
     }
 
-    public ActionOutcomeDTO performAction(Integer institutionId, CommentDTO commentDTO) {
+    public ActionOutcomeDTO performAction(Integer institutionId, CommentDTO commentDTO) throws Exception {
         Institution institution = entityService.getById(Institution.class, institutionId);
         PrismAction actionId = commentDTO.getAction();
 

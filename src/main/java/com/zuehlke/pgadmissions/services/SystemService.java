@@ -57,7 +57,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.helpers.StateServiceHelper;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -110,7 +109,7 @@ public class SystemService {
 
     @Autowired
     private StateService stateService;
-    
+
     @Autowired
     private StateServiceHelper stateTransitionHelper;
 
@@ -125,8 +124,8 @@ public class SystemService {
         return entityService.getByProperty(System.class, "name", systemName);
     }
 
-    @Transactional(timeout = 120)
-    public void initialiseSystem() throws WorkflowConfigurationException, WorkflowEngineException {
+    @Transactional(timeout = 600)
+    public void initialiseSystem() throws Exception {
         logger.info("Initialising scope definitions");
         verifyBackwardCompatibility(Scope.class);
         initialiseScopes();
@@ -172,14 +171,14 @@ public class SystemService {
         fullTextSession.createIndexer().startAndWait();
     }
 
-    private void initialiseScopes() {
+    private void initialiseScopes() throws Exception {
         for (PrismScope prismScope : PrismScope.values()) {
             Scope transientScope = new Scope().withId(prismScope).withPrecedence(prismScope.getPrecedence()).withShortCode(prismScope.getShortCode());
             entityService.createOrUpdate(transientScope);
         }
     }
 
-    private void initialiseRoles() {
+    private void initialiseRoles() throws Exception {
         roleService.deleteExludedRoles();
         Set<Role> rolesWithExclusions = Sets.newHashSet();
 
@@ -202,7 +201,7 @@ public class SystemService {
         }
     }
 
-    private void initialiseActions() {
+    private void initialiseActions() throws Exception {
         entityService.deleteAll(ActionRedaction.class);
 
         for (PrismAction prismAction : PrismAction.values()) {
@@ -230,15 +229,16 @@ public class SystemService {
         }
     }
 
-    private void initialiseStateGroups() {
+    private void initialiseStateGroups() throws Exception {
         for (PrismStateGroup prismStateGroup : PrismStateGroup.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismStateGroup.getScope());
-            StateGroup transientStateGroup = new StateGroup().withId(prismStateGroup).withSequenceOrder(prismStateGroup.getSequenceOrder()).withScope(scope);
+            StateGroup transientStateGroup = new StateGroup().withId(prismStateGroup).withSequenceOrder(prismStateGroup.getSequenceOrder())
+                    .withRepeatable(prismStateGroup.isRepeatable()).withScope(scope);
             entityService.createOrUpdate(transientStateGroup);
         }
     }
 
-    private void initialiseStates() {
+    private void initialiseStates() throws Exception {
         for (PrismState prismState : PrismState.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismState.getScope());
             StateGroup stateGroup = entityService.getByProperty(StateGroup.class, "id", prismState.getStateGroup());
@@ -247,7 +247,7 @@ public class SystemService {
         }
     }
 
-    private System initialiseSystemResource() {
+    private System initialiseSystemResource() throws Exception {
         User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail);
         State systemRunning = stateService.getById(PrismState.SYSTEM_RUNNING);
         DateTime startupTimestamp = new DateTime();
@@ -258,7 +258,7 @@ public class SystemService {
         return system;
     }
 
-    private void initialiseNotificationTemplates(System system) {
+    private void initialiseNotificationTemplates(System system) throws Exception {
         if (BooleanUtils.isTrue(initializeNotifications)) {
             notificationService.deleteAllNotifications();
         }
@@ -307,7 +307,7 @@ public class SystemService {
         return version;
     }
 
-    private void initialiseStateDurations(System system) {
+    private void initialiseStateDurations(System system) throws Exception {
         for (PrismState prismState : PrismState.values()) {
             if (prismState.getDuration() != null) {
                 State state = stateService.getById(prismState);
@@ -317,7 +317,7 @@ public class SystemService {
         }
     }
 
-    private void initialiseStateActions() throws WorkflowConfigurationException {
+    private void initialiseStateActions() throws Exception {
         stateTransitionHelper.executePendingStateTransitions();
         stateService.deleteStateActions();
 
@@ -397,7 +397,7 @@ public class SystemService {
         }
     }
 
-    private void initialiseSystemUser(System system) throws WorkflowEngineException {
+    private void initialiseSystemUser(System system) throws Exception {
         User user = system.getUser();
         if (user.getUserAccount() == null) {
             Action action = actionService.getById(PrismAction.SYSTEM_STARTUP);

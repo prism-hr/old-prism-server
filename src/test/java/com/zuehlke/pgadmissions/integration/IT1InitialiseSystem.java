@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.integration.helpers.SystemInitialisationHelper;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
 import com.zuehlke.pgadmissions.services.SystemService;
@@ -32,7 +30,7 @@ public class IT1InitialiseSystem implements IPrismIntegrationTest {
 
     @Test
     @Override
-    public void run() throws WorkflowConfigurationException, WorkflowEngineException {
+    public void run() throws Exception {
         for (int i = 0; i < 2; i++) {
             systemService.initialiseSystem();
 

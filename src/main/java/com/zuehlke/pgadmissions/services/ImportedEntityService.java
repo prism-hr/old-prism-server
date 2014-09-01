@@ -127,7 +127,7 @@ public class ImportedEntityService {
         ImportedEntity persistentEntity = entityService.getDuplicateEntity(transientEntity);
 
         if (persistentEntity == null) {
-            entityService.saveChecked(transientEntity);
+            entityService.save(transientEntity);
         } else {
             String transientCode = transientEntity.getCode();
             String transientName = transientEntity.getName();
@@ -158,7 +158,7 @@ public class ImportedEntityService {
         ImportedInstitution persistentImportedInstitution = entityService.getDuplicateEntity(transientImportedInstitution);
 
         if (persistentImportedInstitution == null) {
-            entityService.saveChecked(transientImportedInstitution);
+            entityService.save(transientImportedInstitution);
         } else {
             Domicile transientDomicile = transientImportedInstitution.getDomicile();
             String transientCode = transientImportedInstitution.getCode();
@@ -292,7 +292,7 @@ public class ImportedEntityService {
         Program persistentProgram = entityService.getDuplicateEntity(transientProgram);
 
         if (persistentProgram == null) {
-            entityService.saveChecked(transientProgram);
+            entityService.save(transientProgram);
             return transientProgram;
         } else {
             persistentProgram.setTitle(transientTitle);
@@ -306,7 +306,7 @@ public class ImportedEntityService {
         ProgramStudyOption persistentProgramStudyOption = entityService.getDuplicateEntity(transientProgramStudyOption);
 
         if (persistentProgramStudyOption == null) {
-            entityService.saveChecked(transientProgramStudyOption);
+            entityService.save(transientProgramStudyOption);
             return transientProgramStudyOption;
         } else {
             LocalDate transientStartDate = transientProgramStudyOption.getApplicationStartDate();

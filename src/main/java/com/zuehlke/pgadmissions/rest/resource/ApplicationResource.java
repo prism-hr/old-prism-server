@@ -126,7 +126,7 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/qualifications/{qualificationId}", method = RequestMethod.DELETE)
-    public void updateQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId) {
+    public void deleteQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId) {
         applicationService.deleteQualification(applicationId, qualificationId);
     }
 
@@ -144,7 +144,7 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/employmentPositions/{employmentPositionId}", method = RequestMethod.DELETE)
-    public void updateEmploymentPosition(@PathVariable Integer applicationId, @PathVariable Integer employmentPositionId) {
+    public void deleteEmploymentPosition(@PathVariable Integer applicationId, @PathVariable Integer employmentPositionId) {
         applicationService.deleteEmploymentPosition(applicationId, employmentPositionId);
     }
 
@@ -160,7 +160,7 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/fundings/{fundingId}", method = RequestMethod.DELETE)
-    public void updateFunding(@PathVariable Integer applicationId, @PathVariable Integer fundingId) {
+    public void deleteFunding(@PathVariable Integer applicationId, @PathVariable Integer fundingId) {
         applicationService.deleteFunding(applicationId, fundingId);
     }
 
@@ -175,7 +175,7 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/referees/{refereeId}", method = RequestMethod.PUT)
-    public void updateReferee(@PathVariable Integer applicationId, @PathVariable Integer refereeId, @Valid @RequestBody ApplicationRefereeDTO refereeDTO) {
+    public void deleteReferee(@PathVariable Integer applicationId, @PathVariable Integer refereeId, @Valid @RequestBody ApplicationRefereeDTO refereeDTO) {
         try {
             applicationService.saveReferee(applicationId, refereeId, refereeDTO);
         } catch (Exception e) {

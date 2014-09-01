@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.exceptions.DataImportException;
 
 @Service
 @Transactional
@@ -21,10 +22,6 @@ public class EntityService {
 
     public <T> T getById(Class<T> klass, Object id) {
         return entityDAO.getById(klass, id);
-    }
-
-    public <T> T getByCode(Class<T> klass, String code) {
-        return entityDAO.getByCode(klass, code);
     }
 
     public <T> T getByProperty(Class<T> klass, String propertyName, Object propertyValue) {
@@ -84,10 +81,12 @@ public class EntityService {
     public Serializable save(Object entity) {
         return entityDAO.save(entity);
     }
-
-    public void save(Object... entities) {
-        for (Object entity : entities) {
-            entityDAO.save(entity);
+    
+    public <T extends IUniqueEntity> Serializable saveChecked(T entity) throws DataImportException {
+        try {
+            return save(entity);
+        } catch (Exception e) {
+            throw new DataImportException("Attempted to import invalid " + entity.getClass().getSimpleName() + " " + entity.getResourceSignature().toString());
         }
     }
 

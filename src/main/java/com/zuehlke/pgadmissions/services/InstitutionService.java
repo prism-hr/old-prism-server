@@ -66,9 +66,9 @@ public class InstitutionService {
     public List<InstitutionDomicileRegion> getTopLevelRegions(InstitutionDomicile domicile) {
         return institutionDAO.getTopLevelRegions(domicile);
     }
-
-    public List<Institution> listByCountry(InstitutionDomicile domicile) {
-        return institutionDAO.listByCountry(domicile);
+    
+    public List<Institution> listApprovedInstitutionsByCountry(InstitutionDomicile domicile) {
+        return institutionDAO.listApprovedInstitutionsByCountry(domicile);
     }
 
     public Institution getUclInstitution() {
@@ -95,7 +95,8 @@ public class InstitutionService {
 
     public void save(Institution institution) {
         InstitutionAddress institutionAddress = institution.getAddress();
-        entityService.save(institutionAddress, institution);
+        entityService.save(institutionAddress);
+        entityService.save(institution);
     }
 
     public void populateDefaultImportedEntityFeeds() throws Exception {

@@ -46,26 +46,26 @@ import com.zuehlke.pgadmissions.services.converters.ImportedInstitutionConverter
 import com.zuehlke.pgadmissions.services.converters.ImportedLanguageQualificationTypeConverter;
 
 @Component
-@SuppressWarnings({"unchecked", "rawtypes"})
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ImportedEntityServiceHelper {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(ImportedEntityServiceHelper.class);
-    
+
     @Value("${import.advertCategory.location}")
     private String advertCategoryImportLocation;
-    
+
     @Value("${import.institutionDomicile.location}")
     private String institutionDomicileImportLocation;
-    
+
     @Autowired
     private EntityService entityService;
-    
+
     @Autowired
     private ImportedEntityService importedEntityService;
-    
+
     @Autowired
     private InstitutionService institutionService;
-    
+
     @Autowired
     private NotificationService notificationService;
 
@@ -112,7 +112,7 @@ public class ImportedEntityServiceHelper {
 
             Institution institution = importedEntityFeed.getInstitution();
             if (entityClass.equals(Program.class)) {
-                mergeProgrammeOcccurences(institution, (List<ProgrammeOccurrence>) unmarshalled);
+                mergeImportedPrograms(institution, (List<ProgrammeOccurrence>) unmarshalled);
             } else {
                 Function<Object, ? extends ImportedEntity> entityConverter;
                 if (entityClass.equals(LanguageQualificationType.class)) {
@@ -123,8 +123,13 @@ public class ImportedEntityServiceHelper {
                     entityConverter = ImportedEntityConverter.create(institution, entityClass);
                 }
 
-                Iterable<ImportedEntity> newEntities = Iterables.transform(unmarshalled, entityConverter);
-                mergeEntities(entityClass, importedEntityFeed.getInstitution(), newEntities);
+                if (entityClass.equals(ImportedInstitution.class)) {
+                    Iterable<ImportedInstitution> newImportedEntities = Iterables.transform(unmarshalled, entityConverter);
+                    mergeImportedInstitutions(importedEntityFeed.getInstitution(), newImportedEntities);
+                } else {
+                    Iterable<ImportedEntity> newImportedEntities = Iterables.transform(unmarshalled, entityConverter);
+                    mergeImportedEntities(entityClass, importedEntityFeed.getInstitution(), newImportedEntities);
+                }
             }
 
             importedEntityService.setLastImportedDate(importedEntityFeed);
@@ -133,7 +138,7 @@ public class ImportedEntityServiceHelper {
             throw new DataImportException("Error during the import of file: " + fileLocation, e);
         }
     }
-    
+
     public void importAdvertCategories() throws DataImportException {
         logger.info("Starting the import from file: " + advertCategoryImportLocation);
         try {
@@ -144,7 +149,7 @@ public class ImportedEntityServiceHelper {
             throw new DataImportException("Error during the import of file: " + advertCategoryImportLocation, e);
         }
     }
-    
+
     public void importInstitutionDomiciles() throws DataImportException {
         logger.info("Starting the import from file: " + institutionDomicileImportLocation);
         try {
@@ -167,7 +172,7 @@ public class ImportedEntityServiceHelper {
             Authenticator.setDefault(null);
         }
     }
-    
+
     private List<Object> unmarshallEntities(final ImportedEntityFeed importedEntityFeed) throws Exception {
         try {
             Authenticator.setDefault(new Authenticator() {
@@ -185,29 +190,37 @@ public class ImportedEntityServiceHelper {
             Authenticator.setDefault(null);
         }
     }
-    
-    private void mergeEntities(Class<ImportedEntity> entityClass, Institution institution, Iterable<ImportedEntity> transientEntities) throws Exception {
-        importedEntityService.disableAllEntities(entityClass, institution);
-        for (ImportedEntity transientEntity : transientEntities) {
-            importedEntityService.mergeEntity(entityClass, institution, transientEntity);
+
+    private void mergeImportedEntities(Class<ImportedEntity> importedEntityClass, Institution institution, Iterable<ImportedEntity> transientImportedEntities)
+            throws Exception {
+        importedEntityService.disableAllEntities(importedEntityClass, institution);
+        for (ImportedEntity transientImportedEntity : transientImportedEntities) {
+            importedEntityService.mergeImportedEntity(importedEntityClass, institution, transientImportedEntity);
         }
     }
 
-    private void mergeProgrammeOcccurences(Institution institution, List<ProgrammeOccurrence> occurrences) throws Exception {
+    private void mergeImportedInstitutions(Institution institution, Iterable<ImportedInstitution> transientImportedInstitutions) throws Exception {
+        importedEntityService.disableAllEntities(ImportedInstitution.class, institution);
+        for (ImportedInstitution transientImportedInstitution : transientImportedInstitutions) {
+            importedEntityService.mergeImportedInstitution(institution, transientImportedInstitution);
+        }
+    }
+
+    private void mergeImportedPrograms(Institution institution, List<ProgrammeOccurrence> importedPrograms) throws Exception {
         LocalDate baseline = new LocalDate();
-        
+
         importedEntityService.disableAllImportedPrograms(institution, baseline);
-        HashMultimap<String, ProgrammeOccurrence> batchedOccurrences = getBatchedProgramOccurrences(occurrences);
+        HashMultimap<String, ProgrammeOccurrence> batchedOccurrences = getBatchedImportedPrograms(importedPrograms);
 
         for (String programCode : batchedOccurrences.keySet()) {
             Set<ProgrammeOccurrence> occurrencesInBatch = batchedOccurrences.get(programCode);
-            importedEntityService.mergeProgrammeOccurrences(institution, occurrencesInBatch, baseline);
+            importedEntityService.mergeImportedProgram(institution, occurrencesInBatch, baseline);
         }
     }
-    
-    private HashMultimap<String, ProgrammeOccurrence> getBatchedProgramOccurrences(List<ProgrammeOccurrence> occurrences) {
+
+    private HashMultimap<String, ProgrammeOccurrence> getBatchedImportedPrograms(List<ProgrammeOccurrence> importedPrograms) {
         HashMultimap<String, ProgrammeOccurrence> batchedImports = HashMultimap.create();
-        for (ProgrammeOccurrence occurrence : occurrences) {
+        for (ProgrammeOccurrence occurrence : importedPrograms) {
             batchedImports.put(occurrence.getProgramme().getCode(), occurrence);
         }
         return batchedImports;
@@ -244,5 +257,5 @@ public class ImportedEntityServiceHelper {
             importedEntityService.mergeInstitutionDomicile(country);
         }
     }
-    
+
 }

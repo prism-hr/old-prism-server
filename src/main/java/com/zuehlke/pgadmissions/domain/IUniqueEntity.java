@@ -58,7 +58,9 @@ public interface IUniqueEntity {
         }
         
         private String propertyToString(Object property) {
-            if (PropertyUtils.isReadable(property, "id")) {
+            if (property == null) {
+                return "null";
+            } else if (PropertyUtils.isReadable(property, "id")) {
                 try {
                     return propertyToString(PropertyUtils.getSimpleProperty(property, "id"));
                 } catch (Exception e) {

@@ -87,7 +87,7 @@ public class ProgramService {
 
         Advert advert = new Advert().withTitle(title);
         Institution institution = entityService.getById(Institution.class, programDTO.getInstitutionId());
-        ProgramType programType = importedEntityService.getByCode(ProgramType.class, institution, programDTO.getProgramType().name());
+        ProgramType programType = importedEntityService.getImportedEntityByCode(ProgramType.class, institution, programDTO.getProgramType().name());
         
         Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withTitle(title).withInstitution(institution)
                 .withProgramType(programType).withRequireProjectDefinition(programDTO.getRequireProjectDefinition()).withImported(false).withAdvert(advert)
@@ -129,7 +129,7 @@ public class ProgramService {
         Program program = entityService.getById(Program.class, programId);
         Advert advert = program.getAdvert();
 
-        ProgramType programType = importedEntityService.getByCode(ProgramType.class, program.getInstitution(), programDTO.getProgramType().name());
+        ProgramType programType = importedEntityService.getImportedEntityByCode(ProgramType.class, program.getInstitution(), programDTO.getProgramType().name());
 
         program.setProgramType(programType);
         program.setTitle(title);

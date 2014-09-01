@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
@@ -122,7 +123,7 @@ public class NotificationService {
 
         for (UserNotificationDefinitionDTO reminder : reminders) {
             User user = userService.getById(reminder.getUserId());
-            
+
             Role role = roleService.getById(reminder.getRoleId());
             UserRole userRole = roleService.getUserRole(resource, user, role);
 
@@ -163,10 +164,11 @@ public class NotificationService {
     }
 
     public void sendSyndicatedUpdateNotifications(Resource resource, Comment transitionComment, LocalDate baseline) {
+        State state = transitionComment.getState();
         Action action = transitionComment.getAction();
         User invoker = transitionComment.getAuthor();
 
-        List<UserNotificationDefinitionDTO> updates = notificationDAO.getSyndicatedUpdateNotifications(resource, action, invoker, baseline);
+        List<UserNotificationDefinitionDTO> updates = notificationDAO.getSyndicatedUpdateNotifications(resource, state, action, invoker, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
         for (UserNotificationDefinitionDTO update : updates) {
@@ -236,7 +238,9 @@ public class NotificationService {
     }
 
     private void sendIndividualUpdateNotifications(Resource resource, Action action, User invoker, LocalDate baseline) {
-        List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateNotifications(resource, action, invoker, baseline);
+        State state = resource.getPreviousState();
+        
+        List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateNotifications(resource, state, action, invoker, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
         for (UserNotificationDefinitionDTO update : updates) {

@@ -1,13 +1,14 @@
 package com.zuehlke.pgadmissions.mail;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-
-import java.util.List;
-import java.util.Map;
 
 public final class MailMessageDTO {
 

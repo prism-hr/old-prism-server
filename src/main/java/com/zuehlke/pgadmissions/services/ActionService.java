@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 
@@ -97,12 +96,12 @@ public class ActionService {
         return Lists.newArrayList(enhancements);
     }
 
-    public ActionOutcomeDTO executeUserAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
+    public ActionOutcomeDTO executeUserAction(Resource resource, Action action, Comment comment) throws Exception {
         validateInvokeAction(resource, action, comment);
         return executeSystemAction(resource, action, comment);
     }
 
-    public ActionOutcomeDTO executeSystemAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
+    public ActionOutcomeDTO executeSystemAction(Resource resource, Action action, Comment comment) throws Exception {
         User actionOwner = comment.getUser();
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE || action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE) {
@@ -143,7 +142,7 @@ public class ActionService {
         return actionDAO.getEscalationActions();
     }
 
-    public ActionOutcomeDTO getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO, String referrer) throws WorkflowEngineException {
+    public ActionOutcomeDTO getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO, String referrer) throws Exception {
         Action action = getById(registrationDTO.getAction().getActionId());
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             Object operativeResourceDTO = registrationDTO.getAction().getOperativeResourceDTO();

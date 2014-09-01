@@ -37,8 +37,10 @@ public class ApplicationSummaryService {
 
     public void summariseApplication(Application application) {
         ApplicationRatingDTO ratingSummary = applicationSummaryDAO.getApplicationRatingSummary(application);
-        application.setRatingCount(ratingSummary.getRatingCount());
-        application.setRatingAverage(ratingSummary.getRatingAverage().setScale(2, RoundingMode.HALF_UP));
+        application.setRatingCount(ratingSummary.getRatingCount().intValue());
+        
+        BigDecimal ratingAverage = BigDecimal.valueOf(ratingSummary.getRatingAverage());
+        application.setRatingAverage(ratingAverage.setScale(2, RoundingMode.HALF_UP));
 
         for (PrismScope summaryScope : summaryScopes) {
             try {
@@ -49,7 +51,7 @@ public class ApplicationSummaryService {
         }
     }
 
-    public void summariseApplicationProcessing(Application application) {
+    public void summariseApplicationProcessing(Application application) throws Exception {
         StateGroup stateGroup = application.getState().getStateGroup();
         StateGroup previousStateGroup = application.getPreviousState().getStateGroup();
 
@@ -77,7 +79,7 @@ public class ApplicationSummaryService {
         }
     }
 
-    private void createOrUpdateApplicationProcessing(Application application, StateGroup stateGroup, LocalDate baseline) {
+    private void createOrUpdateApplicationProcessing(Application application, StateGroup stateGroup, LocalDate baseline) throws Exception {
         ApplicationProcessing transientProcessing = new ApplicationProcessing().withApplication(application).withStateGroup(stateGroup);
         ApplicationProcessing persistentProcessing = entityService.getDuplicateEntity(transientProcessing);
 
@@ -116,6 +118,11 @@ public class ApplicationSummaryService {
         for (PrismScope summaryScope : summaryScopes) {
             try {
                 ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, summaryScope.getLowerCaseName());
+                
+                if (summaryResource == null) {
+                    continue;
+                }
+                
                 ApplicationProcessingSummary transientSummary = new ApplicationProcessingSummary().withResource(summaryResource).withStateGroup(stateGroup);
                 ApplicationProcessingSummary persistentSummary = entityService.getDuplicateEntity(transientSummary);
 
@@ -159,7 +166,7 @@ public class ApplicationSummaryService {
     }
 
     private void updateApplicationProcessingSummary(ParentResource summaryResource, StateGroup stateGroup, ApplicationProcessingSummary persistentSummary) {
-        BigDecimal instanceCountAverage = applicationSummaryDAO.getInstanceCountAverage(summaryResource, stateGroup);
+        BigDecimal instanceCountAverage = BigDecimal.valueOf(applicationSummaryDAO.getInstanceCountAverage(summaryResource, stateGroup));
         persistentSummary.setInstanceCountAverage(instanceCountAverage.setScale(2, RoundingMode.HALF_UP));
         
         persistentSummary.setInstanceSum(persistentSummary.getInstanceSum() + 1);
@@ -172,28 +179,32 @@ public class ApplicationSummaryService {
         for (PrismScope summaryScope : summaryScopes) {
             try {
                 ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, summaryScope.getLowerCaseName());
+                
+                if (summaryResource == null) {
+                    continue;
+                }
+                
                 ApplicationProcessingSummary summary = applicationSummaryDAO.getProcessingSummary(summaryResource, previousStateGroup);
                 
-                BigDecimal instanceCountAverage = applicationSummaryDAO.getDayDurationSumAverage(summaryResource, previousStateGroup);
+                BigDecimal instanceCountAverage = BigDecimal.valueOf(applicationSummaryDAO.getDayDurationSumAverage(summaryResource, previousStateGroup));
                 summary.setDayDurationSumAverage(instanceCountAverage.setScale(2, RoundingMode.HALF_UP));
                 
                 summary.setInstanceSumLive(summary.getInstanceSumLive() - 1);
                 updateApplicationProcessingSummaryPercentile(summaryResource, previousStateGroup, summary, "dayDurationSum");
             } catch (Exception e) {
                 throw new Error(e);
-
             }
         }
     }
 
     private void updateApplicationProcessingSummaryPercentile(ParentResource summaryResource, StateGroup stateGroup,
             ApplicationProcessingSummary processingSummary, String property) {
-        Integer valuesInSet = applicationSummaryDAO.getNotNullProcessingCount(summaryResource, stateGroup);
+        Integer valuesInSet = applicationSummaryDAO.getNotNullProcessingCount(summaryResource, stateGroup).intValue();
 
         for (Integer percentile : summaryPercentiles) {
             Integer actualPercentile = getActualPercentile(valuesInSet, percentile);
             Object actualValue = applicationSummaryDAO.getProcessingPercentileValue(summaryResource, stateGroup, property, actualPercentile);
-            processingSummary.setPercentileValue(property, actualPercentile, actualValue);
+            processingSummary.setPercentileValue(property, percentile, actualValue);
         }
     }
 

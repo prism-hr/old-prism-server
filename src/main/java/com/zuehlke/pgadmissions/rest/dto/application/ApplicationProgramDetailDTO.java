@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 
 import org.joda.time.DateTime;
 
-public class ApplicationProgramDetailsDTO {
+public class ApplicationProgramDetailDTO {
 
     @NotNull
     private Integer studyOption;

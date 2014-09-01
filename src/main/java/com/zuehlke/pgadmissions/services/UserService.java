@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTem
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
@@ -89,7 +88,7 @@ public class UserService {
                 .withLastName(user.getLastName()).withEmail(user.getEmail());
     }
 
-    public User getOrCreateUser(String firstName, String lastName, String email) {
+    public User getOrCreateUser(String firstName, String lastName, String email) throws Exception {
         User user;
         User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email);
         User duplicateUser = entityService.getDuplicateEntity(transientUser);
@@ -104,7 +103,7 @@ public class UserService {
         return user;
     }
 
-    public User registerUser(UserRegistrationDTO registrationDTO, String referrer) throws WorkflowEngineException {
+    public User registerUser(UserRegistrationDTO registrationDTO, String referrer) throws Exception {
         User user = getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail());
         if ((registrationDTO.getActivationCode() != null && !user.getActivationCode().equals(registrationDTO.getActivationCode()))
                 || user.getUserAccount() != null) {
@@ -121,7 +120,7 @@ public class UserService {
     }
 
     public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource,
-            List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
+            List<AbstractResourceRepresentation.RoleRepresentation> roles) throws Exception {
         User user = getOrCreateUser(firstName, lastName, email);
         roleService.updateRoles(resource, user, roles);
         return user;
@@ -157,7 +156,7 @@ public class UserService {
         }
     }
 
-    public void setFilter(Filter transientFilter) {
+    public void setFilter(Filter transientFilter) throws Exception {
         Filter persistentFilter = entityService.getDuplicateEntity(transientFilter);
         if (persistentFilter == null) {
             UserAccount userAccount = transientFilter.getUserAccount();

@@ -85,12 +85,12 @@ public class ImportedEntityService {
         return importedEntityDAO.getByName(entityClass, institution, name);
     }
 
-    public ImportedEntityFeed getOrCreateImportedEntityFeed(Institution institution, PrismImportedEntity importedEntityType, String location) {
+    public ImportedEntityFeed getOrCreateImportedEntityFeed(Institution institution, PrismImportedEntity importedEntityType, String location) throws Exception {
         return getOrCreateImportedEntityFeed(institution, importedEntityType, location, null, null);
     }
 
     public ImportedEntityFeed getOrCreateImportedEntityFeed(Institution institution, PrismImportedEntity importedEntityType, String location, String username,
-            String password) {
+            String password) throws Exception {
         ImportedEntityFeed transientImportedEntityFeed = new ImportedEntityFeed().withImportedEntityType(importedEntityType).withLocation(location)
                 .withUserName(username).withPassword(password).withInstitution(institution);
         return entityService.getOrCreate(transientImportedEntityFeed);
@@ -110,12 +110,12 @@ public class ImportedEntityService {
         importedEntityDAO.disableAllImportedProgramStudyOptionInstances(institution);
     }
 
-    public void mergeEntity(Class<ImportedEntity> entityClass, Institution institution, ImportedEntity transientEntity) {
+    public void mergeEntity(Class<ImportedEntity> entityClass, Institution institution, ImportedEntity transientEntity) throws Exception {
         ImportedEntity persistentEntity = entityService.getDuplicateEntity(transientEntity);
 
         if (persistentEntity == null) {
             entityService.save(transientEntity);
-        } else {
+        } else {            
             String transientCode = transientEntity.getCode();
             String transientName = transientEntity.getName();
 
@@ -141,7 +141,7 @@ public class ImportedEntityService {
         }
     }
 
-    public void mergeProgrammeOccurrences(Institution institution, Set<ProgrammeOccurrence> occurrencesInBatch, LocalDate baseline) {
+    public void mergeProgrammeOccurrences(Institution institution, Set<ProgrammeOccurrence> occurrencesInBatch, LocalDate baseline) throws Exception {
         Programme programme = occurrencesInBatch.iterator().next().getProgramme();
         Program persistentProgram = mergeProgram(institution, programme);
 
@@ -179,7 +179,7 @@ public class ImportedEntityService {
         importedEntityDAO.disableAllEntities(AdvertCategory.class);
     }
 
-    public void createOrUpdateAdvertCategory(AdvertCategoryImportRowDTO importRow) {
+    public void createOrUpdateAdvertCategory(AdvertCategoryImportRowDTO importRow) throws Exception {
         AdvertCategory parentCategory = entityService.getById(AdvertCategory.class, importRow.getId() / 10);
         AdvertCategory transientCategory = new AdvertCategory().withId(importRow.getId()).withEnabled(true).withName(importRow.getName())
                 .withParentCategory(parentCategory);
@@ -227,7 +227,7 @@ public class ImportedEntityService {
         }
     }
 
-    private Program mergeProgram(Institution institution, Programme importProgram) {
+    private Program mergeProgram(Institution institution, Programme importProgram) throws Exception {
         User proxyCreator = institution.getUser();
 
         String transientTitle = importProgram.getName();
@@ -256,7 +256,7 @@ public class ImportedEntityService {
         }
     }
 
-    private ProgramStudyOption mergeProgramStudyOption(ProgramStudyOption transientProgramStudyOption, LocalDate baseline) {
+    private ProgramStudyOption mergeProgramStudyOption(ProgramStudyOption transientProgramStudyOption, LocalDate baseline) throws Exception {
         ProgramStudyOption persistentProgramStudyOption = entityService.getDuplicateEntity(transientProgramStudyOption);
 
         if (persistentProgramStudyOption == null) {
@@ -280,14 +280,14 @@ public class ImportedEntityService {
         }
     }
 
-    private StudyOption mergeStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) {
+    private StudyOption mergeStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) throws Exception {
         String externalcode = modeOfAttendance.getCode();
         PrismStudyOption internalCode = PrismStudyOption.findValueFromString(externalcode);
         StudyOption studyOption = new StudyOption().withInstitution(institution).withCode(internalCode.name()).withName(externalcode).withEnabled(true);
         return entityService.createOrUpdate(studyOption);
     }
 
-    private void executeProgramImportAction(Program program) {
+    private void executeProgramImportAction(Program program) throws Exception {
         Action action = actionService.getById(PrismAction.INSTITUTION_IMPORT_PROGRAM);
 
         User invoker = program.getUser();

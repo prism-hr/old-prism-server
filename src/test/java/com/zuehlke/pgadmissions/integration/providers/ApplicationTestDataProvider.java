@@ -153,7 +153,7 @@ public class ApplicationTestDataProvider {
         entityService.save(funding);
     }
 
-    private void createReferees(Application application) {
+    private void createReferees(Application application) throws Exception {
         for (int i = 0; i < 3; i++) {
             ApplicationReferee referee = new ApplicationReferee();
             referee.setUser(userService.getOrCreateUser("Jakis", "Polecacz", "polecacz" + UUID.randomUUID().toString() + "@email.com"));

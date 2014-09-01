@@ -8,7 +8,7 @@ import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 
-public class ApplicationPersonalDetailsDTO {
+public class ApplicationPersonalDetailDTO {
 
     @NotNull
     private UserDTO user;

@@ -30,7 +30,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 
 @Service
 @Transactional
@@ -123,14 +122,14 @@ public class StateService {
         return pendingStateTransitions;
     }
 
-    public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
+    public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) throws Exception {
         comment.setResource(resource);
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             resourceService.persistResource(resource);
         }
 
-        entityService.save(comment);
+        commentService.save(comment);
         StateTransition stateTransition = getStateTransition(resource, action, comment);
         
         if (stateTransition != null) {

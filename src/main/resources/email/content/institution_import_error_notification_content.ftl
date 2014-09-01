@@ -17,7 +17,7 @@
 			</td>
             <td width="500">
 				<h1 style="font-size: 12pt;">
-					<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${user.firstName?html},</font>
+					<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${user},</font>
 				</h1>		
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">

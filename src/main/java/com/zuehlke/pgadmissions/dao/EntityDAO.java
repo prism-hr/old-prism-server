@@ -16,10 +16,11 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 
 @Repository
 public class EntityDAO {
-
+    
     @Autowired
     private SessionFactory sessionFactory;
 
@@ -97,7 +98,7 @@ public class EntityDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) {
+    public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) throws Exception {
         IUniqueEntity.ResourceSignature signature = uniqueResource.getResourceSignature();
         Class<T> resourceClass = (Class<T>) uniqueResource.getClass();
         
@@ -129,7 +130,11 @@ public class EntityDAO {
                 criteria.add(Restrictions.not(Restrictions.in(key, exclusions.get(key))));
             }
 
-            return (T) criteria.uniqueResult();
+            try {
+                return (T) criteria.uniqueResult();
+            } catch (Exception e) {
+                throw new DeduplicationException("Tried to deduplicate entity " + signature.toString() + " with more than one potential duplicate", e);
+            }
         }
 
         throw new Error("Tried to deduplicate entity " + resourceClass.getSimpleName() + " with empty resource signature");

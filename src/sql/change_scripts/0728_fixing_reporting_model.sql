@@ -349,3 +349,19 @@ ALTER TABLE USER_ACCOUNT
 	ADD COLUMN last_notified_date_recommendation DATE AFTER send_recommendation_notification,
 	ADD INDEX (last_notified_date_recommendation)
 ;
+
+ALTER TABLE STATE_GROUP
+	ADD COLUMN repeatable INT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER sequence_order
+;
+
+ALTER TABLE STATE_GROUP
+	MODIFY COLUMN repeatable INT(1) UNSIGNED NOT NULL
+;
+
+UPDATE IMPORTED_LANGUAGE_QUALIFICATION_TYPE
+SET name = REPLACE(name, "( ", "(")
+;
+
+UPDATE IMPORTED_LANGUAGE_QUALIFICATION_TYPE
+SET name = REPLACE(name, " )", ")")
+;

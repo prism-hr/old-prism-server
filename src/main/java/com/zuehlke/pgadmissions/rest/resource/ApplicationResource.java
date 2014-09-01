@@ -41,6 +41,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.CommentAssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
@@ -48,8 +49,8 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInform
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositionDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationFundingDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailsDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
@@ -94,13 +95,17 @@ public class ApplicationResource {
     private CompleteApplicationValidator completeApplicationValidator;
 
     @RequestMapping(value = "/{applicationId}/programDetails", method = RequestMethod.PUT)
-    public void saveProgramDetails(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationProgramDetailsDTO programDetailsDTO) {
-        applicationService.saveProgramDetails(applicationId, programDetailsDTO);
+    public void saveProgramDetails(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationProgramDetailDTO programDetailDTO) {
+        try {
+            applicationService.saveProgramDetails(applicationId, programDetailDTO);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException();
+        }
     }
 
     @RequestMapping(value = "/{applicationId}/personalDetails", method = RequestMethod.PUT)
-    public void savePersonalDetails(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationPersonalDetailsDTO personalDetailsDTO) {
-        applicationService.savePersonalDetails(applicationId, personalDetailsDTO);
+    public void savePersonalDetails(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationPersonalDetailDTO personalDetailDTO) {
+        applicationService.savePersonalDetails(applicationId, personalDetailDTO);
     }
 
     @RequestMapping(value = "/{applicationId}/address", method = RequestMethod.PUT)
@@ -161,13 +166,21 @@ public class ApplicationResource {
 
     @RequestMapping(value = "/{applicationId}/referees", method = RequestMethod.POST)
     public Map<String, Object> createRreferee(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationRefereeDTO refereeDTO) {
-        ApplicationReferee referee = applicationService.saveReferee(applicationId, null, refereeDTO);
-        return ImmutableMap.of("id", (Object) referee.getId());
+        try {
+            ApplicationReferee referee = applicationService.saveReferee(applicationId, null, refereeDTO);
+            return ImmutableMap.of("id", (Object) referee.getId());
+        } catch (Exception e) {
+            throw new ResourceNotFoundException();
+        }
     }
 
     @RequestMapping(value = "/{applicationId}/referees/{refereeId}", method = RequestMethod.PUT)
     public void updateReferee(@PathVariable Integer applicationId, @PathVariable Integer refereeId, @Valid @RequestBody ApplicationRefereeDTO refereeDTO) {
-        applicationService.saveReferee(applicationId, refereeId, refereeDTO);
+        try {
+            applicationService.saveReferee(applicationId, refereeId, refereeDTO);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException();
+        }
     }
 
     @RequestMapping(value = "/{applicationId}/referees/{refereeId}", method = RequestMethod.DELETE)
@@ -241,15 +254,24 @@ public class ApplicationResource {
         } else if (commentDTO.getAssignedUsers() != null) {
             for (CommentAssignedUserDTO assignedUserDTO : commentDTO.getAssignedUsers()) {
                 UserDTO commentUserDTO = assignedUserDTO.getUser();
-                User commentUser = userService.getOrCreateUser(commentUserDTO.getFirstName(), commentUserDTO.getLastName(), commentUserDTO.getEmail());
-                assignedUsers.add(new CommentAssignedUser().withUser(commentUser).withRole(entityService.getById(Role.class, assignedUserDTO.getRole())));
+                
+                try {
+                    User commentUser = userService.getOrCreateUser(commentUserDTO.getFirstName(), commentUserDTO.getLastName(), commentUserDTO.getEmail());
+                    assignedUsers.add(new CommentAssignedUser().withUser(commentUser).withRole(entityService.getById(Role.class, assignedUserDTO.getRole())));
+                } catch (Exception e) {
+                    throw new ResourceNotFoundException();
+                }
             }
         }
 
         comment.getAssignedUsers().addAll(assignedUsers);
 
-        ActionOutcomeDTO actionOutcome = actionService.executeUserAction(application, action, comment);
-        return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
+        try {
+            ActionOutcomeDTO actionOutcome = actionService.executeUserAction(application, action, comment);
+            return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException();
+        }
     }
 
     @RequestMapping(value = "/{applicationId}/comments/{commentId}", method = RequestMethod.PUT)

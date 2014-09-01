@@ -62,7 +62,7 @@ public class UserRole implements IUniqueEntity {
     @JoinColumn(name = "notification_template_id")
     private NotificationTemplate notificationTemplate;
     
-    @Column(name = "notification_last_sent_date")
+    @Column(name = "last_notified_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedDate;
     

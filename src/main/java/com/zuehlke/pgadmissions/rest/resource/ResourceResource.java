@@ -172,8 +172,13 @@ public class ResourceResource {
         User user = userService.getCurrentUser();
         Object newResourceDTO = actionDTO.getOperativeResourceDTO();
         Action action = actionService.getById(actionDTO.getActionId());
-        ActionOutcomeDTO actionOutcome = resourceService.createResource(user, action, newResourceDTO, referrer);
-        return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
+        
+        try {
+            ActionOutcomeDTO actionOutcome = resourceService.createResource(user, action, newResourceDTO, referrer);
+            return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException();
+        }
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.PUT)
@@ -182,8 +187,12 @@ public class ResourceResource {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
 
-        roleService.updateRoles(resource, user, roles);
-        // TODO: return validation error if workflow engine exception is thrown.
+        try {
+            roleService.updateRoles(resource, user, roles);
+            // TODO: return validation error if workflow engine exception is thrown.
+        } catch (Exception e) {
+            throw new ResourceNotFoundException();
+        }
     }
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
@@ -191,9 +200,13 @@ public class ResourceResource {
             @RequestBody AbstractResourceRepresentation.UserRolesRepresentation userRolesRepresentation) throws WorkflowEngineException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
 
-        userService.getOrCreateUserWithRoles(userRolesRepresentation.getFirstName(), userRolesRepresentation.getLastName(), userRolesRepresentation.getEmail(),
-                resource, userRolesRepresentation.getRoles());
-        // TODO: return validation error if workflow engine exception is thrown.
+        try {
+            userService.getOrCreateUserWithRoles(userRolesRepresentation.getFirstName(), userRolesRepresentation.getLastName(), userRolesRepresentation.getEmail(),
+                    resource, userRolesRepresentation.getRoles());
+            // TODO: return validation error if workflow engine exception is thrown.
+        } catch (Exception e) {
+            throw new ResourceNotFoundException();
+        }
     }
 
     public void enrichApplicationRepresentation(Application application, ApplicationExtendedRepresentation applicationRepresentation) {

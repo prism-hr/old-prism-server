@@ -89,7 +89,7 @@ public enum PrismState {
     APPLICATION_REVIEW_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_REVIEW, 7, PrismScope.APPLICATION, PrismApplicationReviewPendingFeedback.class), //
     APPLICATION_UNSUBMITTED(PrismStateGroup.APPLICATION_UNSUBMITTED, 28, PrismScope.APPLICATION, PrismApplicationUnsubmitted.class), //
     APPLICATION_UNSUBMITTED_PENDING_COMPLETION(PrismStateGroup.APPLICATION_UNSUBMITTED, //
-            null, PrismScope.APPLICATION, PrismApplicationUnsubmittedPendingCompletion.class), //
+            28, PrismScope.APPLICATION, PrismApplicationUnsubmittedPendingCompletion.class), //
     APPLICATION_VALIDATION(PrismStateGroup.APPLICATION_VALIDATION, null, PrismScope.APPLICATION, PrismApplicationValidation.class), //
     APPLICATION_VALIDATION_PENDING_COMPLETION(PrismStateGroup.APPLICATION_VALIDATION, //
             null, PrismScope.APPLICATION, PrismApplicationValidationPendingCompletion.class), //

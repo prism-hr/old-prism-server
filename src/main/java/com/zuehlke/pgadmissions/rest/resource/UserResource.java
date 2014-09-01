@@ -84,7 +84,11 @@ public class UserResource {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public void submitRegistration(@RequestHeader(value = "referer", required = false) String referrer,
             @Valid @RequestBody UserRegistrationDTO userRegistrationDTO) throws WorkflowEngineException {
-        userService.registerUser(userRegistrationDTO, referrer);
+        try {
+            userService.registerUser(userRegistrationDTO, referrer);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException();
+        }
     }
 
     @RequestMapping(value = "/activate", method = RequestMethod.PUT)

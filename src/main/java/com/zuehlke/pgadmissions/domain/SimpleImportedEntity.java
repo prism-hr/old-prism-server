@@ -4,6 +4,8 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -53,6 +55,7 @@ public abstract class SimpleImportedEntity extends ImportedEntity {
     private Institution institution;
     
     @Column(name = "imported_entity_type", insertable = false, updatable = false)
+    @Enumerated(EnumType.STRING)
     private PrismImportedEntity type;
 
     @Column(name = "code", nullable = false)

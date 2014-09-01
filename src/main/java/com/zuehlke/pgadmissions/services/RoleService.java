@@ -50,7 +50,7 @@ public class RoleService {
         return entityService.list(Role.class);
     }
 
-    public UserRole getOrCreateUserRole(Resource resource, User user, PrismRole newRoleId) throws WorkflowEngineException {
+    public UserRole getOrCreateUserRole(Resource resource, User user, PrismRole newRoleId) throws Exception {
         Role newRole = getById(newRoleId);
         UserRole transientUserRole = new UserRole().withResource(resource).withUser(user).withRole(newRole).withAssignedTimestamp(new DateTime());
         if (isRoleAssignmentPermitted(transientUserRole)) {
@@ -60,7 +60,7 @@ public class RoleService {
                 + " due to existing permission conflicts");
     }
 
-    public void updateRoles(Resource resource, User user, List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
+    public void updateRoles(Resource resource, User user, List<AbstractResourceRepresentation.RoleRepresentation> roles) throws Exception {
         for (AbstractResourceRepresentation.RoleRepresentation role : roles) {
             if (role.getValue()) {
                 getOrCreateUserRole(resource, user, role.getId());
@@ -118,7 +118,7 @@ public class RoleService {
         return roleDAO.getExcludingUserRoles(userRole).isEmpty();
     }
 
-    public void executeRoleTransitions(StateTransition stateTransition, Comment comment) throws WorkflowEngineException {
+    public void executeRoleTransitions(StateTransition stateTransition, Comment comment) throws Exception {
         for (PrismRoleTransitionType transitionType : PrismRoleTransitionType.values()) {
             HashMultimap<User, RoleTransition> userRoleTransitions = null;
             List<RoleTransition> roleTransitions = roleDAO.getRoleTransitions(stateTransition, transitionType);
@@ -176,7 +176,7 @@ public class RoleService {
         return userRoleTransitions;
     }
 
-    private void executeRoleTransition(Comment comment, User user, RoleTransition roleTransition) throws WorkflowEngineException {
+    private void executeRoleTransition(Comment comment, User user, RoleTransition roleTransition) throws Exception {
         DateTime baseline = new DateTime();
 
         Role role = roleTransition.getRole();
@@ -204,7 +204,7 @@ public class RoleService {
         }
     }
 
-    private void executeBranchUserRole(UserRole userRole, UserRole transitionRole, Comment comment) throws WorkflowEngineException {
+    private void executeBranchUserRole(UserRole userRole, UserRole transitionRole, Comment comment) throws Exception {
         UserRole persistentRole = entityService.getDuplicateEntity(userRole);
         if (persistentRole == null) {
             throw new WorkflowEngineException("Found no role of type " + userRole.getRole().getAuthority() + " for " + userRole.getResource().getCode()
@@ -217,7 +217,7 @@ public class RoleService {
         comment.withAssignedUser(transitionRole.getUser(), transitionRole.getRole());
     }
 
-    private void executeCreateUserRole(UserRole userRole, Comment comment) throws WorkflowEngineException {
+    private void executeCreateUserRole(UserRole userRole, Comment comment) throws Exception {
         if (!isRoleAssignmentPermitted(userRole, comment)) {
             throw new WorkflowEngineException("Unable to assign role of type " + userRole.getRole().getAuthority() + " for " + userRole.getResource().getCode()
                     + " due to existing permission conflicts");
@@ -225,7 +225,7 @@ public class RoleService {
         entityService.getOrCreate(userRole);
     }
 
-    private void executeRemoveUserRole(UserRole userRole) {
+    private void executeRemoveUserRole(UserRole userRole) throws Exception {
         UserRole persistentRole = entityService.getDuplicateEntity(userRole);
         if (persistentRole != null) {
             deleteUserRoles(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole().getId());
@@ -237,7 +237,7 @@ public class RoleService {
                 || (roleDAO.getExcludingRoles(userRole, comment).isEmpty() && isRoleAssignmentPermitted(userRole));
     }
 
-    private void executeUpdateUserRole(UserRole userRole, UserRole transitionRole) throws WorkflowEngineException {
+    private void executeUpdateUserRole(UserRole userRole, UserRole transitionRole) throws Exception {
         UserRole persistentRole = entityService.getDuplicateEntity(userRole);
         if (persistentRole == null) {
             throw new WorkflowEngineException("Found no role of type " + userRole.getRole().getAuthority() + " for " + userRole.getResource().getCode()

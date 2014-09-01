@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -27,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -95,8 +97,7 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Resource> getResourcesToPropagate(Resource propagator, Action action) {
-        PrismScope propagatedScope = action.getScope().getId();
+    public List<Resource> getResourcesToPropagate(Resource propagator, Action action, PrismScope propagatedScope) {
         String propagatedAlias = propagatedScope.getLowerCaseName();
         String propagatedReference = propagator.getResourceScope().getPrecedence() > propagatedScope.getPrecedence() ? propagatedAlias : propagatedAlias + "s";
 
@@ -168,6 +169,17 @@ public class ResourceDAO {
         return (List<Resource>) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
                 .add(Restrictions.between("updatedTimestamp", rangeStart, rangeClose)) //
                 .list();
+    }
+    
+    public <T extends Resource> DetachedCriteria getResourceListFilter(User user, Class<T> resourceClass, List<Scope> scopes) {
+        String resourceReference = PrismScope.getResourceScope(resourceClass).getLowerCaseName();
+        DetachedCriteria criteria = DetachedCriteria.forClass(UserRole.class) //
+                .setProjection(Projections.property(resourceReference + ".id"));
+        
+        for (Scope scope : scopes) {
+            
+        }
+        return null;
     }
 
 }

@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.math.BigDecimal;
-
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -36,10 +34,10 @@ public class ApplicationSummaryDAO {
                 .uniqueResult();
     }
 
-    public Object getPercentileValue(ParentResource parentResource, String property, Integer percentile) {
+    public Object getPercentileValue(ParentResource summaryResource, String property, Integer percentile) {
         return (Object) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.property(property)) //
-                .add(Restrictions.eq(parentResource.getResourceScope().getLowerCaseName(), parentResource)) //
+                .add(Restrictions.eq(summaryResource.getResourceScope().getLowerCaseName(), summaryResource)) //
                 .add(Restrictions.isNotNull(property)) //
                 .addOrder(Order.asc(property)) //
                 .setFirstResult(percentile - 1) //
@@ -61,22 +59,20 @@ public class ApplicationSummaryDAO {
                 .uniqueResult();
     }
 
-    public Integer getNotNullProcessingCount(ParentResource parentResource, StateGroup stateGroup) {
-        String parentResourceReference = parentResource.getResourceScope().getLowerCaseName();
-        return (Integer) sessionFactory.getCurrentSession().createCriteria(ApplicationProcessing.class) //
+    public Long getNotNullProcessingCount(ParentResource summaryResource, StateGroup stateGroup) {
+        return (Long) sessionFactory.getCurrentSession().createCriteria(ApplicationProcessing.class) //
                 .setProjection(Projections.count("application")) //
                 .createAlias("application", "application", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("application." + parentResourceReference, parentResource)) //
+                .add(Restrictions.eq("application." + summaryResource.getResourceScope().getLowerCaseName(), summaryResource)) //
                 .add(Restrictions.eq("stateGroup", stateGroup)) //
                 .uniqueResult();
     }
 
-    public Object getProcessingPercentileValue(ParentResource parentResource, StateGroup stateGroup, String property, Integer percentile) {
-        String parentResourceReference = parentResource.getResourceScope().getLowerCaseName();
-        return (ApplicationProcessing) sessionFactory.getCurrentSession().createCriteria(ApplicationProcessing.class) //
+    public Object getProcessingPercentileValue(ParentResource summaryResource, StateGroup stateGroup, String property, Integer percentile) {
+        return (Object) sessionFactory.getCurrentSession().createCriteria(ApplicationProcessing.class) //
                 .setProjection(Projections.property(property)) //
                 .createAlias("application", "application", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("application." + parentResourceReference, parentResource)) //
+                .add(Restrictions.eq("application." + summaryResource.getResourceScope().getLowerCaseName(), summaryResource)) //
                 .add(Restrictions.eq("stateGroup", stateGroup)) //
                 .addOrder(Order.asc(property)) //
                 .setFirstResult(percentile - 1) //
@@ -84,20 +80,20 @@ public class ApplicationSummaryDAO {
                 .uniqueResult();
     }
 
-    public BigDecimal getInstanceCountAverage(ParentResource summaryResource, StateGroup stateGroup) {
-        return (BigDecimal) sessionFactory.getCurrentSession().createCriteria(ApplicationProcessing.class) //
+    public Double getInstanceCountAverage(ParentResource summaryResource, StateGroup stateGroup) {
+        return (Double) sessionFactory.getCurrentSession().createCriteria(ApplicationProcessing.class) //
                 .setProjection(Projections.avg("instanceCount")) //
                 .createAlias("application", "application", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(summaryResource.getResourceScope().getLowerCaseName(), summaryResource)) //
+                .add(Restrictions.eq("application." + summaryResource.getResourceScope().getLowerCaseName(), summaryResource)) //
                 .add(Restrictions.eq("stateGroup", stateGroup)) //
                 .uniqueResult();
     }
     
-    public BigDecimal getDayDurationSumAverage(ParentResource summaryResource, StateGroup stateGroup) {
-        return (BigDecimal) sessionFactory.getCurrentSession().createCriteria(ApplicationProcessing.class) //
+    public Double getDayDurationSumAverage(ParentResource summaryResource, StateGroup stateGroup) {
+        return (Double) sessionFactory.getCurrentSession().createCriteria(ApplicationProcessing.class) //
                 .setProjection(Projections.avg("dayDurationSum")) //
                 .createAlias("application", "application", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(summaryResource.getResourceScope().getLowerCaseName(), summaryResource)) //
+                .add(Restrictions.eq("application." + summaryResource.getResourceScope().getLowerCaseName(), summaryResource)) //
                 .add(Restrictions.eq("stateGroup", stateGroup)) //
                 .uniqueResult();
     }

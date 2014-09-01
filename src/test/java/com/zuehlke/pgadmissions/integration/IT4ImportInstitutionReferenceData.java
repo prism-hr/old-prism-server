@@ -63,7 +63,7 @@ public class IT4ImportInstitutionReferenceData implements IPrismIntegrationTest 
         referenceDataImportHelper.verifyImportedProgramInitialisation();
     }
 
-    private Institution createTestInstitution() {
+    private Institution createTestInstitution() throws Exception {
         System system = systemService.getSystem();
         State institutionState = entityService.getByProperty(State.class, "id", PrismState.INSTITUTION_APPROVED);
 

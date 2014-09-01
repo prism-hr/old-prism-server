@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.lifecycle;
+package com.zuehlke.pgadmissions.services.helpers;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.services.AdvertService;
 
 @Component
-public class AdvertHelper {
+public class AdvertServiceHelper {
     
     @Autowired
     private AdvertService advertService;

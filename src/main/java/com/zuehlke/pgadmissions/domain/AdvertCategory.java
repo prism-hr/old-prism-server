@@ -15,14 +15,14 @@ import com.google.common.collect.Maps;
 
 @Entity
 @Table(name = "ADVERT_OPPORTUNITY_CATEGORY")
-public class OpportunityCategory implements IUniqueEntity {
+public class AdvertCategory implements IUniqueEntity {
 
     @Id
     private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "parent_category_id")
-    private OpportunityCategory parentCategory;
+    private AdvertCategory parentCategory;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -38,11 +38,11 @@ public class OpportunityCategory implements IUniqueEntity {
         this.id = id;
     }
 
-    public OpportunityCategory getParentCategory() {
+    public AdvertCategory getParentCategory() {
         return parentCategory;
     }
 
-    public void setParentCategory(OpportunityCategory parentCategory) {
+    public void setParentCategory(AdvertCategory parentCategory) {
         this.parentCategory = parentCategory;
     }
 
@@ -62,22 +62,22 @@ public class OpportunityCategory implements IUniqueEntity {
         this.enabled = enabled;
     }
 
-    public OpportunityCategory withId(Integer id) {
+    public AdvertCategory withId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public OpportunityCategory withParentCategory(OpportunityCategory parentCategory) {
+    public AdvertCategory withParentCategory(AdvertCategory parentCategory) {
         this.parentCategory = parentCategory;
         return this;
     }
 
-    public OpportunityCategory withName(String name) {
+    public AdvertCategory withName(String name) {
         this.name = name;
         return this;
     }
 
-    public OpportunityCategory withEnabled(boolean enabled) {
+    public AdvertCategory withEnabled(boolean enabled) {
         this.enabled = enabled;
         return this;
     }

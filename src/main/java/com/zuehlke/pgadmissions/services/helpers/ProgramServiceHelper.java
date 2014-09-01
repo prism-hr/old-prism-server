@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.lifecycle;
+package com.zuehlke.pgadmissions.services.helpers;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.services.ProgramService;
 
 @Component
-public class ProgramHelper {
+public class ProgramServiceHelper {
     
     @Autowired
     private ProgramService programService;

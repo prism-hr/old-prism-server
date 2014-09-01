@@ -51,7 +51,7 @@ public class ApplicationProgramDetail {
     
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "APPLICATION_OTHER_PROJECT", joinColumns = @JoinColumn(name = "application_program_detail_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "project_id", nullable = false))
-    private Set<OpportunityCategory> categories = Sets.newHashSet();
+    private Set<AdvertCategory> categories = Sets.newHashSet();
 
 
     @OneToOne(mappedBy = "programDetail")

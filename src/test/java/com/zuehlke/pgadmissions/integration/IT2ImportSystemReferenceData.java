@@ -28,7 +28,7 @@ public class IT2ImportSystemReferenceData implements IPrismIntegrationTest {
     public void run() throws Exception {
         integrationTestRunner.run(it1);
         systemDataImportHelper.verifyInstitutionDomicileImport();
-        systemDataImportHelper.verifyOpportunityCategoryImport();
+        systemDataImportHelper.verifyAdvertCategoryImport();
         integrationTestRunner.recordTestSuccess(this);
     }
     

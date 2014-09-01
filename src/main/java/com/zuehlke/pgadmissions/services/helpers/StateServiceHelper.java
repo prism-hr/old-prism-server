@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.lifecycle;
+package com.zuehlke.pgadmissions.services.helpers;
 
 import java.util.HashMap;
 
@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
 @Component
-public class StateTransitionHelper {
+public class StateServiceHelper {
 
     @Autowired
     private ActionService actionService;

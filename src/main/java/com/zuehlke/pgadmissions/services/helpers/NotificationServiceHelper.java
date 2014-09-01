@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.lifecycle;
+package com.zuehlke.pgadmissions.services.helpers;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
 @Component
-public class NotificationHelper {
+public class NotificationServiceHelper {
 
     @Autowired
     private CommentService commentService;

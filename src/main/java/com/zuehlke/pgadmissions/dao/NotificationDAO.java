@@ -131,8 +131,7 @@ public class NotificationDAO {
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
                         .add(Projections.groupProperty("role.id"), "roleId") //
-                        .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId") //
-                        .add(Projections.property("lastNotifiedDate"), "lastNotifiedDate")) //
+                        .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId")) //
                 .createAlias("stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
@@ -162,8 +161,7 @@ public class NotificationDAO {
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
-                        .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId") //
-                        .add(Projections.property("lastNotifiedDate"), "lastNotifiedDate")) //
+                        .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId")) //
                 .createAlias("stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //

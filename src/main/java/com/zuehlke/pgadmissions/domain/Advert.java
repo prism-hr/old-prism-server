@@ -156,7 +156,7 @@ public class Advert {
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "ADVERT_CATEGORY", joinColumns = @JoinColumn(name = "advert_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "advert_opportunity_category_id", nullable = false))
-    private Set<OpportunityCategory> categories = Sets.newHashSet();
+    private Set<AdvertCategory> categories = Sets.newHashSet();
 
     @OneToMany(mappedBy = "advert")
     private Set<AdvertRecruitmentPreference> preferences = Sets.newHashSet();
@@ -413,7 +413,7 @@ public class Advert {
         return closingDates;
     }
 
-    public Set<OpportunityCategory> getCategories() {
+    public Set<AdvertCategory> getCategories() {
         return categories;
     }
 

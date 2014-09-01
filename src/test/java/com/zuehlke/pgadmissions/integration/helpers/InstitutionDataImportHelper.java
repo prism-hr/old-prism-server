@@ -16,14 +16,12 @@ import com.zuehlke.pgadmissions.domain.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
-import com.zuehlke.pgadmissions.lifecycle.EntityImportHelper;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.StateService;
-import com.zuehlke.pgadmissions.services.importers.AdvertCategoryImportService;
-import com.zuehlke.pgadmissions.services.importers.InstitutionDomicileImportService;
+import com.zuehlke.pgadmissions.services.helpers.ImportedEntityServiceHelper;
 
 @Service
 public class InstitutionDataImportHelper {
@@ -32,16 +30,10 @@ public class InstitutionDataImportHelper {
     private EntityService entityService;
 
     @Autowired
-    private EntityImportHelper entityImportHelper;
-    
-    @Autowired
-    private InstitutionDomicileImportService institutionDomicileImportService;
+    private ImportedEntityServiceHelper entityImportHelper;
 
     @Autowired
     private ImportedEntityService importedEntityService;
-
-    @Autowired
-    private AdvertCategoryImportService opportunityCategoryImportService;
 
     @Autowired
     private ProgramService programService;

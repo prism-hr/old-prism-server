@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.importers;
+package com.zuehlke.pgadmissions.services.converters;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -9,19 +9,19 @@ import com.google.common.base.Function;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.Institution;
 
-public class GenericEntityImportConverter<E extends ImportedEntity> implements Function<Object, E> {
+public class ImportedEntityConverter<E extends ImportedEntity> implements Function<Object, E> {
 
     private Class<E> importedEntityType;
     
     private Institution institution;
 
-    protected GenericEntityImportConverter(Institution institution, Class<E> importedEntityType) {
+    protected ImportedEntityConverter(Institution institution, Class<E> importedEntityType) {
         this.importedEntityType = importedEntityType;
         this.institution = institution;
     }
 
-    public static <E extends ImportedEntity> GenericEntityImportConverter<E> create(Institution institution, Class<E> importedEntityType) {
-        return new GenericEntityImportConverter<E>(institution, importedEntityType);
+    public static <E extends ImportedEntity> ImportedEntityConverter<E> create(Institution institution, Class<E> importedEntityType) {
+        return new ImportedEntityConverter<E>(institution, importedEntityType);
     }
     
     @Override

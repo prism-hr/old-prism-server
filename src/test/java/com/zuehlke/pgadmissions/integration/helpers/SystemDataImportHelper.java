@@ -4,29 +4,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
-import com.zuehlke.pgadmissions.services.importers.AdvertCategoryImportService;
-import com.zuehlke.pgadmissions.services.importers.CurrencyImportService;
-import com.zuehlke.pgadmissions.services.importers.InstitutionDomicileImportService;
+import com.zuehlke.pgadmissions.services.helpers.ImportedEntityServiceHelper;
 
 @Service
 public class SystemDataImportHelper {
     
     @Autowired
-    private AdvertCategoryImportService advertCategoryImportService;
-    
-    @Autowired
-    private InstitutionDomicileImportService institutionDomicileImportService;
-
-    @Autowired
-    private CurrencyImportService currencyImportService;
+    private ImportedEntityServiceHelper importedEntityServiceHelper;
 
     public void verifyInstitutionDomicileImport() throws Exception {
-        institutionDomicileImportService.importEntities();
-//        currencyImportService.importEntities();
+        importedEntityServiceHelper.importInstitutionDomiciles();
     }
     
-    public void verifyOpportunityCategoryImport() throws DataImportException {
-        advertCategoryImportService.importEntities();
+    public void verifyAdvertCategoryImport() throws DataImportException {
+        importedEntityServiceHelper.importAdvertCategories();
     }
 
 }

@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.importers;
+package com.zuehlke.pgadmissions.services.converters;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
@@ -7,11 +7,11 @@ import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.services.EntityService;
 
-public class InstitutionImportConverter extends GenericEntityImportConverter<ImportedInstitution> {
+public class ImportedInstitutionConverter extends ImportedEntityConverter<ImportedInstitution> {
 
     private final EntityService entityService;
 
-    public InstitutionImportConverter(Institution institution, EntityService entityService) {
+    public ImportedInstitutionConverter(Institution institution, EntityService entityService) {
         super(institution, ImportedInstitution.class);
         this.entityService = entityService;
     }

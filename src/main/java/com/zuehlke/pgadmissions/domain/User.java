@@ -288,6 +288,14 @@ public class User implements UserDetails, IUniqueEntity {
         return this;
     }
     
+    public <T extends Resource> LocalDate getLastNotifiedDate(Class<T> resourceClass) {
+        try {
+            return (LocalDate) PropertyUtils.getSimpleProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName());
+        } catch (Exception e) {
+            throw new Error (e);
+        }
+    }
+    
     public <T extends Resource> void setLastNotifiedDate(Class<T> resourceClass, LocalDate lastNotifiedDate) {
         try {
             PropertyUtils.setSimpleProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName(), lastNotifiedDate);

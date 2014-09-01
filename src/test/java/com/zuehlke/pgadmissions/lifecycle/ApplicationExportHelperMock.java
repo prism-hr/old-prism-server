@@ -13,9 +13,9 @@ import org.apache.commons.io.IOUtils;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.lifecycle.ApplicationExportHelper;
+import com.zuehlke.pgadmissions.services.helpers.ApplicationExportServiceHelper;
 
-public class ApplicationExportHelperMock extends ApplicationExportHelper {
+public class ApplicationExportHelperMock extends ApplicationExportServiceHelper {
 
     private final HashMap<Application, ApplicationExportRequest> exportRequests = Maps.newHashMap();
 

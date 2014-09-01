@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.lifecycle;
+package com.zuehlke.pgadmissions.services.helpers;
 
 import java.util.List;
 
@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.services.exporters.ApplicationExportService;
+import com.zuehlke.pgadmissions.services.ApplicationExportService;
 
 @Component
-public class ApplicationExportHelper {
+public class ApplicationExportServiceHelper {
     
     private final Logger logger = LoggerFactory.getLogger(ApplicationExportService.class);
     

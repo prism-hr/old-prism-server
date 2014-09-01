@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.importers;
+package com.zuehlke.pgadmissions.services.converters;
 
 import java.math.BigDecimal;
 
@@ -7,9 +7,9 @@ import org.apache.commons.beanutils.PropertyUtils;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
 
-public class LanguageQualificationTypeImportConverter extends GenericEntityImportConverter<LanguageQualificationType> {
+public class ImportedLanguageQualificationTypeConverter extends ImportedEntityConverter<LanguageQualificationType> {
 
-    public LanguageQualificationTypeImportConverter(Institution institution) {
+    public ImportedLanguageQualificationTypeConverter(Institution institution) {
         super(institution, LanguageQualificationType.class);
     }
 

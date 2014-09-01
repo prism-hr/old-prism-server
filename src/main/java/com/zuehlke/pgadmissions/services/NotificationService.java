@@ -114,7 +114,7 @@ public class NotificationService {
         sendIndividualRequestNotifications(resource, invoker, baseline);
         sendIndividualUpdateNotifications(resource, comment.getAction(), invoker, baseline);
     }
-    
+
     public void sendIndividualRequestReminders(Resource resource, LocalDate baseline) {
         User invoker = systemService.getSystem().getUser();
         List<UserNotificationDefinitionDTO> reminders = notificationDAO.getIndividualRequestReminders(resource, baseline);
@@ -122,22 +122,23 @@ public class NotificationService {
 
         for (UserNotificationDefinitionDTO reminder : reminders) {
             User user = userService.getById(reminder.getUserId());
-            NotificationTemplate notificationTemplate = getById(reminder.getNotificationTemplateId());
             
+            Role role = roleService.getById(reminder.getRoleId());
+            UserRole userRole = roleService.getUserRole(resource, user, role);
+
+            NotificationTemplate notificationTemplate = getById(reminder.getNotificationTemplateId());
             Integer reminderInterval = getReminderInterval(resource, notificationTemplate);
 
-            if (!sent.get(notificationTemplate).contains(user) && baseline.minusDays(reminderInterval) == reminder.getLastNotifiedDate()) {
+            if (!sent.get(notificationTemplate).contains(user) && baseline.minusDays(reminderInterval) == userRole.getLastNotifiedDate()) {
                 sendNotification(user, resource, notificationTemplate.getReminderTemplate(), ImmutableMap.of("author", invoker.getDisplayName()));
                 sent.put(notificationTemplate, user);
             }
 
-            Role role = roleService.getById(reminder.getRoleId());
-            UserRole userRole = roleService.getUserRole(resource, user, role);
             userRole.setNotificationTemplate(notificationTemplate);
             userRole.setLastNotifiedDate(baseline);
         }
     }
-    
+
     public void sendSyndicatedRequestNotifications(Resource resource, LocalDate baseline) {
         User invoker = systemService.getSystem().getUser();
         List<UserNotificationDefinitionDTO> definitions = notificationDAO.getSyndicatedRequestNotifications(resource, baseline);
@@ -145,12 +146,12 @@ public class NotificationService {
 
         for (UserNotificationDefinitionDTO definition : definitions) {
             User user = userService.getById(definition.getUserId());
-            
+
             NotificationTemplate notificationTemplate = getById(definition.getNotificationTemplateId());
-            LocalDate lastNotifiedDate = definition.getLastNotifiedDate();
-            
+            LocalDate lastNotifiedDate = user.getLastNotifiedDate(resource.getClass());
+
             Integer reminderInterval = getReminderInterval(resource, notificationTemplate);
-            boolean doSendReminder = baseline.minusDays(reminderInterval) == definition.getLastNotifiedDate();
+            boolean doSendReminder = baseline.minusDays(reminderInterval) == lastNotifiedDate;
 
             if (!sent.get(notificationTemplate).contains(user) && (lastNotifiedDate == null || doSendReminder)) {
                 NotificationTemplate sendTemplate = doSendReminder ? notificationTemplate.getReminderTemplate() : notificationTemplate;
@@ -161,11 +162,10 @@ public class NotificationService {
         }
     }
 
-    
     public void sendSyndicatedUpdateNotifications(Resource resource, Comment transitionComment, LocalDate baseline) {
         Action action = transitionComment.getAction();
         User invoker = transitionComment.getAuthor();
-        
+
         List<UserNotificationDefinitionDTO> updates = notificationDAO.getSyndicatedUpdateNotifications(resource, action, invoker, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
@@ -249,7 +249,7 @@ public class NotificationService {
             }
         }
     }
-    
+
     private void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate, Map<String, String> extraParameters) {
         NotificationTemplateVersion templateVersion = getActiveVersion(resource, notificationTemplate);
         MailMessageDTO message = new MailMessageDTO();

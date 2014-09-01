@@ -7,9 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.services.importers.AdvertCategoryImportService;
-import com.zuehlke.pgadmissions.services.importers.CurrencyImportService;
-import com.zuehlke.pgadmissions.services.importers.InstitutionDomicileImportService;
+import com.zuehlke.pgadmissions.services.helpers.ImportedEntityServiceHelper;
 
 @Service
 public class PrismInitialisationService implements InitializingBean {
@@ -27,16 +25,10 @@ public class PrismInitialisationService implements InitializingBean {
     private Boolean importAdvertCategory;
 
     @Autowired
-    private SystemService systemService;
-
-    @Autowired
-    private InstitutionDomicileImportService institutionDomicileImportService;
-
-    @Autowired
-    private CurrencyImportService currencyImportService;
+    private ImportedEntityServiceHelper importedEntityServiceHelper;
     
     @Autowired
-    private AdvertCategoryImportService advertCategoryImportService;
+    private SystemService systemService;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -45,12 +37,11 @@ public class PrismInitialisationService implements InitializingBean {
         }
 
         if (BooleanUtils.isTrue(importInstitutionDomicile)) {
-            institutionDomicileImportService.importEntities();
-            currencyImportService.importEntities();
+            importedEntityServiceHelper.importInstitutionDomiciles();
         }
 
         if (BooleanUtils.isTrue(importAdvertCategory)) {
-            advertCategoryImportService.importEntities();
+            importedEntityServiceHelper.importAdvertCategories();
         }
 
         if (BooleanUtils.isTrue(buildIndex)) {

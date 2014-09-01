@@ -7,6 +7,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.helpers.AdvertServiceHelper;
+import com.zuehlke.pgadmissions.services.helpers.ApplicationExportServiceHelper;
+import com.zuehlke.pgadmissions.services.helpers.ImportedEntityServiceHelper;
+import com.zuehlke.pgadmissions.services.helpers.NotificationServiceHelper;
+import com.zuehlke.pgadmissions.services.helpers.ProgramServiceHelper;
+import com.zuehlke.pgadmissions.services.helpers.StateServiceHelper;
 
 @Service
 public class PrismMaintenanceService {
@@ -14,22 +20,22 @@ public class PrismMaintenanceService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     @Autowired
-    private StateTransitionHelper stateTransitionHelper;
+    private StateServiceHelper stateTransitionHelper;
     
     @Autowired
-    private EntityImportHelper entityImportHelper;
+    private ImportedEntityServiceHelper entityImportHelper;
     
     @Autowired
-    private AdvertHelper advertHelper;
+    private AdvertServiceHelper advertHelper;
     
     @Autowired
-    private ProgramHelper programHelper;
+    private ProgramServiceHelper programHelper;
 
     @Autowired
-    private ApplicationExportHelper applicationExportHelper;
+    private ApplicationExportServiceHelper applicationExportHelper;
     
     @Autowired
-    private NotificationHelper notificationHelper;
+    private NotificationServiceHelper notificationHelper;
 
     @Autowired
     private DocumentService documentService;

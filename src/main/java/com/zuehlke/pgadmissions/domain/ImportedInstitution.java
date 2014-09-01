@@ -151,7 +151,7 @@ public class ImportedInstitution extends ImportedEntity {
         propertiesWrapper.add(properties1);
         HashMap<String, Object> properties2 = Maps.newHashMap();
         properties2.put("institution", institution);
-        properties1.put("domicile", domicile);
+        properties2.put("domicile", domicile);
         properties2.put("name", name);
         propertiesWrapper.add(properties2);
         return new ResourceSignature(propertiesWrapper);

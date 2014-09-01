@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services.converters;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
+import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
@@ -18,7 +19,7 @@ public class ImportedInstitutionConverter extends ImportedEntityConverter<Import
 
     protected void setCustomProperties(Object input, ImportedInstitution result) throws Exception {
         String domicileCode = (String) PropertyUtils.getSimpleProperty(input, "domicile");
-        Domicile domicile = entityService.getByCode(Domicile.class, domicileCode);
+        Domicile domicile = entityService.getByProperties(Domicile.class, ImmutableMap.of("code", (Object) domicileCode, "enabled", true));
         result.setDomicile(domicile);
     }
 

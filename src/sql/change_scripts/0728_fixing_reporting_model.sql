@@ -365,3 +365,12 @@ SET name = REPLACE(name, "( ", "(")
 UPDATE IMPORTED_LANGUAGE_QUALIFICATION_TYPE
 SET name = REPLACE(name, " )", ")")
 ;
+
+UPDATE IMPORTED_INSTITUTION
+SET name = TRIM(REPLACE(name, "  ", " "))
+;
+
+UPDATE IMPORTED_INSTITUTION
+SET name = REPLACE(REPLACE(name, "&", "& "), "  ", " ")
+;
+

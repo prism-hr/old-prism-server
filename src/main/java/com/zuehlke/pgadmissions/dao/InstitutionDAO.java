@@ -71,7 +71,7 @@ public class InstitutionDAO {
                 .list();
     }
 
-    public List<Institution> listByCountry(InstitutionDomicile domicile) {
+    public List<Institution> listApprovedInstitutionsByCountry(InstitutionDomicile domicile) {
         return sessionFactory.getCurrentSession().createCriteria(Institution.class) //
                 .add(Restrictions.eq("domicile", domicile)) //
                 .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED)) //

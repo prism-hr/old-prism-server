@@ -23,8 +23,10 @@ import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.AdvertCategory;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
+import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
@@ -69,6 +71,9 @@ public class ImportedEntityService {
     private RoleService roleService;
 
     @Autowired
+    private InstitutionService institutionService;
+
+    @Autowired
     private SystemService systemService;
 
     @SuppressWarnings("unchecked")
@@ -77,12 +82,20 @@ public class ImportedEntityService {
         return entity;
     }
 
-    public <T extends ImportedEntity> T getByCode(Class<? extends ImportedEntity> clazz, Institution institution, String code) {
-        return importedEntityDAO.getByCode(clazz, institution, code);
+    public <T extends ImportedEntity> T getImportedEntityByCode(Class<? extends ImportedEntity> entityClass, Institution institution, String code) {
+        return importedEntityDAO.getImportedEntityByCode(entityClass, institution, code);
     }
 
-    public ImportedEntity getByName(Class<ImportedEntity> entityClass, Institution institution, String name) {
-        return importedEntityDAO.getByName(entityClass, institution, name);
+    public ImportedEntity getImportedEntityByName(Class<ImportedEntity> entityClass, Institution institution, String name) {
+        return importedEntityDAO.getImportedEntityByName(entityClass, institution, name);
+    }
+
+    public ImportedInstitution getImportedInstitutionByCode(Institution institution, Domicile domicile, String code) {
+        return importedEntityDAO.getImportedInstitutionByCode(institution, domicile, code);
+    }
+
+    public ImportedInstitution getImportedInstitutionByName(Institution institution, Domicile domicile, String name) {
+        return importedEntityDAO.getImportedInstitutionByName(institution, domicile, name);
     }
 
     public ImportedEntityFeed getOrCreateImportedEntityFeed(Institution institution, PrismImportedEntity importedEntityType, String location) throws Exception {
@@ -110,12 +123,12 @@ public class ImportedEntityService {
         importedEntityDAO.disableAllImportedProgramStudyOptionInstances(institution);
     }
 
-    public void mergeEntity(Class<ImportedEntity> entityClass, Institution institution, ImportedEntity transientEntity) throws Exception {
+    public void mergeImportedEntity(Class<ImportedEntity> entityClass, Institution institution, ImportedEntity transientEntity) throws Exception {
         ImportedEntity persistentEntity = entityService.getDuplicateEntity(transientEntity);
 
         if (persistentEntity == null) {
-            entityService.save(transientEntity);
-        } else {            
+            entityService.saveChecked(transientEntity);
+        } else {
             String transientCode = transientEntity.getCode();
             String transientName = transientEntity.getName();
 
@@ -126,12 +139,12 @@ public class ImportedEntityService {
                 persistentEntity.setEnabled(true);
             } else {
                 if (transientName != persistentName) {
-                    ImportedEntity otherPersistentEntity = getByName(entityClass, institution, transientName);
+                    ImportedEntity otherPersistentEntity = getImportedEntityByName(entityClass, institution, transientName);
                     if (otherPersistentEntity == null) {
                         persistentEntity.setName(transientName);
                     }
                 } else {
-                    ImportedEntity otherPersistentEntity = getByCode(entityClass, institution, transientCode);
+                    ImportedEntity otherPersistentEntity = getImportedEntityByCode(entityClass, institution, transientCode);
                     if (otherPersistentEntity == null) {
                         persistentEntity.setCode(transientCode);
                     }
@@ -141,7 +154,40 @@ public class ImportedEntityService {
         }
     }
 
-    public void mergeProgrammeOccurrences(Institution institution, Set<ProgrammeOccurrence> occurrencesInBatch, LocalDate baseline) throws Exception {
+    public void mergeImportedInstitution(Institution institution, ImportedInstitution transientImportedInstitution) throws Exception {
+        ImportedInstitution persistentImportedInstitution = entityService.getDuplicateEntity(transientImportedInstitution);
+
+        if (persistentImportedInstitution == null) {
+            entityService.saveChecked(transientImportedInstitution);
+        } else {
+            Domicile transientDomicile = transientImportedInstitution.getDomicile();
+            String transientCode = transientImportedInstitution.getCode();
+            String transientName = transientImportedInstitution.getName();
+
+            Domicile persistentDomicile = persistentImportedInstitution.getDomicile();
+            String persistentCode = persistentImportedInstitution.getCode();
+            String persistentName = persistentImportedInstitution.getName();
+
+            if (transientDomicile == persistentDomicile && transientCode == persistentCode && transientName == persistentName) {
+                persistentImportedInstitution.setEnabled(true);
+            } else {
+                if (transientName != persistentName) {
+                    ImportedEntity otherPersistentEntity = getImportedInstitutionByName(institution, transientDomicile, transientName);
+                    if (otherPersistentEntity == null) {
+                        persistentImportedInstitution.setName(transientName);
+                    }
+                } else {
+                    ImportedEntity otherPersistentEntity = getImportedInstitutionByCode(institution, transientDomicile, transientCode);
+                    if (otherPersistentEntity == null) {
+                        persistentImportedInstitution.setCode(transientCode);
+                    }
+                }
+                persistentImportedInstitution.setEnabled(true);
+            }
+        }
+    }
+
+    public void mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> occurrencesInBatch, LocalDate baseline) throws Exception {
         Programme programme = occurrencesInBatch.iterator().next().getProgramme();
         Program persistentProgram = mergeProgram(institution, programme);
 
@@ -190,7 +236,7 @@ public class ImportedEntityService {
         ImportedEntityFeed persistentImportedEntityFeed = entityService.getById(ImportedEntityFeed.class, detachedImportedEntityFeed.getId());
         persistentImportedEntityFeed.setLastImportedDate(new LocalDate());
     }
-    
+
     public void mergeInstitutionDomicile(CountryType country) {
         String status = null;
         String countryName = null;
@@ -238,7 +284,7 @@ public class ImportedEntityService {
 
         boolean transientRequireProjectDefinition = importProgram.isAtasRegistered();
 
-        ProgramType programType = getByCode(ProgramType.class, institution, programTypeCode);
+        ProgramType programType = getImportedEntityByCode(ProgramType.class, institution, programTypeCode);
         Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withImportedCode(importProgram.getCode())
                 .withTitle(transientTitle).withRequireProjectDefinition(transientRequireProjectDefinition).withImported(true).withAdvert(transientAdvert)
                 .withProgramType(programType).withUser(proxyCreator).withCreatedTimestamp(baseline).withUpdatedTimestamp(baseline);
@@ -246,7 +292,7 @@ public class ImportedEntityService {
         Program persistentProgram = entityService.getDuplicateEntity(transientProgram);
 
         if (persistentProgram == null) {
-            entityService.save(transientProgram);
+            entityService.saveChecked(transientProgram);
             return transientProgram;
         } else {
             persistentProgram.setTitle(transientTitle);
@@ -260,7 +306,7 @@ public class ImportedEntityService {
         ProgramStudyOption persistentProgramStudyOption = entityService.getDuplicateEntity(transientProgramStudyOption);
 
         if (persistentProgramStudyOption == null) {
-            entityService.save(transientProgramStudyOption);
+            entityService.saveChecked(transientProgramStudyOption);
             return transientProgramStudyOption;
         } else {
             LocalDate transientStartDate = transientProgramStudyOption.getApplicationStartDate();
@@ -297,7 +343,7 @@ public class ImportedEntityService {
                 .withAssignedUser(invoker, invokerRole);
         actionService.executeSystemAction(program, action, comment);
     }
-    
+
     private void mergeInstitutionDomicileRegions(InstitutionDomicile domicile, List<SubdivisionType> subdivisions, Map<Short, String> categories) {
         InstitutionDomicileSubdivisionToRegionConverter converter = new InstitutionDomicileSubdivisionToRegionConverter(domicile, null, categories);
         Iterable<InstitutionDomicileRegion> regions = Iterables.concat(Iterables.transform(subdivisions, converter));

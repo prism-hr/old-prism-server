@@ -208,7 +208,7 @@ public class ApplicationResource {
         User delegateUser = userService.getById(commentDTO.getDelegateUser());
         State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
         Institution institution = application.getInstitution();
-        ResidenceState residenceState = importedEntitytService.getByCode(ResidenceState.class, institution, commentDTO.getResidenceState());
+        ResidenceState residenceState = importedEntitytService.getImportedEntityByCode(ResidenceState.class, institution, commentDTO.getResidenceState());
         LocalDate positionProvisionalStartDate = commentDTO.getPositionProvisionalStartDate() == null ? null : commentDTO.getPositionProvisionalStartDate()
                 .toLocalDate();
         Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withDelegateUser(delegateUser).withAction(action)

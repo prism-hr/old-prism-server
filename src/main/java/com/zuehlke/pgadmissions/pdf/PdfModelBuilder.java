@@ -950,7 +950,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                         pdfDocument.add(new Chunk(" - Funding proof of award"));
                     } else if (document.getApplicationQualification() != null) {
                         pdfDocument.add(new Chunk(" - Qualification Transcript"));
-                    } else if (document.getApplicationlanguageQualification() != null) {
+                    } else if (document.getApplicationLanguageQualification() != null) {
                         pdfDocument.add(new Chunk(" - English Language Certificate"));
                     }
 

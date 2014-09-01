@@ -11,10 +11,7 @@ import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -168,8 +165,8 @@ public class StaticDataResource {
     }
 
     @SuppressWarnings("unused")
-    @RequestMapping(method = RequestMethod.GET, value = "/institutions")
-    public List<ImportedInstitutionRepresentation> getInstitutions(@RequestParam Integer domicileId) {
+    @RequestMapping(method = RequestMethod.GET, value = "/domiciles/{domicileId}/importedInstitutions")
+    public List<ImportedInstitutionRepresentation> getImportedInstitutions(@PathVariable Integer domicileId) {
         Map<String, Object> staticData = Maps.newHashMap();
 
         Domicile domicile = entityService.getById(Domicile.class, domicileId);

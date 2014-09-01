@@ -15,7 +15,7 @@ public class DocumentDAO {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete Document " //
                     + "where comment is null "
-                        + "and applicationlanguageQualification is null "
+                        + "and applicationLanguageQualification is null "
                         + "and applicationQualification is null "
                         + "and applicationFunding is null "
                         + "and applicationCv is null "

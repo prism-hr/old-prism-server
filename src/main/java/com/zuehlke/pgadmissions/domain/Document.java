@@ -46,7 +46,7 @@ public class Document {
     private DateTime createdTimestamp;
     
     @OneToOne(mappedBy = "document")
-    private ApplicationLanguageQualification applicationlanguageQualification;
+    private ApplicationLanguageQualification applicationLanguageQualification;
     
     @OneToOne(mappedBy = "document")
     private ApplicationQualification applicationQualification;
@@ -117,8 +117,8 @@ public class Document {
         return comment;
     }
 
-    public final ApplicationLanguageQualification getApplicationlanguageQualification() {
-        return applicationlanguageQualification;
+    public final ApplicationLanguageQualification getApplicationLanguageQualification() {
+        return applicationLanguageQualification;
     }
 
     public final ApplicationQualification getApplicationQualification() {

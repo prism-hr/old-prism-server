@@ -18,7 +18,7 @@
             <td width="500">
 				<h1 style="font-size: 12pt;">
 					<font face="Arial, Helvetica, sans-serif" color="#0055A1">
-						Dear ${interviewer.user.firstName?html},
+						Dear ${userFirstName},
 					</font>
 				</h1>
 				<p>
@@ -46,7 +46,7 @@
 						 </a>
 					</#if>
 					<!-- Button -->
-					<a style="text-decoration:none;" 
+					<a style="text-decoration:none;"
 						<#if !interviewer.user.enabled>
 							href="${host}/pgadmissions/register?activationCode=${interviewer.user.activationCode}&directToUrl=${"/application?view=view&applicationId=${applicationCode}"?url('ISO-8859-1')}">
 						<#else>

@@ -1,1 +1,1 @@
-${resource.user.firstName} ${resource.user.lastName} Application ${applicationCode} for UCL ${projectOrProgramTitle} - Interview Preference Alteration
+${user} Application ${applicationCode} for UCL ${projectOrProgramTitle} - Interview Preference Alteration

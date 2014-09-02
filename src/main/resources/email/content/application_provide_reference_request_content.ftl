@@ -18,7 +18,7 @@
 			<td width="500">
 				<h1 style="font-size: 12pt;">
 					<font face="Arial, Helvetica, sans-serif" color="#0055A1">
-						Dear ${referee.firstname?html},
+                        Dear ${userFirstName},
 					</font>
 				</h1>
 				<p>
@@ -29,7 +29,7 @@
 				</p>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
-						They have nominated you as one of their referees and we would very much appreciate your feedback on their suitability for postgraduate research study.  
+						They have nominated you as one of their referees and we would very much appreciate your feedback on their suitability for postgraduate research study.
 					</font>
 				</p>
 				<p>
@@ -39,7 +39,7 @@
 				</p>
 				<p>
 					<!-- Button -->
-					<a style="text-decoration:none;" 
+					<a style="text-decoration:none;"
 						<#if !referee.user.enabled>
 							href="${host}/pgadmissions/register?activationCode=${referee.user.activationCode!}&directToUrl=${"/referee/addReferences?applicationId=${applicationCode}"?url('ISO-8859-1')}">
 						<#else>

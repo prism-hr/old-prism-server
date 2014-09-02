@@ -23,9 +23,10 @@ public class CommentDTOValidator extends AbstractValidator {
 
         // TODO finish validation
         if (Arrays.asList(PrismAction.APPLICATION_ASSESS_ELIGIBILITY, PrismAction.APPLICATION_CONFIRM_ELIGIBILITY).contains(action)) {
+            ValidationUtils.rejectIfEmpty(errors, "content", EMPTY_FIELD_ERROR_MESSAGE);
             ValidationUtils.rejectIfEmpty(errors, "qualified", EMPTY_DROPDOWN_ERROR_MESSAGE);
             ValidationUtils.rejectIfEmpty(errors, "competentInWorkLanguage", EMPTY_DROPDOWN_ERROR_MESSAGE);
-            ValidationUtils.rejectIfEmpty(errors, "residenceStatus", EMPTY_DROPDOWN_ERROR_MESSAGE);
+            ValidationUtils.rejectIfEmpty(errors, "residenceState", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
     }
 }

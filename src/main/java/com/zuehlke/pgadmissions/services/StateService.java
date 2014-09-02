@@ -194,7 +194,7 @@ public class StateService {
     }
 
     @Transactional
-    public StateTransition getApplicationReviewedOutcome(Resource resource, Comment comment, PrismTransitionEvaluation evaluation) {
+    public StateTransition getApplicationReviewedOutcome(Resource resource, Comment comment) {
         PrismState transitionState = PrismState.APPLICATION_REVIEW_PENDING_FEEDBACK;
         if (roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_REVIEWER)).size() == 1) {
             transitionState = PrismState.APPLICATION_REVIEW_PENDING_COMPLETION;

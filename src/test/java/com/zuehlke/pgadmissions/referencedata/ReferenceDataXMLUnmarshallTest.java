@@ -1,19 +1,16 @@
 package com.zuehlke.pgadmissions.referencedata;
 
-import java.io.File;
 import java.net.URL;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.Resource;
 import junit.framework.Assert;
 
 import org.junit.Test;
 
+import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Countries;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Disabilities;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Domiciles;

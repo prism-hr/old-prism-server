@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.pdf;
 import java.io.ByteArrayOutputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.itextpdf.text.Document;
@@ -18,6 +19,9 @@ import com.zuehlke.pgadmissions.services.CommentService;
 
 @Component
 public class ApplicationAlternativeQualificationBuilder extends AbstractPdfModelBuilder {
+    
+    @Value("${xml.export.system.qualification}")
+    String noQualificationExplanation;
     
     @Autowired
     private CommentService commentService;
@@ -37,11 +41,10 @@ public class ApplicationAlternativeQualificationBuilder extends AbstractPdfModel
 
             Comment approvalComment = commentService.getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
             
-            String alternativeQualification = approvalComment.getEquivalentExperience();
-            if (alternativeQualification == null) {
+            if (approvalComment == null) {
                 exportDocument.add(new Paragraph(String.format("Approval Round Comment:\n%s", NOT_PROVIDED)));
             } else {
-                exportDocument.add(new Paragraph(String.format("Approval Round Comment:\n%s", alternativeQualification)));
+                exportDocument.add(new Paragraph(String.format("Approval Round Comment:\n%s", noQualificationExplanation)));
             }
             
             exportDocument.close();

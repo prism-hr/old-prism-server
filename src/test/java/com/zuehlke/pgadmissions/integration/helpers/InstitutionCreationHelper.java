@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.ActionDTO;
@@ -54,7 +53,8 @@ public class InstitutionCreationHelper {
         registrationDTO.setEmail("c.neil@ucl.ac.uk");
         registrationDTO.setPassword("pgadmissions");
 
-        User user = userService.registerUser(registrationDTO);
+        // TODO: integration test of institution workflow
+        
         return null;
     }
     

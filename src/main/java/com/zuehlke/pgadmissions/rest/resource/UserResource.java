@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -72,7 +73,7 @@ public class UserResource {
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public Map<String, String> authenticate(@RequestParam(required = false, value = "username") String username,
-                                            @RequestParam(required = false, value = "password") String password) {
+            @RequestParam(required = false, value = "password") String password) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
         Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -81,9 +82,13 @@ public class UserResource {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public void submitRegistration(@Valid @RequestBody UserRegistrationDTO userRegistrationDTO)
-            throws WorkflowEngineException {
-        userService.registerUser(userRegistrationDTO);
+    public void submitRegistration(@RequestHeader(value = "referer", required = false) String referrer,
+            @Valid @RequestBody UserRegistrationDTO userRegistrationDTO) throws WorkflowEngineException {
+        try {
+            userService.registerUser(userRegistrationDTO, referrer);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException();
+        }
     }
 
     @RequestMapping(value = "/activate", method = RequestMethod.PUT)

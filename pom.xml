@@ -456,7 +456,7 @@
                         <configuration>
                             <packageName>com.zuehlke.pgadmissions.referencedata.jaxb</packageName>
                             <outputDirectory>${project.build.directory}/generated-sources/jaxb/import</outputDirectory>
-                            <schemaDirectory>${project.basedir}/src/main/xsd/import</schemaDirectory>
+                            <schemaDirectory>${project.basedir}/src/main/resources/xsd/import</schemaDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -467,7 +467,7 @@
                         <configuration>
                             <packageName>com.zuehlke.pgadmissions.admissionsservice.jaxb</packageName>
                             <outputDirectory>${project.build.directory}/generated-sources/jaxb/export</outputDirectory>
-                            <schemaDirectory>${project.basedir}/src/main/xsd/export</schemaDirectory>
+                            <schemaDirectory>${project.basedir}/src/main/resources/xsd/export</schemaDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -479,7 +479,7 @@
                             <packageName>com.zuehlke.pgadmissions.scoring.jaxb</packageName>
                             <outputDirectory>${project.build.directory}/generated-sources/jaxb/scoringConfig
                             </outputDirectory>
-                            <schemaDirectory>${project.basedir}/src/main/resources/xml/scoring</schemaDirectory>
+                            <schemaDirectory>${project.basedir}/src/main/resources/xsd/scoring</schemaDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -490,7 +490,7 @@
                         <configuration>
                             <packageName>com.zuehlke.pgadmissions.iso.jaxb</packageName>
                             <outputDirectory>${project.build.directory}/generated-sources/jaxb/isoCountryCodes</outputDirectory>
-                            <schemaDirectory>${project.basedir}/src/main/xsd/isoCountryCodesImport</schemaDirectory>
+                            <schemaDirectory>${project.basedir}/src/main/resources/xsd/isoCountryCodes</schemaDirectory>
                         </configuration>
                     </execution>
                 </executions>

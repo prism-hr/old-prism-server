@@ -14,16 +14,18 @@ import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 
 @Component
 public class ApplicationCombinedReferencesBuilder extends AbstractPdfModelBuilder {
 
-    @Value("${email.address.to}")
-    private String emailAddressTo;
+    @Value("${xml.export.system.reference}")
+    private String noReferenceExplanation;
     
-    public void build(final Comment referenceComment, final OutputStream outputStream) {
+    public void build(final Application application, final Comment referenceComment, final OutputStream outputStream) {
         try {
             Document document = new Document(PageSize.A4, 50, 50, 100, 50);
             PdfWriter writer = PdfWriter.getInstance(document, outputStream);
@@ -36,10 +38,18 @@ public class ApplicationCombinedReferencesBuilder extends AbstractPdfModelBuilde
             document.add(table);
             document.add(addSectionSeparators());
 
-            if (BooleanUtils.isTrue(referenceComment.isDeclinedResponse())) {
-                document.add(new Paragraph("Comment:\nDeclined to provide a reference."));
+            if (referenceComment == null) {
+                if (application.getState().getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED) {
+                    document.add(new Paragraph("Comment:\n" + noReferenceExplanation));
+                } else {
+                    document.add(new Paragraph("Comment:\nReference not yet provided at time of outcome")); 
+                }
             } else {
-                document.add(new Paragraph("Comment:\n" + referenceComment.getContent()));
+                if (BooleanUtils.isTrue(referenceComment.isDeclinedResponse())) {
+                    document.add(new Paragraph("Comment:\nDeclined to provide a reference."));
+                } else {
+                    document.add(new Paragraph("Comment:\n" + referenceComment.getContent()));
+                }
             }
 
             PdfContentByte cb = writer.getDirectContent();
@@ -52,12 +62,7 @@ public class ApplicationCombinedReferencesBuilder extends AbstractPdfModelBuilde
                         cb.addTemplate(page, 0, 0);
                     }
                 } catch (IllegalArgumentException e) {
-                    document.newPage();
-                    document.add(new Paragraph(
-                            "We are sorry but we were unable to read and merge the contents of this document. " +
-                                    "Please contact us at " + emailAddressTo + " to obtain an original copy, " +
-                                    "quoting our application reference number: " + referenceComment.getApplication().getCode() + " " +
-                                    "and document identifier: " + in.getId().toString() + "."));    
+                    throw new Error(e);
                 }
             }
             document.newPage();

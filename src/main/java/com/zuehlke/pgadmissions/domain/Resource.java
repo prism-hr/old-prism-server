@@ -12,6 +12,10 @@ public abstract class Resource implements IUniqueEntity {
 
     public abstract void setId(Integer id);
     
+    public abstract User getUser();
+
+    public abstract void setUser(User user);
+    
     public abstract String getCode();
     
     public abstract void setCode(String code);
@@ -33,14 +37,14 @@ public abstract class Resource implements IUniqueEntity {
     public abstract void setProject(Project project);
 
     public abstract Application getApplication();
+    
+    public abstract String getReferrer();
+    
+    public abstract void setReferrer(String referrer);
 
     public abstract State getState();
 
     public abstract void setState(State state);
-
-    public abstract User getUser();
-
-    public abstract void setUser(User user);
 
     public abstract State getPreviousState();
 
@@ -61,11 +65,7 @@ public abstract class Resource implements IUniqueEntity {
     public abstract String getSequenceIdentifier();
     
     public abstract void setSequenceIdentifier(String sequenceIdentifier);
-
-    public LocalDate getDueDateBaseline() {
-        return new LocalDate();
-    }
-
+    
     public Resource getParentResource() {
         PrismScope resourceScope = PrismScope.getResourceScope(this.getClass());
         switch (resourceScope) {

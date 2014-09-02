@@ -5,7 +5,12 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("DOMICILE")
-public class Domicile extends AbstractImportedEntity {
+public class Domicile extends SimpleImportedEntity {
+    
+    public Domicile withInstitution(Institution institution) {
+        setInstitution(institution);
+        return this;
+    }
 
     public Domicile withCode(String code) {
         setCode(code);
@@ -14,6 +19,11 @@ public class Domicile extends AbstractImportedEntity {
 
     public Domicile withName(String name) {
         setName(name);
+        return this;
+    }
+    
+    public Domicile withEnabled(Boolean enabled) {
+        setEnabled(enabled);
         return this;
     }
 

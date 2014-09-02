@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("DISABILITY")
-public class Disability extends AbstractImportedEntity {
+public class Disability extends SimpleImportedEntity {
 
     public Disability withInstitution(Institution institution) {
         setInstitution(institution);
@@ -22,7 +22,7 @@ public class Disability extends AbstractImportedEntity {
         return this;
     }
 
-    public Disability withEnabled(boolean enabled) {
+    public Disability withEnabled(Boolean enabled) {
         setEnabled(enabled);
         return this;
     }

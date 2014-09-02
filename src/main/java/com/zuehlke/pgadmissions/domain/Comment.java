@@ -18,13 +18,15 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 @Entity
 @Table(name = "COMMENT")
@@ -80,11 +82,12 @@ public class Comment {
     private String content;
 
     @ManyToOne
+    @JoinColumn(name = "state_id")
+    private State state;
+    
+    @ManyToOne
     @JoinColumn(name = "transition_state_id")
     private State transitionState;
-
-    @Column(name = "user_specified_due_date")
-    private LocalDate userSpecifiedDueDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "application_qualified")
@@ -129,9 +132,6 @@ public class Comment {
     @Column(name = "application_interview_location")
     private String interviewLocation;
 
-    @Column(name = "application_equivalent_experience")
-    private String equivalentExperience;
-
     @Column(name = "application_position_title")
     private String positionTitle;
 
@@ -147,7 +147,7 @@ public class Comment {
 
     @Column(name = "application_recruiter_accept_appointment")
     private Boolean recruiterAcceptAppointment;
-    
+
     @ManyToOne
     @JoinColumn(name = "application_rejection_reason_id")
     private RejectionReason rejectionReason;
@@ -191,18 +191,18 @@ public class Comment {
     private DateTime createdTimestamp;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "comment_id", nullable = false, unique = true)
+    @JoinColumn(name = "comment_id")
     private Set<CommentAssignedUser> assignedUsers = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "comment_id", nullable = false, unique = true)
+    @JoinColumn(name = "comment_id")
     private Set<CommentAppointmentTimeslot> appointmentTimeslots = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "comment_id", nullable = false, unique = true)
+    @JoinColumn(name = "comment_id")
     private Set<CommentAppointmentPreference> appointmentPreferences = Sets.newHashSet();
 
-    @OneToMany(cascade= CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id")
     private Set<Document> documents = Sets.newHashSet();
 
@@ -310,20 +310,20 @@ public class Comment {
         this.content = content;
     }
 
+    public final State getState() {
+        return state;
+    }
+
+    public final void setState(State state) {
+        this.state = state;
+    }
+
     public State getTransitionState() {
         return transitionState;
     }
 
     public void setTransitionState(State transitionState) {
         this.transitionState = transitionState;
-    }
-
-    public LocalDate getUserSpecifiedDueDate() {
-        return userSpecifiedDueDate;
-    }
-
-    public void setUserSpecifiedDueDate(LocalDate userSpecifiedDueDate) {
-        this.userSpecifiedDueDate = userSpecifiedDueDate;
     }
 
     public YesNoUnsureResponse getQualified() {
@@ -428,14 +428,6 @@ public class Comment {
 
     public void setInterviewLocation(String interviewLocation) {
         this.interviewLocation = interviewLocation;
-    }
-
-    public String getEquivalentExperience() {
-        return equivalentExperience;
-    }
-
-    public void setEquivalentExperience(String equivalentExperience) {
-        this.equivalentExperience = equivalentExperience;
     }
 
     public String getPositionTitle() {
@@ -624,10 +616,6 @@ public class Comment {
         }
     }
 
-    public User getAuthor() {
-        return delegateUser == null ? user : delegateUser;
-    }
-    
     public Comment withId(Integer id) {
         this.id = id;
         return this;
@@ -697,6 +685,11 @@ public class Comment {
         this.content = content;
         return this;
     }
+    
+    public Comment withState(State state) {
+        this.state = state;
+        return this;
+    }
 
     public Comment withTransitionState(final State transitionState) {
         this.transitionState = transitionState;
@@ -707,7 +700,7 @@ public class Comment {
         this.positionTitle = positionTitle;
         return this;
     }
-    
+
     public Comment withRejectionReason(RejectionReason rejectionReason) {
         this.rejectionReason = rejectionReason;
         return this;
@@ -830,8 +823,54 @@ public class Comment {
         return getQualified() == YesNoUnsureResponse.UNSURE || getCompetentInWorkLanguage() == YesNoUnsureResponse.UNSURE;
     }
 
-    public String getTooltipMessage(final String role) {
-        return String.format("%s %s (%s) as: %s", user.getFirstName(), user.getLastName(), user.getEmail(), StringUtils.capitalize(role));
+    public User getAuthor() {
+        return delegateUser == null ? user : delegateUser;
+    }
+
+    public boolean isProgramCreateComment() {
+        return action.getCreationScope() == null ? false : action.getCreationScope().getId() == PrismScope.PROGRAM ? true : false;
+    }
+
+    public boolean isProgramUpdateComment() {
+        return action.getScope().getId() == PrismScope.PROGRAM && action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE;
+    }
+
+    public boolean isProgramCreateOrUpdateComment() {
+        return isProgramCreateComment() || isProgramUpdateComment();
+    }
+
+    public boolean isProjectCreateComment() {
+        return action.getCreationScope() == null ? false : action.getCreationScope().getId() == PrismScope.PROJECT ? true : false;
+    }
+
+    public boolean isProjectUpdateComment() {
+        return action.getScope().getId() == PrismScope.PROJECT && action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE;
+    }
+
+    public boolean isProjectCreateOrUpdateComment() {
+        return isProjectCreateComment() || isProjectUpdateComment();
+    }
+
+    public boolean isApplicationAssignReviewersComment() {
+        return action.getId() == PrismAction.APPLICATION_ASSIGN_REVIEWERS;
+    }
+
+    public boolean isApplicationProvideReferenceComment() {
+        return action.getId() == PrismAction.APPLICATION_PROVIDE_REFERENCE;
+    }
+
+    public boolean isApplicationConfirmOfferRecommendationComment() {
+        return action.getId() == PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
+    }
+
+    public boolean isRatingComment() {
+        return action.isRatingAction();
+    }
+
+    public boolean isTransitionComment() {
+        StateGroup previousStateGroup = state.getStateGroup();
+        StateGroup currentStateGroup = transitionState.getStateGroup();
+        return action.isTransitionAction() && previousStateGroup.getId() == currentStateGroup.getId() || previousStateGroup.isRepeatable();
     }
 
 }

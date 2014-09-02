@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("COUNTRY")
-public class Country extends AbstractImportedEntity {
+public class Country extends SimpleImportedEntity {
 
     public Country withInstitution(Institution institution) {
         setInstitution(institution);
@@ -22,7 +22,7 @@ public class Country extends AbstractImportedEntity {
         return this;
     }
 
-    public Country withEnabled(boolean enabled) {
+    public Country withEnabled(Boolean enabled) {
         setEnabled(enabled);
         return this;
     }

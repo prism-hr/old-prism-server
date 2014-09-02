@@ -74,7 +74,7 @@ public class InstitutionDomicile {
         return this;
     }
 
-    public InstitutionDomicile withEnabled(boolean enabled) {
+    public InstitutionDomicile withEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
     }

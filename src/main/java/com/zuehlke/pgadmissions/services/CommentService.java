@@ -3,23 +3,33 @@ package com.zuehlke.pgadmissions.services;
 import java.util.List;
 import java.util.Set;
 
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
-import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.CommentAppointmentTimeslot;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotRepresentation;
+import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.OfferRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.UserAppointmentPreferencesRepresentation;
@@ -36,6 +46,9 @@ public class CommentService {
 
     @Autowired
     private EntityService entityService;
+    
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
     private UserService userService;
@@ -170,7 +183,40 @@ public class CommentService {
 
         return new OfferRepresentation();
     }
+    
+    public void save(Comment comment) {
+        Resource resource = comment.getResource();
+        Action action = comment.getAction();
+        
+        if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
+            comment.setRole(PrismRole.SYSTEM_ADMINISTRATOR.toString());
+        } else {
+            if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
+                comment.setRole(roleService.getCreatorRole(resource).getId().toString());
+            } else { 
+                comment.setRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action)));
+                if (comment.getDelegateUser() != null) {
+                    comment.setDelegateRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getDelegateUser(), resource, action)));
+                }
+            }
+        }
+        entityService.save(comment);
+    }
 
+    public void updateComment(Integer commentId, CommentDTO commentDTO) {
+        Comment comment = getById(commentId);
+        actionService.validateUpdateAction(comment);
+        
+        comment.setDeclinedResponse(commentDTO.getDeclinedResponse());
+        comment.setContent(commentDTO.getContent());
+        comment.getDocuments().clear();
+        
+        for (FileDTO fileDTO : commentDTO.getDocuments()) {
+            Document document = entityService.getById(Document.class, fileDTO.getId());
+            comment.getDocuments().add(document);
+        }
+    }
+    
     private Set<ApplicationAssignedSupervisorRepresentation> buildApplicationSupervisorRepresentation(Comment assignmentComment) {
         Set<ApplicationAssignedSupervisorRepresentation> supervisors = Sets.newLinkedHashSet();
 
@@ -186,6 +232,10 @@ public class CommentService {
         return supervisors;
     }
 
+    public List<Comment> getTransitionComments(Resource resource, DateTime rangeStart, DateTime rangeClose) {
+        return commentDAO.getTransitionComments(resource, rangeStart, rangeClose);
+    }
+    
     private Comment getLatestAppointmentPreferenceComment(Application application, Comment schedulingComment, User user) {
         DateTime baseline = schedulingComment.getCreatedTimestamp();
         Comment preferenceComment = getLatestComment(application, PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY, user, baseline);
@@ -198,20 +248,6 @@ public class CommentService {
                 .withPositionProvisionalStartDate(sourceComment.getPositionProvisionalStartDate())
                 .withAppointmentConditions(sourceComment.getAppointmentConditions());
         return offerRepresentation;
-    }
-
-    public void updateComment(Integer commentId, CommentDTO commentDTO) {
-        Comment comment = getById(commentId);
-        actionService.validateUpdateAction(comment);
-        
-        comment.setDeclinedResponse(commentDTO.getDeclinedResponse());
-        comment.setContent(commentDTO.getContent());
-        comment.getDocuments().clear();
-        
-        for (FileDTO fileDTO : commentDTO.getDocuments()) {
-            Document document = entityService.getById(Document.class, fileDTO.getId());
-            comment.getDocuments().add(document);
-        }
     }
     
 }

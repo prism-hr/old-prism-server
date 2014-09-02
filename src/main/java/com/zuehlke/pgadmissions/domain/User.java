@@ -17,8 +17,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -68,6 +71,26 @@ public class User implements UserDetails, IUniqueEntity {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
+    
+    @Column(name = "last_notified_date_system")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastNotifiedDateSystem;
+    
+    @Column(name = "last_notified_date_institution")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastNotifiedDateInstitution;
+    
+    @Column(name = "last_notified_date_program")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastNotifiedDateProgram;
+    
+    @Column(name = "last_notified_date_project")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastNotifiedDateProject;
+    
+    @Column(name = "last_notified_date_application")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastNotifiedDateApplication;
 
     @ManyToOne
     @JoinColumn(name = "parent_user_id")
@@ -75,9 +98,6 @@ public class User implements UserDetails, IUniqueEntity {
 
     @OneToMany(mappedBy = "user")
     private Set<UserRole> userRoles = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "user")
-    private Set<ProgramExport> programExports = Sets.newHashSet();
     
     @OneToMany(mappedBy = "user")
     private Set<Document> documents = Sets.newHashSet();
@@ -153,6 +173,46 @@ public class User implements UserDetails, IUniqueEntity {
     public void setUserAccount(UserAccount account) {
         this.userAccount = account;
     }
+    
+    public final LocalDate getLastNotifiedDateSystem() {
+        return lastNotifiedDateSystem;
+    }
+
+    public final void setLastNotifiedDateSystem(LocalDate lastNotifiedDateSystem) {
+        this.lastNotifiedDateSystem = lastNotifiedDateSystem;
+    }
+
+    public final LocalDate getLastNotifiedDateInstitution() {
+        return lastNotifiedDateInstitution;
+    }
+
+    public final void setLastNotifiedDateInstitution(LocalDate lastNotifiedDateInstitution) {
+        this.lastNotifiedDateInstitution = lastNotifiedDateInstitution;
+    }
+
+    public final LocalDate getLastNotifiedDateProgram() {
+        return lastNotifiedDateProgram;
+    }
+
+    public final void setLastNotifiedDateProgram(LocalDate lastNotifiedDateProgram) {
+        this.lastNotifiedDateProgram = lastNotifiedDateProgram;
+    }
+
+    public final LocalDate getLastNotifiedDateProject() {
+        return lastNotifiedDateProject;
+    }
+
+    public final void setLastNotifiedDateProject(LocalDate lastNotifiedDateProject) {
+        this.lastNotifiedDateProject = lastNotifiedDateProject;
+    }
+
+    public final LocalDate getLastNotifiedDateApplication() {
+        return lastNotifiedDateApplication;
+    }
+
+    public final void setLastNotifiedDateApplication(LocalDate lastNotifiedDateApplication) {
+        this.lastNotifiedDateApplication = lastNotifiedDateApplication;
+    }
 
     public final User getParentUser() {
         return parentUser;
@@ -164,10 +224,6 @@ public class User implements UserDetails, IUniqueEntity {
     
     public Set<UserRole> getUserRoles() {
         return userRoles;
-    }
-
-    public Set<ProgramExport> getProgramExports() {
-        return programExports;
     }
 
     public final Set<Document> getDocuments() {
@@ -230,6 +286,22 @@ public class User implements UserDetails, IUniqueEntity {
     public User withParentUser(User parentUser) {
         this.parentUser = parentUser;
         return this;
+    }
+    
+    public <T extends Resource> LocalDate getLastNotifiedDate(Class<T> resourceClass) {
+        try {
+            return (LocalDate) PropertyUtils.getSimpleProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName());
+        } catch (Exception e) {
+            throw new Error (e);
+        }
+    }
+    
+    public <T extends Resource> void setLastNotifiedDate(Class<T> resourceClass, LocalDate lastNotifiedDate) {
+        try {
+            PropertyUtils.setSimpleProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName(), lastNotifiedDate);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
     }
 
     @Override

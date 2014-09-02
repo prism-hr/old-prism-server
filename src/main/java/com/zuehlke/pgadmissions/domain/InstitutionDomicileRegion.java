@@ -131,7 +131,7 @@ public class InstitutionDomicileRegion {
         return this;
     }
 
-    public InstitutionDomicileRegion withEnabled(boolean enabled) {
+    public InstitutionDomicileRegion withEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
     }

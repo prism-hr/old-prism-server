@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("QUALIFICATION_TYPE")
-public class QualificationType extends AbstractImportedEntity {
+public class QualificationType extends SimpleImportedEntity {
 
     public QualificationType withInstitution(Institution institution) {
         setInstitution(institution);
@@ -22,7 +22,7 @@ public class QualificationType extends AbstractImportedEntity {
         return this;
     }
 
-    public QualificationType withEnabled(boolean enabled) {
+    public QualificationType withEnabled(Boolean enabled) {
         setEnabled(enabled);
         return this;
     }

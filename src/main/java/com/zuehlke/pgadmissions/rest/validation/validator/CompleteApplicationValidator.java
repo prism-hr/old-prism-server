@@ -1,13 +1,14 @@
 package com.zuehlke.pgadmissions.rest.validation.validator;
 
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationProgramDetails;
-import com.zuehlke.pgadmissions.services.ApplicationService;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
+
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.ApplicationProgramDetail;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 
 @Component
 public class CompleteApplicationValidator extends AbstractValidator {
@@ -32,7 +33,7 @@ public class CompleteApplicationValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmpty(errors, "additionalInformation", "notNull");
 
 
-        ApplicationProgramDetails programDetails = application.getProgramDetails();
+        ApplicationProgramDetail programDetails = application.getProgramDetail();
         if (programDetails != null) {
             errors.pushNestedPath("programDetails");
             LocalDate startDate = programDetails.getStartDate();

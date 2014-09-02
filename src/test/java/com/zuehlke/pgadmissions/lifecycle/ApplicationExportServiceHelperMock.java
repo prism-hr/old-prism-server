@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicati
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.services.helpers.ApplicationExportServiceHelper;
 
-public class ApplicationExportHelperMock extends ApplicationExportServiceHelper {
+public class ApplicationExportServiceHelperMock extends ApplicationExportServiceHelper {
 
     private final HashMap<Application, ApplicationExportRequest> exportRequests = Maps.newHashMap();
 
@@ -80,12 +80,12 @@ public class ApplicationExportHelperMock extends ApplicationExportServiceHelper 
             return documentExportRequest;
         }
 
-        public ApplicationExportHelperMock.ApplicationExportRequest withDataExportRequest(SubmitAdmissionsApplicationRequest dataExportRequest) {
+        public ApplicationExportServiceHelperMock.ApplicationExportRequest withDataExportRequest(SubmitAdmissionsApplicationRequest dataExportRequest) {
             this.dataExportRequest = dataExportRequest;
             return this;
         }
 
-        public ApplicationExportHelperMock.ApplicationExportRequest withDocumentExportRequest(byte[] documentExportRequest) {
+        public ApplicationExportServiceHelperMock.ApplicationExportRequest withDocumentExportRequest(byte[] documentExportRequest) {
             this.documentExportRequest = documentExportRequest;
             return this;
         }

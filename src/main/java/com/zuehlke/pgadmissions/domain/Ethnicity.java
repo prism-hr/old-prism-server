@@ -22,7 +22,7 @@ public class Ethnicity extends SimpleImportedEntity {
         return this;
     }
 
-    public Ethnicity withEnabled(boolean enabled) {
+    public Ethnicity withEnabled(Boolean enabled) {
         setEnabled(enabled);
         return this;
     }

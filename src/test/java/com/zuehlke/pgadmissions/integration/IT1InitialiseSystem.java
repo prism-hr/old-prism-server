@@ -24,9 +24,6 @@ public class IT1InitialiseSystem implements IPrismIntegrationTest {
     
     @Autowired
     private SystemInitialisationHelper systemInitialisationHelper;
-    
-    @Autowired
-    private IntegrationTestRunner integrationTestRunner;
 
     @Test
     @Override
@@ -53,7 +50,6 @@ public class IT1InitialiseSystem implements IPrismIntegrationTest {
 
             mailSenderMock.verify();
         }
-        integrationTestRunner.recordTestSuccess(this);
     }
 
 }

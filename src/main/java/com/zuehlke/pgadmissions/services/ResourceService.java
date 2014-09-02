@@ -108,8 +108,10 @@ public class ResourceService {
             actionService.throwWorkflowPermissionException(action, resource);
         }
 
+        resource.setReferrer(referrer);
         Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                 .withAssignedUser(user, roleService.getCreatorRole(resource));
+        
         return actionService.executeUserAction(resource, action, comment);
     }
 

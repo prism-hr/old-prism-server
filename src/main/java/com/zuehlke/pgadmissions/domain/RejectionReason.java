@@ -22,7 +22,7 @@ public class RejectionReason extends SimpleImportedEntity {
         return this;
     }
 
-    public RejectionReason withEnabled(boolean enabled) {
+    public RejectionReason withEnabled(Boolean enabled) {
         setEnabled(enabled);
         return this;
     }

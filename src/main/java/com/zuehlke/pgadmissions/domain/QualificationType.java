@@ -22,7 +22,7 @@ public class QualificationType extends SimpleImportedEntity {
         return this;
     }
 
-    public QualificationType withEnabled(boolean enabled) {
+    public QualificationType withEnabled(Boolean enabled) {
         setEnabled(enabled);
         return this;
     }

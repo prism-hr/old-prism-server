@@ -77,7 +77,7 @@ public class AdvertCategory implements IUniqueEntity {
         return this;
     }
 
-    public AdvertCategory withEnabled(boolean enabled) {
+    public AdvertCategory withEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
     }

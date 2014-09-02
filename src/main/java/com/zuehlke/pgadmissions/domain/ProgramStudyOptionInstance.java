@@ -128,7 +128,7 @@ public class ProgramStudyOptionInstance implements IUniqueEntity {
         return this;
     }
     
-    public ProgramStudyOptionInstance withEnabled(boolean enabled) {
+    public ProgramStudyOptionInstance withEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
     }

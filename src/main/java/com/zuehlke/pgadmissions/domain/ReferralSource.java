@@ -22,7 +22,7 @@ public class ReferralSource extends SimpleImportedEntity {
         return this;
     }
 
-    public ReferralSource withEnabled(boolean enabled) {
+    public ReferralSource withEnabled(Boolean enabled) {
         setEnabled(enabled);
         return this;
     }

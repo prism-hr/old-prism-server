@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.domain.FundingSource;
 import com.zuehlke.pgadmissions.domain.Gender;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.builders.TestObjectProvider;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -67,7 +67,7 @@ public class ApplicationTestDataProvider {
         personalDetails.setSecondNationality(testObjectProvider.get(Language.class));
         personalDetails.setLanguageQualificationAvailable(true);
         ApplicationLanguageQualification languageQualification = new ApplicationLanguageQualification();
-        languageQualification.setType(entityService.getByProperty(LanguageQualificationType.class, "code", "IELTS_ACADEMIC"));
+        languageQualification.setType(entityService.getByProperty(ImportedLanguageQualificationType.class, "code", "IELTS_ACADEMIC"));
         languageQualification.setExamDate(new LocalDate(1967, 9, 14));
         languageQualification.setOverallScore("6");
         languageQualification.setReadingScore("6");

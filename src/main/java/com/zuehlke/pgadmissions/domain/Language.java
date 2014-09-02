@@ -22,7 +22,7 @@ public class Language extends SimpleImportedEntity {
         return this;
     }
 
-    public Language withEnabled(boolean enabled) {
+    public Language withEnabled(Boolean enabled) {
         setEnabled(enabled);
         return this;
     }

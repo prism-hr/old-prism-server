@@ -35,7 +35,7 @@ import org.hibernate.search.annotations.TokenizerDef;
 @Table(name = "IMPORTED_LANGUAGE_QUALIFICATION_TYPE", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_id", "code"}),
         @UniqueConstraint(columnNames = {"institution_id", "name"})})
 @Indexed
-public class LanguageQualificationType extends ImportedEntity {
+public class ImportedLanguageQualificationType extends ImportedEntity {
 
     @Id
     @GeneratedValue
@@ -205,18 +205,68 @@ public class LanguageQualificationType extends ImportedEntity {
         this.enabled = enabled;
     }
 
-    public LanguageQualificationType withInstitution(Institution institution) {
+    public ImportedLanguageQualificationType withInstitution(Institution institution) {
         this.institution = institution;
         return this;
     }
 
-    public LanguageQualificationType withCode(String code) {
+    public ImportedLanguageQualificationType withCode(String code) {
         this.code = code;
         return this;
     }
 
-    public LanguageQualificationType withName(String name) {
+    public ImportedLanguageQualificationType withName(String name) {
         this.name = name;
+        return this;
+    }
+    
+    public ImportedLanguageQualificationType withMinimumOverallScore(BigDecimal minimumOverallScore) {
+        this.minimumOverallScore = minimumOverallScore;
+        return this;
+    }
+    
+    public ImportedLanguageQualificationType withMaximumOverallScore(BigDecimal maximumOverallScore) {
+        this.maximumOverallScore = maximumOverallScore;
+        return this;
+    }
+    
+    public ImportedLanguageQualificationType withMinimumReadingScore(BigDecimal minimumReadingScore) {
+        this.minimumReadingScore = minimumReadingScore;
+        return this;
+    }
+    
+    public ImportedLanguageQualificationType withMaximumReadingScore(BigDecimal maximumReadingScore) {
+        this.maximumReadingScore = maximumReadingScore;
+        return this;
+    }
+    
+    public ImportedLanguageQualificationType withMinimumWritingScore(BigDecimal minimumWritingScore) {
+        this.minimumWritingScore = minimumWritingScore;
+        return this;
+    }
+    
+    public ImportedLanguageQualificationType withMaximumWritingScore(BigDecimal maximumWritingScore) {
+        this.maximumWritingScore = maximumWritingScore;
+        return this;
+    }
+    
+    public ImportedLanguageQualificationType withMinimumSpeakingScore(BigDecimal minimumSpeakingScore) {
+        this.minimumSpeakingScore = minimumSpeakingScore;
+        return this;
+    }
+    
+    public ImportedLanguageQualificationType withMaximumSpeakingScore(BigDecimal maximumSpeakingScore) {
+        this.maximumSpeakingScore = maximumSpeakingScore;
+        return this;
+    }
+    
+    public ImportedLanguageQualificationType withMinimumListeningScore(BigDecimal minimumListeningScore) {
+        this.minimumListeningScore = minimumListeningScore;
+        return this;
+    }
+    
+    public ImportedLanguageQualificationType withMaximumListeningScore(BigDecimal maximumListeningScore) {
+        this.maximumListeningScore = maximumListeningScore;
         return this;
     }
 

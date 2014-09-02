@@ -45,7 +45,7 @@ import com.zuehlke.pgadmissions.domain.Gender;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.ReferralSource;
@@ -304,7 +304,7 @@ public class ApplicationService {
                 languageQualification = new ApplicationLanguageQualification();
                 personalDetails.setLanguageQualification(languageQualification);
             }
-            LanguageQualificationType languageQualificationType = importedEntityService.getById(LanguageQualificationType.class, institution,
+            ImportedLanguageQualificationType languageQualificationType = importedEntityService.getById(ImportedLanguageQualificationType.class, institution,
                     languageQualificationDTO.getType());
             Document proofOfAward = entityService.getById(Document.class, languageQualificationDTO.getProofOfAward().getId());
             languageQualification.setType(languageQualificationType);

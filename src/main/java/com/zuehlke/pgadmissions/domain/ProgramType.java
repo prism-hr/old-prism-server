@@ -8,16 +8,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 @Entity
 @DiscriminatorValue("PROGRAM_TYPE")
 public class ProgramType extends SimpleImportedEntity {
-
-    @Override
-    public void setCode(String code) {
-        try {
-            PrismProgramType.valueOf(code);
-            super.setCode(code);
-        } catch (IllegalArgumentException e) {
-            throw new Error(e);
-        }
-    }
     
     public ProgramType withInstitution(Institution institution) {
         setInstitution(institution);
@@ -34,7 +24,7 @@ public class ProgramType extends SimpleImportedEntity {
         return this;
     }
 
-    public ProgramType withEnabled(boolean enabled) {
+    public ProgramType withEnabled(Boolean enabled) {
         setEnabled(enabled);
         return this;
     }

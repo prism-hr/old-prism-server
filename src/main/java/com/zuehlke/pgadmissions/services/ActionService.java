@@ -1,25 +1,28 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.dao.ActionDAO;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
-import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
+import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Set;
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.dao.ActionDAO;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.StateTransition;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
+import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 
 @Service
 @Transactional
@@ -48,7 +51,9 @@ public class ActionService {
         User owner = comment.getUser();
         User delegateOwner = comment.getDelegateUser();
 
-        authenticateAction(action, owner, delegateOwner);
+        User currentUser = userService.getCurrentUser();
+        authenticateActionInvocation(currentUser, action, owner, delegateOwner);
+
         Resource operative = resourceService.getOperativeResource(resource, action);
 
         if (delegateOwner == null && checkActionAvailable(operative, action, owner)) {
@@ -63,14 +68,14 @@ public class ActionService {
     }
 
     public void validateUpdateAction(Comment comment) {
-        User currentUser = userService.getCurrentUser();
-
+        Action action = comment.getAction();
+        
         User owner = comment.getUser();
         User delegateOwner = comment.getDelegateUser();
 
-        authenticateAction(comment.getAction(), owner, delegateOwner);
+        User currentUser = userService.getCurrentUser();
+        authenticateActionInvocation(currentUser, action, owner, delegateOwner);
 
-        Action action = comment.getAction();
         Resource resource = comment.getResource();
 
         if (owner == currentUser || checkDelegateActionAvailable(resource, action, delegateOwner)) {
@@ -91,12 +96,12 @@ public class ActionService {
         return Lists.newArrayList(enhancements);
     }
 
-    public ActionOutcome executeUserAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
+    public ActionOutcomeDTO executeUserAction(Resource resource, Action action, Comment comment) throws Exception {
         validateInvokeAction(resource, action, comment);
         return executeSystemAction(resource, action, comment);
     }
 
-    public ActionOutcome executeSystemAction(Resource resource, Action action, Comment comment) throws WorkflowEngineException {
+    public ActionOutcomeDTO executeSystemAction(Resource resource, Action action, Comment comment) throws Exception {
         User actionOwner = comment.getUser();
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE || action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE) {
@@ -105,7 +110,8 @@ public class ActionService {
             if (duplicateResource != null) {
                 if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
                     Action redirectAction = getRedirectAction(action, actionOwner, duplicateResource);
-                    return new ActionOutcome().withUser(actionOwner).withResource(duplicateResource).withTransitionResource(duplicateResource).withTransitionAction(redirectAction);
+                    return new ActionOutcomeDTO().withUser(actionOwner).withResource(duplicateResource).withTransitionResource(duplicateResource)
+                            .withTransitionAction(redirectAction);
                 } else if (!Objects.equal(resource.getId(), duplicateResource.getId())) {
                     throwWorkflowPermissionException(action, resource);
                 }
@@ -116,7 +122,7 @@ public class ActionService {
         Action transitionAction = stateTransition == null ? action : stateTransition.getTransitionAction();
         Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
-        return new ActionOutcome().withUser(actionOwner).withResource(resource).withTransitionResource(transitionResource)
+        return new ActionOutcomeDTO().withUser(actionOwner).withResource(resource).withTransitionResource(transitionResource)
                 .withTransitionAction(transitionAction);
     }
 
@@ -136,14 +142,14 @@ public class ActionService {
         return actionDAO.getEscalationActions();
     }
 
-    public ActionOutcome getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO) throws WorkflowEngineException {
+    public ActionOutcomeDTO getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO, String referrer) throws Exception {
         Action action = getById(registrationDTO.getAction().getActionId());
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             Object operativeResourceDTO = registrationDTO.getAction().getOperativeResourceDTO();
-            return resourceService.createResource(user, action, operativeResourceDTO);
+            return resourceService.createResource(user, action, operativeResourceDTO, referrer);
         } else {
             Resource resource = entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId());
-            return new ActionOutcome().withUser(user).withResource(resource).withTransitionResource(resource).withTransitionAction(action);
+            return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(resource).withTransitionAction(action);
         }
     }
 
@@ -166,16 +172,9 @@ public class ActionService {
         return checkActionAvailable(resource, delegateAction, invoker);
     }
 
-    private void authenticateAction(Action action, User owner, User delegateOwner) throws Error {
-        User currentUser = userService.getCurrentUser();
-
-        if (currentUser == null && action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
-            return;
-        }
-
-        if (delegateOwner == null && !owner.getId().equals(currentUser.getId())) {
-            throw new Error();
-        } else if (delegateOwner != null && (!owner.getId().equals(currentUser.getId()) && !delegateOwner.getId().equals(currentUser.getId()))) {
+    private void authenticateActionInvocation(User currentUser, Action action, User owner, User delegateOwner) {
+        if (!(currentUser == null && action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE || //
+                Objects.equal(owner.getId(), currentUser.getId()) || Objects.equal(delegateOwner.getId(), currentUser.getId()))) {
             throw new Error();
         }
     }

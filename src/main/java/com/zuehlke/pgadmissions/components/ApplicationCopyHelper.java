@@ -1,19 +1,34 @@
 package com.zuehlke.pgadmissions.components;
 
-import com.zuehlke.pgadmissions.domain.*;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.domain.Address;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
+import com.zuehlke.pgadmissions.domain.ApplicationAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.ApplicationFunding;
+import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
+import com.zuehlke.pgadmissions.domain.ApplicationPassport;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetail;
+import com.zuehlke.pgadmissions.domain.ApplicationProgramDetail;
+import com.zuehlke.pgadmissions.domain.ApplicationQualification;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.Institution;
 @Component
 public class ApplicationCopyHelper {
 
     @Transactional
     public void copyApplicationFormData(Application to, Application from) {
-        if (from.getPersonalDetails() != null) {
-            ApplicationPersonalDetails personalDetails = new ApplicationPersonalDetails();
-            to.setPersonalDetails(personalDetails);
+        if (from.getPersonalDetail() != null) {
+            ApplicationPersonalDetail personalDetails = new ApplicationPersonalDetail();
+            to.setPersonalDetail(personalDetails);
             personalDetails.setApplication(to);
-            copyPersonalDetails(to.getPersonalDetails(), from.getPersonalDetails());
+            copyPersonalDetails(to.getPersonalDetail(), from.getPersonalDetail());
         }
 
         if (from.getAddress() != null) {
@@ -66,7 +81,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    public void copyProgramDetails(ApplicationProgramDetails to, ApplicationProgramDetails from) {
+    public void copyProgramDetails(ApplicationProgramDetail to, ApplicationProgramDetail from) {
         Institution toInstitution = to.getApplication().getInstitution();
         to.setStudyOption(getEnabledImportedObject(toInstitution, from.getStudyOption()));
         to.setStartDate(from.getStartDate());
@@ -123,7 +138,7 @@ public class ApplicationCopyHelper {
         to.setDocument(copyDocument(from.getDocument()));
     }
 
-    public void copyPersonalDetails(ApplicationPersonalDetails to, ApplicationPersonalDetails from) {
+    public void copyPersonalDetails(ApplicationPersonalDetail to, ApplicationPersonalDetail from) {
         Institution toInstitution = to.getApplication().getInstitution();
         to.setTitle(getEnabledImportedObject(toInstitution, from.getTitle()));
         to.setGender(getEnabledImportedObject(toInstitution, from.getGender()));

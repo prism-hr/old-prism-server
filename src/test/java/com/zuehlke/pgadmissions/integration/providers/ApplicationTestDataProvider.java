@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationPassport;
-import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetails;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Country;
@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.domain.FundingSource;
 import com.zuehlke.pgadmissions.domain.Gender;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.builders.TestObjectProvider;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -59,7 +59,7 @@ public class ApplicationTestDataProvider {
     }
 
     private void createPersonalDetails(Application application) {
-        ApplicationPersonalDetails personalDetails = new ApplicationPersonalDetails();
+        ApplicationPersonalDetail personalDetails = new ApplicationPersonalDetail();
         personalDetails.setGender(testObjectProvider.get(Gender.class));
         personalDetails.setDateOfBirth(new LocalDate().minusYears(28));
         personalDetails.setCountry(testObjectProvider.get(Country.class));
@@ -67,7 +67,7 @@ public class ApplicationTestDataProvider {
         personalDetails.setSecondNationality(testObjectProvider.get(Language.class));
         personalDetails.setLanguageQualificationAvailable(true);
         ApplicationLanguageQualification languageQualification = new ApplicationLanguageQualification();
-        languageQualification.setType(entityService.getByProperty(LanguageQualificationType.class, "code", "IELTS_ACADEMIC"));
+        languageQualification.setType(entityService.getByProperty(ImportedLanguageQualificationType.class, "code", "IELTS_ACADEMIC"));
         languageQualification.setExamDate(new LocalDate(1967, 9, 14));
         languageQualification.setOverallScore("6");
         languageQualification.setReadingScore("6");
@@ -88,7 +88,7 @@ public class ApplicationTestDataProvider {
         personalDetails.setMessenger("dupajasia");
         personalDetails.setEthnicity(testObjectProvider.get(Ethnicity.class));
         personalDetails.setDisability(testObjectProvider.get(Disability.class));
-        application.setPersonalDetails(personalDetails);
+        application.setPersonalDetail(personalDetails);
         entityService.save(personalDetails);
     }
 
@@ -153,7 +153,7 @@ public class ApplicationTestDataProvider {
         entityService.save(funding);
     }
 
-    private void createReferees(Application application) {
+    private void createReferees(Application application) throws Exception {
         for (int i = 0; i < 3; i++) {
             ApplicationReferee referee = new ApplicationReferee();
             referee.setUser(userService.getOrCreateUser("Jakis", "Polecacz", "polecacz" + UUID.randomUUID().toString() + "@email.com"));

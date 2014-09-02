@@ -58,17 +58,13 @@ public class StateDAO {
     public StateDuration getStateDuration(Resource resource, State state) {
         return (StateDuration) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
                 .add(Restrictions.eq("state", state)) //
-                .add(Restrictions.disjunction().add(Restrictions.conjunction() //
+                .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("system", resource.getSystem())) //
-                        .add(Restrictions.isNull("institution")) //
-                        .add(Restrictions.isNull("program"))) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("institution", resource.getInstitution())) //
-                                .add(Restrictions.isNull("program"))) //
+                        .add(Restrictions.eq("institution", resource.getInstitution())) //
                         .add(Restrictions.eq("program", resource.getProgram()))) //
-                .addOrder(Order.desc("system")) //
-                .addOrder(Order.desc("institution")) //
                 .addOrder(Order.desc("program")) //
+                .addOrder(Order.desc("institution")) //
+                .addOrder(Order.desc("system")) //
                 .setMaxResults(1) //
                 .uniqueResult();
     }
@@ -132,6 +128,20 @@ public class StateDAO {
                 .createAlias("stateAction", "stateAction") //
                 .add(Restrictions.eq("stateAction.state", resource.getState())) //
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
+                .list();
+    }
+
+    public List<State> getActiveProgramStates() {
+        return (List<State>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.groupProperty("state")) //
+                .add(Restrictions.eq("action.id", PrismAction.PROGRAM_CREATE_APPLICATION)) //
+                .list();
+    }
+    
+    public List<State> getActiveProjectStates() {
+        return (List<State>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.groupProperty("state")) //
+                .add(Restrictions.eq("action.id", PrismAction.PROJECT_CREATE_APPLICATION)) //
                 .list();
     }
 

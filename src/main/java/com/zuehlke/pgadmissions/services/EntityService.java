@@ -23,10 +23,6 @@ public class EntityService {
         return entityDAO.getById(klass, id);
     }
 
-    public <T> T getByCode(Class<T> klass, String code) {
-        return entityDAO.getByCode(klass, code);
-    }
-
     public <T> T getByProperty(Class<T> klass, String propertyName, Object propertyValue) {
         return entityDAO.getByProperty(klass, propertyName, propertyValue);
     }
@@ -51,11 +47,11 @@ public class EntityService {
         return entityDAO.listByProperties(klass, properties);
     }
 
-    public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) {
+    public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) throws Exception {
         return (T) entityDAO.getDuplicateEntity(uniqueResource);
     }
 
-    public <T extends IUniqueEntity> T getOrCreate(T transientResource) {
+    public <T extends IUniqueEntity> T getOrCreate(T transientResource) throws Exception {
         T persistentResource = (T) getDuplicateEntity(transientResource);
         if (persistentResource == null) {
             save(transientResource);
@@ -64,7 +60,7 @@ public class EntityService {
         return persistentResource;
     }
 
-    public <T extends IUniqueEntity> T createOrUpdate(T transientResource) {
+    public <T extends IUniqueEntity> T createOrUpdate(T transientResource) throws Exception {
         T persistentResource = (T) getDuplicateEntity(transientResource);
         if (persistentResource == null) {
             save(transientResource);
@@ -83,12 +79,6 @@ public class EntityService {
 
     public Serializable save(Object entity) {
         return entityDAO.save(entity);
-    }
-
-    public void save(Object... entities) {
-        for (Object entity : entities) {
-            entityDAO.save(entity);
-        }
     }
 
     public void update(Object entity) {
@@ -117,6 +107,10 @@ public class EntityService {
     
     public <T> void deleteAll(Class<T> classReference) {
         entityDAO.deleteAll(classReference);
+    }
+    
+    public <T> Integer getNotNullValueCount(Class<T> entityClass, String property, Map<String, Object> filters) {
+        return entityDAO.getNotNullValueCount(entityClass, property, filters);
     }
     
 }

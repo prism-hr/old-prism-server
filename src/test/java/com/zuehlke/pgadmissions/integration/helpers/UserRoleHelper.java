@@ -10,7 +10,6 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -29,7 +28,7 @@ public class UserRoleHelper {
     @Autowired
     private RoleService roleService;
 
-    public void verifyResourceOwnerReassignment() throws WorkflowEngineException {
+    public void verifyResourceOwnerReassignment() throws Exception {
         Program program = programService.getProgramByImportedCode(null, "RRDSCSSING01");
         User program2NewAdmin = userService.getOrCreateUserWithRoles("Alex", "Salmond", "alex@salmond.com", program,
                 Lists.newArrayList(new AbstractResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_ADMINISTRATOR, true)));

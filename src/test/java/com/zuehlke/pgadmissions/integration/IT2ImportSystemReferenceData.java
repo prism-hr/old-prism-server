@@ -18,18 +18,14 @@ public class IT2ImportSystemReferenceData implements IPrismIntegrationTest {
     private SystemDataImportHelper systemDataImportHelper;
     
     @Autowired
-    private IntegrationTestRunner integrationTestRunner;
-    
-    @Autowired
     private IT1InitialiseSystem it1;
     
     @Test
     @Override
     public void run() throws Exception {
-        integrationTestRunner.run(it1);
+        it1.run();
         systemDataImportHelper.verifyInstitutionDomicileImport();
-        systemDataImportHelper.verifyOpportunityCategoryImport();
-        integrationTestRunner.recordTestSuccess(this);
+        systemDataImportHelper.verifyAdvertCategoryImport();
     }
     
 }

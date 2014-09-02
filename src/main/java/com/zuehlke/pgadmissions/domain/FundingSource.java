@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("FUNDING_SOURCE")
-public class FundingSource extends AbstractImportedEntity {
+public class FundingSource extends SimpleImportedEntity {
 
     public FundingSource withInstitution(Institution institution) {
         setInstitution(institution);
@@ -22,7 +22,7 @@ public class FundingSource extends AbstractImportedEntity {
         return this;
     }
 
-    public FundingSource withEnabled(boolean enabled) {
+    public FundingSource withEnabled(Boolean enabled) {
         setEnabled(enabled);
         return this;
     }

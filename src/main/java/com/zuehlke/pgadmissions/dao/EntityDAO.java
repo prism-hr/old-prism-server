@@ -9,16 +9,18 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 
 @Repository
 public class EntityDAO {
-
+    
     @Autowired
     private SessionFactory sessionFactory;
 
@@ -96,7 +98,7 @@ public class EntityDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) {
+    public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) throws Exception {
         IUniqueEntity.ResourceSignature signature = uniqueResource.getResourceSignature();
         Class<T> resourceClass = (Class<T>) uniqueResource.getClass();
         
@@ -128,7 +130,11 @@ public class EntityDAO {
                 criteria.add(Restrictions.not(Restrictions.in(key, exclusions.get(key))));
             }
 
-            return (T) criteria.uniqueResult();
+            try {
+                return (T) criteria.uniqueResult();
+            } catch (Exception e) {
+                throw new DeduplicationException("Tried to deduplicate entity " + signature.toString() + " with more than one potential duplicate", e);
+            }
         }
 
         throw new Error("Tried to deduplicate entity " + resourceClass.getSimpleName() + " with empty resource signature");
@@ -162,6 +168,18 @@ public class EntityDAO {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete " + classReference.getSimpleName()) //
                 .executeUpdate();
+    }
+    
+    public <T> Integer getNotNullValueCount(Class<T> entityClass, String property, Map<String, Object> filters) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(entityClass) //
+                .setProjection(Projections.count("id"));
+        
+        for (String filter : filters.keySet()) {
+            criteria.add(Restrictions.eq(filter, filters.get(filter)));
+        }
+                
+        return (Integer) criteria.add(Restrictions.isNotNull(property)) //
+                .uniqueResult();
     }
 
 }

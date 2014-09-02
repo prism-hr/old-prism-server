@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
 import org.apache.commons.lang.WordUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
+import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedEntityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedInstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.LanguageQualificationTypeRepresentation;
@@ -106,10 +107,10 @@ public class StaticDataResource {
         }
 
         // Display names and min/max values for language qualification types
-        List<LanguageQualificationType> languageQualificationTypes = entityService.list(LanguageQualificationType.class);
+        List<ImportedLanguageQualificationType> languageQualificationTypes = entityService.list(ImportedLanguageQualificationType.class);
         List<LanguageQualificationTypeRepresentation> languageQualificationTypeRepresentations = Lists.newArrayListWithCapacity(languageQualificationTypes
                 .size());
-        for (LanguageQualificationType languageQualificationType : languageQualificationTypes) {
+        for (ImportedLanguageQualificationType languageQualificationType : languageQualificationTypes) {
             languageQualificationTypeRepresentations.add(dozerBeanMapper.map(languageQualificationType, LanguageQualificationTypeRepresentation.class));
         }
         staticData.put("languageQualificationTypes", languageQualificationTypeRepresentations);
@@ -128,7 +129,7 @@ public class StaticDataResource {
 
         // Display names for imported entities
         for (Class<Object> importedEntityType : new Class[]{StudyOption.class, ReferralSource.class, Title.class, Ethnicity.class, Disability.class,
-                Gender.class, Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, LanguageQualificationType.class, FundingSource.class,
+                Gender.class, Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, ImportedLanguageQualificationType.class, FundingSource.class,
                 RejectionReason.class, ResidenceState.class}) {
             String simpleName = importedEntityType.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);

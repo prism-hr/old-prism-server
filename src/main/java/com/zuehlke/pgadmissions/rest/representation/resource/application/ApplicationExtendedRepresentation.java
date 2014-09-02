@@ -1,15 +1,16 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
+import java.util.List;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProjectRepresentation;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
-import java.util.List;
 
 public class ApplicationExtendedRepresentation extends AbstractResourceRepresentation {
 

@@ -1,17 +1,23 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
-import com.zuehlke.pgadmissions.dto.ActionOutcome;
-import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
-import com.zuehlke.pgadmissions.rest.validation.validator.CommentDTOValidator;
-import com.zuehlke.pgadmissions.services.InstitutionService;
+import javax.validation.Valid;
+
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
+import com.zuehlke.pgadmissions.rest.validation.validator.CommentDTOValidator;
+import com.zuehlke.pgadmissions.services.InstitutionService;
 
 @RestController
 @RequestMapping(value = {"api/institutions"})
@@ -28,8 +34,12 @@ public class InstitutionResource {
 
     @RequestMapping(value = "/{institutionId}/comments", method = RequestMethod.POST)
     public ActionOutcomeRepresentation performAction(@PathVariable Integer institutionId, @Valid @RequestBody CommentDTO commentDTO) {
-        ActionOutcome actionOutcome = institutionService.performAction(institutionId, commentDTO);
-        return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
+        try {
+            ActionOutcomeDTO actionOutcome = institutionService.performAction(institutionId, commentDTO);
+            return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException();
+        }
     }
 
     @InitBinder(value = "commentDTO")

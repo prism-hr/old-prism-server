@@ -36,7 +36,8 @@ public enum PrismNotificationTemplate {
     SYSTEM_PROGRAM_UPDATE_NOTIFICATION(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.UPDATE, PrismScope.SYSTEM),
     SYSTEM_PROJECT_TASK_REQUEST(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REQUEST, PrismScope.SYSTEM), //
     SYSTEM_PROJECT_TASK_REQUEST_REMINDER(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REMINDER, PrismScope.SYSTEM), //
-    SYSTEM_PROJECT_UPDATE_NOTIFICATION(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.UPDATE, PrismScope.SYSTEM);
+    SYSTEM_PROJECT_UPDATE_NOTIFICATION(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.UPDATE, PrismScope.SYSTEM),
+    SYSTEM_RECOMMENDATION_NOTIFICATION(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.UPDATE, PrismScope.SYSTEM);
 
     private final PrismNotificationType notificationType;
 

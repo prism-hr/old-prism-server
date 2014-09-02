@@ -3,14 +3,15 @@ package com.zuehlke.pgadmissions.rest.representation;
 
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 public class AbstractResourceRepresentation {
 

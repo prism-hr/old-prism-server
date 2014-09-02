@@ -22,9 +22,7 @@ import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.services.importers.AdvertCategoryImportService;
-import com.zuehlke.pgadmissions.services.importers.EntityImportService;
-import com.zuehlke.pgadmissions.services.importers.InstitutionDomicileImportService;
+import com.zuehlke.pgadmissions.services.helpers.ImportedEntityServiceHelper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
@@ -33,16 +31,10 @@ import com.zuehlke.pgadmissions.services.importers.InstitutionDomicileImportServ
 public class IT4ImportInstitutionReferenceData implements IPrismIntegrationTest {
 
     @Autowired
-    private EntityImportService entityImportService;
+    private ImportedEntityServiceHelper entityImportHelper;
 
     @Autowired
     private ImportedEntityService importedEntityService;
-
-    @Autowired
-    private InstitutionDomicileImportService institutionDomicileImportService;
-
-    @Autowired
-    private AdvertCategoryImportService opportunityCategoryImportService;
 
     @Autowired
     private EntityService entityService;
@@ -68,12 +60,10 @@ public class IT4ImportInstitutionReferenceData implements IPrismIntegrationTest 
         it1.run();
         Institution institution = createTestInstitution();
         referenceDataImportHelper.verifyEntityImport(institution);
-        referenceDataImportHelper.verifyProgramImport(institution);
-        referenceDataImportHelper.verifyProductionDataImport(institution);
         referenceDataImportHelper.verifyImportedProgramInitialisation();
     }
 
-    private Institution createTestInstitution() {
+    private Institution createTestInstitution() throws Exception {
         System system = systemService.getSystem();
         State institutionState = entityService.getByProperty(State.class, "id", PrismState.INSTITUTION_APPROVED);
 

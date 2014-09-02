@@ -1,28 +1,45 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.collect.*;
-import com.zuehlke.pgadmissions.dao.NotificationDAO;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.System;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationPurpose;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.dto.ResourceActionDTO;
-import com.zuehlke.pgadmissions.dto.StateChangeDTO;
-import com.zuehlke.pgadmissions.dto.UserNotificationDefinition;
-import com.zuehlke.pgadmissions.mail.MailMessageDTO;
-import com.zuehlke.pgadmissions.mail.MailSender;
-import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.dao.NotificationDAO;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
+import com.zuehlke.pgadmissions.domain.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.System;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
+import com.zuehlke.pgadmissions.mail.MailMessageDTO;
+import com.zuehlke.pgadmissions.mail.MailSender;
+import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 
 @Service
+@Transactional
 public class NotificationService {
 
     @Value("${application.host}")
@@ -30,6 +47,9 @@ public class NotificationService {
 
     @Autowired
     private NotificationDAO notificationDAO;
+
+    @Autowired
+    private AdvertService advertService;
 
     @Autowired
     private CommentService commentService;
@@ -55,34 +75,28 @@ public class NotificationService {
     @Autowired
     private EntityService entityService;
 
-    @Transactional
     public NotificationTemplate getById(PrismNotificationTemplate id) {
         return entityService.getByProperty(NotificationTemplate.class, "id", id);
     }
 
-    @Transactional
     public NotificationConfiguration getConfiguration(Resource resource, NotificationTemplate template) {
         return notificationDAO.getConfiguration(resource, template);
     }
 
-    @Transactional
     public NotificationTemplateVersion getActiveVersion(Resource resource, NotificationTemplate template) {
         NotificationConfiguration configuration = notificationDAO.getConfiguration(resource, template);
         return configuration == null ? null : configuration.getNotificationTemplateVersion();
     }
 
-    @Transactional
     public Integer getReminderInterval(Resource resource, NotificationTemplate template) {
-        return getConfiguration(resource, template).getReminderInterval();
+        NotificationConfiguration configuration = getConfiguration(resource, template);
+        return configuration == null ? 1 : configuration.getReminderInterval();
     }
 
-    @Transactional
     public List<NotificationTemplate> getTemplates() {
         return entityService.list(NotificationTemplate.class);
     }
 
-    // FIXME: scoping for those that can be configured in a given context.
-    @Transactional
     public List<NotificationTemplate> getWorkflowTemplates() {
         List<NotificationTemplate> templates = Lists.newLinkedList();
         templates.addAll(notificationDAO.getWorkflowRequestTemplates());
@@ -90,67 +104,99 @@ public class NotificationService {
         return templates;
     }
 
-    @Transactional
     public void deleteObseleteNotificationConfigurations() {
         notificationDAO.deleteObseleteNotificationConfigurations(getWorkflowTemplates());
     }
 
-    public void sendDeferredWorkflowNotifications() {
+    public void sendWorkflowNotifications(Resource resource, Comment comment) {
+        User invoker = comment.getAuthor();
         LocalDate baseline = new LocalDate();
 
-        HashMultimap<NotificationTemplate, User> sentIndividual = HashMultimap.create();
-        HashMultimap<Scope, User> sentSyndicated = HashMultimap.create();
-
-        for (Scope scope : scopeService.getScopesAscending()) {
-            List<UserNotificationDefinition> definitions = getDeferredWorkflowNotifications(scope, baseline);
-
-            for (UserNotificationDefinition definition : definitions) {
-                sendDeferredWorkflowNotification(scope, definition, sentIndividual, sentSyndicated, baseline);
-            }
-        }
+        sendIndividualRequestNotifications(resource, invoker, baseline);
+        sendIndividualUpdateNotifications(resource, comment.getAction(), invoker, baseline);
     }
 
-    @Transactional
-    public void sendWorkflowNotifications(Resource resource, Action action, User invoker) {
-        LocalDate baseline = new LocalDate();
-        List<UserNotificationDefinition> definitions = getWorkflowNotifications(resource, action, invoker);
+    public void sendIndividualRequestReminders(Resource resource, LocalDate baseline) {
+        User invoker = systemService.getSystem().getUser();
+        List<UserNotificationDefinitionDTO> reminders = notificationDAO.getIndividualRequestReminders(resource, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
-        for (UserNotificationDefinition definition : definitions) {
-            UserRole userRole = roleService.getUserRoleById(definition.getUserRoleId());
-            User user = userRole.getUser();
+        for (UserNotificationDefinitionDTO reminder : reminders) {
+            User user = userService.getById(reminder.getUserId());
 
-            NotificationTemplate notificationTemplate = getById(definition.getNotificationTemplateId());
+            Role role = roleService.getById(reminder.getRoleId());
+            UserRole userRole = roleService.getUserRole(resource, user, role);
 
-            if (!sent.get(notificationTemplate).contains(user)) {
-                sendNotification(user, resource, notificationTemplate, ImmutableMap.of("author", invoker.getDisplayName()));
+            NotificationTemplate notificationTemplate = getById(reminder.getNotificationTemplateId());
+            Integer reminderInterval = getReminderInterval(resource, notificationTemplate);
+
+            if (!sent.get(notificationTemplate).contains(user) && baseline.minusDays(reminderInterval) == userRole.getLastNotifiedDate()) {
+                sendNotification(user, resource, notificationTemplate.getReminderTemplate(), ImmutableMap.of("author", invoker.getDisplayName()));
                 sent.put(notificationTemplate, user);
             }
 
-            if (notificationTemplate.getNotificationPurpose() == PrismNotificationPurpose.REQUEST) {
-                createOrUpdateUserNotification(resource, userRole, notificationTemplate, baseline);
+            userRole.setNotificationTemplate(notificationTemplate);
+            userRole.setLastNotifiedDate(baseline);
+        }
+    }
+
+    public void sendSyndicatedRequestNotifications(Resource resource, LocalDate baseline) {
+        User invoker = systemService.getSystem().getUser();
+        List<UserNotificationDefinitionDTO> definitions = notificationDAO.getSyndicatedRequestNotifications(resource, baseline);
+        HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
+
+        for (UserNotificationDefinitionDTO definition : definitions) {
+            User user = userService.getById(definition.getUserId());
+
+            NotificationTemplate notificationTemplate = getById(definition.getNotificationTemplateId());
+            LocalDate lastNotifiedDate = user.getLastNotifiedDate(resource.getClass());
+
+            Integer reminderInterval = getReminderInterval(resource, notificationTemplate);
+            boolean doSendReminder = baseline.minusDays(reminderInterval) == lastNotifiedDate;
+
+            if (!sent.get(notificationTemplate).contains(user) && (lastNotifiedDate == null || doSendReminder)) {
+                NotificationTemplate sendTemplate = doSendReminder ? notificationTemplate.getReminderTemplate() : notificationTemplate;
+                sendNotification(user, resource, sendTemplate, ImmutableMap.of("author", invoker.getDisplayName()));
+                user.setLastNotifiedDate(resource.getClass(), baseline);
+                sent.put(notificationTemplate, user);
             }
         }
     }
 
-    @Transactional
+    public void sendSyndicatedUpdateNotifications(Resource resource, Comment transitionComment, LocalDate baseline) {
+        State state = transitionComment.getState();
+        Action action = transitionComment.getAction();
+        User invoker = transitionComment.getAuthor();
+
+        List<UserNotificationDefinitionDTO> updates = notificationDAO.getSyndicatedUpdateNotifications(resource, state, action, invoker, baseline);
+        HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
+
+        for (UserNotificationDefinitionDTO update : updates) {
+            User user = userService.getById(update.getUserId());
+            NotificationTemplate notificationTemplate = getById(update.getNotificationTemplateId());
+
+            if (!sent.get(notificationTemplate).contains(user)) {
+                sendNotification(user, resource, notificationTemplate, ImmutableMap.of("author", invoker.getDisplayName()));
+                user.setLastNotifiedDate(resource.getClass(), baseline);
+                sent.put(notificationTemplate, user);
+            }
+        }
+    }
+
+    public List<User> getRecommendationNotifications(LocalDate baseline) {
+        return notificationDAO.getRecommendationNotifications(baseline);
+    }
+
     public void sendNotification(User user, Resource resource, PrismNotificationTemplate notificationTemplateId, Map<String, String> extraParameters) {
         NotificationTemplate notificationTemplate = getById(notificationTemplateId);
         sendNotification(user, resource, notificationTemplate, extraParameters);
     }
 
-    @Transactional
     public void sendNotification(User user, Resource resource, PrismNotificationTemplate notificationTemplateId) {
         NotificationTemplate notificationTemplate = getById(notificationTemplateId);
-        sendNotification(user, resource, notificationTemplate, Collections.<String, String>emptyMap());
+        sendNotification(user, resource, notificationTemplate, Collections.<String, String> emptyMap());
     }
 
-    @Transactional
-    public void deleteUserNotification(UserRole roleToRemove) {
-        notificationDAO.deleteUserNotification(roleToRemove);
-    }
-
-    @Transactional
     public void sendDataImportErrorNotifications(Institution institution, String errorMessage) {
         for (User user : userService.getUsersForResourceAndRole(institution, PrismRole.INSTITUTION_ADMINISTRATOR)) {
             NotificationTemplate template = getById(PrismNotificationTemplate.INSTITUTION_IMPORT_ERROR_NOTIFICATION);
@@ -158,103 +204,56 @@ public class NotificationService {
         }
     }
 
-    @Transactional
     public void deleteAllNotifications() {
         entityService.deleteAll(NotificationConfiguration.class);
         entityService.deleteAll(NotificationTemplateVersion.class);
     }
 
-    @Transactional
-    private void createOrUpdateUserNotification(Resource resource, UserRole userRole, NotificationTemplate notificationTemplate, LocalDate baseline) {
-        UserNotification transientUserNotification = new UserNotification().withResource(resource).withUserRole(userRole)
-                .withNotificationTemplate(notificationTemplate).withCreatedDate(baseline);
-        entityService.createOrUpdate(transientUserNotification);
+    public void sendRecommendationNotification(User user, LocalDate baseline) {
+        System system = systemService.getSystem();
+        NotificationTemplate template = getById(PrismNotificationTemplate.SYSTEM_RECOMMENDATION_NOTIFICATION);
+        String recommendations = advertService.getRecommendedAdvertsForEmail(user);
+        sendNotification(user, system, template, ImmutableMap.of("author", system.getUser().getDisplayName(), "recommendations", recommendations));
+        user.getUserAccount().setLastNotifiedDateRecommendation(baseline);
     }
 
-    @Transactional
-    private List<UserNotificationDefinition> getWorkflowNotifications(Resource resource, Action action, User invoker) {
-        LocalDate baseline = new LocalDate();
-        List<UserNotificationDefinition> definitions = Lists.newLinkedList();
-        definitions.addAll(notificationDAO.getRequestNotifications(resource, action, invoker));
-        definitions.addAll(notificationDAO.getUpdateNotifications(resource, action, invoker, baseline));
-        return definitions;
-    }
+    private void sendIndividualRequestNotifications(Resource resource, User invoker, LocalDate baseline) {
+        List<UserNotificationDefinitionDTO> requests = notificationDAO.getIndividualRequestNotifications(resource, invoker);
+        HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
-    @Transactional
-    private List<UserNotificationDefinition> getDeferredWorkflowNotifications(Scope scope, LocalDate baseline) {
-        User invoker = systemService.getSystem().getUser();
-        List<UserNotificationDefinition> definitions = Lists.newLinkedList();
-        definitions.addAll(getDeferredRequestNotifications(scope, invoker));
-        definitions.addAll(getDeferredUpdateNotifications(scope, invoker, baseline));
-        return definitions;
-    }
+        for (UserNotificationDefinitionDTO request : requests) {
+            User user = userService.getById(request.getUserId());
+            NotificationTemplate notificationTemplate = getById(request.getNotificationTemplateId());
 
-    @Transactional
-    private List<UserNotificationDefinition> getDeferredRequestNotifications(Scope scope, User invoker) {
-        List<ResourceActionDTO> resourceActions = resourceService.getResoucesFlaggedAsUrgent(scope);
-        Set<UserNotificationDefinition> definitions = Sets.newLinkedHashSet();
-
-        for (ResourceActionDTO resourceAction : resourceActions) {
-            Action action = resourceAction.getAction();
-            Resource resource = resourceService.getById(action.getScope().getId().getResourceClass(), resourceAction.getResourceId());
-            definitions.addAll(notificationDAO.getDeferredRequestNotifications(resource, action, invoker));
-        }
-
-        return Lists.newLinkedList(definitions);
-    }
-
-    @Transactional
-    private List<UserNotificationDefinition> getDeferredUpdateNotifications(Scope scope, User invoker, LocalDate baseline) {
-        List<StateChangeDTO> updates = resourceService.getRecentStateChanges(scope, baseline);
-        Set<UserNotificationDefinition> definitions = Sets.newLinkedHashSet();
-
-        for (StateChangeDTO update : updates) {
-            definitions.addAll(notificationDAO.getDeferredUpdateNotifications(update.getResource(), update.getAction(), invoker, baseline.minusDays(1)));
-        }
-
-        return Lists.newLinkedList(definitions);
-    }
-
-    @Transactional
-    private void sendDeferredWorkflowNotification(Scope scope, UserNotificationDefinition definition, HashMultimap<NotificationTemplate, User> sentIndividual,
-                                                  HashMultimap<Scope, User> sentSyndicated, LocalDate baseline) {
-        UserRole userRole = roleService.getUserRoleById(definition.getUserRoleId());
-        User user = userRole.getUser();
-
-        NotificationTemplate notificationTemplate = getById(definition.getNotificationTemplateId());
-        PrismNotificationType notificationType = notificationTemplate.getNotificationType();
-
-        Resource taskResource = resourceService.getById(notificationTemplate.getScope().getId().getResourceClass(), definition.getResourceId());
-        Resource messageResource = taskResource.getEnclosingResource(notificationTemplate.getScope().getId());
-
-        if (notificationType == PrismNotificationType.INDIVIDUAL && !sentIndividual.get(notificationTemplate).contains(user)) {
-            sendDeferredWorkflowRequestOrReminder(messageResource, user, userRole, notificationTemplate, baseline);
-            sentIndividual.put(notificationTemplate, user);
-        } else if (notificationType == PrismNotificationType.SYNDICATED && !sentSyndicated.get(scope).contains(user)) {
-            if (notificationTemplate.getNotificationPurpose() == PrismNotificationPurpose.REQUEST) {
-                sendNotification(user, messageResource, notificationTemplate, ImmutableMap.of("author", messageResource.getUser().getDisplayName()));
-            } else {
-                sendDeferredWorkflowRequestOrReminder(messageResource, user, userRole, notificationTemplate, baseline);
+            if (!sent.get(notificationTemplate).contains(user)) {
+                sendNotification(user, resource, notificationTemplate, ImmutableMap.of("author", invoker.getDisplayName()));
+                sent.put(notificationTemplate, user);
             }
-            sentSyndicated.put(scope, user);
+
+            Role role = roleService.getById(request.getRoleId());
+            UserRole userRole = roleService.getUserRole(resource, user, role);
+            userRole.setNotificationTemplate(notificationTemplate);
+            userRole.setLastNotifiedDate(baseline);
         }
     }
 
-    @Transactional
-    private void sendDeferredWorkflowRequestOrReminder(Resource resource, User user, UserRole userRole, NotificationTemplate template, LocalDate baseline) {
-        UserNotification userNotification = notificationDAO.getUserNotification(resource, userRole, template);
-        if (userNotification == null) {
-            sendNotification(user, resource, template, ImmutableMap.of("author", resource.getUser().getDisplayName()));
-        } else {
-            Integer reminderInterval = getReminderInterval(resource, template);
-            if (baseline.minusDays(1) == userNotification.getCreatedDate().plusDays(reminderInterval)) {
-                sendNotification(user, resource, template.getReminderTemplate(), ImmutableMap.of("author", resource.getUser().getDisplayName()));
+    private void sendIndividualUpdateNotifications(Resource resource, Action action, User invoker, LocalDate baseline) {
+        State state = resource.getPreviousState();
+        
+        List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateNotifications(resource, state, action, invoker, baseline);
+        HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
+
+        for (UserNotificationDefinitionDTO update : updates) {
+            User user = userService.getById(update.getUserId());
+            NotificationTemplate notificationTemplate = getById(update.getNotificationTemplateId());
+
+            if (!sent.get(notificationTemplate).contains(user)) {
+                sendNotification(user, resource, notificationTemplate, ImmutableMap.of("author", invoker.getDisplayName()));
+                sent.put(notificationTemplate, user);
             }
         }
-        createOrUpdateUserNotification(resource, userRole, template, baseline.minusDays(1));
     }
 
-    @Transactional
     private void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate, Map<String, String> extraParameters) {
         NotificationTemplateVersion templateVersion = getActiveVersion(resource, notificationTemplate);
         MailMessageDTO message = new MailMessageDTO();
@@ -262,19 +261,13 @@ public class NotificationService {
         message.setTo(user);
         message.setTemplate(templateVersion);
         message.setModel(createNotificationModel(user, resource, templateVersion, extraParameters));
-        message.setAttachments(Lists.<PdfAttachmentInputSource>newArrayList());
+        message.setAttachments(Lists.<PdfAttachmentInputSource> newArrayList());
 
         mailSender.sendEmail(message);
     }
 
-    @Transactional
-    private void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate) {
-        sendNotification(user, resource, notificationTemplate, Collections.<String, String>emptyMap());
-    }
-
-    @Transactional
     private Map<String, Object> createNotificationModel(User user, Resource resource, NotificationTemplateVersion notificationTemplate,
-                                                        Map<String, String> extraParameters) {
+            Map<String, String> extraParameters) {
         Map<String, Object> model = Maps.newHashMap();
         model.put("user", user.getDisplayName());
         model.put("userFirstName", user.getFirstName());
@@ -303,7 +296,7 @@ public class NotificationService {
             model.put("programTitle", program.getTitle());
         }
 
-        if(project != null) {
+        if (project != null) {
             model.put("projectId", project.getId().toString());
             model.put("projectCode", project.getCode());
             model.put("projectTitle", project.getTitle());

@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("TITLE")
-public class Title extends AbstractImportedEntity {
+public class Title extends SimpleImportedEntity {
 
     public Title withInstitution(Institution institution) {
         setInstitution(institution);
@@ -22,7 +22,7 @@ public class Title extends AbstractImportedEntity {
         return this;
     }
 
-    public Title withEnabled(boolean enabled) {
+    public Title withEnabled(Boolean enabled) {
         setEnabled(enabled);
         return this;
     }

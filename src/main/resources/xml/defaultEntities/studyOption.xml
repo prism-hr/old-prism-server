@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<studyOptions>
+  <studyOption>
+    <code>B+++++</code>
+    <name>Modular/flexible study</name>
+  </studyOption>
+  <studyOption>
+    <code>F+++++</code>
+    <name>Full-time</name>
+  </studyOption>
+  <studyOption>
+    <code>P+++++</code>
+    <name>Part-time</name>
+  </studyOption>
+</studyOptions>

@@ -1,0 +1,1 @@
+update APPLICATION_FORM_REFEREE set phone=(select  number from TELEPHONE where TELEPHONE.referee_id = APPLICATION_FORM_REFEREE.id limit 1);

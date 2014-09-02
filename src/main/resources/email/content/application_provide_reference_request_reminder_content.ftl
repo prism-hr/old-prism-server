@@ -18,7 +18,7 @@
 			<td width="500">
 				<h1 style="font-size: 12pt;">
 					<font face="Arial, Helvetica, sans-serif" color="#0055A1">
-						Dear ${referee.firstname?html},
+                        Dear ${userFirstName},
 					</font>
 				</h1>
 				<p>
@@ -29,17 +29,17 @@
 				</p>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
-						The Programme Admissions Panel would still very much appreciate your feedback on their suitability for postgraduate research study.  
+						The Programme Admissions Panel would still very much appreciate your feedback on their suitability for postgraduate research study.
 					</font>
 				</p>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
 						<b>If you are able to kindly assist us on this occasion:</b><br /><ul><li>Please follow the <i>Provide Reference</i> link below to access our admissions portal.</li><li>Enter a password of your choice on the registration form, (or simply login if you have already registered).</li><li>Then follow the onscreen guidance to access a short feedback form, (or upload a document if you have already prepared one).</li></ul><b><br />If you feel unable to do this, or if the applicant is unknown to you:</b><br /><ul><li>Please let us know by clicking on the alternative, <i>Decline</i>, link. (Please note that declining may reduce the chance of this applicant securing a place).</li></ul></font>
 				</p>
-				
+
 				<p>
 					<!-- Button -->
-					<a style="text-decoration:none;" 
+					<a style="text-decoration:none;"
 						<#if !referee.user.enabled>
 							href="${host}/pgadmissions/register?activationCode=${referee.user.activationCode!}&directToUrl=${"/referee/addReferences?applicationId=${applicationCode}"?url('ISO-8859-1')}">
 						<#else>

@@ -18,12 +18,12 @@
 			<td width="500">
 				<h1 style="font-size: 12pt;">
 					<font face="Arial, Helvetica, sans-serif" color="#0055A1">
-						Dear ${comment.opportunityRequest.author.firstName},
+                        Dear ${userFirstName},
 					</font>
-				</h1>		
+				</h1>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
-						Thank you for your recent request to advertise the ${comment.opportunityRequest.programTitle} opportunity to our user network.  
+						Thank you for your recent request to advertise the ${comment.opportunityRequest.programTitle} opportunity to our user network.
 					</font>
 				</p>
 		<p>
@@ -41,9 +41,9 @@
 						</#if>
 						for further details of this review and to access more detailed instructions on how to proceed.
 					</font>
-				</p>	
+				</p>
 				<p>
-					<!-- Button -->     
+					<!-- Button -->
 					<a style="text-decoration:none;"
 						<#if user.enabled>
 							href="${host}/pgadmissions/applications?applyFilters=my&activationCode=${user.activationCode!}">

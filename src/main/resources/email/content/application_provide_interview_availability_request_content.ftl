@@ -18,7 +18,7 @@
 			<td width="500">
 				<h1 style="font-size: 12pt;">
 					<font face="Arial, Helvetica, sans-serif" color="#0055A1">
-						Dear ${participant.user.firstName?html},
+						Dear ${userFirstName},
 					</font>
 				</h1>
 				<p>
@@ -28,25 +28,16 @@
 				</p>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
-						Please
-						<#if participant.user.enabled>
-							login
-						<#else>
-							register
-						</#if>
-						and let us know when you would be available to attend.
+						Please let us know when you would be available to attend.
 					</font>
 				</p>
 				<p>
-					<!-- Button -->
-					<a style="text-decoration:none;" 
-						<#if !participant.user.enabled>
-							href="${host}/pgadmissions/register?activationCode=${participant.user.activationCode!}&directToUrl=${"/interviewVote?applicationId=${applicationCode}"?url('ISO-8859-1')}">
-						<#else>
-							href="${host}/pgadmissions/interviewVote?applicationId=${applicationCode}&activationCode=${participant.user.activationCode!}">
-						</#if>
-						<img alt="Confirm your availability for interview" title="Confirm your availability for interview" width="148" height="33" src="${host}/pgadmissions/design/default/images/email/confirm_availability.jpg" />
-					</a>
+                    <a style="text-decoration:none;"
+                       href="${host}/#/application/${applicationId}/action?action=APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY">
+                        <img alt="Confirm your availability for interview" title="Confirm your availability for interview"
+                             width="148" height="33"
+                             src="${host}/pgadmissions/design/default/images/email/confirm_availability.jpg"/>
+                    </a>
 				</p>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">

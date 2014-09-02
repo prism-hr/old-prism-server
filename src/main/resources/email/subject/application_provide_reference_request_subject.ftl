@@ -1,1 +1,1 @@
-${resource.user.firstName} ${resource.user.lastName} Application ${applicationCode} for UCL ${projectOrProgramTitle} - Reference Request
+${user} Application ${applicationCode} for UCL ${projectOrProgramTitle} - Reference Request

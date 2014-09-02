@@ -1,1 +1,1 @@
-${resource.user.firstName} ${resource.user.lastName} Application ${applicationCode} for UCL ${projectOrProgramTitle} - Interview Confirmation
+${user} Application ${applicationCode} for UCL ${projectOrProgramTitle} - Interview Confirmation

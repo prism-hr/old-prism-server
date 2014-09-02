@@ -18,9 +18,9 @@
 			<td width="500">
 				<h1 style="font-size: 12pt;">
 					<font face="Arial, Helvetica, sans-serif" color="#0055A1">
-						Dear ${user.firstName},
+                        Dear ${userFirstName},
 					</font>
-				</h1>		
+				</h1>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
 						One or more of the postgraduate research applications assigned to you have recently been updated.
@@ -36,9 +36,9 @@
 						</#if>
 						to view the applications and see the updates. Updates can be found in the application timeline.
 					</font>
-				</p>	
+				</p>
 				<p>
-					<!-- Button -->     
+					<!-- Button -->
 					<a style="text-decoration:none;"
 						<#if user.enabled>
 							href="${host}/pgadmissions/applications?applyFilters=my&activationCode=${user.activationCode!}">

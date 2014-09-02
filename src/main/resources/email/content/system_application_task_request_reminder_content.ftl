@@ -18,9 +18,9 @@
 			<td width="500">
 				<h1 style="font-size: 12pt;">
 					<font face="Arial, Helvetica, sans-serif" color="#0055A1">
-						Dear ${user.firstName},
+                        Dear ${userFirstName},
 					</font>
-				</h1>		
+				</h1>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
 						We recently informed you that one or more postgraduate research applications have been assigned to you for consideration.
@@ -36,9 +36,9 @@
 						</#if>
 						to assess the applications at your earliest convenience so that we can continue to process them efficiently.
 					</font>
-				</p>	
+				</p>
 				<p>
-					<!-- Button -->     
+					<!-- Button -->
 					<a style="text-decoration:none;"
 						<#if user.enabled>
 							href="${host}/pgadmissions/applications?applyFilters=urgent&activationCode=${user.activationCode!}">
@@ -58,7 +58,7 @@
 					<font face="Arial, Helvetica, sans-serif" size="2">
 						Yours sincerely,
 						<br/>
-						UCL Prism	
+						UCL Prism
 					</font>
 				</p>
 			</td>

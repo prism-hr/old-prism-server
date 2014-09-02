@@ -18,7 +18,7 @@
             <td width="500">
 				<h1 style="font-size: 12pt;">
 					<font face="Arial, Helvetica, sans-serif" color="#0055A1">
-						Dear ${administrator.firstName},
+                        Dear ${userFirstName},
 					</font>
 				</h1>
 				<p>
@@ -33,7 +33,7 @@
 				</p>
 				<p>
 					<!-- Button -->
-					<a style="text-decoration:none;" 
+					<a style="text-decoration:none;"
 						<#if !participant.user.enabled>
 							href="${host}/pgadmissions/register?activationCode=${participant.user.activationCode!}&directToUrl=%2FinterviewConfirm%3FapplicationId%3D${applicationCode}"?url('ISO-8859-1')}">
 						<#else>

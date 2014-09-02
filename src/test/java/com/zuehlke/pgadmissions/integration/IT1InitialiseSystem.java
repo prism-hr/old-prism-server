@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.integration;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,8 @@ import com.zuehlke.pgadmissions.services.SystemService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
-public class IT1InitialiseSystem implements IPrismIntegrationTest {
+@Ignore
+public class IT1InitialiseSystem {
     
     @Autowired
     private SystemService systemService;
@@ -26,7 +28,6 @@ public class IT1InitialiseSystem implements IPrismIntegrationTest {
     private SystemInitialisationHelper systemInitialisationHelper;
 
     @Test
-    @Override
     public void run() throws Exception {
         for (int i = 0; i < 2; i++) {
             systemService.initialiseSystem();

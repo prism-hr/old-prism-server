@@ -28,6 +28,7 @@ import org.hibernate.search.annotations.Store;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -131,7 +132,7 @@ public class ImportedInstitution extends ImportedEntity {
         return this;
     }
 
-    public ImportedInstitution withEnabled(boolean enabled) {
+    public ImportedInstitution withEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
     }
@@ -139,6 +140,24 @@ public class ImportedInstitution extends ImportedEntity {
     public ImportedInstitution withCode(String code) {
         this.code = code;
         return this;
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(institution, domicile, code, name);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        final ImportedInstitution other = (ImportedInstitution) object;
+        return Objects.equal(institution, other.getInstitution()) && Objects.equal(domicile, other.getDomicile())
+                && Objects.equal(code, other.getCode()) && Objects.equal(name, other.getName());
     }
     
     @Override

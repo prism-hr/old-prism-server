@@ -32,7 +32,7 @@ public class PrismMaintenanceService {
     private ProgramServiceHelper programHelper;
 
     @Autowired
-    private ApplicationExportServiceHelper applicationExportHelper;
+    private ApplicationExportServiceHelper applicationExportServiceHelper;
     
     @Autowired
     private NotificationServiceHelper notificationHelper;
@@ -91,7 +91,7 @@ public class PrismMaintenanceService {
     private void exportUclApplications() {
         try {
             logger.trace("Exporting applications");
-            applicationExportHelper.exportUclApplications();
+            applicationExportServiceHelper.exportUclApplications();
         } catch (Exception e) {
             logger.info("Error exporting applications", e);
         }

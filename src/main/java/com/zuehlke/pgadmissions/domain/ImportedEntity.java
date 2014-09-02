@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
@@ -10,7 +11,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 public abstract class ImportedEntity implements IUniqueEntity {
 
     public abstract Integer getId();
-    
+
     public abstract void setId(Integer id);
 
     public abstract Institution getInstitution();
@@ -28,14 +29,32 @@ public abstract class ImportedEntity implements IUniqueEntity {
     public abstract Boolean isEnabled();
 
     public abstract void setEnabled(Boolean enabled);
-    
+
     public PrismImportedEntity getType() {
         return null;
     }
-    
+
     public void setType(PrismImportedEntity type) {
     }
-    
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getInstitution(), getType(), getCode(), getName());
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        final ImportedEntity other = (ImportedEntity) object;
+        return Objects.equal(getInstitution(), other.getInstitution()) && Objects.equal(getType(), other.getType())
+                && Objects.equal(getCode(), other.getCode()) && Objects.equal(getName(), other.getName());
+    }
+
     @Override
     public ResourceSignature getResourceSignature() {
         PrismImportedEntity type = getType();

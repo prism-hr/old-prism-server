@@ -22,7 +22,7 @@ public class FundingSource extends SimpleImportedEntity {
         return this;
     }
 
-    public FundingSource withEnabled(boolean enabled) {
+    public FundingSource withEnabled(Boolean enabled) {
         setEnabled(enabled);
         return this;
     }

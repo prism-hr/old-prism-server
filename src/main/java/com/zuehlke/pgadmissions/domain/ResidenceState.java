@@ -22,7 +22,7 @@ public class ResidenceState extends SimpleImportedEntity {
         return this;
     }
 
-    public ResidenceState withEnabled(boolean enabled) {
+    public ResidenceState withEnabled(Boolean enabled) {
         setEnabled(enabled);
         return this;
     }

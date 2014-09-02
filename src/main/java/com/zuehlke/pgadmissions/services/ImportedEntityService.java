@@ -1,11 +1,14 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.JAXBElement;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -14,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -27,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
@@ -42,15 +48,17 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.dto.AdvertCategoryImportRowDTO;
+import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.iso.jaxb.CategoryNameType;
 import com.zuehlke.pgadmissions.iso.jaxb.CategoryType;
 import com.zuehlke.pgadmissions.iso.jaxb.CountryType;
 import com.zuehlke.pgadmissions.iso.jaxb.ShortNameType;
+import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionLocaleType;
 import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionType;
+import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
-import com.zuehlke.pgadmissions.services.converters.InstitutionDomicileSubdivisionToRegionConverter;
 
 @Service
 @Transactional
@@ -86,7 +94,7 @@ public class ImportedEntityService {
         return importedEntityDAO.getImportedEntityByCode(entityClass, institution, code);
     }
 
-    public ImportedEntity getImportedEntityByName(Class<ImportedEntity> entityClass, Institution institution, String name) {
+    public ImportedEntity getImportedEntityByName(Class<? extends ImportedEntity> entityClass, Institution institution, String name) {
         return importedEntityDAO.getImportedEntityByName(entityClass, institution, name);
     }
 
@@ -123,75 +131,11 @@ public class ImportedEntityService {
         importedEntityDAO.disableAllImportedProgramStudyOptionInstances(institution);
     }
 
-    public void mergeImportedEntity(Class<ImportedEntity> entityClass, Institution institution, ImportedEntity transientEntity) throws Exception {
-        ImportedEntity persistentEntity = entityService.getDuplicateEntity(transientEntity);
+    public void mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline) throws Exception {
+        Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
+        Program persistentProgram = mergeProgram(institution, programDefinition);
 
-        if (persistentEntity == null) {
-            entityService.save(transientEntity);
-        } else {
-            String transientCode = transientEntity.getCode();
-            String transientName = transientEntity.getName();
-
-            String persistentCode = persistentEntity.getCode();
-            String persistentName = persistentEntity.getName();
-
-            if (transientCode == persistentCode && transientName == persistentName) {
-                persistentEntity.setEnabled(true);
-            } else {
-                if (transientName != persistentName) {
-                    ImportedEntity otherPersistentEntity = getImportedEntityByName(entityClass, institution, transientName);
-                    if (otherPersistentEntity == null) {
-                        persistentEntity.setName(transientName);
-                    }
-                } else {
-                    ImportedEntity otherPersistentEntity = getImportedEntityByCode(entityClass, institution, transientCode);
-                    if (otherPersistentEntity == null) {
-                        persistentEntity.setCode(transientCode);
-                    }
-                }
-                persistentEntity.setEnabled(true);
-            }
-        }
-    }
-
-    public void mergeImportedInstitution(Institution institution, ImportedInstitution transientImportedInstitution) throws Exception {
-        ImportedInstitution persistentImportedInstitution = entityService.getDuplicateEntity(transientImportedInstitution);
-
-        if (persistentImportedInstitution == null) {
-            entityService.save(transientImportedInstitution);
-        } else {
-            Domicile transientDomicile = transientImportedInstitution.getDomicile();
-            String transientCode = transientImportedInstitution.getCode();
-            String transientName = transientImportedInstitution.getName();
-
-            Domicile persistentDomicile = persistentImportedInstitution.getDomicile();
-            String persistentCode = persistentImportedInstitution.getCode();
-            String persistentName = persistentImportedInstitution.getName();
-
-            if (transientDomicile == persistentDomicile && transientCode == persistentCode && transientName == persistentName) {
-                persistentImportedInstitution.setEnabled(true);
-            } else {
-                if (transientName != persistentName) {
-                    ImportedEntity otherPersistentEntity = getImportedInstitutionByName(institution, transientDomicile, transientName);
-                    if (otherPersistentEntity == null) {
-                        persistentImportedInstitution.setName(transientName);
-                    }
-                } else {
-                    ImportedEntity otherPersistentEntity = getImportedInstitutionByCode(institution, transientDomicile, transientCode);
-                    if (otherPersistentEntity == null) {
-                        persistentImportedInstitution.setCode(transientCode);
-                    }
-                }
-                persistentImportedInstitution.setEnabled(true);
-            }
-        }
-    }
-
-    public void mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> occurrencesInBatch, LocalDate baseline) throws Exception {
-        Programme programme = occurrencesInBatch.iterator().next().getProgramme();
-        Program persistentProgram = mergeProgram(institution, programme);
-
-        for (ProgrammeOccurrence occurrence : occurrencesInBatch) {
+        for (ProgrammeOccurrence occurrence : programInstanceDefinitions) {
             StudyOption studyOption = mergeStudyOption(institution, occurrence.getModeOfAttendance());
 
             LocalDate transientStartDate = datetFormatter.parseLocalDate(occurrence.getStartDate());
@@ -214,6 +158,53 @@ public class ImportedEntityService {
 
             executeProgramImportAction(persistentProgram);
         }
+    }
+
+    public void mergeImportedInstitution(Institution institution, com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution institutionDefinition)
+            throws Exception {
+        String domicileCode = institutionDefinition.getDomicile();
+
+        Domicile domicile = entityService.getByProperties(Domicile.class, ImmutableMap.of("code", (Object) domicileCode, "enabled", true));
+        ImportedInstitution transientImportedInstitution = new ImportedInstitution().withInstitution(institution).withDomicile(domicile)
+                .withCode(institutionDefinition.getCode()).withName(institutionDefinition.getName());
+
+        if (domicile == null) {
+            throw new DataImportException("No enabled domicile for Institution " + transientImportedInstitution.getResourceSignature().toString()
+                    + ". Code specified was " + domicileCode);
+        }
+
+        createOrUpdateImportedEntity(transientImportedInstitution);
+    }
+
+    public void mergeImportedLanguageQualificationType(Institution institution, LanguageQualificationType languageQualificationTypeDefinition) throws Exception {
+        ImportedLanguageQualificationType transientImportedLanguageQualificationType = new ImportedLanguageQualificationType().withInstitution(institution)
+                .withCode(languageQualificationTypeDefinition.getCode()).withName(languageQualificationTypeDefinition.getName())
+                .withMinimumOverallScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMinimumOverallScore()))
+                .withMaximumOverallScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMaximumOverallScore()))
+                .withMinimumReadingScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMinimumReadingScore()))
+                .withMaximumReadingScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMaximumReadingScore()))
+                .withMinimumWritingScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMinimumWritingScore()))
+                .withMaximumWritingScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMaximumWritingScore()))
+                .withMinimumSpeakingScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMinimumSpeakingScore()))
+                .withMaximumSpeakingScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMaximumSpeakingScore()))
+                .withMinimumListeningScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMinimumListeningScore()))
+                .withMaximumListeningScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMaximumListeningScore()));
+
+        createOrUpdateImportedEntity(transientImportedLanguageQualificationType);
+    }
+
+    public void mergeImportedEntity(Class<ImportedEntity> entityClass, Institution institution, Object entityDefinition) throws Exception {
+        ImportedEntity transientEntity = entityClass.newInstance();
+
+        try {
+            transientEntity.setInstitution(institution);
+            transientEntity.setCode((String) PropertyUtils.getSimpleProperty(entityDefinition, "code"));
+            transientEntity.setName((String) PropertyUtils.getSimpleProperty(entityDefinition, "name"));
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+
+        createOrUpdateImportedEntity(transientEntity);
     }
 
     public void disableAllInstitutionDomiciles() {
@@ -273,21 +264,22 @@ public class ImportedEntityService {
         }
     }
 
-    private Program mergeProgram(Institution institution, Programme importProgram) throws Exception {
+    private Program mergeProgram(Institution institution, Programme programDefinition) throws Exception {
         User proxyCreator = institution.getUser();
 
-        String transientTitle = importProgram.getName();
+        String transientTitle = programDefinition.getName();
         Advert transientAdvert = new Advert().withTitle(transientTitle);
 
         DateTime baseline = new DateTime();
-        String programTypeCode = PrismProgramType.findValueFromString(importProgram.getName()).name();
+        String programTypeCode = PrismProgramType.findValueFromString(programDefinition.getName()).name();
 
-        boolean transientRequireProjectDefinition = importProgram.isAtasRegistered();
+        boolean transientRequireProjectDefinition = programDefinition.isAtasRegistered();
 
         ProgramType programType = getImportedEntityByCode(ProgramType.class, institution, programTypeCode);
-        Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withImportedCode(importProgram.getCode())
-                .withTitle(transientTitle).withRequireProjectDefinition(transientRequireProjectDefinition).withImported(true).withAdvert(transientAdvert)
-                .withProgramType(programType).withUser(proxyCreator).withCreatedTimestamp(baseline).withUpdatedTimestamp(baseline);
+        Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution)
+                .withImportedCode(programDefinition.getCode()).withTitle(transientTitle).withRequireProjectDefinition(transientRequireProjectDefinition)
+                .withImported(true).withAdvert(transientAdvert).withProgramType(programType).withUser(proxyCreator).withCreatedTimestamp(baseline)
+                .withUpdatedTimestamp(baseline);
 
         Program persistentProgram = entityService.getDuplicateEntity(transientProgram);
 
@@ -333,6 +325,51 @@ public class ImportedEntityService {
         return entityService.createOrUpdate(studyOption);
     }
 
+    private void createOrUpdateImportedEntity(ImportedEntity transientImportedEntity) throws Exception {
+        ImportedEntity persistentImportedEntity = entityService.getDuplicateEntity(transientImportedEntity);
+
+        if (persistentImportedEntity == null) {
+            persistentImportedEntity = (ImportedEntity) entityService.save(transientImportedEntity);
+        } else if (!transientImportedEntity.equals(persistentImportedEntity)) {
+            String transientCode = transientImportedEntity.getCode();
+            String transientName = transientImportedEntity.getName();
+
+            if (transientCode == persistentImportedEntity.getCode()) {
+                ImportedEntity otherPersistentEntity = getSimilarEntityByName(transientImportedEntity);
+                if (otherPersistentEntity == null) {
+                    persistentImportedEntity.setName(transientName);
+                }
+            } else {
+                ImportedEntity otherPersistentEntity = getSimilarEntityByCode(transientImportedEntity);
+                if (otherPersistentEntity == null) {
+                    persistentImportedEntity.setCode(transientCode);
+                }
+            }
+        }
+
+        persistentImportedEntity.setEnabled(true);
+    }
+
+    private ImportedEntity getSimilarEntityByCode(ImportedEntity transientImportedEntity) {
+        Class<? extends ImportedEntity> entityClass = transientImportedEntity.getClass();
+        if (transientImportedEntity.getClass().equals(ImportedInstitution.class)) {
+            ImportedInstitution transientImportedInstitution = (ImportedInstitution) transientImportedEntity;
+            return getImportedInstitutionByCode(transientImportedInstitution.getInstitution(), transientImportedInstitution.getDomicile(),
+                    transientImportedInstitution.getCode());
+        }
+        return getImportedEntityByCode(entityClass, transientImportedEntity.getInstitution(), transientImportedEntity.getCode());
+    }
+
+    private ImportedEntity getSimilarEntityByName(ImportedEntity transientImportedEntity) {
+        Class<? extends ImportedEntity> entityClass = transientImportedEntity.getClass();
+        if (transientImportedEntity.getClass().equals(ImportedInstitution.class)) {
+            ImportedInstitution transientImportedInstitution = (ImportedInstitution) transientImportedEntity;
+            return getImportedInstitutionByCode(transientImportedInstitution.getInstitution(), transientImportedInstitution.getDomicile(),
+                    transientImportedInstitution.getName());
+        }
+        return getImportedEntityByCode(entityClass, transientImportedEntity.getInstitution(), transientImportedEntity.getName());
+    }
+
     private void executeProgramImportAction(Program program) throws Exception {
         Action action = actionService.getById(PrismAction.INSTITUTION_IMPORT_PROGRAM);
 
@@ -353,4 +390,49 @@ public class ImportedEntityService {
         }
     }
 
+    private BigDecimal convertFloatToBigDecimal(Float input) throws Exception {
+        return input == null ? null : BigDecimal.valueOf(input);
+    }
+
+    private static class InstitutionDomicileSubdivisionToRegionConverter implements Function<SubdivisionType, Iterable<InstitutionDomicileRegion>> {
+
+        private InstitutionDomicile domicile;
+
+        private InstitutionDomicileRegion parentRegion;
+
+        private Map<Short, String> categories;
+
+        public InstitutionDomicileSubdivisionToRegionConverter(InstitutionDomicile domicile, InstitutionDomicileRegion parentRegion, Map<Short, String> categories) {
+            this.domicile = domicile;
+            this.parentRegion = parentRegion;
+            this.categories = categories;
+        }
+
+        @Override
+        public Iterable<InstitutionDomicileRegion> apply(SubdivisionType subdivision) {
+            List<SubdivisionLocaleType> locales = subdivision.getSubdivisionLocale();
+            String name = locales.get(0).getSubdivisionLocaleName();
+            List<String> otherNames = Lists.newLinkedList();
+            for (int i = 1; i < locales.size(); i++) {
+                otherNames.add(locales.get(i).getSubdivisionLocaleName());
+            }
+            String otherName = null;
+            if (!otherNames.isEmpty()) {
+                otherName = Joiner.on(",").join(otherNames);
+            }
+            String regionType = categories.get(subdivision.getCategoryId());
+
+            InstitutionDomicileRegion currentRegion = new InstitutionDomicileRegion().withId(subdivision.getSubdivisionCode().getValue()).withEnabled(true)
+                    .withDomicile(domicile).withParentRegion(parentRegion).withName(name).withOtherName(otherName).withRegionType(regionType);
+
+            if (subdivision.getSubdivision().isEmpty()) {
+                return Lists.newArrayList(currentRegion);
+            }
+            InstitutionDomicileSubdivisionToRegionConverter subConverter = new InstitutionDomicileSubdivisionToRegionConverter(domicile, currentRegion, categories);
+            Iterable<InstitutionDomicileRegion> subregions = Iterables.concat(Iterables.transform(subdivision.getSubdivision(), subConverter));
+            return Iterables.concat(Collections.singleton(currentRegion), subregions);
+        }
+
+    }
+    
 }

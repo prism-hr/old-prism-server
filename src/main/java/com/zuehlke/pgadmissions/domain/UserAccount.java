@@ -115,7 +115,7 @@ public class UserAccount {
         return this;
     }
     
-    public UserAccount withEnabled(boolean enabled) {
+    public UserAccount withEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
     }

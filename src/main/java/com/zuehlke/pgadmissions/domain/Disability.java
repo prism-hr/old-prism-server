@@ -22,7 +22,7 @@ public class Disability extends SimpleImportedEntity {
         return this;
     }
 
-    public Disability withEnabled(boolean enabled) {
+    public Disability withEnabled(Boolean enabled) {
         setEnabled(enabled);
         return this;
     }

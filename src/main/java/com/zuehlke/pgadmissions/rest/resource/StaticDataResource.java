@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.LanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.ReferralSource;
 import com.zuehlke.pgadmissions.domain.RejectionReason;
@@ -126,10 +126,10 @@ public class StaticDataResource {
         }
 
         // Display names and min/max values for language qualification types
-        List<LanguageQualificationType> languageQualificationTypes = entityService.list(LanguageQualificationType.class);
+        List<ImportedLanguageQualificationType> languageQualificationTypes = entityService.list(ImportedLanguageQualificationType.class);
         List<LanguageQualificationTypeRepresentation> languageQualificationTypeRepresentations = Lists.newArrayListWithCapacity(languageQualificationTypes
                 .size());
-        for (LanguageQualificationType languageQualificationType : languageQualificationTypes) {
+        for (ImportedLanguageQualificationType languageQualificationType : languageQualificationTypes) {
             languageQualificationTypeRepresentations.add(dozerBeanMapper.map(languageQualificationType, LanguageQualificationTypeRepresentation.class));
         }
         staticData.put("languageQualificationTypes", languageQualificationTypeRepresentations);
@@ -148,7 +148,7 @@ public class StaticDataResource {
 
         // Display names for imported entities
         for (Class<Object> importedEntityType : new Class[]{StudyOption.class, ReferralSource.class, Title.class, Ethnicity.class, Disability.class,
-                Gender.class, Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, LanguageQualificationType.class, FundingSource.class,
+                Gender.class, Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, ImportedLanguageQualificationType.class, FundingSource.class,
                 RejectionReason.class}) {
             String simpleName = importedEntityType.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);

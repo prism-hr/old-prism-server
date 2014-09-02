@@ -25,7 +25,7 @@
                 <prop key="hibernate.show_sql">false</prop>
                 <prop key="hibernate.format_sql">false</prop>
                 <prop key="javax.persistence.validation.mode">NONE</prop>
-                <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+                <prop key="hibernate.hbm2ddl.auto">create</prop>
                 <prop key="hibernate.cache.use_second_level_cache">false</prop>
                 <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory
                 </prop>
@@ -71,7 +71,7 @@
 
     <bean id="mailSender" class="com.zuehlke.pgadmissions.mail.MailSenderMock" primary="true"/>
     
-    <bean id="applicationExportService" class="com.zuehlke.pgadmissions.lifecycle.ApplicationExportHelperMock" primary="true"/>
+    <bean id="applicationExportServiceHelper" class="com.zuehlke.pgadmissions.lifecycle.ApplicationExportServiceHelperMock" primary="true"/>
 
     <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PrismAuthenticationProvider"/>
 

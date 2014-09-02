@@ -22,7 +22,7 @@ public class Country extends SimpleImportedEntity {
         return this;
     }
 
-    public Country withEnabled(boolean enabled) {
+    public Country withEnabled(Boolean enabled) {
         setEnabled(enabled);
         return this;
     }

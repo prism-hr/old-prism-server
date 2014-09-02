@@ -22,7 +22,7 @@ public class Title extends SimpleImportedEntity {
         return this;
     }
 
-    public Title withEnabled(boolean enabled) {
+    public Title withEnabled(Boolean enabled) {
         setEnabled(enabled);
         return this;
     }

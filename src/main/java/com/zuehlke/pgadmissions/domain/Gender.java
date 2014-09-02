@@ -22,7 +22,7 @@ public class Gender extends SimpleImportedEntity {
         return this;
     }
 
-    public Gender withEnabled(boolean enabled) {
+    public Gender withEnabled(Boolean enabled) {
         setEnabled(enabled);
         return this;
     }

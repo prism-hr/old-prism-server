@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.integration.helpers.InstitutionCreationHelper;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
-public class IT3CreateInstitution implements IPrismIntegrationTest {
+public class IT3CreateInstitution {
 
     @Autowired
     private InstitutionCreationHelper institutionCreationHelper;
@@ -21,7 +21,6 @@ public class IT3CreateInstitution implements IPrismIntegrationTest {
     private IT2ImportSystemReferenceData it2;
     
     @Test
-    @Override
     public void run() throws Exception {
         it2.run();
         institutionCreationHelper.verifyInstitutionCreation();

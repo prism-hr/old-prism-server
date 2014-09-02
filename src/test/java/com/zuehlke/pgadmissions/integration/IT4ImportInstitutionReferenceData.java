@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.services.helpers.ImportedEntityServiceHelper;
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
 @Ignore
-public class IT4ImportInstitutionReferenceData implements IPrismIntegrationTest {
+public class IT4ImportInstitutionReferenceData {
 
     @Autowired
     private ImportedEntityServiceHelper entityImportHelper;
@@ -55,7 +55,6 @@ public class IT4ImportInstitutionReferenceData implements IPrismIntegrationTest 
     private IT1InitialiseSystem it1;
 
     @Test
-    @Override
     public void run() throws Exception {
         it1.run();
         Institution institution = createTestInstitution();

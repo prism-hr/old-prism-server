@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.integration;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,8 @@ import com.zuehlke.pgadmissions.integration.helpers.SystemDataImportHelper;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
-public class IT2ImportSystemReferenceData implements IPrismIntegrationTest {
+@Ignore
+public class IT2ImportSystemReferenceData {
 
     @Autowired
     private SystemDataImportHelper systemDataImportHelper;
@@ -21,7 +23,6 @@ public class IT2ImportSystemReferenceData implements IPrismIntegrationTest {
     private IT1InitialiseSystem it1;
     
     @Test
-    @Override
     public void run() throws Exception {
         it1.run();
         systemDataImportHelper.verifyInstitutionDomicileImport();

@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
 @Ignore
-public class IT5AssignInstitutionUsers implements IPrismIntegrationTest {
+public class IT5AssignInstitutionUsers {
 
     @Autowired
     private UserService userService;
@@ -51,7 +51,6 @@ public class IT5AssignInstitutionUsers implements IPrismIntegrationTest {
     private IT4ImportInstitutionReferenceData it4;
 
     @Test
-    @Override
     public void run() throws Exception {
         it4.run();
 

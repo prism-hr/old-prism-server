@@ -225,9 +225,9 @@ public class ResourceService {
     }
 
     public <T extends Resource> DetachedCriteria getResourceListFilter(User user, Class<T> resourceClass, List<PrismState> stateWithUrgentActionIds,
-            ResourceListFilterDTO filter) {
+            ResourceListFilterDTO filterDTO, String lastSequenceIdentifier) {
         List<PrismScope> parentScopeIds = scopeService.getParentScopes(resourceClass);
-        return resourceDAO.getResourceListFilter(user, resourceClass, parentScopeIds, filter);
+        return resourceDAO.getResourceListFilter(user, resourceClass, parentScopeIds, filterDTO, lastSequenceIdentifier);
     }
 
 }

@@ -41,6 +41,7 @@ import com.zuehlke.pgadmissions.domain.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.builders.ApplicationDocumentExportBuilder;
 import com.zuehlke.pgadmissions.services.builders.ApplicationExportBuilder;
@@ -102,7 +103,7 @@ public class ApplicationExportService {
     }
 
     @Transactional
-    public String sendDataExportRequest(Application transientApplication) throws Exception {
+    public String sendDataExportRequest(Application transientApplication) throws DeduplicationException, DatatypeConfigurationException, JAXBException {
         Application persistentApplication = applicationService.getById(transientApplication.getId());
         SubmitAdmissionsApplicationRequest exportRequest = buildDataExportRequest(transientApplication);
 
@@ -136,7 +137,6 @@ public class ApplicationExportService {
                 .withIdentitier(exportResponse.getReference().getApplicantID());
 
         entityService.createOrUpdate(transientUserInstitutionIdentity);
-
         return exportReference;
     }
 

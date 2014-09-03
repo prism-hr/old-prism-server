@@ -98,7 +98,7 @@ public class EntityDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) throws Exception {
+    public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) throws DeduplicationException {
         IUniqueEntity.ResourceSignature signature = uniqueResource.getResourceSignature();
         Class<T> resourceClass = (Class<T>) uniqueResource.getClass();
         

@@ -29,23 +29,10 @@ public class ScopeDAO {
                 .list();
     }
     
-    public List<Scope> getParentScopes(Scope scope) {
-        return (List<Scope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
-                .add(Restrictions.lt("precedence", scope.getPrecedence())) //
-                .addOrder(Order.desc("precedence")) //
-                .list();
-    }
-    
-    public List<Scope> getChildScopes(Scope scope) {
-        return (List<Scope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
-                .add(Restrictions.gt("precedence", scope.getPrecedence())) //
-                .addOrder(Order.asc("precedence")) //
-                .list();
-    }
-    
-    public List<Scope> getEnclosingScopes(Scope scope) {
-        return (List<Scope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
-                .add(Restrictions.le("precedence", scope.getPrecedence())) //
+    public List<PrismScope> getParentScopesDescending(PrismScope childScopeId) {
+        return (List<PrismScope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
+                .setProjection(Projections.property("id")) //
+                .add(Restrictions.lt("precedence", childScopeId.getPrecedence())) //
                 .addOrder(Order.desc("precedence")) //
                 .list();
     }

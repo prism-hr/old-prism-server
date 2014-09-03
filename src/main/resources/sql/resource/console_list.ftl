@@ -13,7 +13,7 @@ FROM (
 	FROM ${queryScopeUpper} INNER JOIN (
 		SELECT USER_ROLE.${queryScopeLower}_id,
 		<#list parentScopes as parentScope>
-			USER_ROLE.${parentScope.id?lower_case}_id,
+			USER_ROLE.${parentScope?lower_case}_id,
 		</#list>
 			STATE_ACTION.state_id, MAX(STATE_ACTION.raises_urgent_flag) AS raises_urgent_flag
 		FROM USER INNER JOIN USER_ROLE
@@ -36,13 +36,13 @@ FROM (
 					AND ${queryScopeUpper}.state_id = STATE.id))
 		GROUP BY USER_ROLE.${queryScopeLower}_id, STATE_ACTION.state_id,
 		<#list parentScopes as parentScope>
-			USER_ROLE.${parentScope.id?lower_case}_id, STATE_ACTION.state_id<#if parentScope_has_next>,<#else>)</#if>
+			USER_ROLE.${parentScope?lower_case}_id, STATE_ACTION.state_id<#if parentScope_has_next>,<#else>)</#if>
 		</#list>
 		AS ${queryScopeUpper}_LIST_PERMISSION
 		ON ${queryScopeUpper}.state_id = ${queryScopeUpper}_LIST_PERMISSION.state_id
 		AND (${queryScopeUpper}.id = ${queryScopeUpper}_LIST_PERMISSION.${queryScopeLower}_id
 		<#list parentScopes as parentScope>
-			OR ${queryScopeUpper}.${parentScope.id?lower_case}_id = ${queryScopeUpper}_LIST_PERMISSION.${parentScope.id?lower_case}_id<#if !parentScope_has_next>)</#if>
+			OR ${queryScopeUpper}.${parentScope?lower_case}_id = ${queryScopeUpper}_LIST_PERMISSION.${parentScope?lower_case}_id<#if !parentScope_has_next>)</#if>
 		</#list>
   	<#include "${queryScopeLower}_custom_joins.ftl">
 	INNER JOIN STATE

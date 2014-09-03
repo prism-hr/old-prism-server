@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 
 @Service
 @Transactional
@@ -122,7 +123,7 @@ public class StateService {
         return stateDAO.getStateTransitionsPending(scopeId);
     }
 
-    public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) throws Exception {
+    public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) throws DeduplicationException {
         comment.setResource(resource);
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
@@ -139,7 +140,7 @@ public class StateService {
             resource.setState(newState);
             resource.setPreviousState(oldState);
             
-            comment.setState(oldState);
+            comment.setState(oldState == null ? newState : oldState);
             comment.setTransitionState(newState);
             
             resourceService.processResource(resource, comment); 

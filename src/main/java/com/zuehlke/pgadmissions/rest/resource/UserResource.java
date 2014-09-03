@@ -9,6 +9,8 @@ import javax.validation.Valid;
 import javax.ws.rs.WebApplicationException;
 
 import org.dozer.Mapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
@@ -41,6 +44,8 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RequestMapping("/api/user")
 public class UserResource {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     @Resource(name = "prismUserDetailsService")
     private UserDetailsService userDetailsService;
 
@@ -86,7 +91,8 @@ public class UserResource {
             @Valid @RequestBody UserRegistrationDTO userRegistrationDTO) throws WorkflowEngineException {
         try {
             userService.registerUser(userRegistrationDTO, referrer);
-        } catch (Exception e) {
+        } catch (DeduplicationException e) {
+            logger.error(e.getMessage());
             throw new ResourceNotFoundException();
         }
     }

@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 
@@ -64,7 +65,7 @@ public class ActionService {
             return;
         }
 
-        throwWorkflowPermissionException(action, operative);
+        throwWorkflowPermissionException(operative, action);
     }
 
     public void validateUpdateAction(Comment comment) {
@@ -82,7 +83,7 @@ public class ActionService {
             return;
         }
 
-        throwWorkflowPermissionException(action, resource);
+        throwWorkflowPermissionException(resource, action);
     }
 
     public List<PrismAction> getPermittedActions(Resource resource, User user) {
@@ -96,12 +97,12 @@ public class ActionService {
         return Lists.newArrayList(enhancements);
     }
 
-    public ActionOutcomeDTO executeUserAction(Resource resource, Action action, Comment comment) throws Exception {
+    public ActionOutcomeDTO executeUserAction(Resource resource, Action action, Comment comment) throws DeduplicationException {
         validateInvokeAction(resource, action, comment);
         return executeSystemAction(resource, action, comment);
     }
 
-    public ActionOutcomeDTO executeSystemAction(Resource resource, Action action, Comment comment) throws Exception {
+    public ActionOutcomeDTO executeSystemAction(Resource resource, Action action, Comment comment) throws DeduplicationException {
         User actionOwner = comment.getUser();
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE || action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE) {
@@ -113,7 +114,7 @@ public class ActionService {
                     return new ActionOutcomeDTO().withUser(actionOwner).withResource(duplicateResource).withTransitionResource(duplicateResource)
                             .withTransitionAction(redirectAction);
                 } else if (!Objects.equal(resource.getId(), duplicateResource.getId())) {
-                    throwWorkflowPermissionException(action, resource);
+                    throwWorkflowPermissionException(resource, action);
                 }
             }
         }
@@ -146,7 +147,7 @@ public class ActionService {
         return actionDAO.getPropagatedActions(stateTransitionPendingId);
     }
 
-    public ActionOutcomeDTO getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO, String referrer) throws Exception {
+    public ActionOutcomeDTO getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO, String referrer) throws DeduplicationException {
         Action action = getById(registrationDTO.getAction().getActionId());
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             Object operativeResourceDTO = registrationDTO.getAction().getOperativeResourceDTO();
@@ -161,7 +162,11 @@ public class ActionService {
         return actionDAO.getViewEditAction(resource);
     }
 
-    public void throwWorkflowPermissionException(Action action, Resource resource) {
+    public void throwWorkflowPermissionException(Resource resource, Action action) {
+        throwWorkflowPermissionException(resource, action, null);
+    }
+    
+    public void throwWorkflowPermissionException(Resource resource, Action action, String message) {
         Action fallbackAction = action.getFallbackAction();
         Resource fallbackResource = resource.getEnclosingResource(fallbackAction.getScope().getId());
         throw new WorkflowPermissionException(action, fallbackAction, resource, fallbackResource);

@@ -56,6 +56,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 import com.zuehlke.pgadmissions.services.helpers.StateServiceHelper;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -171,14 +172,14 @@ public class SystemService {
         fullTextSession.createIndexer().startAndWait();
     }
 
-    private void initialiseScopes() throws Exception {
+    private void initialiseScopes() throws DeduplicationException {
         for (PrismScope prismScope : PrismScope.values()) {
             Scope transientScope = new Scope().withId(prismScope).withPrecedence(prismScope.getPrecedence()).withShortCode(prismScope.getShortCode());
             entityService.createOrUpdate(transientScope);
         }
     }
 
-    private void initialiseRoles() throws Exception {
+    private void initialiseRoles() throws DeduplicationException {
         roleService.deleteExludedRoles();
         Set<Role> rolesWithExclusions = Sets.newHashSet();
 
@@ -201,7 +202,7 @@ public class SystemService {
         }
     }
 
-    private void initialiseActions() throws Exception {
+    private void initialiseActions() throws DeduplicationException {
         entityService.deleteAll(ActionRedaction.class);
 
         for (PrismAction prismAction : PrismAction.values()) {
@@ -229,7 +230,7 @@ public class SystemService {
         }
     }
 
-    private void initialiseStateGroups() throws Exception {
+    private void initialiseStateGroups() throws DeduplicationException {
         for (PrismStateGroup prismStateGroup : PrismStateGroup.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismStateGroup.getScope());
             StateGroup transientStateGroup = new StateGroup().withId(prismStateGroup).withSequenceOrder(prismStateGroup.getSequenceOrder())
@@ -238,7 +239,7 @@ public class SystemService {
         }
     }
 
-    private void initialiseStates() throws Exception {
+    private void initialiseStates() throws DeduplicationException {
         for (PrismState prismState : PrismState.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismState.getScope());
             StateGroup stateGroup = entityService.getByProperty(StateGroup.class, "id", prismState.getStateGroup());
@@ -247,7 +248,7 @@ public class SystemService {
         }
     }
 
-    private System initialiseSystemResource() throws Exception {
+    private System initialiseSystemResource() throws DeduplicationException {
         User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail);
         State systemRunning = stateService.getById(PrismState.SYSTEM_RUNNING);
         DateTime startupTimestamp = new DateTime();
@@ -258,7 +259,7 @@ public class SystemService {
         return system;
     }
 
-    private void initialiseNotificationTemplates(System system) throws Exception {
+    private void initialiseNotificationTemplates(System system) throws DeduplicationException {
         if (BooleanUtils.isTrue(initializeNotifications)) {
             notificationService.deleteAllNotifications();
         }
@@ -307,7 +308,7 @@ public class SystemService {
         return version;
     }
 
-    private void initialiseStateDurations(System system) throws Exception {
+    private void initialiseStateDurations(System system) throws DeduplicationException {
         for (PrismState prismState : PrismState.values()) {
             if (prismState.getDuration() != null) {
                 State state = stateService.getById(prismState);

@@ -8,7 +8,7 @@ FROM USER INNER JOIN USER_ROLE
 INNER JOIN ${queryScopeUpper}
 	ON USER_ROLE.${queryScopeLower}_id = ${queryScopeUpper}.id
 <#list parentScopes as parentScope>
-	OR USER_ROLE.${parentScope.id?lower_case}_id = ${queryScopeUpper}.${parentScope.id?lower_case}_id
+	OR USER_ROLE.${parentScope?lower_case}_id = ${queryScopeUpper}.${parentScope?lower_case}_id
 </#list>
 INNER JOIN STATE_ACTION_ASSIGNMENT
 	ON USER_ROLE.role_id = STATE_ACTION_ASSIGNMENT.role_id

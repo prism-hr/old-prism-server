@@ -25,16 +25,12 @@ public class ScopeService {
         return entityService.getByProperty(Scope.class, "id", id);
     }
     
-    public <T extends Resource> Scope getByResourceClass(Class<T> resourceClass) {
-        return getById(PrismScope.getResourceScope(resourceClass));
-    }
-    
     public List<PrismScope> getScopesDescending() {
         return scopeDAO.getScopesDescending();
     }
     
-    public <T extends Resource> List<Scope> getParentScopes(Class<T> resourceClass) {
-        return scopeDAO.getParentScopes(getByResourceClass(resourceClass));
+    public <T extends Resource> List<PrismScope> getParentScopes(Class<T> resourceClass) {
+        return scopeDAO.getParentScopesDescending(PrismScope.getResourceScope(resourceClass));
     }
     
 }

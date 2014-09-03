@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
@@ -88,7 +89,7 @@ public class UserService {
                 .withLastName(user.getLastName()).withEmail(user.getEmail());
     }
 
-    public User getOrCreateUser(String firstName, String lastName, String email) throws Exception {
+    public User getOrCreateUser(String firstName, String lastName, String email) throws DeduplicationException {
         User user;
         User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email);
         User duplicateUser = entityService.getDuplicateEntity(transientUser);
@@ -103,7 +104,7 @@ public class UserService {
         return user;
     }
 
-    public User registerUser(UserRegistrationDTO registrationDTO, String referrer) throws Exception {
+    public User registerUser(UserRegistrationDTO registrationDTO, String referrer) throws DeduplicationException {
         User user = getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail());
         if ((registrationDTO.getActivationCode() != null && !user.getActivationCode().equals(registrationDTO.getActivationCode()))
                 || user.getUserAccount() != null) {
@@ -120,7 +121,7 @@ public class UserService {
     }
 
     public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource,
-            List<AbstractResourceRepresentation.RoleRepresentation> roles) throws Exception {
+            List<AbstractResourceRepresentation.RoleRepresentation> roles) throws DeduplicationException {
         User user = getOrCreateUser(firstName, lastName, email);
         roleService.updateRoles(resource, user, roles);
         return user;
@@ -156,7 +157,7 @@ public class UserService {
         }
     }
 
-    public void setFilter(Filter transientFilter) throws Exception {
+    public void setFilter(Filter transientFilter) throws DeduplicationException {
         Filter persistentFilter = entityService.getDuplicateEntity(transientFilter);
         if (persistentFilter == null) {
             UserAccount userAccount = transientFilter.getUserAccount();

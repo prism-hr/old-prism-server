@@ -318,7 +318,12 @@ public class SystemService {
     }
 
     private void initialiseStateActions() throws Exception {
-        stateTransitionHelper.executePendingStateTransitions();
+        logger.info("Flushing resource escalations");
+        stateTransitionHelper.executeEscalatedStateTransitions();
+        
+        logger.info("Flushing resource propagations");
+        stateTransitionHelper.executePropagatedStateTransitions();
+        
         stateService.deleteStateActions();
 
         for (State state : stateService.getStates()) {
@@ -419,10 +424,10 @@ public class SystemService {
     }
 
     private void verifyBackwardResourceCompatibility() throws WorkflowConfigurationException {
-        for (Scope scope : scopeService.getScopesDescending()) {
-            Class<? extends Resource> resourceClass = scope.getId().getResourceClass();
+        for (PrismScope scopeId : scopeService.getScopesDescending()) {
+            Class<? extends Resource> resourceClass = scopeId.getResourceClass();
             if (!stateService.getDeprecatedStates(resourceClass).isEmpty()) {
-                throw new WorkflowConfigurationException("You attempted to remove a state definition for resources of type " + scope.getId().getLowerCaseName()
+                throw new WorkflowConfigurationException("You attempted to remove a state definition for resources of type " + scopeId.getLowerCaseName()
                         + " which is required for backward compatibility by the workflow engine");
             }
         }

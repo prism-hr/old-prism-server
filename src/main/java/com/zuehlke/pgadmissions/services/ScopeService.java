@@ -29,11 +29,7 @@ public class ScopeService {
         return getById(PrismScope.getResourceScope(resourceClass));
     }
     
-    public List<Scope> getScopesAscending() {
-        return scopeDAO.getScopesAscending();
-    }
-    
-    public List<Scope> getScopesDescending() {
+    public List<PrismScope> getScopesDescending() {
         return scopeDAO.getScopesDescending();
     }
     

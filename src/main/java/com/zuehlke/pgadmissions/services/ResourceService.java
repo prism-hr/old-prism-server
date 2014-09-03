@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
@@ -20,8 +18,8 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.StateDuration;
-import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
@@ -111,7 +109,7 @@ public class ResourceService {
         resource.setReferrer(referrer);
         Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                 .withAssignedUser(user, roleService.getCreatorRole(resource));
-        
+
         return actionService.executeUserAction(resource, action, comment);
     }
 
@@ -172,8 +170,11 @@ public class ResourceService {
     public void updateResource(Resource resource, Comment comment) throws Exception {
         DateTime baselineTime = new DateTime();
         LocalDate baselineDate = baselineTime.toLocalDate();
+        
+        DateTime rangeStart = baselineDate.toDateTimeAtStartOfDay();
+        DateTime rangeClose = rangeStart.plusDays(1).minusSeconds(1);
 
-        String lastSequenceIdentifier = resourceDAO.getLastSequenceIdentifier(resource, baselineDate);
+        String lastSequenceIdentifier = resourceDAO.getLastSequenceIdentifier(resource, rangeStart, rangeClose);
 
         lastSequenceIdentifier = lastSequenceIdentifier == null ? baselineDate.toString("yyyyMMdd") + "-0000000001" : lastSequenceIdentifier;
         String[] lastSequenceIdentifierParts = lastSequenceIdentifier.split("-");
@@ -198,54 +199,24 @@ public class ResourceService {
         }
     }
 
-    public HashMap<Resource, Action> getResourceEscalations() {
-        LocalDate baseline = new LocalDate();
-        HashMap<Resource, Action> escalations = Maps.newHashMap();
-
-        for (Action action : actionService.getEscalationActions()) {
-            List<Resource> resources = resourceDAO.getResourcesToEscalate(action, baseline);
-
-            for (Resource resource : resources) {
-                escalations.put(resource, action);
-            }
-        }
-
-        return escalations;
+    public <T extends Resource> List<Integer> getResourcesToEscalate(Class<T> resourceClass, PrismAction actionId, LocalDate baseline) {
+        return resourceDAO.getResourcesToEscalate(resourceClass, actionId, baseline);
     }
 
-    public HashMap<Resource, Action> getResourcePropagations() {
-        HashMap<Resource, Action> propagations = Maps.newHashMap();
-        List<StateTransitionPending> stateTransitionsPending = stateService.getStateTransitionsPending();
-
-        for (StateTransitionPending stateTransitionPending : stateTransitionsPending) {
-
-            for (Action action : stateTransitionPending.getStateTransition().getPropagatedActions()) {
-                List<Resource> resources = resourceDAO.getResourcesToPropagate(stateTransitionPending.getResource(), action, action.getScope().getId());
-
-                for (Resource resource : resources) {
-                    if (!propagations.containsKey(resource)) {
-                        propagations.put(resource, action);
-                    }
-                }
-
-                if (resources.isEmpty()) {
-                    entityService.delete(stateTransitionPending);
-                }
-            }
-        }
-
-        return propagations;
+    public <T extends Resource> List<Integer> getResourcesToPropagate(PrismScope propagatingResourceScope, Integer propagatingResourceId,
+            PrismScope propagatedResourceScope, PrismAction actionId) {
+        return resourceDAO.getResourcesToPropagate(propagatingResourceScope, propagatingResourceId, propagatingResourceScope, actionId);
     }
 
     public Resource getOperativeResource(Resource resource, Action action) {
         return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
     }
 
-    public <T extends Resource> List<Resource> getResourcesRequiringAttention(Class<T> resourceClass) {
+    public <T extends Resource> List<Integer> getResourcesRequiringAttention(Class<T> resourceClass) {
         return resourceDAO.getResourcesRequiringAttention(resourceClass);
     }
 
-    public <T extends Resource> List<Resource> getRecentlyUpdatedResources(Class<T> resourceClass, DateTime rangeStart, DateTime rangeClose) {
+    public <T extends Resource> List<Integer> getRecentlyUpdatedResources(Class<T> resourceClass, DateTime rangeStart, DateTime rangeClose) {
         return resourceDAO.getRecentlyUpdatedResources(resourceClass, rangeStart, rangeClose);
     }
 

@@ -13,14 +13,15 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -69,9 +70,12 @@ public class StateDAO {
                 .uniqueResult();
     }
 
-    public List<StateTransitionPending> getStateTransitionsPending(Scope scope) {
-        String scopeReference = scope.getId().getLowerCaseName();
-        return (List<StateTransitionPending>) sessionFactory.getCurrentSession().createCriteria(StateTransitionPending.class) //
+    public List<StateTransitionPendingDTO> getStateTransitionsPending(PrismScope scopeId) {
+        String scopeReference = scopeId.getLowerCaseName();
+        return (List<StateTransitionPendingDTO>) sessionFactory.getCurrentSession().createCriteria(StateTransitionPending.class, "stateTransitionPending") //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("id"), "id") //
+                        .add(Projections.property(scopeReference + ".id"), "resourceId")) //
                 .add(Restrictions.isNotNull(scopeReference)) //
                 .addOrder(Order.asc(scopeReference + ".id")) //
                 .addOrder(Order.asc("id")) //

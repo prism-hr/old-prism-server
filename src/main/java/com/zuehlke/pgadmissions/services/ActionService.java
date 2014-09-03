@@ -138,8 +138,12 @@ public class ActionService {
         return entityService.list(Action.class);
     }
 
-    public List<Action> getEscalationActions() {
+    public List<PrismAction> getEscalationActions() {
         return actionDAO.getEscalationActions();
+    }
+    
+    public List<PrismAction> getPropagatedActions(Integer stateTransitionPendingId) {
+        return actionDAO.getPropagatedActions(stateTransitionPendingId);
     }
 
     public ActionOutcomeDTO getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO, String referrer) throws Exception {

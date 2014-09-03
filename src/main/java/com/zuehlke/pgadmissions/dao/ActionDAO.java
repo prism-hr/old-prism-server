@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
+import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
@@ -197,13 +198,22 @@ public class ActionDAO {
                 .uniqueResult();
     }
     
-    public List<Action> getEscalationActions() {
-        return (List<Action>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.property("action")) //
+    public List<PrismAction> getEscalationActions() {
+        return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.property("action.id")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("action.actionCategory", PrismActionCategory.ESCALATE_RESOURCE)) //
                 .addOrder(Order.desc("scope.precedence")) //
+                .list();
+    }
+    
+    public List<PrismAction> getPropagatedActions(Integer stateTransitionPendingId) {
+        return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(StateTransitionPending.class) //
+                .setProjection(Projections.property("propagatedAction.id")) //
+                .createAlias("stateTransition", "stateTransition", JoinType.INNER_JOIN) //
+                .createAlias("propagatedActions", "propagatedAction", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("id", stateTransitionPendingId)) //
                 .list();
     }
     

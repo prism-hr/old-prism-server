@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.services.SystemService;
 
 @Component
 public class StateServiceHelper {
-
+            
     @Autowired
     private ActionService actionService;
 

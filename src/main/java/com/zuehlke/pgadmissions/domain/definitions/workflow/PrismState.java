@@ -33,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicat
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidationPendingCompletion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidationPendingFeedback;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnCompleted;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnCompletedUnsubmitted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnPendingExport;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismInstitutionApproval;
@@ -96,6 +97,8 @@ public enum PrismState {
     APPLICATION_VALIDATION_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_VALIDATION, 3, PrismScope.APPLICATION, PrismApplicationValidationPendingFeedback.class), //
     APPLICATION_WITHDRAWN_PENDING_EXPORT(PrismStateGroup.APPLICATION_WITHDRAWN, null, PrismScope.APPLICATION, PrismApplicationWithdrawnPendingExport.class), //
     APPLICATION_WITHDRAWN_COMPLETED(PrismStateGroup.APPLICATION_WITHDRAWN, null, PrismScope.APPLICATION, PrismApplicationWithdrawnCompleted.class), //
+    APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED(PrismStateGroup.APPLICATION_WITHDRAWN, null, PrismScope.APPLICATION,
+            PrismApplicationWithdrawnCompletedUnsubmitted.class), //
     APPLICATION_WITHDRAWN_PENDING_CORRECTION(PrismStateGroup.APPLICATION_WITHDRAWN, //
             28, PrismScope.APPLICATION, PrismApplicationWithdrawnPendingCorrection.class), //
     INSTITUTION_APPROVAL(PrismStateGroup.INSTITUTION_APPROVAL, 28, PrismScope.INSTITUTION, PrismInstitutionApproval.class), //

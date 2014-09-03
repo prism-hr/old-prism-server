@@ -148,5 +148,5 @@ public class StateDAO {
                 .add(Restrictions.eq("action.id", PrismAction.PROJECT_CREATE_APPLICATION)) //
                 .list();
     }
-
+    
 }

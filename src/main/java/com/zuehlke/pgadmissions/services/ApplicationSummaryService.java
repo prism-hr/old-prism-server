@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.ParentResource;
 import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ApplicationRatingDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 
 @Service
 @Transactional
@@ -51,7 +52,7 @@ public class ApplicationSummaryService {
         }
     }
 
-    public void summariseApplicationProcessing(Application application) throws Exception {
+    public void summariseApplicationProcessing(Application application) throws DeduplicationException {
         StateGroup stateGroup = application.getState().getStateGroup();
         StateGroup previousStateGroup = application.getPreviousState().getStateGroup();
 
@@ -79,7 +80,7 @@ public class ApplicationSummaryService {
         }
     }
 
-    private void createOrUpdateApplicationProcessing(Application application, StateGroup stateGroup, LocalDate baseline) throws Exception {
+    private void createOrUpdateApplicationProcessing(Application application, StateGroup stateGroup, LocalDate baseline) throws DeduplicationException {
         ApplicationProcessing transientProcessing = new ApplicationProcessing().withApplication(application).withStateGroup(stateGroup);
         ApplicationProcessing persistentProcessing = entityService.getDuplicateEntity(transientProcessing);
 
@@ -114,7 +115,7 @@ public class ApplicationSummaryService {
         updatePreviousApplicationProcessingSummary(application, previousStateGroup);
     }
 
-    private void createOrUpdateApplicationProcessingSummary(Application application, StateGroup stateGroup) {
+    private void createOrUpdateApplicationProcessingSummary(Application application, StateGroup stateGroup) throws DeduplicationException {
         for (PrismScope summaryScope : summaryScopes) {
             try {
                 ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, summaryScope.getLowerCaseName());
@@ -131,7 +132,9 @@ public class ApplicationSummaryService {
                 } else {
                     updateApplicationProcessingSummary(summaryResource, stateGroup, persistentSummary);
                 }
-
+                
+            } catch (DeduplicationException e) {
+                throw e;
             } catch (Exception e) {
                 throw new Error(e);
             }

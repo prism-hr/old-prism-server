@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 
 @Service
 @Transactional
@@ -47,11 +48,11 @@ public class EntityService {
         return entityDAO.listByProperties(klass, properties);
     }
 
-    public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) throws Exception {
+    public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) throws DeduplicationException {
         return (T) entityDAO.getDuplicateEntity(uniqueResource);
     }
 
-    public <T extends IUniqueEntity> T getOrCreate(T transientResource) throws Exception {
+    public <T extends IUniqueEntity> T getOrCreate(T transientResource) throws DeduplicationException {
         T persistentResource = (T) getDuplicateEntity(transientResource);
         if (persistentResource == null) {
             save(transientResource);
@@ -60,7 +61,7 @@ public class EntityService {
         return persistentResource;
     }
 
-    public <T extends IUniqueEntity> T createOrUpdate(T transientResource) throws Exception {
+    public <T extends IUniqueEntity> T createOrUpdate(T transientResource) throws DeduplicationException {
         T persistentResource = (T) getDuplicateEntity(transientResource);
         if (persistentResource == null) {
             save(transientResource);

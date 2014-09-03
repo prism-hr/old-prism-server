@@ -6,6 +6,8 @@ import java.util.Set;
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.dozer.Mapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhanceme
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.ActionDTO;
@@ -62,6 +65,8 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RestController
 @RequestMapping(value = { "api/{resourceScope}" })
 public class ResourceResource {
+    
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private EntityService entityService;
@@ -114,7 +119,7 @@ public class ResourceResource {
         List<PrismAction> permittedActions = actionService.getPermittedActions(resource, currentUser);
         if (permittedActions.isEmpty()) {
             Action viewEditAction = actionService.getViewEditAction(resource);
-            actionService.throwWorkflowPermissionException(viewEditAction, resource);
+            actionService.throwWorkflowPermissionException(resource, viewEditAction);
         }
         representation.setActions(permittedActions);
 
@@ -176,7 +181,8 @@ public class ResourceResource {
         try {
             ActionOutcomeDTO actionOutcome = resourceService.createResource(user, action, newResourceDTO, referrer);
             return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
-        } catch (Exception e) {
+        } catch (DeduplicationException e) {
+            logger.error(e.getMessage());
             throw new ResourceNotFoundException();
         }
     }
@@ -190,7 +196,8 @@ public class ResourceResource {
         try {
             roleService.updateRoles(resource, user, roles);
             // TODO: return validation error if workflow engine exception is thrown.
-        } catch (Exception e) {
+        } catch (DeduplicationException e) {
+            logger.error(e.getMessage());
             throw new ResourceNotFoundException();
         }
     }
@@ -204,7 +211,8 @@ public class ResourceResource {
             userService.getOrCreateUserWithRoles(userRolesRepresentation.getFirstName(), userRolesRepresentation.getLastName(), userRolesRepresentation.getEmail(),
                     resource, userRolesRepresentation.getRoles());
             // TODO: return validation error if workflow engine exception is thrown.
-        } catch (Exception e) {
+        } catch (DeduplicationException e) {
+            logger.error(e.getMessage());
             throw new ResourceNotFoundException();
         }
     }

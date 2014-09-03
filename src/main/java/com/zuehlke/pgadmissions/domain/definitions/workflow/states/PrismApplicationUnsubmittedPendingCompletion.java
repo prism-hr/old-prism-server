@@ -55,7 +55,7 @@ public class PrismApplicationUnsubmittedPendingCompletion extends PrismWorkflowS
             .withDefaultAction(false) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
-                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN_COMPLETED) // 
+                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED) // 
                         .withTransitionAction(PrismAction.APPLICATION_ESCALATE)))); //
 
         stateActions.add(new PrismStateAction() //

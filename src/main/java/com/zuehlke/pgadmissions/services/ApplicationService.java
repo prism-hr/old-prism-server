@@ -56,6 +56,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
@@ -535,7 +536,7 @@ public class ApplicationService {
         return null;
     }
 
-    public void postProcessApplication(Application application, Comment comment) throws Exception {
+    public void postProcessApplication(Application application, Comment comment) throws DeduplicationException {
         if (comment.isProjectCreateComment()) {
             synchroniseProjectSupervisors(application);
         }

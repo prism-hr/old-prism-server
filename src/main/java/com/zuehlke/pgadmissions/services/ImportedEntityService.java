@@ -49,6 +49,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.dto.AdvertCategoryImportRowDTO;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.iso.jaxb.CategoryNameType;
 import com.zuehlke.pgadmissions.iso.jaxb.CategoryType;
 import com.zuehlke.pgadmissions.iso.jaxb.CountryType;
@@ -111,7 +112,7 @@ public class ImportedEntityService {
     }
 
     public ImportedEntityFeed getOrCreateImportedEntityFeed(Institution institution, PrismImportedEntity importedEntityType, String location, String username,
-            String password) throws Exception {
+            String password) throws DeduplicationException {
         ImportedEntityFeed transientImportedEntityFeed = new ImportedEntityFeed().withImportedEntityType(importedEntityType).withLocation(location)
                 .withUserName(username).withPassword(password).withInstitution(institution);
         return entityService.getOrCreate(transientImportedEntityFeed);
@@ -131,7 +132,7 @@ public class ImportedEntityService {
         importedEntityDAO.disableAllImportedProgramStudyOptionInstances(institution);
     }
 
-    public void mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline) throws Exception {
+    public void mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline) throws DeduplicationException {
         Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
         Program persistentProgram = mergeProgram(institution, programDefinition);
 
@@ -216,7 +217,7 @@ public class ImportedEntityService {
         importedEntityDAO.disableAllEntities(AdvertCategory.class);
     }
 
-    public void createOrUpdateAdvertCategory(AdvertCategoryImportRowDTO importRow) throws Exception {
+    public void createOrUpdateAdvertCategory(AdvertCategoryImportRowDTO importRow) throws DeduplicationException {
         AdvertCategory parentCategory = entityService.getById(AdvertCategory.class, importRow.getId() / 10);
         AdvertCategory transientCategory = new AdvertCategory().withId(importRow.getId()).withEnabled(true).withName(importRow.getName())
                 .withParentCategory(parentCategory);
@@ -264,7 +265,7 @@ public class ImportedEntityService {
         }
     }
 
-    private Program mergeProgram(Institution institution, Programme programDefinition) throws Exception {
+    private Program mergeProgram(Institution institution, Programme programDefinition) throws DeduplicationException {
         User proxyCreator = institution.getUser();
 
         String transientTitle = programDefinition.getName();
@@ -294,7 +295,7 @@ public class ImportedEntityService {
         }
     }
 
-    private ProgramStudyOption mergeProgramStudyOption(ProgramStudyOption transientProgramStudyOption, LocalDate baseline) throws Exception {
+    private ProgramStudyOption mergeProgramStudyOption(ProgramStudyOption transientProgramStudyOption, LocalDate baseline) throws DeduplicationException {
         ProgramStudyOption persistentProgramStudyOption = entityService.getDuplicateEntity(transientProgramStudyOption);
 
         if (persistentProgramStudyOption == null) {
@@ -318,14 +319,14 @@ public class ImportedEntityService {
         }
     }
 
-    private StudyOption mergeStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) throws Exception {
+    private StudyOption mergeStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) throws DeduplicationException {
         String externalcode = modeOfAttendance.getCode();
         PrismStudyOption internalCode = PrismStudyOption.findValueFromString(externalcode);
         StudyOption studyOption = new StudyOption().withInstitution(institution).withCode(internalCode.name()).withName(externalcode).withEnabled(true);
         return entityService.createOrUpdate(studyOption);
     }
 
-    private void createOrUpdateImportedEntity(ImportedEntity transientImportedEntity) throws Exception {
+    private void createOrUpdateImportedEntity(ImportedEntity transientImportedEntity) throws DeduplicationException {
         ImportedEntity persistentImportedEntity = entityService.getDuplicateEntity(transientImportedEntity);
 
         if (persistentImportedEntity == null) {
@@ -370,7 +371,7 @@ public class ImportedEntityService {
         return getImportedEntityByCode(entityClass, transientImportedEntity.getInstitution(), transientImportedEntity.getName());
     }
 
-    private void executeProgramImportAction(Program program) throws Exception {
+    private void executeProgramImportAction(Program program) throws DeduplicationException {
         Action action = actionService.getById(PrismAction.INSTITUTION_IMPORT_PROGRAM);
 
         User invoker = program.getUser();

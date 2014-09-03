@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
+import org.hibernate.criterion.DetachedCriteria;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +23,17 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 
 @Service
 @Transactional
@@ -82,7 +86,7 @@ public class ResourceService {
         return Lists.newArrayList();
     }
 
-    public ActionOutcomeDTO createResource(User user, Action action, Object newResourceDTO, String referrer) throws Exception {
+    public ActionOutcomeDTO createResource(User user, Action action, Object newResourceDTO, String referrer) throws DeduplicationException {
         Resource resource = null;
 
         switch (action.getCreationScope().getId()) {
@@ -103,7 +107,7 @@ public class ResourceService {
         }
 
         if (entityService.getDuplicateEntity(resource) != null && !user.isEnabled()) {
-            actionService.throwWorkflowPermissionException(action, resource);
+            actionService.throwWorkflowPermissionException(resource, action);
         }
 
         resource.setReferrer(referrer);
@@ -167,10 +171,10 @@ public class ResourceService {
         resource.setDueDate(baseline.plusDays(stateDuration == null ? 0 : stateDuration.getDuration()));
     }
 
-    public void updateResource(Resource resource, Comment comment) throws Exception {
+    public void updateResource(Resource resource, Comment comment) throws DeduplicationException {
         DateTime baselineTime = new DateTime();
         LocalDate baselineDate = baselineTime.toLocalDate();
-        
+
         DateTime rangeStart = baselineDate.toDateTimeAtStartOfDay();
         DateTime rangeClose = rangeStart.plusDays(1).minusSeconds(1);
 
@@ -182,7 +186,7 @@ public class ResourceService {
 
         Integer nextSequenceIdentifierIndex = lastSequenceIdentifierIndex + 1;
         resource.setSequenceIdentifier(lastSequenceIdentifierParts[0] + "-" + String.format("%010d", nextSequenceIdentifierIndex));
-        
+
         resource.setUpdatedTimestamp(baselineTime);
 
         switch (resource.getResourceScope()) {
@@ -199,6 +203,10 @@ public class ResourceService {
         }
     }
 
+    public Resource getOperativeResource(Resource resource, Action action) {
+        return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
+    }
+
     public <T extends Resource> List<Integer> getResourcesToEscalate(Class<T> resourceClass, PrismAction actionId, LocalDate baseline) {
         return resourceDAO.getResourcesToEscalate(resourceClass, actionId, baseline);
     }
@@ -208,16 +216,18 @@ public class ResourceService {
         return resourceDAO.getResourcesToPropagate(propagatingResourceScope, propagatingResourceId, propagatingResourceScope, actionId);
     }
 
-    public Resource getOperativeResource(Resource resource, Action action) {
-        return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
-    }
-
     public <T extends Resource> List<Integer> getResourcesRequiringAttention(Class<T> resourceClass) {
         return resourceDAO.getResourcesRequiringAttention(resourceClass);
     }
 
     public <T extends Resource> List<Integer> getRecentlyUpdatedResources(Class<T> resourceClass, DateTime rangeStart, DateTime rangeClose) {
         return resourceDAO.getRecentlyUpdatedResources(resourceClass, rangeStart, rangeClose);
+    }
+
+    public <T extends Resource> DetachedCriteria getResourceListFilter(User user, Class<T> resourceClass, List<PrismState> stateWithUrgentActionIds,
+            ResourceListFilterDTO filter) {
+        List<PrismScope> parentScopeIds = scopeService.getParentScopes(resourceClass);
+        return resourceDAO.getResourceListFilter(user, resourceClass, parentScopeIds, filter);
     }
 
 }

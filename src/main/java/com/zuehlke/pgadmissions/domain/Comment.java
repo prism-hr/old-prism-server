@@ -727,7 +727,7 @@ public class Comment {
     }
 
     public Comment withAssignedUser(User user, Role role) {
-        CommentAssignedUser newAssignment = new CommentAssignedUser().withUser(user).withRole(role);
+        CommentAssignedUser newAssignment = new CommentAssignedUser().withUser(user).withRole(role).withComment(this);
         assignedUsers.add(newAssignment);
         return this;
     }

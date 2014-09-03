@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,8 @@ import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 @Service
 @Transactional
 public class StateService {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private StateDAO stateDAO;
@@ -307,9 +311,13 @@ public class StateService {
     public <T extends Resource> void executeDeferredStateTransition(Class<T> resourceClass, Integer resourceId, PrismAction actionId) throws Exception {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Action action = actionService.getById(actionId);
+        
+        logger.info("Calling " + action.getId() + " on " + resource.getCode());
+        
         Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action).withDeclinedResponse(false)
                 .withCreatedTimestamp(new DateTime());
         executeStateTransition(resource, action, comment);
+        
         entityService.flush();
         entityService.evict(resource);
         entityService.evict(action);
@@ -318,6 +326,7 @@ public class StateService {
 
     public void deleteStateTransitionPending(Integer stateTransitionPendingId) {
         StateTransitionPending pending = entityService.getById(StateTransitionPending.class, stateTransitionPendingId);
+        
         entityService.delete(pending);
         entityService.flush();
         entityService.evict(pending);

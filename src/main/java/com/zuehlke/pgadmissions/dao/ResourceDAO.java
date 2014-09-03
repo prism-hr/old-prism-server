@@ -136,7 +136,7 @@ public class ResourceDAO {
     }
 
     public <T extends Resource> DetachedCriteria getResourceListFilter(User user, Class<T> resourceClass, List<PrismScope> parentScopeIds,
-            ResourceListFilterDTO filterDTO) {
+            ResourceListFilterDTO filterDTO, String lastSequenceIdentifier) {
         DetachedCriteria criteria = DetachedCriteria.forClass(resourceClass) //
                 .setProjection(Projections.groupProperty("id")) //
                 .add(Restrictions.disjunction() //

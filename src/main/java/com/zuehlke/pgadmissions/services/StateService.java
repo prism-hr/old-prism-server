@@ -310,13 +310,17 @@ public class StateService {
         Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action).withDeclinedResponse(false)
                 .withCreatedTimestamp(new DateTime());
         executeStateTransition(resource, action, comment);
-        entityService.clear();
+        entityService.flush();
+        entityService.evict(resource);
+        entityService.evict(action);
+        entityService.evict(comment);
     }
 
     public void deleteStateTransitionPending(Integer stateTransitionPendingId) {
         StateTransitionPending pending = entityService.getById(StateTransitionPending.class, stateTransitionPendingId);
         entityService.delete(pending);
-        entityService.clear();
+        entityService.flush();
+        entityService.evict(pending);
     }
 
 }

@@ -182,7 +182,7 @@ public class ResourceService {
 
         Integer nextSequenceIdentifierIndex = lastSequenceIdentifierIndex + 1;
         resource.setSequenceIdentifier(lastSequenceIdentifierParts[0] + "-" + String.format("%010d", nextSequenceIdentifierIndex));
-
+        
         resource.setUpdatedTimestamp(baselineTime);
 
         switch (resource.getResourceScope()) {

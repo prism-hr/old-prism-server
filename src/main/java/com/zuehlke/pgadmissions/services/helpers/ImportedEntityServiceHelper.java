@@ -51,6 +51,9 @@ public class ImportedEntityServiceHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(ImportedEntityServiceHelper.class);
 
+    @Value("${context.environment}")
+    private String contextEnvironment;
+
     @Value("${import.advertCategory.location}")
     private String advertCategoryImportLocation;
 
@@ -74,29 +77,30 @@ public class ImportedEntityServiceHelper {
 
         for (ImportedEntityFeed importedEntityFeed : importedEntityService.getImportedEntityFeedsToImport()) {
             String maxRedirects = null;
-
-            try {
-                maxRedirects = System.getProperty("http.maxRedirects");
-                System.setProperty("http.maxRedirects", "5");
-
-                importEntities(importedEntityFeed);
-            } catch (DataImportException e) {
-                logger.error("Error importing reference data.", e);
-                String errorMessage = e.getMessage();
-                Throwable cause = e.getCause();
-
-                if (cause != null) {
-                    errorMessage += "\n" + cause.toString();
+            if (contextEnvironment.equals("prod") || (!importedEntityFeed.isAuthenticated()
+                    && importedEntityFeed.getImportedEntityType() != PrismImportedEntity.INSTITUTION)) {
+                try {
+                    maxRedirects = System.getProperty("http.maxRedirects");
+                    System.setProperty("http.maxRedirects", "5");
+                    importEntities(importedEntityFeed);
+                } catch (DataImportException e) {
+                    logger.error("Error importing reference data.", e);
+                    String errorMessage = e.getMessage();
+                    Throwable cause = e.getCause();
+                    if (cause != null) {
+                        errorMessage += "\n" + cause.toString();
+                    }
+                    notificationService.sendDataImportErrorNotifications(importedEntityFeed.getInstitution(), errorMessage);
+                } finally {
+                    Authenticator.setDefault(null);
+                    if (maxRedirects != null) {
+                        System.setProperty("http.maxRedirects", maxRedirects);
+                    } else {
+                        System.clearProperty("http.maxRedirects");
+                    }
                 }
-
-                notificationService.sendDataImportErrorNotifications(importedEntityFeed.getInstitution(), errorMessage);
-            } finally {
-                Authenticator.setDefault(null);
-                if (maxRedirects != null) {
-                    System.setProperty("http.maxRedirects", maxRedirects);
-                } else {
-                    System.clearProperty("http.maxRedirects");
-                }
+            } else {
+                logger.info("Skipped the import from file: " + importedEntityFeed.getLocation());
             }
         }
     }
@@ -116,7 +120,8 @@ public class ImportedEntityServiceHelper {
             } else if (importedEntityClass.equals(ImportedInstitution.class)) {
                 mergeImportedInstitutions(institution, (List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution>) unmarshalled);
             } else if (importedEntityClass.equals(ImportedLanguageQualificationType.class)) {
-                mergeImportedLanguageQualificationTypes(institution, (List<com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType>) unmarshalled);
+                mergeImportedLanguageQualificationTypes(institution,
+                        (List<com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType>) unmarshalled);
             } else {
                 mergeImportedEntities(importedEntityClass, institution, (List<Object>) unmarshalled);
             }
@@ -171,16 +176,16 @@ public class ImportedEntityServiceHelper {
             });
 
             PrismImportedEntity importedEntityType = importedEntityFeed.getImportedEntityType();
-            
+
             URL fileUrl = new DefaultResourceLoader().getResource(importedEntityFeed.getLocation()).getURL();
             JAXBContext jaxbContext = JAXBContext.newInstance(importedEntityType.getJaxbClass());
-            
+
             SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             Schema schema = schemaFactory.newSchema(new DefaultResourceLoader().getResource(importedEntityType.getSchemaLocation()).getFile());
-            
+
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             unmarshaller.setSchema(schema);
-            
+
             Object unmarshaled = unmarshaller.unmarshal(fileUrl);
             return (List<Object>) PropertyUtils.getSimpleProperty(unmarshaled, importedEntityType.getJaxbPropertyName());
         } finally {
@@ -199,21 +204,23 @@ public class ImportedEntityServiceHelper {
             importedEntityService.mergeImportedProgram(institution, occurrencesInBatch, baseline);
         }
     }
-    
-    private void mergeImportedInstitutions(Institution institution, List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution> institutionDefinitions) throws Exception {
+
+    private void mergeImportedInstitutions(Institution institution,
+            List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution> institutionDefinitions) throws Exception {
         importedEntityService.disableAllEntities(ImportedInstitution.class, institution);
-        for (com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution transientImportedInstitution : institutionDefinitions) {  
+        for (com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution transientImportedInstitution : institutionDefinitions) {
             importedEntityService.mergeImportedInstitution(institution, transientImportedInstitution);
         }
     }
-    
-    private void mergeImportedLanguageQualificationTypes(Institution institution, List<LanguageQualificationType> languageQualificationTypeDefinitions) throws Exception {
+
+    private void mergeImportedLanguageQualificationTypes(Institution institution, List<LanguageQualificationType> languageQualificationTypeDefinitions)
+            throws Exception {
         importedEntityService.disableAllEntities(ImportedLanguageQualificationType.class, institution);
         for (LanguageQualificationType languageQualificationTypeDefinition : languageQualificationTypeDefinitions) {
             importedEntityService.mergeImportedLanguageQualificationType(institution, languageQualificationTypeDefinition);
-        } 
+        }
     }
-    
+
     private void mergeImportedEntities(Class<ImportedEntity> importedEntityClass, Institution institution, List<Object> entityDefinitions) throws Exception {
         importedEntityService.disableAllEntities(importedEntityClass, institution);
         for (Object entityDefinition : entityDefinitions) {
@@ -227,7 +234,7 @@ public class ImportedEntityServiceHelper {
             importedEntityService.mergeInstitutionDomicile(country);
         }
     }
-    
+
     private void mergeAdvertCategories(CSVReader reader) throws Exception {
         importedEntityService.disableAllAdvertCategories();
         String[] row;
@@ -252,7 +259,7 @@ public class ImportedEntityServiceHelper {
         }
         return null;
     }
-    
+
     private HashMultimap<String, ProgrammeOccurrence> getBatchedImportedPrograms(List<ProgrammeOccurrence> importedPrograms) {
         HashMultimap<String, ProgrammeOccurrence> batchedImports = HashMultimap.create();
         for (ProgrammeOccurrence occurrence : importedPrograms) {
@@ -260,5 +267,5 @@ public class ImportedEntityServiceHelper {
         }
         return batchedImports;
     }
-    
+
 }

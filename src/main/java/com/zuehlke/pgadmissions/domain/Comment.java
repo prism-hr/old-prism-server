@@ -870,7 +870,7 @@ public class Comment {
     public boolean isTransitionComment() {
         StateGroup previousStateGroup = state.getStateGroup();
         StateGroup currentStateGroup = transitionState.getStateGroup();
-        return action.isTransitionAction() && previousStateGroup.getId() == currentStateGroup.getId() || previousStateGroup.isRepeatable();
+        return action.isTransitionAction() && (previousStateGroup.getId() != currentStateGroup.getId() || previousStateGroup.isRepeatable());
     }
 
 }

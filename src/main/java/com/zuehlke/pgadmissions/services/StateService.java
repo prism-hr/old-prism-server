@@ -8,13 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
-import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
@@ -27,9 +25,11 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
+import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 
 @Service
 @Transactional
@@ -113,13 +113,9 @@ public class StateService {
     public List<State> getOrderedTransitionStates(State state, State... excludedTransitionStates) {
         return stateDAO.getOrderedTransitionStates(state, excludedTransitionStates);
     }
-
-    public List<StateTransitionPending> getStateTransitionsPending() {
-        List<StateTransitionPending> pendingStateTransitions = Lists.newArrayList();
-        for (Scope scope : scopeService.getScopesDescending()) {
-            pendingStateTransitions.addAll(stateDAO.getStateTransitionsPending(scope));
-        }
-        return pendingStateTransitions;
+    
+    public List<StateTransitionPendingDTO> getStateTransitionsPending(PrismScope scopeId) {
+        return stateDAO.getStateTransitionsPending(scopeId);
     }
 
     public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) throws Exception {
@@ -306,6 +302,21 @@ public class StateService {
     public StateTransition getProgramConfiguredOutcome(Resource resource, Comment comment) {
         // TODO implement
         return null;
+    }
+    
+    public <T extends Resource> void executeDeferredStateTransition(Class<T> resourceClass, Integer resourceId, PrismAction actionId) throws Exception {
+        Resource resource = resourceService.getById(resourceClass, resourceId);
+        Action action = actionService.getById(actionId);
+        Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action).withDeclinedResponse(false)
+                .withCreatedTimestamp(new DateTime());
+        executeStateTransition(resource, action, comment);
+        entityService.clear();
+    }
+
+    public void deleteStateTransitionPending(Integer stateTransitionPendingId) {
+        StateTransitionPending pending = entityService.getById(StateTransitionPending.class, stateTransitionPendingId);
+        entityService.delete(pending);
+        entityService.clear();
     }
 
 }

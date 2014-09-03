@@ -116,8 +116,10 @@ public class NotificationService {
         sendIndividualUpdateNotifications(resource, comment.getAction(), invoker, baseline);
     }
 
-    public void sendIndividualRequestReminders(Resource resource, LocalDate baseline) {
+    public <T extends Resource> void sendIndividualRequestReminders(Class<T> resourceClass, Integer resourceId, LocalDate baseline) {
         User invoker = systemService.getSystem().getUser();
+        Resource resource = resourceService.getById(resourceClass, resourceId);
+        
         List<UserNotificationDefinitionDTO> reminders = notificationDAO.getIndividualRequestReminders(resource, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
@@ -140,8 +142,10 @@ public class NotificationService {
         }
     }
 
-    public void sendSyndicatedRequestNotifications(Resource resource, LocalDate baseline) {
+    public <T extends Resource> void sendSyndicatedRequestNotifications(Class<T> resourceClass, Integer resourceId, LocalDate baseline) {
         User invoker = systemService.getSystem().getUser();
+        Resource resource = resourceService.getById(resourceClass, resourceId);
+        
         List<UserNotificationDefinitionDTO> definitions = notificationDAO.getSyndicatedRequestNotifications(resource, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
@@ -163,10 +167,12 @@ public class NotificationService {
         }
     }
 
-    public void sendSyndicatedUpdateNotifications(Resource resource, Comment transitionComment, LocalDate baseline) {
+    public <T extends Resource> void sendSyndicatedUpdateNotifications(Class<T> resourceClass, Integer resourceId, Comment transitionComment, LocalDate baseline) {
+        User invoker = transitionComment.getAuthor();
+        Resource resource = resourceService.getById(resourceClass, resourceId);
+        
         State state = transitionComment.getState();
         Action action = transitionComment.getAction();
-        User invoker = transitionComment.getAuthor();
 
         List<UserNotificationDefinitionDTO> updates = notificationDAO.getSyndicatedUpdateNotifications(resource, state, action, invoker, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();

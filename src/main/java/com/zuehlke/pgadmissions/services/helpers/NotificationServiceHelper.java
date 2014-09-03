@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.ResourceService;
@@ -37,10 +37,11 @@ public class NotificationServiceHelper {
     
     public void sendDeferredWorkflowNotifications() {
         LocalDate baseline = new LocalDate();
-        for (Scope scope : scopeService.getScopesAscending()) {
-            sendIndividualRequestReminders(scope, baseline);
-            sendSyndicatedRequestNotifications(scope, baseline);
-            sendSyndicatedUpdateNotifications(scope, baseline);
+        List<PrismScope> scopeIds = scopeService.getScopesDescending();
+        for (PrismScope scopeId : scopeIds) {
+            sendIndividualRequestReminders(scopeId, baseline);
+            sendSyndicatedRequestNotifications(scopeId, baseline);
+            sendSyndicatedUpdateNotifications(scopeId, baseline);
         }
     }
     
@@ -52,28 +53,31 @@ public class NotificationServiceHelper {
         }
     }
     
-    private void sendIndividualRequestReminders(Scope scope, LocalDate baseline) {
-        List<Resource> resources = resourceService.getResourcesRequiringAttention(scope.getId().getResourceClass());
-        for (Resource resource : resources) {
-            notificationService.sendIndividualRequestReminders(resource, baseline);
+    private void sendIndividualRequestReminders(PrismScope scopeId, LocalDate baseline) {
+        Class<? extends Resource> resourceClass = scopeId.getResourceClass();
+        List<Integer> resourceIds = resourceService.getResourcesRequiringAttention(resourceClass);
+        for (Integer resourceId : resourceIds) {
+            notificationService.sendIndividualRequestReminders(resourceClass, resourceId, baseline);
         }
     }
     
-    private void sendSyndicatedRequestNotifications(Scope scope, LocalDate baseline) {
-        List<Resource> resources = resourceService.getResourcesRequiringAttention(scope.getId().getResourceClass());
-        for (Resource resource : resources) {
-            notificationService.sendSyndicatedRequestNotifications(resource, baseline);
+    private void sendSyndicatedRequestNotifications(PrismScope scopeId, LocalDate baseline) {
+        Class<? extends Resource> resourceClass = scopeId.getResourceClass();
+        List<Integer> resourceIds = resourceService.getResourcesRequiringAttention(resourceClass);
+        for (Integer resourceId : resourceIds) {
+            notificationService.sendSyndicatedRequestNotifications(resourceClass, resourceId, baseline);
         }
     }
     
-    private void sendSyndicatedUpdateNotifications(Scope scope, LocalDate baseline) {
+    private void sendSyndicatedUpdateNotifications(PrismScope scopeId, LocalDate baseline) {
         DateTime rangeStart = baseline.minusDays(1).toDateTimeAtStartOfDay();
         DateTime rangeClose = rangeStart.plusDays(1).minusSeconds(1);
-        List<Resource> resources = resourceService.getRecentlyUpdatedResources(scope.getId().getResourceClass(), rangeStart, rangeClose);
-        for (Resource resource : resources) {
-            List<Comment> transitionComments = commentService.getTransitionComments(resource, rangeStart, rangeClose);
+        Class<? extends Resource> resourceClass = scopeId.getResourceClass(); 
+        List<Integer> resourceIds = resourceService.getRecentlyUpdatedResources(resourceClass, rangeStart, rangeClose);
+        for (Integer resourceId : resourceIds) {
+            List<Comment> transitionComments = commentService.getTransitionComments(resourceClass, resourceId, rangeStart, rangeClose);
             for (Comment transitionComment : transitionComments) {
-                notificationService.sendSyndicatedUpdateNotifications(resource, transitionComment, baseline);
+                notificationService.sendSyndicatedUpdateNotifications(resourceClass, resourceId, transitionComment, baseline);
             }
         }
     }

@@ -42,7 +42,8 @@ public class PrismMaintenanceService {
 
     @Scheduled(cron = "${maintenance.ongoing}")
     public void maintainSystem() {
-        executePendingStateTransitions();
+        executeResourceEscalations();
+        executeResourcePropagations();
         importReferenceData();
         exportUclApplications();
         updateProgamStudyOptions();
@@ -52,12 +53,21 @@ public class PrismMaintenanceService {
         deleteUnusedDocuments();
     }
 
-    private void executePendingStateTransitions() {
+    private void executeResourceEscalations() {
         try {
-            logger.info("Executing pending state transitions");
-            stateTransitionHelper.executePendingStateTransitions();
+            logger.info("Executing resource escalations");
+            stateTransitionHelper.executeEscalatedStateTransitions();
         } catch (Exception e) {
-            logger.info("Error executing pending state transitions", e);
+            logger.info("Error executing resource escalations", e);
+        }
+    }
+    
+    private void executeResourcePropagations() {
+        try {
+            logger.info("Executing resource propagations");
+            stateTransitionHelper.executePropagatedStateTransitions();
+        } catch (Exception e) {
+            logger.info("Error executing resource propagations", e);
         }
     }
     

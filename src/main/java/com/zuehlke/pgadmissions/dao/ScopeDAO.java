@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Scope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -19,15 +21,10 @@ public class ScopeDAO {
     
     @Autowired
     private SessionFactory sessionFactory;
-
-    public List<Scope> getScopesAscending() {
-        return (List<Scope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
-                .addOrder(Order.asc("precedence")) //
-                .list();
-    }
     
-    public List<Scope> getScopesDescending() {
-        return (List<Scope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
+    public List<PrismScope> getScopesDescending() {
+        return (List<PrismScope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
+                .setProjection(Projections.property("id")) //
                 .addOrder(Order.desc("precedence")) //
                 .list();
     }

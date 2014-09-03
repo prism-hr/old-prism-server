@@ -40,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
@@ -107,7 +108,8 @@ public class SystemInitialisationHelper {
     private WorkflowConfigurationHelper workflowConfigurationHelper;
 
     public void verifyScopeCreation() {
-        for (Scope scope : scopeService.getScopesDescending()) {
+        for (PrismScope scopeId : scopeService.getScopesDescending()) {
+            Scope scope = scopeService.getById(scopeId);
             assertEquals(scope.getId().getPrecedence(), scope.getPrecedence());
             assertEquals(scope.getId().getShortCode(), scope.getShortCode());
         }

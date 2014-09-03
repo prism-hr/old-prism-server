@@ -90,6 +90,7 @@ public class NotificationDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("user.userAccount")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
+                .add(Restrictions.isNull("userRole.lastNotifiedDate")) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }

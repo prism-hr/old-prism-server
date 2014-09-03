@@ -30,8 +30,8 @@ public class MailSender {
 
     private final Logger logger = LoggerFactory.getLogger(MailSender.class);
 
-    @Value("${email.prod}")
-    private boolean productionContext;
+    @Value("${context.environment}")
+    private String contextEnvironment;
 
     @Value("${email.address.from}")
     private String emailAddressFrom;
@@ -73,7 +73,7 @@ public class MailSender {
                     plainText = plainText + "\n\n" + emailBrokenLinkMessage;
 
                     // populate messageHelper
-                    if (productionContext) {
+                    if (contextEnvironment.equals("prod")) {
                         messageHelper.setTo(convertToInternetAddresses(message.getTo()));
                         messageHelper.setSubject(subject);
                     } else {

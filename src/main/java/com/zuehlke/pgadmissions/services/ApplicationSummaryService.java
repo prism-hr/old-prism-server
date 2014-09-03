@@ -106,7 +106,7 @@ public class ApplicationSummaryService {
 
     private void updatePreviousApplicationProcessing(Application application, StateGroup previousStateGroup, LocalDate baseline) {
         ApplicationProcessing persistentPreviousProcessing = applicationSummaryDAO.getProcessing(application, previousStateGroup);
-        Integer actualStateDuration = Days.daysBetween(baseline, persistentPreviousProcessing.getLastUpdatedDate()).getDays();
+        Integer actualStateDuration = Days.daysBetween(persistentPreviousProcessing.getLastUpdatedDate(), baseline).getDays();
 
         persistentPreviousProcessing.setDayDurationSum(persistentPreviousProcessing.getDayDurationSum() + actualStateDuration);
         persistentPreviousProcessing.setLastUpdatedDate(baseline);

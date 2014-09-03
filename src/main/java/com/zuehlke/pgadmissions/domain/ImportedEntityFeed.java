@@ -136,6 +136,10 @@ public class ImportedEntityFeed implements IUniqueEntity {
         return this;
     }
     
+    public boolean isAuthenticated() {
+        return !(username == null || password == null);
+    }
+    
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();

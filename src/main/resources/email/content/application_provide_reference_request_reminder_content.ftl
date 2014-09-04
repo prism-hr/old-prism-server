@@ -23,7 +23,7 @@
 				</h1>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
-						This is a gentle reminder that ${applicant.firstName?html} ${applicant.lastName?html} has nominated you as their referee for Application ${applicationCode}, postgraduate research study at
+						This is a gentle reminder that ${applicant} has nominated you as their referee for Application ${applicationCode}, postgraduate research study at
 						<a href="http://www.ucl.ac.uk/">University College London (UCL)</a> in ${projectOrProgramTitle}.
 					</font>
 				</p>
@@ -40,11 +40,7 @@
 				<p>
 					<!-- Button -->
 					<a style="text-decoration:none;"
-						<#if !referee.user.enabled>
-							href="${host}/pgadmissions/register?activationCode=${referee.user.activationCode!}&directToUrl=${"/referee/addReferences?applicationId=${applicationCode}"?url('ISO-8859-1')}">
-						<#else>
-							href="${host}/pgadmissions/referee/addReferences?applicationId=${applicationCode}&activationCode=${referee.user.activationCode!}">
-						</#if>
+                        href="${actionUrl}">
 						<img alt="Provide your reference" title="Provide your reference" width="147" height="33" src="${host}/pgadmissions/design/default/images/email/provide_reference.jpg"/>
 					</a>
 					<!-- Button -->

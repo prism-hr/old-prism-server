@@ -119,7 +119,7 @@ public class NotificationService {
     public <T extends Resource> void sendIndividualRequestReminders(Class<T> resourceClass, Integer resourceId, LocalDate baseline) {
         User invoker = systemService.getSystem().getUser();
         Resource resource = resourceService.getById(resourceClass, resourceId);
-        
+
         List<UserNotificationDefinitionDTO> reminders = notificationDAO.getIndividualRequestReminders(resource, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
@@ -145,7 +145,7 @@ public class NotificationService {
     public <T extends Resource> void sendSyndicatedRequestNotifications(Class<T> resourceClass, Integer resourceId, LocalDate baseline) {
         User invoker = systemService.getSystem().getUser();
         Resource resource = resourceService.getById(resourceClass, resourceId);
-        
+
         List<UserNotificationDefinitionDTO> definitions = notificationDAO.getSyndicatedRequestNotifications(resource, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
@@ -170,7 +170,7 @@ public class NotificationService {
     public <T extends Resource> void sendSyndicatedUpdateNotifications(Class<T> resourceClass, Integer resourceId, Comment transitionComment, LocalDate baseline) {
         User invoker = transitionComment.getAuthor();
         Resource resource = resourceService.getById(resourceClass, resourceId);
-        
+
         State state = transitionComment.getState();
         Action action = transitionComment.getAction();
 
@@ -245,7 +245,7 @@ public class NotificationService {
 
     private void sendIndividualUpdateNotifications(Resource resource, Action action, User invoker, LocalDate baseline) {
         State state = resource.getPreviousState();
-        
+
         List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateNotifications(resource, state, action, invoker, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
@@ -282,6 +282,7 @@ public class NotificationService {
         model.put("activationCode", user.getActivationCode());
 
         model.put("resourceId", resource.getId().toString());
+        model.put("actionUrl", "to be defined");
 
         System system = resource.getSystem();
         Institution institution = resource.getInstitution();

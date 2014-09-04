@@ -70,7 +70,7 @@ public class ActionService {
 
     public void validateUpdateAction(Comment comment) {
         Action action = comment.getAction();
-        
+
         User owner = comment.getUser();
         User delegateOwner = comment.getDelegateUser();
 
@@ -142,7 +142,7 @@ public class ActionService {
     public List<PrismAction> getEscalationActions() {
         return actionDAO.getEscalationActions();
     }
-    
+
     public List<PrismAction> getPropagatedActions(Integer stateTransitionPendingId) {
         return actionDAO.getPropagatedActions(stateTransitionPendingId);
     }

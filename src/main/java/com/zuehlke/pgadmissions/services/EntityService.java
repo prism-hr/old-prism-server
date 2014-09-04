@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -105,13 +106,13 @@ public class EntityService {
     public void evict(Object entity) {
         entityDAO.evict(entity);
     }
-    
+
     public <T> void deleteAll(Class<T> classReference) {
         entityDAO.deleteAll(classReference);
     }
-    
+
     public <T> Integer getNotNullValueCount(Class<T> entityClass, String property, Map<String, Object> filters) {
         return entityDAO.getNotNullValueCount(entityClass, property, filters);
     }
-    
+
 }

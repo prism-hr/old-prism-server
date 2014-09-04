@@ -177,7 +177,7 @@ public class ResourceResource {
         User user = userService.getCurrentUser();
         Object newResourceDTO = actionDTO.getOperativeResourceDTO();
         Action action = actionService.getById(actionDTO.getActionId());
-        
+
         try {
             ActionOutcomeDTO actionOutcome = resourceService.createResource(user, action, newResourceDTO, referrer);
             return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);

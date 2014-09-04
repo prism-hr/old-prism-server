@@ -23,7 +23,7 @@
 				</h1>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
-						We can confirm the arrangements for your interview of ${applicant.firstName?html} ${applicant.lastName?html} in connection with Application ${applicationCode} for ${application.programAndProjectTitle}.
+						We can confirm the arrangements for your interview of ${applicant} in connection with Application ${applicationCode} for ${programAndProjectTitle}.
 					</font>
 				</p>
 				<p>
@@ -47,11 +47,7 @@
 					</#if>
 					<!-- Button -->
 					<a style="text-decoration:none;"
-						<#if !interviewer.user.enabled>
-							href="${host}/pgadmissions/register?activationCode=${interviewer.user.activationCode}&directToUrl=${"/application?view=view&applicationId=${applicationCode}"?url('ISO-8859-1')}">
-						<#else>
-							href="${host}/pgadmissions/application?view=view&applicationId=${applicationCode}&activationCode=${interviewer.user.activationCode}">
-						</#if>
+                        href="${actionUrl}">
 						<img alt="View application" title="View application" width="131" height="33" src="${host}/pgadmissions/design/default/images/email/view_app.jpg" />
 					</a>
 				</p>

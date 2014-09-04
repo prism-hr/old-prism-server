@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
-import com.zuehlke.pgadmissions.rest.validation.validator.CommentDTOValidator;
+import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentDTOValidator;
 import com.zuehlke.pgadmissions.services.ProgramService;
 
 @RestController

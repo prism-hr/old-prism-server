@@ -125,7 +125,7 @@
     </mapping>
 
     <mapping>
-        <class-a>com.zuehlke.pgadmissions.dto.ActionOutcome</class-a>
+        <class-a>com.zuehlke.pgadmissions.dto.ActionOutcomeDTO</class-a>
         <class-b>com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation</class-b>
         <field>
             <a>transitionAction.id</a>

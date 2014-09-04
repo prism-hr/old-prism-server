@@ -90,7 +90,7 @@ public class StateService {
     public StateDuration getStateDuration(Resource resource) {
         return stateDAO.getStateDuration(resource, resource.getState());
     }
-    
+
     public StateDuration getStateDuration(Resource resource, State state) {
         return stateDAO.getStateDuration(resource, state);
     }
@@ -118,7 +118,7 @@ public class StateService {
     public List<State> getOrderedTransitionStates(State state, State... excludedTransitionStates) {
         return stateDAO.getOrderedTransitionStates(state, excludedTransitionStates);
     }
-    
+
     public List<StateTransitionPendingDTO> getStateTransitionsPending(PrismScope scopeId) {
         return stateDAO.getStateTransitionsPending(scopeId);
     }
@@ -132,18 +132,18 @@ public class StateService {
 
         commentService.save(comment);
         StateTransition stateTransition = getStateTransition(resource, action, comment);
-        
+
         if (stateTransition != null) {
             State oldState = resource.getState();
             State newState = stateTransition.getTransitionState();
-            
+
             resource.setState(newState);
             resource.setPreviousState(oldState);
             
             comment.setState(oldState == null ? newState : oldState);
             comment.setTransitionState(newState);
-            
-            resourceService.processResource(resource, comment); 
+
+            resourceService.processResource(resource, comment);
             roleService.executeRoleTransitions(stateTransition, comment);
 
             if (stateTransition.getPropagatedActions().size() > 0) {
@@ -293,7 +293,7 @@ public class StateService {
     public List<State> getActiveProjectStates() {
         return stateDAO.getActiveProjectStates();
     }
-    
+
     public StateTransition getInstitutionApprovedOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId = comment.getTransitionState().getId();
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
@@ -308,7 +308,7 @@ public class StateService {
         // TODO implement
         return null;
     }
-    
+
     public <T extends Resource> void executeDeferredStateTransition(Class<T> resourceClass, Integer resourceId, PrismAction actionId) throws Exception {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Action action = actionService.getById(actionId);

@@ -39,14 +39,14 @@
 
 				<p>
 					<!-- Button -->
-					<a style="text-decoration:none;" href="${host}/#/application/${applicationId}/view?user=${userEmail}" title="View/Update Application">
+					<a style="text-decoration:none;" href="${actionUrl}" title="View/Update Application">
 						<img alt="View or update your application" title="View or update your application" width="180" height="33" src="${host}/pgadmissions/design/default/images/email/view_update_app.jpg" />
 					</a>
 				</p>
-<p><font face="Arial, Helvetica, sans-serif" size="2">Note that we 
-do not contact Referees immediately after you submit your application.&nbsp; 
-References are typically requested once applications have been short-listed for academic review. </p><p>Should you require any assistance whilst your application is being considered, please see our <a title="UCL Prism Helpdesk" class="external-link-new-window" target="_blank" href="http://uclprism.freshdesk.com/">Helpdesk Pages</a> in the first instance.&nbsp;</p>	</font>					
-		<p>
+                <p><font face="Arial, Helvetica, sans-serif" size="2">Note that we
+                do not contact Referees immediately after you submit your application.&nbsp;
+                References are typically requested once applications have been short-listed for academic review. </p><p>Should you require any assistance whilst your application is being considered, please see our <a title="UCL Prism Helpdesk" class="external-link-new-window" target="_blank" href="http://uclprism.freshdesk.com/">Helpdesk Pages</a> in the first instance.&nbsp;</p>	</font>
+                <p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
 						Yours sincerely,
 						<br/>

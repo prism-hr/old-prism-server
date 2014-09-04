@@ -21,9 +21,9 @@ public abstract class AbstractValidator implements org.springframework.validatio
 
     public static final Integer ERROR_VALUE_FOR_DURATION_OF_STUDY = -1;
     public static final Integer ERROR_UNIT_FOR_DURATION_OF_STUDY = -2;
-    
+
     public static final String EMPTY_FIELD_ERROR_MESSAGE = "text.field.empty";
-    
+
     public static final String MAXIMUM_500_CHARACTERS = "maximum.500.characters";
 
     public static final String EMPTY_DROPDOWN_ERROR_MESSAGE = "dropdown.radio.select.none";
@@ -41,7 +41,7 @@ public abstract class AbstractValidator implements org.springframework.validatio
     public static final String INVALID_TIME = "time.field.invalid";
 
     public static final Pattern TIME_PATTERN = Pattern.compile("([01]?[0-9]|2[0-3]):[0-5][0-9]");
-    
+
     public static final String PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER = "prospectus.durationOfStudy.emptyOrNotInteger";
 
     @Autowired
@@ -90,10 +90,14 @@ public abstract class AbstractValidator implements org.springframework.validatio
             String message = constraintViolation.getMessage();
             errors.rejectValue(propertyPath, "", message);
         }
-        addExtraValidation(target, errors);
+        try {
+            addExtraValidation(target, errors);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
     }
 
-    protected abstract void addExtraValidation(final Object target, final Errors errors);
+    protected abstract void addExtraValidation(final Object target, final Errors errors) throws Exception;
 
     public Validator getValidator() {
         return validator;
@@ -102,7 +106,7 @@ public abstract class AbstractValidator implements org.springframework.validatio
     public void setValidator(Validator validator) {
         this.validator = validator;
     }
-    
+
     protected void validateStudyDuration(Errors errors, Integer studyDuration) {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyDuration", PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER);
         if (studyDuration != null && studyDuration.equals(ERROR_VALUE_FOR_DURATION_OF_STUDY)) {
@@ -112,7 +116,7 @@ public abstract class AbstractValidator implements org.springframework.validatio
             errors.rejectValue("studyDuration", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
     }
-    
+
     public boolean isValid(Object target) {
         if(target == null){
             return false;
@@ -121,5 +125,5 @@ public abstract class AbstractValidator implements org.springframework.validatio
         validate(target, errors);
         return !errors.hasErrors();
     }
-    
+
 }

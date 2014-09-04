@@ -84,7 +84,7 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
-    
+
     @ManyToOne
     @JoinColumn(name = "transition_state_id")
     private State transitionState;
@@ -685,7 +685,7 @@ public class Comment {
         this.content = content;
         return this;
     }
-    
+
     public Comment withState(State state) {
         this.state = state;
         return this;

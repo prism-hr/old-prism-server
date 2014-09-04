@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 
 @Repository
 public class EntityDAO {
-    
+
     @Autowired
     private SessionFactory sessionFactory;
 
@@ -101,7 +101,7 @@ public class EntityDAO {
     public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) throws DeduplicationException {
         IUniqueEntity.ResourceSignature signature = uniqueResource.getResourceSignature();
         Class<T> resourceClass = (Class<T>) uniqueResource.getClass();
-        
+
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceClass);
         Disjunction indices = Restrictions.disjunction();
 
@@ -110,7 +110,7 @@ public class EntityDAO {
             for (HashMap<String, Object> properties : propertyWrapper) {
                 Conjunction index = Restrictions.conjunction();
                 for (Map.Entry<String, Object> property : properties.entrySet()) {
-                    String key = property.getKey(); 
+                    String key = property.getKey();
                     if (key == null) {
                         throw new Error("Tried to deduplicate entity with null property key " + property.getKey());
                     }
@@ -163,21 +163,21 @@ public class EntityDAO {
     public void evict(Object entity) {
         sessionFactory.getCurrentSession().evict(entity);
     }
-    
+
     public <T> void deleteAll(Class<T> classReference) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete " + classReference.getSimpleName()) //
                 .executeUpdate();
     }
-    
+
     public <T> Integer getNotNullValueCount(Class<T> entityClass, String property, Map<String, Object> filters) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(entityClass) //
                 .setProjection(Projections.count("id"));
-        
+
         for (String filter : filters.keySet()) {
             criteria.add(Restrictions.eq(filter, filters.get(filter)));
         }
-                
+
         return (Integer) criteria.add(Restrictions.isNotNull(property)) //
                 .uniqueResult();
     }

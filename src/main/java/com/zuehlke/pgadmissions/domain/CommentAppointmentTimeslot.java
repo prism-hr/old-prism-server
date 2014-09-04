@@ -16,6 +16,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Objects;
+import org.joda.time.LocalDateTime;
 
 @Entity
 @Table(name = "COMMENT_APPOINTMENT_TIMESLOT", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "timeslot_datetime" }) })
@@ -29,10 +30,10 @@ public class CommentAppointmentTimeslot {
     @JoinColumn(name = "comment_id", insertable = false, updatable = false)
     private Comment comment;
 
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
     @Column(name = "timeslot_datetime", nullable = false)
-    private DateTime dateTime;
-    
+    private LocalDateTime dateTime;
+
     @OneToMany(mappedBy = "appointmentTimeslot")
     private Set<CommentAppointmentPreference> appointmentPreferences;
 
@@ -52,11 +53,11 @@ public class CommentAppointmentTimeslot {
         this.comment = comment;
     }
 
-    public DateTime getDateTime() {
+    public LocalDateTime getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(DateTime dateTime) {
+    public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
 
@@ -80,5 +81,5 @@ public class CommentAppointmentTimeslot {
         CommentAppointmentTimeslot other = (CommentAppointmentTimeslot) obj;
         return Objects.equal(comment, other.getComment()) && Objects.equal(dateTime, other.getDateTime());
     }
-    
+
 }

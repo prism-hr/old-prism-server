@@ -11,6 +11,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.FileRepresentation;
+import org.joda.time.LocalDateTime;
 
 public class CommentRepresentation {
 
@@ -48,7 +49,7 @@ public class CommentRepresentation {
 
     private Boolean desireToRecruit;
 
-    private DateTime interviewDateTime;
+    private LocalDateTime interviewDateTime;
 
     private TimeZone interviewTimeZone;
 
@@ -236,11 +237,11 @@ public class CommentRepresentation {
         this.desireToRecruit = desireToRecruit;
     }
 
-    public DateTime getInterviewDateTime() {
+    public LocalDateTime getInterviewDateTime() {
         return interviewDateTime;
     }
 
-    public void setInterviewDateTime(DateTime interviewDateTime) {
+    public void setInterviewDateTime(LocalDateTime interviewDateTime) {
         this.interviewDateTime = interviewDateTime;
     }
 

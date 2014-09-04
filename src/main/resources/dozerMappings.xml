@@ -14,6 +14,7 @@
         <copy-by-references>
             <copy-by-reference>java.util.TimeZone</copy-by-reference>
             <copy-by-reference>org.joda.time.LocalDate</copy-by-reference>
+            <copy-by-reference>org.joda.time.LocalDateTime</copy-by-reference>
             <copy-by-reference>org.joda.time.DateTime</copy-by-reference>
         </copy-by-references>
     </configuration>

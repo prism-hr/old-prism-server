@@ -1,16 +1,17 @@
 package com.zuehlke.pgadmissions.rest.representation.comment;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 public class AppointmentPreferenceRepresentation {
 
-    private DateTime dateTime;
+    private LocalDateTime dateTime;
 
-    public DateTime getDateTime() {
+    public LocalDateTime getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(DateTime dateTime) {
+    public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
 }

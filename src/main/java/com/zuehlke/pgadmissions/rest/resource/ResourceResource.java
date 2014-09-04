@@ -158,7 +158,9 @@ public class ResourceResource {
     @RequestMapping(method = RequestMethod.GET)
     public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestParam(value = "page") Integer loadIndex) {
-        List<ResourceConsoleListRowDTO> consoleListBlock = resourceService.getConsoleListBlock(resourceDescriptor.getType(), loadIndex);
+        // TODO new list location
+        // FIXME : reintegrate console list
+        List<ResourceConsoleListRowDTO> consoleListBlock = null;
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
         for (ResourceConsoleListRowDTO appDTO : consoleListBlock) {
             ResourceListRowRepresentation representation = dozerBeanMapper.map(appDTO, ResourceListRowRepresentation.class);

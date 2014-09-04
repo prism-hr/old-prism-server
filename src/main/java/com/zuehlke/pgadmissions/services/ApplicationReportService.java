@@ -23,9 +23,9 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.ReportFormat;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
 
-@Service("applicationsReportService")
+@Service
 @Transactional
-public class ApplicationsReportService {
+public class ApplicationReportService {
 
 //    private static final String N_R = "N/R";
 
@@ -140,7 +140,7 @@ public class ApplicationsReportService {
 
         data.addColumns(cd);
 
-        List<ResourceReportListRowDTO> reportRows = applicationsService.getReportList();
+        List<ResourceReportListRowDTO> reportRows = null;
 
         for (ResourceReportListRowDTO reportRow : reportRows) {
 

@@ -110,6 +110,9 @@ public class Institution extends ParentResource {
     @Column(name = "application_rating_count_percentile_95")
     private Integer applicationRatingCount95;
     
+    @Column(name = "application_rating_average")
+    private BigDecimal applicatingRatingAverage;
+    
     @Column(name = "application_rating_average_percentile_05")
     private BigDecimal applicationRatingAverage05;
     
@@ -293,6 +296,16 @@ public class Institution extends ParentResource {
     @Override
     public final void setApplicationRatingCount95(Integer applicationRatingCount95) {
         this.applicationRatingCount95 = applicationRatingCount95;
+    }
+    
+    @Override
+    public BigDecimal getApplicationRatingAverage() {
+        return applicatingRatingAverage;
+    }
+
+    @Override
+    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+        this.applicatingRatingAverage = applicationRatingAverage;
     }
     
     @Override

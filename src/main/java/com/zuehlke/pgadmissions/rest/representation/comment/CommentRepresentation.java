@@ -50,7 +50,7 @@ public class CommentRepresentation {
 
     private DateTime interviewDateTime;
 
-    private TimeZone interviewTimeZone = TimeZone.getTimeZone("GMT");
+    private TimeZone interviewTimeZone;
 
     private Integer interviewDuration;
 

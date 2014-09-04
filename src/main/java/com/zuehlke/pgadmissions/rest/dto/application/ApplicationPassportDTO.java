@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.rest.validation.annotation.DateFuture;
 import com.zuehlke.pgadmissions.rest.validation.annotation.DatePast;
+import org.joda.time.LocalDate;
 
 public class ApplicationPassportDTO {
 
@@ -18,11 +19,11 @@ public class ApplicationPassportDTO {
 
     @NotNull
     @DatePast
-    private DateTime issueDate;
+    private LocalDate issueDate;
 
     @NotNull
     @DateFuture
-    private DateTime expiryDate;
+    private LocalDate expiryDate;
 
     public String getNumber() {
         return number;
@@ -40,19 +41,19 @@ public class ApplicationPassportDTO {
         this.name = name;
     }
 
-    public DateTime getIssueDate() {
+    public LocalDate getIssueDate() {
         return issueDate;
     }
 
-    public void setIssueDate(DateTime issueDate) {
+    public void setIssueDate(LocalDate issueDate) {
         this.issueDate = issueDate;
     }
 
-    public DateTime getExpiryDate() {
+    public LocalDate getExpiryDate() {
         return expiryDate;
     }
 
-    public void setExpiryDate(DateTime expiryDate) {
+    public void setExpiryDate(LocalDate expiryDate) {
         this.expiryDate = expiryDate;
     }
 }

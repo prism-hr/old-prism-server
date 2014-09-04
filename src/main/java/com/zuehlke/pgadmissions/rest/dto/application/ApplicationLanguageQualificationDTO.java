@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.validation.annotation.DatePast;
+import org.joda.time.LocalDate;
 
 public class ApplicationLanguageQualificationDTO {
 
@@ -15,7 +16,7 @@ public class ApplicationLanguageQualificationDTO {
 
     @NotNull
     @DatePast
-    private DateTime examDate;
+    private LocalDate examDate;
 
     @NotEmpty
     private String overallScore;
@@ -43,11 +44,11 @@ public class ApplicationLanguageQualificationDTO {
         this.type = type;
     }
 
-    public DateTime getExamDate() {
+    public LocalDate getExamDate() {
         return examDate;
     }
 
-    public void setExamDate(DateTime examDate) {
+    public void setExamDate(LocalDate examDate) {
         this.examDate = examDate;
     }
 

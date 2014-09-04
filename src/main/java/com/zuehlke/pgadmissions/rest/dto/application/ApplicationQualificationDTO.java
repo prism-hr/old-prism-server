@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.validation.annotation.DateNotAfterDate;
 import com.zuehlke.pgadmissions.rest.validation.annotation.DatePast;
+import org.joda.time.LocalDate;
 
 @DateNotAfterDate(startDate = "startDate", endDate = "awardDate")
 public class ApplicationQualificationDTO {
@@ -21,10 +22,10 @@ public class ApplicationQualificationDTO {
 
     @DatePast
     @NotNull
-    private DateTime startDate;
+    private LocalDate startDate;
 
     @NotNull
-    private DateTime awardDate;
+    private LocalDate awardDate;
 
     @NotEmpty
     private String language;
@@ -68,19 +69,19 @@ public class ApplicationQualificationDTO {
         this.title = title;
     }
 
-    public DateTime getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(DateTime startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public DateTime getAwardDate() {
+    public LocalDate getAwardDate() {
         return awardDate;
     }
 
-    public void setAwardDate(DateTime awardDate) {
+    public void setAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
     }
 

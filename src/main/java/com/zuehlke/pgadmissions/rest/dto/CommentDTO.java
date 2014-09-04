@@ -9,6 +9,7 @@ import org.joda.time.DateTime;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import org.joda.time.LocalDate;
 
 public class CommentDTO {
 
@@ -64,7 +65,7 @@ public class CommentDTO {
 
     private String positionDescription;
 
-    private DateTime positionProvisionalStartDate;
+    private LocalDate positionProvisionalStartDate;
 
     private String appointmentConditions;
 
@@ -284,11 +285,11 @@ public class CommentDTO {
         this.positionDescription = positionDescription;
     }
 
-    public DateTime getPositionProvisionalStartDate() {
+    public LocalDate getPositionProvisionalStartDate() {
         return positionProvisionalStartDate;
     }
 
-    public void setPositionProvisionalStartDate(DateTime positionProvisionalStartDate) {
+    public void setPositionProvisionalStartDate(LocalDate positionProvisionalStartDate) {
         this.positionProvisionalStartDate = positionProvisionalStartDate;
     }
 

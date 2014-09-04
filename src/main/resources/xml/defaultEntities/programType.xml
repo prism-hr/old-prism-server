@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<programTypes>
+  <programType>
+  	<code>UNDERGRADUATE_STUDY</code>
+    <name>Undergraduate Study</name>
+  </programType>
+  <programType>
+    <code>POSTGRADUATE_STUDY</code>
+    <name>Postgraduate Study</name>
+  </programType>
+  <programType>
+    <code>POSTGRADUATE_RESEARCH</code>
+    <name>Postgraduate Research</name>
+  </programType>
+    <programType>
+  	<code>INTERNSHIP</code>
+    <name>Internship</name>
+  </programType>
+  <programType>
+    <code>SECONDMENT</code>
+    <name>Secondment</name>
+  </programType>
+  <programType>
+    <code>EMPLOYMENT</code>
+    <name>Employment</name>
+  </programType>
+  <programType>
+    <code>CONTINUING_PROFESSIONAL_DEVELOPMENT</code>
+    <name>Continuing Professional Development</name>
+  </programType>
+  <programType>
+    <code>UNCLASSIFIED</code>
+    <name>Other</name>
+  </programType>
+</programTypes>

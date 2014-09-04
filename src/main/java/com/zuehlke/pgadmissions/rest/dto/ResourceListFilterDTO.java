@@ -7,18 +7,22 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
+import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 public class ResourceListFilterDTO {
 
     private Boolean urgentOnly;
     
-    private Boolean updatedOnly;
-    
     private FilterMatchMode matchMode;
+    
+    private List<StringFilterDTO> user;
+    
+    private List<StringFilterDTO> code;
     
     private List<StringFilterDTO> institution;
 
@@ -26,11 +30,13 @@ public class ResourceListFilterDTO {
     
     private List<StringFilterDTO> project;
     
-    private List<DateFilterDTO> createdDate;
+    private List<DateFilterDTO> createdTimestamp;
     
-    private List<DateFilterDTO> submittedDate;
+    private List<DateFilterDTO> submittedTimetamp;
     
-    private List<DateFilterDTO> updatedDate;
+    private List<DateFilterDTO> updatedTimestamp;
+    
+    private List<DateFilterDTO> dueDate;
     
     private List<DateFilterDTO> closingDate;
     
@@ -41,15 +47,25 @@ public class ResourceListFilterDTO {
     private List<StringFilterDTO> supervisor;
     
     private List<RatingFilterDTO> rating;
+    
+    private FilterSortOrder sortOrder;
 
     public final Boolean isUrgentOnly() {
         return urgentOnly;
     }
-    
+
     public final FilterMatchMode getMatchMode() {
         return matchMode;
     }
     
+    public final List<StringFilterDTO> getUser() {
+        return user;
+    }
+
+    public final List<StringFilterDTO> getCode() {
+        return code;
+    }
+
     public final List<StringFilterDTO> getInstitution() {
         return institution;
     }
@@ -62,16 +78,20 @@ public class ResourceListFilterDTO {
         return project;
     }
     
-    public final List<DateFilterDTO> getCreatedDate() {
-        return createdDate;
+    public final List<DateFilterDTO> getCreatedTimestamp() {
+        return createdTimestamp;
     }
 
-    public final List<DateFilterDTO> getSubmittedDate() {
-        return submittedDate;
+    public final List<DateFilterDTO> getSubmittedTimestamp() {
+        return submittedTimetamp;
     }
 
-    public final List<DateFilterDTO> getUpdatedDate() {
-        return updatedDate;
+    public final List<DateFilterDTO> getUpdatedTimestamp() {
+        return updatedTimestamp;
+    }
+    
+    public final List<DateFilterDTO> getDueDate() {
+        return dueDate;
     }
 
     public final List<DateFilterDTO> getClosingDate() {
@@ -94,19 +114,28 @@ public class ResourceListFilterDTO {
         return rating;
     }
 
-    public class StringFilterDTO {
-        
-        private Boolean containing;
+    public final FilterSortOrder getSortOrder() {
+        return sortOrder;
+    }
+
+    public HashMap<String, Object> getFilters() {
+        HashMap<String, Object> filters = Maps.newHashMap();
+        for (Field field : this.getClass().getDeclaredFields()) {
+            String fieldName = field.getName();
+            if (Arrays.asList("urgentOnly", "matchMode", "sortOrder").contains(fieldName)) {
+                try {
+                    filters.put(fieldName, field.get(this));
+                } catch (Exception e) {
+                    throw new Error(e);
+                }
+            }
+        }
+        return filters;
+    }
+    
+    public static class StringFilterDTO extends ObjectFilterDTO {
         
         private String filter;
-
-        public final Boolean getContaining() {
-            return containing;
-        }
-
-        public final void setContaining(Boolean containing) {
-            this.containing = containing;
-        }
 
         public final String getFilter() {
             return filter;
@@ -118,31 +147,53 @@ public class ResourceListFilterDTO {
 
     }
     
-    public static class DateFilterDTO {
+    public static class StateFilterDTO extends ObjectFilterDTO {
         
-        private DateTime rangeStart;
-        
-        private DateTime rangeClose;
+        private PrismState filter;
 
-        public final DateTime getRangeStart() {
+        public final PrismState getFilter() {
+            return filter;
+        }
+
+        public final void setFilter(PrismState filter) {
+            this.filter = filter;
+        }
+
+    }
+    
+    public static class DateFilterDTO extends ObjectFilterDTO {
+        
+        private LocalDate rangeStart;
+        
+        private LocalDate rangeClose;
+
+        public final LocalDate getRangeStart() {
             return rangeStart;
         }
 
-        public final void setRangeStart(DateTime rangeStart) {
+        public final void setRangeStart(LocalDate rangeStart) {
             this.rangeStart = rangeStart;
         }
 
-        public final DateTime getRangeClose() {
+        public final LocalDate getRangeClose() {
             return rangeClose;
         }
 
-        public final void setRangeClose(DateTime rangeClose) {
+        public final void setRangeClose(LocalDate rangeClose) {
             this.rangeClose = rangeClose;
+        }
+        
+        public DateTime getRangeStartAsDateTime() {
+            return rangeStart.toDateTimeAtStartOfDay();
+        }
+        
+        public DateTime getRangeCloseAsDateTime() {
+            return rangeClose.plusDays(1).toDateTimeAtStartOfDay().minusSeconds(1);
         }
         
     }
     
-    public static class RatingFilterDTO {
+    public static class RatingFilterDTO extends ObjectFilterDTO {
         
         private BigDecimal rangeStart;
         
@@ -165,20 +216,19 @@ public class ResourceListFilterDTO {
         }
         
     }
-    
-    public HashMap<String, Object> getFilters() {
-        HashMap<String, Object> filters = Maps.newHashMap();
-        for (Field field : this.getClass().getDeclaredFields()) {
-            String fieldName = field.getName();
-            if (Arrays.asList("urgentOnly", "updatedOnly", "matchMode").contains(fieldName)) {
-                try {
-                    filters.put(fieldName, field.get(this));
-                } catch (Exception e) {
-                    throw new Error(e);
-                }
-            }
-        }
-        return filters;
-    }
 
+    public static abstract class ObjectFilterDTO {
+        
+        private Boolean negated;
+
+        public final Boolean isNegated() {
+            return negated;
+        }
+
+        public final void setNegated(Boolean negated) {
+            this.negated = negated;
+        }
+        
+    }
+    
 }

@@ -1,49 +1,46 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang3.text.WordUtils;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
-import org.hibernate.type.BooleanType;
-import org.hibernate.type.DateType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.StringType;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
+import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.DateFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.RatingFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.StateFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.StringFilterDTO;
+import com.zuehlke.pgadmissions.services.helpers.FilterHelper;
 import com.zuehlke.pgadmissions.utils.FreeMarkerHelper;
 
 @Repository
 @SuppressWarnings("unchecked")
 public class ResourceDAO {
-
-    @Value("${resource.list.sql.location}")
-    private String resourceListSqlLocation;
-
-    @Value("${resource.list.years.to.retrieve}")
-    private Integer resourceListYearsToRetrieve;
 
     @Value("${resource.list.records.to.retrieve}")
     private Integer resourceListRecordsToRetrieve;
@@ -53,39 +50,6 @@ public class ResourceDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
-
-    public <T extends Resource> List<ResourceConsoleListRowDTO> getConsoleListBlock(User user, Class<T> resourceClass, List<PrismScope> parentScopes,
-            int loadIndex) {
-        HashMap<String, Object> model = Maps.newHashMap();
-        model.put("user", user);
-        model.put("queryScope", PrismScope.getResourceScope(resourceClass).getLowerCaseName());
-        model.put("parentScopes", parentScopes);
-        model.put("queryRangeValue", resourceListYearsToRetrieve);
-        model.put("queryRangeUnit", DurationUnit.YEAR.name());
-        model.put("queryRangeValue", resourceListYearsToRetrieve);
-        model.put("queryRangeUnit", DurationUnit.YEAR.name());
-        model.put("rowIndex", loadIndex * resourceListRecordsToRetrieve);
-        model.put("rowCount", resourceListRecordsToRetrieve);
-
-        return (List<ResourceConsoleListRowDTO>) sessionFactory.getCurrentSession() //
-                .createSQLQuery(freeMarkerHelper.buildString(resourceListSqlLocation, model)) //
-                .addScalar("id", IntegerType.INSTANCE) //
-                .addScalar("code", StringType.INSTANCE) //
-                .addScalar("raisesUrgentFlag", BooleanType.INSTANCE) //
-                .addScalar("state", StringType.INSTANCE) //
-                .addScalar("creatorFirstName", StringType.INSTANCE) //
-                .addScalar("creatorFirstName2", StringType.INSTANCE) //
-                .addScalar("creatorFirstName3", StringType.INSTANCE) //
-                .addScalar("creatorLastName", StringType.INSTANCE) //
-                .addScalar("institutionTitle", StringType.INSTANCE) //
-                .addScalar("programTitle", StringType.INSTANCE) //
-                .addScalar("projectTitle", StringType.INSTANCE) //
-                .addScalar("displayTimestamp", DateType.INSTANCE) //
-                .addScalar("actions", StringType.INSTANCE) //
-                .addScalar("averageRating", BigDecimalType.INSTANCE) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowDTO.class)) //
-                .list();
-    }
 
     public <T extends Resource> List<Integer> getResourcesToEscalate(Class<T> resourceClass, PrismAction actionId, LocalDate baseline) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
@@ -135,9 +99,13 @@ public class ResourceDAO {
                 .list();
     }
 
-    public <T extends Resource> DetachedCriteria getResourceListFilter(User user, Class<T> resourceClass, List<PrismScope> parentScopeIds,
+    public <T extends Resource> List<Integer> getResourceListFilter(User user, Class<T> resourceClass, List<PrismScope> parentScopeIds,
             ResourceListFilterDTO filterDTO, String lastSequenceIdentifier) {
-        DetachedCriteria criteria = DetachedCriteria.forClass(resourceClass) //
+        if (resourceClass.equals(System.class)) {
+            throw new Error("System is not a listable resource type");
+        }
+        
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceClass) //
                 .setProjection(Projections.groupProperty("id")) //
                 .add(Restrictions.disjunction() //
                         .add(Subqueries.propertyIn("id", //
@@ -184,11 +152,105 @@ public class ResourceDAO {
         }
         
         HashMap<String, Object> filters = filterDTO.getFilters();
-        for (String type : filters.keySet()) {
-            Object filter = filters.get(type);
+        for (String filterProperty : filters.keySet()) {
+            Object filter = filters.get(filterProperty);
+            
+            if (filterProperty.equals("creator")) {
+                for (StringFilterDTO filterTerm : (List<StringFilterDTO>) filter) {
+                    FilterHelper.appendUserFilterCriterion(filterConditions, filterProperty, filterTerm);
+                }
+            } else if (filterProperty.equals("code")) {
+                for (StringFilterDTO filterTerm : (List<StringFilterDTO>) filters) {
+                    FilterHelper.appendStringFilterCriterion(filterConditions, filterProperty, filterTerm);
+                }
+            } else if (Arrays.asList("institution", "program", "project").contains(filterProperty)) {
+                for (StringFilterDTO filterTerm : (List<StringFilterDTO>) filter) {
+                    FilterHelper.appendParentResourceFilterCriterion(filterConditions, filterProperty, filterTerm);   
+                }
+            } else if (Arrays.asList("createdTimestamp", "updatedTimestamp").contains(filterProperty)) {
+                for (DateFilterDTO filterRange : (List<DateFilterDTO>) filter) {
+                    FilterHelper.appendDateTimeFilterCriterion(filterConditions, filterProperty, filterRange);
+                }
+            } else if (filterProperty.equals("submittedTimestamp")) {
+                if (resourceClass.equals(Application.class)) {
+                    for (DateFilterDTO filterRange : (List<DateFilterDTO>) filter) {
+                        FilterHelper.appendDateTimeFilterCriterion(filterConditions, filterProperty, filterRange);
+                    }
+                } else {
+                    throwResourceFilterListMissingPropertyError(resourceClass, filterProperty);
+                }
+            } else if (filterProperty.equals("dueDate")) {
+                for (DateFilterDTO filterRange : (List<DateFilterDTO>) filters) {
+                    FilterHelper.appendDateFilterCriterion(filterConditions, filterProperty, filterRange);
+                }
+            } else if (filterProperty.equals("closingDate")) {
+                if (resourceClass.equals(Application.class)) {
+                    for (DateFilterDTO filterRange : (List<DateFilterDTO>) filters) {
+                        Junction closingDateRestriction = Restrictions.disjunction();
+                        FilterHelper.appendDateFilterCriterion(closingDateRestriction, filterProperty, filterRange);
+                        FilterHelper.appendDateFilterCriterion(closingDateRestriction, "previous" + WordUtils.capitalize(filterProperty), filterRange);
+                        filterConditions.add(closingDateRestriction);
+                    }
+                } else {
+                    throwResourceFilterListMissingPropertyError(resourceClass, filterProperty);
+                }
+            } else if (filterProperty.equals("state")) {
+                for (StateFilterDTO filterTerm : (List<StateFilterDTO>) filters) {
+                    FilterHelper.appendStateFilterCriterion(filterConditions, filterProperty, filterTerm);
+                }
+            } else if (filterProperty.equals("referrer")) {
+                for (StringFilterDTO filterTerm : (List<StringFilterDTO>) filters) {
+                    FilterHelper.appendStringFilterCriterion(filterConditions, filterProperty, filterTerm);
+                }
+            } else if (filterProperty.equals("supervisor")) {
+                if (resourceClass.equals(Application.class)) {
+                    for (StringFilterDTO filterTerm : (List<StringFilterDTO>) filters) {
+                        FilterHelper.appendUserFilterCriterion(filterConditions, "project.user.id", filterTerm);
+                    }
+                } else {
+                    throwResourceFilterListMissingPropertyError(resourceClass, filterProperty);
+                }
+            } else if (filterProperty.equals("rating")) {
+                String fieldProperty = resourceClass.equals(Application.class) ? "ratingAverage" : "applicationRatingAverage";
+                for (RatingFilterDTO filterRange : (List<RatingFilterDTO>) filters) {
+                    FilterHelper.appendRatingFilterCriterion(filterConditions, fieldProperty, filterRange);
+                }
+            }
         }
         
-        return criteria.add(filterConditions);
+        criteria.add(filterConditions);
+        
+        FilterSortOrder sortOrder = filterDTO.getSortOrder();
+        addPagingCondition(criteria, sortOrder, lastSequenceIdentifier);   
+        addOrderByExpression(criteria, sortOrder);
+        
+        return criteria.setMaxResults(resourceListRecordsToRetrieve).list();
     }
 
+    private void addPagingCondition(Criteria criteria, FilterSortOrder sortOrder, String lastSequenceIdentifier) {
+        if (lastSequenceIdentifier != null) {
+            Criterion pagingCondition;
+            if (sortOrder == FilterSortOrder.DESCENDING) {
+                pagingCondition = Restrictions.lt("sequenceIdentifier", lastSequenceIdentifier);
+            } else {
+                pagingCondition = Restrictions.gt("sequenceIdentifier", lastSequenceIdentifier);
+            }
+            criteria.add(pagingCondition);
+        }
+    }
+    
+    private void addOrderByExpression(Criteria criteria, FilterSortOrder sortOrder) {
+        Order sortOrderExpression;
+        if (sortOrder == FilterSortOrder.DESCENDING) {
+            sortOrderExpression = Order.desc("sequenceIdentifier");
+        } else {
+            sortOrderExpression = Order.asc("sequenceIdentifier");
+        }
+        criteria.addOrder(sortOrderExpression);
+    }
+
+    private <T extends Resource> void throwResourceFilterListMissingPropertyError(Class<T> resourceClass, String type) {
+        throw new Error(resourceClass.getSimpleName() + " does not have a " + type + " property");
+    }
+    
 }

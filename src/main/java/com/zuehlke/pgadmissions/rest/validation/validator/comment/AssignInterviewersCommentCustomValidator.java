@@ -54,8 +54,6 @@ public class AssignInterviewersCommentCustomValidator implements Validator {
 
         if(!takenPlace) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "interviewerInstructions", "notEmpty");
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "interviewerInstructions", "notEmpty");
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "interviewLocation", "notEmpty");
         }
     }
 }

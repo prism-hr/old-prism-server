@@ -69,7 +69,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
 public class ApplicationExportBuilder {
 
     private final ObjectFactory objectFactory = new ObjectFactory();
-    
+
     @Value("${xml.export.source}")
     private String exportSource;
 
@@ -146,13 +146,13 @@ public class ApplicationExportBuilder {
 
     private NameTp buildFullName(Application application) {
         NameTp nameTp = objectFactory.createNameTp();
-        ApplicationPersonalDetail personalDetails = application.getPersonalDetail();
+        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         User applicant = application.getUser();
         nameTp.setSurname(applicant.getLastName());
         nameTp.setForename1(applicant.getFirstName());
         nameTp.setForename2(applicant.getFirstName2());
         nameTp.setForename3(applicant.getFirstName3());
-        nameTp.setTitle(personalDetails.getTitle().getName());
+        nameTp.setTitle(personalDetail.getTitle().getName());
         return nameTp;
     }
 
@@ -162,13 +162,13 @@ public class ApplicationExportBuilder {
     }
 
     private XMLGregorianCalendar buildDateOfBirth(Application application) {
-        ApplicationPersonalDetail personalDetails = application.getPersonalDetail();
-        return applicationExportBuilderHelper.buildXmlDate(personalDetails.getDateOfBirth());
+        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
+        return applicationExportBuilderHelper.buildXmlDate(personalDetail.getDateOfBirth());
     }
 
     private NationalityTp buildFirstNationality(Application application) {
-        ApplicationPersonalDetail personalDetails = application.getPersonalDetail();
-        Language firstNationality = personalDetails.getFirstNationality();
+        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
+        Language firstNationality = personalDetail.getFirstNationality();
         NationalityTp nationalityTp = objectFactory.createNationalityTp();
         nationalityTp.setCode(firstNationality.getCode());
         nationalityTp.setName(firstNationality.getName());
@@ -189,21 +189,21 @@ public class ApplicationExportBuilder {
     }
 
     private CountryTp buildCountry(Application application) {
-        ApplicationPersonalDetail personalDetails = application.getPersonalDetail();
+        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         CountryTp countryTp = objectFactory.createCountryTp();
-        countryTp.setCode(personalDetails.getCountry().getCode());
-        countryTp.setName(personalDetails.getCountry().getName());
+        countryTp.setCode(personalDetail.getCountry().getCode());
+        countryTp.setName(personalDetail.getCountry().getName());
         return countryTp;
     }
 
     private PassportTp buildPassport(Application application) {
-        ApplicationPersonalDetail personalDetails = application.getPersonalDetail();
-        if (personalDetails.getPassportAvailable()) {
+        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
+        if (personalDetail.getPassportAvailable()) {
             PassportTp passportTp = objectFactory.createPassportTp();
-            passportTp.setName(personalDetails.getPassport().getName());
-            passportTp.setNumber(personalDetails.getPassport().getNumber());
-            passportTp.setExpiryDate(applicationExportBuilderHelper.buildXmlDate(personalDetails.getPassport().getExpiryDate()));
-            passportTp.setIssueDate(applicationExportBuilderHelper.buildXmlDate(personalDetails.getPassport().getIssueDate()));
+            passportTp.setName(personalDetail.getPassport().getName());
+            passportTp.setNumber(personalDetail.getPassport().getNumber());
+            passportTp.setExpiryDate(applicationExportBuilderHelper.buildXmlDate(personalDetail.getPassport().getExpiryDate()));
+            passportTp.setIssueDate(applicationExportBuilderHelper.buildXmlDate(personalDetail.getPassport().getIssueDate()));
             return passportTp;
         } else {
             PassportTp passportTp = objectFactory.createPassportTp();
@@ -216,23 +216,23 @@ public class ApplicationExportBuilder {
     }
 
     private DisabilityTp buildDisability(Application application) {
-        ApplicationPersonalDetail personalDetails = application.getPersonalDetail();
+        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         DisabilityTp disabilityTp = objectFactory.createDisabilityTp();
-        disabilityTp.setCode(personalDetails.getDisability().getCode());
-        disabilityTp.setName(personalDetails.getDisability().getName());
+        disabilityTp.setCode(personalDetail.getDisability().getCode());
+        disabilityTp.setName(personalDetail.getDisability().getName());
         return disabilityTp;
     }
 
     private EthnicityTp buildEthnicity(Application application) {
-        ApplicationPersonalDetail personalDetails = application.getPersonalDetail();
+        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         EthnicityTp ethnicityTp = objectFactory.createEthnicityTp();
-        ethnicityTp.setCode(personalDetails.getEthnicity().getCode());
-        ethnicityTp.setName(personalDetails.getEthnicity().getName());
+        ethnicityTp.setCode(personalDetail.getEthnicity().getCode());
+        ethnicityTp.setName(personalDetail.getEthnicity().getName());
         return ethnicityTp;
     }
 
     private ContactDtlsTp buildHomeAddress(Application application) {
-        ApplicationPersonalDetail personalDetails = application.getPersonalDetail();
+        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         ContactDtlsTp contactDtlsTp = objectFactory.createContactDtlsTp();
         AddressTp addressTp = objectFactory.createAddressTp();
         Address currentAddress = application.getAddress().getCurrentAddress();
@@ -247,7 +247,7 @@ public class ApplicationExportBuilder {
         addressTp.setCountry(currentAddress.getDomicile().getCode());
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(application.getUser().getEmail());
-        contactDtlsTp.setLandline(applicationExportBuilderHelper.cleanPhoneNumber(personalDetails.getPhoneNumber()));
+        contactDtlsTp.setLandline(applicationExportBuilderHelper.cleanPhoneNumber(personalDetail.getPhoneNumber()));
         return contactDtlsTp;
     }
 
@@ -485,11 +485,11 @@ public class ApplicationExportBuilder {
     }
 
     private EnglishLanguageQualificationDetailsTp buildEnglishLanguageQualification(Application application) {
-        ApplicationPersonalDetail personalDetails = application.getPersonalDetail();
+        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         EnglishLanguageQualificationDetailsTp englishLanguageQualificationDetailsTp = objectFactory.createEnglishLanguageQualificationDetailsTp();
 
-        if (personalDetails.getLanguageQualificationAvailable()) {
-            ApplicationLanguageQualification languageQualification = personalDetails.getLanguageQualification();
+        if (personalDetail.getLanguageQualificationAvailable()) {
+            ApplicationLanguageQualification languageQualification = personalDetail.getLanguageQualification();
             EnglishLanguageTp englishLanguageTp = objectFactory.createEnglishLanguageTp();
             englishLanguageTp.setDateTaken(applicationExportBuilderHelper.buildXmlDate(languageQualification.getExamDate()));
 

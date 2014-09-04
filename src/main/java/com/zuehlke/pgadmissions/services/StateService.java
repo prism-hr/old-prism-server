@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,7 +141,7 @@ public class StateService {
 
             resource.setState(newState);
             resource.setPreviousState(oldState);
-            
+
             comment.setState(oldState == null ? newState : oldState);
             comment.setTransitionState(newState);
 
@@ -213,9 +215,10 @@ public class StateService {
 
     public StateTransition getApplicationInterviewScheduledOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId;
-        DateTime interviewDateTime = comment.getInterviewDateTime();
+        LocalDateTime interviewDateTime = comment.getInterviewDateTime();
         if (interviewDateTime != null) {
-            if (new DateTime().isAfter(interviewDateTime)) {
+            DateTime interviewZonedDateTime = interviewDateTime.toDateTime(DateTimeZone.forTimeZone(comment.getInterviewTimeZone()));
+            if (new DateTime().isAfter(interviewZonedDateTime)) {
                 transitionStateId = PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
             } else {
                 transitionStateId = PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
@@ -312,13 +315,13 @@ public class StateService {
     public <T extends Resource> void executeDeferredStateTransition(Class<T> resourceClass, Integer resourceId, PrismAction actionId) throws Exception {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Action action = actionService.getById(actionId);
-        
+
         logger.info("Calling " + action.getId() + " on " + resource.getCode());
-        
+
         Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action).withDeclinedResponse(false)
                 .withCreatedTimestamp(new DateTime());
         executeStateTransition(resource, action, comment);
-        
+
         entityService.flush();
         entityService.evict(resource);
         entityService.evict(action);
@@ -327,7 +330,7 @@ public class StateService {
 
     public void deleteStateTransitionPending(Integer stateTransitionPendingId) {
         StateTransitionPending pending = entityService.getById(StateTransitionPending.class, stateTransitionPendingId);
-        
+
         entityService.delete(pending);
         entityService.flush();
         entityService.evict(pending);

@@ -31,7 +31,7 @@ public class AssignInterviewersCommentCustomValidator implements Validator {
                 errors.rejectValue("appointmentTimeslots", "min", new Object[]{0}, null);
             }
         } else {
-            DateTime interviewDateTime = new DateTime(comment.getInterviewDateTime().getMillis(), DateTimeZone.forTimeZone(comment.getInterviewTimeZone()));
+            DateTime interviewDateTime = comment.getInterviewDateTime().toDateTime(DateTimeZone.forTimeZone(comment.getInterviewTimeZone()));
             if (interviewDateTime.isBeforeNow()) {
                 // taken place
                 takenPlace = true;
@@ -54,8 +54,6 @@ public class AssignInterviewersCommentCustomValidator implements Validator {
 
         if(!takenPlace) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "interviewerInstructions", "notEmpty");
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "interviewerInstructions", "notEmpty");
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "interviewLocation", "notEmpty");
         }
     }
 }

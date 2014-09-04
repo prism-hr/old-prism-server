@@ -1,12 +1,13 @@
 package com.zuehlke.pgadmissions.rest.representation.comment;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 public class AppointmentTimeslotRepresentation {
-    
+
     public Integer id;
-    
-    public DateTime dateTime;
+
+    public LocalDateTime dateTime;
 
     public final Integer getId() {
         return id;
@@ -16,22 +17,22 @@ public class AppointmentTimeslotRepresentation {
         this.id = id;
     }
 
-    public final DateTime getDateTime() {
+    public final LocalDateTime getDateTime() {
         return dateTime;
     }
 
-    public final void setDateTime(DateTime dateTime) {
+    public final void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
-    
+
     public AppointmentTimeslotRepresentation withId(Integer id) {
         this.id = id;
         return this;
     }
-    
-    public AppointmentTimeslotRepresentation withDateTime(DateTime dateTime) {
+
+    public AppointmentTimeslotRepresentation withDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
         return this;
     }
-    
+
 }

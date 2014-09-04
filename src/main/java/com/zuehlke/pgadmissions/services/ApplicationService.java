@@ -154,7 +154,7 @@ public class ApplicationService {
         if (studyOption == null) {
             return null;
         }
-        
+
         LocalDate baseline = new LocalDate();
         LocalDate studyOptionStart = studyOption.getApplicationStartDate();
 
@@ -169,7 +169,7 @@ public class ApplicationService {
         if (studyOption == null) {
             return null;
         }
-        
+
         LocalDate studyOptionStart = studyOption.getApplicationStartDate();
         LocalDate studyOptionClose = studyOption.getApplicationCloseDate();
 
@@ -214,22 +214,22 @@ public class ApplicationService {
         return applicationDAO.getUclApplicationsForExport();
     }
 
-    public void saveProgramDetail(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) throws DeduplicationException {
+    public void saveProgramDetails(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) throws Exception {
         Application application = entityService.getById(Application.class, applicationId);
         Institution institution = application.getInstitution();
-        ApplicationProgramDetail programDetails = application.getProgramDetail();
-        if (programDetails == null) {
-            programDetails = new ApplicationProgramDetail();
-            application.setProgramDetail(programDetails);
+        ApplicationProgramDetail programDetail = application.getProgramDetail();
+        if (programDetail == null) {
+            programDetail = new ApplicationProgramDetail();
+            application.setProgramDetail(programDetail);
         }
 
         StudyOption studyOption = importedEntityService.getById(StudyOption.class, institution, programDetailDTO.getStudyOption());
         ReferralSource referralSource = importedEntityService.getById(ReferralSource.class, institution, programDetailDTO.getReferralSource());
-        programDetails.setStudyOption(studyOption);
-        programDetails.setStartDate(programDetailDTO.getStartDate().toLocalDate());
-        programDetails.setReferralSource(referralSource);
+        programDetail.setStudyOption(studyOption);
+        programDetail.setStartDate(programDetailDTO.getStartDate());
+        programDetail.setReferralSource(referralSource);
 
-        Iterator<ApplicationSupervisor> supervisorsIterator = programDetails.getSupervisors().iterator();
+        Iterator<ApplicationSupervisor> supervisorsIterator = programDetail.getSupervisors().iterator();
         while (supervisorsIterator.hasNext()) {
             final ApplicationSupervisor supervisor = supervisorsIterator.next();
             Optional<ApplicationSupervisorDTO> supervisorDTO = Iterables.tryFind(programDetailDTO.getSupervisors(), new Predicate<ApplicationSupervisorDTO>() {
@@ -249,17 +249,17 @@ public class ApplicationService {
             User user = userService.getOrCreateUser(supervisorDTO.getUser().getFirstName(), supervisorDTO.getUser().getLastName(), supervisorDTO.getUser()
                     .getEmail());
             ApplicationSupervisor supervisor = new ApplicationSupervisor().withAware(supervisorDTO.getAware()).withUser(user);
-            programDetails.getSupervisors().add(supervisor);
+            programDetail.getSupervisors().add(supervisor);
         }
     }
 
     public void savePersonalDetail(Integer applicationId, ApplicationPersonalDetailDTO personalDetailDTO) {
         Application application = entityService.getById(Application.class, applicationId);
         Institution institution = application.getInstitution();
-        ApplicationPersonalDetail personalDetails = application.getPersonalDetail();
-        if (personalDetails == null) {
-            personalDetails = new ApplicationPersonalDetail();
-            application.setPersonalDetail(personalDetails);
+        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
+        if (personalDetail == null) {
+            personalDetail = new ApplicationPersonalDetail();
+            application.setPersonalDetail(personalDetail);
         }
 
         User user = application.getUser();
@@ -277,34 +277,34 @@ public class ApplicationService {
         Domicile residenceCountry = importedEntityService.getById(Domicile.class, institution, personalDetailDTO.getResidenceCountry());
         Ethnicity ethnicity = importedEntityService.getById(Ethnicity.class, institution, personalDetailDTO.getEthnicity());
         Disability disability = importedEntityService.getById(Disability.class, institution, personalDetailDTO.getDisability());
-        personalDetails.setTitle(title);
-        personalDetails.setGender(gender);
-        personalDetails.setDateOfBirth(personalDetailDTO.getDateOfBirth().toLocalDate());
-        personalDetails.setCountry(country);
-        personalDetails.setFirstNationality(firstNationality);
-        personalDetails.setSecondNationality(secondNationality);
-        personalDetails.setFirstLanguageEnglish(personalDetailDTO.getFirstLanguageEnglish());
-        personalDetails.setResidenceCountry(residenceCountry);
-        personalDetails.setVisaRequired(personalDetailDTO.getVisaRequired());
-        personalDetails.setPhoneNumber(personalDetailDTO.getPhoneNumber());
-        personalDetails.setMessenger(Strings.emptyToNull(personalDetailDTO.getMessenger()));
-        personalDetails.setEthnicity(ethnicity);
-        personalDetails.setDisability(disability);
+        personalDetail.setTitle(title);
+        personalDetail.setGender(gender);
+        personalDetail.setDateOfBirth(personalDetailDTO.getDateOfBirth());
+        personalDetail.setCountry(country);
+        personalDetail.setFirstNationality(firstNationality);
+        personalDetail.setSecondNationality(secondNationality);
+        personalDetail.setFirstLanguageEnglish(personalDetailDTO.getFirstLanguageEnglish());
+        personalDetail.setResidenceCountry(residenceCountry);
+        personalDetail.setVisaRequired(personalDetailDTO.getVisaRequired());
+        personalDetail.setPhoneNumber(personalDetailDTO.getPhoneNumber());
+        personalDetail.setMessenger(Strings.emptyToNull(personalDetailDTO.getMessenger()));
+        personalDetail.setEthnicity(ethnicity);
+        personalDetail.setDisability(disability);
 
         ApplicationLanguageQualificationDTO languageQualificationDTO = personalDetailDTO.getLanguageQualification();
         if (languageQualificationDTO == null) {
-            personalDetails.setLanguageQualification(null);
+            personalDetail.setLanguageQualification(null);
         } else {
-            ApplicationLanguageQualification languageQualification = personalDetails.getLanguageQualification();
+            ApplicationLanguageQualification languageQualification = personalDetail.getLanguageQualification();
             if (languageQualification == null) {
                 languageQualification = new ApplicationLanguageQualification();
-                personalDetails.setLanguageQualification(languageQualification);
+                personalDetail.setLanguageQualification(languageQualification);
             }
             ImportedLanguageQualificationType languageQualificationType = importedEntityService.getById(ImportedLanguageQualificationType.class, institution,
                     languageQualificationDTO.getType());
             Document proofOfAward = entityService.getById(Document.class, languageQualificationDTO.getProofOfAward().getId());
             languageQualification.setType(languageQualificationType);
-            languageQualification.setExamDate(languageQualificationDTO.getExamDate().toLocalDate());
+            languageQualification.setExamDate(languageQualificationDTO.getExamDate());
             languageQualification.setOverallScore(languageQualificationDTO.getOverallScore());
             languageQualification.setReadingScore(languageQualificationDTO.getReadingScore());
             languageQualification.setWritingScore(languageQualificationDTO.getWritingScore());
@@ -315,17 +315,17 @@ public class ApplicationService {
 
         ApplicationPassportDTO passportDTO = personalDetailDTO.getPassport();
         if (passportDTO == null) {
-            personalDetails.setPassport(null);
+            personalDetail.setPassport(null);
         } else {
-            ApplicationPassport passport = personalDetails.getPassport();
+            ApplicationPassport passport = personalDetail.getPassport();
             if (passport == null) {
                 passport = new ApplicationPassport();
-                personalDetails.setPassport(passport);
+                personalDetail.setPassport(passport);
             }
             passport.setNumber(passportDTO.getNumber());
             passport.setName(passportDTO.getName());
-            passport.setIssueDate(passportDTO.getIssueDate().toLocalDate());
-            passport.setExpiryDate(passportDTO.getExpiryDate().toLocalDate());
+            passport.setIssueDate(passportDTO.getIssueDate());
+            passport.setExpiryDate(passportDTO.getExpiryDate());
         }
     }
 
@@ -377,10 +377,10 @@ public class ApplicationService {
         qualification.setTitle(Strings.emptyToNull(qualificationDTO.getTitle()));
         qualification.setSubject(qualificationDTO.getSubject());
         qualification.setLanguage(qualificationDTO.getLanguage());
-        qualification.setStartDate(qualificationDTO.getStartDate().toLocalDate());
+        qualification.setStartDate(qualificationDTO.getStartDate());
         qualification.setCompleted(qualificationDTO.getCompleted());
         qualification.setGrade(qualificationDTO.getGrade());
-        qualification.setAwardDate(qualificationDTO.getAwardDate().toLocalDate());
+        qualification.setAwardDate(qualificationDTO.getAwardDate());
         qualification.setDocument(qualificationDocument);
         return qualification;
     }
@@ -417,9 +417,9 @@ public class ApplicationService {
 
         employmentPosition.setPosition(employmentPositionDTO.getPosition());
         employmentPosition.setRemit(employmentPositionDTO.getRemit());
-        employmentPosition.setStartDate(employmentPositionDTO.getStartDate().toLocalDate());
+        employmentPosition.setStartDate(employmentPositionDTO.getStartDate());
         employmentPosition.setCurrent(employmentPositionDTO.getCurrent());
-        employmentPosition.setEndDate(employmentPositionDTO.getEndDate() != null ? employmentPositionDTO.getEndDate().toLocalDate() : null);
+        employmentPosition.setEndDate(employmentPositionDTO.getEndDate());
 
         return employmentPosition;
     }
@@ -448,7 +448,7 @@ public class ApplicationService {
         funding.setFundingSource(fundingSource);
         funding.setDescription(fundingDTO.getDescription());
         funding.setValue(fundingDTO.getValue());
-        funding.setAwardDate(fundingDTO.getAwardDate().toLocalDate());
+        funding.setAwardDate(fundingDTO.getAwardDate());
         funding.setDocument(fundingDocument);
 
         return funding;

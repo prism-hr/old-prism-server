@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 public class ApplicationProgramDetailDTO {
 
@@ -12,7 +13,7 @@ public class ApplicationProgramDetailDTO {
     private Integer studyOption;
 
     @NotNull
-    private DateTime startDate;
+    private LocalDate startDate;
 
     @NotNull
     private Integer referralSource;
@@ -27,11 +28,11 @@ public class ApplicationProgramDetailDTO {
         this.studyOption = studyOption;
     }
 
-    public DateTime getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(DateTime startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 

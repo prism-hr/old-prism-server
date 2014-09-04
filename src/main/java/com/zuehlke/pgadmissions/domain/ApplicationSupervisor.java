@@ -19,7 +19,7 @@ public class ApplicationSupervisor {
 
     @ManyToOne
     @JoinColumn(name = "application_program_detail_id", insertable = false, updatable = false)
-    private ApplicationProgramDetail programDetails;
+    private ApplicationProgramDetail programDetail;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -36,12 +36,12 @@ public class ApplicationSupervisor {
         this.id = id;
     }
 
-    public ApplicationProgramDetail getProgramDetails() {
-        return programDetails;
+    public ApplicationProgramDetail getProgramDetail() {
+        return programDetail;
     }
 
-    public void setProgramDetails(ApplicationProgramDetail programDetails) {
-        this.programDetails = programDetails;
+    public void setProgramDetail(ApplicationProgramDetail programDetail) {
+        this.programDetail = programDetail;
     }
 
     public User getUser() {

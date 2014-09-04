@@ -97,7 +97,7 @@ public class ApplicationResource {
     @Autowired
     private CompleteApplicationValidator completeApplicationValidator;
 
-    @RequestMapping(value = "/{applicationId}/programDetails", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{applicationId}/programDetail", method = RequestMethod.PUT)
     public void saveProgramDetail(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationProgramDetailDTO programDetailDTO) {
         try {
             applicationService.saveProgramDetail(applicationId, programDetailDTO);
@@ -106,7 +106,7 @@ public class ApplicationResource {
         }
     }
 
-    @RequestMapping(value = "/{applicationId}/personalDetails", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{applicationId}/personalDetail", method = RequestMethod.PUT)
     public void savePersonalDetail(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationPersonalDetailDTO personalDetailDTO) {
         applicationService.savePersonalDetail(applicationId, personalDetailDTO);
     }
@@ -212,8 +212,7 @@ public class ApplicationResource {
         State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
         Institution institution = application.getInstitution();
         ResidenceState residenceState = importedEntitytService.getImportedEntityByCode(ResidenceState.class, institution, commentDTO.getResidenceState());
-        LocalDate positionProvisionalStartDate = commentDTO.getPositionProvisionalStartDate() == null ? null : commentDTO.getPositionProvisionalStartDate()
-                .toLocalDate();
+        LocalDate positionProvisionalStartDate = commentDTO.getPositionProvisionalStartDate();
         Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withDelegateUser(delegateUser).withAction(action)
                 .withTransitionState(transitionState).withCreatedTimestamp(new DateTime())
                 .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withQualified(commentDTO.getQualified())
@@ -237,7 +236,7 @@ public class ApplicationResource {
             comment.setContent(rejectionReason.getName());
         }
         if (commentDTO.getAppointmentTimeslots() != null) {
-            for (DateTime dateTime : commentDTO.getAppointmentTimeslots()) {
+            for (LocalDateTime dateTime : commentDTO.getAppointmentTimeslots()) {
                 CommentAppointmentTimeslot timeslot = new CommentAppointmentTimeslot();
                 timeslot.setDateTime(dateTime);
                 comment.getAppointmentTimeslots().add(timeslot);

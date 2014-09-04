@@ -468,13 +468,13 @@ public class Application extends Resource {
         return this;
     }
 
-    public Application withPersonalDetails(ApplicationPersonalDetail personalDetails) {
-        this.personalDetail = personalDetails;
+    public Application withPersonalDetail(ApplicationPersonalDetail personalDetail) {
+        this.personalDetail = personalDetail;
         return this;
     }
 
-    public Application withProgramDetails(ApplicationProgramDetail programDetails) {
-        this.programDetail = programDetails;
+    public Application withProgramDetail(ApplicationProgramDetail programDetail) {
+        this.programDetail = programDetail;
         return this;
     }
 
@@ -557,7 +557,7 @@ public class Application extends Resource {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
-    
+
     public LocalDate getRecommendedStartDate() {
         return project == null ? program.getRecommendedStartDate() : project.getRecommendedStartDate();
     }

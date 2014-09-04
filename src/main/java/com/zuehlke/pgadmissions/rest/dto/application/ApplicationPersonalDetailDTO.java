@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
+import org.joda.time.LocalDate;
 
 public class ApplicationPersonalDetailDTO {
 
@@ -41,7 +42,7 @@ public class ApplicationPersonalDetailDTO {
     private Integer gender;
 
     @NotNull
-    private DateTime dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @NotNull
     private Integer country;
@@ -143,11 +144,11 @@ public class ApplicationPersonalDetailDTO {
         this.gender = gender;
     }
 
-    public DateTime getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(DateTime dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 

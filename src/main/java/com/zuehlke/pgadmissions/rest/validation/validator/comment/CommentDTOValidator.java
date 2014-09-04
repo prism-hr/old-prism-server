@@ -67,6 +67,5 @@ public class CommentDTOValidator extends AbstractValidator {
         if (customValidator != null) {
             ValidationUtils.invokeValidator(customValidator, comment, errors);
         }
-
     }
 }

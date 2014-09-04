@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.validation.annotation.DatePast;
+import org.joda.time.LocalDate;
 
 public class ApplicationFundingDTO {
 
@@ -26,7 +27,7 @@ public class ApplicationFundingDTO {
 
     @NotNull
     @DatePast
-    private DateTime awardDate;
+    private LocalDate awardDate;
 
     public Integer getId() {
         return id;
@@ -68,11 +69,11 @@ public class ApplicationFundingDTO {
         this.value = value;
     }
 
-    public DateTime getAwardDate() {
+    public LocalDate getAwardDate() {
         return awardDate;
     }
 
-    public void setAwardDate(DateTime awardDate) {
+    public void setAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
     }
 }

@@ -9,6 +9,8 @@ import org.joda.time.DateTime;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 
 public class CommentDTO {
 
@@ -42,7 +44,7 @@ public class CommentDTO {
 
     private Integer rating;
 
-    private DateTime interviewDateTime;
+    private LocalDateTime interviewDateTime;
 
     private TimeZone interviewTimeZone;
 
@@ -54,7 +56,7 @@ public class CommentDTO {
 
     private String interviewLocation;
 
-    private Set<DateTime> appointmentTimeslots;
+    private Set<LocalDateTime> appointmentTimeslots;
 
     private Set<Integer> appointmentPreferences;
 
@@ -64,7 +66,7 @@ public class CommentDTO {
 
     private String positionDescription;
 
-    private DateTime positionProvisionalStartDate;
+    private LocalDate positionProvisionalStartDate;
 
     private String appointmentConditions;
 
@@ -196,11 +198,11 @@ public class CommentDTO {
         this.rating = rating;
     }
 
-    public DateTime getInterviewDateTime() {
+    public LocalDateTime getInterviewDateTime() {
         return interviewDateTime;
     }
 
-    public void setInterviewDateTime(DateTime interviewDateTime) {
+    public void setInterviewDateTime(LocalDateTime interviewDateTime) {
         this.interviewDateTime = interviewDateTime;
     }
 
@@ -244,11 +246,11 @@ public class CommentDTO {
         this.interviewLocation = interviewLocation;
     }
 
-    public Set<DateTime> getAppointmentTimeslots() {
+    public Set<LocalDateTime> getAppointmentTimeslots() {
         return appointmentTimeslots;
     }
 
-    public void setAppointmentTimeslots(Set<DateTime> appointmentTimeslots) {
+    public void setAppointmentTimeslots(Set<LocalDateTime> appointmentTimeslots) {
         this.appointmentTimeslots = appointmentTimeslots;
     }
 
@@ -284,11 +286,11 @@ public class CommentDTO {
         this.positionDescription = positionDescription;
     }
 
-    public DateTime getPositionProvisionalStartDate() {
+    public LocalDate getPositionProvisionalStartDate() {
         return positionProvisionalStartDate;
     }
 
-    public void setPositionProvisionalStartDate(DateTime positionProvisionalStartDate) {
+    public void setPositionProvisionalStartDate(LocalDate positionProvisionalStartDate) {
         this.positionProvisionalStartDate = positionProvisionalStartDate;
     }
 

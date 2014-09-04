@@ -6,6 +6,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.rest.validation.annotation.DateNotAfterDate;
+import org.joda.time.LocalDate;
 
 @DateNotAfterDate(startDate = "startDate", endDate = "endDate")
 public class ApplicationEmploymentPositionDTO {
@@ -28,9 +29,9 @@ public class ApplicationEmploymentPositionDTO {
     private String remit;
 
     @NotNull
-    private DateTime startDate;
+    private LocalDate startDate;
 
-    private DateTime endDate;
+    private LocalDate endDate;
 
     public Integer getId() {
         return id;
@@ -80,19 +81,19 @@ public class ApplicationEmploymentPositionDTO {
         this.remit = remit;
     }
 
-    public DateTime getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(DateTime startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public DateTime getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(DateTime endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 }

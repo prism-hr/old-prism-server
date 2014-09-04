@@ -7,9 +7,10 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import org.joda.time.LocalDate;
 
 public class ProgramDTO {
-    
+
     @NotNull
     private Integer institutionId;
 
@@ -26,10 +27,10 @@ public class ProgramDTO {
     private String description;
 
     @NotNull
-    private DateTime startDate;
+    private LocalDate startDate;
 
     @NotNull
-    private DateTime closeDate;
+    private LocalDate closeDate;
 
     @Size(min = 1)
     private Integer[] studyOptions;
@@ -74,19 +75,19 @@ public class ProgramDTO {
         this.description = description;
     }
 
-    public DateTime getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(DateTime startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public DateTime getCloseDate() {
+    public LocalDate getCloseDate() {
         return closeDate;
     }
 
-    public void setCloseDate(DateTime closeDate) {
+    public void setCloseDate(LocalDate closeDate) {
         this.closeDate = closeDate;
     }
 

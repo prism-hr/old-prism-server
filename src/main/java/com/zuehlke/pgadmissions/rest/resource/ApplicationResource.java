@@ -14,8 +14,8 @@ import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.*;
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
-import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentDTOValidator;
 import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationValidator;
+import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentDTOValidator;
 import com.zuehlke.pgadmissions.services.*;
 import org.apache.commons.lang.BooleanUtils;
 import org.dozer.Mapper;
@@ -175,8 +175,7 @@ public class ApplicationResource {
         State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
         Institution institution = application.getInstitution();
         ResidenceState residenceState = importedEntitytService.getImportedEntityByCode(ResidenceState.class, institution, commentDTO.getResidenceState());
-        LocalDate positionProvisionalStartDate = commentDTO.getPositionProvisionalStartDate() == null ? null : commentDTO.getPositionProvisionalStartDate()
-                .toLocalDate();
+        LocalDate positionProvisionalStartDate = commentDTO.getPositionProvisionalStartDate() == null ? null : commentDTO.getPositionProvisionalStartDate();
         Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withDelegateUser(delegateUser).withAction(action)
                 .withTransitionState(transitionState).withCreatedTimestamp(new DateTime())
                 .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withQualified(commentDTO.getQualified())

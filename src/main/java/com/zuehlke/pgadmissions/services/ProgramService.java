@@ -46,10 +46,10 @@ public class ProgramService {
 
     @Autowired
     private SystemService systemService;
-    
+
     @Autowired
     private InstitutionService institutionService;
-    
+
     @Autowired
     private ProjectService projectService;
 
@@ -88,10 +88,10 @@ public class ProgramService {
         Advert advert = new Advert().withTitle(title);
         Institution institution = entityService.getById(Institution.class, programDTO.getInstitutionId());
         ProgramType programType = importedEntityService.getImportedEntityByCode(ProgramType.class, institution, programDTO.getProgramType().name());
-        
+
         Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withTitle(title).withInstitution(institution)
                 .withProgramType(programType).withRequireProjectDefinition(programDTO.getRequireProjectDefinition()).withImported(false).withAdvert(advert)
-                .withDueDate(programDTO.getCloseDate().toLocalDate());
+                .withDueDate(programDTO.getCloseDate());
 
         // TODO: study options
         return program;
@@ -141,7 +141,7 @@ public class ProgramService {
         advert.setTitle(title);
     }
 
-    public void postProcessProgram(Program program, Comment comment) {        
+    public void postProcessProgram(Program program, Comment comment) {
         if (comment.isProgramCreateOrUpdateComment()) {
             program.getAdvert().setSequenceIdentifier(program.getSequenceIdentifier() + "-" + program.getResourceScope().getShortCode());
             projectService.updateProjectsLinkedToProgramDueDate(program);
@@ -152,7 +152,7 @@ public class ProgramService {
     public List<ProgramStudyOption> getEnabledProgramStudyOptions(Program program) {
         return programDAO.getEnabledProgramStudyOptions(program);
     }
-    
+
     public ProgramStudyOption getEnabledProgramStudyOption(Program program, StudyOption studyOption) {
         return programDAO.getEnabledProgramStudyOption(program, studyOption);
     }
@@ -160,29 +160,29 @@ public class ProgramService {
     public LocalDate getProgramClosureDate(Program program) {
         return programDAO.getProgramClosureDate(program);
     }
-    
+
     public LocalDate resolveDueDateBaseline(Program program, Comment comment) {
         if (comment.isProgramCreateOrUpdateComment()) {
             return getProgramClosureDate(program);
         }
         return null;
     }
-    
+
     public List<ProgramStudyOptionInstance> getProgramStudyOptionInstances(Program program) {
         return programDAO.getProgramStudyOptionInstances(program);
     }
-    
+
     public List<Program> getProgramsWithElapsedStudyOptions(LocalDate baseline) {
         return programDAO.getProgramsWithElapsedStudyOptions(baseline);
     }
-    
+
     public void updateProgramStudyOptions(Program program, LocalDate baseline) {
         List<ProgramStudyOption> elapsedOptions = programDAO.getElapsedStudyOptions(program, baseline);
-        
+
         for (ProgramStudyOption elapsedOption : elapsedOptions) {
             elapsedOption.setEnabled(false);
         }
-        
+
         if (program.getStudyOptions().size() == elapsedOptions.size()) {
             program.setDueDate(baseline);
         }

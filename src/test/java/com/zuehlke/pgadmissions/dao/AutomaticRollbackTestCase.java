@@ -7,15 +7,15 @@ import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
 
-import com.zuehlke.pgadmissions.domain.builders.TestObjectProvider;
+import com.zuehlke.pgadmissions.utils.TestObjectProvider;
 import com.zuehlke.pgadmissions.utils.ApplicationTestContext;
 
 public abstract class AutomaticRollbackTestCase {
 
 	protected SessionFactory sessionFactory;
-	
+
 	protected Transaction transaction;
-	
+
 	protected TestObjectProvider testObjectProvider;
 
 	public AutomaticRollbackTestCase() {
@@ -28,7 +28,7 @@ public abstract class AutomaticRollbackTestCase {
             sessionFactory.getCurrentSession().save(domainObject);
         }
     }
-	
+
 	protected void save(Object... domainObjects) {
 		for (Object domainObject : domainObjects) {
 			sessionFactory.getCurrentSession().save(domainObject);
@@ -42,12 +42,12 @@ public abstract class AutomaticRollbackTestCase {
 
 	@After
 	public void tearDown() {
-		transaction.rollback();		
+		transaction.rollback();
 	}
 
 	protected void flushAndClearSession() {
 		sessionFactory.getCurrentSession().flush();
 		sessionFactory.getCurrentSession().clear();
 	}
-	
+
 }

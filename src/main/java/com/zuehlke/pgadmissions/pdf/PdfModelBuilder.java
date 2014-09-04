@@ -142,7 +142,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
             pdfDocument.add(addSectionSeparators());
 
-            addPersonalDetailsSection(form, pdfDocument);
+            addPersonalDetailSection(form, pdfDocument);
 
             pdfDocument.add(addSectionSeparators());
 
@@ -257,7 +257,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.addCell(newTableCell(form.getProgram().getTitle(), SMALL_FONT));
 
         table.addCell(newTableCell("Study Option", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "programDetails.studyOption"));
+        table.addCell(createPropertyCell(form, "programDetail.studyOption"));
 
         addProjectTitleToTable(table, form);
 
@@ -318,19 +318,19 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
     }
 
-    protected void addPersonalDetailsSection(final Application form, Document pdfDocument) throws DocumentException {
+    protected void addPersonalDetailSection(final Application form, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newGrayTableCell("PERSONAL DETAILS", BOLD_FONT));
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        ApplicationPersonalDetail personalDetails = form.getPersonalDetail();
+        ApplicationPersonalDetail personalDetail = form.getPersonalDetail();
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
 
         table.addCell(newTableCell("Title", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "personalDetails.title.displayValue"));
+        table.addCell(createPropertyCell(form, "personalDetail.title.displayValue"));
 
         table.addCell(newTableCell("First Name", SMALL_BOLD_FONT));
         table.addCell(createPropertyCell(form, "applicant.firstName"));
@@ -345,31 +345,31 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.addCell(createPropertyCell(form, "applicant.lastName"));
 
         table.addCell(newTableCell("Gender", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "personalDetails.gender.displayValue"));
+        table.addCell(createPropertyCell(form, "personalDetail.gender.displayValue"));
 
         table.addCell(newTableCell("Date of Birth", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "personalDetails.dateOfBirth"));
+        table.addCell(createPropertyCell(form, "personalDetail.dateOfBirth"));
 
         table.addCell(newTableCell("Country of Birth", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "personalDetails.country.name"));
+        table.addCell(createPropertyCell(form, "personalDetail.country.name"));
 
         table.addCell(newTableCell("Nationality", SMALL_BOLD_FONT));
         StringBuilder sb = new StringBuilder();
 
-        if (personalDetails != null && personalDetails.getFirstNationality() != null) {
-            sb.append(personalDetails.getFirstNationality().getName());
+        if (personalDetail != null && personalDetail.getFirstNationality() != null) {
+            sb.append(personalDetail.getFirstNationality().getName());
         }
-        if (personalDetails != null && personalDetails.getSecondNationality() != null) {
-            sb.append(", " + personalDetails.getSecondNationality().getName());
+        if (personalDetail != null && personalDetail.getSecondNationality() != null) {
+            sb.append(", " + personalDetail.getSecondNationality().getName());
         }
 
         table.addCell(newTableCell(sb.toString(), SMALL_FONT));
 
         table.addCell(newTableCell("Is English your first language?", SMALL_BOLD_FONT));
-        if (personalDetails == null || personalDetails.getFirstLanguageEnglish() == null) {
+        if (personalDetail == null || personalDetail.getFirstLanguageEnglish() == null) {
             table.addCell(newTableCell(null, SMALL_FONT));
         } else {
-            if (BooleanUtils.isTrue(personalDetails.getFirstLanguageEnglish())) {
+            if (BooleanUtils.isTrue(personalDetail.getFirstLanguageEnglish())) {
                 table.addCell(newTableCell("Yes", SMALL_FONT));
             } else {
                 table.addCell(newTableCell("No", SMALL_FONT));
@@ -377,10 +377,10 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
 
         table.addCell(newTableCell("Do you have an English language qualification?", SMALL_BOLD_FONT));
-        if (personalDetails == null || personalDetails.getLanguageQualificationAvailable() == null) {
+        if (personalDetail == null || personalDetail.getLanguageQualificationAvailable() == null) {
             table.addCell(newTableCell(null, SMALL_FONT));
         } else {
-            if (BooleanUtils.isTrue(personalDetails.getLanguageQualificationAvailable())) {
+            if (BooleanUtils.isTrue(personalDetail.getLanguageQualificationAvailable())) {
                 table.addCell(newTableCell("Yes", SMALL_FONT));
             } else {
                 table.addCell(newTableCell("No", SMALL_FONT));
@@ -388,17 +388,17 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
 
         table.addCell(newTableCell("Country of Residence", SMALL_BOLD_FONT));
-        if (personalDetails == null || personalDetails.getResidenceCountry() == null) {
+        if (personalDetail == null || personalDetail.getResidenceCountry() == null) {
             table.addCell(newTableCell(null, SMALL_FONT));
         } else {
-            table.addCell(newTableCell(personalDetails.getResidenceCountry().getName(), SMALL_FONT));
+            table.addCell(newTableCell(personalDetail.getResidenceCountry().getName(), SMALL_FONT));
         }
 
         table.addCell(newTableCell("Do you Require a Visa to Study in the UK?", SMALL_BOLD_FONT));
-        if (personalDetails == null || personalDetails.getVisaRequired() == null) {
+        if (personalDetail == null || personalDetail.getVisaRequired() == null) {
             table.addCell(newTableCell(null, SMALL_FONT));
         } else {
-            if (BooleanUtils.isTrue(personalDetails.getVisaRequired())) {
+            if (BooleanUtils.isTrue(personalDetail.getVisaRequired())) {
                 table.addCell(newTableCell("Yes", SMALL_FONT));
             } else {
                 table.addCell(newTableCell("No", SMALL_FONT));
@@ -406,18 +406,18 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
 
         table.addCell(newTableCell("Do you have a passport?", SMALL_BOLD_FONT));
-        if (personalDetails == null || personalDetails.getPassportAvailable() == null) {
+        if (personalDetail == null || personalDetail.getPassportAvailable() == null) {
             table.addCell(newTableCell(null, SMALL_FONT));
         } else {
-            if (BooleanUtils.isTrue(personalDetails.getPassportAvailable())) {
+            if (BooleanUtils.isTrue(personalDetail.getPassportAvailable())) {
                 table.addCell(newTableCell("Yes", SMALL_FONT));
             } else {
                 table.addCell(newTableCell("No", SMALL_FONT));
             }
         }
 
-        if (personalDetails != null && BooleanUtils.isTrue(personalDetails.getVisaRequired())) {
-            ApplicationPassport passportInformation = personalDetails.getPassport();
+        if (personalDetail != null && BooleanUtils.isTrue(personalDetail.getVisaRequired())) {
+            ApplicationPassport passportInformation = personalDetail.getPassport();
             if (passportInformation != null) {
                 table.addCell(newTableCell("Passport Number", SMALL_BOLD_FONT));
 
@@ -454,31 +454,31 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.addCell(newTableCell(form.getUser().getEmail(), SMALL_FONT));
 
         table.addCell(newTableCell("Telephone", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "personalDetails.phoneNumber"));
+        table.addCell(createPropertyCell(form, "personalDetail.phoneNumber"));
 
         table.addCell(newTableCell("Skype", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "personalDetails.messenger"));
+        table.addCell(createPropertyCell(form, "personalDetail.messenger"));
 
         if (includeEthnicity) {
             table.addCell(newTableCell("Ethnicity", SMALL_BOLD_FONT));
-            table.addCell(createPropertyCell(form, "personalDetails.ethnicity.name"));
+            table.addCell(createPropertyCell(form, "personalDetail.ethnicity.name"));
         }
 
         if (includeDisability) {
             table.addCell(newTableCell("Disability", SMALL_BOLD_FONT));
-            table.addCell(createPropertyCell(form, "personalDetails.disability.name"));
+            table.addCell(createPropertyCell(form, "personalDetail.disability.name"));
         }
 
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        if (personalDetails == null || personalDetails.getLanguageQualification() == null) {
+        if (personalDetail == null || personalDetail.getLanguageQualification() == null) {
             table = new PdfPTable(2);
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             table.addCell(newTableCell("English Language Qualification", SMALL_BOLD_FONT));
             table.addCell(newTableCell(null, SMALL_FONT));
         } else {
-            ApplicationLanguageQualification qualification = personalDetails.getLanguageQualification();
+            ApplicationLanguageQualification qualification = personalDetail.getLanguageQualification();
             table = new PdfPTable(2);
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             PdfPCell headerCell = newTableCell("English Language Qualification", SMALL_BOLD_FONT);
@@ -964,19 +964,19 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 Comment reference = (Comment) object;
                 if (reference.getAction().getId() == PrismAction.APPLICATION_PROVIDE_REFERENCE) {
                     pdfDocument.add(new Chunk("APPENDIX (" + integer + ")").setLocalDestination(integer.toString()));
-    
+
                     pdfDocument.add(new Chunk(" - Reference"));
                     pdfDocument.add(addSectionSeparators());
                     pdfDocument.add(addSectionSeparators());
                     pdfDocument.add(addSectionSeparators());
                     pdfDocument.add(addSectionSeparators());
-    
+
                     PdfPTable table = new PdfPTable(1);
                     table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                     table.addCell(newGrayTableCell("REFERENCE", BOLD_FONT));
                     pdfDocument.add(table);
                     pdfDocument.add(addSectionSeparators());
-    
+
                     table = new PdfPTable(2);
                     table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                     table.addCell(newTableCell("Referee", SMALL_BOLD_FONT));
@@ -1002,7 +1002,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                         } catch (Exception e) {
                             logger.warn("Error reading PDF document", e.getMessage());
                         }
-                    }   
+                    }
                 }
             }
         }

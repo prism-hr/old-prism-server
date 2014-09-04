@@ -2,14 +2,12 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
-import org.hibernate.criterion.DetachedCriteria;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
@@ -25,8 +23,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
-import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
@@ -76,16 +72,6 @@ public class ResourceService {
         return entityService.getById(resourceClass, id);
     }
 
-    public <T extends Resource> List<ResourceConsoleListRowDTO> getConsoleListBlock(Class<T> resourceClass, int loadIndex) {
-        // TODO: Build filter and integrate
-        return resourceDAO.getConsoleListBlock(userService.getCurrentUser(), resourceClass, scopeService.getParentScopes(resourceClass), loadIndex);
-    }
-
-    public <T extends Resource> List<ResourceReportListRowDTO> getReportList(Class<T> resourceType) {
-        // TODO: Build the query and integrate with filter
-        return Lists.newArrayList();
-    }
-
     public ActionOutcomeDTO createResource(User user, Action action, Object newResourceDTO, String referrer) throws DeduplicationException {
         Resource resource = null;
 
@@ -103,7 +89,7 @@ public class ResourceService {
             resource = applicationService.create(user, (ApplicationDTO) newResourceDTO);
             break;
         default:
-            throw new WorkflowEngineException("Attempted to create a resource of invalid type " + action.getCreationScope().getId().toString());
+            actionService.throwWorkflowEngineException(resource, action, "Attempted to create a resource of invalid type");
         }
 
         if (entityService.getDuplicateEntity(resource) != null && !user.isEnabled()) {
@@ -117,7 +103,7 @@ public class ResourceService {
         return actionService.executeUserAction(resource, action, comment);
     }
 
-    public void persistResource(Resource resource) throws WorkflowEngineException {
+    public void persistResource(Resource resource, Action action) throws WorkflowEngineException {
         resource.setCreatedTimestamp(new DateTime());
         resource.setUpdatedTimestamp(new DateTime());
 
@@ -135,7 +121,7 @@ public class ResourceService {
             applicationService.save((Application) resource);
             break;
         default:
-            throw new WorkflowEngineException("Attempted to persist a resource of invalid type " + resource.getResourceScope().getLowerCaseName());
+            actionService.throwWorkflowEngineException(resource, action, "Attempted to persist a resource of invalid type");
         }
 
         resource.setCode(generateResourceCode(resource));
@@ -224,7 +210,7 @@ public class ResourceService {
         return resourceDAO.getRecentlyUpdatedResources(resourceClass, rangeStart, rangeClose);
     }
 
-    public <T extends Resource> DetachedCriteria getResourceListFilter(User user, Class<T> resourceClass, List<PrismState> stateWithUrgentActionIds,
+    public <T extends Resource> List<Integer> getResourceListFilter(User user, Class<T> resourceClass, List<PrismState> stateWithUrgentActionIds,
             ResourceListFilterDTO filterDTO, String lastSequenceIdentifier) {
         List<PrismScope> parentScopeIds = scopeService.getParentScopes(resourceClass);
         return resourceDAO.getResourceListFilter(user, resourceClass, parentScopeIds, filterDTO, lastSequenceIdentifier);

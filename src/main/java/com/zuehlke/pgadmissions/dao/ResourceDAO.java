@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.definitions.FilterFetchMode;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -44,6 +45,9 @@ public class ResourceDAO {
 
     @Value("${resource.list.records.to.retrieve}")
     private Integer resourceListRecordsToRetrieve;
+    
+    @Value("${resource.report.records.to.retrieve}")
+    private Integer resourceReportRecordsToRetrieve;
 
     @Autowired
     private FreeMarkerHelper freeMarkerHelper;
@@ -100,7 +104,7 @@ public class ResourceDAO {
     }
 
     public <T extends Resource> List<Integer> getResourceListFilter(User user, Class<T> resourceClass, List<PrismScope> parentScopeIds,
-            ResourceListFilterDTO filterDTO, String lastSequenceIdentifier) {
+            ResourceListFilterDTO filterDTO, FilterFetchMode fetchMode, String lastSequenceIdentifier) {
         if (resourceClass.equals(System.class)) {
             throw new Error("System is not a listable resource type");
         }
@@ -224,7 +228,8 @@ public class ResourceDAO {
         addPagingCondition(criteria, sortOrder, lastSequenceIdentifier);   
         addOrderByExpression(criteria, sortOrder);
         
-        return criteria.setMaxResults(resourceListRecordsToRetrieve).list();
+        Integer recordsToRetrieve = fetchMode == FilterFetchMode.LIST ? resourceListRecordsToRetrieve : resourceReportRecordsToRetrieve;
+        return criteria.setMaxResults(recordsToRetrieve).list();
     }
 
     private void addPagingCondition(Criteria criteria, FilterSortOrder sortOrder, String lastSequenceIdentifier) {

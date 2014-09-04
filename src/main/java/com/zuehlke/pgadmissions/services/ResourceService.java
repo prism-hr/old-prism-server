@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.FilterFetchMode;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -211,9 +212,9 @@ public class ResourceService {
     }
 
     public <T extends Resource> List<Integer> getResourceListFilter(User user, Class<T> resourceClass, List<PrismState> stateWithUrgentActionIds,
-            ResourceListFilterDTO filterDTO, String lastSequenceIdentifier) {
+            ResourceListFilterDTO filterDTO, FilterFetchMode fetchMode, String lastSequenceIdentifier) {
         List<PrismScope> parentScopeIds = scopeService.getParentScopes(resourceClass);
-        return resourceDAO.getResourceListFilter(user, resourceClass, parentScopeIds, filterDTO, lastSequenceIdentifier);
+        return resourceDAO.getResourceListFilter(user, resourceClass, parentScopeIds, filterDTO, fetchMode, lastSequenceIdentifier);
     }
 
 }

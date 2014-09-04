@@ -16,6 +16,8 @@ public class ResourceListFilterDTO {
 
     private Boolean urgentOnly;
     
+    private Boolean updatedOnly;
+    
     private FilterMatchMode matchMode;
     
     private List<StringFilterDTO> institution;
@@ -168,7 +170,7 @@ public class ResourceListFilterDTO {
         HashMap<String, Object> filters = Maps.newHashMap();
         for (Field field : this.getClass().getDeclaredFields()) {
             String fieldName = field.getName();
-            if (Arrays.asList("urgentOnly", "matchMode").contains(fieldName)) {
+            if (Arrays.asList("urgentOnly", "updatedOnly", "matchMode").contains(fieldName)) {
                 try {
                     filters.put(fieldName, field.get(this));
                 } catch (Exception e) {

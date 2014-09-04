@@ -127,7 +127,7 @@ public class StateService {
         comment.setResource(resource);
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
-            resourceService.persistResource(resource);
+            resourceService.persistResource(resource, action);
         }
 
         commentService.save(comment);

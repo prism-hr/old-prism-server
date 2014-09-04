@@ -201,7 +201,6 @@ public class CommentService {
             }
         }
         entityService.save(comment);
-        entityService.flush();
     }
 
     public void updateComment(Integer commentId, CommentDTO commentDTO) {

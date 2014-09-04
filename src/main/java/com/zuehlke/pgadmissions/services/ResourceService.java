@@ -103,7 +103,7 @@ public class ResourceService {
             resource = applicationService.create(user, (ApplicationDTO) newResourceDTO);
             break;
         default:
-            throw new WorkflowEngineException("Attempted to create a resource of invalid type " + action.getCreationScope().getId().toString());
+            actionService.throwWorkflowEngineException(resource, action, "Attempted to create a resource of invalid type");
         }
 
         if (entityService.getDuplicateEntity(resource) != null && !user.isEnabled()) {
@@ -117,7 +117,7 @@ public class ResourceService {
         return actionService.executeUserAction(resource, action, comment);
     }
 
-    public void persistResource(Resource resource) throws WorkflowEngineException {
+    public void persistResource(Resource resource, Action action) throws WorkflowEngineException {
         resource.setCreatedTimestamp(new DateTime());
         resource.setUpdatedTimestamp(new DateTime());
 
@@ -135,7 +135,7 @@ public class ResourceService {
             applicationService.save((Application) resource);
             break;
         default:
-            throw new WorkflowEngineException("Attempted to persist a resource of invalid type " + resource.getResourceScope().getLowerCaseName());
+            actionService.throwWorkflowEngineException(resource, action, "Attempted to persist a resource of invalid type");
         }
 
         resource.setCode(generateResourceCode(resource));

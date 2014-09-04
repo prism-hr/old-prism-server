@@ -3,11 +3,10 @@ package com.zuehlke.pgadmissions.rest.dto.application;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.validation.annotation.DatePast;
-import org.joda.time.LocalDate;
 
 public class ApplicationFundingDTO {
 

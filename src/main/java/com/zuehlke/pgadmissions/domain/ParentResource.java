@@ -34,6 +34,10 @@ public abstract class ParentResource extends Resource {
     public abstract Integer getApplicationRatingCount95();
 
     public abstract void setApplicationRatingCount95(Integer applicationRatingCount95);
+    
+    public abstract BigDecimal getApplicationRatingCountAverage();
+    
+    public abstract void setApplicationRatingCountAverage(BigDecimal applicationRatingAverage);
 
     public abstract BigDecimal getApplicationRatingAverage();
     

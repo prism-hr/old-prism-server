@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ParentResource;
 import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.dto.ApplicationRatingDTO;
+import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
 
 @Repository
 public class ApplicationSummaryDAO {
@@ -29,6 +30,18 @@ public class ApplicationSummaryDAO {
                         .add(Projections.count("id"), "ratingCount") //
                         .add(Projections.avg("rating"), "ratingAverage")) //
                 .add(Restrictions.eq("application", application)) //
+                .add(Restrictions.isNotNull("rating")) //
+                .setResultTransformer(Transformers.aliasToBean(ApplicationRatingDTO.class)) //
+                .uniqueResult();
+    }
+    
+    public ApplicationRatingSummaryDTO getApplicationRatingSummary(ParentResource parentResource) {
+        return (ApplicationRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Comment.class, "comment") //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.avg("id"), "ratingCountAverage") //
+                        .add(Projections.avg("rating"), "ratingAverage")) //
+                .createAlias("application", "application", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(parentResource.getResourceScope().getLowerCaseName(), parentResource)) //
                 .add(Restrictions.isNotNull("rating")) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationRatingDTO.class)) //
                 .uniqueResult();

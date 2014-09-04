@@ -86,6 +86,12 @@ public class Project extends ParentResource {
     @Field(analyzer = @Analyzer(definition = "advertAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String title;
     
+    @Column(name = "application_rating_count_average")
+    private BigDecimal applicationRatingCountAverage;
+    
+    @Column(name = "application_rating_average")
+    private BigDecimal applicatingRatingAverage;
+    
     @Column(name = "application_rating_count_percentile_05")
     private Integer applicationRatingCount05;
     
@@ -194,6 +200,26 @@ public class Project extends ParentResource {
         this.title = title;
     }
 
+    @Override
+    public final BigDecimal getApplicationRatingCountAverage() {
+        return applicationRatingCountAverage;
+    }
+    
+    @Override
+    public final void setApplicationRatingCountAverage(BigDecimal applicationRatingCountAverage) {
+        this.applicationRatingCountAverage = applicationRatingCountAverage;
+    }
+
+    @Override
+    public BigDecimal getApplicationRatingAverage() {
+        return applicatingRatingAverage;
+    }
+
+    @Override
+    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+        this.applicatingRatingAverage = applicationRatingAverage;
+    }
+    
     @Override
     public final Integer getApplicationRatingCount05() {
         return applicationRatingCount05;

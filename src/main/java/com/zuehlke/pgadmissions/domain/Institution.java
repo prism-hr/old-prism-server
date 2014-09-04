@@ -89,6 +89,12 @@ public class Institution extends ParentResource {
     @Column(name = "is_ucl_institution", nullable = false)
     private Boolean uclInstitution = false;
     
+    @Column(name = "application_rating_count_average")
+    private BigDecimal applicationRatingCountAverage;
+    
+    @Column(name = "application_rating_average")
+    private BigDecimal applicatingRatingAverage;
+    
     @Column(name = "application_rating_count_percentile_05")
     private Integer applicationRatingCount05;
     
@@ -109,9 +115,6 @@ public class Institution extends ParentResource {
     
     @Column(name = "application_rating_count_percentile_95")
     private Integer applicationRatingCount95;
-    
-    @Column(name = "application_rating_average")
-    private BigDecimal applicatingRatingAverage;
     
     @Column(name = "application_rating_average_percentile_05")
     private BigDecimal applicationRatingAverage05;
@@ -229,6 +232,26 @@ public class Institution extends ParentResource {
     }
 
     @Override
+    public final BigDecimal getApplicationRatingCountAverage() {
+        return applicationRatingCountAverage;
+    }
+    
+    @Override
+    public final void setApplicationRatingCountAverage(BigDecimal applicationRatingCountAverage) {
+        this.applicationRatingCountAverage = applicationRatingCountAverage;
+    }
+
+    @Override
+    public BigDecimal getApplicationRatingAverage() {
+        return applicatingRatingAverage;
+    }
+
+    @Override
+    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+        this.applicatingRatingAverage = applicationRatingAverage;
+    }
+    
+    @Override
     public final Integer getApplicationRatingCount05() {
         return applicationRatingCount05;
     }
@@ -296,16 +319,6 @@ public class Institution extends ParentResource {
     @Override
     public final void setApplicationRatingCount95(Integer applicationRatingCount95) {
         this.applicationRatingCount95 = applicationRatingCount95;
-    }
-    
-    @Override
-    public BigDecimal getApplicationRatingAverage() {
-        return applicatingRatingAverage;
-    }
-
-    @Override
-    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
-        this.applicatingRatingAverage = applicationRatingAverage;
     }
     
     @Override

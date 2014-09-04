@@ -214,7 +214,7 @@ public class ApplicationService {
         return applicationDAO.getUclApplicationsForExport();
     }
 
-    public void saveProgramDetails(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) throws Exception {
+    public void saveProgramDetail(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) throws DeduplicationException {
         Application application = entityService.getById(Application.class, applicationId);
         Institution institution = application.getInstitution();
         ApplicationProgramDetail programDetail = application.getProgramDetail();

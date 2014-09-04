@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.ParentResource;
 import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ApplicationRatingDTO;
+import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 
 @Service
@@ -43,6 +44,8 @@ public class ApplicationSummaryService {
         BigDecimal ratingAverage = BigDecimal.valueOf(ratingSummary.getRatingAverage());
         application.setRatingAverage(ratingAverage.setScale(2, RoundingMode.HALF_UP));
 
+        entityService.flush();
+        
         for (PrismScope summaryScope : summaryScopes) {
             try {
                 updateApplicationSummary(application, summaryScope);
@@ -62,6 +65,12 @@ public class ApplicationSummaryService {
     }
 
     private void updateApplicationSummary(Application application, PrismScope summaryScope) throws Exception {
+        ParentResource parent = (ParentResource) PropertyUtils.getProperty(application, summaryScope.getLowerCaseName());
+        ApplicationRatingSummaryDTO summary = applicationSummaryDAO.getApplicationRatingSummary(parent);
+        
+        parent.setApplicationRatingCountAverage(BigDecimal.valueOf(summary.getRatingCountAverage()).setScale(2, RoundingMode.HALF_UP));
+        parent.setApplicationRatingAverage(BigDecimal.valueOf(summary.getRatingAverage()).setScale(2, RoundingMode.HALF_UP));
+        
         String summaryReference = summaryScope.getLowerCaseName();
         ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, summaryReference);
 
@@ -78,6 +87,8 @@ public class ApplicationSummaryService {
                 summaryResource.setPercentileValue(propertyToSet, percentile, actualValue);
             }
         }
+        
+        entityService.flush();
     }
 
     private void createOrUpdateApplicationProcessing(Application application, StateGroup stateGroup, LocalDate baseline) throws DeduplicationException {
@@ -92,6 +103,7 @@ public class ApplicationSummaryService {
         }
 
         createOrUpdateApplicationProcessingSummary(application, stateGroup);
+        entityService.flush();
     }
 
     private void createApplicationProcessing(ApplicationProcessing transientProcessing, LocalDate baseline) {
@@ -113,6 +125,7 @@ public class ApplicationSummaryService {
         persistentPreviousProcessing.setLastUpdatedDate(baseline);
 
         updatePreviousApplicationProcessingSummary(application, previousStateGroup);
+        entityService.flush();
     }
 
     private void createOrUpdateApplicationProcessingSummary(Application application, StateGroup stateGroup) throws DeduplicationException {

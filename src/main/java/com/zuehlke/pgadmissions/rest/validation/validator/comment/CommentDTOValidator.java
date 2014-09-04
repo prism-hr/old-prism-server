@@ -1,20 +1,21 @@
 package com.zuehlke.pgadmissions.rest.validation.validator.comment;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldResolution;
-import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
-import com.zuehlke.pgadmissions.rest.validation.validator.AbstractValidator;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldResolution;
+import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import com.zuehlke.pgadmissions.rest.validation.validator.AbstractValidator;
 
 @Component
 public class CommentDTOValidator extends AbstractValidator {

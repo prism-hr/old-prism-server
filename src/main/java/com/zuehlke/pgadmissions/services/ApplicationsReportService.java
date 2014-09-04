@@ -140,7 +140,8 @@ public class ApplicationsReportService {
 
         data.addColumns(cd);
 
-        List<ResourceReportListRowDTO> reportRows = applicationsService.getReportList();
+        // TODO: restore gata get
+        List<ResourceReportListRowDTO> reportRows = null;
 
         for (ResourceReportListRowDTO reportRow : reportRows) {
 

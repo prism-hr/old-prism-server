@@ -1,14 +1,15 @@
 package com.zuehlke.pgadmissions.rest.validation.validator.comment;
 
-import com.google.common.base.Preconditions;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
+
+import com.google.common.base.Preconditions;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 
 @Component
 public class AssignInterviewersCommentCustomValidator implements Validator {

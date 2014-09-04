@@ -80,6 +80,12 @@ public class Program extends ParentResource {
     @Column(name = "imported", nullable = false)
     private Boolean imported;
     
+    @Column(name = "application_rating_count_average")
+    private BigDecimal applicationRatingCountAverage;
+    
+    @Column(name = "application_rating_average")
+    private BigDecimal applicatingRatingAverage;
+    
     @Column(name = "application_rating_count_percentile_05")
     private Integer applicationRatingCount05;
     
@@ -290,6 +296,26 @@ public class Program extends ParentResource {
         this.imported = imported;
     }
 
+    @Override
+    public final BigDecimal getApplicationRatingCountAverage() {
+        return applicationRatingCountAverage;
+    }
+    
+    @Override
+    public final void setApplicationRatingCountAverage(BigDecimal applicationRatingCountAverage) {
+        this.applicationRatingCountAverage = applicationRatingCountAverage;
+    }
+
+    @Override
+    public BigDecimal getApplicationRatingAverage() {
+        return applicatingRatingAverage;
+    }
+
+    @Override
+    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+        this.applicatingRatingAverage = applicationRatingAverage;
+    }
+    
     @Override
     public final Integer getApplicationRatingCount05() {
         return applicationRatingCount05;

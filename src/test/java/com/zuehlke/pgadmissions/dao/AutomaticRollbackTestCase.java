@@ -7,8 +7,8 @@ import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
 
-import com.zuehlke.pgadmissions.utils.TestObjectProvider;
 import com.zuehlke.pgadmissions.utils.ApplicationTestContext;
+import com.zuehlke.pgadmissions.utils.TestObjectProvider;
 
 public abstract class AutomaticRollbackTestCase {
 

@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.domain.builders;
+package com.zuehlke.pgadmissions.utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -248,7 +248,7 @@ public class TestObjectProvider {
     public Domicile getDomicile() {
         return (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).setMaxResults(1).uniqueResult();
     }
-    
+
     @SuppressWarnings("unchecked")
     public <T> T get(Class<T> entityClass) {
         return (T) sessionFactory.getCurrentSession().createCriteria(entityClass).setMaxResults(1).uniqueResult();

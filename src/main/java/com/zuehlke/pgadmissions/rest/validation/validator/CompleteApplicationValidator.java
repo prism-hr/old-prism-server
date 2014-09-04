@@ -25,18 +25,18 @@ public class CompleteApplicationValidator extends AbstractValidator {
     public void addExtraValidation(Object target, Errors errors) {
         Application application = (Application) target;
 
-        ValidationUtils.rejectIfEmpty(errors, "programDetails", "notNull");
-        ValidationUtils.rejectIfEmpty(errors, "personalDetails", "notNull");
+        ValidationUtils.rejectIfEmpty(errors, "programDetail", "notNull");
+        ValidationUtils.rejectIfEmpty(errors, "personalDetail", "notNull");
         ValidationUtils.rejectIfEmpty(errors, "address", "notNull");
         // FIXME uncomment when documents are implemented
 //        ValidationUtils.rejectIfEmpty(errors, "document", "notNull");
         ValidationUtils.rejectIfEmpty(errors, "additionalInformation", "notNull");
 
 
-        ApplicationProgramDetail programDetails = application.getProgramDetail();
-        if (programDetails != null) {
-            errors.pushNestedPath("programDetails");
-            LocalDate startDate = programDetails.getStartDate();
+        ApplicationProgramDetail programDetail = application.getProgramDetail();
+        if (programDetail != null) {
+            errors.pushNestedPath("programDetail");
+            LocalDate startDate = programDetail.getStartDate();
             LocalDate earliestStartDate = applicationService.getEarliestStartDate(application);
             LocalDate latestStartDate = applicationService.getLatestStartDate(application);
 

@@ -24,9 +24,9 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     private DateTime submittedTimestamp;
 
-    private PersonalDetailsRepresentation personalDetails;
+    private PersonalDetailRepresentation personalDetail;
 
-    private ProgramDetailsRepresentation programDetails;
+    private ProgramDetailRepresentation programDetail;
 
     private ApplicationAddressRepresentation address;
 
@@ -94,20 +94,20 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
         this.submittedTimestamp = submittedTimestamp;
     }
 
-    public PersonalDetailsRepresentation getPersonalDetails() {
-        return personalDetails;
+    public PersonalDetailRepresentation getPersonalDetail() {
+        return personalDetail;
     }
 
-    public void setPersonalDetails(PersonalDetailsRepresentation personalDetails) {
-        this.personalDetails = personalDetails;
+    public void setPersonalDetail(PersonalDetailRepresentation personalDetail) {
+        this.personalDetail = personalDetail;
     }
 
-    public ProgramDetailsRepresentation getProgramDetails() {
-        return programDetails;
+    public ProgramDetailRepresentation getProgramDetail() {
+        return programDetail;
     }
 
-    public void setProgramDetails(ProgramDetailsRepresentation programDetails) {
-        this.programDetails = programDetails;
+    public void setProgramDetail(ProgramDetailRepresentation programDetail) {
+        this.programDetail = programDetail;
     }
 
     public ApplicationAddressRepresentation getAddress() {

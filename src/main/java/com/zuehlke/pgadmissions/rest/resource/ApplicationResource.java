@@ -60,18 +60,18 @@ public class ApplicationResource {
     @Autowired
     private CompleteApplicationValidator completeApplicationValidator;
 
-    @RequestMapping(value = "/{applicationId}/programDetails", method = RequestMethod.PUT)
-    public void saveProgramDetails(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationProgramDetailDTO programDetailDTO) {
+    @RequestMapping(value = "/{applicationId}/programDetail", method = RequestMethod.PUT)
+    public void saveProgramDetail(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationProgramDetailDTO programDetailDTO) {
         try {
-            applicationService.saveProgramDetails(applicationId, programDetailDTO);
+            applicationService.saveProgramDetail(applicationId, programDetailDTO);
         } catch (Exception e) {
             throw new ResourceNotFoundException();
         }
     }
 
-    @RequestMapping(value = "/{applicationId}/personalDetails", method = RequestMethod.PUT)
-    public void savePersonalDetails(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationPersonalDetailDTO personalDetailDTO) {
-        applicationService.savePersonalDetails(applicationId, personalDetailDTO);
+    @RequestMapping(value = "/{applicationId}/personalDetail", method = RequestMethod.PUT)
+    public void savePersonalDetail(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationPersonalDetailDTO personalDetailDTO) {
+        applicationService.savePersonalDetail(applicationId, personalDetailDTO);
     }
 
     @RequestMapping(value = "/{applicationId}/address", method = RequestMethod.PUT)

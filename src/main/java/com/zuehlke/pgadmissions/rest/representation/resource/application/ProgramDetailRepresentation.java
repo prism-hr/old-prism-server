@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.joda.time.LocalDate;
 
-public class ProgramDetailsRepresentation {
+public class ProgramDetailRepresentation {
 
     private Integer studyOption;
 

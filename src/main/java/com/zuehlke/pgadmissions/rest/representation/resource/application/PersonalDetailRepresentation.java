@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.LocalDate;
 
-public class PersonalDetailsRepresentation {
+public class PersonalDetailRepresentation {
 
     private String messenger;
 

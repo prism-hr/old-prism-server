@@ -25,10 +25,10 @@ public class ApplicationCopyHelper {
     @Transactional
     public void copyApplicationFormData(Application to, Application from) {
         if (from.getPersonalDetail() != null) {
-            ApplicationPersonalDetail personalDetails = new ApplicationPersonalDetail();
-            to.setPersonalDetail(personalDetails);
-            personalDetails.setApplication(to);
-            copyPersonalDetails(to.getPersonalDetail(), from.getPersonalDetail());
+            ApplicationPersonalDetail personalDetail = new ApplicationPersonalDetail();
+            to.setPersonalDetail(personalDetail);
+            personalDetail.setApplication(to);
+            copyPersonalDetail(to.getPersonalDetail(), from.getPersonalDetail());
         }
 
         if (from.getAddress() != null) {
@@ -81,7 +81,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    public void copyProgramDetails(ApplicationProgramDetail to, ApplicationProgramDetail from) {
+    public void copyProgramDetail(ApplicationProgramDetail to, ApplicationProgramDetail from) {
         Institution toInstitution = to.getApplication().getInstitution();
         to.setStudyOption(getEnabledImportedObject(toInstitution, from.getStudyOption()));
         to.setStartDate(from.getStartDate());
@@ -138,7 +138,7 @@ public class ApplicationCopyHelper {
         to.setDocument(copyDocument(from.getDocument()));
     }
 
-    public void copyPersonalDetails(ApplicationPersonalDetail to, ApplicationPersonalDetail from) {
+    public void copyPersonalDetail(ApplicationPersonalDetail to, ApplicationPersonalDetail from) {
         Institution toInstitution = to.getApplication().getInstitution();
         to.setTitle(getEnabledImportedObject(toInstitution, from.getTitle()));
         to.setGender(getEnabledImportedObject(toInstitution, from.getGender()));

@@ -31,42 +31,42 @@ public class CommentDTOValidator extends AbstractValidator {
 
         PrismActionValidationDefinition validationDefinition = action.getValidationDefinition();
         Map<PrismActionCommentField, List<PrismActionValidationFieldResolution>> fieldDefinitions = validationDefinition.getFieldResolutions();
-
-        for (PrismActionCommentField field : PrismActionCommentField.values()) {
-            List<PrismActionValidationFieldResolution> resolutions = fieldDefinitions.get(field);
-            String fieldName = field.getFieldName();
-            Object fieldValue = PropertyUtils.getSimpleProperty(comment, fieldName);
-            if (resolutions != null) {
-                for (PrismActionValidationFieldResolution fieldResolution : resolutions) {
-                    switch (fieldResolution.getRestriction()) {
-                        case NOT_NULL:
-                            ValidationUtils.rejectIfEmpty(errors, fieldName, "notNull");
-                            break;
-                        case NOT_EMPTY:
-                            ValidationUtils.rejectIfEmptyOrWhitespace(errors, fieldName, "notEmpty");
-                            break;
-                        case SIZE:
-                            Collection collection = (Collection) fieldValue;
-                            Integer min = (Integer) fieldResolution.getArguments().get("min");
-                            Integer max = (Integer) fieldResolution.getArguments().get("max");
-                            if (min != null && min > 0 && (collection == null || collection.size() < min)) {
-                                errors.rejectValue(fieldName, "min", new Object[]{min}, null);
-                            } else if (max != null && collection != null && collection.size() > max) {
-                                errors.rejectValue(fieldName, "max", new Object[]{max}, null);
-                            }
-                    }
-                }
-            } else {
-                if (fieldValue != null) {
-                    errors.rejectValue(fieldName, "forbidden");
-                }
-            }
-        }
-
-        Validator customValidator = validationDefinition.getCustomValidator();
-        if (customValidator != null) {
-            ValidationUtils.invokeValidator(customValidator, comment, errors);
-        }
+//
+//        for (PrismActionCommentField field : PrismActionCommentField.values()) {
+//            List<PrismActionValidationFieldResolution> resolutions = fieldDefinitions.get(field);
+//            String fieldName = field.getFieldName();
+//            Object fieldValue = PropertyUtils.getSimpleProperty(comment, fieldName);
+//            if (resolutions != null) {
+//                for (PrismActionValidationFieldResolution fieldResolution : resolutions) {
+//                    switch (fieldResolution.getRestriction()) {
+//                        case NOT_NULL:
+//                            ValidationUtils.rejectIfEmpty(errors, fieldName, "notNull");
+//                            break;
+//                        case NOT_EMPTY:
+//                            ValidationUtils.rejectIfEmptyOrWhitespace(errors, fieldName, "notEmpty");
+//                            break;
+//                        case SIZE:
+//                            Collection collection = (Collection) fieldValue;
+//                            Integer min = (Integer) fieldResolution.getArguments().get("min");
+//                            Integer max = (Integer) fieldResolution.getArguments().get("max");
+//                            if (min != null && min > 0 && (collection == null || collection.size() < min)) {
+//                                errors.rejectValue(fieldName, "min", new Object[]{min}, null);
+//                            } else if (max != null && collection != null && collection.size() > max) {
+//                                errors.rejectValue(fieldName, "max", new Object[]{max}, null);
+//                            }
+//                    }
+//                }
+//            } else {
+//                if (fieldValue != null) {
+//                    errors.rejectValue(fieldName, "forbidden");
+//                }
+//            }
+//        }
+//
+//        Validator customValidator = validationDefinition.getCustomValidator();
+//        if (customValidator != null) {
+//            ValidationUtils.invokeValidator(customValidator, comment, errors);
+//        }
 
     }
 }

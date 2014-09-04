@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.QualificationType;
-import com.zuehlke.pgadmissions.domain.builders.TestObjectProvider;
+import com.zuehlke.pgadmissions.utils.TestObjectProvider;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -43,12 +43,12 @@ public class ApplicationTestDataProvider {
 
     @Autowired
     private TestObjectProvider testObjectProvider;
-    
+
     @Autowired
     private EntityService entityService;
 
     public void fillWithData(Application application) throws Exception {
-        createPersonalDetails(application);
+        createPersonalDetail(application);
         createAddress(application);
         createQualifications(application);
         createEmployments(application);
@@ -58,14 +58,14 @@ public class ApplicationTestDataProvider {
         createAdditionalInformation(application);
     }
 
-    private void createPersonalDetails(Application application) {
-        ApplicationPersonalDetail personalDetails = new ApplicationPersonalDetail();
-        personalDetails.setGender(testObjectProvider.get(Gender.class));
-        personalDetails.setDateOfBirth(new LocalDate().minusYears(28));
-        personalDetails.setCountry(testObjectProvider.get(Country.class));
-        personalDetails.setFirstNationality(testObjectProvider.get(Language.class));
-        personalDetails.setSecondNationality(testObjectProvider.get(Language.class));
-        personalDetails.setLanguageQualificationAvailable(true);
+    private void createPersonalDetail(Application application) {
+        ApplicationPersonalDetail personalDetail = new ApplicationPersonalDetail();
+        personalDetail.setGender(testObjectProvider.get(Gender.class));
+        personalDetail.setDateOfBirth(new LocalDate().minusYears(28));
+        personalDetail.setCountry(testObjectProvider.get(Country.class));
+        personalDetail.setFirstNationality(testObjectProvider.get(Language.class));
+        personalDetail.setSecondNationality(testObjectProvider.get(Language.class));
+        personalDetail.setLanguageQualificationAvailable(true);
         ApplicationLanguageQualification languageQualification = new ApplicationLanguageQualification();
         languageQualification.setType(entityService.getByProperty(ImportedLanguageQualificationType.class, "code", "IELTS_ACADEMIC"));
         languageQualification.setExamDate(new LocalDate(1967, 9, 14));
@@ -75,21 +75,21 @@ public class ApplicationTestDataProvider {
         languageQualification.setSpeakingScore("6");
         languageQualification.setListeningScore("6");
         languageQualification.setDocument(testObjectProvider.get(Document.class));
-        personalDetails.setLanguageQualification(languageQualification);
-        personalDetails.setResidenceCountry(testObjectProvider.get(Domicile.class));
-        personalDetails.setVisaRequired(true);
+        personalDetail.setLanguageQualification(languageQualification);
+        personalDetail.setResidenceCountry(testObjectProvider.get(Domicile.class));
+        personalDetail.setVisaRequired(true);
         ApplicationPassport passport = new ApplicationPassport();
         passport.setNumber("666");
         passport.setName("Kubus Fibinger");
         passport.setIssueDate(new LocalDate(2003, 9, 14));
         passport.setExpiryDate(new LocalDate(2084, 8, 14));
-        personalDetails.setPassport(passport);
-        personalDetails.setPhoneNumber("+44(4)5435435");
-        personalDetails.setMessenger("dupajasia");
-        personalDetails.setEthnicity(testObjectProvider.get(Ethnicity.class));
-        personalDetails.setDisability(testObjectProvider.get(Disability.class));
-        application.setPersonalDetail(personalDetails);
-        entityService.save(personalDetails);
+        personalDetail.setPassport(passport);
+        personalDetail.setPhoneNumber("+44(4)5435435");
+        personalDetail.setMessenger("dupajasia");
+        personalDetail.setEthnicity(testObjectProvider.get(Ethnicity.class));
+        personalDetail.setDisability(testObjectProvider.get(Disability.class));
+        application.setPersonalDetail(personalDetail);
+        entityService.save(personalDetail);
     }
 
     private void createAddress(Application application) {

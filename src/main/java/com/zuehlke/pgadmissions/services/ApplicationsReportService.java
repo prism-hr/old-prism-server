@@ -34,7 +34,7 @@ public class ApplicationsReportService {
     @Autowired
     private ApplicationService applicationsService;
 
-    @Value("${application.host}") 
+    @Value("${application.host}")
     private String host;
 
     public DataTable getApplicationsReport(User user, Filter filtering, ReportFormat reportType) {
@@ -146,10 +146,10 @@ public class ApplicationsReportService {
 
             try {
 //                User applicant = app.getUser();
-//                PersonalDetails personalDetails = app.getPersonalDetails();
+//                PersonalDetails personalDetails = app.getPersonalDetail();
 //                String firstNames = Joiner.on(" ").skipNulls().join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3());
 //                Program program = app.getProgram();
-//                ProgramDetails programmeDetails = app.getProgramDetails();
+//                ProgramDetail programmeDetail = app.getProgramDetail();
 //                ValidationComment validationComment = (ValidationComment) applicationsService.getLatestStateChangeComment(app, SystemAction.APPLICATION_COMPLETE_VALIDATION_STAGE);
 //                int[] receivedAndDeclinedReferences = getNumberOfReceivedAndDeclinedReferences(app);
 //                int[] referenceEndorsements = getNumberOfPositiveAndNegativeReferenceEndorsements(app);

@@ -6,19 +6,16 @@
 
     <configuration>
         <custom-converters>
-            <converter type="com.zuehlke.pgadmissions.rest.converter.LocalDateConverter">
-                <class-a>org.joda.time.LocalDate</class-a>
-                <class-b>org.joda.time.LocalDate</class-b>
-            </converter>
-            <converter type="com.zuehlke.pgadmissions.rest.converter.DateTimeConverter">
-                <class-a>org.joda.time.DateTime</class-a>
-                <class-b>org.joda.time.DateTime</class-b>
-            </converter>
             <converter type="com.zuehlke.pgadmissions.rest.converter.ImportedEntityConverter">
                 <class-a>com.zuehlke.pgadmissions.domain.ImportedEntity</class-a>
                 <class-b>java.lang.Integer</class-b>
             </converter>
         </custom-converters>
+        <copy-by-references>
+            <copy-by-reference>java.util.TimeZone</copy-by-reference>
+            <copy-by-reference>org.joda.time.LocalDate</copy-by-reference>
+            <copy-by-reference>org.joda.time.DateTime</copy-by-reference>
+        </copy-by-references>
     </configuration>
 
     <mapping>

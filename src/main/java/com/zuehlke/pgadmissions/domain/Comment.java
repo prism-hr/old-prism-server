@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import org.joda.time.LocalDateTime;
 
 @Entity
 @Table(name = "COMMENT")
@@ -114,8 +115,8 @@ public class Comment {
     private Boolean desireToRecruit;
 
     @Column(name = "application_interview_datetime")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime interviewDateTime;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+    private LocalDateTime interviewDateTime;
 
     @Column(name = "application_interview_timezone")
     private TimeZone interviewTimeZone;
@@ -382,11 +383,11 @@ public class Comment {
         this.desireToRecruit = desireToRecruit;
     }
 
-    public DateTime getInterviewDateTime() {
+    public LocalDateTime getInterviewDateTime() {
         return interviewDateTime;
     }
 
-    public void setInterviewDateTime(DateTime interviewDateTime) {
+    public void setInterviewDateTime(LocalDateTime interviewDateTime) {
         this.interviewDateTime = interviewDateTime;
     }
 
@@ -754,7 +755,7 @@ public class Comment {
         return this;
     }
 
-    public Comment withInterviewDateTime(final DateTime interviewDateTime) {
+    public Comment withInterviewDateTime(final LocalDateTime interviewDateTime) {
         this.interviewDateTime = interviewDateTime;
         return this;
     }

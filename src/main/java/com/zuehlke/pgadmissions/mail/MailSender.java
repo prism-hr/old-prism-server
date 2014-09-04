@@ -73,7 +73,7 @@ public class MailSender {
                     plainText = plainText + "\n\n" + emailBrokenLinkMessage;
 
                     // populate messageHelper
-                    if (contextEnvironment.equals("prod")) {
+                    if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")) {
                         messageHelper.setTo(convertToInternetAddresses(message.getTo()));
                         messageHelper.setSubject(subject);
                     } else {

@@ -77,7 +77,7 @@ public class ImportedEntityServiceHelper {
 
         for (ImportedEntityFeed importedEntityFeed : importedEntityService.getImportedEntityFeedsToImport()) {
             String maxRedirects = null;
-            if (contextEnvironment.equals("prod") || (!importedEntityFeed.isAuthenticated()
+            if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat") || (!importedEntityFeed.isAuthenticated()
                     && importedEntityFeed.getImportedEntityType() != PrismImportedEntity.INSTITUTION)) {
                 try {
                     maxRedirects = System.getProperty("http.maxRedirects");

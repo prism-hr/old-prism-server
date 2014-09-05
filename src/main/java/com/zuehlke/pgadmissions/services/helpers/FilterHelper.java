@@ -7,14 +7,17 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.hibernate.sql.JoinType;
 
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.DateFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.ObjectFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.RatingFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.StateFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.StringFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.UserRoleFilterDTO;
 
 public class FilterHelper {
     
@@ -39,17 +42,17 @@ public class FilterHelper {
     }
     
     public static void appendDateTimeFilterCriterion(Junction filterConditions, String filterProperty, DateFilterDTO filterDefinition) {
-        Criterion restriction = Restrictions.between(filterProperty, filterDefinition.getRangeStartAsDateTime(), filterDefinition.getRangeCloseAsDateTime()); 
+        Criterion restriction = getRangeFilterCriterion(filterProperty, filterDefinition.getRangeStartAsDateTime(), filterDefinition.getRangeCloseAsDateTime());
         applyOrNegateFilterCriterion(filterConditions, filterDefinition, restriction);
     }
     
     public static void appendDateFilterCriterion(Junction filterConditions, String filterProperty, DateFilterDTO filterDefinition) {
-        Criterion restriction = Restrictions.between(filterProperty, filterDefinition.getRangeStart(), filterDefinition.getRangeClose());
+        Criterion restriction = getRangeFilterCriterion(filterProperty, filterDefinition.getRangeStart(), filterDefinition.getRangeClose());
         applyOrNegateFilterCriterion(filterConditions, filterDefinition, restriction);
     }
 
     public static void appendRatingFilterCriterion(Junction filterConditions, String filterProperty, RatingFilterDTO filterDefinition) {
-        Criterion restriction = Restrictions.between(filterProperty, filterDefinition.getRangeStart(), filterDefinition.getRangeClose());
+        Criterion restriction = getRangeFilterCriterion(filterProperty, filterDefinition.getRangeStart(), filterDefinition.getRangeClose());
         applyOrNegateFilterCriterion(filterConditions, filterDefinition, restriction);
     }
     
@@ -60,6 +63,29 @@ public class FilterHelper {
                         .add(Restrictions.disjunction()
                                 .add(Restrictions.ilike("fullName", filterTerm.getFilter(), MatchMode.ANYWHERE))
                                 .add(Restrictions.ilike("email", filterTerm.getFilter(), MatchMode.ANYWHERE)))));
+    }
+    
+    public static void appendUserRoleFilterCriterion(Junction filterConditions, String filterProperty, UserRoleFilterDTO filterTerm) {
+        filterConditions.add(Subqueries.in(filterProperty + ".id", // 
+                DetachedCriteria.forClass(UserRole.class) //
+                        .setProjection(Projections.property("id")) //
+                        .createAlias("user", "user", JoinType.INNER_JOIN) //
+                        .add(Restrictions.in("role.id", filterTerm.getUserRoles())) //
+                        .add(Restrictions.disjunction() //
+                                .add(Restrictions.ilike("user.fullName", filterTerm.getFilter(), MatchMode.ANYWHERE)) //
+                                .add(Restrictions.ilike("user.email", filterTerm.getFilter(), MatchMode.ANYWHERE)))));
+    }
+    
+    private static Criterion getRangeFilterCriterion(String filterProperty, Object rangeStart, Object rangeClose) {
+        Criterion restriction;
+        if (rangeStart == null) {
+            restriction = Restrictions.le(filterProperty, rangeClose);
+        } else if (rangeClose == null) {
+            restriction = Restrictions.ge(filterProperty, rangeStart);
+        } else {
+            restriction = Restrictions.between(filterProperty, rangeStart, rangeClose);
+        }
+        return restriction;
     }
     
     private static void applyOrNegateFilterCriterion(Junction filterConditions, ObjectFilterDTO filterDefinition, Criterion restriction) {

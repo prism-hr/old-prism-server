@@ -36,11 +36,10 @@ public class ApplicationSummaryDAO {
     }
     
     public ApplicationRatingSummaryDTO getApplicationRatingSummary(ParentResource parentResource) {
-        return (ApplicationRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Comment.class, "comment") //
+        return (ApplicationRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Application.class, "application") //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.avg("id"), "ratingCountAverage") //
-                        .add(Projections.avg("rating"), "ratingAverage")) //
-                .createAlias("application", "application", JoinType.INNER_JOIN) //
+                        .add(Projections.avg("ratingCount"), "ratingCountAverage") //
+                        .add(Projections.avg("ratingAverage"), "ratingAverage")) //
                 .add(Restrictions.eq(parentResource.getResourceScope().getLowerCaseName(), parentResource)) //
                 .add(Restrictions.isNotNull("rating")) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationRatingDTO.class)) //

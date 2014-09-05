@@ -63,7 +63,27 @@ public class ApplicationSummaryService {
         createOrUpdateApplicationProcessing(application, stateGroup, baseline);
         updatePreviousApplicationProcessing(application, previousStateGroup, baseline);
     }
+    
+    public void incrementApplicationCreatedCount(Application application) {
+        incrementApplicationEventCount(application, "applicationCreatedCount");
+    }
+    
+    public void incrementApplicationSubmittedCount(Application application) {
+        incrementApplicationEventCount(application, "applicationSubmittedCount");
+    }
 
+    public void incrementApplicationApprovedCount(Application application) {
+        incrementApplicationEventCount(application, "applicationApprovedCount");
+    }
+
+    public void incrementApplicationRejectedCount(Application application) {
+        incrementApplicationEventCount(application, "applicationRejectedCount");
+    }
+
+    public void incrementApplicationWithdrawnCount(Application application) {
+        incrementApplicationEventCount(application, "applicationWithdrawnCount");
+    }
+    
     private void updateApplicationSummary(Application application, PrismScope summaryScope) throws Exception {
         ParentResource parent = (ParentResource) PropertyUtils.getProperty(application, summaryScope.getLowerCaseName());
         ApplicationRatingSummaryDTO summary = applicationSummaryDAO.getApplicationRatingSummary(parent);
@@ -226,6 +246,19 @@ public class ApplicationSummaryService {
 
     private int getActualPercentile(Integer valuesInSet, Integer percentile) {
         return new BigDecimal(percentile * (valuesInSet / 100.0)).setScale(0, RoundingMode.HALF_UP).intValue();
+    }
+    
+    private void incrementApplicationEventCount(Application application, String eventCountProperty) {
+        for (PrismScope summaryScope : summaryScopes) {
+            try {
+                ParentResource parent = (ParentResource) PropertyUtils.getSimpleProperty(application, summaryScope.getLowerCaseName());
+                Integer currentCount = (Integer) PropertyUtils.getSimpleProperty(parent, eventCountProperty);
+                PropertyUtils.setSimpleProperty(parent, eventCountProperty, currentCount == null ? 1 : currentCount + 1);
+            } catch (Exception e) {
+                throw new Error(e);
+            }
+        }
+        
     }
 
 }

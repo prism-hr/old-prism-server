@@ -18,6 +18,8 @@ public enum PrismProgramType {
             new String[] { "mres", "md(res)" }), //
     POSTGRADUATE_RESEARCH(new PrismProgramTypeScheduled().withStartMonth(DateTimeConstants.SEPTEMBER).withStartWeek(3).withStartDay(DateTimeConstants.MONDAY), //
             new String[] { "research degree", "engineering doctorate" }), //
+    STUDY_SCHOLARSHIP(new PrismProgramTypeScheduled().withStartMonth(DateTimeConstants.SEPTEMBER).withStartWeek(3).withStartDay(DateTimeConstants.MONDAY),
+            new String[] {}), //
     INTERNSHIP(new PrismProgramTypeImmediate().withStartDay(DateTimeConstants.MONDAY), new String[] {}), //
     SECONDMENT(new PrismProgramTypeImmediate().withStartDay(DateTimeConstants.MONDAY), new String[] { "visiting research" }), //
     EMPLOYMENT(new PrismProgramTypeImmediate().withStartDay(DateTimeConstants.MONDAY), new String[] {}), //
@@ -27,7 +29,7 @@ public enum PrismProgramType {
     private PrismProgramTypeConfiguration configuration;
 
     private String[] prefixes;
-    
+
     private static final List<String> stringValues = Lists.newArrayList();
 
     static {
@@ -37,7 +39,7 @@ public enum PrismProgramType {
             }
         }
     }
-    
+
     private PrismProgramType(PrismProgramTypeConfiguration configuration, String[] prefixes) {
         this.configuration = configuration;
         this.prefixes = prefixes;
@@ -63,9 +65,9 @@ public enum PrismProgramType {
     public LocalDate getImmediateStartDate() {
         return configuration.getImmediateStartDate();
     }
-    
+
     public LocalDate getRecommendedStartDate() {
         return configuration.getRecommendedStartDate();
     }
-    
+
 }

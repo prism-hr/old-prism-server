@@ -7,6 +7,34 @@ import org.apache.commons.lang3.text.WordUtils;
 
 public abstract class ParentResource extends Resource {
 
+    public abstract Integer getApplicationCreatedCount();
+    
+    public abstract void setApplicationCreatedCount(Integer applicationCreatedCount);
+    
+    public abstract Integer getApplicationSubmittedCount();
+    
+    public abstract void setApplicationSubmittedCount(Integer applicationSubmittedCount);
+    
+    public abstract Integer getApplicationApprovedCount();
+    
+    public abstract void setApplicationApprovedCount(Integer applicationApprovedCount);
+    
+    public abstract Integer getApplicationRejectedCount();
+    
+    public abstract void setApplicationRejectedCount(Integer applicationRejectedCount);
+    
+    public abstract Integer getApplicationWithdrawnCount();
+    
+    public abstract void setApplicationWithdrawnCount(Integer applicationWithdrawnCount);
+    
+    public abstract BigDecimal getApplicationRatingCountAverage();
+    
+    public abstract void setApplicationRatingCountAverage(BigDecimal applicationRatingAverage);
+
+    public abstract BigDecimal getApplicationRatingAverage();
+    
+    public abstract void setApplicationRatingAverage(BigDecimal applicationRatingAverage);
+    
     public abstract Integer getApplicationRatingCount05();
 
     public abstract void setApplicationRatingCount05(Integer applicationRatingCount05);
@@ -34,14 +62,6 @@ public abstract class ParentResource extends Resource {
     public abstract Integer getApplicationRatingCount95();
 
     public abstract void setApplicationRatingCount95(Integer applicationRatingCount95);
-    
-    public abstract BigDecimal getApplicationRatingCountAverage();
-    
-    public abstract void setApplicationRatingCountAverage(BigDecimal applicationRatingAverage);
-
-    public abstract BigDecimal getApplicationRatingAverage();
-    
-    public abstract void setApplicationRatingAverage(BigDecimal applicationRatingAverage);
     
     public abstract BigDecimal getApplicationRatingAverage05();
 

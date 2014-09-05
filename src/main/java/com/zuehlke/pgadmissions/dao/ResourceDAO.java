@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.DateFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.RatingFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.StateFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.StringFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.UserRoleFilterDTO;
 import com.zuehlke.pgadmissions.services.helpers.FilterHelper;
 import com.zuehlke.pgadmissions.utils.FreeMarkerHelper;
 
@@ -45,7 +46,7 @@ public class ResourceDAO {
 
     @Value("${resource.list.records.to.retrieve}")
     private Integer resourceListRecordsToRetrieve;
-    
+
     @Value("${resource.report.records.to.retrieve}")
     private Integer resourceReportRecordsToRetrieve;
 
@@ -108,57 +109,71 @@ public class ResourceDAO {
         if (resourceClass.equals(System.class)) {
             throw new Error("System is not a listable resource type");
         }
-        
+
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceClass) //
-                .setProjection(Projections.groupProperty("id")) //
-                .add(Restrictions.disjunction() //
-                        .add(Subqueries.propertyIn("id", //
-                                DetachedCriteria.forClass(UserRole.class) //
-                                        .setProjection(Projections.groupProperty("application.id")) //
-                                        .createAlias("role", "role", JoinType.INNER_JOIN) //
-                                        .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                                        .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
-                                        .add(Restrictions.eq("user", user)) //
-                                        .add(Restrictions.isNotNull(PrismScope.getResourceScope(resourceClass).getLowerCaseName())))));
-        
+                .setProjection(Projections.groupProperty("id"));
+
+        if (filterDTO.hasFilter("userRole")) {
+            criteria.createAlias("userRoles", "userRole", JoinType.LEFT_OUTER_JOIN);
+        }
+
+        criteria.add(Restrictions.disjunction() //
+                .add(Subqueries.propertyIn("id", //
+                        DetachedCriteria.forClass(UserRole.class) //
+                                .setProjection(Projections.groupProperty("application.id")) //
+                                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                                .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
+                                .add(Restrictions.eq("user", user)) //
+                                .add(Restrictions.isNotNull(PrismScope.getResourceScope(resourceClass).getLowerCaseName())))));
+
         boolean getUrgentOnly = filterDTO.isUrgentOnly();
-        
+
         if (getUrgentOnly) {
             criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
         }
 
         for (PrismScope parentScopeId : parentScopeIds) {
             String parentResourceReference = parentScopeId.getLowerCaseName();
-            
-            DetachedCriteria stateCriteria = DetachedCriteria.forClass(StateAction.class) //
-                    .setProjection(Projections.groupProperty("state.id"))
-                    .createAlias("stateActionAssignments", "stateActionAssigment", JoinType.INNER_JOIN)
-                    .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN)
-                    .add(Restrictions.eq("role.scope.id", parentScopeId));
-            
+
+            DetachedCriteria stateCriteria = DetachedCriteria.forClass(StateAction.class)
+                    //
+                    .setProjection(Projections.groupProperty("state.id")).createAlias("stateActionAssignments", "stateActionAssigment", JoinType.INNER_JOIN)
+                    .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN).add(Restrictions.eq("role.scope.id", parentScopeId));
+
             if (filterDTO.isUrgentOnly()) {
                 stateCriteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
             }
-            
+
             criteria.add(Restrictions.conjunction() //
                     .add(Subqueries.propertyIn(parentResourceReference, //
                             DetachedCriteria.forClass(UserRole.class) //
                                     .setProjection(Projections.groupProperty(parentResourceReference + ".id")) //
-                                    .add(Restrictions.eq("user", user))
-                                    .add(Restrictions.isNotNull(parentResourceReference)))) //
+                                    .add(Restrictions.eq("user", user)).add(Restrictions.isNotNull(parentResourceReference)))) //
                     .add(Subqueries.propertyIn("state", //
                             stateCriteria)));
         }
-        
+
+        appendResourceListFilterCriteria(resourceClass, criteria, filterDTO);
+
+        FilterSortOrder sortOrder = filterDTO.getSortOrder();
+        appendResourceListPagingExpression(criteria, filterDTO.getSortOrder(), lastSequenceIdentifier);
+        appendResourceListOrderByExpression(criteria, sortOrder);
+
+        appendResourceListLimitExpression(criteria, fetchMode);
+        return criteria.list();
+    }
+
+    private <T extends Resource> void appendResourceListFilterCriteria(Class<T> resourceClass, Criteria criteria, ResourceListFilterDTO filterDTO) {
         Junction filterConditions = Restrictions.conjunction();
         if (filterDTO.getMatchMode() == FilterMatchMode.ANY) {
             filterConditions = Restrictions.disjunction();
         }
-        
+
         HashMap<String, Object> filters = filterDTO.getFilters();
         for (String filterProperty : filters.keySet()) {
             Object filter = filters.get(filterProperty);
-            
+
             if (filterProperty.equals("creator")) {
                 for (StringFilterDTO filterTerm : (List<StringFilterDTO>) filter) {
                     FilterHelper.appendUserFilterCriterion(filterConditions, filterProperty, filterTerm);
@@ -169,7 +184,7 @@ public class ResourceDAO {
                 }
             } else if (Arrays.asList("institution", "program", "project").contains(filterProperty)) {
                 for (StringFilterDTO filterTerm : (List<StringFilterDTO>) filter) {
-                    FilterHelper.appendParentResourceFilterCriterion(filterConditions, filterProperty, filterTerm);   
+                    FilterHelper.appendParentResourceFilterCriterion(filterConditions, filterProperty, filterTerm);
                 }
             } else if (Arrays.asList("createdTimestamp", "updatedTimestamp").contains(filterProperty)) {
                 for (DateFilterDTO filterRange : (List<DateFilterDTO>) filter) {
@@ -206,10 +221,10 @@ public class ResourceDAO {
                 for (StringFilterDTO filterTerm : (List<StringFilterDTO>) filters) {
                     FilterHelper.appendStringFilterCriterion(filterConditions, filterProperty, filterTerm);
                 }
-            } else if (filterProperty.equals("supervisor")) {
+            } else if (filterProperty.equals("userRole")) {
                 if (resourceClass.equals(Application.class)) {
-                    for (StringFilterDTO filterTerm : (List<StringFilterDTO>) filters) {
-                        FilterHelper.appendUserFilterCriterion(filterConditions, "project.user.id", filterTerm);
+                    for (UserRoleFilterDTO filterTerm : (List<UserRoleFilterDTO>) filters) {
+                        FilterHelper.appendUserRoleFilterCriterion(filterConditions, "project.user.id", filterTerm);
                     }
                 } else {
                     throwResourceFilterListMissingPropertyError(resourceClass, filterProperty);
@@ -221,30 +236,25 @@ public class ResourceDAO {
                 }
             }
         }
-        
+
         criteria.add(filterConditions);
-        
-        FilterSortOrder sortOrder = filterDTO.getSortOrder();
-        addPagingCondition(criteria, sortOrder, lastSequenceIdentifier);   
-        addOrderByExpression(criteria, sortOrder);
-        
-        Integer recordsToRetrieve = fetchMode == FilterFetchMode.LIST ? resourceListRecordsToRetrieve : resourceReportRecordsToRetrieve;
-        return criteria.setMaxResults(recordsToRetrieve).list();
     }
 
-    private void addPagingCondition(Criteria criteria, FilterSortOrder sortOrder, String lastSequenceIdentifier) {
-        if (lastSequenceIdentifier != null) {
-            Criterion pagingCondition;
-            if (sortOrder == FilterSortOrder.DESCENDING) {
-                pagingCondition = Restrictions.lt("sequenceIdentifier", lastSequenceIdentifier);
-            } else {
-                pagingCondition = Restrictions.gt("sequenceIdentifier", lastSequenceIdentifier);
-            }
-            criteria.add(pagingCondition);
+    private void appendResourceListPagingExpression(Criteria criteria, FilterSortOrder sortOrder, String lastSequenceIdentifier) {
+        if (lastSequenceIdentifier == null) {
+            return;
         }
+
+        Criterion pagingCondition;
+        if (sortOrder == FilterSortOrder.DESCENDING) {
+            pagingCondition = Restrictions.lt("sequenceIdentifier", lastSequenceIdentifier);
+        } else {
+            pagingCondition = Restrictions.gt("sequenceIdentifier", lastSequenceIdentifier);
+        }
+        criteria.add(pagingCondition);
     }
-    
-    private void addOrderByExpression(Criteria criteria, FilterSortOrder sortOrder) {
+
+    private void appendResourceListOrderByExpression(Criteria criteria, FilterSortOrder sortOrder) {
         Order sortOrderExpression;
         if (sortOrder == FilterSortOrder.DESCENDING) {
             sortOrderExpression = Order.desc("sequenceIdentifier");
@@ -254,8 +264,16 @@ public class ResourceDAO {
         criteria.addOrder(sortOrderExpression);
     }
 
+    private void appendResourceListLimitExpression(Criteria criteria, FilterFetchMode fetchMode) {
+        Integer recordsToRetrieve = fetchMode == FilterFetchMode.LIST ? resourceListRecordsToRetrieve : null;
+        if (recordsToRetrieve == null) {
+            return;
+        }
+        criteria.setMaxResults(recordsToRetrieve);
+    }
+
     private <T extends Resource> void throwResourceFilterListMissingPropertyError(Class<T> resourceClass, String type) {
         throw new Error(resourceClass.getSimpleName() + " does not have a " + type + " property");
     }
-    
+
 }

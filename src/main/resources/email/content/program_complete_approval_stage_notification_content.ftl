@@ -20,7 +20,7 @@
 					<font face="Arial, Helvetica, sans-serif" color="#0055A1">
 						Dear ${userFirstName},
 					</font>
-				</h1>		
+				</h1>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
 						Thank you for your recent request to advertise the ${programTitle} opportunity to our user network.
@@ -33,21 +33,13 @@
 				</p>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
-						Please
-						<#if user.enabled>
-							login
-						<#else>
-							register
-						</#if>
-						for further details of this review and to access more detailed instructions on how to proceed.
+						Please login for further details of this review and to access more detailed instructions on how to proceed.
 					</font>
-				</p>	
+				</p>
 				<p>
-					<!-- Button -->     
-					<a style="text-decoration:none;"
-                       href="${host}/#/program/${programId}/action?action=${action}">
-							<img alt="Login" title="Login" width="64" height="33" src="${host}/pgadmissions/design/default/images/email/login.jpg"/>
-					</a>
+                    <a style="text-decoration:none;" href="${actionUrl}">
+                        <img alt="Confirm registration" title="Confirm registration" width="158" height="33" src="${host}/pgadmissions/design/default/images/email/confirm_registration.jpg">
+                    </a>
 				</p>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>

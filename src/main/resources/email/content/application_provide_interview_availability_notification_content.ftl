@@ -32,15 +32,9 @@
 					</font>
 				</p>
 				<p>
-					<!-- Button -->
-					<a style="text-decoration:none;"
-						<#if !participant.user.enabled>
-							href="${host}/pgadmissions/register?activationCode=${participant.user.activationCode!}&directToUrl=%2FinterviewConfirm%3FapplicationId%3D${applicationCode}"?url('ISO-8859-1')}">
-						<#else>
-							href="${host}/pgadmissions/interviewConfirm?applicationId=${applicationCode}&activationCode=${participant.user.activationCode!}">
-						</#if>
-						<img alt="Confirm interview arrangements" title="Confirm interview arrangements" width="228" height="30" src="${host}/pgadmissions/design/default/images/email/confirm_interview_arrangements.jpg" />
-					</a>
+                    <a style="text-decoration:none;" href="${actionUrl}">
+                        <img alt="Confirm interview arrangements" title="Confirm interview arrangements" width="228" height="30" src="${host}/pgadmissions/design/default/images/email/confirm_interview_arrangements.jpg" />
+                    </a>
 				</p>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">

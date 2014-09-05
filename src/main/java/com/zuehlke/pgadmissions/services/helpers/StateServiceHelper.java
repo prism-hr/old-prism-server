@@ -1,24 +1,20 @@
 package com.zuehlke.pgadmissions.services.helpers;
 
-import java.util.List;
-
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import com.zuehlke.pgadmissions.services.ScopeService;
-import com.zuehlke.pgadmissions.services.StateService;
-import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.*;
+import org.hibernate.SessionFactory;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class StateServiceHelper {
-            
+
     @Autowired
     private ActionService actionService;
 
@@ -30,6 +26,9 @@ public class StateServiceHelper {
 
     @Autowired
     private StateService stateService;
+
+    @Autowired
+    private SessionFactory sessionFactory;
 
     @Autowired
     private SystemService systemService;

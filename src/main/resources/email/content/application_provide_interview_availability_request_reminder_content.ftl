@@ -39,8 +39,7 @@
             </p>
 
             <p>
-                <a style="text-decoration:none;"
-                   href="${host}/#/application/${applicationId}/action?action=APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY">
+                <a style="text-decoration:none;" href="${actionUrl}">
                     <img alt="Confirm your availability for interview" title="Confirm your availability for interview"
                          width="148" height="33"
                          src="${host}/pgadmissions/design/default/images/email/confirm_availability.jpg"/>

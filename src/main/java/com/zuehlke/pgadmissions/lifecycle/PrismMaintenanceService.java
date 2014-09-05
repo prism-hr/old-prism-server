@@ -16,24 +16,24 @@ import com.zuehlke.pgadmissions.services.helpers.StateServiceHelper;
 
 @Service
 public class PrismMaintenanceService {
-    
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     @Autowired
     private StateServiceHelper stateTransitionHelper;
-    
+
     @Autowired
     private ImportedEntityServiceHelper entityImportHelper;
-    
+
     @Autowired
     private AdvertServiceHelper advertHelper;
-    
+
     @Autowired
     private ProgramServiceHelper programHelper;
 
     @Autowired
     private ApplicationExportServiceHelper applicationExportServiceHelper;
-    
+
     @Autowired
     private NotificationServiceHelper notificationHelper;
 
@@ -45,7 +45,8 @@ public class PrismMaintenanceService {
         executeResourceEscalations();
         executeResourcePropagations();
         importReferenceData();
-        exportUclApplications();
+        // FIXME uncomment and fix
+//        exportUclApplications();
         updateProgamStudyOptions();
         updateAdvertClosingDates();
         sendDeferredWorkflowNotifications();
@@ -61,7 +62,7 @@ public class PrismMaintenanceService {
             logger.info("Error executing resource escalations", e);
         }
     }
-    
+
     private void executeResourcePropagations() {
         try {
             logger.info("Executing resource propagations");
@@ -70,7 +71,7 @@ public class PrismMaintenanceService {
             logger.info("Error executing resource propagations", e);
         }
     }
-    
+
     private void importReferenceData() {
         try {
             logger.info("Importing reference data");
@@ -79,7 +80,7 @@ public class PrismMaintenanceService {
             logger.info("Error importing reference data", e);
         }
     }
-    
+
     private void updateProgamStudyOptions() {
         try {
             logger.info("Updating program study options");
@@ -88,7 +89,7 @@ public class PrismMaintenanceService {
             logger.info("Error updating program study options", e);
         }
     }
-    
+
     private void updateAdvertClosingDates() {
         try {
             logger.info("Updating advert closing dates");
@@ -97,7 +98,7 @@ public class PrismMaintenanceService {
             logger.info("Error updating advert closing dates", e);
         }
     }
-    
+
     private void exportUclApplications() {
         try {
             logger.trace("Exporting applications");
@@ -106,7 +107,7 @@ public class PrismMaintenanceService {
             logger.info("Error exporting applications", e);
         }
     }
-    
+
     private void sendDeferredWorkflowNotifications() {
         try {
             logger.info("Sending deferred workflow notifications.");
@@ -115,16 +116,16 @@ public class PrismMaintenanceService {
             logger.info("Error sending deferred workflow notifications", e);
         }
     }
-    
+
     private void sendRecommendationNotifications() {
         try {
             logger.info("Sending recommendation notifications");
-            notificationHelper.sendRecommendationNotifications();     
+            notificationHelper.sendRecommendationNotifications();
         }  catch (Exception e) {
             logger.info("Error sending recommendation notifications", e);
         }
     }
-    
+
     private void deleteUnusedDocuments() {
         try {
             logger.info("Deleting unused documents");
@@ -133,5 +134,5 @@ public class PrismMaintenanceService {
             logger.info("Error deleting unused documents", e);
         }
     }
-    
+
 }

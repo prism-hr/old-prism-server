@@ -104,6 +104,7 @@ public class ResourceDAO {
                 + "s";
 
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(propagatingResourceScope.getResourceClass()) //
+                .setProjection(Projections.id())
                 .createAlias(propagatedReference, propagatedAlias, JoinType.INNER_JOIN) //
                 .createAlias(propagatedAlias + ".state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
@@ -148,26 +149,26 @@ public class ResourceDAO {
                                         .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
                                         .add(Restrictions.eq("user", user)) //
                                         .add(Restrictions.isNotNull(PrismScope.getResourceScope(resourceClass).getLowerCaseName())))));
-        
+
         boolean getUrgentOnly = filterDTO.isUrgentOnly();
-        
+
         if (getUrgentOnly) {
             criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
         }
 
         for (PrismScope parentScopeId : parentScopeIds) {
             String parentResourceReference = parentScopeId.getLowerCaseName();
-            
+
             DetachedCriteria stateCriteria = DetachedCriteria.forClass(StateAction.class) //
                     .setProjection(Projections.groupProperty("state.id"))
                     .createAlias("stateActionAssignments", "stateActionAssigment", JoinType.INNER_JOIN)
                     .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN)
                     .add(Restrictions.eq("role.scope.id", parentScopeId));
-            
+
             if (filterDTO.isUrgentOnly()) {
                 stateCriteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
             }
-            
+
             criteria.add(Restrictions.conjunction() //
                     .add(Subqueries.propertyIn(parentResourceReference, //
                             DetachedCriteria.forClass(UserRole.class) //
@@ -177,17 +178,17 @@ public class ResourceDAO {
                     .add(Subqueries.propertyIn("state", //
                             stateCriteria)));
         }
-        
+
         Junction filterConditions = Restrictions.conjunction();
         if (filterDTO.getMatchMode() == FilterMatchMode.ANY) {
             filterConditions = Restrictions.disjunction();
         }
-        
+
         HashMap<String, Object> filters = filterDTO.getFilters();
         for (String type : filters.keySet()) {
             Object filter = filters.get(type);
         }
-        
+
         return criteria.add(filterConditions);
     }
 

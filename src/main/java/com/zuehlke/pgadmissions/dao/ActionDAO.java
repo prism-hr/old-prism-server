@@ -188,7 +188,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();
     }
-    
+
     public Action getViewEditAction(Resource resource) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action")) //
@@ -197,7 +197,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("action.actionCategory", PrismActionCategory.VIEW_EDIT_RESOURCE)) //
                 .uniqueResult();
     }
-    
+
     public List<PrismAction> getEscalationActions() {
         return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.property("action.id")) //
@@ -207,14 +207,14 @@ public class ActionDAO {
                 .addOrder(Order.desc("scope.precedence")) //
                 .list();
     }
-    
+
     public List<PrismAction> getPropagatedActions(Integer stateTransitionPendingId) {
         return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(StateTransitionPending.class) //
                 .setProjection(Projections.property("propagatedAction.id")) //
                 .createAlias("stateTransition", "stateTransition", JoinType.INNER_JOIN) //
-                .createAlias("propagatedActions", "propagatedAction", JoinType.INNER_JOIN) //
+                .createAlias("stateTransition.propagatedActions", "propagatedAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("id", stateTransitionPendingId)) //
                 .list();
     }
-    
+
 }

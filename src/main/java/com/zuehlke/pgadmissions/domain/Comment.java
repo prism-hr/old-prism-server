@@ -28,6 +28,8 @@ import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
 @Entity
 @Table(name = "COMMENT")
@@ -862,6 +864,28 @@ public class Comment {
 
     public boolean isApplicationConfirmOfferRecommendationComment() {
         return action.getId() == PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
+    }
+
+    public boolean isApplicationCreatedComment() {
+        return this.transitionState.getId() == PrismState.APPLICATION_UNSUBMITTED;
+    }
+
+    public boolean isApplicationSubmittedComment() {
+        return this.transitionState.getId() == PrismState.APPLICATION_VALIDATION;
+    }
+
+    public boolean isApplicationApprovedComment() {
+        return this.transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED
+                && transitionState.getId() != PrismState.APPLICATION_APPROVED;
+    }
+    
+    public boolean isApplicationRejectedComment() {
+        return this.transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED
+                && transitionState.getId() != PrismState.APPLICATION_REJECTED;
+    }
+    
+    public boolean isApplicationWithdrawnComment() {
+        return this.transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_WITHDRAWN;
     }
 
     public boolean isRatingComment() {

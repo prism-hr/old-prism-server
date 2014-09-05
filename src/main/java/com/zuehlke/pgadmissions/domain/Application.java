@@ -123,8 +123,12 @@ public class Application extends Resource {
     private LocalDate confirmedStartDate;
 
     @ManyToOne
-    @JoinColumn(name = "confirmed_supervisor_user_id")
-    private User confirmedSupervisor;
+    @JoinColumn(name = "confirmed_primary_supervisor_id")
+    private User confirmedPrimarySupervisor;
+    
+    @ManyToOne
+    @JoinColumn(name = "confirmed_secondary_supervisor_id")
+    private User confirmedSecondarySupervisor;
 
     @Column(name = "confirmed_offer_type")
     @Enumerated(EnumType.STRING)
@@ -161,10 +165,10 @@ public class Application extends Resource {
     private DateTime updatedTimestamp;
 
     @OneToMany(mappedBy = "application")
-    private Set<UserRole> userRoles = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "application")
     private Set<Comment> comments = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "application")
+    private Set<UserRole> userRoles = Sets.newHashSet();
 
     @Transient
     private Boolean acceptedTerms;
@@ -370,12 +374,20 @@ public class Application extends Resource {
         this.confirmedStartDate = confirmedStartDate;
     }
 
-    public final User getConfirmedSupervisor() {
-        return confirmedSupervisor;
+    public final User getConfirmedPrimarySupervisor() {
+        return confirmedPrimarySupervisor;
     }
 
-    public final void setConfirmedSupervisor(User confirmedSupervisor) {
-        this.confirmedSupervisor = confirmedSupervisor;
+    public final void setConfirmedPrimarySupervisor(User confirmedPrimarySupervisor) {
+        this.confirmedPrimarySupervisor = confirmedPrimarySupervisor;
+    }
+
+    public final User getConfirmedSecondarySupervisor() {
+        return confirmedSecondarySupervisor;
+    }
+
+    public final void setConfirmedSecondarySupervisor(User confirmedSecondarySupervisor) {
+        this.confirmedSecondarySupervisor = confirmedSecondarySupervisor;
     }
 
     public final PrismOfferType getConfirmedOfferType() {
@@ -410,12 +422,12 @@ public class Application extends Resource {
         return referees;
     }
 
-    public final Set<UserRole> getUserRoles() {
-        return userRoles;
-    }
-
     public final Set<Comment> getComments() {
         return comments;
+    }
+    
+    public final Set<UserRole> getUserRoles() {
+        return userRoles;
     }
 
     public Application withId(Integer id) {

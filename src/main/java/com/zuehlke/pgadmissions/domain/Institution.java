@@ -89,6 +89,21 @@ public class Institution extends ParentResource {
     @Column(name = "is_ucl_institution", nullable = false)
     private Boolean uclInstitution = false;
     
+    @Column(name = "application_created_count")
+    private Integer applicationCreatedCount;
+    
+    @Column(name = "application_submitted_count")
+    private Integer applicationSubmittedCount;
+    
+    @Column(name = "application_approved_count")
+    private Integer applicationApprovedCount;
+    
+    @Column(name = "application_rejected_count")
+    private Integer applicationRejectedCount;
+    
+    @Column(name = "application_withdrawn_count")
+    private Integer applicationWithdrawnCount;
+    
     @Column(name = "application_rating_count_average")
     private BigDecimal applicationRatingCountAverage;
     
@@ -162,6 +177,9 @@ public class Institution extends ParentResource {
     
     @OneToMany(mappedBy = "institution")
     private Set<ImportedEntityFeed> importedEntityFeeds = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "project")
+    private Set<UserRole> userRoles = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -229,6 +247,56 @@ public class Institution extends ParentResource {
 
     public void setUclInstitution(boolean uclInstitution) {
         this.uclInstitution = uclInstitution;
+    }
+    
+    @Override
+    public Integer getApplicationCreatedCount() {
+        return applicationCreatedCount;
+    }
+
+    @Override
+    public void setApplicationCreatedCount(Integer applicationCreatedCount) {
+        this.applicationCreatedCount = applicationCreatedCount;
+    }
+
+    @Override
+    public Integer getApplicationSubmittedCount() {
+        return applicationSubmittedCount;
+    }
+
+    @Override
+    public void setApplicationSubmittedCount(Integer applicationSubmittedCount) {
+        this.applicationSubmittedCount = applicationSubmittedCount;
+    }
+
+    @Override
+    public Integer getApplicationApprovedCount() {
+        return applicationApprovedCount;
+    }
+
+    @Override
+    public void setApplicationApprovedCount(Integer applicationApprovedCount) {
+        this.applicationApprovedCount = applicationApprovedCount;
+    }
+
+    @Override
+    public Integer getApplicationRejectedCount() {
+        return applicationRejectedCount;
+    }
+
+    @Override
+    public void setApplicationRejectedCount(Integer applicationRejectedCount) {
+        this.applicationRejectedCount = applicationRejectedCount;
+    }
+
+    @Override
+    public Integer getApplicationWithdrawnCount() {
+        return applicationWithdrawnCount;
+    }
+
+    @Override
+    public void setApplicationWithdrawnCount(Integer applicationWithdrawnCount) {
+        this.applicationWithdrawnCount = applicationWithdrawnCount;
     }
 
     @Override
@@ -393,6 +461,10 @@ public class Institution extends ParentResource {
 
     public final Set<ImportedEntityFeed> getImportedEntityFeeds() {
         return importedEntityFeeds;
+    }
+
+    public final Set<UserRole> getUserRoles() {
+        return userRoles;
     }
 
     public Institution withId(Integer id) {

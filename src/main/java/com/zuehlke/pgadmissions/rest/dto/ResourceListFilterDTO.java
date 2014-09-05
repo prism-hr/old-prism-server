@@ -1,18 +1,17 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
 
 public class ResourceListFilterDTO {
 
@@ -44,11 +43,15 @@ public class ResourceListFilterDTO {
     
     private List<StringFilterDTO> referrer;
     
-    private List<StringFilterDTO> supervisor;
+    private List<UserRoleFilterDTO> userRole;
+    
+    private List<DateFilterDTO> confirmedStartDate;
     
     private List<RatingFilterDTO> rating;
     
     private FilterSortOrder sortOrder;
+    
+    private Boolean saveAsDefaultFilter;
 
     public final Boolean isUrgentOnly() {
         return urgentOnly;
@@ -106,8 +109,12 @@ public class ResourceListFilterDTO {
         return referrer;
     }
 
-    public final List<StringFilterDTO> getSupervisor() {
-        return supervisor;
+    public final List<UserRoleFilterDTO> getSupervisor() {
+        return userRole;
+    }
+
+    public final List<DateFilterDTO> getConfirmedStartDate() {
+        return confirmedStartDate;
     }
 
     public final List<RatingFilterDTO> getRating() {
@@ -118,19 +125,16 @@ public class ResourceListFilterDTO {
         return sortOrder;
     }
 
+    public final Boolean isSaveAsDefaultFilter() {
+        return saveAsDefaultFilter;
+    }
+    
     public HashMap<String, Object> getFilters() {
-        HashMap<String, Object> filters = Maps.newHashMap();
-        for (Field field : this.getClass().getDeclaredFields()) {
-            String fieldName = field.getName();
-            if (Arrays.asList("urgentOnly", "matchMode", "sortOrder").contains(fieldName)) {
-                try {
-                    filters.put(fieldName, field.get(this));
-                } catch (Exception e) {
-                    throw new Error(e);
-                }
-            }
-        }
-        return filters;
+        return IntrospectionHelper.getBeanPropertiesMap(this, "urgentOnly", "matchMode", "sortOrder", "saveAsDefaultFilter");
+    }
+    
+    public boolean hasFilter(String filterProperty) {
+        return getFilters().containsKey(filterProperty);
     }
     
     public static class StringFilterDTO extends ObjectFilterDTO {
@@ -143,6 +147,20 @@ public class ResourceListFilterDTO {
 
         public final void setFilter(String filter) {
             this.filter = filter;
+        }
+
+    }
+
+    public static class UserRoleFilterDTO extends StringFilterDTO {
+        
+        private List<PrismRole> userRoles;
+
+        public final List<PrismRole> getUserRoles() {
+            return userRoles;
+        }
+
+        public final void setUserRoles(List<PrismRole> userRoles) {
+            this.userRoles = userRoles;
         }
 
     }

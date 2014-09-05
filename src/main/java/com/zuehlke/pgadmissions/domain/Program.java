@@ -80,6 +80,21 @@ public class Program extends ParentResource {
     @Column(name = "imported", nullable = false)
     private Boolean imported;
     
+    @Column(name = "application_created_count")
+    private Integer applicationCreatedCount;
+    
+    @Column(name = "application_submitted_count")
+    private Integer applicationSubmittedCount;
+    
+    @Column(name = "application_approved_count")
+    private Integer applicationApprovedCount;
+    
+    @Column(name = "application_rejected_count")
+    private Integer applicationRejectedCount;
+    
+    @Column(name = "application_withdrawn_count")
+    private Integer applicationWithdrawnCount;
+    
     @Column(name = "application_rating_count_average")
     private BigDecimal applicationRatingCountAverage;
     
@@ -162,6 +177,9 @@ public class Program extends ParentResource {
 
     @OneToMany(mappedBy = "program")
     private Set<Comment> comments = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "project")
+    private Set<UserRole> userRoles = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -172,7 +190,6 @@ public class Program extends ParentResource {
     public void setId(Integer id) {
         this.id = id;
     }
-    
 
     @Override
     public System getSystem() {
@@ -294,6 +311,56 @@ public class Program extends ParentResource {
 
     public final void setImported(Boolean imported) {
         this.imported = imported;
+    }
+    
+    @Override
+    public Integer getApplicationCreatedCount() {
+        return applicationCreatedCount;
+    }
+
+    @Override
+    public void setApplicationCreatedCount(Integer applicationCreatedCount) {
+        this.applicationCreatedCount = applicationCreatedCount;
+    }
+
+    @Override
+    public Integer getApplicationSubmittedCount() {
+        return applicationSubmittedCount;
+    }
+
+    @Override
+    public void setApplicationSubmittedCount(Integer applicationSubmittedCount) {
+        this.applicationSubmittedCount = applicationSubmittedCount;
+    }
+
+    @Override
+    public Integer getApplicationApprovedCount() {
+        return applicationApprovedCount;
+    }
+
+    @Override
+    public void setApplicationApprovedCount(Integer applicationApprovedCount) {
+        this.applicationApprovedCount = applicationApprovedCount;
+    }
+
+    @Override
+    public Integer getApplicationRejectedCount() {
+        return applicationRejectedCount;
+    }
+
+    @Override
+    public void setApplicationRejectedCount(Integer applicationRejectedCount) {
+        this.applicationRejectedCount = applicationRejectedCount;
+    }
+
+    @Override
+    public Integer getApplicationWithdrawnCount() {
+        return applicationWithdrawnCount;
+    }
+
+    @Override
+    public void setApplicationWithdrawnCount(Integer applicationWithdrawnCount) {
+        this.applicationWithdrawnCount = applicationWithdrawnCount;
     }
 
     @Override
@@ -526,6 +593,10 @@ public class Program extends ParentResource {
 
     public Set<Comment> getComments() {
         return comments;
+    }
+
+    public final Set<UserRole> getUserRoles() {
+        return userRoles;
     }
 
     public Program withId(Integer id) {

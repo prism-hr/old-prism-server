@@ -532,6 +532,10 @@ public class ApplicationService {
     }
 
     public void postProcessApplication(Application application, Comment comment) throws DeduplicationException {
+        if (comment.isApplicationCreatedComment()) {
+            applicationSummaryService.incrementApplicationCreatedCount(application);
+        }
+        
         if (comment.isProjectCreateComment()) {
             synchroniseProjectSupervisors(application);
         }
@@ -551,6 +555,22 @@ public class ApplicationService {
         if (comment.isTransitionComment()) {
             applicationSummaryService.summariseApplicationProcessing(application);
         }
+        
+        if (comment.isApplicationSubmittedComment()) {
+            applicationSummaryService.incrementApplicationSubmittedCount(application);
+        }
+        
+        if (comment.isApplicationApprovedComment()) {
+            applicationSummaryService.incrementApplicationApprovedCount(application);
+        }
+        
+        if (comment.isApplicationRejectedComment()) {
+            applicationSummaryService.incrementApplicationRejectedCount(application);
+        }
+        
+        if (comment.isApplicationWithdrawnComment()) {
+            applicationSummaryService.incrementApplicationWithdrawnCount(application);
+        }
     }
 
     private void synchroniseProjectSupervisors(Application application) {
@@ -569,7 +589,8 @@ public class ApplicationService {
 
     private void synchroniseOfferRecommendation(Application application, Comment comment) {
         application.setConfirmedStartDate(comment.getPositionProvisionalStartDate());
-        application.setConfirmedSupervisor(roleService.getRoleUsers(application, PrismRole.APPLICATION_PRIMARY_SUPERVISOR).get(0));
+        application.setConfirmedPrimarySupervisor(roleService.getRoleUsers(application, PrismRole.APPLICATION_PRIMARY_SUPERVISOR).get(0));
+        application.setConfirmedSecondarySupervisor(roleService.getRoleUsers(application, PrismRole.APPLICATION_SECONDARY_SUPERVISOR).get(0));
         application.setConfirmedOfferType(comment.getAppointmentConditions() == null ? PrismOfferType.UNCONDITIONAL : PrismOfferType.CONDITIONAL);
     }
 

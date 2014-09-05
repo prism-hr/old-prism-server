@@ -38,15 +38,10 @@
 					</font>
 				</p>
 				<p>
-					<!-- Button -->
 					<a style="text-decoration:none;"
-						<#if user.enabled>
-							href="${host}/pgadmissions/applications?applyFilters=my&activationCode=${user.activationCode!}">
-							<img alt="Login" title="Login" width="64" height="33" src="${host}/pgadmissions/design/default/images/email/login.jpg"/>
-						<#else>
-							href="${host}/pgadmissions/register?activationCode=${user.activationCode!}&directToUrl=${"/applications?applyFilters=my"?url('ISO-8859-1')}">
-							<img alt="Register" title="Register" width="82" height="33" src="${host}/pgadmissions/design/default/images/email/register.jpg"/>
-						</#if>
+                        <a style="text-decoration:none;" href="${actionUrl}">
+                            <img alt="Login" title="Login" width="64" height="33" src="${host}/pgadmissions/design/default/images/email/login.jpg"/>
+                        </a>
 					</a>
 				</p>
 				<p>

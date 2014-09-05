@@ -8,6 +8,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -79,6 +81,7 @@ public class StateDAO {
                 .add(Restrictions.isNotNull(scopeReference)) //
                 .addOrder(Order.asc(scopeReference + ".id")) //
                 .addOrder(Order.asc("id")) //
+                .setResultTransformer(Transformers.aliasToBean(StateTransitionPendingDTO.class))
                 .list();
     }
 
@@ -141,12 +144,12 @@ public class StateDAO {
                 .add(Restrictions.eq("action.id", PrismAction.PROGRAM_CREATE_APPLICATION)) //
                 .list();
     }
-    
+
     public List<State> getActiveProjectStates() {
         return (List<State>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("state")) //
                 .add(Restrictions.eq("action.id", PrismAction.PROJECT_CREATE_APPLICATION)) //
                 .list();
     }
-    
+
 }

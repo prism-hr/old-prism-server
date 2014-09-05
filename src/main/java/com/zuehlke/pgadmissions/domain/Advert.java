@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -49,11 +49,11 @@ public class Advert {
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @Column(name = "title", nullable = false)
     @Field(analyzer = @Analyzer(definition = "advertAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String title;
-    
+
     @Column(name = "summary")
     @Field(analyzer = @Analyzer(definition = "advertAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String summary;
@@ -68,85 +68,85 @@ public class Advert {
     @ManyToOne
     @JoinColumn(name = "institution_address_id")
     private InstitutionAddress address;
-    
+
     @Column(name = "month_study_duration_minimum")
     private Integer studyDurationMinimum;
-    
+
     @Column(name = "month_study_duration_maximum")
     private Integer studyDurationMaximum;
-    
+
     @Column(name = "currency")
     private String currency;
-    
+
     @Column(name = "currency_at_locale")
     private String currencyAtLocale;
-    
+
     @Column(name = "fee_interval")
     @Enumerated(EnumType.STRING)
     private DurationUnit feeInterval;
-    
+
     @Column(name = "month_fee_minimum_specified")
-    private BigInteger monthFeeMinimumSpecified;
-    
+    private BigDecimal monthFeeMinimumSpecified;
+
     @Column(name = "month_fee_maximum_specified")
-    private BigInteger monthFeeMaximumSpecified;
-    
+    private BigDecimal monthFeeMaximumSpecified;
+
     @Column(name = "year_fee_minimum_specified")
-    private BigInteger yearFeeMinimumSpecified;
-    
+    private BigDecimal yearFeeMinimumSpecified;
+
     @Column(name = "year_fee_maximum_specified")
-    private BigInteger yearFeeMaximumSpecified;
-    
+    private BigDecimal yearFeeMaximumSpecified;
+
     @Column(name = "month_fee_minimum_at_locale")
-    private BigInteger monthFeeMinimumAtLocale;
-    
+    private BigDecimal monthFeeMinimumAtLocale;
+
     @Column(name = "month_fee_maximum_at_locale")
-    private BigInteger monthFeeMaximumAtLocale;
-    
+    private BigDecimal monthFeeMaximumAtLocale;
+
     @Column(name = "year_fee_minimum_at_locale")
-    private BigInteger yearFeeMinimumAtLocale;
-    
+    private BigDecimal yearFeeMinimumAtLocale;
+
     @Column(name = "year_fee_maximum_at_locale")
-    private BigInteger yearFeeMaximumAtLocale;
-    
+    private BigDecimal yearFeeMaximumAtLocale;
+
     @Column(name = "pay_interval")
     @Enumerated(EnumType.STRING)
     private DurationUnit payInterval;
-    
+
     @Column(name = "month_pay_minimum_specified")
-    private BigInteger monthPayMinimumSpecified;
-    
+    private BigDecimal monthPayMinimumSpecified;
+
     @Column(name = "month_pay_maximum_specified")
-    private BigInteger monthPayMaximumSpecified;
-    
+    private BigDecimal monthPayMaximumSpecified;
+
     @Column(name = "year_pay_minimum_specified")
-    private BigInteger yearPayMinimumSpecified;
-    
+    private BigDecimal yearPayMinimumSpecified;
+
     @Column(name = "year_pay_maximum_specified")
-    private BigInteger yearPayMaximumSpecified;
-    
+    private BigDecimal yearPayMaximumSpecified;
+
     @Column(name = "month_pay_minimum_at_locale")
-    private BigInteger monthPayMinimumAtLocale;
-    
+    private BigDecimal monthPayMinimumAtLocale;
+
     @Column(name = "month_pay_maximum_at_locale")
-    private BigInteger monthPayMaximumAtLocale;
-    
+    private BigDecimal monthPayMaximumAtLocale;
+
     @Column(name = "year_pay_minimum_at_locale")
-    private BigInteger yearPayMinimumAtLocale;
-    
+    private BigDecimal yearPayMinimumAtLocale;
+
     @Column(name = "year_pay_maximum_at_locale")
-    private BigInteger yearPayMaximumAtLocale;
-    
+    private BigDecimal yearPayMaximumAtLocale;
+
     @OneToOne
     @JoinColumn(name = "advert_closing_date_id", unique = true)
     private AdvertClosingDate closingDate;
-    
+
     @Column(name = "sequence_identifier")
     private String sequenceIdentifier;
 
     @OneToOne(mappedBy = "advert")
     private Program program;
-    
+
     @OneToOne(mappedBy = "advert")
     private Project project;
 
@@ -176,7 +176,7 @@ public class Advert {
     public final void setTitle(String title) {
         this.title = title;
     }
-    
+
     public final String getSummary() {
         return summary;
     }
@@ -249,67 +249,67 @@ public class Advert {
         this.feeInterval = feeInterval;
     }
 
-    public final BigInteger getMonthFeeMinimumSpecified() {
+    public final BigDecimal getMonthFeeMinimumSpecified() {
         return monthFeeMinimumSpecified;
     }
 
-    public final void setMonthFeeMinimumSpecified(BigInteger monthFeeMinimumSpecified) {
+    public final void setMonthFeeMinimumSpecified(BigDecimal monthFeeMinimumSpecified) {
         this.monthFeeMinimumSpecified = monthFeeMinimumSpecified;
     }
 
-    public final BigInteger getMonthFeeMaximumSpecified() {
+    public final BigDecimal getMonthFeeMaximumSpecified() {
         return monthFeeMaximumSpecified;
     }
 
-    public final void setMonthFeeMaximumSpecified(BigInteger monthFeeMaximumSpecified) {
+    public final void setMonthFeeMaximumSpecified(BigDecimal monthFeeMaximumSpecified) {
         this.monthFeeMaximumSpecified = monthFeeMaximumSpecified;
     }
 
-    public final BigInteger getYearFeeMinimumSpecified() {
+    public final BigDecimal getYearFeeMinimumSpecified() {
         return yearFeeMinimumSpecified;
     }
 
-    public final void setYearFeeMinimumSpecified(BigInteger yearFeeMinimumSpecified) {
+    public final void setYearFeeMinimumSpecified(BigDecimal yearFeeMinimumSpecified) {
         this.yearFeeMinimumSpecified = yearFeeMinimumSpecified;
     }
 
-    public final BigInteger getYearFeeMaximumSpecified() {
+    public final BigDecimal getYearFeeMaximumSpecified() {
         return yearFeeMaximumSpecified;
     }
 
-    public final void setYearFeeMaximumSpecified(BigInteger yearFeeMaximumSpecified) {
+    public final void setYearFeeMaximumSpecified(BigDecimal yearFeeMaximumSpecified) {
         this.yearFeeMaximumSpecified = yearFeeMaximumSpecified;
     }
 
-    public final BigInteger getMonthFeeMinimumAtLocale() {
+    public final BigDecimal getMonthFeeMinimumAtLocale() {
         return monthFeeMinimumAtLocale;
     }
 
-    public final void setMonthFeeMinimumAtLocale(BigInteger monthFeeMinimumAtLocale) {
+    public final void setMonthFeeMinimumAtLocale(BigDecimal monthFeeMinimumAtLocale) {
         this.monthFeeMinimumAtLocale = monthFeeMinimumAtLocale;
     }
 
-    public final BigInteger getMonthFeeMaximumAtLocale() {
+    public final BigDecimal getMonthFeeMaximumAtLocale() {
         return monthFeeMaximumAtLocale;
     }
 
-    public final void setMonthFeeMaximumAtLocale(BigInteger monthFeeMaximumAtLocale) {
+    public final void setMonthFeeMaximumAtLocale(BigDecimal monthFeeMaximumAtLocale) {
         this.monthFeeMaximumAtLocale = monthFeeMaximumAtLocale;
     }
 
-    public final BigInteger getYearFeeMinimumAtLocale() {
+    public final BigDecimal getYearFeeMinimumAtLocale() {
         return yearFeeMinimumAtLocale;
     }
 
-    public final void setYearFeeMinimumAtLocale(BigInteger yearFeeMinimumAtLocale) {
+    public final void setYearFeeMinimumAtLocale(BigDecimal yearFeeMinimumAtLocale) {
         this.yearFeeMinimumAtLocale = yearFeeMinimumAtLocale;
     }
 
-    public final BigInteger getYearFeeMaximumAtLocale() {
+    public final BigDecimal getYearFeeMaximumAtLocale() {
         return yearFeeMaximumAtLocale;
     }
 
-    public final void setYearFeeMaximumAtLocale(BigInteger yearFeeMaximumAtLocale) {
+    public final void setYearFeeMaximumAtLocale(BigDecimal yearFeeMaximumAtLocale) {
         this.yearFeeMaximumAtLocale = yearFeeMaximumAtLocale;
     }
 
@@ -321,67 +321,67 @@ public class Advert {
         this.payInterval = payInterval;
     }
 
-    public final BigInteger getMonthPayMinimumSpecified() {
+    public final BigDecimal getMonthPayMinimumSpecified() {
         return monthPayMinimumSpecified;
     }
 
-    public final void setMonthPayMinimumSpecified(BigInteger monthPayMinimumSpecified) {
+    public final void setMonthPayMinimumSpecified(BigDecimal monthPayMinimumSpecified) {
         this.monthPayMinimumSpecified = monthPayMinimumSpecified;
     }
 
-    public final BigInteger getMonthPayMaximumSpecified() {
+    public final BigDecimal getMonthPayMaximumSpecified() {
         return monthPayMaximumSpecified;
     }
 
-    public final void setMonthPayMaximumSpecified(BigInteger monthPayMaximumSpecified) {
+    public final void setMonthPayMaximumSpecified(BigDecimal monthPayMaximumSpecified) {
         this.monthPayMaximumSpecified = monthPayMaximumSpecified;
     }
 
-    public final BigInteger getYearPayMinimumSpecified() {
+    public final BigDecimal getYearPayMinimumSpecified() {
         return yearPayMinimumSpecified;
     }
 
-    public final void setYearPayMinimumSpecified(BigInteger yearPayMinimumSpecified) {
+    public final void setYearPayMinimumSpecified(BigDecimal yearPayMinimumSpecified) {
         this.yearPayMinimumSpecified = yearPayMinimumSpecified;
     }
 
-    public final BigInteger getYearPayMaximumSpecified() {
+    public final BigDecimal getYearPayMaximumSpecified() {
         return yearPayMaximumSpecified;
     }
 
-    public final void setYearPayMaximumSpecified(BigInteger yearPayMaximumSpecified) {
+    public final void setYearPayMaximumSpecified(BigDecimal yearPayMaximumSpecified) {
         this.yearPayMaximumSpecified = yearPayMaximumSpecified;
     }
 
-    public final BigInteger getMonthPayMinimumAtLocale() {
+    public final BigDecimal getMonthPayMinimumAtLocale() {
         return monthPayMinimumAtLocale;
     }
 
-    public final void setMonthPayMinimumAtLocale(BigInteger monthPayMinimumAtLocale) {
+    public final void setMonthPayMinimumAtLocale(BigDecimal monthPayMinimumAtLocale) {
         this.monthPayMinimumAtLocale = monthPayMinimumAtLocale;
     }
 
-    public final BigInteger getMonthPayMaximumAtLocale() {
+    public final BigDecimal getMonthPayMaximumAtLocale() {
         return monthPayMaximumAtLocale;
     }
 
-    public final void setMonthPayMaximumAtLocale(BigInteger monthPayMaximumAtLocale) {
+    public final void setMonthPayMaximumAtLocale(BigDecimal monthPayMaximumAtLocale) {
         this.monthPayMaximumAtLocale = monthPayMaximumAtLocale;
     }
 
-    public final BigInteger getYearPayMinimumAtLocale() {
+    public final BigDecimal getYearPayMinimumAtLocale() {
         return yearPayMinimumAtLocale;
     }
 
-    public final void setYearPayMinimumAtLocale(BigInteger yearPayMinimumAtLocale) {
+    public final void setYearPayMinimumAtLocale(BigDecimal yearPayMinimumAtLocale) {
         this.yearPayMinimumAtLocale = yearPayMinimumAtLocale;
     }
 
-    public final BigInteger getYearPayMaximumAtLocale() {
+    public final BigDecimal getYearPayMaximumAtLocale() {
         return yearPayMaximumAtLocale;
     }
 
-    public final void setYearPayMaximumAtLocale(BigInteger yearPayMaximumAtLocale) {
+    public final void setYearPayMaximumAtLocale(BigDecimal yearPayMaximumAtLocale) {
         this.yearPayMaximumAtLocale = yearPayMaximumAtLocale;
     }
 
@@ -392,7 +392,7 @@ public class Advert {
     public void setClosingDate(AdvertClosingDate closingDate) {
         this.closingDate = closingDate;
     }
-    
+
     public final String getSequenceIdentifier() {
         return sequenceIdentifier;
     }
@@ -400,7 +400,7 @@ public class Advert {
     public final void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
-    
+
     public final Program getProgram() {
         return program;
     }
@@ -420,16 +420,16 @@ public class Advert {
     public Set<AdvertRecruitmentPreference> getPreferences() {
         return preferences;
     }
-    
+
     public Advert withTitle(String title) {
         this.title = title;
         return this;
     }
-    
+
     public ParentResource getParentResource() {
         return project == null ? program : project;
     }
-    
+
     public boolean isProgramAdvert() {
         return program != null;
     }

@@ -39,6 +39,8 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.StringFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.UserRoleFilterDTO;
 import com.zuehlke.pgadmissions.services.helpers.FilterHelper;
 import com.zuehlke.pgadmissions.utils.FreeMarkerHelper;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -73,6 +75,7 @@ public class ResourceDAO {
                 + "s";
 
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(propagatingResourceScope.getResourceClass()) //
+                .setProjection(Projections.property(propagatedAlias + ".id")) //
                 .createAlias(propagatedReference, propagatedAlias, JoinType.INNER_JOIN) //
                 .createAlias(propagatedAlias + ".state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
@@ -92,7 +95,7 @@ public class ResourceDAO {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.raisesUrgentFlag", true)) //
                 .list();
     }

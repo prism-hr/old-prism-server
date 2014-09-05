@@ -4,7 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCo
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.APPOINTMENT_PREFERENCES;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.APPOINTMENT_TIMESLOTS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.ASSIGNED_USERS;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.COMPETENT_IN_WORK_LANGUAGE;
+import com.zuehlke.pgadmissions.rest.validation.validator.comment.ConfirmSupervisionCommentCustomValidator;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.CONTENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.DECLINED_RESPONSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.DESIRE_TO_RECRUIT;
@@ -154,13 +154,14 @@ public enum PrismAction {
             Arrays.asList(new PrismActionRedaction().withRole(PrismRole.APPLICATION_CREATOR).withRedactionType(PrismRedactionType.ALL_CONTENT),
                     new PrismActionRedaction().withRole(PrismRole.APPLICATION_REFEREE).withRedactionType(PrismRedactionType.ALL_CONTENT)),
             PrismActionValidationDefinition.builder()
-                    .addResolution(DECLINED_RESPONSE)
+                    .addResolution(RECRUITER_ACCEPT_APPOINTMENT, NOT_NULL)
+                    .addResolution(CONTENT)
                     .addResolution(ASSIGNED_USERS)
                     .addResolution(POSITION_TITLE)
                     .addResolution(POSITION_DESCRIPTION)
                     .addResolution(POSITION_PROVISIONAL_START_DATE)
                     .addResolution(APPOINTMENT_CONDITIONS)
-                    .addResolution(DOCUMENTS, new PrismActionValidationFieldResolution(SIZE, "min", 0))
+                    .setCustomValidator(new ConfirmSupervisionCommentCustomValidator())
                     .build()),
     APPLICATION_CORRECT(PrismActionType.USER_INVOCATION, PrismActionCategory.PROCESS_RESOURCE, false, false, PrismScope.APPLICATION, null, null, null),
     APPLICATION_EMAIL_CREATOR(PrismActionType.USER_INVOCATION, PrismActionCategory.EMAIL_RESOURCE_CREATOR, false, false, PrismScope.APPLICATION, null, null, null),

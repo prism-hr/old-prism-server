@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -12,12 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.CommentAppointmentTimeslot;
-import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -47,7 +42,7 @@ public class CommentDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-    
+
     public Comment getLatestComment(Resource resource, PrismAction actionId, User user, DateTime baseline) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
@@ -56,6 +51,20 @@ public class CommentDAO {
                 .add(Restrictions.ge("createdTimestamp", baseline)) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+
+    public <T extends Resource> Comment getEarliestComment(ParentResource parentResource, Class<T> resourceClass, PrismAction actionId) {
+        String resourceReference = PrismScope.getResourceScope(resourceClass).getLowerCaseName();
+        String parentResourceReference = parentResource.getResourceScope().getLowerCaseName();
+        return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ". " + parentResourceReference, parentResourceReference, JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("action.id", actionId)) //
+                .add(Restrictions.eq(parentResourceReference + ".id", parentResource.getId())) //
+                .addOrder(Order.asc("createdTimestamp")) //
+                .addOrder(Order.asc("id")) //
                 .setMaxResults(1) //
                 .uniqueResult();
     }
@@ -129,7 +138,7 @@ public class CommentDAO {
                 .add(Restrictions.eq("recruiterAcceptAppointment", false)) //
                 .list();
     }
-    
+
     public List<User> getAssignedUsers(Comment comment, PrismRole roleId) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .setProjection(Projections.property("user")) //
@@ -144,7 +153,7 @@ public class CommentDAO {
                 .add(Restrictions.eq(PrismScope.getResourceScope(resourceClass).getLowerCaseName() + ".id", resourceId)) //
                 .add(Restrictions.between("createdTimestamp", rangeStart, rangeClose)) //
                 .add(Restrictions.eq("action.transitionAction", true)) //
-                .list();        
+                .list();
     }
 
 }

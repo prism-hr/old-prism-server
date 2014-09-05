@@ -200,7 +200,7 @@ public class ResourceService {
 
     public <T extends Resource> List<Integer> getResourcesToPropagate(PrismScope propagatingResourceScope, Integer propagatingResourceId,
             PrismScope propagatedResourceScope, PrismAction actionId) {
-        return resourceDAO.getResourcesToPropagate(propagatingResourceScope, propagatingResourceId, propagatingResourceScope, actionId);
+        return resourceDAO.getResourcesToPropagate(propagatingResourceScope, propagatingResourceId, propagatedResourceScope, actionId);
     }
 
     public <T extends Resource> List<Integer> getResourcesRequiringAttention(Class<T> resourceClass) {

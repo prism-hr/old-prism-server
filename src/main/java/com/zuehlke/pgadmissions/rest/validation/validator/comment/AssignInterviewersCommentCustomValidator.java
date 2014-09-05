@@ -11,6 +11,8 @@ import com.google.common.base.Preconditions;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 
+import static com.zuehlke.pgadmissions.utils.ValidationUtils.rejectIfNotNull;
+
 @Component
 public class AssignInterviewersCommentCustomValidator implements Validator {
 
@@ -36,20 +38,12 @@ public class AssignInterviewersCommentCustomValidator implements Validator {
             if (interviewDateTime.isBeforeNow()) {
                 // taken place
                 takenPlace = true;
-                if (comment.getInterviewerInstructions() != null) {
-                    errors.rejectValue("interviewerInstructions", "forbidden");
-                }
-                if (comment.getIntervieweeInstructions() != null) {
-                    errors.rejectValue("intervieweeInstructions", "forbidden");
-                }
-                if (comment.getInterviewLocation() != null) {
-                    errors.rejectValue("interviewLocation", "forbidden");
-                }
+                rejectIfNotNull(comment, errors, "interviewerInstructions", "forbidden");
+                rejectIfNotNull(comment, errors, "intervieweeInstructions", "forbidden");
+                rejectIfNotNull(comment, errors, "interviewLocation", "forbidden");
             } else {
                 // scheduled
-                if (comment.getAppointmentTimeslots() != null) {
-                    errors.rejectValue("appointmentTimeslots", "forbidden");
-                }
+                rejectIfNotNull(comment, errors, "appointmentTimeslots", "forbidden");
             }
         }
 

@@ -33,13 +33,7 @@
 				</p>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
-						Please
-						<#if user.enabled>
-							login
-						<#else>
-							register
-						</#if>
-						for further details of this review and to access more detailed instructions on how to proceed.
+						Please login for further details of this review and to access more detailed instructions on how to proceed.
 					</font>
 				</p>
 				<p>

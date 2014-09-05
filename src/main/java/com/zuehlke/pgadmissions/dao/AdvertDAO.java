@@ -63,7 +63,7 @@ public class AdvertDAO {
                 .setMaxResults(25) //
                 .list();
     }
-    
+
     public List<Advert> getAdvertsWithElapsedClosingDates(LocalDate baseline) {
         return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .createAlias("closingDate", "closingDate", JoinType.LEFT_OUTER_JOIN) //
@@ -75,14 +75,13 @@ public class AdvertDAO {
                                 .add(Restrictions.ge("otherClosingDate.closingDate", baseline)))) //
                 .list();
     }
-    
+
     public AdvertClosingDate getNextAdvertClosingDate(Advert advert, LocalDate baseline) {
-        return (AdvertClosingDate) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
-                .setProjection(Projections.min("closingDate.closingDate")) //
-                .createAlias("closingDates", "closingDate", JoinType.INNER_JOIN) //
+        return (AdvertClosingDate) sessionFactory.getCurrentSession().createCriteria(AdvertClosingDate.class) //
+                .setProjection(Projections.min("closingDate")) //
                 .add(Restrictions.eq("id", advert.getId())) //
                 .add(Restrictions.ge("closingDate", baseline)) //
                 .uniqueResult();
     }
-    
+
 }

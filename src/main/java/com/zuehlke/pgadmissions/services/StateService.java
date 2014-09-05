@@ -1,7 +1,10 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-
+import com.zuehlke.pgadmissions.dao.StateDAO;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
+import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import org.apache.commons.beanutils.MethodUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -12,29 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.StateDAO;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.RoleTransition;
-import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.StateAction;
-import com.zuehlke.pgadmissions.domain.StateActionAssignment;
-import com.zuehlke.pgadmissions.domain.StateActionNotification;
-import com.zuehlke.pgadmissions.domain.StateDuration;
-import com.zuehlke.pgadmissions.domain.StateGroup;
-import com.zuehlke.pgadmissions.domain.StateTransition;
-import com.zuehlke.pgadmissions.domain.StateTransitionPending;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
-import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import java.util.List;
 
 @Service
 @Transactional
@@ -154,6 +135,9 @@ public class StateService {
             }
 
             notificationService.sendWorkflowNotifications(resource, comment);
+        } else {
+            comment.setState(resource.getState());
+            comment.setTransitionState(resource.getState());
         }
 
         resourceService.updateResource(resource, comment);
@@ -167,7 +151,7 @@ public class StateService {
         if (potentialStateTransitions.size() > 1) {
             try {
                 PrismTransitionEvaluation transitionEvaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation();
-                return (StateTransition) MethodUtils.invokeMethod(this, transitionEvaluation.getMethodName(), new Object[] { operative, comment });
+                return (StateTransition) MethodUtils.invokeMethod(this, transitionEvaluation.getMethodName(), new Object[]{operative, comment});
             } catch (Exception e) {
                 throw new Error(e);
             }
@@ -287,6 +271,11 @@ public class StateService {
             transitionStateId = PrismState.PROGRAM_APPROVED;
         }
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
+    }
+
+    public StateTransition getApplicationRecruitedOutcome(Resource resource, Comment comment) {
+        Comment recruitedComment = commentService.getEarliestComment((ParentResource) resource, Resource.class, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
+        return stateDAO.getStateTransition(resource.getState(), comment.getAction(), null);
     }
 
     public List<State> getActiveProgramStates() {

@@ -154,6 +154,9 @@ public class StateService {
             }
 
             notificationService.sendWorkflowNotifications(resource, comment);
+        } else {
+            comment.setState(resource.getState());
+            comment.setTransitionState(resource.getState());
         }
 
         resourceService.updateResource(resource, comment);

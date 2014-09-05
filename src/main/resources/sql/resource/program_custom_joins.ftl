@@ -1,6 +1,6 @@
 INNER JOIN ADVERT
-    ON ADVERT.id = PROGRAM.id
+    ON PROGRAM.advert_id = ADVERT.id
 INNER JOIN USER
-    ON ADVERT.user_id = USER.id
+    ON PROGRAM.user_id = USER.id
 INNER JOIN INSTITUTION
     ON PROGRAM.institution_id = INSTITUTION.id

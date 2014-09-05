@@ -10,6 +10,10 @@
                 <class-a>com.zuehlke.pgadmissions.domain.ImportedEntity</class-a>
                 <class-b>java.lang.Integer</class-b>
             </converter>
+            <converter type="com.zuehlke.pgadmissions.rest.converter.ProgramTypeConverter">
+                <class-a>com.zuehlke.pgadmissions.domain.ProgramType</class-a>
+                <class-b>com.zuehlke.pgadmissions.domain.definitions.PrismProgramType</class-b>
+            </converter>
         </custom-converters>
         <copy-by-references>
             <copy-by-reference>java.util.TimeZone</copy-by-reference>

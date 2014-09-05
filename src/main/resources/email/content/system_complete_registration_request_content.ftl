@@ -20,17 +20,16 @@
 					<font face="Arial, Helvetica, sans-serif" color="#0055A1">
 						Dear ${userFirstName},
 					</font>
-				</h1>		
+				</h1>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
 						Thank you for your registration. Please follow the instructions below to start using UCL Prism. You will be asked to login using the email address and password that you provided.
 					</font>
 				</p>
 				<p>
-					<!-- Button -->
-					<a style="text-decoration:none;" href="${host}/#/activate?activationCode=${activationCode}&resourceId=${resourceId}&action=${action}" title="Confirm Registration">
-						<img alt="Confirm registration" title="Confirm registration" width="158" height="33" src="${host}/pgadmissions/design/default/images/email/confirm_registration.jpg">
-					</a>
+                    <a style="text-decoration:none;" href="${actionUrl}">
+                        <img alt="Confirm registration" title="Confirm registration" width="158" height="33" src="${host}/pgadmissions/design/default/images/email/confirm_registration.jpg">
+                    </a>
 				</p>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>

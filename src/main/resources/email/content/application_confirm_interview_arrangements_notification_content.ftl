@@ -46,8 +46,7 @@
 						 </a>
 					</#if>
 					<!-- Button -->
-					<a style="text-decoration:none;"
-                        href="${actionUrl}">
+					<a style="text-decoration:none;" href="${actionUrl}">
 						<img alt="View application" title="View application" width="131" height="33" src="${host}/pgadmissions/design/default/images/email/view_app.jpg" />
 					</a>
 				</p>

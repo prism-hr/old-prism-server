@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.utils;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 
 import com.google.common.base.Objects;
+import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
 
 public class HibernateUtils {
 
@@ -23,22 +23,7 @@ public class HibernateUtils {
     }
 
     public static <T> boolean sameEntities(T entity1, T entity2) {
-        Object id1 = null;
-        Object id2 = null;
-
-        try {
-            id1 = PropertyUtils.getSimpleProperty(entity1, "id");
-        } catch (Exception e) {
-            throw new IllegalStateException("A problem ocurred when getting id of the entity of class: " + entity1.getClass(), e);
-        }
-
-        try {
-            id2 = PropertyUtils.getSimpleProperty(entity2, "id");
-        } catch (Exception e) {
-            throw new IllegalStateException("A problem ocurred when getting id of the entity of class: " + entity2.getClass(), e);
-        }
-
-        return Objects.equal(id1, id2);
+        return Objects.equal(IntrospectionHelper.getProperty(entity1, "id"), IntrospectionHelper.getProperty(entity2, "id"));
     }
 
     public static <T> boolean containsEntity(Iterable<T> iterable, T entity) {
@@ -49,4 +34,5 @@ public class HibernateUtils {
         }
         return false;
     }
+    
 }

@@ -8,7 +8,6 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBElement;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -60,6 +59,7 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.La
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
+import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
 
 @Service
 @Transactional
@@ -196,15 +196,9 @@ public class ImportedEntityService {
 
     public void mergeImportedEntity(Class<ImportedEntity> entityClass, Institution institution, Object entityDefinition) throws Exception {
         ImportedEntity transientEntity = entityClass.newInstance();
-
-        try {
-            transientEntity.setInstitution(institution);
-            transientEntity.setCode((String) PropertyUtils.getSimpleProperty(entityDefinition, "code"));
-            transientEntity.setName((String) PropertyUtils.getSimpleProperty(entityDefinition, "name"));
-        } catch (Exception e) {
-            throw new Exception(e);
-        }
-
+        transientEntity.setInstitution(institution);
+        transientEntity.setCode((String) IntrospectionHelper.getProperty(entityDefinition, "code"));
+        transientEntity.setName((String) IntrospectionHelper.getProperty(entityDefinition, "name"));
         createOrUpdateImportedEntity(transientEntity);
     }
 

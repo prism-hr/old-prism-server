@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
 
 @Service
 @Transactional
@@ -66,22 +66,16 @@ public class EntityService {
         if (persistentResource == null) {
             save(transientResource);
         } else {
-            try {
-                Object persistentId = PropertyUtils.getSimpleProperty(persistentResource, "id");
-                PropertyUtils.setSimpleProperty(transientResource, "id", persistentId);
-                evict(persistentResource);
-                update(transientResource);
-            } catch (Exception e) {
-                throw new Error(e);
-            }
+            Object persistentId = IntrospectionHelper.getProperty(persistentResource, "id");
+            IntrospectionHelper.setProperty(transientResource, "id", persistentId);        
+            evict(persistentResource);
+            update(transientResource);
         }
         return transientResource;
     }
 
     public Serializable save(Object entity) {
         return entityDAO.save(entity);
-        
-        
     }
 
     public void update(Object entity) {

@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import java.math.BigDecimal;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ParentResource;
 import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
 import com.zuehlke.pgadmissions.services.helpers.SummaryHelper;
 
 @Service
@@ -138,13 +138,9 @@ public class ApplicationSummaryService {
 
     private void incrementApplicationEventCount(Application application, String eventCountProperty) {
         for (ParentResource parentResource : application.getParentResources()) {
-            try {
-                ParentResource parent = (ParentResource) PropertyUtils.getSimpleProperty(application, parentResource.getResourceScope().getLowerCaseName());
-                Integer currentCount = (Integer) PropertyUtils.getSimpleProperty(parent, eventCountProperty);
-                PropertyUtils.setSimpleProperty(parent, eventCountProperty, SummaryHelper.incrementRunningCount(currentCount));
-            } catch (Exception e) {
-                throw new Error(e);
-            }
+            ParentResource parent = (ParentResource) IntrospectionHelper.getProperty(application, parentResource.getResourceScope().getLowerCaseName());
+            Integer currentCount = (Integer) IntrospectionHelper.getProperty(parent, eventCountProperty);
+            IntrospectionHelper.setProperty(parent, eventCountProperty, SummaryHelper.incrementRunningCount(currentCount));
         }
     }
 

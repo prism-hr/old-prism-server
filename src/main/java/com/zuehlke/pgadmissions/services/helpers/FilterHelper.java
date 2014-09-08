@@ -5,8 +5,8 @@ import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
-import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.DateFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.AbstractFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.DateFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.DecimalFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO.StringFilterDTO;
 

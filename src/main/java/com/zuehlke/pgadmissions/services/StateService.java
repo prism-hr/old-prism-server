@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
-import org.apache.commons.beanutils.MethodUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
@@ -36,6 +35,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
 
 @Service
 @Transactional
@@ -173,12 +173,8 @@ public class StateService {
         List<StateTransition> potentialStateTransitions = stateDAO.getStateTransitions(operative, action);
 
         if (potentialStateTransitions.size() > 1) {
-            try {
-                PrismTransitionEvaluation transitionEvaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation();
-                return (StateTransition) MethodUtils.invokeMethod(this, transitionEvaluation.getMethodName(), new Object[]{operative, comment});
-            } catch (Exception e) {
-                throw new Error(e);
-            }
+            PrismTransitionEvaluation transitionEvaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation();
+            return (StateTransition) IntrospectionHelper.invokeMethod(this, transitionEvaluation.getMethodName(), operative, comment);
         }
 
         return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);

@@ -9,9 +9,10 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+
+import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
 
 @Entity
 @Table(name = "notification_template_version")
@@ -84,11 +85,7 @@ public class NotificationTemplateVersion {
         this.system = null;
         this.institution = null;
         this.program = null;
-        try {
-            PropertyUtils.setSimpleProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
+        IntrospectionHelper.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
     }
     
     public NotificationTemplate getNotificationTemplate() {

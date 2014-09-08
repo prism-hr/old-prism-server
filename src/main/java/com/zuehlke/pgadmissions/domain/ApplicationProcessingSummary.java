@@ -13,14 +13,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.apache.commons.beanutils.MethodUtils;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang3.text.WordUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
 
 @Entity
 @Table(name = "APPLICATION_PROCESSING_SUMMARY", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "state_group_id" }),
@@ -145,19 +143,7 @@ public class ApplicationProcessingSummary implements IUniqueEntity {
         this.institution = null;
         this.program = null;
         this.project = null;
-        try {
-            PropertyUtils.setSimpleProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
-    }
-    
-    public void setPercentileValue(String property, Integer percentile, Object value) {
-        try {
-            MethodUtils.invokeMethod(this, "set" + WordUtils.capitalize(property) + String.format("%02d", percentile), value);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
+        IntrospectionHelper.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
     }
     
     public ApplicationProcessingSummary withResource(Resource resource) {

@@ -14,7 +14,6 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -187,7 +186,7 @@ public class ImportedEntityServiceHelper {
             unmarshaller.setSchema(schema);
 
             Object unmarshaled = unmarshaller.unmarshal(fileUrl);
-            return (List<Object>) PropertyUtils.getSimpleProperty(unmarshaled, importedEntityType.getJaxbPropertyName());
+            return (List<Object>) IntrospectionHelper.getProperty(unmarshaled, importedEntityType.getJaxbPropertyName());
         } finally {
             Authenticator.setDefault(null);
         }

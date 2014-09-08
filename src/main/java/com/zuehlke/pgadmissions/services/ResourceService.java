@@ -2,14 +2,12 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
-import org.hibernate.criterion.DetachedCriteria;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
@@ -20,13 +18,11 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.FilterFetchMode;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
-import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
@@ -61,6 +57,9 @@ public class ResourceService {
     private EntityService entityService;
 
     @Autowired
+    private ResourceListFilterService resourceListFilterService;
+    
+    @Autowired
     private RoleService roleService;
 
     @Autowired
@@ -74,16 +73,6 @@ public class ResourceService {
 
     public <T extends Resource> Resource getById(Class<T> resourceClass, Integer id) {
         return entityService.getById(resourceClass, id);
-    }
-
-    public <T extends Resource> List<ResourceConsoleListRowDTO> getConsoleListBlock(Class<T> resourceClass, int loadIndex) {
-        // TODO: Build filter and integrate
-        return resourceDAO.getConsoleListBlock(userService.getCurrentUser(), resourceClass, scopeService.getParentScopes(resourceClass), loadIndex);
-    }
-
-    public <T extends Resource> List<ResourceReportListRowDTO> getReportList(Class<T> resourceType) {
-        // TODO: Build the query and integrate with filter
-        return Lists.newArrayList();
     }
 
     public ActionOutcomeDTO createResource(User user, Action action, Object newResourceDTO, String referrer) throws DeduplicationException {
@@ -103,7 +92,7 @@ public class ResourceService {
             resource = applicationService.create(user, (ApplicationDTO) newResourceDTO);
             break;
         default:
-            throw new WorkflowEngineException("Attempted to create a resource of invalid type " + action.getCreationScope().getId().toString());
+            actionService.throwWorkflowEngineException(resource, action, "Attempted to create a resource of invalid type");
         }
 
         if (entityService.getDuplicateEntity(resource) != null && !user.isEnabled()) {
@@ -117,7 +106,7 @@ public class ResourceService {
         return actionService.executeUserAction(resource, action, comment);
     }
 
-    public void persistResource(Resource resource) throws WorkflowEngineException {
+    public void persistResource(Resource resource, Action action) throws WorkflowEngineException {
         resource.setCreatedTimestamp(new DateTime());
         resource.setUpdatedTimestamp(new DateTime());
 
@@ -135,7 +124,7 @@ public class ResourceService {
             applicationService.save((Application) resource);
             break;
         default:
-            throw new WorkflowEngineException("Attempted to persist a resource of invalid type " + resource.getResourceScope().getLowerCaseName());
+            actionService.throwWorkflowEngineException(resource, action, "Attempted to persist a resource of invalid type");
         }
 
         resource.setCode(generateResourceCode(resource));
@@ -224,10 +213,13 @@ public class ResourceService {
         return resourceDAO.getRecentlyUpdatedResources(resourceClass, rangeStart, rangeClose);
     }
 
-    public <T extends Resource> DetachedCriteria getResourceListFilter(User user, Class<T> resourceClass, List<PrismState> stateWithUrgentActionIds,
-            ResourceListFilterDTO filterDTO, String lastSequenceIdentifier) {
+    public <T extends Resource> List<Integer> getVisibleResources(User user, Class<T> resourceClass, ResourceListFilterDTO filterDTO,
+            FilterFetchMode fetchMode, String lastSequenceIdentifier) throws DeduplicationException {
         List<PrismScope> parentScopeIds = scopeService.getParentScopes(resourceClass);
-        return resourceDAO.getResourceListFilter(user, resourceClass, parentScopeIds, filterDTO, lastSequenceIdentifier);
+        if (filterDTO.isSaveAsDefaultFilter()) {
+            resourceListFilterService.save(user, resourceClass, filterDTO);
+        }
+        return resourceDAO.getVisibleResources(user, resourceClass, parentScopeIds, filterDTO, fetchMode, lastSequenceIdentifier);
     }
 
 }

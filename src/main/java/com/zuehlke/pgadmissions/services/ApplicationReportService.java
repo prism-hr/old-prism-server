@@ -18,14 +18,14 @@ import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.TableRow;
 import com.google.visualization.datasource.datatable.value.ValueType;
-import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.ReportFormat;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 
-@Service("applicationsReportService")
+@Service
 @Transactional
-public class ApplicationsReportService {
+public class ApplicationReportService {
 
 //    private static final String N_R = "N/R";
 
@@ -34,10 +34,10 @@ public class ApplicationsReportService {
     @Autowired
     private ApplicationService applicationsService;
 
-    @Value("${application.host}")
+    @Value("${application.host}") 
     private String host;
 
-    public DataTable getApplicationsReport(User user, Filter filtering, ReportFormat reportType) {
+    public DataTable getApplicationsReport(User user, ResourceListFilterDTO filtering, ReportFormat reportType) {
         // TODO implement report functionality (supposedly using query and write new tests)
         DataTable data = new DataTable();
 
@@ -140,16 +140,16 @@ public class ApplicationsReportService {
 
         data.addColumns(cd);
 
-        List<ResourceReportListRowDTO> reportRows = applicationsService.getReportList();
+        List<ResourceReportListRowDTO> reportRows = null;
 
         for (ResourceReportListRowDTO reportRow : reportRows) {
 
             try {
 //                User applicant = app.getUser();
-//                PersonalDetails personalDetails = app.getPersonalDetail();
+//                PersonalDetails personalDetails = app.getPersonalDetails();
 //                String firstNames = Joiner.on(" ").skipNulls().join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3());
 //                Program program = app.getProgram();
-//                ProgramDetail programmeDetail = app.getProgramDetail();
+//                ProgramDetails programmeDetails = app.getProgramDetails();
 //                ValidationComment validationComment = (ValidationComment) applicationsService.getLatestStateChangeComment(app, SystemAction.APPLICATION_COMPLETE_VALIDATION_STAGE);
 //                int[] receivedAndDeclinedReferences = getNumberOfReceivedAndDeclinedReferences(app);
 //                int[] referenceEndorsements = getNumberOfPositiveAndNegativeReferenceEndorsements(app);

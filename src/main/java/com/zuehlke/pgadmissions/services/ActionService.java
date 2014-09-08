@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhanceme
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 
@@ -165,11 +166,15 @@ public class ActionService {
     public void throwWorkflowPermissionException(Resource resource, Action action) {
         throwWorkflowPermissionException(resource, action, null);
     }
-    
+
     public void throwWorkflowPermissionException(Resource resource, Action action, String message) {
         Action fallbackAction = action.getFallbackAction();
         Resource fallbackResource = resource.getEnclosingResource(fallbackAction.getScope().getId());
         throw new WorkflowPermissionException(action, fallbackAction, resource, fallbackResource);
+    }
+
+    public void throwWorkflowEngineException(Resource resource, Action action, String message) {
+        throw new WorkflowEngineException("Error executing " + action.getId().name() + " on " + resource.getCode() + ". Explanation was \"" + message + "\".");
     }
 
     private boolean checkActionAvailable(Resource resource, Action action, User invoker) {

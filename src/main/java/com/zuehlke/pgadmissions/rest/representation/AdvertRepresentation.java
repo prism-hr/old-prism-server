@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import java.math.BigDecimal;
+
 import org.joda.time.LocalDate;
 
-import java.math.BigDecimal;
+import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class AdvertRepresentation {
 

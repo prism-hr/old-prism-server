@@ -8,11 +8,13 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
+import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
 
+@SuppressWarnings("unchecked")
 public class ResourceListFilterDTO {
 
     private Boolean urgentOnly;
@@ -39,7 +41,7 @@ public class ResourceListFilterDTO {
     
     private List<DateFilterDTO> closingDate;
     
-    private List<PrismState> state;
+    private List<StateGroupFilterDTO> stateGroup;
     
     private List<StringFilterDTO> referrer;
     
@@ -47,7 +49,7 @@ public class ResourceListFilterDTO {
     
     private List<DateFilterDTO> confirmedStartDate;
     
-    private List<RatingFilterDTO> rating;
+    private List<DecimalFilterDTO> rating;
     
     private FilterSortOrder sortOrder;
     
@@ -101,8 +103,8 @@ public class ResourceListFilterDTO {
         return closingDate;
     }
 
-    public final List<PrismState> getState() {
-        return state;
+    public final List<StateGroupFilterDTO> getStateGroup() {
+        return stateGroup;
     }
 
     public final List<StringFilterDTO> getReferrer() {
@@ -117,7 +119,7 @@ public class ResourceListFilterDTO {
         return confirmedStartDate;
     }
 
-    public final List<RatingFilterDTO> getRating() {
+    public final List<DecimalFilterDTO> getRating() {
         return rating;
     }
 
@@ -129,57 +131,132 @@ public class ResourceListFilterDTO {
         return saveAsDefaultFilter;
     }
     
-    public HashMap<String, Object> getFilters() {
+    public ResourceListFilterDTO withUrgentOnly(Boolean urgentOnly) {
+        this.urgentOnly = urgentOnly;
+        return this;
+    }
+    
+    public ResourceListFilterDTO withMatchMode(FilterMatchMode matchMode) {
+        this.matchMode = matchMode;
+        return this;
+    }
+
+    public void addStringFilter(FilterProperty property, String term, Boolean negated) {
+        List<StringFilterDTO> constraints = (List<StringFilterDTO>) IntrospectionHelper.getProperty(this, property.getPropertyName());
+        constraints.add(new StringFilterDTO().withTerm(term).withNegated(negated));
+    }
+    
+    public void addStateGroupFilter(FilterProperty property, PrismStateGroup stateGroup, Boolean negated) {
+        List<StateGroupFilterDTO> constraints = (List<StateGroupFilterDTO>) IntrospectionHelper.getProperty(this, property.getPropertyName());
+        constraints.add(new StateGroupFilterDTO().withStateGroup(stateGroup).withNegated(negated));
+    }
+    
+    public void addDateFilter(FilterProperty property, LocalDate rangeStart, LocalDate rangeClose, Boolean negated) {
+        List<DateFilterDTO> constraints = (List<DateFilterDTO>) IntrospectionHelper.getProperty(this, property.getPropertyName());
+        constraints.add(new DateFilterDTO().withRangeStart(rangeStart).withRangeClose(rangeClose).withNegated(negated));
+    }
+    
+    public void addDecimalFilter(FilterProperty property, BigDecimal rangeStart, BigDecimal rangeClose, Boolean negated) {
+        List<DecimalFilterDTO> constraints = (List<DecimalFilterDTO>) IntrospectionHelper.getProperty(this, property.getPropertyName());
+        constraints.add(new DecimalFilterDTO().withRangeStart(rangeStart).withRangeClose(rangeClose).withNegated(negated));
+    }
+    
+    public void addUserRoleFilter(FilterProperty property, List<PrismRole> roles, Boolean negated) {
+        List<UserRoleFilterDTO> constraints = (List<UserRoleFilterDTO>) IntrospectionHelper.getProperty(this, property.getPropertyName());
+        constraints.add(new UserRoleFilterDTO().withRoles(roles).withNegated(negated));
+    }    
+    
+    public ResourceListFilterDTO withSortOrder(FilterSortOrder sortOrder) {
+        this.sortOrder = sortOrder;
+        return this;
+    }
+    
+    public HashMap<String, Object> getFilterConstraints() {
         return IntrospectionHelper.getBeanPropertiesMap(this, "urgentOnly", "matchMode", "sortOrder", "saveAsDefaultFilter");
     }
     
-    public boolean hasFilter(String filterProperty) {
-        return getFilters().containsKey(filterProperty);
+    public boolean hasFilter(FilterProperty filterProperty) {
+        return getFilterConstraints().containsKey(filterProperty.getPropertyName());
     }
     
-    public static class StringFilterDTO extends ObjectFilterDTO {
+    public static class StringFilterDTO extends AbstractFilterDTO {
         
-        private String filter;
+        private String string;
 
-        public final String getFilter() {
-            return filter;
+        public final String getString() {
+            return string;
         }
 
-        public final void setFilter(String filter) {
-            this.filter = filter;
+        public final void setString(String string) {
+            this.string = string;
+        }
+        
+        public StringFilterDTO withTerm(String string) {
+            this.string = string;
+            return this;
+        }
+        
+        public StringFilterDTO withNegated(Boolean negated) {
+            setNegated(negated);
+            return this;
         }
 
     }
 
     public static class UserRoleFilterDTO extends StringFilterDTO {
         
-        private List<PrismRole> userRoles;
+        private List<PrismRole> roles;
 
-        public final List<PrismRole> getUserRoles() {
-            return userRoles;
+        public final List<PrismRole> getRoles() {
+            return roles;
         }
 
-        public final void setUserRoles(List<PrismRole> userRoles) {
-            this.userRoles = userRoles;
+        public final void setRoles(List<PrismRole> roles) {
+            this.roles = roles;
         }
-
-    }
-    
-    public static class StateFilterDTO extends ObjectFilterDTO {
         
-        private PrismState filter;
+        public UserRoleFilterDTO withRoles(List<PrismRole> roles) {
+            this.roles = roles;
+            return this;
+        }
+        
+        public StringFilterDTO withTerm(String string) {
+            setString(string);
+            return this;
+        }
+        
+        public UserRoleFilterDTO withNegated(Boolean negated) {
+            setNegated(negated);
+            return this;
+        }
+        
+    }
+    
+    public static class StateGroupFilterDTO extends AbstractFilterDTO {
+        
+        private PrismStateGroup stateGroup;
 
-        public final PrismState getFilter() {
-            return filter;
+        public final PrismStateGroup getStateGroup() {
+            return stateGroup;
         }
 
-        public final void setFilter(PrismState filter) {
-            this.filter = filter;
+        public final void setStateGroup(PrismStateGroup stateGroup) {
+            this.stateGroup = stateGroup;
+        }
+        
+        public StateGroupFilterDTO withStateGroup(PrismStateGroup stateGroup) {
+            this.stateGroup = stateGroup;
+            return this;
+        }
+
+        public StateGroupFilterDTO withNegated(Boolean negated) {
+            setNegated(negated);
+            return this;
         }
 
     }
     
-    public static class DateFilterDTO extends ObjectFilterDTO {
+    public static class DateFilterDTO extends AbstractFilterDTO {
         
         private LocalDate rangeStart;
         
@@ -209,9 +286,24 @@ public class ResourceListFilterDTO {
             return rangeClose.plusDays(1).toDateTimeAtStartOfDay().minusSeconds(1);
         }
         
+        public DateFilterDTO withRangeStart(LocalDate rangeStart) {
+            this.rangeStart = rangeStart;
+            return this;
+        }
+        
+        public DateFilterDTO withRangeClose(LocalDate rangeClose) {
+            this.rangeClose = rangeClose;
+            return this;
+        }
+        
+        public DateFilterDTO withNegated(Boolean negated) {
+            setNegated(negated);
+            return this;
+        }
+        
     }
     
-    public static class RatingFilterDTO extends ObjectFilterDTO {
+    public static class DecimalFilterDTO extends AbstractFilterDTO {
         
         private BigDecimal rangeStart;
         
@@ -233,9 +325,24 @@ public class ResourceListFilterDTO {
             this.rangeClose = rangeClose;
         }
         
+        public DecimalFilterDTO withRangeStart(BigDecimal rangeStart) {
+            this.rangeStart = rangeStart;
+            return this;
+        }
+        
+        public DecimalFilterDTO withRangeClose(BigDecimal rangeClose) {
+            this.rangeClose = rangeClose;
+            return this;
+        }
+        
+        public DecimalFilterDTO withNegated(Boolean negated) {
+            setNegated(negated);
+            return this;
+        }
+        
     }
 
-    public static abstract class ObjectFilterDTO {
+    public static abstract class AbstractFilterDTO {
         
         private Boolean negated;
 

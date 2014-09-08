@@ -549,7 +549,7 @@ public class ApplicationService {
         }
 
         if (comment.isRatingComment()) {
-            applicationSummaryService.summariseApplication(application);
+            applicationSummaryService.summariseApplication(application, comment);
         }
 
         if (comment.isTransitionComment()) {

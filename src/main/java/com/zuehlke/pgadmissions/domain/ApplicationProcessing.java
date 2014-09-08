@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
@@ -40,8 +41,8 @@ public class ApplicationProcessing implements IUniqueEntity {
     @Column(name = "instance_count", nullable = false)
     private Integer instanceCount;
     
-    @Column(name = "day_duration_sum", nullable = false)
-    private Integer dayDurationSum;
+    @Column(name = "day_duration_average")
+    private BigDecimal dayDurationAverage;
     
     @Column(name = "last_updated_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -80,12 +81,12 @@ public class ApplicationProcessing implements IUniqueEntity {
         this.instanceCount = instanceCount;
     }
 
-    public final Integer getDayDurationSum() {
-        return dayDurationSum;
+    public final BigDecimal getDayDurationAverage() {
+        return dayDurationAverage;
     }
 
-    public final void setDayDurationSum(Integer dayDurationSum) {
-        this.dayDurationSum = dayDurationSum;
+    public final void setDayDurationAverage(BigDecimal dayDurationSum) {
+        this.dayDurationAverage = dayDurationSum;
     }
 
     public final LocalDate getLastUpdatedDate() {
@@ -111,8 +112,8 @@ public class ApplicationProcessing implements IUniqueEntity {
         return this;
     }
     
-    public ApplicationProcessing withDayDurationSum(Integer dayDurationSum) {
-        this.dayDurationSum = dayDurationSum;
+    public ApplicationProcessing withDayDurationAverage(BigDecimal dayDurationAverage) {
+        this.dayDurationAverage = dayDurationAverage;
         return this;
     }
     

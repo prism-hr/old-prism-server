@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.definitions.FilterFetchMode;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
@@ -57,6 +56,9 @@ public class ResourceService {
     @Autowired
     private EntityService entityService;
 
+    @Autowired
+    private ResourceListFilterService resourceListFilterService;
+    
     @Autowired
     private RoleService roleService;
 
@@ -211,10 +213,13 @@ public class ResourceService {
         return resourceDAO.getRecentlyUpdatedResources(resourceClass, rangeStart, rangeClose);
     }
 
-    public <T extends Resource> List<Integer> getResourceListFilter(User user, Class<T> resourceClass, List<PrismState> stateWithUrgentActionIds,
-            ResourceListFilterDTO filterDTO, FilterFetchMode fetchMode, String lastSequenceIdentifier) {
+    public <T extends Resource> List<Integer> getVisibleResources(User user, Class<T> resourceClass, ResourceListFilterDTO filterDTO,
+            FilterFetchMode fetchMode, String lastSequenceIdentifier) throws DeduplicationException {
         List<PrismScope> parentScopeIds = scopeService.getParentScopes(resourceClass);
-        return resourceDAO.getResourceListFilter(user, resourceClass, parentScopeIds, filterDTO, fetchMode, lastSequenceIdentifier);
+        if (filterDTO.isSaveAsDefaultFilter()) {
+            resourceListFilterService.save(user, resourceClass, filterDTO);
+        }
+        return resourceDAO.getVisibleResources(user, resourceClass, parentScopeIds, filterDTO, fetchMode, lastSequenceIdentifier);
     }
 
 }

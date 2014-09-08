@@ -156,7 +156,7 @@ public class Comment {
     private RejectionReason rejectionReason;
 
     @Column(name = "application_rating")
-    private Integer rating;
+    private Integer applicationRating;
 
     @Column(name = "application_use_custom_referee_questions")
     private Boolean useCustomRefereeQuestions;
@@ -183,8 +183,8 @@ public class Comment {
     private String exportReference;
 
     @ManyToOne
-    @JoinColumn(name = "action_on_parent_resource_id")
-    private Action actionOnParentResource;
+    @JoinColumn(name = "parent_resource_transition_state_id")
+    private State parentResourceTransitionState;
 
     @Column(name = "creator_ip_address")
     private String creatorIpAddress;
@@ -481,12 +481,12 @@ public class Comment {
         this.rejectionReason = rejectionReason;
     }
 
-    public Integer getRating() {
-        return rating;
+    public Integer getApplicationRating() {
+        return applicationRating;
     }
 
-    public void setRating(Integer rating) {
-        this.rating = rating;
+    public void setApplicationRating(Integer applicationRating) {
+        this.applicationRating = applicationRating;
     }
 
     public Boolean getUseCustomRefereeQuestions() {
@@ -561,12 +561,12 @@ public class Comment {
         this.creatorIpAddress = creatorIpAddress;
     }
 
-    public Action getActionOnParentResource() {
-        return actionOnParentResource;
+    public final State getParentResourceTransitionState() {
+        return parentResourceTransitionState;
     }
 
-    public void setActionOnParentResource(Action actionOnParentResource) {
-        this.actionOnParentResource = actionOnParentResource;
+    public final void setParentResourceTransitionState(State parentResourceTransitionState) {
+        this.parentResourceTransitionState = parentResourceTransitionState;
     }
 
     public Set<CommentAssignedUser> getAssignedUsers() {

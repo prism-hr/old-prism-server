@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.validation.validator.comment;
 
+import static com.zuehlke.pgadmissions.utils.ValidationUtils.rejectIfNotNull;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.springframework.stereotype.Component;
@@ -10,8 +12,6 @@ import org.springframework.validation.Validator;
 import com.google.common.base.Preconditions;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
-
-import static com.zuehlke.pgadmissions.utils.ValidationUtils.rejectIfNotNull;
 
 @Component
 public class AssignInterviewersCommentCustomValidator implements Validator {

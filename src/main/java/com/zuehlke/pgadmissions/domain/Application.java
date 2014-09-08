@@ -573,6 +573,16 @@ public class Application extends Resource {
     public LocalDate getRecommendedStartDate() {
         return project == null ? program.getRecommendedStartDate() : project.getRecommendedStartDate();
     }
+    
+    public Set<ParentResource> getParentResources() {
+        Set<ParentResource> parentResources = Sets.newLinkedHashSet();
+        if (project != null) {
+            parentResources.add(project);
+        }
+        parentResources.add(program);
+        parentResources.add(institution);
+        return parentResources;
+    }
 
     @Override
     public ResourceSignature getResourceSignature() {

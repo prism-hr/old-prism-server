@@ -18,10 +18,10 @@ import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.TableRow;
 import com.google.visualization.datasource.datatable.value.ValueType;
-import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.ReportFormat;
 import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 
 @Service
 @Transactional
@@ -37,7 +37,7 @@ public class ApplicationReportService {
     @Value("${application.host}") 
     private String host;
 
-    public DataTable getApplicationsReport(User user, Filter filtering, ReportFormat reportType) {
+    public DataTable getApplicationsReport(User user, ResourceListFilterDTO filtering, ReportFormat reportType) {
         // TODO implement report functionality (supposedly using query and write new tests)
         DataTable data = new DataTable();
 

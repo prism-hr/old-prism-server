@@ -4,8 +4,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCo
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.APPOINTMENT_PREFERENCES;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.APPOINTMENT_TIMESLOTS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.ASSIGNED_USERS;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.CONTENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.COMPETENT_IN_WORK_LANGUAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.CONTENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.DESIRE_TO_RECRUIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.DOCUMENTS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.INTERVIEWEE_INSTRUCTIONS;

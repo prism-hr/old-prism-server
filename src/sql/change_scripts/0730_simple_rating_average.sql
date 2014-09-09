@@ -378,17 +378,16 @@ ALTER TABLE PROJECT
 ;
 
 ALTER TABLE APPLICATION_PROCESSING_SUMMARY
-	CHANGE COLUMN day_duration_sum_average day_duration_average DECIMAL(10,2) UNSIGNED NOT NULL,
+	CHANGE COLUMN day_duration_sum_average day_duration_average DECIMAL(10,2) UNSIGNED,
 	CHANGE COLUMN instance_sum instance_count INT(10) UNSIGNED NOT NULL,
 	CHANGE COLUMN instance_sum_live instance_count_live INT(10) UNSIGNED NOT NULL,
-	CHANGE COLUMN instance_count_average instance_count_average_non_zero DECIMAL(10,2) UNSIGNED NOT NULL,
-	MODIFY COLUMN day_duration_average DECIMAL(10,2)
+	CHANGE COLUMN instance_count_average instance_count_average_non_zero DECIMAL(10,2) UNSIGNED NOT NULL
 ;
 
 
 UPDATE APPLICATION_PROCESSING_SUMMARY
-SET day_duration_average_non_zero = NULL
-WHERE day_duration_average_non_zero = 0.00
+SET day_duration_average = NULL
+WHERE day_duration_average = 0.00
 ;
 
 ALTER TABLE APPLICATION_PROCESSING
@@ -421,7 +420,7 @@ UPDATE APPLICATION_PROCESSING_SUMMARY INNER JOIN (
 	GROUP BY APPLICATION.project_id, APPLICATION_PROCESSING.state_group_id) AS PROJECT_SUMMARY
 	ON APPLICATION_PROCESSING_SUMMARY.project_id = PROJECT_SUMMARY.project_id
 	AND APPLICATION_PROCESSING_SUMMARY.state_group_id = PROJECT_SUMMARY.state_group_id
-SET APPLICATION_PROCESSING_SUMMARY.day_duration_average_non_zero = PROJECT_SUMMARY.day_duration_average
+SET APPLICATION_PROCESSING_SUMMARY.day_duration_average = PROJECT_SUMMARY.day_duration_average
 ;
 
 UPDATE APPLICATION_PROCESSING_SUMMARY INNER JOIN (
@@ -435,7 +434,7 @@ UPDATE APPLICATION_PROCESSING_SUMMARY INNER JOIN (
 	GROUP BY APPLICATION.program_id, APPLICATION_PROCESSING.state_group_id) AS PROGRAM_SUMMARY
 	ON APPLICATION_PROCESSING_SUMMARY.program_id = PROGRAM_SUMMARY.program_id
 	AND APPLICATION_PROCESSING_SUMMARY.state_group_id = PROGRAM_SUMMARY.state_group_id
-SET APPLICATION_PROCESSING_SUMMARY.day_duration_average_non_zero = PROGRAM_SUMMARY.day_duration_average
+SET APPLICATION_PROCESSING_SUMMARY.day_duration_average = PROGRAM_SUMMARY.day_duration_average
 ;
 
 UPDATE APPLICATION_PROCESSING_SUMMARY INNER JOIN (
@@ -449,7 +448,7 @@ UPDATE APPLICATION_PROCESSING_SUMMARY INNER JOIN (
 	GROUP BY APPLICATION.institution_id, APPLICATION_PROCESSING.state_group_id) AS INSTITUTION_SUMMARY
 	ON APPLICATION_PROCESSING_SUMMARY.institution_id = INSTITUTION_SUMMARY.institution_id
 	AND APPLICATION_PROCESSING_SUMMARY.state_group_id = INSTITUTION_SUMMARY.state_group_id
-SET APPLICATION_PROCESSING_SUMMARY.day_duration_average_non_zero = INSTITUTION_SUMMARY.day_duration_average
+SET APPLICATION_PROCESSING_SUMMARY.day_duration_average = INSTITUTION_SUMMARY.day_duration_average
 ;
 
 ALTER TABLE PROJECT
@@ -528,9 +527,9 @@ CREATE TABLE RESOURCE_LIST_FILTER_CONSTRAINT (
 	UNIQUE INDEX (resource_list_filter_id, filter_property, filter_expression, value_state_group_id),
 	UNIQUE INDEX (resource_list_filter_id, filter_property, filter_expression, value_date_start, value_date_close),
 	UNIQUE INDEX (resource_list_filter_id, filter_property, filter_expression, value_decimal_start, value_decimal_close),
-	INDEX (resource_list_filter_id, display_order),
+	INDEX (resource_list_filter_id, display_position),
 	FOREIGN KEY (resource_list_filter_id) REFERENCES RESOURCE_LIST_FILTER (id),
-	FOREIGN KEY (filter_term_state_group_id) REFERENCES STATE_GROUP (id)
+	FOREIGN KEY (value_state_group_id) REFERENCES STATE_GROUP (id)
 ) ENGINE = INNODB 
 ;
 

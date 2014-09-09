@@ -146,7 +146,7 @@ public class ApplicationService {
     public Application getByCode(String code) {
         return entityService.getByProperty(Application.class, "code", code);
     }
-    
+
     // TODO: handle null response - study option expired
     public LocalDate getEarliestStartDate(Application application) {
         ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(application.getProgram(), application.getProgramDetail().getStudyOption());
@@ -535,7 +535,7 @@ public class ApplicationService {
         if (comment.isApplicationCreatedComment()) {
             applicationSummaryService.incrementApplicationCreatedCount(application);
         }
-        
+
         if (comment.isProjectCreateComment()) {
             synchroniseProjectSupervisors(application);
         }
@@ -555,19 +555,19 @@ public class ApplicationService {
         if (comment.isTransitionComment()) {
             applicationSummaryService.summariseApplicationProcessing(application);
         }
-        
+
         if (comment.isApplicationSubmittedComment()) {
             applicationSummaryService.incrementApplicationSubmittedCount(application);
         }
-        
+
         if (comment.isApplicationApprovedComment()) {
             applicationSummaryService.incrementApplicationApprovedCount(application);
         }
-        
+
         if (comment.isApplicationRejectedComment()) {
             applicationSummaryService.incrementApplicationRejectedCount(application);
         }
-        
+
         if (comment.isApplicationWithdrawnComment()) {
             applicationSummaryService.incrementApplicationWithdrawnCount(application);
         }

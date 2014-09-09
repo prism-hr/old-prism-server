@@ -200,7 +200,7 @@ public class WorkflowConfigurationHelper {
         int stateTransitionCount = stateTransitions.size();
 
         for (StateTransition stateTransition : stateTransitions) {
-            PrismTransitionEvaluation thisTransitionEvaluation = stateTransition.getStateTransitionEvaluation();
+            PrismTransitionEvaluation thisTransitionEvaluation = stateTransition.getStateTransitionEvaluation().getId();
 
             assertTrue(stateTransition.getRoleTransitions().size() > 0 || state != stateTransition.getTransitionState()
                     || action != stateTransition.getTransitionAction() || thisTransitionEvaluation != null);

@@ -22,12 +22,14 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 
 @Service
 @Transactional
@@ -53,7 +55,10 @@ public class ResourceService {
 
     @Autowired
     private EntityService entityService;
-    
+
+    @Autowired
+    private ResourceListFilterService resourceListFilterService;
+
     @Autowired
     private RoleService roleService;
 
@@ -208,4 +213,17 @@ public class ResourceService {
         return resourceDAO.getRecentlyUpdatedResources(resourceClass, rangeStart, rangeClose);
     }
 
+    public <T extends Resource> List<ResourceConsoleListRowDTO> getResourceConsoleList(User user, PrismScope scopeId, ResourceListFilterDTO filterDTO,
+            String lastSequenceIdentifier) throws DeduplicationException {
+        if (scopeId == PrismScope.SYSTEM) {
+            throw new Error("The system resource does not support resource listing");
+        }
+        
+        List<PrismScope> parentScopeIds = scopeService.getParentScopesAscending(scopeId);
+        List<PrismScope> joinScopeIds = scopeService.getJoinScopesAscending(scopeId);
+        
+        filterDTO = resourceListFilterService.saveOrGetByUserAndScope(user, scopeId, filterDTO);
+        return resourceDAO.getResourceConsoleList(user, scopeId, parentScopeIds, joinScopeIds, filterDTO, lastSequenceIdentifier);
+    }
+    
 }

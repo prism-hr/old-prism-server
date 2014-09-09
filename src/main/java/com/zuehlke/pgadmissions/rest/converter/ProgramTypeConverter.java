@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.rest.converter;
 
+import org.dozer.DozerConverter;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.services.EntityService;
-import org.dozer.DozerConverter;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class ProgramTypeConverter extends DozerConverter<ProgramType, PrismProgramType> {
 

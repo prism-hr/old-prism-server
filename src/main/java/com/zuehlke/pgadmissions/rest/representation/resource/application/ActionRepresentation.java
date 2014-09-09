@@ -28,4 +28,5 @@ public class ActionRepresentation {
     public void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
     }
+    
 }

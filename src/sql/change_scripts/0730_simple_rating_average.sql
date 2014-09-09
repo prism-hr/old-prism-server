@@ -549,3 +549,40 @@ CREATE TABLE RESOURCE_LIST_FILTER_CONSTRAINT_ROLE (
 	FOREIGN KEY (role_id) REFERENCES ROLE (id)
 ) ENGINE = INNODB
 ;
+
+ALTER TABLE APPLICATION
+	CHANGE COLUMN rating_count application_rating_count INT(10) UNSIGNED,
+	CHANGE COLUMN rating_average application_rating_averave DECIMAL(3, 2) UNSIGNED
+;
+
+UPDATE STATE_TRANSITION
+SET state_transition_evaluation = REPLACE(state_transition_evaluation, "CONFIGURED", "VIEW_EDIT"),
+	state_transition_evaluation = REPLACE(state_transition_evaluation, "EVALUATED", "STATE_COMPLETED"),
+	state_transition_evaluation = REPLACE(state_transition_evaluation, "REACTIVATED", "RESTORED")
+;
+
+CREATE TABLE STATE_TRANSITION_EVALUATION (
+	id VARCHAR(50) NOT NULL,
+	next_state_selection INT(1) UNSIGNED NOT NULL,
+	scope_id VARCHAR(50) NOT NULL,
+	PRIMARY KEY (id),
+	INDEX (next_state_selection),
+	INDEX (scope_id),
+	FOREIGN KEY (scope_id) REFERENCES SCOPE (id)
+) ENGINE = INNODB
+;
+
+INSERT INTO STATE_TRANSITION_EVALUATION (id, next_state_selection, scope_id)
+	SELECT STATE_TRANSITION.state_transition_evaluation AS id,
+		0 AS next_state_selection,
+		STATE.scope_id AS scope_id
+	FROM STATE_TRANSITION INNER JOIN STATE
+		ON STATE_TRANSITION.transition_state_id = STATE.id
+	WHERE STATE_TRANSITION.state_transition_evaluation IS NOT NULL
+	GROUP BY STATE_TRANSITION.state_transition_evaluation
+;
+
+ALTER TABLE STATE_TRANSITION
+	CHANGE COLUMN state_transition_evaluation state_transition_evaluation_id VARCHAR(50),
+	ADD FOREIGN KEY (state_transition_evaluation_id) REFERENCES STATE_TRANSITION_EVALUATION(id)
+;

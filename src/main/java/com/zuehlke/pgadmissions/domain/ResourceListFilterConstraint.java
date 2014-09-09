@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -35,6 +36,7 @@ public class ResourceListFilterConstraint {
     @GeneratedValue
     private Integer Id;
 
+    @ManyToOne
     @JoinColumn(name = "resource_list_filter_id", nullable = false)
     private ResourceListFilter filter;
 
@@ -63,9 +65,10 @@ public class ResourceListFilterConstraint {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate valueDateClose;
 
+    @ManyToOne
     @JoinColumn(name = "value_state_group_id")
     private StateGroup valueStateGroup;
-
+    
     @Column(name = "value_decimal_start")
     private BigDecimal valueDecimalStart;
 

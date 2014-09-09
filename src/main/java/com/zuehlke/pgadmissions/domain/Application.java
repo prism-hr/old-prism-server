@@ -112,11 +112,11 @@ public class Application extends Resource {
     @JoinColumn(name = "application_additional_information_id", unique = true)
     private ApplicationAdditionalInformation additionalInformation;
 
-    @Column(name = "rating_count")
-    private Integer ratingCount;
+    @Column(name = "application_rating_count")
+    private Integer applicationRatingCount;
 
-    @Column(name = "rating_average")
-    private BigDecimal ratingAverage;
+    @Column(name = "application_rating_average")
+    private BigDecimal applicationRatingAverage;
 
     @Column(name = "confirmed_start_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -350,20 +350,20 @@ public class Application extends Resource {
         this.additionalInformation = additionalInformation;
     }
 
-    public final Integer getRatingCount() {
-        return ratingCount;
+    public final Integer getApplicationRatingCount() {
+        return applicationRatingCount;
     }
 
-    public final void setRatingCount(Integer ratingCount) {
-        this.ratingCount = ratingCount;
+    public final void setApplicationRatingCount(Integer applicationRatingCount) {
+        this.applicationRatingCount = applicationRatingCount;
     }
 
-    public final BigDecimal getRatingAverage() {
-        return ratingAverage;
+    public final BigDecimal getApplicationRatingAverage() {
+        return applicationRatingAverage;
     }
 
-    public final void setRatingAverage(BigDecimal ratingAverage) {
-        this.ratingAverage = ratingAverage;
+    public final void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+        this.applicationRatingAverage = applicationRatingAverage;
     }
 
     public final LocalDate getConfirmedStartDate() {

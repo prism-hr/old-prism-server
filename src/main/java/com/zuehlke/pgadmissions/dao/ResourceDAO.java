@@ -84,44 +84,45 @@ public class ResourceDAO {
             List<PrismScope> joinScopeIds, ResourceListFilterDTO filterDTO, String lastSequenceIdentifier) {
         Class<? extends Resource> resourceClass = scopeId.getResourceClass();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceClass, scopeId.getLowerCaseName());
-       
+
         ProjectionList projectionList = Projections.projectionList();
-        
+
         for (PrismScope parentScopeId : parentScopeIds) {
             String parentScopeName = parentScopeId.getLowerCaseName();
             projectionList.add(Projections.property(parentScopeName + ".id"), parentScopeName + "Id");
         }
-        
-        projectionList.add(Projections.property("id"), scopeId.getLowerCaseName() + ".Id") //
-                .add(Projections.property("user.firstName"), "creatorFirstName") //
-                .add(Projections.property("user.firstName2"), "creatorFirstName2")
-                .add(Projections.property("user.firstName3"), "creatorFirstName3")
-                .add(Projections.property("user.lastName"), "creatorLastName")
-                .add(Projections.property("code"), "code");
-        
+
+        projectionList.add(Projections.property("id"), scopeId.getLowerCaseName() + ".Id")
+                //
+                .add(Projections.property("user.firstName"), "creatorFirstName")
+                //
+                .add(Projections.property("user.firstName2"), "creatorFirstName2").add(Projections.property("user.firstName3"), "creatorFirstName3")
+                .add(Projections.property("user.lastName"), "creatorLastName").add(Projections.property("code"), "code");
+
         for (PrismScope joinScopeId : joinScopeIds) {
             String joinScopeName = joinScopeId.getLowerCaseName();
             projectionList.add(Projections.property(joinScopeName + ".title"), joinScopeName + "Title");
         }
-        
+
         projectionList.add(Projections.property("applicationRatingAverage"), "applicationRatingAverage") //
                 .add(Projections.property("state.id"), "stateId") //
                 .add(Projections.property("state.stateGroup.id"), "stateGroupId") //
                 .add(Projections.property("user.email"), "creatorEmail") //
                 .add(Projections.property("updatedTimestamp"), "updatedTimestamp"); //
-        
+
         criteria.setProjection(projectionList) //
                 .createAlias("user", "user", JoinType.INNER_JOIN);
-        
+
         for (PrismScope joinScopeId : joinScopeIds) {
             String joinScopeName = joinScopeId.getLowerCaseName();
             criteria.createAlias(joinScopeName, joinScopeName, JoinType.LEFT_OUTER_JOIN); //
         }
-        
+
         criteria.createAlias("state", "state", JoinType.INNER_JOIN) //
                 .add(Subqueries.propertyIn("id", ResourceListConstraintBuilder.getVisibleResourcesCriteria(user, resourceClass, parentScopeIds, filterDTO)));
-        
-        return ResourceListConstraintBuilder.appendResourceListDisplayFilterExpression(Application.class, criteria, filterDTO.getSortOrder(), lastSequenceIdentifier) //
+
+        return ResourceListConstraintBuilder
+                .appendResourceListDisplayFilterExpression(Application.class, criteria, filterDTO.getSortOrder(), lastSequenceIdentifier) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowDTO.class)) //
                 .list();
     }

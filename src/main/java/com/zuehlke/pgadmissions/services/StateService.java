@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Service
 @Transactional
@@ -174,7 +174,7 @@ public class StateService {
 
         if (potentialStateTransitions.size() > 1) {
             PrismTransitionEvaluation transitionEvaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation();
-            return (StateTransition) IntrospectionHelper.invokeMethod(this, transitionEvaluation.getMethodName(), operative, comment);
+            return (StateTransition) IntrospectionUtils.invokeMethod(this, transitionEvaluation.getMethodName(), operative, comment);
         }
 
         return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);

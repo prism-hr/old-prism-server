@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Entity
 @Table(name = "notification_template_version")
@@ -85,7 +85,7 @@ public class NotificationTemplateVersion {
         this.system = null;
         this.institution = null;
         this.program = null;
-        IntrospectionHelper.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
+        IntrospectionUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
     }
     
     public NotificationTemplate getNotificationTemplate() {

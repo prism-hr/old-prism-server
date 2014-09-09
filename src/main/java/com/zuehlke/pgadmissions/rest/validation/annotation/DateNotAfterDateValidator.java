@@ -5,7 +5,7 @@ import javax.validation.ConstraintValidatorContext;
 
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 public class DateNotAfterDateValidator implements ConstraintValidator<DateNotAfterDate, Object> {
 
@@ -25,8 +25,8 @@ public class DateNotAfterDateValidator implements ConstraintValidator<DateNotAft
             return true;
         }
 
-        DateTime start = (DateTime) IntrospectionHelper.getProperty(value, startDate);
-        DateTime end = (DateTime) IntrospectionHelper.getProperty(value, endDate);
+        DateTime start = (DateTime) IntrospectionUtils.getProperty(value, startDate);
+        DateTime end = (DateTime) IntrospectionUtils.getProperty(value, endDate);
 
         if (start == null || end == null) {
             return true;

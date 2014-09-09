@@ -18,7 +18,7 @@ import org.joda.time.LocalDate;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Entity
 @Table(name = "USER_ROLE", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_id", "role_id" }),
@@ -197,7 +197,7 @@ public class UserRole implements IUniqueEntity {
         this.program = null;
         this.project = null;
         this.application = null;
-        IntrospectionHelper.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
+        IntrospectionUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
     }
 
     @Override

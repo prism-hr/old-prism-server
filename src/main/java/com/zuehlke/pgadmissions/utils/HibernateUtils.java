@@ -4,7 +4,6 @@ import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 
 import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
 
 public class HibernateUtils {
 
@@ -23,7 +22,7 @@ public class HibernateUtils {
     }
 
     public static <T> boolean sameEntities(T entity1, T entity2) {
-        return Objects.equal(IntrospectionHelper.getProperty(entity1, "id"), IntrospectionHelper.getProperty(entity2, "id"));
+        return Objects.equal(IntrospectionUtils.getProperty(entity1, "id"), IntrospectionUtils.getProperty(entity2, "id"));
     }
 
     public static <T> boolean containsEntity(Iterable<T> iterable, T entity) {

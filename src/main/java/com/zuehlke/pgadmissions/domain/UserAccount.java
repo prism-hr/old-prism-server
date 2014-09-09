@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.Map;
+import java.util.HashMap;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -51,7 +51,7 @@ public class UserAccount {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_account_id", nullable = false)
     @MapKeyJoinColumn(name = "scope_id", nullable = false)
-    private Map<Scope, ResourceListFilter> filters = Maps.newHashMap();
+    private HashMap<Scope, ResourceListFilter> filters = Maps.newHashMap();
 
     public String getPassword() {
         return password;
@@ -101,7 +101,7 @@ public class UserAccount {
         this.lastNotifiedDateRecommendation = lastNotifiedDateRecommendation;
     }
 
-    public Map<Scope, ResourceListFilter> getFilters() {
+    public HashMap<Scope, ResourceListFilter> getFilters() {
         return filters;
     }
 

@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -47,6 +48,7 @@ public class ResourceListFilter implements IUniqueEntity {
     private FilterSortOrder sortOrder;
     
     @OneToMany(mappedBy = "filter")
+    @OrderBy("displayPosition")
     private Set<ResourceListFilterConstraint> constraints = Sets.newHashSet();
 
     public final Integer getId() {

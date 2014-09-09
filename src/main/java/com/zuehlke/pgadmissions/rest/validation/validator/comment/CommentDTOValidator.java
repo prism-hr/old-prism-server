@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidatio
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldResolution;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.validation.validator.AbstractValidator;
-import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Component
 public class CommentDTOValidator extends AbstractValidator {
@@ -37,7 +37,7 @@ public class CommentDTOValidator extends AbstractValidator {
         for (PrismActionCommentField field : PrismActionCommentField.values()) {
             List<PrismActionValidationFieldResolution> resolutions = fieldDefinitions.get(field);
             String fieldName = field.getFieldName();
-            Object fieldValue = IntrospectionHelper.getProperty(comment, fieldName);
+            Object fieldValue = IntrospectionUtils.getProperty(comment, fieldName);
             if (resolutions != null) {
                 for (PrismActionValidationFieldResolution fieldResolution : resolutions) {
                     switch (fieldResolution.getRestriction()) {

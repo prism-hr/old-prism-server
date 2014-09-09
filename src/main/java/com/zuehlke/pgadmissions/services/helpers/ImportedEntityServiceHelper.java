@@ -43,6 +43,7 @@ import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.NotificationService;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Component
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -186,7 +187,7 @@ public class ImportedEntityServiceHelper {
             unmarshaller.setSchema(schema);
 
             Object unmarshaled = unmarshaller.unmarshal(fileUrl);
-            return (List<Object>) IntrospectionHelper.getProperty(unmarshaled, importedEntityType.getJaxbPropertyName());
+            return (List<Object>) IntrospectionUtils.getProperty(unmarshaled, importedEntityType.getJaxbPropertyName());
         } finally {
             Authenticator.setDefault(null);
         }

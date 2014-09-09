@@ -16,8 +16,8 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ParentResource;
 import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
 import com.zuehlke.pgadmissions.services.helpers.SummaryHelper;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Service
 @Transactional
@@ -138,9 +138,9 @@ public class ApplicationSummaryService {
 
     private void incrementApplicationEventCount(Application application, String eventCountProperty) {
         for (ParentResource parentResource : application.getParentResources()) {
-            ParentResource parent = (ParentResource) IntrospectionHelper.getProperty(application, parentResource.getResourceScope().getLowerCaseName());
-            Integer currentCount = (Integer) IntrospectionHelper.getProperty(parent, eventCountProperty);
-            IntrospectionHelper.setProperty(parent, eventCountProperty, SummaryHelper.incrementRunningCount(currentCount));
+            ParentResource parent = (ParentResource) IntrospectionUtils.getProperty(application, parentResource.getResourceScope().getLowerCaseName());
+            Integer currentCount = (Integer) IntrospectionUtils.getProperty(parent, eventCountProperty);
+            IntrospectionUtils.setProperty(parent, eventCountProperty, SummaryHelper.incrementRunningCount(currentCount));
         }
     }
 

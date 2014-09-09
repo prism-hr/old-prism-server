@@ -1,12 +1,13 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import com.google.common.collect.Maps;
-import org.springframework.validation.Validator;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.validation.Validator;
+
+import com.google.common.collect.Maps;
 
 public class PrismActionValidationDefinition {
 

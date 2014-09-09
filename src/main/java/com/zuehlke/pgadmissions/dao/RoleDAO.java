@@ -147,18 +147,6 @@ public class RoleDAO {
                 .list();
     }
 
-    public List<User> getRoleCreateTransitionUsers(Comment comment, Role role, User user) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
-                .setProjection(Projections.property("user")) //
-                .add(Restrictions.eq("comment", comment));
-
-        if (user != null) {
-            criteria.add(Restrictions.eq("user", user));
-        }
-
-        return (List<User>) criteria.add(Restrictions.eq("role", role)).list();
-    }
-
     public List<PrismRole> getUserRoles(Resource resource, User user) {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("role.id"))

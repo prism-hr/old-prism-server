@@ -202,6 +202,7 @@ public class ImportedEntityServiceHelper {
 
             Object unmarshalled = unmarshaller.unmarshal(fileUrl);
             return (List<Object>) PropertyUtils.getSimpleProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
+            return (List<Object>) IntrospectionUtils.getProperty(unmarshaled, importedEntityType.getJaxbPropertyName());
         } finally {
             Authenticator.setDefault(null);
         }

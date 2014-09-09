@@ -1,15 +1,12 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.beanutils.MethodUtils;
 import org.dozer.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,6 +58,7 @@ import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @RestController
 @RequestMapping(value = { "api/{resourceScope}" })
@@ -97,8 +95,7 @@ public class ResourceResource {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @Transactional
-    public AbstractResourceRepresentation getResource(@PathVariable Integer id, @ModelAttribute ResourceDescriptor resourceDescriptor)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, AccessDeniedException {
+    public AbstractResourceRepresentation getResource(@PathVariable Integer id, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         User currentUser = userService.getCurrentUser();
         Resource resource = entityService.getById(resourceDescriptor.getType(), id);
         if (resource == null) {
@@ -151,14 +148,16 @@ public class ResourceResource {
             userRolesRepresentations.add(userRolesRepresentation);
         }
         representation.setUsers(userRolesRepresentations);
-        MethodUtils.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", new Object[] { resource, representation });
+        IntrospectionUtils.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", resource, representation);
         return representation;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestParam(value = "page") Integer loadIndex) {
-        List<ResourceConsoleListRowDTO> consoleListBlock = resourceService.getConsoleListBlock(resourceDescriptor.getType(), loadIndex);
+        // TODO new list location
+        // FIXME : reintegrate console list
+        List<ResourceConsoleListRowDTO> consoleListBlock = null;
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
         for (ResourceConsoleListRowDTO appDTO : consoleListBlock) {
             ResourceListRowRepresentation representation = dozerBeanMapper.map(appDTO, ResourceListRowRepresentation.class);

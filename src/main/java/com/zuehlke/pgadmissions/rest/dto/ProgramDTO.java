@@ -4,10 +4,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import org.joda.time.LocalDate;
 
 public class ProgramDTO {
 

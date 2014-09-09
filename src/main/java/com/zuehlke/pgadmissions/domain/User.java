@@ -17,7 +17,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -30,6 +29,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Entity
 @Table(name = "USER")
@@ -289,19 +289,11 @@ public class User implements UserDetails, IUniqueEntity {
     }
     
     public <T extends Resource> LocalDate getLastNotifiedDate(Class<T> resourceClass) {
-        try {
-            return (LocalDate) PropertyUtils.getSimpleProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName());
-        } catch (Exception e) {
-            throw new Error (e);
-        }
+        return (LocalDate) IntrospectionUtils.getProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName());
     }
     
     public <T extends Resource> void setLastNotifiedDate(Class<T> resourceClass, LocalDate lastNotifiedDate) {
-        try {
-            PropertyUtils.setSimpleProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName(), lastNotifiedDate);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
+        IntrospectionUtils.setProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName(), lastNotifiedDate);
     }
 
     @Override

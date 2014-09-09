@@ -3,10 +3,9 @@ package com.zuehlke.pgadmissions.rest.dto.application;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.validation.annotation.DateNotAfterDate;
-import org.joda.time.LocalDate;
 
 @DateNotAfterDate(startDate = "startDate", endDate = "endDate")
 public class ApplicationEmploymentPositionDTO {

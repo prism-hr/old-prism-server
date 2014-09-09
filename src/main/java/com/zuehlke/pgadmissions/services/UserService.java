@@ -20,11 +20,9 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Filter;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
@@ -154,19 +152,6 @@ public class UserService {
         if (linkFromUser != null && linkIntoUser != null) {
             userDAO.refreshParentUser(linkIntoUser);
             linkFromUser.setParentUser(linkIntoUser);
-        }
-    }
-
-    public void setFilter(Filter transientFilter) throws DeduplicationException {
-        Filter persistentFilter = entityService.getDuplicateEntity(transientFilter);
-        if (persistentFilter == null) {
-            UserAccount userAccount = transientFilter.getUserAccount();
-            Scope scope = transientFilter.getScope();
-
-            transientFilter.setUserAccount(null);
-            transientFilter.setScope(null);
-
-            userAccount.getFilters().put(scope, transientFilter);
         }
     }
 

@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.rest.representation.comment;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 
 public class AppointmentPreferenceRepresentation {

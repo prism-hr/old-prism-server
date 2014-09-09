@@ -13,8 +13,8 @@ import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Service
 @Transactional
@@ -35,14 +35,14 @@ public class AdvertService {
 
     // TODO: user filters
     public List<Advert> getActiveAdverts() {
-        List<State> activeProgramStates = stateService.getActiveProgramStates();
-        List<State> activeProjectStates = stateService.getActiveProjectStates();
+        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
+        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         return advertDAO.getActiveAdverts(activeProgramStates, activeProjectStates);
     }
 
     public List<Advert> getRecommendedAdverts(User user) {
-        List<State> activeProgramStates = stateService.getActiveProgramStates();
-        List<State> activeProjectStates = stateService.getActiveProjectStates();
+        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
+        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         return advertDAO.getRecommendedAdverts(user, activeProgramStates, activeProjectStates);
     }
 

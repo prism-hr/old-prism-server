@@ -3,8 +3,9 @@ package com.zuehlke.pgadmissions.rest.validation.annotation;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.joda.time.DateTime;
+
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 public class DateNotAfterDateValidator implements ConstraintValidator<DateNotAfterDate, Object> {
 
@@ -23,17 +24,14 @@ public class DateNotAfterDateValidator implements ConstraintValidator<DateNotAft
         if (value == null) {
             return true;
         }
-        try {
-            DateTime start = (DateTime) PropertyUtils.getSimpleProperty(value, startDate);
-            DateTime end = (DateTime) PropertyUtils.getSimpleProperty(value, endDate);
 
-            if (start == null || end == null) {
-                return true;
-            } else {
-                return !start.isAfter(end);
-            }
-        } catch (Exception e) {
-            throw new Error(e);
+        DateTime start = (DateTime) IntrospectionUtils.getProperty(value, startDate);
+        DateTime end = (DateTime) IntrospectionUtils.getProperty(value, endDate);
+
+        if (start == null || end == null) {
+            return true;
+        } else {
+            return !start.isAfter(end);
         }
     }
 }

@@ -21,13 +21,15 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import org.joda.time.LocalDateTime;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
 @Entity
 @Table(name = "COMMENT")
@@ -154,7 +156,7 @@ public class Comment {
     private RejectionReason rejectionReason;
 
     @Column(name = "application_rating")
-    private Integer rating;
+    private Integer applicationRating;
 
     @Column(name = "application_use_custom_referee_questions")
     private Boolean useCustomRefereeQuestions;
@@ -181,8 +183,8 @@ public class Comment {
     private String exportReference;
 
     @ManyToOne
-    @JoinColumn(name = "action_on_parent_resource_id")
-    private Action actionOnParentResource;
+    @JoinColumn(name = "parent_resource_transition_state_id")
+    private State parentResourceTransitionState;
 
     @Column(name = "creator_ip_address")
     private String creatorIpAddress;
@@ -479,12 +481,12 @@ public class Comment {
         this.rejectionReason = rejectionReason;
     }
 
-    public Integer getRating() {
-        return rating;
+    public Integer getApplicationRating() {
+        return applicationRating;
     }
 
-    public void setRating(Integer rating) {
-        this.rating = rating;
+    public void setApplicationRating(Integer applicationRating) {
+        this.applicationRating = applicationRating;
     }
 
     public Boolean getUseCustomRefereeQuestions() {
@@ -559,12 +561,12 @@ public class Comment {
         this.creatorIpAddress = creatorIpAddress;
     }
 
-    public Action getActionOnParentResource() {
-        return actionOnParentResource;
+    public final State getParentResourceTransitionState() {
+        return parentResourceTransitionState;
     }
 
-    public void setActionOnParentResource(Action actionOnParentResource) {
-        this.actionOnParentResource = actionOnParentResource;
+    public final void setParentResourceTransitionState(State parentResourceTransitionState) {
+        this.parentResourceTransitionState = parentResourceTransitionState;
     }
 
     public Set<CommentAssignedUser> getAssignedUsers() {
@@ -862,6 +864,28 @@ public class Comment {
 
     public boolean isApplicationConfirmOfferRecommendationComment() {
         return action.getId() == PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
+    }
+
+    public boolean isApplicationCreatedComment() {
+        return this.transitionState.getId() == PrismState.APPLICATION_UNSUBMITTED;
+    }
+
+    public boolean isApplicationSubmittedComment() {
+        return this.transitionState.getId() == PrismState.APPLICATION_VALIDATION;
+    }
+
+    public boolean isApplicationApprovedComment() {
+        return this.transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED
+                && transitionState.getId() != PrismState.APPLICATION_APPROVED;
+    }
+    
+    public boolean isApplicationRejectedComment() {
+        return this.transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED
+                && transitionState.getId() != PrismState.APPLICATION_REJECTED;
+    }
+    
+    public boolean isApplicationWithdrawnComment() {
+        return this.transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_WITHDRAWN;
     }
 
     public boolean isRatingComment() {

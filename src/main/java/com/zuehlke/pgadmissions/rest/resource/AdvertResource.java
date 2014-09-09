@@ -1,18 +1,19 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.rest.representation.AdvertRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.services.AdvertService;
+import java.util.List;
+
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.rest.representation.AdvertRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.services.AdvertService;
 
 @RestController
 @RequestMapping("/api/opportunities")

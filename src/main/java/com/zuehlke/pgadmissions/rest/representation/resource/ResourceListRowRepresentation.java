@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
@@ -36,7 +37,7 @@ public class ResourceListRowRepresentation {
 
     private BigDecimal averageRating;
 
-    private String resourceScope;
+    private PrismScope resourceScope;
 
     public Integer getId() {
         return id;
@@ -134,11 +135,11 @@ public class ResourceListRowRepresentation {
         this.averageRating = averageRating;
     }
 
-    public String getResourceScope() {
+    public PrismScope getResourceScope() {
         return resourceScope;
     }
 
-    public void setResourceScope(String resourceScope) {
+    public void setResourceScope(PrismScope resourceScope) {
         this.resourceScope = resourceScope;
     }
 

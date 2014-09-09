@@ -48,7 +48,7 @@ public class PrismProgramDeactivated extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVED) // 
                         .withTransitionAction(PrismAction.PROGRAM_VIEW_EDIT) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CONFIGURED_OUTCOME)
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_VIEW_EDIT_OUTCOME)
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
@@ -83,7 +83,7 @@ public class PrismProgramDeactivated extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DEACTIVATED) // 
                         .withTransitionAction(PrismAction.PROGRAM_VIEW_EDIT) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CONFIGURED_OUTCOME)
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_VIEW_EDIT_OUTCOME)
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
@@ -118,7 +118,7 @@ public class PrismProgramDeactivated extends PrismWorkflowState {
                 new PrismStateTransition() // 
                     .withTransitionState(PrismState.PROGRAM_DISABLED_COMPLETED) // 
                     .withTransitionAction(PrismAction.PROGRAM_VIEW_EDIT) // 
-                    .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CONFIGURED_OUTCOME)))); //
+                    .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_VIEW_EDIT_OUTCOME)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_CREATE_PROJECT) //

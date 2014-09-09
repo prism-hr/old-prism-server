@@ -1,14 +1,15 @@
 package com.zuehlke.pgadmissions.rest.validation.validator.comment;
 
-import com.google.common.base.Preconditions;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import static com.zuehlke.pgadmissions.utils.ValidationUtils.rejectIfNotNull;
+import static org.springframework.validation.ValidationUtils.rejectIfEmptyOrWhitespace;
+
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import static com.zuehlke.pgadmissions.utils.ValidationUtils.rejectIfNotNull;
-import static org.springframework.validation.ValidationUtils.rejectIfEmptyOrWhitespace;
+import com.google.common.base.Preconditions;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 
 @Component
 public class ConfirmSupervisionCommentCustomValidator implements Validator {

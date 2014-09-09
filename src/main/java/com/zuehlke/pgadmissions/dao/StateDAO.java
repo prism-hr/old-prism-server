@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
-import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -23,7 +23,9 @@ import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -123,33 +125,54 @@ public class StateDAO {
                 .list();
     }
 
+    public List<PrismState> getAvailableNextStates(Resource resource, List<ActionRepresentation> permittedActions) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
+                .setProjection(Projections.property("transitionState.id")) //
+                .createAlias("stateAction", "stateAction") //
+                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
+                .createAlias("stateTransitionEvaluation", "stateTransitionEvaluation", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("stateAction.state", resource.getState())) //
+                .add(Restrictions.eq("stateTransitionEvaluation.nextStateSelection", true)); //
+                
+                Junction disjunction = Restrictions.disjunction();
+                for (ActionRepresentation permittedAction : permittedActions) {
+                    disjunction.add(Restrictions.eq("stateAction.action.id", permittedAction.getName()));
+                }
+                
+                return criteria.add(disjunction) //
+                        .addOrder(Order.asc("stateGroup.sequenceOrder"))
+                        .list(); //
+    }
+
+    public List<PrismState> getActiveProgramStates() {
+        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.groupProperty("state.id")) //
+                .add(Restrictions.eq("action.id", PrismAction.PROGRAM_CREATE_APPLICATION)) //
+                .list();
+    }
+
+    public List<PrismState> getActiveProjectStates() {
+        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.groupProperty("state.id")) //
+                .add(Restrictions.eq("action.id", PrismAction.PROJECT_CREATE_APPLICATION)) //
+                .list();
+    }
+    
     public List<State> getWorkflowStates() {
         return (List<State>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("state")) //
                 .list();
     }
-
-    public List<PrismState> getAvailableNextStates(Resource resource, PrismAction actionId) {
-        return sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
-                .setProjection(Projections.property("transitionState.id")) //
-                .createAlias("stateAction", "stateAction") //
-                .add(Restrictions.eq("stateAction.state", resource.getState())) //
-                .add(Restrictions.eq("stateAction.action.id", actionId)) //
-                .list();
-    }
-
-    public List<State> getActiveProgramStates() {
-        return (List<State>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.groupProperty("state")) //
-                .add(Restrictions.eq("action.id", PrismAction.PROGRAM_CREATE_APPLICATION)) //
-                .list();
-    }
-
-    public List<State> getActiveProjectStates() {
-        return (List<State>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.groupProperty("state")) //
-                .add(Restrictions.eq("action.id", PrismAction.PROJECT_CREATE_APPLICATION)) //
-                .list();
+    
+    public List<PrismStateGroup> getAssignableStateGroups(PrismScope scopeId) {
+        return (List<PrismStateGroup>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.groupProperty("stateGroup.id")) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("stateGroup.scope.id", scopeId)) //
+                .addOrder(Order.asc("stateGroup.sequenceOrder")) //
+                .list();  
     }
 
 }

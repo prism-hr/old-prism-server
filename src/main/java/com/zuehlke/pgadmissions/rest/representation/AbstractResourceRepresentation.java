@@ -6,12 +6,12 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
 
 public class AbstractResourceRepresentation {
 
@@ -31,7 +31,7 @@ public class AbstractResourceRepresentation {
 
     private DateTime updatedTimestamp;
 
-    private List<PrismAction> actions;
+    private List<ActionRepresentation> actions;
     
     private List<PrismActionEnhancement> actionEnhancements;
 
@@ -105,11 +105,11 @@ public class AbstractResourceRepresentation {
         this.updatedTimestamp = updatedTimestamp;
     }
 
-    public List<PrismAction> getActions() {
+    public final List<ActionRepresentation> getActions() {
         return actions;
     }
 
-    public void setActions(List<PrismAction> actions) {
+    public final void setActions(List<ActionRepresentation> actions) {
         this.actions = actions;
     }
 

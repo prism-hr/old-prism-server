@@ -89,47 +89,29 @@ public class Institution extends ParentResource {
     @Column(name = "is_ucl_institution", nullable = false)
     private Boolean uclInstitution = false;
     
-    @Column(name = "application_rating_count_percentile_05")
-    private Integer applicationRatingCount05;
+    @Column(name = "application_created_count")
+    private Integer applicationCreatedCount;
     
-    @Column(name = "application_rating_count_percentile_20")
-    private Integer applicationRatingCount20;
-
-    @Column(name = "application_rating_count_percentile_35")
-    private Integer applicationRatingCount35;
+    @Column(name = "application_submitted_count")
+    private Integer applicationSubmittedCount;
     
-    @Column(name = "application_rating_count_percentile_50")
-    private Integer applicationRatingCount50;
+    @Column(name = "application_approved_count")
+    private Integer applicationApprovedCount;
     
-    @Column(name = "application_rating_count_percentile_65")
-    private Integer applicationRatingCount65;
+    @Column(name = "application_rejected_count")
+    private Integer applicationRejectedCount;
     
-    @Column(name = "application_rating_count_percentile_80")
-    private Integer applicationRatingCount80;
+    @Column(name = "application_withdrawn_count")
+    private Integer applicationWithdrawnCount;
     
-    @Column(name = "application_rating_count_percentile_95")
-    private Integer applicationRatingCount95;
+    @Column(name = "application_rating_count")
+    private Integer applicationRatingCount;
     
-    @Column(name = "application_rating_average_percentile_05")
-    private BigDecimal applicationRatingAverage05;
+    @Column(name = "application_rating_count_average_non_zero")
+    private BigDecimal applicationRatingCountAverageNonZero;
     
-    @Column(name = "application_rating_average_percentile_20")
-    private BigDecimal applicationRatingAverage20;
-
-    @Column(name = "application_rating_average_percentile_35")
-    private BigDecimal applicationRatingAverage35;
-    
-    @Column(name = "application_rating_average_percentile_50")
-    private BigDecimal applicationRatingAverage50;
-    
-    @Column(name = "application_rating_average_percentile_65")
-    private BigDecimal applicationRatingAverage65;
-    
-    @Column(name = "application_rating_average_percentile_80")
-    private BigDecimal applicationRatingAverage80;
-    
-    @Column(name = "application_rating_average_percentile_95")
-    private BigDecimal applicationRatingAverage95;
+    @Column(name = "application_rating_average")
+    private BigDecimal applicatingRatingAverage;
     
     @ManyToOne
     @JoinColumn(name = "state_id")
@@ -156,6 +138,9 @@ public class Institution extends ParentResource {
     
     @OneToMany(mappedBy = "institution")
     private Set<ImportedEntityFeed> importedEntityFeeds = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "project")
+    private Set<UserRole> userRoles = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -224,149 +209,94 @@ public class Institution extends ParentResource {
     public void setUclInstitution(boolean uclInstitution) {
         this.uclInstitution = uclInstitution;
     }
-
+    
     @Override
-    public final Integer getApplicationRatingCount05() {
-        return applicationRatingCount05;
+    public Integer getApplicationCreatedCount() {
+        return applicationCreatedCount;
     }
 
     @Override
-    public final void setApplicationRatingCount05(Integer applicationRatingCount05) {
-        this.applicationRatingCount05 = applicationRatingCount05;
+    public void setApplicationCreatedCount(Integer applicationCreatedCount) {
+        this.applicationCreatedCount = applicationCreatedCount;
     }
 
     @Override
-    public final Integer getApplicationRatingCount20() {
-        return applicationRatingCount20;
+    public Integer getApplicationSubmittedCount() {
+        return applicationSubmittedCount;
     }
 
     @Override
-    public final void setApplicationRatingCount20(Integer applicationRatingCount20) {
-        this.applicationRatingCount20 = applicationRatingCount20;
+    public void setApplicationSubmittedCount(Integer applicationSubmittedCount) {
+        this.applicationSubmittedCount = applicationSubmittedCount;
     }
 
     @Override
-    public final Integer getApplicationRatingCount35() {
-        return applicationRatingCount35;
+    public Integer getApplicationApprovedCount() {
+        return applicationApprovedCount;
     }
 
     @Override
-    public final void setApplicationRatingCount35(Integer applicationRatingCount35) {
-        this.applicationRatingCount35 = applicationRatingCount35;
+    public void setApplicationApprovedCount(Integer applicationApprovedCount) {
+        this.applicationApprovedCount = applicationApprovedCount;
     }
 
     @Override
-    public final Integer getApplicationRatingCount50() {
-        return applicationRatingCount50;
+    public Integer getApplicationRejectedCount() {
+        return applicationRejectedCount;
     }
 
     @Override
-    public final void setApplicationRatingCount50(Integer applicationRatingCount50) {
-        this.applicationRatingCount50 = applicationRatingCount50;
+    public void setApplicationRejectedCount(Integer applicationRejectedCount) {
+        this.applicationRejectedCount = applicationRejectedCount;
     }
 
     @Override
-    public final Integer getApplicationRatingCount65() {
-        return applicationRatingCount65;
+    public Integer getApplicationWithdrawnCount() {
+        return applicationWithdrawnCount;
     }
 
     @Override
-    public final void setApplicationRatingCount65(Integer applicationRatingCount65) {
-        this.applicationRatingCount65 = applicationRatingCount65;
+    public void setApplicationWithdrawnCount(Integer applicationWithdrawnCount) {
+        this.applicationWithdrawnCount = applicationWithdrawnCount;
     }
 
     @Override
-    public final Integer getApplicationRatingCount80() {
-        return applicationRatingCount80;
-    }
-
-    @Override
-    public final void setApplicationRatingCount80(Integer applicationRatingCount80) {
-        this.applicationRatingCount80 = applicationRatingCount80;
-    }
-
-    @Override
-    public final Integer getApplicationRatingCount95() {
-        return applicationRatingCount95;
-    }
-
-    @Override
-    public final void setApplicationRatingCount95(Integer applicationRatingCount95) {
-        this.applicationRatingCount95 = applicationRatingCount95;
+    public final Integer getApplicationRatingCount() {
+        return applicationRatingCount;
     }
     
     @Override
-    public final BigDecimal getApplicationRatingAverage05() {
-        return applicationRatingAverage05;
+    public final void setApplicationRatingCount(Integer applicationRatingCountSum) {
+        this.applicationRatingCount = applicationRatingCountSum;
+    }
+    
+    
+    @Override
+    public final BigDecimal getApplicationRatingCountAverageNonZero() {
+        return applicationRatingCountAverageNonZero;
+    }
+    
+    @Override
+    public final void setApplicationRatingCountAverageNonZero(BigDecimal applicationRatingCountAverage) {
+        this.applicationRatingCountAverageNonZero = applicationRatingCountAverage;
     }
 
     @Override
-    public final void setApplicationRatingAverage05(BigDecimal applicationRatingAverage05) {
-        this.applicationRatingAverage05 = applicationRatingAverage05;
+    public BigDecimal getApplicationRatingAverage() {
+        return applicatingRatingAverage;
     }
 
     @Override
-    public final BigDecimal getApplicationRatingAverage20() {
-        return applicationRatingAverage20;
+    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+        this.applicatingRatingAverage = applicationRatingAverage;
     }
-
-    @Override
-    public final void setApplicationRatingAverage20(BigDecimal applicationRatingAverage20) {
-        this.applicationRatingAverage20 = applicationRatingAverage20;
-    }
-
-    @Override
-    public final BigDecimal getApplicationRatingAverage35() {
-        return applicationRatingAverage35;
-    }
-
-    @Override
-    public final void setApplicationRatingAverage35(BigDecimal applicationRatingAverage35) {
-        this.applicationRatingAverage35 = applicationRatingAverage35;
-    }
-
-    @Override
-    public final BigDecimal getApplicationRatingAverage50() {
-        return applicationRatingAverage50;
-    }
-
-    @Override
-    public final void setApplicationRatingAverage50(BigDecimal applicationRatingAverage50) {
-        this.applicationRatingAverage50 = applicationRatingAverage50;
-    }
-
-    @Override
-    public final BigDecimal getApplicationRatingAverage65() {
-        return applicationRatingAverage65;
-    }
-
-    @Override
-    public final void setApplicationRatingAverage65(BigDecimal applicationRatingAverage65) {
-        this.applicationRatingAverage65 = applicationRatingAverage65;
-    }
-
-    @Override
-    public final BigDecimal getApplicationRatingAverage80() {
-        return applicationRatingAverage80;
-    }
-
-    @Override
-    public final void setApplicationRatingAverage80(BigDecimal applicationRatingAverage80) {
-        this.applicationRatingAverage80 = applicationRatingAverage80;
-    }
-
-    @Override
-    public final BigDecimal getApplicationRatingAverage95() {
-        return applicationRatingAverage95;
-    }
-
-    @Override
-    public final void setApplicationRatingAverage95(BigDecimal applicationRatingAverage95) {
-        this.applicationRatingAverage95 = applicationRatingAverage95;
-    }
-
+    
     public final Set<ImportedEntityFeed> getImportedEntityFeeds() {
         return importedEntityFeeds;
+    }
+
+    public final Set<UserRole> getUserRoles() {
+        return userRoles;
     }
 
     public Institution withId(Integer id) {

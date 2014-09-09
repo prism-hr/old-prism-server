@@ -1,34 +1,27 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.dao.ApplicationSummaryDAO;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationProcessing;
 import com.zuehlke.pgadmissions.domain.ApplicationProcessingSummary;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ParentResource;
 import com.zuehlke.pgadmissions.domain.StateGroup;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.dto.ApplicationRatingDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.services.helpers.SummaryHelper;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Service
 @Transactional
 public class ApplicationSummaryService {
-
-    private final Integer[] summaryPercentiles = new Integer[] { 5, 20, 35, 50, 65, 80, 95 };
-
-    private final PrismScope[] summaryScopes = new PrismScope[] { PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION };
 
     @Autowired
     private ApplicationSummaryDAO applicationSummaryDAO;
@@ -36,19 +29,14 @@ public class ApplicationSummaryService {
     @Autowired
     private EntityService entityService;
 
-    public void summariseApplication(Application application) {
-        ApplicationRatingDTO ratingSummary = applicationSummaryDAO.getApplicationRatingSummary(application);
-        application.setRatingCount(ratingSummary.getRatingCount().intValue());
-        
-        BigDecimal ratingAverage = BigDecimal.valueOf(ratingSummary.getRatingAverage());
-        application.setRatingAverage(ratingAverage.setScale(2, RoundingMode.HALF_UP));
+    public void summariseApplication(Application application, Comment comment) {
+        Integer currentRatingCount = application.getApplicationRatingCount();
+        application.setApplicationRatingCount(SummaryHelper.incrementRunningCount(currentRatingCount));
+        application.setApplicationRatingAverage(SummaryHelper.computeRunningAverage(currentRatingCount, application.getApplicationRatingAverage(),
+                comment.getApplicationRating()));
 
-        for (PrismScope summaryScope : summaryScopes) {
-            try {
-                updateApplicationSummary(application, summaryScope);
-            } catch (Exception e) {
-                throw new Error(e);
-            }
+        for (ParentResource parentResource : application.getParentResources()) {
+            updateApplicationSummary(parentResource, application);
         }
     }
 
@@ -57,162 +45,104 @@ public class ApplicationSummaryService {
         StateGroup previousStateGroup = application.getPreviousState().getStateGroup();
 
         LocalDate baseline = new LocalDate();
-        createOrUpdateApplicationProcessing(application, stateGroup, baseline);
-        updatePreviousApplicationProcessing(application, previousStateGroup, baseline);
+        ApplicationProcessing processing = createOrUpdateApplicationProcessing(application, stateGroup, baseline);
+        createOrUpdateApplicationProcessingSummary(application, processing, stateGroup);
+
+        Integer stateDuration = updatePreviousApplicationProcessing(application, previousStateGroup, baseline);
+        updatePreviousApplicationProcessingSummary(application, previousStateGroup, stateDuration);
     }
 
-    private void updateApplicationSummary(Application application, PrismScope summaryScope) throws Exception {
-        String summaryReference = summaryScope.getLowerCaseName();
-        ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, summaryReference);
-
-        String[] summaryPropertiesRating = new String[] { "ratingCount", "ratingAverage" };
-
-        for (String summaryProperty : summaryPropertiesRating) {
-            Integer notNullValueCount = entityService.getNotNullValueCount(Application.class, summaryProperty,
-                    ImmutableMap.of(summaryReference, (Object) summaryResource));
-
-            for (Integer percentile : summaryPercentiles) {
-                Integer valuesInSet = getActualPercentile(notNullValueCount, percentile);
-                Object actualValue = applicationSummaryDAO.getPercentileValue(summaryResource, summaryProperty, valuesInSet);
-                String propertyToSet = application.getResourceScope().getLowerCaseName() + WordUtils.capitalize(summaryProperty);
-                summaryResource.setPercentileValue(propertyToSet, percentile, actualValue);
-            }
-        }
+    public void incrementApplicationCreatedCount(Application application) {
+        incrementApplicationEventCount(application, "applicationCreatedCount");
     }
 
-    private void createOrUpdateApplicationProcessing(Application application, StateGroup stateGroup, LocalDate baseline) throws DeduplicationException {
+    public void incrementApplicationSubmittedCount(Application application) {
+        incrementApplicationEventCount(application, "applicationSubmittedCount");
+    }
+
+    public void incrementApplicationApprovedCount(Application application) {
+        incrementApplicationEventCount(application, "applicationApprovedCount");
+    }
+
+    public void incrementApplicationRejectedCount(Application application) {
+        incrementApplicationEventCount(application, "applicationRejectedCount");
+    }
+
+    public void incrementApplicationWithdrawnCount(Application application) {
+        incrementApplicationEventCount(application, "applicationWithdrawnCount");
+    }
+
+    private void updateApplicationSummary(ParentResource parentResource, Application application) {
+        Integer currentRatingCountSum = parentResource.getApplicationRatingCount();
+        parentResource.setApplicationRatingCount(SummaryHelper.incrementRunningCount(currentRatingCountSum));
+        parentResource.setApplicationRatingCountAverageNonZero(SummaryHelper.computeRunningAverage(currentRatingCountSum,
+                parentResource.getApplicationRatingCountAverageNonZero(), application.getApplicationRatingCount()));
+        parentResource.setApplicationRatingAverage(SummaryHelper.computeRunningAverage(currentRatingCountSum, parentResource.getApplicationRatingAverage(),
+                application.getApplicationRatingAverage()));
+    }
+
+    private ApplicationProcessing createOrUpdateApplicationProcessing(Application application, StateGroup stateGroup, LocalDate baseline)
+            throws DeduplicationException {
         ApplicationProcessing transientProcessing = new ApplicationProcessing().withApplication(application).withStateGroup(stateGroup);
         ApplicationProcessing persistentProcessing = entityService.getDuplicateEntity(transientProcessing);
 
         if (persistentProcessing == null) {
-            createApplicationProcessing(transientProcessing, baseline);
-            entityService.save(transientProcessing);
+            transientProcessing.setInstanceCount(1);
+            transientProcessing.setLastUpdatedDate(baseline);
+            persistentProcessing = (ApplicationProcessing) entityService.save(transientProcessing);
         } else {
-            updateApplicationProcessing(baseline, persistentProcessing);
+            persistentProcessing.setInstanceCount(SummaryHelper.incrementRunningCount(persistentProcessing.getInstanceCount()));
+            persistentProcessing.setLastUpdatedDate(baseline);
         }
 
-        createOrUpdateApplicationProcessingSummary(application, stateGroup);
+        return persistentProcessing;
     }
 
-    private void createApplicationProcessing(ApplicationProcessing transientProcessing, LocalDate baseline) {
-        transientProcessing.setInstanceCount(1);
-        transientProcessing.setDayDurationSum(0);
-        transientProcessing.setLastUpdatedDate(baseline);
-    }
-    
-    private void updateApplicationProcessing(LocalDate baseline, ApplicationProcessing persistentProcessing) {
-        persistentProcessing.setInstanceCount(persistentProcessing.getInstanceCount() + 1);
-        persistentProcessing.setLastUpdatedDate(baseline);
-    }
+    private Integer updatePreviousApplicationProcessing(Application application, StateGroup previousStateGroup, LocalDate baseline) {
+        ApplicationProcessing previousProcessing = applicationSummaryDAO.getProcessing(application, previousStateGroup);
+        Integer stateDuration = Days.daysBetween(previousProcessing.getLastUpdatedDate(), baseline).getDays();
 
-    private void updatePreviousApplicationProcessing(Application application, StateGroup previousStateGroup, LocalDate baseline) {
-        ApplicationProcessing persistentPreviousProcessing = applicationSummaryDAO.getProcessing(application, previousStateGroup);
-        Integer actualStateDuration = Days.daysBetween(persistentPreviousProcessing.getLastUpdatedDate(), baseline).getDays();
+        previousProcessing.setDayDurationAverage(SummaryHelper.computeRunningAverage((previousProcessing.getInstanceCount() - 1),
+                previousProcessing.getDayDurationAverage(), stateDuration));
+        previousProcessing.setLastUpdatedDate(baseline);
 
-        persistentPreviousProcessing.setDayDurationSum(persistentPreviousProcessing.getDayDurationSum() + actualStateDuration);
-        persistentPreviousProcessing.setLastUpdatedDate(baseline);
-
-        updatePreviousApplicationProcessingSummary(application, previousStateGroup);
+        return stateDuration;
     }
 
-    private void createOrUpdateApplicationProcessingSummary(Application application, StateGroup stateGroup) throws DeduplicationException {
-        for (PrismScope summaryScope : summaryScopes) {
-            try {
-                ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, summaryScope.getLowerCaseName());
-                
-                if (summaryResource == null) {
-                    continue;
-                }
-                
-                ApplicationProcessingSummary transientSummary = new ApplicationProcessingSummary().withResource(summaryResource).withStateGroup(stateGroup);
-                ApplicationProcessingSummary persistentSummary = entityService.getDuplicateEntity(transientSummary);
+    private void createOrUpdateApplicationProcessingSummary(Application application, ApplicationProcessing processing, StateGroup stateGroup)
+            throws DeduplicationException {
+        for (ParentResource parentResource : application.getParentResources()) {
+            ApplicationProcessingSummary transientSummary = new ApplicationProcessingSummary().withResource(parentResource).withStateGroup(stateGroup);
+            ApplicationProcessingSummary persistentSummary = entityService.getDuplicateEntity(transientSummary);
 
-                if (persistentSummary == null) {
-                    createApplicationProcessingSummary(transientSummary);
-                } else {
-                    updateApplicationProcessingSummary(summaryResource, stateGroup, persistentSummary);
-                }
-                
-            } catch (DeduplicationException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new Error(e);
+            if (persistentSummary == null) {
+                transientSummary.setInstanceCount(1);
+                transientSummary.setInstanceCountLive(1);
+                transientSummary.setInstanceCountAverageNonZero(new BigDecimal(1.00));
+                entityService.save(transientSummary);
+            } else {
+                persistentSummary.setInstanceCount(SummaryHelper.incrementRunningCount(persistentSummary.getInstanceCount()));
+                persistentSummary.setInstanceCountLive(SummaryHelper.incrementRunningCount(persistentSummary.getInstanceCountLive()));
+                persistentSummary.setInstanceCountAverageNonZero(SummaryHelper.computeRunningAverage(persistentSummary.getInstanceCount(),
+                        persistentSummary.getInstanceCountAverageNonZero(), 1));
             }
         }
     }
 
-    private void createApplicationProcessingSummary(ApplicationProcessingSummary transientSummary) {
-        transientSummary.setInstanceSum(1);
-        transientSummary.setInstanceSumLive(1);
-
-        transientSummary.setInstanceCountAverage(new BigDecimal(1.00));
-        
-        transientSummary.setInstanceCount05(1);
-        transientSummary.setInstanceCount20(1);
-        transientSummary.setInstanceCount35(1);
-        transientSummary.setInstanceCount50(1);
-        transientSummary.setInstanceCount65(1);
-        transientSummary.setInstanceCount80(1);
-        transientSummary.setInstanceCount95(1);
-        
-        transientSummary.setDayDurationSumAverage(new BigDecimal(0.00));
-
-        transientSummary.setDayDurationSum05(0);
-        transientSummary.setDayDurationSum20(0);
-        transientSummary.setDayDurationSum35(0);
-        transientSummary.setDayDurationSum50(0);
-        transientSummary.setDayDurationSum65(0);
-        transientSummary.setDayDurationSum80(0);
-        transientSummary.setDayDurationSum95(0);
-
-        entityService.save(transientSummary);
-    }
-
-    private void updateApplicationProcessingSummary(ParentResource summaryResource, StateGroup stateGroup, ApplicationProcessingSummary persistentSummary) {
-        BigDecimal instanceCountAverage = BigDecimal.valueOf(applicationSummaryDAO.getInstanceCountAverage(summaryResource, stateGroup));
-        persistentSummary.setInstanceCountAverage(instanceCountAverage.setScale(2, RoundingMode.HALF_UP));
-        
-        persistentSummary.setInstanceSum(persistentSummary.getInstanceSum() + 1);
-        persistentSummary.setInstanceSumLive(persistentSummary.getInstanceSumLive() + 1);
-
-        updateApplicationProcessingSummaryPercentile(summaryResource, stateGroup, persistentSummary, "instanceCount");
-    }
-
-    private void updatePreviousApplicationProcessingSummary(Application application, StateGroup previousStateGroup) {
-        for (PrismScope summaryScope : summaryScopes) {
-            try {
-                ParentResource summaryResource = (ParentResource) PropertyUtils.getSimpleProperty(application, summaryScope.getLowerCaseName());
-                
-                if (summaryResource == null) {
-                    continue;
-                }
-                
-                ApplicationProcessingSummary summary = applicationSummaryDAO.getProcessingSummary(summaryResource, previousStateGroup);
-                
-                BigDecimal instanceCountAverage = BigDecimal.valueOf(applicationSummaryDAO.getDayDurationSumAverage(summaryResource, previousStateGroup));
-                summary.setDayDurationSumAverage(instanceCountAverage.setScale(2, RoundingMode.HALF_UP));
-                
-                summary.setInstanceSumLive(summary.getInstanceSumLive() - 1);
-                updateApplicationProcessingSummaryPercentile(summaryResource, previousStateGroup, summary, "dayDurationSum");
-            } catch (Exception e) {
-                throw new Error(e);
-            }
+    private void updatePreviousApplicationProcessingSummary(Application application, StateGroup previousStateGroup, Integer stateDuration) {
+        for (ParentResource parentResource : application.getParentResources()) {
+            ApplicationProcessingSummary summary = applicationSummaryDAO.getProcessingSummary(parentResource, previousStateGroup);
+            summary.setInstanceCountLive(SummaryHelper.decrementRunningCount(summary.getInstanceCountLive()));
+            summary.setDayDurationAverage(SummaryHelper.computeRunningAverage(summary.getInstanceCount(), summary.getDayDurationAverage(), stateDuration));
         }
     }
 
-    private void updateApplicationProcessingSummaryPercentile(ParentResource summaryResource, StateGroup stateGroup,
-            ApplicationProcessingSummary processingSummary, String property) {
-        Integer valuesInSet = applicationSummaryDAO.getNotNullProcessingCount(summaryResource, stateGroup).intValue();
-
-        for (Integer percentile : summaryPercentiles) {
-            Integer actualPercentile = getActualPercentile(valuesInSet, percentile);
-            Object actualValue = applicationSummaryDAO.getProcessingPercentileValue(summaryResource, stateGroup, property, actualPercentile);
-            processingSummary.setPercentileValue(property, percentile, actualValue);
+    private void incrementApplicationEventCount(Application application, String eventCountProperty) {
+        for (ParentResource parentResource : application.getParentResources()) {
+            ParentResource parent = (ParentResource) IntrospectionUtils.getProperty(application, parentResource.getResourceScope().getLowerCaseName());
+            Integer currentCount = (Integer) IntrospectionUtils.getProperty(parent, eventCountProperty);
+            IntrospectionUtils.setProperty(parent, eventCountProperty, SummaryHelper.incrementRunningCount(currentCount));
         }
-    }
-
-    private int getActualPercentile(Integer valuesInSet, Integer percentile) {
-        return new BigDecimal(percentile * (valuesInSet / 100.0)).setScale(0, RoundingMode.HALF_UP).intValue();
     }
 
 }

@@ -1,11 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.zuehlke.pgadmissions.dao.StateDAO;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
-import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import org.apache.commons.beanutils.MethodUtils;
+import java.util.List;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
@@ -15,7 +11,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.zuehlke.pgadmissions.dao.StateDAO;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.ParentResource;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.RoleTransition;
+import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.StateActionAssignment;
+import com.zuehlke.pgadmissions.domain.StateActionNotification;
+import com.zuehlke.pgadmissions.domain.StateDuration;
+import com.zuehlke.pgadmissions.domain.StateGroup;
+import com.zuehlke.pgadmissions.domain.StateTransition;
+import com.zuehlke.pgadmissions.domain.StateTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.StateTransitionPending;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
+import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Service
 @Transactional
@@ -51,7 +73,15 @@ public class StateService {
     private SystemService systemService;
 
     public State getById(PrismState id) {
-        return entityService.getByProperty(State.class, "id", id);
+        return entityService.getById(State.class, id);
+    }
+    
+    public StateGroup getStateGroupById(PrismStateGroup stateGroupId) {
+        return entityService.getById(StateGroup.class, stateGroupId);
+    }
+    
+    public StateTransitionEvaluation getStateTransitionEvaluationById(PrismTransitionEvaluation stateTransitionEvaluationId) {
+        return entityService.getById(StateTransitionEvaluation.class, stateTransitionEvaluationId);
     }
 
     public List<State> getConfigurableStates() {
@@ -64,6 +94,10 @@ public class StateService {
 
     public List<StateGroup> getStateGroups() {
         return entityService.list(StateGroup.class);
+    }
+    
+    public List<StateTransitionEvaluation> getStateTransitionEvaluations() {
+        return entityService.list(StateTransitionEvaluation.class);
     }
 
     public List<State> getWorkflowStates() {
@@ -110,7 +144,7 @@ public class StateService {
         comment.setResource(resource);
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
-            resourceService.persistResource(resource);
+            resourceService.persistResource(resource, action);
         }
 
         commentService.save(comment);
@@ -149,22 +183,18 @@ public class StateService {
         List<StateTransition> potentialStateTransitions = stateDAO.getStateTransitions(operative, action);
 
         if (potentialStateTransitions.size() > 1) {
-            try {
-                PrismTransitionEvaluation transitionEvaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation();
-                return (StateTransition) MethodUtils.invokeMethod(this, transitionEvaluation.getMethodName(), new Object[]{operative, comment});
-            } catch (Exception e) {
-                throw new Error(e);
-            }
+            PrismTransitionEvaluation transitionEvaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation().getId();
+            return (StateTransition) IntrospectionUtils.invokeMethod(this, transitionEvaluation.getMethodName(), operative, comment);
         }
 
         return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);
     }
 
-    public List<PrismState> getAvailableNextStates(Resource resource, PrismAction actionId) {
-        return stateDAO.getAvailableNextStates(resource, actionId);
+    public List<PrismState> getAvailableNextStates(Resource resource, List<ActionRepresentation> permittedActions) {
+        return stateDAO.getAvailableNextStates(resource, permittedActions);
     }
 
-    public StateTransition getApplicationEvaluatedOutcome(Resource resource, Comment comment) {
+    public StateTransition getApplicationStateCompletedOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId = comment.getTransitionState().getId();
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
@@ -275,14 +305,14 @@ public class StateService {
 
     public StateTransition getApplicationRecruitedOutcome(Resource resource, Comment comment) {
         Comment recruitedComment = commentService.getEarliestComment((ParentResource) resource, Resource.class, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
-        return stateDAO.getStateTransition(resource.getState(), comment.getAction(), null);
+        return stateDAO.getStateTransition(resource.getState(), comment.getAction(), recruitedComment.getParentResourceTransitionState().getId());
     }
 
-    public List<State> getActiveProgramStates() {
+    public List<PrismState> getActiveProgramStates() {
         return stateDAO.getActiveProgramStates();
     }
 
-    public List<State> getActiveProjectStates() {
+    public List<PrismState> getActiveProjectStates() {
         return stateDAO.getActiveProjectStates();
     }
 
@@ -296,7 +326,7 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 
-    public StateTransition getProgramConfiguredOutcome(Resource resource, Comment comment) {
+    public StateTransition getProgramViewEditOutcome(Resource resource, Comment comment) {
         // TODO implement
         return null;
     }
@@ -323,6 +353,10 @@ public class StateService {
         entityService.delete(pending);
         entityService.flush();
         entityService.evict(pending);
+    }
+    
+    public List<PrismStateGroup> getAssignableStateGroups(PrismScope scopeId) {
+        return stateDAO.getAssignableStateGroups(scopeId);
     }
 
 }

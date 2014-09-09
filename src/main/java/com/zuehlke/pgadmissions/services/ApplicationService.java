@@ -55,7 +55,6 @@ import com.zuehlke.pgadmissions.domain.Title;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.dto.ResourceReportListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
@@ -148,10 +147,6 @@ public class ApplicationService {
         return entityService.getByProperty(Application.class, "code", code);
     }
 
-    public List<ResourceReportListRowDTO> getReportList() {
-        return resourceService.getReportList(Application.class);
-    }
-
     // TODO: handle null response - study option expired
     public LocalDate getEarliestStartDate(Application application) {
         ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(application.getProgram(), application.getProgramDetail().getStudyOption());
@@ -219,7 +214,7 @@ public class ApplicationService {
         return applicationDAO.getUclApplicationsForExport();
     }
 
-    public void saveProgramDetail(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) throws Exception {
+    public void saveProgramDetail(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) throws DeduplicationException {
         Application application = entityService.getById(Application.class, applicationId);
         Institution institution = application.getInstitution();
         ApplicationProgramDetail programDetail = application.getProgramDetail();
@@ -465,7 +460,7 @@ public class ApplicationService {
         application.getFundings().remove(funding);
     }
 
-    public ApplicationReferee saveReferee(Integer applicationId, Integer refereeId, ApplicationRefereeDTO refereeDTO) throws Exception {
+    public ApplicationReferee saveReferee(Integer applicationId, Integer refereeId, ApplicationRefereeDTO refereeDTO) throws DeduplicationException {
         Application application = entityService.getById(Application.class, applicationId);
 
         ApplicationReferee referee;
@@ -537,6 +532,10 @@ public class ApplicationService {
     }
 
     public void postProcessApplication(Application application, Comment comment) throws DeduplicationException {
+        if (comment.isApplicationCreatedComment()) {
+            applicationSummaryService.incrementApplicationCreatedCount(application);
+        }
+
         if (comment.isProjectCreateComment()) {
             synchroniseProjectSupervisors(application);
         }
@@ -550,11 +549,27 @@ public class ApplicationService {
         }
 
         if (comment.isRatingComment()) {
-            applicationSummaryService.summariseApplication(application);
+            applicationSummaryService.summariseApplication(application, comment);
         }
 
         if (comment.isTransitionComment()) {
             applicationSummaryService.summariseApplicationProcessing(application);
+        }
+
+        if (comment.isApplicationSubmittedComment()) {
+            applicationSummaryService.incrementApplicationSubmittedCount(application);
+        }
+
+        if (comment.isApplicationApprovedComment()) {
+            applicationSummaryService.incrementApplicationApprovedCount(application);
+        }
+
+        if (comment.isApplicationRejectedComment()) {
+            applicationSummaryService.incrementApplicationRejectedCount(application);
+        }
+
+        if (comment.isApplicationWithdrawnComment()) {
+            applicationSummaryService.incrementApplicationWithdrawnCount(application);
         }
     }
 
@@ -574,7 +589,8 @@ public class ApplicationService {
 
     private void synchroniseOfferRecommendation(Application application, Comment comment) {
         application.setConfirmedStartDate(comment.getPositionProvisionalStartDate());
-        application.setConfirmedSupervisor(roleService.getRoleUsers(application, PrismRole.APPLICATION_PRIMARY_SUPERVISOR).get(0));
+        application.setConfirmedPrimarySupervisor(roleService.getRoleUsers(application, PrismRole.APPLICATION_PRIMARY_SUPERVISOR).get(0));
+        application.setConfirmedSecondarySupervisor(roleService.getRoleUsers(application, PrismRole.APPLICATION_SECONDARY_SUPERVISOR).get(0));
         application.setConfirmedOfferType(comment.getAppointmentConditions() == null ? PrismOfferType.UNCONDITIONAL : PrismOfferType.CONDITIONAL);
     }
 

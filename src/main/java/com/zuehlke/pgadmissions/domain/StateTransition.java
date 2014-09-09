@@ -5,10 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -25,7 +22,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 
 @Entity
 @Table(name = "STATE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "transition_state_id" }) })
@@ -48,9 +44,9 @@ public class StateTransition implements IUniqueEntity {
     @JoinColumn(name = "transition_action_id", nullable = false)
     private Action transitionAction;
 
-    @Column(name = "state_transition_evaluation")
-    @Enumerated(EnumType.STRING)
-    private PrismTransitionEvaluation stateTransitionEvaluation;
+    @ManyToOne
+    @JoinColumn(name = "state_transition_evaluation_id")
+    private StateTransitionEvaluation stateTransitionEvaluation;
 
     @OneToMany(mappedBy = "stateTransition")
     private Set<RoleTransition> roleTransitions = Sets.newHashSet();
@@ -91,11 +87,11 @@ public class StateTransition implements IUniqueEntity {
         this.transitionAction = transitionAction;
     }
 
-    public PrismTransitionEvaluation getStateTransitionEvaluation() {
+    public final StateTransitionEvaluation getStateTransitionEvaluation() {
         return stateTransitionEvaluation;
     }
 
-    public void setStateTransitionEvaluation(PrismTransitionEvaluation stateTransitionEvaluation) {
+    public final void setStateTransitionEvaluation(StateTransitionEvaluation stateTransitionEvaluation) {
         this.stateTransitionEvaluation = stateTransitionEvaluation;
     }
 
@@ -122,7 +118,7 @@ public class StateTransition implements IUniqueEntity {
         return this;
     }
     
-    public StateTransition withStateTransitionEvaluation(PrismTransitionEvaluation stateTransitionEvaluation) {
+    public StateTransition withStateTransitionEvaluation(StateTransitionEvaluation stateTransitionEvaluation) {
         this.stateTransitionEvaluation = stateTransitionEvaluation;
         return this;
     }

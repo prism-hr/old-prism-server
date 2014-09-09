@@ -28,12 +28,21 @@ public class ScopeDAO {
                 .addOrder(Order.desc("precedence")) //
                 .list();
     }
-    
-    public List<PrismScope> getParentScopesDescending(PrismScope childScopeId) {
+  
+    public List<PrismScope> getParentScopesAscending(PrismScope scopeId) {
         return (List<PrismScope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
                 .setProjection(Projections.property("id")) //
-                .add(Restrictions.lt("precedence", childScopeId.getPrecedence())) //
-                .addOrder(Order.desc("precedence")) //
+                .add(Restrictions.lt("precedence", scopeId.getPrecedence())) //
+                .addOrder(Order.asc("precedence")) //
+                .list();
+    }
+    
+    public List<PrismScope> getJoinScopesAscending(PrismScope scopeId) {
+        Integer precedence = scopeId.getPrecedence();
+        return (List<PrismScope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
+                .setProjection(Projections.property("id")) //
+                .add(Restrictions.between("precedence", (precedence - 2), (precedence + 1)))
+                .addOrder(Order.asc("precedence")) //
                 .list();
     }
     

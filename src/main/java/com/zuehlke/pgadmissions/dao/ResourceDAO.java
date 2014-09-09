@@ -1,93 +1,35 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.HashMap;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
-import org.hibernate.type.BooleanType;
-import org.hibernate.type.DateType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.StringType;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.utils.FreeMarkerHelper;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
 
 @Repository
 @SuppressWarnings("unchecked")
 public class ResourceDAO {
 
-    @Value("${resource.list.sql.location}")
-    private String resourceListSqlLocation;
-
-    @Value("${resource.list.years.to.retrieve}")
-    private Integer resourceListYearsToRetrieve;
-
-    @Value("${resource.list.records.to.retrieve}")
-    private Integer resourceListRecordsToRetrieve;
-
-    @Autowired
-    private FreeMarkerHelper freeMarkerHelper;
-
     @Autowired
     private SessionFactory sessionFactory;
-
-    public <T extends Resource> List<ResourceConsoleListRowDTO> getConsoleListBlock(User user, Class<T> resourceClass, List<PrismScope> parentScopes,
-            int loadIndex) {
-        HashMap<String, Object> model = Maps.newHashMap();
-        model.put("user", user);
-        model.put("queryScope", PrismScope.getResourceScope(resourceClass).getLowerCaseName());
-        model.put("parentScopes", parentScopes);
-        model.put("queryRangeValue", resourceListYearsToRetrieve);
-        model.put("queryRangeUnit", DurationUnit.YEAR.name());
-        model.put("queryRangeValue", resourceListYearsToRetrieve);
-        model.put("queryRangeUnit", DurationUnit.YEAR.name());
-        model.put("rowIndex", loadIndex * resourceListRecordsToRetrieve);
-        model.put("rowCount", resourceListRecordsToRetrieve);
-
-        return (List<ResourceConsoleListRowDTO>) sessionFactory.getCurrentSession() //
-                .createSQLQuery(freeMarkerHelper.buildString(resourceListSqlLocation, model)) //
-                .addScalar("id", IntegerType.INSTANCE) //
-                .addScalar("code", StringType.INSTANCE) //
-                .addScalar("raisesUrgentFlag", BooleanType.INSTANCE) //
-                .addScalar("state", StringType.INSTANCE) //
-                .addScalar("creatorFirstName", StringType.INSTANCE) //
-                .addScalar("creatorFirstName2", StringType.INSTANCE) //
-                .addScalar("creatorFirstName3", StringType.INSTANCE) //
-                .addScalar("creatorLastName", StringType.INSTANCE) //
-                .addScalar("institutionTitle", StringType.INSTANCE) //
-                .addScalar("programTitle", StringType.INSTANCE) //
-                .addScalar("projectTitle", StringType.INSTANCE) //
-                .addScalar("displayTimestamp", DateType.INSTANCE) //
-                .addScalar("actions", StringType.INSTANCE) //
-                .addScalar("averageRating", BigDecimalType.INSTANCE) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowDTO.class)) //
-                .list();
-    }
 
     public <T extends Resource> List<Integer> getResourcesToEscalate(Class<T> resourceClass, PrismAction actionId, LocalDate baseline) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
@@ -138,60 +80,51 @@ public class ResourceDAO {
                 .list();
     }
 
-    public <T extends Resource> DetachedCriteria getResourceListFilter(User user, Class<T> resourceClass, List<PrismScope> parentScopeIds,
-            ResourceListFilterDTO filterDTO, String lastSequenceIdentifier) {
-        DetachedCriteria criteria = DetachedCriteria.forClass(resourceClass) //
-                .setProjection(Projections.groupProperty("id")) //
-                .add(Restrictions.disjunction() //
-                        .add(Subqueries.propertyIn("id", //
-                                DetachedCriteria.forClass(UserRole.class) //
-                                        .setProjection(Projections.groupProperty("application.id")) //
-                                        .createAlias("role", "role", JoinType.INNER_JOIN) //
-                                        .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                                        .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
-                                        .add(Restrictions.eq("user", user)) //
-                                        .add(Restrictions.isNotNull(PrismScope.getResourceScope(resourceClass).getLowerCaseName())))));
+    public List<ResourceConsoleListRowDTO> getResourceConsoleList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds,
+            List<PrismScope> joinScopeIds, ResourceListFilterDTO filterDTO, String lastSequenceIdentifier) {
+        Class<? extends Resource> resourceClass = scopeId.getResourceClass();
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceClass, scopeId.getLowerCaseName());
 
-        boolean getUrgentOnly = filterDTO.isUrgentOnly();
-
-        if (getUrgentOnly) {
-            criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
-        }
+        ProjectionList projectionList = Projections.projectionList();
 
         for (PrismScope parentScopeId : parentScopeIds) {
-            String parentResourceReference = parentScopeId.getLowerCaseName();
-
-            DetachedCriteria stateCriteria = DetachedCriteria.forClass(StateAction.class) //
-                    .setProjection(Projections.groupProperty("state.id"))
-                    .createAlias("stateActionAssignments", "stateActionAssigment", JoinType.INNER_JOIN)
-                    .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN)
-                    .add(Restrictions.eq("role.scope.id", parentScopeId));
-
-            if (filterDTO.isUrgentOnly()) {
-                stateCriteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
-            }
-
-            criteria.add(Restrictions.conjunction() //
-                    .add(Subqueries.propertyIn(parentResourceReference, //
-                            DetachedCriteria.forClass(UserRole.class) //
-                                    .setProjection(Projections.groupProperty(parentResourceReference + ".id")) //
-                                    .add(Restrictions.eq("user", user))
-                                    .add(Restrictions.isNotNull(parentResourceReference)))) //
-                    .add(Subqueries.propertyIn("state", //
-                            stateCriteria)));
+            String parentScopeName = parentScopeId.getLowerCaseName();
+            projectionList.add(Projections.property(parentScopeName + ".id"), parentScopeName + "Id");
         }
 
-        Junction filterConditions = Restrictions.conjunction();
-        if (filterDTO.getMatchMode() == FilterMatchMode.ANY) {
-            filterConditions = Restrictions.disjunction();
+        projectionList.add(Projections.property("id"), scopeId.getLowerCaseName() + ".Id")
+                //
+                .add(Projections.property("user.firstName"), "creatorFirstName")
+                //
+                .add(Projections.property("user.firstName2"), "creatorFirstName2").add(Projections.property("user.firstName3"), "creatorFirstName3")
+                .add(Projections.property("user.lastName"), "creatorLastName").add(Projections.property("code"), "code");
+
+        for (PrismScope joinScopeId : joinScopeIds) {
+            String joinScopeName = joinScopeId.getLowerCaseName();
+            projectionList.add(Projections.property(joinScopeName + ".title"), joinScopeName + "Title");
         }
 
-        HashMap<String, Object> filters = filterDTO.getFilters();
-        for (String type : filters.keySet()) {
-            Object filter = filters.get(type);
+        projectionList.add(Projections.property("applicationRatingAverage"), "applicationRatingAverage") //
+                .add(Projections.property("state.id"), "stateId") //
+                .add(Projections.property("state.stateGroup.id"), "stateGroupId") //
+                .add(Projections.property("user.email"), "creatorEmail") //
+                .add(Projections.property("updatedTimestamp"), "updatedTimestamp"); //
+
+        criteria.setProjection(projectionList) //
+                .createAlias("user", "user", JoinType.INNER_JOIN);
+
+        for (PrismScope joinScopeId : joinScopeIds) {
+            String joinScopeName = joinScopeId.getLowerCaseName();
+            criteria.createAlias(joinScopeName, joinScopeName, JoinType.LEFT_OUTER_JOIN); //
         }
 
-        return criteria.add(filterConditions);
+        criteria.createAlias("state", "state", JoinType.INNER_JOIN) //
+                .add(Subqueries.propertyIn("id", ResourceListConstraintBuilder.getVisibleResourcesCriteria(user, resourceClass, parentScopeIds, filterDTO)));
+
+        return ResourceListConstraintBuilder
+                .appendResourceListDisplayFilterExpression(Application.class, criteria, filterDTO.getSortOrder(), lastSequenceIdentifier) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowDTO.class)) //
+                .list();
     }
 
 }

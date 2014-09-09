@@ -1,20 +1,21 @@
 package com.zuehlke.pgadmissions.rest.validation.validator.comment;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
+import org.springframework.validation.Validator;
+
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldResolution;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.validation.validator.AbstractValidator;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.springframework.stereotype.Component;
-import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Component
 public class CommentDTOValidator extends AbstractValidator {
@@ -25,7 +26,8 @@ public class CommentDTOValidator extends AbstractValidator {
     }
 
     @Override
-    public void addExtraValidation(Object target, Errors errors) throws Exception {
+    @SuppressWarnings("rawtypes")
+    public void addExtraValidation(Object target, Errors errors) {
         CommentDTO comment = (CommentDTO) target;
         PrismAction action = comment.getAction();
 
@@ -35,7 +37,7 @@ public class CommentDTOValidator extends AbstractValidator {
         for (PrismActionCommentField field : PrismActionCommentField.values()) {
             List<PrismActionValidationFieldResolution> resolutions = fieldDefinitions.get(field);
             String fieldName = field.getFieldName();
-            Object fieldValue = PropertyUtils.getSimpleProperty(comment, fieldName);
+            Object fieldValue = IntrospectionUtils.getProperty(comment, fieldName);
             if (resolutions != null) {
                 for (PrismActionValidationFieldResolution fieldResolution : resolutions) {
                     switch (fieldResolution.getRestriction()) {

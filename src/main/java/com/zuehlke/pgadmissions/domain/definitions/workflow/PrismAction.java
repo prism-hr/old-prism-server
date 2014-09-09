@@ -1,18 +1,43 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.rest.validation.validator.comment.AssignInterviewersCommentCustomValidator;
-import com.zuehlke.pgadmissions.rest.validation.validator.comment.ConfirmSupervisionCommentCustomValidator;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.APPOINTMENT_CONDITIONS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.APPOINTMENT_PREFERENCES;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.APPOINTMENT_TIMESLOTS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.ASSIGNED_USERS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.COMPETENT_IN_WORK_LANGUAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.CONTENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.DESIRE_TO_RECRUIT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.DOCUMENTS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.INTERVIEWEE_INSTRUCTIONS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.INTERVIEWER_INSTRUCTIONS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.INTERVIEW_DATE_TIME;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.INTERVIEW_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.INTERVIEW_LOCATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.INTERVIEW_TIME_ZONE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.POSITION_DESCRIPTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.POSITION_PROVISIONAL_START_DATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.POSITION_TITLE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.QUALIFIED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.RATING;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.RECRUITER_ACCEPT_APPOINTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.REJECTION_REASON;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.RESIDENCE_STATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.SUITABLE_FOR_INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.SUITABLE_FOR_OPPORTUNITY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.TRANSITION_STATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldRestriction.NOT_EMPTY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldRestriction.NOT_NULL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldRestriction.SIZE;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.*;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldRestriction.*;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.rest.validation.validator.comment.AssignInterviewersCommentCustomValidator;
+import com.zuehlke.pgadmissions.rest.validation.validator.comment.ConfirmSupervisionCommentCustomValidator;
 
 public enum PrismAction {
 

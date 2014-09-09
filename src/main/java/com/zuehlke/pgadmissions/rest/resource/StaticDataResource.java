@@ -112,7 +112,7 @@ public class StaticDataResource {
         }
         staticData.put("roles", roleRepresentationsRepresentations);
 
-        List<InstitutionDomicile> institutionDomiciles = entityService.list(InstitutionDomicile.class);
+        List<InstitutionDomicile> institutionDomiciles = entityService.listByProperty(InstitutionDomicile.class, "enabled", true);
         staticData.put("institutionDomiciles", institutionDomiciles);
 
         // Display names for enum classes

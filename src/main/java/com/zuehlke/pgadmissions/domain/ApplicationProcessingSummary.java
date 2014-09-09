@@ -18,7 +18,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Entity
 @Table(name = "APPLICATION_PROCESSING_SUMMARY", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "state_group_id" }),
@@ -143,7 +143,7 @@ public class ApplicationProcessingSummary implements IUniqueEntity {
         this.institution = null;
         this.program = null;
         this.project = null;
-        IntrospectionHelper.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
+        IntrospectionUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
     }
     
     public ApplicationProcessingSummary withResource(Resource resource) {

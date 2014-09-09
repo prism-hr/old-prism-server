@@ -8,7 +8,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 public interface IUniqueEntity {
 
@@ -62,7 +62,7 @@ public interface IUniqueEntity {
             if (property == null) {
                 return "null";
             } else if (PropertyUtils.isReadable(property, "id")) {
-                IntrospectionHelper.getProperty(property, "id");
+                IntrospectionUtils.getProperty(property, "id");
             }
             return property.toString();
         }

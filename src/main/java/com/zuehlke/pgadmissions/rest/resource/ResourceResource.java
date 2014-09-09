@@ -58,7 +58,7 @@ import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @RestController
 @RequestMapping(value = { "api/{resourceScope}" })
@@ -148,7 +148,7 @@ public class ResourceResource {
             userRolesRepresentations.add(userRolesRepresentation);
         }
         representation.setUsers(userRolesRepresentations);
-        IntrospectionHelper.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", resource, representation);
+        IntrospectionUtils.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", resource, representation);
         return representation;
     }
 

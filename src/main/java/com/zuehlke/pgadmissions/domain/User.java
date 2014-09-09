@@ -29,7 +29,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
-import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Entity
 @Table(name = "USER")
@@ -289,11 +289,11 @@ public class User implements UserDetails, IUniqueEntity {
     }
     
     public <T extends Resource> LocalDate getLastNotifiedDate(Class<T> resourceClass) {
-        return (LocalDate) IntrospectionHelper.getProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName());
+        return (LocalDate) IntrospectionUtils.getProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName());
     }
     
     public <T extends Resource> void setLastNotifiedDate(Class<T> resourceClass, LocalDate lastNotifiedDate) {
-        IntrospectionHelper.setProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName(), lastNotifiedDate);
+        IntrospectionUtils.setProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName(), lastNotifiedDate);
     }
 
     @Override

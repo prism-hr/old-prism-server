@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Service
 @Transactional
@@ -66,8 +66,8 @@ public class EntityService {
         if (persistentResource == null) {
             save(transientResource);
         } else {
-            Object persistentId = IntrospectionHelper.getProperty(persistentResource, "id");
-            IntrospectionHelper.setProperty(transientResource, "id", persistentId);        
+            Object persistentId = IntrospectionUtils.getProperty(persistentResource, "id");
+            IntrospectionUtils.setProperty(transientResource, "id", persistentId);        
             evict(persistentResource);
             update(transientResource);
         }

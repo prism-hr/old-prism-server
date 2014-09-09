@@ -20,14 +20,15 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 
 @Entity
 @Table(name = "RESOURCE_LIST_FILTER_CONSTRAINT", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "resouce_list_filter_id", "filter_property", "filter_term_string" }),
-        @UniqueConstraint(columnNames = { "resouce_list_filter_id", "filter_property", "filter_term_date_start", "filter_term_date_close" }),
-        @UniqueConstraint(columnNames = { "resouce_list_filter_id", "filter_property", "filter_term_state_id" }),
-        @UniqueConstraint(columnNames = { "resouce_list_filter_id", "filter_property", "filter_term_decimal_start", "filter_term_decimal_close" }) })
+        @UniqueConstraint(columnNames = { "resouce_list_filter_id", "filter_property", "filter_expression", "value_string" }),
+        @UniqueConstraint(columnNames = { "resouce_list_filter_id", "filter_property", "filter_expression", "value_date_start", "value_date_close" }),
+        @UniqueConstraint(columnNames = { "resouce_list_filter_id", "filter_property", "filter_expression", "value_state_id" }),
+        @UniqueConstraint(columnNames = { "resouce_list_filter_id", "filter_property", "filter_expression", "value_decimal_start", "value_decimal_close" }) })
 public class ResourceListFilterConstraint {
 
     @Id
@@ -40,33 +41,40 @@ public class ResourceListFilterConstraint {
     @Column(name = "filter_property", nullable = false)
     @Enumerated(EnumType.STRING)
     private FilterProperty filterProperty;
+    
+    @Column(name = "filter_expression", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private FilterExpression filterExpression;
 
     @Column(name = "negated", nullable = false)
     private Boolean negated;
+    
+    @Column(name = "display_position", nullable = false)
+    private Integer displayPosition;
 
-    @Column(name = "filter_term_string")
-    private String filterTermString;
+    @Column(name = "value_string")
+    private String valueString;
 
-    @Column(name = "filter_term_date_start")
+    @Column(name = "value_date_start")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate filterTermDateStart;
+    private LocalDate valueDateStart;
 
-    @Column(name = "filter_term_date_close")
+    @Column(name = "value_date_close")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate filterTermDateClose;
+    private LocalDate valueDateClose;
 
-    @JoinColumn(name = "filter_term_state_group_id")
-    private StateGroup filterTermStateGroup;
+    @JoinColumn(name = "value_state_group_id")
+    private StateGroup valueStateGroup;
 
-    @Column(name = "filter_term_decimal_start")
-    private BigDecimal filterTermDecimalStart;
+    @Column(name = "value_decimal_start")
+    private BigDecimal valueDecimalStart;
 
-    @Column(name = "filter_term_decimal_close")
-    private BigDecimal filterTermDecimalClose;
+    @Column(name = "value_decimal_close")
+    private BigDecimal valueDecimalClose;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "RESOURCE_LIST_FILTER_CONSTRAINT_ROLE", joinColumns = { @JoinColumn(name = "resource_list_filter_constraint_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "role_id", nullable = false) })
-    private Set<Role> roles = Sets.newHashSet();
+    private Set<Role> valueRoles = Sets.newHashSet();
 
     public final Integer getId() {
         return Id;
@@ -92,6 +100,14 @@ public class ResourceListFilterConstraint {
         this.filterProperty = filterProperty;
     }
 
+    public final FilterExpression getFilterExpression() {
+        return filterExpression;
+    }
+
+    public final void setFilterExpression(FilterExpression filterExpression) {
+        this.filterExpression = filterExpression;
+    }
+
     public final Boolean isNegated() {
         return negated;
     }
@@ -100,56 +116,64 @@ public class ResourceListFilterConstraint {
         this.negated = negated;
     }
 
-    public final String getFilterTermString() {
-        return filterTermString;
+    public final Integer getDisplayPosition() {
+        return displayPosition;
     }
 
-    public final void setFilterTermString(String filterTermString) {
-        this.filterTermString = filterTermString;
+    public final void setDisplayPosition(Integer displayPosition) {
+        this.displayPosition = displayPosition;
     }
 
-    public final LocalDate getFilterTermDateStart() {
-        return filterTermDateStart;
+    public final String getValueString() {
+        return valueString;
     }
 
-    public final void setFilterTermDateStart(LocalDate filterTermDateStart) {
-        this.filterTermDateStart = filterTermDateStart;
+    public final void setValueString(String valueString) {
+        this.valueString = valueString;
     }
 
-    public final LocalDate getFilterTermDateClose() {
-        return filterTermDateClose;
+    public final LocalDate getValueDateStart() {
+        return valueDateStart;
     }
 
-    public final void setFilterTermDateClose(LocalDate filterTermDateClose) {
-        this.filterTermDateClose = filterTermDateClose;
+    public final void setValueDateStart(LocalDate valueDateStart) {
+        this.valueDateStart = valueDateStart;
     }
 
-    public final StateGroup getFilterTermStateGroup() {
-        return filterTermStateGroup;
+    public final LocalDate getValueDateClose() {
+        return valueDateClose;
     }
 
-    public final void setFilterTermStateGroup(StateGroup filterTermStateGroup) {
-        this.filterTermStateGroup = filterTermStateGroup;
+    public final void setValueDateClose(LocalDate valueDateClose) {
+        this.valueDateClose = valueDateClose;
     }
 
-    public final BigDecimal getFilterTermDecimalStart() {
-        return filterTermDecimalStart;
+    public final StateGroup getValueStateGroup() {
+        return valueStateGroup;
     }
 
-    public final void setFilterTermDecimalStart(BigDecimal filterTermDecimalStart) {
-        this.filterTermDecimalStart = filterTermDecimalStart;
+    public final void setValueStateGroup(StateGroup valueStateGroup) {
+        this.valueStateGroup = valueStateGroup;
     }
 
-    public final BigDecimal getFilterTermDecimalClose() {
-        return filterTermDecimalClose;
+    public final BigDecimal getValueDecimalStart() {
+        return valueDecimalStart;
     }
 
-    public final void setFilterTermDecimalClose(BigDecimal filterTermDecimalClose) {
-        this.filterTermDecimalClose = filterTermDecimalClose;
+    public final void setValueDecimalStart(BigDecimal valueDecimalStart) {
+        this.valueDecimalStart = valueDecimalStart;
     }
 
-    public final Set<Role> getRoles() {
-        return roles;
+    public final BigDecimal getValueDecimalClose() {
+        return valueDecimalClose;
+    }
+
+    public final void setValueDecimalClose(BigDecimal valueDecimalClose) {
+        this.valueDecimalClose = valueDecimalClose;
+    }
+
+    public final Set<Role> getValueRoles() {
+        return valueRoles;
     }
 
     public ResourceListFilterConstraint withFilter(ResourceListFilter filter) {
@@ -161,10 +185,49 @@ public class ResourceListFilterConstraint {
         this.filterProperty = filterProperty;
         return this;
     }
-
+    
+    public ResourceListFilterConstraint withFilterExpression(FilterExpression filterExpression) {
+        this.filterExpression = filterExpression;
+        return this;
+    }
+    
     public ResourceListFilterConstraint withNegated(Boolean negated) {
         this.negated = negated;
         return this;
+    }
+    
+    public ResourceListFilterConstraint withDisplayPosition(Integer displayPosition) {
+        this.displayPosition = displayPosition;
+        return this;
+    }
+    
+    public ResourceListFilterConstraint withValueString(String valueString) {
+        this.valueString = valueString;
+        return this;
+    }
+    
+    public ResourceListFilterConstraint withValueDateStart(LocalDate valueDateStart) {
+        this.valueDateStart = valueDateStart;
+        return this;
+    }
+    
+    public ResourceListFilterConstraint withValueDateClose(LocalDate valueDateClose) {
+        this.valueDateClose = valueDateClose;
+        return this;
+    }
+    
+    public ResourceListFilterConstraint withValueDecimalStart(BigDecimal valueDecimalStart) {
+        this.valueDecimalStart = valueDecimalStart;
+        return this;
+    }
+    
+    public ResourceListFilterConstraint withValueDecimalClose(BigDecimal valueDecimalClose) {
+        this.valueDecimalClose = valueDecimalClose;
+        return this;
+    }
+    
+    public void addValueRole(Role role) {
+        valueRoles.add(role);
     }
 
 }

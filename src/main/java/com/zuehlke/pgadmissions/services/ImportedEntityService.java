@@ -59,7 +59,7 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.La
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
-import com.zuehlke.pgadmissions.services.helpers.IntrospectionHelper;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Service
 @Transactional
@@ -197,8 +197,8 @@ public class ImportedEntityService {
     public void mergeImportedEntity(Class<ImportedEntity> entityClass, Institution institution, Object entityDefinition) throws Exception {
         ImportedEntity transientEntity = entityClass.newInstance();
         transientEntity.setInstitution(institution);
-        transientEntity.setCode((String) IntrospectionHelper.getProperty(entityDefinition, "code"));
-        transientEntity.setName((String) IntrospectionHelper.getProperty(entityDefinition, "name"));
+        transientEntity.setCode((String) IntrospectionUtils.getProperty(entityDefinition, "code"));
+        transientEntity.setName((String) IntrospectionUtils.getProperty(entityDefinition, "name"));
         createOrUpdateImportedEntity(transientEntity);
     }
 

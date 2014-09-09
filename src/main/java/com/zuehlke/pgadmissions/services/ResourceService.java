@@ -18,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.FilterFetchMode;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -29,7 +28,6 @@ import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 
 @Service
 @Transactional
@@ -55,9 +53,6 @@ public class ResourceService {
 
     @Autowired
     private EntityService entityService;
-
-    @Autowired
-    private ResourceListFilterService resourceListFilterService;
     
     @Autowired
     private RoleService roleService;
@@ -211,15 +206,6 @@ public class ResourceService {
 
     public <T extends Resource> List<Integer> getRecentlyUpdatedResources(Class<T> resourceClass, DateTime rangeStart, DateTime rangeClose) {
         return resourceDAO.getRecentlyUpdatedResources(resourceClass, rangeStart, rangeClose);
-    }
-
-    public <T extends Resource> List<Integer> getVisibleResources(User user, Class<T> resourceClass, ResourceListFilterDTO filterDTO,
-            FilterFetchMode fetchMode, String lastSequenceIdentifier) throws DeduplicationException {
-        List<PrismScope> parentScopeIds = scopeService.getParentScopes(resourceClass);
-        if (filterDTO.isSaveAsDefaultFilter()) {
-            resourceListFilterService.save(user, resourceClass, filterDTO);
-        }
-        return resourceDAO.getVisibleResources(user, resourceClass, parentScopeIds, filterDTO, fetchMode, lastSequenceIdentifier);
     }
 
 }

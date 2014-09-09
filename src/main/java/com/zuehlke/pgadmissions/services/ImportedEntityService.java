@@ -1,13 +1,27 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.bind.JAXBElement;
-
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.dto.AdvertCategoryImportRowDTO;
+import com.zuehlke.pgadmissions.exceptions.DataImportException;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.iso.jaxb.*;
+import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -16,50 +30,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.AdvertCategory;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
-import com.zuehlke.pgadmissions.domain.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramStudyOption;
-import com.zuehlke.pgadmissions.domain.ProgramStudyOptionInstance;
-import com.zuehlke.pgadmissions.domain.ProgramType;
-import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.dto.AdvertCategoryImportRowDTO;
-import com.zuehlke.pgadmissions.exceptions.DataImportException;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.iso.jaxb.CategoryNameType;
-import com.zuehlke.pgadmissions.iso.jaxb.CategoryType;
-import com.zuehlke.pgadmissions.iso.jaxb.CountryType;
-import com.zuehlke.pgadmissions.iso.jaxb.ShortNameType;
-import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionLocaleType;
-import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionType;
-import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
-import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
+import javax.xml.bind.JAXBElement;
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -112,7 +88,7 @@ public class ImportedEntityService {
     }
 
     public ImportedEntityFeed getOrCreateImportedEntityFeed(Institution institution, PrismImportedEntity importedEntityType, String location, String username,
-            String password) throws DeduplicationException {
+                                                            String password) throws DeduplicationException {
         ImportedEntityFeed transientImportedEntityFeed = new ImportedEntityFeed().withImportedEntityType(importedEntityType).withLocation(location)
                 .withUserName(username).withPassword(password).withInstitution(institution);
         return entityService.getOrCreate(transientImportedEntityFeed);
@@ -223,7 +199,7 @@ public class ImportedEntityService {
         persistentImportedEntityFeed.setLastImportedDate(new LocalDate());
     }
 
-    public void mergeInstitutionDomicile(CountryType country) {
+    public void mergeInstitutionDomicile(CountryType country, Map<String, String> countryCurrencies) {
         String status = null;
         String countryName = null;
         String alpha2Code = null;
@@ -251,12 +227,15 @@ public class ImportedEntityService {
                 }
             }
         }
+        String currency = countryCurrencies.get(alpha2Code);
 
-        if (!(status.equals("exceptionally-reserved") || status.equals("indeterminately-reserved"))) {
-            InstitutionDomicile institutionDomicile = new InstitutionDomicile().withId(alpha2Code).withName(countryName).withEnabled(true);
-            entityService.merge(institutionDomicile);
-            mergeInstitutionDomicileRegions(institutionDomicile, subdivisions, categories);
+        if (Strings.isNullOrEmpty(currency) || status.equals("exceptionally-reserved") || status.equals("indeterminately-reserved")) {
+            return;
         }
+
+        InstitutionDomicile institutionDomicile = new InstitutionDomicile().withId(alpha2Code).withName(countryName).withCurrency(currency).withEnabled(true);
+        entityService.merge(institutionDomicile);
+        mergeInstitutionDomicileRegions(institutionDomicile, subdivisions, categories);
     }
 
     private Program mergeProgram(Institution institution, Programme programDefinition) throws DeduplicationException {
@@ -429,5 +408,5 @@ public class ImportedEntityService {
         }
 
     }
-    
+
 }

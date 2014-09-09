@@ -30,9 +30,10 @@ public class ApplicationSummaryService {
     private EntityService entityService;
 
     public void summariseApplication(Application application, Comment comment) {
-        Integer currentRatingCount = application.getRatingCount();
-        application.setRatingCount(SummaryHelper.incrementRunningCount(currentRatingCount));
-        application.setRatingAverage(SummaryHelper.computeRunningAverage(currentRatingCount, application.getRatingAverage(), comment.getApplicationRating()));
+        Integer currentRatingCount = application.getApplicationRatingCount();
+        application.setApplicationRatingCount(SummaryHelper.incrementRunningCount(currentRatingCount));
+        application.setApplicationRatingAverage(SummaryHelper.computeRunningAverage(currentRatingCount, application.getApplicationRatingAverage(),
+                comment.getApplicationRating()));
 
         for (ParentResource parentResource : application.getParentResources()) {
             updateApplicationSummary(parentResource, application);
@@ -75,9 +76,9 @@ public class ApplicationSummaryService {
         Integer currentRatingCountSum = parentResource.getApplicationRatingCount();
         parentResource.setApplicationRatingCount(SummaryHelper.incrementRunningCount(currentRatingCountSum));
         parentResource.setApplicationRatingCountAverageNonZero(SummaryHelper.computeRunningAverage(currentRatingCountSum,
-                parentResource.getApplicationRatingCountAverageNonZero(), application.getRatingCount()));
+                parentResource.getApplicationRatingCountAverageNonZero(), application.getApplicationRatingCount()));
         parentResource.setApplicationRatingAverage(SummaryHelper.computeRunningAverage(currentRatingCountSum, parentResource.getApplicationRatingAverage(),
-                application.getRatingAverage()));
+                application.getApplicationRatingAverage()));
     }
 
     private ApplicationProcessing createOrUpdateApplicationProcessing(Application application, StateGroup stateGroup, LocalDate baseline)
@@ -100,11 +101,11 @@ public class ApplicationSummaryService {
     private Integer updatePreviousApplicationProcessing(Application application, StateGroup previousStateGroup, LocalDate baseline) {
         ApplicationProcessing previousProcessing = applicationSummaryDAO.getProcessing(application, previousStateGroup);
         Integer stateDuration = Days.daysBetween(previousProcessing.getLastUpdatedDate(), baseline).getDays();
-        
+
         previousProcessing.setDayDurationAverage(SummaryHelper.computeRunningAverage((previousProcessing.getInstanceCount() - 1),
                 previousProcessing.getDayDurationAverage(), stateDuration));
         previousProcessing.setLastUpdatedDate(baseline);
-        
+
         return stateDuration;
     }
 

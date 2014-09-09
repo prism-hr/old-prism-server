@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
@@ -100,7 +101,8 @@ public class ResourceListFilterService {
         return null;
     }
 
-    public ResourceListFilterDTO saveOrGetByUserAndScope(User user, Scope scope, ResourceListFilterDTO filterDTO) throws DeduplicationException {
+    public ResourceListFilterDTO saveOrGetByUserAndScope(User user, PrismScope scopeId, ResourceListFilterDTO filterDTO) throws DeduplicationException {
+        Scope scope = scopeService.getById(scopeId);
         if (filterDTO == null) {
             return getByUserAndScope(user, scope);
         } else if (filterDTO.isSaveAsDefaultFilter()) {

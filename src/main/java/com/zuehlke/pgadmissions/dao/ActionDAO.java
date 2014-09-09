@@ -7,6 +7,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -22,6 +23,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -33,8 +36,7 @@ public class ActionDAO {
     public Action getDelegateAction(Resource resource, Action action) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(StateActionAssignment.class) //
                 .setProjection(Projections.property("stateAction.action")) //
-                .createAlias("delegatedAction", "action", JoinType.INNER_JOIN)
-                .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("delegatedAction", "action", JoinType.INNER_JOIN).createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "delegateAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", resource.getState())) //
                 .add(Restrictions.eq("delegatedAction", action)) //
@@ -88,41 +90,43 @@ public class ActionDAO {
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.eq("action", action)) //
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.isNull("stateActionAssignment.id"))
-                        .add(Restrictions.conjunction()
-                                .add(Restrictions.disjunction() //
-                                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
-                                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
-                                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
-                                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
-                                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
+                .add(Restrictions.disjunction().add(Restrictions.isNull("stateActionAssignment.id"))
+                        .add(Restrictions.conjunction().add(Restrictions.disjunction() //
+                                .add(Restrictions.eq("userRole.application", resource.getApplication())) //
+                                .add(Restrictions.eq("userRole.project", resource.getProject())) //
+                                .add(Restrictions.eq("userRole.program", resource.getProgram())) //
+                                .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
+                                .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
                                 .add(Restrictions.eq("userRole.user", user)) //
                                 .add(Restrictions.eq("userAccount.enabled", true)))) //
                 .uniqueResult();
     }
 
-    public List<PrismAction> getPermittedActions(Resource resource, User user) {
-        return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.groupProperty("action.id"))
+    public List<ActionRepresentation> getPermittedActions(Integer systemId, Integer institutionId, Integer programId, Integer projectId, Integer applicationId,
+            PrismState stateId, User user) {
+        return (List<ActionRepresentation>) sessionFactory.getCurrentSession().createCriteria(StateAction.class, "stateAction") //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("action.id"), "name") //
+                        .add(Projections.max("raisesUrgentFlag"), "raisesUrgentFlag")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("state", resource.getState())) //
+                .add(Restrictions.eq("state.id", stateId)) //
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
-                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
-                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
-                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
-                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
+                        .add(Restrictions.eq("userRole.system.id", systemId)) //
+                        .add(Restrictions.eq("userRole.institution.id", institutionId)) //
+                        .add(Restrictions.eq("userRole.program.id", programId)) //
+                        .add(Restrictions.eq("userRole.project.id", projectId)) //
+                        .add(Restrictions.eq("userRole.application.id", applicationId))) //
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.asc("action.id")) //
+                .setResultTransformer(Transformers.aliasToBean(ActionRepresentation.class)) //
                 .list();
     }
 

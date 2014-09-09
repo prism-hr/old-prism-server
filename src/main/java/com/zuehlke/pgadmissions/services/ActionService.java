@@ -20,11 +20,13 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
 
 @Service
 @Transactional
@@ -87,8 +89,14 @@ public class ActionService {
         throwWorkflowPermissionException(resource, action);
     }
 
-    public List<PrismAction> getPermittedActions(Resource resource, User user) {
-        return actionDAO.getPermittedActions(resource, user);
+    public List<ActionRepresentation> getPermittedActions(Integer systemId, Integer institutionId, Integer programId, Integer projectId, Integer applicationId,
+            PrismState stateId, User user) {
+        return actionDAO.getPermittedActions(systemId, institutionId, programId, projectId, applicationId, stateId, user);
+    }
+
+    public List<ActionRepresentation> getPermittedActions(Resource resource, User user) {
+        return actionDAO.getPermittedActions(resource.getSystem().getId(), resource.getInstitution().getId(), resource.getProgram().getId(), resource
+                .getProject().getId(), resource.getApplication().getId(), resource.getState().getId(), user);
     }
 
     public List<PrismActionEnhancement> getPermittedActionEnhancements(Resource resource, User user) {

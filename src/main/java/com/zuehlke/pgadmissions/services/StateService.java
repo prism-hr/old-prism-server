@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.StateTransition;
+import com.zuehlke.pgadmissions.domain.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.StateTransitionPending;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -35,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
 import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Service
@@ -77,6 +79,10 @@ public class StateService {
     public StateGroup getStateGroupById(PrismStateGroup stateGroupId) {
         return entityService.getById(StateGroup.class, stateGroupId);
     }
+    
+    public StateTransitionEvaluation getStateTransitionEvaluationById(PrismTransitionEvaluation stateTransitionEvaluationId) {
+        return entityService.getById(StateTransitionEvaluation.class, stateTransitionEvaluationId);
+    }
 
     public List<State> getConfigurableStates() {
         return stateDAO.getConfigurableStates();
@@ -88,6 +94,10 @@ public class StateService {
 
     public List<StateGroup> getStateGroups() {
         return entityService.list(StateGroup.class);
+    }
+    
+    public List<StateTransitionEvaluation> getStateTransitionEvaluations() {
+        return entityService.list(StateTransitionEvaluation.class);
     }
 
     public List<State> getWorkflowStates() {
@@ -173,18 +183,18 @@ public class StateService {
         List<StateTransition> potentialStateTransitions = stateDAO.getStateTransitions(operative, action);
 
         if (potentialStateTransitions.size() > 1) {
-            PrismTransitionEvaluation transitionEvaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation();
+            PrismTransitionEvaluation transitionEvaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation().getId();
             return (StateTransition) IntrospectionUtils.invokeMethod(this, transitionEvaluation.getMethodName(), operative, comment);
         }
 
         return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);
     }
 
-    public List<PrismState> getAvailableNextStates(Resource resource, PrismAction actionId) {
-        return stateDAO.getAvailableNextStates(resource, actionId);
+    public List<PrismState> getAvailableNextStates(Resource resource, List<ActionRepresentation> permittedActions) {
+        return stateDAO.getAvailableNextStates(resource, permittedActions);
     }
 
-    public StateTransition getApplicationEvaluatedOutcome(Resource resource, Comment comment) {
+    public StateTransition getApplicationStateCompletedOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId = comment.getTransitionState().getId();
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
@@ -316,7 +326,7 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 
-    public StateTransition getProgramConfiguredOutcome(Resource resource, Comment comment) {
+    public StateTransition getProgramViewEditOutcome(Resource resource, Comment comment) {
         // TODO implement
         return null;
     }

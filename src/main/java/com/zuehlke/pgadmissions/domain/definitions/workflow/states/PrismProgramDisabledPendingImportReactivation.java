@@ -70,13 +70,13 @@ public class PrismProgramDisabledPendingImportReactivation extends PrismWorkflow
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVED) // 
                         .withTransitionAction(PrismAction.PROGRAM_RESTORE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_REACTIVATED_OUTCOME)// 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_RESTORED_OUTCOME)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.PROJECT_RESTORE)), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DEACTIVATED) // 
                         .withTransitionAction(PrismAction.PROGRAM_RESTORE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_REACTIVATED_OUTCOME)// 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_RESTORED_OUTCOME)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.PROJECT_RESTORE))))); //
         

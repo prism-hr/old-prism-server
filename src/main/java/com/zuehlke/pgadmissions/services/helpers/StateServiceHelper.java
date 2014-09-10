@@ -53,7 +53,13 @@ public class StateServiceHelper {
     public void executePropagatedStateTransitions() throws Exception {
         List<PrismScope> scopeIds = scopeService.getScopesDescending();
         for (PrismScope scopeId : scopeIds) {
+            // TODO remove comment
+            log.info("iterating over scope " + scopeId);
+
             List<StateTransitionPendingDTO> stateTransitionPendingDTOs = stateService.getStateTransitionsPending(scopeId);
+
+            // TODO remove comment
+            log.info("pending trasitions " + stateTransitionPendingDTOs.size());
             for (StateTransitionPendingDTO stateTransitionPendingDTO : stateTransitionPendingDTOs) {
                 Integer stateTransitionPendingId = stateTransitionPendingDTO.getId();
                 boolean completed = true;

@@ -321,10 +321,12 @@ public class SystemService {
     private void initialiseStateActions() throws Exception {
         logger.info("Flushing resource escalations");
         stateTransitionHelper.executeEscalatedStateTransitions();
-        
+
         logger.info("Flushing resource propagations");
         stateTransitionHelper.executePropagatedStateTransitions();
-        
+        // TODO remove comment
+        logger.info("Flushed");
+
         stateService.deleteStateActions();
 
         for (State state : stateService.getStates()) {

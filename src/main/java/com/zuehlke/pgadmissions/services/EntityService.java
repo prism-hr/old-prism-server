@@ -98,8 +98,15 @@ public class EntityService {
         entityDAO.merge(entity);
     }
 
-    public void evict(Object entity) {
-        entityDAO.evict(entity);
+    public void evict(Object... entities) {
+        for (Object entity : entities) {
+            entityDAO.evict(entity);
+        }
+    }
+    
+    public void flushAndEvict(Object... entities) {
+        flush();
+        evict(entities);
     }
 
     public <T> void deleteAll(Class<T> classReference) {

@@ -11,6 +11,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -30,9 +31,11 @@ public class ResourceListFilter implements IUniqueEntity {
     @GeneratedValue
     Integer Id;
     
+    @ManyToOne
     @JoinColumn(name = "user_account_id", nullable = false)
     private UserAccount userAccount;
     
+    @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
     

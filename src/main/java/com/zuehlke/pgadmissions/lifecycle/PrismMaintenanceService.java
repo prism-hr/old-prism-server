@@ -42,8 +42,7 @@ public class PrismMaintenanceService {
 
     @Scheduled(cron = "${maintenance.ongoing}")
     public void maintainSystem() {
-        executeResourceEscalations();
-        executeResourcePropagations();
+        executeDeferredStateTransitions();
         importReferenceData();
         // FIXME uncomment and fix
 //        exportUclApplications();
@@ -54,21 +53,12 @@ public class PrismMaintenanceService {
         deleteUnusedDocuments();
     }
 
-    private void executeResourceEscalations() {
+    private void executeDeferredStateTransitions() {
         try {
-            logger.info("Executing resource escalations");
-            stateTransitionHelper.executeEscalatedStateTransitions();
+            logger.info("Executing deferred state transitions");
+            stateTransitionHelper.executeDeferredStateTransitions();
         } catch (Exception e) {
-            logger.info("Error executing resource escalations", e);
-        }
-    }
-
-    private void executeResourcePropagations() {
-        try {
-            logger.info("Executing resource propagations");
-            stateTransitionHelper.executePropagatedStateTransitions();
-        } catch (Exception e) {
-            logger.info("Error executing resource propagations", e);
+            logger.info("Error executing deferrred state transitions", e);
         }
     }
 

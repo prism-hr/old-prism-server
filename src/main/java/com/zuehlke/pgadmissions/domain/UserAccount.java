@@ -1,13 +1,12 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.util.HashMap;
+import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -48,10 +47,9 @@ public class UserAccount {
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_account_id", nullable = false)
-    @MapKeyJoinColumn(name = "scope_id", nullable = false)
-    private HashMap<Scope, ResourceListFilter> filters = Maps.newHashMap();
+    @OneToMany(mappedBy = "userAccount")
+    @MapKeyJoinColumn(name = "scope_id")
+    private Map<Scope, ResourceListFilter> filters = Maps.newHashMap();
 
     public String getPassword() {
         return password;
@@ -101,7 +99,7 @@ public class UserAccount {
         this.lastNotifiedDateRecommendation = lastNotifiedDateRecommendation;
     }
 
-    public HashMap<Scope, ResourceListFilter> getFilters() {
+    public Map<Scope, ResourceListFilter> getFilters() {
         return filters;
     }
 

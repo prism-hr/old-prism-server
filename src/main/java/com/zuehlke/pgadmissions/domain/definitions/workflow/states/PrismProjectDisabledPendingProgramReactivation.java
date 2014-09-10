@@ -54,19 +54,19 @@ public class PrismProjectDisabledPendingProgramReactivation extends PrismWorkflo
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_APPROVAL) // 
                         .withTransitionAction(PrismAction.PROJECT_RESTORE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_REACTIVATED_OUTCOME), // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_RESTORED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_APPROVAL_PENDING_CORRECTION) // 
                         .withTransitionAction(PrismAction.PROJECT_RESTORE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_REACTIVATED_OUTCOME), // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_RESTORED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_APPROVED) // 
                         .withTransitionAction(PrismAction.PROJECT_RESTORE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_REACTIVATED_OUTCOME), // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_RESTORED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DEACTIVATED) // 
                         .withTransitionAction(PrismAction.PROJECT_RESTORE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_REACTIVATED_OUTCOME)))); //
+                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_RESTORED_OUTCOME)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_TERMINATE) //

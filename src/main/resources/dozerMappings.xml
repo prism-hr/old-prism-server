@@ -92,6 +92,15 @@
     </mapping>
 
     <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.ApplicationProgramDetail</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.resource.application.ProgramDetailRepresentation</class-b>
+        <field>
+            <a>studyOption.code</a>
+            <b>studyOption</b>
+        </field>
+    </mapping>
+
+    <mapping>
         <class-a>com.zuehlke.pgadmissions.domain.Resource</class-a>
         <class-b>com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation</class-b>
         <field>

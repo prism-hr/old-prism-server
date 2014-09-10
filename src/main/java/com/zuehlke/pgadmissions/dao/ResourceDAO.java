@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
+import org.apache.commons.lang.WordUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.ProjectionList;
@@ -15,6 +16,7 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
@@ -81,9 +83,11 @@ public class ResourceDAO {
     }
 
     public List<ResourceConsoleListRowDTO> getResourceConsoleList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds,
-            List<PrismScope> joinScopeIds, ResourceListFilterDTO filterDTO, String lastSequenceIdentifier) {
+            ResourceListFilterDTO filterDTO, String lastSequenceIdentifier) {
         Class<? extends Resource> resourceClass = scopeId.getResourceClass();
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceClass, scopeId.getLowerCaseName());
+        String resourceReference = scopeId.getLowerCaseName();
+
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceClass, resourceReference);
 
         ProjectionList projectionList = Projections.projectionList();
 
@@ -92,17 +96,13 @@ public class ResourceDAO {
             projectionList.add(Projections.property(parentScopeName + ".id"), parentScopeName + "Id");
         }
 
-        projectionList.add(Projections.property("id"), scopeId.getLowerCaseName() + ".Id")
-                //
-                .add(Projections.property("user.firstName"), "creatorFirstName")
-                //
-                .add(Projections.property("user.firstName2"), "creatorFirstName2").add(Projections.property("user.firstName3"), "creatorFirstName3")
+        projectionList.add(Projections.property("id"), scopeId.getLowerCaseName() + ".Id") //
+                .add(Projections.property("user.firstName"), "creatorFirstName") //
+                .add(Projections.property("user.firstName2"), "creatorFirstName2") //
+                .add(Projections.property("user.firstName3"), "creatorFirstName3") //
                 .add(Projections.property("user.lastName"), "creatorLastName").add(Projections.property("code"), "code");
 
-        for (PrismScope joinScopeId : joinScopeIds) {
-            String joinScopeName = joinScopeId.getLowerCaseName();
-            projectionList.add(Projections.property(joinScopeName + ".title"), joinScopeName + "Title");
-        }
+        addResourceListCustomColumns(scopeId, projectionList);
 
         projectionList.add(Projections.property("applicationRatingAverage"), "applicationRatingAverage") //
                 .add(Projections.property("state.id"), "stateId") //
@@ -113,10 +113,7 @@ public class ResourceDAO {
         criteria.setProjection(projectionList) //
                 .createAlias("user", "user", JoinType.INNER_JOIN);
 
-        for (PrismScope joinScopeId : joinScopeIds) {
-            String joinScopeName = joinScopeId.getLowerCaseName();
-            criteria.createAlias(joinScopeName, joinScopeName, JoinType.LEFT_OUTER_JOIN); //
-        }
+        addResourceListCustomJoins(scopeId, resourceReference, criteria);
 
         criteria.createAlias("state", "state", JoinType.INNER_JOIN) //
                 .add(Subqueries.propertyIn("id", ResourceListConstraintBuilder.getVisibleResourcesCriteria(user, resourceClass, parentScopeIds, filterDTO)));
@@ -125,6 +122,25 @@ public class ResourceDAO {
                 .appendResourceListDisplayFilterExpression(Application.class, criteria, filterDTO.getSortOrder(), lastSequenceIdentifier) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowDTO.class)) //
                 .list();
+    }
+
+    private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {
+        HashMultimap<String, String> customColumns = scopeId.getConsoleListCustomColumns();
+        for (String tableName : customColumns.keySet()) {
+            boolean prefixColumnName = !tableName.equals(scopeId.getLowerCaseName());
+            for (String columnName : customColumns.get(tableName)) {
+                projectionList.add(Projections.property(prefixColumnName ? tableName + "." + columnName : columnName),
+                        prefixColumnName ? tableName + WordUtils.capitalize(columnName) : columnName);
+            }
+        }
+    }
+    
+    private void addResourceListCustomJoins(PrismScope scopeId, String resourceReference, Criteria criteria) {
+        for (String tableName : scopeId.getConsoleListCustomColumns().keySet()) {
+            if (!tableName.equals(resourceReference)) {
+                criteria.createAlias(tableName, tableName, JoinType.LEFT_OUTER_JOIN); //
+            }
+        }
     }
 
 }

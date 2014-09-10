@@ -47,6 +47,9 @@ public class ResourceListFilter implements IUniqueEntity {
     @Enumerated(EnumType.STRING)
     private FilterSortOrder sortOrder;
     
+    @Column(name = "value_string")
+    private String valueString;
+    
     @OneToMany(mappedBy = "filter")
     @OrderBy("displayPosition")
     private Set<ResourceListFilterConstraint> constraints = Sets.newHashSet();
@@ -99,6 +102,14 @@ public class ResourceListFilter implements IUniqueEntity {
         this.sortOrder = sortOrder;
     }
 
+    public final String getValueString() {
+        return valueString;
+    }
+
+    public final void setValueString(String valueString) {
+        this.valueString = valueString;
+    }
+
     public final Set<ResourceListFilterConstraint> getConstraints() {
         return constraints;
     }
@@ -125,6 +136,11 @@ public class ResourceListFilter implements IUniqueEntity {
     
     public ResourceListFilter withSortOrder(FilterSortOrder sortOrder) {
         this.sortOrder = sortOrder;
+        return this;
+    }
+    
+    public ResourceListFilter withValueString(String valueString) {
+        this.valueString = valueString;
         return this;
     }
     

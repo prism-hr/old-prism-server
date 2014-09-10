@@ -61,4 +61,5 @@ public class PrismActionValidationDefinition {
             return new PrismActionValidationDefinition(fieldDefinitions, customValidator);
         }
     }
+    
 }

@@ -13,6 +13,8 @@ public class ResourceListFilterDTO {
     
     private FilterSortOrder sortOrder;
     
+    private String valueString;
+    
     private List<ResourceListFilterConstraintDTO> constraints;
     
     private Boolean saveAsDefaultFilter;
@@ -27,6 +29,10 @@ public class ResourceListFilterDTO {
 
     public final FilterSortOrder getSortOrder() {
         return sortOrder;
+    }
+
+    public final String getValueString() {
+        return valueString;
     }
 
     public final List<ResourceListFilterConstraintDTO> getConstraints() {
@@ -49,6 +55,11 @@ public class ResourceListFilterDTO {
     
     public ResourceListFilterDTO withSortOrder(FilterSortOrder sortOrder) {
         this.sortOrder = sortOrder;
+        return this;
+    }
+    
+    public ResourceListFilterDTO withValueString(String valueString) {
+        this.valueString = valueString;
         return this;
     }
     

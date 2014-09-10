@@ -324,10 +324,10 @@ public class SystemService {
 
         logger.info("Flushing resource propagations");
         stateTransitionHelper.executePropagatedStateTransitions();
-        // TODO remove comment
-        logger.info("Flushed");
 
         stateService.deleteStateActions();
+        // TODO remove comment
+        logger.info("State actions deleted");
 
         for (State state : stateService.getStates()) {
             for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
@@ -344,12 +344,22 @@ public class SystemService {
                 initialiseStateTransitions(prismStateAction, stateAction);
             }
         }
+        // TODO remove comment
+        logger.info("States initialized");
 
         stateService.deleteObsoleteStateDurations();
+        // TODO remove comment
+        logger.info("obsolete durations deleted");
         notificationService.deleteObseleteNotificationConfigurations();
+        // TODO remove comment
+        logger.info("obsolete notificatins deleted");
         roleService.deleteInactiveRoles();
+        // TODO remove comment
+        logger.info("inactive roles deleted");
 
         verifyBackwardResourceCompatibility();
+        // TODO remove comment
+        logger.info("backward compatibility verified");
     }
 
     private void initialiseStateActionAssignments(PrismStateAction prismStateAction, StateAction stateAction) {

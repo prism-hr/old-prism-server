@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -46,25 +47,29 @@ public class StateServiceHelper {
 
     @Autowired
     private SystemService systemService;
-    
+
     ExecutorService executor = Executors.newFixedThreadPool(10);
 
-    public void executeDeferredStateTransitions() {
+    public void executeDeferredStateTransitions() throws DeduplicationException {
+        final List<DeferredStateTransitionDTO> transitions = Lists.newLinkedList();
+        transitions.addAll(getEscalatedStateTransitions());
+        transitions.addAll(getPropagatedStateTransitions());
+
         Runnable transition = new Runnable() {
             @Override
             public void run() {
-                try {
-                    logger.info("Flushing resource escalations");
-                    executeEscalatedStateTransitions();
-
-                    logger.info("Flushing resource propagations");
-                    executePropagatedStateTransitions();
-                } catch (Exception e) {
-                    logger.error("Error executing deferred state transitions", e);
+                for (DeferredStateTransitionDTO transition : transitions) {
+                    try {
+                        stateService.executeDeferredStateTransition(transition);
+                    } catch (DeduplicationException e) {
+                        logger.info("Error calling " + transition.getActionId() + " on " + PrismScope.getResourceScope(transition.getResourceClass()).name()
+                                + ": " + transition.getResourceId().toString(), e);
+                        continue;
+                    }
                 }
             }
         };
-        
+
         try {
             executor.submit(transition);
         } catch (RejectedExecutionException e) {
@@ -72,19 +77,22 @@ public class StateServiceHelper {
         }
     }
 
-    private void executeEscalatedStateTransitions() throws DeduplicationException {
+    private List<DeferredStateTransitionDTO> getEscalatedStateTransitions() throws DeduplicationException {
+        List<DeferredStateTransitionDTO> queue = Lists.newLinkedList();
         LocalDate baseline = new LocalDate();
         List<PrismAction> escalationActionIds = actionService.getEscalationActions();
         for (PrismAction escalatedActionId : escalationActionIds) {
             Class<? extends Resource> resourceClass = escalatedActionId.getScope().getResourceClass();
             List<Integer> resourceIds = resourceService.getResourcesToEscalate(resourceClass, escalatedActionId, baseline);
             for (Integer resourceId : resourceIds) {
-                stateService.executeDeferredStateTransition(new DeferredStateTransitionDTO(resourceClass, resourceId, escalatedActionId));
+                queue.add(new DeferredStateTransitionDTO(resourceClass, resourceId, escalatedActionId));
             }
         }
+        return queue;
     }
 
-    private void executePropagatedStateTransitions() throws DeduplicationException {
+    private List<DeferredStateTransitionDTO> getPropagatedStateTransitions() throws DeduplicationException {
+        List<DeferredStateTransitionDTO> queue = Lists.newLinkedList();
         List<PrismScope> scopeIds = scopeService.getScopesDescending();
         for (PrismScope scopeId : scopeIds) {
             List<StateTransitionPendingDTO> stateTransitionPendingDTOs = stateService.getStateTransitionsPending(scopeId);
@@ -99,11 +107,12 @@ public class StateServiceHelper {
                         stateService.deleteStateTransitionPending(stateTransitionPendingId);
                     }
                     for (Integer resourceId : resourceIds) {
-                        stateService.executeDeferredStateTransition(new DeferredStateTransitionDTO(propagatedResourceClass, resourceId, propagatedActionId));
+                        queue.add(new DeferredStateTransitionDTO(propagatedResourceClass, resourceId, propagatedActionId));
                     }
                 }
             }
         }
+        return queue;
     }
 
 }

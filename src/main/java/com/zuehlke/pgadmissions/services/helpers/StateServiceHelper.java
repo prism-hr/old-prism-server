@@ -5,8 +5,11 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.services.*;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +17,8 @@ import java.util.List;
 
 @Component
 public class StateServiceHelper {
+
+    private static final Logger log = LoggerFactory.getLogger(StateServiceHelper.class);
 
     @Autowired
     private ActionService actionService;
@@ -61,6 +66,7 @@ public class StateServiceHelper {
                         try {
                             stateService.executeDeferredStateTransition(propagatedScopeId.getResourceClass(), resourceId, propagatedActionId);
                         } catch (Exception e) {
+                            log.error("Problem executing deferred state transition", e);
                             completed = false;
                             continue;
                         }

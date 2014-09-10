@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.dto;
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class DeferredStateTransitionDTO implements Comparable<DeferredStateTransitionDTO> {
@@ -16,7 +17,7 @@ public class DeferredStateTransitionDTO implements Comparable<DeferredStateTrans
     public final Class<? extends Resource> getResourceClass() {
         return resourceClass;
     }
-    
+
     public DeferredStateTransitionDTO(Class<? extends Resource> resourceClass, Integer resourceId, PrismAction actionId) {
         this.resourceClass = resourceClass;
         this.resourceId = resourceId;
@@ -33,7 +34,7 @@ public class DeferredStateTransitionDTO implements Comparable<DeferredStateTrans
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(resourceClass, resourceId);
+        return Objects.hashCode(resourceClass, resourceId, actionId);
     }
 
     @Override
@@ -45,13 +46,17 @@ public class DeferredStateTransitionDTO implements Comparable<DeferredStateTrans
             return false;
         }
         final DeferredStateTransitionDTO other = (DeferredStateTransitionDTO) object;
-        return Objects.equal(resourceClass, other.getResourceClass()) && Objects.equal(resourceId, other.getResourceId());
+        return Objects.equal(resourceClass, other.getResourceClass()) && Objects.equal(resourceId, other.getResourceId())
+                && Objects.equal(actionId, other.getActionId());
     }
 
     @Override
     public int compareTo(DeferredStateTransitionDTO other) {
         if (this.equals(other)) {
             return 0;
+        } else if (PrismScope.getResourceScope(resourceClass) == PrismScope.getResourceScope(other.getResourceClass())
+                && resourceId == other.getResourceId()) {
+            return actionId.getActionCategory() == PrismActionCategory.ESCALATE_RESOURCE ? -1 : 1;
         } else if (PrismScope.getResourceScope(resourceClass).getPrecedence() < PrismScope.getResourceScope(other.getResourceClass()).getPrecedence()) {
             return -1;
         } else if (resourceId < other.getResourceId()) {
@@ -60,5 +65,5 @@ public class DeferredStateTransitionDTO implements Comparable<DeferredStateTrans
             return 1;
         }
     }
-    
+
 }

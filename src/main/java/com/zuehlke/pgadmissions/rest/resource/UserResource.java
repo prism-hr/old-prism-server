@@ -45,7 +45,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 public class UserResource {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     @Resource(name = "prismUserDetailsService")
     private UserDetailsService userDetailsService;
 

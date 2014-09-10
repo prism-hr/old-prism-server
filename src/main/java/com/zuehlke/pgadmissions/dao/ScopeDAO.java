@@ -37,13 +37,4 @@ public class ScopeDAO {
                 .list();
     }
     
-    public List<PrismScope> getJoinScopesAscending(PrismScope scopeId) {
-        Integer precedence = scopeId.getPrecedence();
-        return (List<PrismScope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
-                .setProjection(Projections.property("id")) //
-                .add(Restrictions.between("precedence", (precedence - 2), (precedence + 1)))
-                .addOrder(Order.asc("precedence")) //
-                .list();
-    }
-    
 }

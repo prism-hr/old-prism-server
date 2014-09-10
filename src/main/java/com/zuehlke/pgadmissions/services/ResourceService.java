@@ -220,10 +220,9 @@ public class ResourceService {
         }
         
         List<PrismScope> parentScopeIds = scopeService.getParentScopesAscending(scopeId);
-        List<PrismScope> joinScopeIds = scopeService.getJoinScopesAscending(scopeId);
-        
         filterDTO = resourceListFilterService.saveOrGetByUserAndScope(user, scopeId, filterDTO);
-        return resourceDAO.getResourceConsoleList(user, scopeId, parentScopeIds, joinScopeIds, filterDTO, lastSequenceIdentifier);
+        
+        return resourceDAO.getResourceConsoleList(user, scopeId, parentScopeIds, filterDTO, lastSequenceIdentifier);
     }
     
 }

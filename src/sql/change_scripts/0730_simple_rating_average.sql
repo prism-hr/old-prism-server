@@ -515,7 +515,7 @@ CREATE TABLE RESOURCE_LIST_FILTER_CONSTRAINT (
 	filter_expression VARCHAR(50) NOT NULL,
 	negated INT(1) UNSIGNED NOT NULL,
 	display_position INTEGER(3) NOT NULL,
-	value_string VARCHAR(50),
+	value_string VARCHAR(255),
 	value_state_group_id VARCHAR(50),
 	value_date_start DATE,
 	value_date_close DATE,

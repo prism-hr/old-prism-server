@@ -105,15 +105,6 @@ public class StaticDataResource {
             staticData.put(pluralize(simpleName), definitions);
         }
 
-        // Display names and min/max values for language qualification types
-        List<ImportedLanguageQualificationType> languageQualificationTypes = entityService.list(ImportedLanguageQualificationType.class);
-        List<LanguageQualificationTypeRepresentation> languageQualificationTypeRepresentations = Lists.newArrayListWithCapacity(languageQualificationTypes
-                .size());
-        for (ImportedLanguageQualificationType languageQualificationType : languageQualificationTypes) {
-            languageQualificationTypeRepresentations.add(dozerBeanMapper.map(languageQualificationType, LanguageQualificationTypeRepresentation.class));
-        }
-        staticData.put("languageQualificationTypes", languageQualificationTypeRepresentations);
-
         staticData.put("timeZones", TimeZoneList.getInstance().getTimeZoneDefinitions());
 
         return staticData;
@@ -128,7 +119,7 @@ public class StaticDataResource {
 
         // Display names for imported entities
         for (Class<Object> importedEntityType : new Class[]{ReferralSource.class, Title.class, Ethnicity.class, Disability.class,
-                Gender.class, Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, ImportedLanguageQualificationType.class, FundingSource.class,
+                Gender.class, Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, FundingSource.class,
                 RejectionReason.class, ResidenceState.class}) {
             String simpleName = importedEntityType.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);
@@ -139,6 +130,15 @@ public class StaticDataResource {
             }
             staticData.put(pluralize(simpleName), entityRepresentations);
         }
+
+        // Display names and min/max values for language qualification types
+        List<ImportedLanguageQualificationType> languageQualificationTypes = entityService.listByProperty(ImportedLanguageQualificationType.class, "institution", institution);
+        List<LanguageQualificationTypeRepresentation> languageQualificationTypeRepresentations = Lists.newArrayListWithCapacity(languageQualificationTypes
+                .size());
+        for (ImportedLanguageQualificationType languageQualificationType : languageQualificationTypes) {
+            languageQualificationTypeRepresentations.add(dozerBeanMapper.map(languageQualificationType, LanguageQualificationTypeRepresentation.class));
+        }
+        staticData.put("languageQualificationTypes", languageQualificationTypeRepresentations);
 
         staticData.put("institution", dozerBeanMapper.map(institution, InstitutionRepresentation.class));
         return staticData;

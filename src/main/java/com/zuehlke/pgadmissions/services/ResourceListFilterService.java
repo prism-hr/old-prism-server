@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,7 +70,7 @@ public class ResourceListFilterService {
     }
 
     public ResourceListFilterDTO getByUserAndScope(User user, Scope scope) {
-        HashMap<Scope, ResourceListFilter> filters = user.getUserAccount().getFilters();
+        Map<Scope, ResourceListFilter> filters = user.getUserAccount().getFilters();
 
         if (filters.containsKey(scope)) {
             ResourceListFilter filter = filters.get(scope);

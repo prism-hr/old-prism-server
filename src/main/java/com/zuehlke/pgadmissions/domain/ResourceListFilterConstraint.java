@@ -26,10 +26,10 @@ import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 
 @Entity
 @Table(name = "RESOURCE_LIST_FILTER_CONSTRAINT", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "resouce_list_filter_id", "filter_property", "filter_expression", "value_string" }),
-        @UniqueConstraint(columnNames = { "resouce_list_filter_id", "filter_property", "filter_expression", "value_date_start", "value_date_close" }),
-        @UniqueConstraint(columnNames = { "resouce_list_filter_id", "filter_property", "filter_expression", "value_state_id" }),
-        @UniqueConstraint(columnNames = { "resouce_list_filter_id", "filter_property", "filter_expression", "value_decimal_start", "value_decimal_close" }) })
+        @UniqueConstraint(columnNames = { "resource_list_filter_id", "filter_property", "filter_expression", "value_string" }),
+        @UniqueConstraint(columnNames = { "resource_list_filter_id", "filter_property", "filter_expression", "value_date_start", "value_date_close" }),
+        @UniqueConstraint(columnNames = { "resource_list_filter_id", "filter_property", "filter_expression", "value_state_group_id" }),
+        @UniqueConstraint(columnNames = { "resource_list_filter_id", "filter_property", "filter_expression", "value_decimal_start", "value_decimal_close" }) })
 public class ResourceListFilterConstraint {
 
     @Id

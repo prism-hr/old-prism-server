@@ -298,9 +298,11 @@ public class SystemInitialisationHelper {
         assertTrue(prismStateAction.getTransitions().size() == stateTransitions.size());
 
         for (StateTransition stateTransition : stateTransitions) {
+            StateTransitionEvaluation evaluation = stateTransition.getStateTransitionEvaluation();
+            
             PrismStateTransition prismStateTransition = new PrismStateTransition().withTransitionState(stateTransition.getTransitionState().getId())
                     .withTransitionAction(stateTransition.getTransitionAction().getId())
-                    .withTransitionEvaluation(stateTransition.getStateTransitionEvaluation().getId());
+                    .withTransitionEvaluation(evaluation == null ? null : evaluation.getId());
 
             for (RoleTransition roleTransition : stateTransition.getRoleTransitions()) {
                 prismStateTransition.getRoleTransitions().add(

@@ -177,11 +177,12 @@ public class RoleService {
         for (CommentAssignedUser assignee : assignees) {
             if (assignee.getRole() == transitionRole) {
                 User transitionUser = assignee.getUser();
-                if (restrictedToUser == null || transitionUser.equals(restrictedToUser)) {
-                    transitionUsers.add(transitionUser);
+                if (restrictedToUser != null && !transitionUser.equals(restrictedToUser)) {
+                    actionService.throwWorkflowEngineException(comment.getResource(), comment.getAction(),
+                            "Attempted to create user :" + transitionUser.toString() + " in role " + transitionRole.getAuthority()
+                                    + ". Role is restricted to creator " + restrictedToUser.toString());
                 }
-                actionService.throwWorkflowEngineException(comment.getResource(), comment.getAction(), "Attempted to create user :" + transitionUser.toString()
-                        + " in role " + transitionRole.getAuthority() + ". Role is restricted to creator " + restrictedToUser.toString());
+                transitionUsers.add(transitionUser);
             }
         }
 

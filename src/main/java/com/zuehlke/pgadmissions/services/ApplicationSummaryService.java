@@ -89,13 +89,13 @@ public class ApplicationSummaryService {
         if (persistentProcessing == null) {
             transientProcessing.setInstanceCount(1);
             transientProcessing.setLastUpdatedDate(baseline);
-            persistentProcessing = (ApplicationProcessing) entityService.save(transientProcessing);
+            entityService.save(transientProcessing);
+            return transientProcessing;
         } else {
             persistentProcessing.setInstanceCount(SummaryHelper.incrementRunningCount(persistentProcessing.getInstanceCount()));
             persistentProcessing.setLastUpdatedDate(baseline);
+            return persistentProcessing;
         }
-
-        return persistentProcessing;
     }
 
     private Integer updatePreviousApplicationProcessing(Application application, StateGroup previousStateGroup, LocalDate baseline) {

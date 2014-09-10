@@ -127,7 +127,7 @@ public class SystemService {
     }
 
     @Transactional(timeout = 600)
-    public void initialiseSystem() throws Exception {
+    public void initialiseSystem() throws WorkflowConfigurationException, DeduplicationException {
         logger.info("Initialising scope definitions");
         verifyBackwardCompatibility(Scope.class);
         initialiseScopes();
@@ -332,13 +332,8 @@ public class SystemService {
         }
     }
 
-    private void initialiseStateActions() throws Exception {
-        logger.info("Flushing resource escalations");
-        stateTransitionHelper.executeEscalatedStateTransitions();
-
-        logger.info("Flushing resource propagations");
-        stateTransitionHelper.executePropagatedStateTransitions();
-
+    private void initialiseStateActions() throws DeduplicationException, WorkflowConfigurationException {
+        stateTransitionHelper.executeDeferredStateTransitions();
         stateService.deleteStateActions();
 
         for (State state : stateService.getStates()) {
@@ -417,7 +412,7 @@ public class SystemService {
         }
     }
 
-    private void initialiseSystemUser(System system) throws Exception {
+    private void initialiseSystemUser(System system) throws DeduplicationException {
         User user = system.getUser();
         if (user.getUserAccount() == null) {
             Action action = actionService.getById(PrismAction.SYSTEM_STARTUP);

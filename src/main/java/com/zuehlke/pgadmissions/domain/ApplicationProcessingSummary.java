@@ -55,7 +55,7 @@ public class ApplicationProcessingSummary implements IUniqueEntity {
     @Column(name = "instance_count_average_non_zero", nullable = false)
     private BigDecimal instanceCountAverageNonZero;
     
-    @Column(name = "day_duration_average_non_zero")
+    @Column(name = "day_duration_average")
     private BigDecimal dayDurationAverage;
     
     public final Integer getId() {

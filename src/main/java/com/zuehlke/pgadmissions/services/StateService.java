@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -34,6 +35,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
+import com.zuehlke.pgadmissions.dto.DeferredStateTransitionDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
@@ -72,14 +74,16 @@ public class StateService {
     @Autowired
     private SystemService systemService;
 
+    protected final ConcurrentSkipListSet<DeferredStateTransitionDTO> deferredTransitions = new ConcurrentSkipListSet<DeferredStateTransitionDTO>();
+
     public State getById(PrismState id) {
         return entityService.getById(State.class, id);
     }
-    
+
     public StateGroup getStateGroupById(PrismStateGroup stateGroupId) {
         return entityService.getById(StateGroup.class, stateGroupId);
     }
-    
+
     public StateTransitionEvaluation getStateTransitionEvaluationById(PrismTransitionEvaluation stateTransitionEvaluationId) {
         return entityService.getById(StateTransitionEvaluation.class, stateTransitionEvaluationId);
     }
@@ -95,7 +99,7 @@ public class StateService {
     public List<StateGroup> getStateGroups() {
         return entityService.list(StateGroup.class);
     }
-    
+
     public List<StateTransitionEvaluation> getStateTransitionEvaluations() {
         return entityService.list(StateTransitionEvaluation.class);
     }
@@ -304,7 +308,8 @@ public class StateService {
     }
 
     public StateTransition getApplicationRecruitedOutcome(Resource resource, Comment comment) {
-        Comment recruitedComment = commentService.getEarliestComment((ParentResource) resource, Resource.class, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
+        Comment recruitedComment = commentService.getEarliestComment((ParentResource) resource, Resource.class,
+                PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), recruitedComment.getParentResourceTransitionState().getId());
     }
 
@@ -331,9 +336,17 @@ public class StateService {
         return null;
     }
 
-    public <T extends Resource> void executeDeferredStateTransition(Class<T> resourceClass, Integer resourceId, PrismAction actionId) throws Exception {
-        Resource resource = resourceService.getById(resourceClass, resourceId);
-        Action action = actionService.getById(actionId);
+    public synchronized <T extends Resource> void executeDeferredStateTransition(DeferredStateTransitionDTO transitionDTO)
+            throws DeduplicationException {
+        Resource resource = resourceService.getById(transitionDTO.getResourceClass(), transitionDTO.getResourceId());
+        Action action = actionService.getById(transitionDTO.getActionId());
+        
+        if (deferredTransitions.contains(transitionDTO)) {
+            logger.info("Skipping " + action.getId() + " on " + resource.getCode() + " - already queued");
+            return;
+        }
+        
+        deferredTransitions.add(transitionDTO);
 
         logger.info("Calling " + action.getId() + " on " + resource.getCode());
 
@@ -341,20 +354,17 @@ public class StateService {
                 .withCreatedTimestamp(new DateTime());
         executeStateTransition(resource, action, comment);
 
-        entityService.flush();
-        entityService.evict(resource);
-        entityService.evict(action);
-        entityService.evict(comment);
+        deferredTransitions.remove(transitionDTO);
+        entityService.flushAndEvict(resource, action, comment);
     }
 
     public void deleteStateTransitionPending(Integer stateTransitionPendingId) {
         StateTransitionPending pending = entityService.getById(StateTransitionPending.class, stateTransitionPendingId);
 
         entityService.delete(pending);
-        entityService.flush();
-        entityService.evict(pending);
+        entityService.flushAndEvict(pending);
     }
-    
+
     public List<PrismStateGroup> getAssignableStateGroups(PrismScope scopeId) {
         return stateDAO.getAssignableStateGroups(scopeId);
     }

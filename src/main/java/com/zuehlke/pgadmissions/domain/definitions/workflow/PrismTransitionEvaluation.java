@@ -24,7 +24,7 @@ public enum PrismTransitionEvaluation {
     PROJECT_APPROVED_OUTCOME(true, PrismScope.PROJECT), //
     PROJECT_VIEW_EDIT_OUTCOME(true, PrismScope.PROJECT), //
     PROJECT_CREATED_OUTCOME(false, PrismScope.PROJECT), //
-    PROJECT_REACTIVATED_OUTCOME(false, PrismScope.PROJECT);
+    PROJECT_RESTORED_OUTCOME(false, PrismScope.PROJECT);
     
     private boolean nextStateSelection;
     

@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
@@ -99,7 +100,7 @@ public class InstitutionService {
         entityService.save(institution);
     }
 
-    public void populateDefaultImportedEntityFeeds() throws Exception {
+    public void populateDefaultImportedEntityFeeds() throws DeduplicationException {
         for (Institution institution : institutionDAO.getInstitutionsWithoutImportedEntityFeeds()) {
             for (PrismImportedEntity importedEntityType : PrismImportedEntity.values()) {
                 if (importedEntityType.getDefaultLocation() != null) {

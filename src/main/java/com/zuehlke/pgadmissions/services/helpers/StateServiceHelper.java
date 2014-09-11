@@ -1,14 +1,9 @@
 package com.zuehlke.pgadmissions.services.helpers;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
 
 import org.hibernate.SessionFactory;
 import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,9 +21,7 @@ import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
 @Component
-public class StateServiceHelper {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+public class StateServiceHelper extends AbstractServiceHelper {
 
     @Autowired
     private ActionService actionService;
@@ -48,32 +41,14 @@ public class StateServiceHelper {
     @Autowired
     private SystemService systemService;
 
-    ExecutorService executor = Executors.newFixedThreadPool(10);
-
-    public void executeDeferredStateTransitions() throws DeduplicationException {
+    @Override
+    public void execute() throws DeduplicationException {
         final List<DeferredStateTransitionDTO> transitions = Lists.newLinkedList();
         transitions.addAll(getEscalatedStateTransitions());
         transitions.addAll(getPropagatedStateTransitions());
 
-        Runnable transition = new Runnable() {
-            @Override
-            public void run() {
-                for (DeferredStateTransitionDTO transition : transitions) {
-                    try {
-                        stateService.executeDeferredStateTransition(transition);
-                    } catch (DeduplicationException e) {
-                        logger.info("Error calling " + transition.getActionId() + " on " + PrismScope.getResourceScope(transition.getResourceClass()).name()
-                                + ": " + transition.getResourceId().toString(), e);
-                        continue;
-                    }
-                }
-            }
-        };
-
-        try {
-            executor.submit(transition);
-        } catch (RejectedExecutionException e) {
-            logger.info("The thread pool is saturated", e);
+        for (DeferredStateTransitionDTO transition : transitions) {
+            stateService.executeDeferredStateTransition(transition);
         }
     }
 

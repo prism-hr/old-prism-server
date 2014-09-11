@@ -10,12 +10,13 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.services.ProgramService;
 
 @Component
-public class ProgramServiceHelper {
+public class ProgramServiceHelper extends AbstractServiceHelper {
     
     @Autowired
     private ProgramService programService;
 
-    public void updateProgramStudyOptions() {
+    @Override
+    public void execute() {
         LocalDate baseline = new LocalDate();
         List<Program> programs = programService.getProgramsWithElapsedStudyOptions(baseline);
         

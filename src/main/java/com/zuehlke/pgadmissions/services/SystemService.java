@@ -9,6 +9,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.MaintenanceTask;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
@@ -117,6 +119,9 @@ public class SystemService {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private MaintenanceService maintenanceService;
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -172,9 +177,14 @@ public class SystemService {
     }
 
     @Transactional
-    public void initializeSearchIndexes() throws InterruptedException {
+    public void initialiseSearchIndexes() throws InterruptedException {
         FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
         fullTextSession.createIndexer().startAndWait();
+    }
+    
+    @Transactional
+    public void setLastDataImportDate(LocalDate baseline) {
+        getSystem().setLastDataImportDate(baseline);
     }
 
     private void initialiseScopes() throws DeduplicationException {
@@ -333,7 +343,7 @@ public class SystemService {
     }
 
     private void initialiseStateActions() throws DeduplicationException, WorkflowConfigurationException {
-        stateTransitionHelper.executeDeferredStateTransitions();
+        maintenanceService.submit(MaintenanceTask.SYSTEM_EXECUTE_DEFERRED_STATE_TRANSITION);
         stateService.deleteStateActions();
 
         for (State state : stateService.getStates()) {

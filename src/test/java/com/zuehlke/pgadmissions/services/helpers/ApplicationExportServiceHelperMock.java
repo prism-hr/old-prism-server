@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.lifecycle;
+package com.zuehlke.pgadmissions.services.helpers;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -13,14 +13,13 @@ import org.apache.commons.io.IOUtils;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.services.helpers.ApplicationExportServiceHelper;
 
 public class ApplicationExportServiceHelperMock extends ApplicationExportServiceHelper {
 
     private final HashMap<Application, ApplicationExportRequest> exportRequests = Maps.newHashMap();
 
     @Override
-    public void exportUclApplications() {
+    public void execute() {
         List<Application> applications = applicationExportService.getUclApplicationsForExport();
         for (Application application : applications) {
             OutputStream outputStream = null;

@@ -108,7 +108,7 @@ public class ImportedEntityService {
         return importedEntityDAO.getImportedInstitutionByName(institution, domicile, name);
     }
 
-    public ImportedEntityFeed getOrCreateImportedEntityFeed(Institution institution, PrismImportedEntity importedEntityType, String location) throws Exception {
+    public ImportedEntityFeed getOrCreateImportedEntityFeed(Institution institution, PrismImportedEntity importedEntityType, String location) throws DeduplicationException {
         return getOrCreateImportedEntityFeed(institution, importedEntityType, location, null, null);
     }
 

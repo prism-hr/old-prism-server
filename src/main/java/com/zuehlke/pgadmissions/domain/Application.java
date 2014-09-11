@@ -112,19 +112,23 @@ public class Application extends Resource {
     @JoinColumn(name = "application_additional_information_id", unique = true)
     private ApplicationAdditionalInformation additionalInformation;
 
-    @Column(name = "rating_count")
-    private Integer ratingCount;
+    @Column(name = "application_rating_count")
+    private Integer applicationRatingCount;
 
-    @Column(name = "rating_average")
-    private BigDecimal ratingAverage;
+    @Column(name = "application_rating_average")
+    private BigDecimal applicationRatingAverage;
 
     @Column(name = "confirmed_start_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate confirmedStartDate;
 
     @ManyToOne
-    @JoinColumn(name = "confirmed_supervisor_user_id")
-    private User confirmedSupervisor;
+    @JoinColumn(name = "confirmed_primary_supervisor_id")
+    private User confirmedPrimarySupervisor;
+    
+    @ManyToOne
+    @JoinColumn(name = "confirmed_secondary_supervisor_id")
+    private User confirmedSecondarySupervisor;
 
     @Column(name = "confirmed_offer_type")
     @Enumerated(EnumType.STRING)
@@ -161,10 +165,10 @@ public class Application extends Resource {
     private DateTime updatedTimestamp;
 
     @OneToMany(mappedBy = "application")
-    private Set<UserRole> userRoles = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "application")
     private Set<Comment> comments = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "application")
+    private Set<UserRole> userRoles = Sets.newHashSet();
 
     @Transient
     private Boolean acceptedTerms;
@@ -346,20 +350,20 @@ public class Application extends Resource {
         this.additionalInformation = additionalInformation;
     }
 
-    public final Integer getRatingCount() {
-        return ratingCount;
+    public final Integer getApplicationRatingCount() {
+        return applicationRatingCount;
     }
 
-    public final void setRatingCount(Integer ratingCount) {
-        this.ratingCount = ratingCount;
+    public final void setApplicationRatingCount(Integer applicationRatingCount) {
+        this.applicationRatingCount = applicationRatingCount;
     }
 
-    public final BigDecimal getRatingAverage() {
-        return ratingAverage;
+    public final BigDecimal getApplicationRatingAverage() {
+        return applicationRatingAverage;
     }
 
-    public final void setRatingAverage(BigDecimal ratingAverage) {
-        this.ratingAverage = ratingAverage;
+    public final void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+        this.applicationRatingAverage = applicationRatingAverage;
     }
 
     public final LocalDate getConfirmedStartDate() {
@@ -370,12 +374,20 @@ public class Application extends Resource {
         this.confirmedStartDate = confirmedStartDate;
     }
 
-    public final User getConfirmedSupervisor() {
-        return confirmedSupervisor;
+    public final User getConfirmedPrimarySupervisor() {
+        return confirmedPrimarySupervisor;
     }
 
-    public final void setConfirmedSupervisor(User confirmedSupervisor) {
-        this.confirmedSupervisor = confirmedSupervisor;
+    public final void setConfirmedPrimarySupervisor(User confirmedPrimarySupervisor) {
+        this.confirmedPrimarySupervisor = confirmedPrimarySupervisor;
+    }
+
+    public final User getConfirmedSecondarySupervisor() {
+        return confirmedSecondarySupervisor;
+    }
+
+    public final void setConfirmedSecondarySupervisor(User confirmedSecondarySupervisor) {
+        this.confirmedSecondarySupervisor = confirmedSecondarySupervisor;
     }
 
     public final PrismOfferType getConfirmedOfferType() {
@@ -410,12 +422,12 @@ public class Application extends Resource {
         return referees;
     }
 
-    public final Set<UserRole> getUserRoles() {
-        return userRoles;
-    }
-
     public final Set<Comment> getComments() {
         return comments;
+    }
+    
+    public final Set<UserRole> getUserRoles() {
+        return userRoles;
     }
 
     public Application withId(Integer id) {
@@ -560,6 +572,16 @@ public class Application extends Resource {
 
     public LocalDate getRecommendedStartDate() {
         return project == null ? program.getRecommendedStartDate() : project.getRecommendedStartDate();
+    }
+    
+    public Set<ParentResource> getParentResources() {
+        Set<ParentResource> parentResources = Sets.newLinkedHashSet();
+        if (project != null) {
+            parentResources.add(project);
+        }
+        parentResources.add(program);
+        parentResources.add(institution);
+        return parentResources;
     }
 
     @Override

@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.StateTransition;
+import com.zuehlke.pgadmissions.domain.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
@@ -200,24 +201,26 @@ public class WorkflowConfigurationHelper {
         int stateTransitionCount = stateTransitions.size();
 
         for (StateTransition stateTransition : stateTransitions) {
-            PrismTransitionEvaluation thisTransitionEvaluation = stateTransition.getStateTransitionEvaluation();
+
+            StateTransitionEvaluation thisTransitionEvaluation = stateTransition.getStateTransitionEvaluation();
+            PrismTransitionEvaluation thisTransitionEvaluationId = thisTransitionEvaluation == null ? null : thisTransitionEvaluation.getId();
 
             assertTrue(stateTransition.getRoleTransitions().size() > 0 || state != stateTransition.getTransitionState()
-                    || action != stateTransition.getTransitionAction() || thisTransitionEvaluation != null);
+                    || action != stateTransition.getTransitionAction() || thisTransitionEvaluationId != null);
 
             logger.info("Verifying state transition: " + state.getId().toString() + " "
-                    + (thisTransitionEvaluation == null ? "" : thisTransitionEvaluation + " ") + stateTransition.getTransitionState().getId().toString());
+                    + (thisTransitionEvaluationId == null ? "" : thisTransitionEvaluationId + " ") + stateTransition.getTransitionState().getId().toString());
 
             if (stateTransitionCount == 1) {
-                assertNull(thisTransitionEvaluation);
+                assertNull(thisTransitionEvaluationId);
             } else {
-                assertTrue(lastTransitionEvaluation == null || lastTransitionEvaluation == thisTransitionEvaluation);
+                assertTrue(lastTransitionEvaluation == null || lastTransitionEvaluation == thisTransitionEvaluationId);
             }
 
             State transitionState = stateTransition.getTransitionState();
             assertTrue(state.getScope() == transitionState.getScope() || action.getCreationScope() == transitionState.getScope());
 
-            lastTransitionEvaluation = thisTransitionEvaluation;
+            lastTransitionEvaluation = thisTransitionEvaluationId;
             verifyRoleTransitions(stateTransition);
 
             if (!stateTransition.getPropagatedActions().isEmpty()) {

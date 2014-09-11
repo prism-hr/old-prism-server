@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.NotificationService;
@@ -18,7 +17,7 @@ import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
 @Component
-public class NotificationServiceHelper {
+public class NotificationServiceHelperWorkflow extends AbstractServiceHelper {
 
     @Autowired
     private CommentService commentService;
@@ -35,21 +34,14 @@ public class NotificationServiceHelper {
     @Autowired
     private SystemService systemService;
     
-    public void sendDeferredWorkflowNotifications() {
+    @Override
+    public void execute() {
         LocalDate baseline = new LocalDate();
         List<PrismScope> scopeIds = scopeService.getScopesDescending();
         for (PrismScope scopeId : scopeIds) {
             sendIndividualRequestReminders(scopeId, baseline);
             sendSyndicatedRequestNotifications(scopeId, baseline);
             sendSyndicatedUpdateNotifications(scopeId, baseline);
-        }
-    }
-    
-    public void sendRecommendationNotifications() {
-        LocalDate baseline = new LocalDate();
-        List<User> users = notificationService.getRecommendationNotifications(baseline);
-        for (User user : users) {
-            notificationService.sendRecommendationNotification(user, baseline);
         }
     }
     

@@ -14,8 +14,8 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -24,22 +24,22 @@ public class AdvertDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public List<Advert> getActiveAdverts(List<State> activeProgramStates, List<State> activeProjectStates) {
+    public List<Advert> getActiveAdverts(List<PrismState> activeProgramStates, List<PrismState> activeProjectStates) {
         return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("project", "project", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("program"))
-                                .add(Restrictions.in("program.state", activeProgramStates))) //
+                                .add(Restrictions.in("program.state.id", activeProgramStates))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("project"))
-                                .add(Restrictions.in("project.state", activeProjectStates)))) //
+                                .add(Restrictions.in("project.state.id", activeProjectStates)))) //
                 .addOrder(Order.desc("sequenceIdentifier")) //
                 .list();
     }
 
-    public List<Advert> getRecommendedAdverts(User user, List<State> activeProgramStates, List<State> activeProjectStates) {
+    public List<Advert> getRecommendedAdverts(User user, List<PrismState> activeProgramStates, List<PrismState> activeProjectStates) {
         return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.groupProperty("application.advert")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
@@ -54,10 +54,10 @@ public class AdvertDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("recommendedAdvert.program"))
-                                .add(Restrictions.in("program.state", activeProgramStates))) //
+                                .add(Restrictions.in("program.state.id", activeProgramStates))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("recommendedAdvert.project"))
-                                .add(Restrictions.in("project.state", activeProjectStates)))) //
+                                .add(Restrictions.in("project.state.id", activeProjectStates)))) //
                 .addOrder(Order.desc("application.submittedTimestamp")) //
                 .addOrder(Order.desc("recommendedAdvert.sequenceIdentifier")) //
                 .setMaxResults(25) //

@@ -108,7 +108,7 @@ public class PrismApplicationApprovalPendingFeedback extends PrismWorkflowState 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVAL) // 
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_SUPERVISORS) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EVALUATED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_STATE_COMPLETED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
@@ -134,7 +134,7 @@ public class PrismApplicationApprovalPendingFeedback extends PrismWorkflowState 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVED) // 
                         .withTransitionAction(PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EVALUATED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_STATE_COMPLETED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
@@ -154,7 +154,7 @@ public class PrismApplicationApprovalPendingFeedback extends PrismWorkflowState 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_INTERVIEW) // 
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_INTERVIEWERS) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EVALUATED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_STATE_COMPLETED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
@@ -180,7 +180,7 @@ public class PrismApplicationApprovalPendingFeedback extends PrismWorkflowState 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REJECTED) // 
                         .withTransitionAction(PrismAction.APPLICATION_CONFIRM_REJECTION) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EVALUATED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_STATE_COMPLETED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
@@ -200,7 +200,7 @@ public class PrismApplicationApprovalPendingFeedback extends PrismWorkflowState 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REVIEW) // 
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_REVIEWERS) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EVALUATED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_STATE_COMPLETED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //

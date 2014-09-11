@@ -38,6 +38,10 @@ public class System extends Resource {
 
     @Column(name = "name", unique = true)
     private String name;
+    
+    @Column(name = "due_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastDataImportDate;
 
     @ManyToOne
     @JoinColumn(name = "state_id")
@@ -88,6 +92,14 @@ public class System extends Resource {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public final LocalDate getLastDataImportDate() {
+        return lastDataImportDate;
+    }
+
+    public final void setLastDataImportDate(LocalDate lastDataImportDate) {
+        this.lastDataImportDate = lastDataImportDate;
     }
 
     public System withName(String name) {

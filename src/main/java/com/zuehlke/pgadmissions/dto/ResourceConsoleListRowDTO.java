@@ -1,17 +1,23 @@
 package com.zuehlke.pgadmissions.dto;
 
 import java.math.BigDecimal;
-import java.util.Date;
+
+import org.joda.time.LocalDate;
+
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
 public class ResourceConsoleListRowDTO {
 
-    private Integer id;
-
-    private String code;
-
-    private Boolean raisesUrgentFlag;
-
-    private String state;
+    private Integer systemId;
+    
+    private Integer institutionId;
+    
+    private Integer programId;
+    
+    private Integer projectId;
+    
+    private Integer applicationId;
 
     private String creatorFirstName;
 
@@ -20,139 +26,167 @@ public class ResourceConsoleListRowDTO {
     private String creatorFirstName3;
 
     private String creatorLastName;
+    
+    private String code;
 
-    private String creatorEmail;
-
+    private String institutionTitle;
+    
     private String programTitle;
 
     private String projectTitle;
+    
+    private BigDecimal applicationRatingAverage;
+    
+    private PrismState stateId;
+    
+    private PrismStateGroup stateGroupId;
+    
+    private String creatorEmail;
 
-    private String institutionTitle;
+    private LocalDate updatedTimestamp;
 
-    private Date displayTimestamp;
-
-    private String actions;
-
-    private BigDecimal averageRating;
-
-    public Integer getId() {
-        return id;
+    public final Integer getSystemId() {
+        return systemId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public final void setSystemId(Integer systemId) {
+        this.systemId = systemId;
     }
 
-    public String getCode() {
-        return code;
+    public final Integer getInstitutionId() {
+        return institutionId;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public final void setInstitutionId(Integer institutionId) {
+        this.institutionId = institutionId;
     }
 
-    public Boolean getRaisesUrgentFlag() {
-        return raisesUrgentFlag;
+    public final Integer getProgramId() {
+        return programId;
     }
 
-    public void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
-        this.raisesUrgentFlag = raisesUrgentFlag;
+    public final void setProgramId(Integer programId) {
+        this.programId = programId;
     }
 
-    public String getState() {
-        return state;
+    public final Integer getProjectId() {
+        return projectId;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public final void setProjectId(Integer projectId) {
+        this.projectId = projectId;
     }
 
-    public String getCreatorFirstName() {
+    public final Integer getApplicationId() {
+        return applicationId;
+    }
+
+    public final void setApplicationId(Integer applicationId) {
+        this.applicationId = applicationId;
+    }
+
+    public final String getCreatorFirstName() {
         return creatorFirstName;
     }
 
-    public void setCreatorFirstName(String creatorFirstName) {
+    public final void setCreatorFirstName(String creatorFirstName) {
         this.creatorFirstName = creatorFirstName;
     }
 
-    public String getCreatorFirstName2() {
+    public final String getCreatorFirstName2() {
         return creatorFirstName2;
     }
 
-    public void setCreatorFirstName2(String creatorFirstName2) {
+    public final void setCreatorFirstName2(String creatorFirstName2) {
         this.creatorFirstName2 = creatorFirstName2;
     }
 
-    public String getCreatorFirstName3() {
+    public final String getCreatorFirstName3() {
         return creatorFirstName3;
     }
 
-    public void setCreatorFirstName3(String creatorFirstName3) {
+    public final void setCreatorFirstName3(String creatorFirstName3) {
         this.creatorFirstName3 = creatorFirstName3;
     }
 
-    public String getCreatorLastName() {
+    public final String getCreatorLastName() {
         return creatorLastName;
     }
 
-    public void setCreatorLastName(String creatorLastName) {
+    public final void setCreatorLastName(String creatorLastName) {
         this.creatorLastName = creatorLastName;
     }
 
-    public String getCreatorEmail() {
-        return creatorEmail;
+    public final String getCode() {
+        return code;
     }
 
-    public void setCreatorEmail(String creatorEmail) {
-        this.creatorEmail = creatorEmail;
+    public final void setCode(String code) {
+        this.code = code;
     }
 
-    public String getProgramTitle() {
-        return programTitle;
-    }
-
-    public void setProgramTitle(String programTitle) {
-        this.programTitle = programTitle;
-    }
-
-    public String getProjectTitle() {
-        return projectTitle;
-    }
-
-    public void setProjectTitle(String projectTitle) {
-        this.projectTitle = projectTitle;
-    }
-
-    public String getInstitutionTitle() {
+    public final String getInstitutionTitle() {
         return institutionTitle;
     }
 
-    public void setInstitutionTitle(String institutionTitle) {
+    public final void setInstitutionTitle(String institutionTitle) {
         this.institutionTitle = institutionTitle;
     }
 
-    public Date getDisplayTimestamp() {
-        return displayTimestamp;
+    public final String getProgramTitle() {
+        return programTitle;
     }
 
-    public void setDisplayTimestamp(Date displayTimestamp) {
-        this.displayTimestamp = displayTimestamp;
+    public final void setProgramTitle(String programTitle) {
+        this.programTitle = programTitle;
     }
 
-    public String getActions() {
-        return actions;
+    public final String getProjectTitle() {
+        return projectTitle;
     }
 
-    public void setActions(String actions) {
-        this.actions = actions;
+    public final void setProjectTitle(String projectTitle) {
+        this.projectTitle = projectTitle;
     }
 
-    public BigDecimal getAverageRating() {
-        return averageRating;
+    public final BigDecimal getApplicationRatingAverage() {
+        return applicationRatingAverage;
     }
 
-    public void setAverageRating(BigDecimal averageRating) {
-        this.averageRating = averageRating;
+    public final void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+        this.applicationRatingAverage = applicationRatingAverage;
+    }
+
+    public final PrismState getStateId() {
+        return stateId;
+    }
+
+    public final void setStateId(PrismState stateId) {
+        this.stateId = stateId;
+    }
+
+    public final PrismStateGroup getStateGroupId() {
+        return stateGroupId;
+    }
+
+    public final void setStateGroupId(PrismStateGroup stateGroupId) {
+        this.stateGroupId = stateGroupId;
+    }
+
+    public final String getCreatorEmail() {
+        return creatorEmail;
+    }
+
+    public final void setCreatorEmail(String creatorEmail) {
+        this.creatorEmail = creatorEmail;
+    }
+
+    public final LocalDate getUpdatedTimestamp() {
+        return updatedTimestamp;
+    }
+
+    public final void setUpdatedTimestamp(LocalDate updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
     }
     
 }

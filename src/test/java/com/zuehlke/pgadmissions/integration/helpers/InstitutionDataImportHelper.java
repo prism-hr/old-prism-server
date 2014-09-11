@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.StateService;
-import com.zuehlke.pgadmissions.services.helpers.ImportedEntityServiceHelper;
+import com.zuehlke.pgadmissions.services.helpers.ImportedEntityServiceHelperInstitution;
 
 @Service
 public class InstitutionDataImportHelper {
@@ -30,7 +30,7 @@ public class InstitutionDataImportHelper {
     private EntityService entityService;
 
     @Autowired
-    private ImportedEntityServiceHelper entityImportHelper;
+    private ImportedEntityServiceHelperInstitution entityImportHelper;
 
     @Autowired
     private ImportedEntityService importedEntityService;

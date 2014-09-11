@@ -4,28 +4,45 @@ import org.apache.commons.lang.WordUtils;
 
 public enum PrismTransitionEvaluation {
 
-    APPLICATION_SUPERVISION_CONFIRMED_OUTCOME, //
-    APPLICATION_ELIGIBILITY_ASSESSED_OUTCOME, //
-    APPLICATION_EVALUATED_OUTCOME, //
-    APPLICATION_EXPORTED_OUTCOME, //
-    APPLICATION_INTERVIEW_RSVPED_OUTCOME, //
-    APPLICATION_INTERVIEWED_OUTCOME, //
-    APPLICATION_INTERVIEW_SCHEDULED_OUTCOME, //
-    APPLICATION_PROCESSED_OUTCOME, //
-    APPLICATION_RECRUITED_OUTCOME, //
-    APPLICATION_REVIEWED_OUTCOME, //
-    INSTITUTION_APPROVED_OUTCOME, //
-    INSTITUTION_CREATED_OUTCOME, //
-    PROGRAM_APPROVED_OUTCOME, //
-    PROGRAM_CONFIGURED_OUTCOME, //
-    PROGRAM_CREATED_OUTCOME, //
-    PROGRAM_EXPIRED_OUTCOME, //
-    PROGRAM_REACTIVATED_OUTCOME, //
-    PROJECT_APPROVED_OUTCOME, //
-    PROJECT_CONFIGURED_OUTCOME, //
-    PROJECT_CREATED_OUTCOME, //
-    PROJECT_REACTIVATED_OUTCOME;
+    APPLICATION_SUPERVISION_CONFIRMED_OUTCOME(false, PrismScope.APPLICATION), //
+    APPLICATION_ELIGIBILITY_ASSESSED_OUTCOME(false, PrismScope.APPLICATION), //
+    APPLICATION_STATE_COMPLETED_OUTCOME(true, PrismScope.APPLICATION), //
+    APPLICATION_EXPORTED_OUTCOME(false, PrismScope.APPLICATION), //
+    APPLICATION_INTERVIEW_RSVPED_OUTCOME(false, PrismScope.APPLICATION), //
+    APPLICATION_INTERVIEWED_OUTCOME(false, PrismScope.APPLICATION), //
+    APPLICATION_INTERVIEW_SCHEDULED_OUTCOME(false, PrismScope.APPLICATION), //
+    APPLICATION_PROCESSED_OUTCOME(false, PrismScope.APPLICATION), //
+    APPLICATION_RECRUITED_OUTCOME(false, PrismScope.APPLICATION), //
+    APPLICATION_REVIEWED_OUTCOME(false, PrismScope.APPLICATION), //
+    INSTITUTION_APPROVED_OUTCOME(true, PrismScope.INSTITUTION), //
+    INSTITUTION_CREATED_OUTCOME(false, PrismScope.INSTITUTION), //
+    PROGRAM_APPROVED_OUTCOME(true, PrismScope.PROGRAM), //
+    PROGRAM_VIEW_EDIT_OUTCOME(true, PrismScope.PROGRAM), //
+    PROGRAM_CREATED_OUTCOME(false, PrismScope.PROGRAM), //
+    PROGRAM_EXPIRED_OUTCOME(false, PrismScope.PROGRAM), //
+    PROGRAM_RESTORED_OUTCOME(false, PrismScope.PROGRAM), //
+    PROJECT_APPROVED_OUTCOME(true, PrismScope.PROJECT), //
+    PROJECT_VIEW_EDIT_OUTCOME(true, PrismScope.PROJECT), //
+    PROJECT_CREATED_OUTCOME(false, PrismScope.PROJECT), //
+    PROJECT_RESTORED_OUTCOME(false, PrismScope.PROJECT);
     
+    private boolean nextStateSelection;
+    
+    private PrismScope scope;
+    
+    private PrismTransitionEvaluation(boolean nextStateSelection, PrismScope scope) {
+        this.nextStateSelection = nextStateSelection;
+        this.scope = scope;
+    }
+    
+    public final boolean isNextStateSelection() {
+        return nextStateSelection;
+    }
+
+    public final PrismScope getScope() {
+        return scope;
+    }
+
     public String getMethodName() {
         String[] nameParts = name().split("_");
         String methodName = "get";

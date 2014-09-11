@@ -1,21 +1,17 @@
 package com.zuehlke.pgadmissions.services.helpers;
 
-import au.com.bytecode.opencsv.CSVReader;
-import com.google.common.base.Charsets;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.dto.AdvertCategoryImportRowDTO;
-import com.zuehlke.pgadmissions.exceptions.DataImportException;
-import com.zuehlke.pgadmissions.iso.jaxb.CountryCodesType;
-import com.zuehlke.pgadmissions.iso.jaxb.CountryType;
-import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
-import com.zuehlke.pgadmissions.services.InstitutionService;
-import com.zuehlke.pgadmissions.services.NotificationService;
-import org.apache.commons.beanutils.PropertyUtils;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
+import java.net.URL;
+import java.util.List;
+import java.util.Set;
+
+import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,39 +20,31 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
 
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.System;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
+import com.zuehlke.pgadmissions.domain.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.exceptions.DataImportException;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import com.zuehlke.pgadmissions.services.InstitutionService;
+import com.zuehlke.pgadmissions.services.NotificationService;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Component
 @SuppressWarnings({"unchecked", "rawtypes"})
-public class ImportedEntityServiceHelper {
+public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelper {
 
-    private static final Logger logger = LoggerFactory.getLogger(ImportedEntityServiceHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(ImportedEntityServiceHelperInstitution.class);
 
     @Value("${context.environment}")
     private String contextEnvironment;
-
-    @Value("${import.advertCategory.location}")
-    private String advertCategoryImportLocation;
-
-    @Value("${import.institutionDomicile.location}")
-    private String institutionDomicileImportLocation;
-
-    @Value("${import.countryCurrency.location}")
-    private String countryCurrencyImportLocation;
 
     @Autowired
     private ImportedEntityService importedEntityService;
@@ -67,7 +55,7 @@ public class ImportedEntityServiceHelper {
     @Autowired
     private NotificationService notificationService;
 
-    public void importReferenceData() throws Exception {
+    public void execute() throws DeduplicationException {
         institutionService.populateDefaultImportedEntityFeeds();
 
         for (ImportedEntityFeed importedEntityFeed : importedEntityService.getImportedEntityFeedsToImport()) {
@@ -100,7 +88,7 @@ public class ImportedEntityServiceHelper {
         }
     }
 
-    public void importEntities(ImportedEntityFeed importedEntityFeed) throws DataImportException {
+    private void importEntities(ImportedEntityFeed importedEntityFeed) throws DataImportException {
         String fileLocation = importedEntityFeed.getLocation();
         logger.info("Starting the import from file: " + fileLocation);
 
@@ -128,59 +116,6 @@ public class ImportedEntityServiceHelper {
         }
     }
 
-    public void importAdvertCategories() throws DataImportException {
-        logger.info("Starting the import from file: " + advertCategoryImportLocation);
-        try {
-            URL fileUrl = new DefaultResourceLoader().getResource(advertCategoryImportLocation).getURL();
-            CSVReader reader = new CSVReader(new InputStreamReader(fileUrl.openStream(), Charsets.UTF_8));
-            mergeAdvertCategories(reader);
-        } catch (Exception e) {
-            throw new DataImportException("Error during the import of file: " + advertCategoryImportLocation, e);
-        }
-    }
-
-    public void importInstitutionDomiciles() throws DataImportException {
-        logger.info("Starting the import from file: " + institutionDomicileImportLocation);
-        try {
-            List<CountryType> unmarshalled = unmarshalInstitutionDomiciles(institutionDomicileImportLocation);
-            Map<String, String> countryCurrencies = parseCountryCurrencies(countryCurrencyImportLocation);
-            mergeInstitutionDomiciles(unmarshalled, countryCurrencies);
-        } catch (Exception e) {
-            throw new DataImportException("Error during the import of file: " + institutionDomicileImportLocation, e);
-        }
-    }
-
-    /**
-     * Parses country currency file.
-     *
-     * @return map of country codes to currency codes
-     */
-    private Map<String, String> parseCountryCurrencies(String importLocation) throws IOException {
-        Map<String, String> countryCurrencies = Maps.newHashMap();
-        URL fileUrl = new DefaultResourceLoader().getResource(importLocation).getURL();
-        CSVReader reader = new CSVReader(new InputStreamReader(fileUrl.openStream(), Charsets.UTF_8));
-        String[] row;
-        while ((row = reader.readNext()) != null) {
-            String countryCode = row[2];
-            String currencyCode = row[14];
-            countryCurrencies.put(countryCode, currencyCode);
-        }
-        return countryCurrencies;
-    }
-
-    public List<CountryType> unmarshalInstitutionDomiciles(final String fileLocation) throws Exception {
-        try {
-            URL fileUrl = new DefaultResourceLoader().getResource(fileLocation).getURL();
-            JAXBContext jaxbContext = JAXBContext.newInstance(CountryCodesType.class);
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            JAXBElement<CountryCodesType> unmarshalled = (JAXBElement<CountryCodesType>) unmarshaller.unmarshal(fileUrl);
-            CountryCodesType countryCodes = (CountryCodesType) unmarshalled.getValue();
-            return countryCodes.getCountry();
-        } finally {
-            Authenticator.setDefault(null);
-        }
-    }
-
     private List<Object> unmarshalEntities(final ImportedEntityFeed importedEntityFeed) throws Exception {
         try {
             Authenticator.setDefault(new Authenticator() {
@@ -201,7 +136,7 @@ public class ImportedEntityServiceHelper {
             unmarshaller.setSchema(schema);
 
             Object unmarshalled = unmarshaller.unmarshal(fileUrl);
-            return (List<Object>) PropertyUtils.getSimpleProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
+            return (List<Object>) IntrospectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
         } finally {
             Authenticator.setDefault(null);
         }
@@ -240,38 +175,6 @@ public class ImportedEntityServiceHelper {
         for (Object entityDefinition : entityDefinitions) {
             importedEntityService.mergeImportedEntity(importedEntityClass, institution, entityDefinition);
         }
-    }
-
-    private void mergeInstitutionDomiciles(List<CountryType> countries, Map<String, String> countryCurrencies) throws DataImportException {
-        importedEntityService.disableAllInstitutionDomiciles();
-        for (CountryType country : countries) {
-            importedEntityService.mergeInstitutionDomicile(country, countryCurrencies);
-        }
-    }
-
-    private void mergeAdvertCategories(CSVReader reader) throws Exception {
-        importedEntityService.disableAllAdvertCategories();
-        String[] row;
-        while ((row = reader.readNext()) != null) {
-            AdvertCategoryImportRowDTO importRow = getAdvertCategoryRowDescriptor(row);
-            if (importRow != null) {
-                importedEntityService.createOrUpdateAdvertCategory(importRow);
-            }
-        }
-    }
-
-    private AdvertCategoryImportRowDTO getAdvertCategoryRowDescriptor(String[] row) {
-        if (row.length < 5) {
-            return null;
-        }
-        for (int i = 0; i < 4; i++) {
-            try {
-                int id = Integer.parseInt(row[i]);
-                return new AdvertCategoryImportRowDTO(id, row[4]);
-            } catch (NumberFormatException e) {
-            }
-        }
-        return null;
     }
 
     private HashMultimap<String, ProgrammeOccurrence> getBatchedImportedPrograms(List<ProgrammeOccurrence> importedPrograms) {

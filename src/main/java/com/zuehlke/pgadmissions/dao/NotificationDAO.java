@@ -88,7 +88,7 @@ public class NotificationDAO {
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.application", resource.getApplication()))) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("user.userAccount")) //
+                        .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
                 .add(Restrictions.isNull("userRole.lastNotifiedDate")) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
@@ -121,7 +121,7 @@ public class NotificationDAO {
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.application", resource.getApplication()))) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("user.userAccount")) //
+                        .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
                 .add(Restrictions.lt("userRole.lastNotifiedDate", baseline)) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
@@ -150,7 +150,7 @@ public class NotificationDAO {
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.application", resource.getApplication()))) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("user.userAccount")) //
+                        .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
                 .add(Restrictions.lt("userRole.lastNotifiedDate", baseline)) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
@@ -180,7 +180,7 @@ public class NotificationDAO {
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.application", resource.getApplication()))) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("user.userAccount")) //
+                        .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull(lastNotifiedDateReference))
@@ -216,7 +216,7 @@ public class NotificationDAO {
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.application", resource.getApplication()))) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("user.userAccount")) //
+                        .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull(lastNotifiedDateReference))

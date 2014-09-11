@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.StateTransition;
+import com.zuehlke.pgadmissions.domain.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
@@ -70,10 +71,10 @@ public class SystemInitialisationHelper {
 
     @Value("${system.user.email}")
     private String systemUserEmail;
-    
+
     @Value("${system.default.email.subject.directory}")
     private String defaultEmailSubjectDirectory;
-    
+
     @Value("${system.default.email.content.directory}")
     private String defaultEmailContentDirectory;
 
@@ -88,7 +89,7 @@ public class SystemInitialisationHelper {
 
     @Autowired
     private ResourceService resourceService;
-    
+
     @Autowired
     private RoleService roleService;
 
@@ -137,14 +138,14 @@ public class SystemInitialisationHelper {
             assertEquals(action.getId().getActionCategory(), action.getActionCategory());
             assertEquals(action.getId().isRatingAction(), action.isRatingAction());
             assertEquals(action.getId().isTransitionAction(), action.isTransitionAction());
-            assertEquals(PrismAction.getFallBackAction(action.getId()), action.getFallbackAction().getId());    
+            assertEquals(PrismAction.getFallBackAction(action.getId()), action.getFallbackAction().getId());
             assertEquals(action.getId().getScope(), action.getScope().getId());
             assertEquals(action.getId().getCreationScope(), action.getCreationScope() == null ? null : action.getCreationScope().getId());
 
             if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
                 assertEquals(action.isTransitionAction(), true);
             }
-            
+
             Set<ActionRedaction> redactions = action.getRedactions();
             List<PrismActionRedaction> prismActionRedactions = action.getId().getRedactions();
 
@@ -165,11 +166,18 @@ public class SystemInitialisationHelper {
             assertEquals(stateGroup.getId().getScope(), stateGroup.getScope().getId());
         }
     }
-    
+
     public void verifyStateCreation() {
         for (State state : stateService.getStates()) {
             assertEquals(state.getId().getStateGroup(), state.getStateGroup().getId());
             assertEquals(state.getId().getScope(), state.getScope().getId());
+        }
+    }
+
+    public void verifyStateTransitionEvaluationCreation() {
+        for (StateTransitionEvaluation stateTransitionEvaluation : stateService.getStateTransitionEvaluations()) {
+            assertEquals(stateTransitionEvaluation.getId().isNextStateSelection(), stateTransitionEvaluation.isNextStateSelection());
+            assertEquals(stateTransitionEvaluation.getId().getScope(), stateTransitionEvaluation.getScope().getId());
         }
     }
 
@@ -290,9 +298,11 @@ public class SystemInitialisationHelper {
         assertTrue(prismStateAction.getTransitions().size() == stateTransitions.size());
 
         for (StateTransition stateTransition : stateTransitions) {
+            StateTransitionEvaluation evaluation = stateTransition.getStateTransitionEvaluation();
+            
             PrismStateTransition prismStateTransition = new PrismStateTransition().withTransitionState(stateTransition.getTransitionState().getId())
                     .withTransitionAction(stateTransition.getTransitionAction().getId())
-                    .withTransitionEvaluation(stateTransition.getStateTransitionEvaluation());
+                    .withTransitionEvaluation(evaluation == null ? null : evaluation.getId());
 
             for (RoleTransition roleTransition : stateTransition.getRoleTransitions()) {
                 prismStateTransition.getRoleTransitions().add(

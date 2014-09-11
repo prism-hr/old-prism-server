@@ -1,27 +1,13 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.dto.AdvertCategoryImportRowDTO;
-import com.zuehlke.pgadmissions.exceptions.DataImportException;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.iso.jaxb.*;
-import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
-import org.apache.commons.beanutils.PropertyUtils;
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.bind.JAXBElement;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -30,12 +16,51 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.bind.JAXBElement;
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.AdvertCategory;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
+import com.zuehlke.pgadmissions.domain.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramStudyOption;
+import com.zuehlke.pgadmissions.domain.ProgramStudyOptionInstance;
+import com.zuehlke.pgadmissions.domain.ProgramType;
+import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.StudyOption;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.dto.AdvertCategoryImportRowDTO;
+import com.zuehlke.pgadmissions.exceptions.DataImportException;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.iso.jaxb.CategoryNameType;
+import com.zuehlke.pgadmissions.iso.jaxb.CategoryType;
+import com.zuehlke.pgadmissions.iso.jaxb.CountryType;
+import com.zuehlke.pgadmissions.iso.jaxb.ShortNameType;
+import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionLocaleType;
+import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionType;
+import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Service
 @Transactional
@@ -83,7 +108,7 @@ public class ImportedEntityService {
         return importedEntityDAO.getImportedInstitutionByName(institution, domicile, name);
     }
 
-    public ImportedEntityFeed getOrCreateImportedEntityFeed(Institution institution, PrismImportedEntity importedEntityType, String location) throws Exception {
+    public ImportedEntityFeed getOrCreateImportedEntityFeed(Institution institution, PrismImportedEntity importedEntityType, String location) throws DeduplicationException {
         return getOrCreateImportedEntityFeed(institution, importedEntityType, location, null, null);
     }
 
@@ -172,15 +197,9 @@ public class ImportedEntityService {
 
     public void mergeImportedEntity(Class<ImportedEntity> entityClass, Institution institution, Object entityDefinition) throws Exception {
         ImportedEntity transientEntity = entityClass.newInstance();
-
-        try {
-            transientEntity.setInstitution(institution);
-            transientEntity.setCode((String) PropertyUtils.getSimpleProperty(entityDefinition, "code"));
-            transientEntity.setName((String) PropertyUtils.getSimpleProperty(entityDefinition, "name"));
-        } catch (Exception e) {
-            throw new Exception(e);
-        }
-
+        transientEntity.setInstitution(institution);
+        transientEntity.setCode((String) IntrospectionUtils.getProperty(entityDefinition, "code"));
+        transientEntity.setName((String) IntrospectionUtils.getProperty(entityDefinition, "name"));
         createOrUpdateImportedEntity(transientEntity);
     }
 

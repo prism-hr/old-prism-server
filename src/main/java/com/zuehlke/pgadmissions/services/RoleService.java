@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
@@ -61,7 +64,7 @@ public class RoleService {
             return entityService.getOrCreate(transientUserRole);
         }
         Action action = actionService.getViewEditAction(resource);
-        throwWorkflowPermissionException(resource, action, newRole);
+        throwWorkflowPermissionException(resource, action, user, newRole);
         return null;
     }
 
@@ -148,7 +151,7 @@ public class RoleService {
 
         for (RoleTransition roleTransition : roleTransitions) {
             User restrictedToUser = roleTransition.isRestrictToActionOwner() ? comment.getUser() : null;
-            List<User> users = roleDAO.getRoleCreateTransitionUsers(comment, roleTransition.getRole(), restrictedToUser);
+            List<User> users = getRoleCreateTransitionUsers(comment, roleTransition.getTransitionRole(), restrictedToUser);
 
             Integer minimumPermitted = roleTransition.getMinimumPermitted();
             Integer maximumPermitted = roleTransition.getMaximumPermitted();
@@ -158,12 +161,32 @@ public class RoleService {
                     userRoleTransitions.put(user, roleTransition);
                 }
             } else {
-                throw new WorkflowEngineException("Attempted to process " + users.size() + " users of role: " + roleTransition.getRole().getAuthority()
+                actionService.throwWorkflowEngineException(comment.getResource(), comment.getAction(), "Attempted to "
+                        + roleTransition.getRoleTransitionType().name() + " " + users.size() + " users of role: " + roleTransition.getRole().getAuthority()
                         + ". Expected " + minimumPermitted + " <= n <=" + maximumPermitted);
             }
         }
 
         return userRoleTransitions;
+    }
+
+    private List<User> getRoleCreateTransitionUsers(Comment comment, Role transitionRole, User restrictedToUser) {
+        List<User> transitionUsers = Lists.newArrayList();
+        Set<CommentAssignedUser> assignees = comment.getAssignedUsers();
+
+        for (CommentAssignedUser assignee : assignees) {
+            if (assignee.getRole() == transitionRole) {
+                User transitionUser = assignee.getUser();
+                if (restrictedToUser != null && !transitionUser.equals(restrictedToUser)) {
+                    actionService.throwWorkflowEngineException(comment.getResource(), comment.getAction(),
+                            "Attempted to create user :" + transitionUser.toString() + " in role " + transitionRole.getAuthority()
+                                    + ". Role is restricted to creator " + restrictedToUser.toString());
+                }
+                transitionUsers.add(transitionUser);
+            }
+        }
+
+        return transitionUsers;
     }
 
     private HashMultimap<User, RoleTransition> getRoleUpdateTransitions(StateTransition stateTransition, Comment comment, List<RoleTransition> roleTransitions) {
@@ -202,20 +225,20 @@ public class RoleService {
             executeCreateUserRole(transientTransitionRole, comment);
             break;
         case REMOVE:
-            executeRemoveUserRole(transientTransitionRole);
+            executeRemoveUserRole(transientTransitionRole, comment);
             break;
         case UPDATE:
-            executeUpdateUserRole(transientRole, transientTransitionRole);
+            executeUpdateUserRole(transientRole, transientTransitionRole, comment);
         }
     }
 
     private void executeBranchUserRole(UserRole userRole, UserRole transitionRole, Comment comment) throws DeduplicationException {
         UserRole persistentRole = entityService.getDuplicateEntity(userRole);
         if (persistentRole == null) {
-            throw new WorkflowEngineException("Found no role of type " + userRole.getRole().getAuthority() + " for " + userRole.getResource().getCode()
+            actionService.throwWorkflowEngineException(comment.getResource(), comment.getAction(), "Found no role of type " + userRole.getRole().getAuthority()
                     + " to branch for user " + userRole.getUser().toString());
         } else if (!isRoleAssignmentPermitted(userRole, comment)) {
-            throwWorkflowPermissionException(comment.getResource(), comment.getAction(), userRole.getRole());
+            throwWorkflowPermissionException(comment.getResource(), comment.getAction(), userRole.getUser(), userRole.getRole());
         }
         entityService.getOrCreate(transitionRole);
         comment.withAssignedUser(transitionRole.getUser(), transitionRole.getRole());
@@ -223,12 +246,12 @@ public class RoleService {
 
     private void executeCreateUserRole(UserRole userRole, Comment comment) throws DeduplicationException {
         if (!isRoleAssignmentPermitted(userRole, comment)) {
-            throwWorkflowPermissionException(comment.getResource(), comment.getAction(), userRole.getRole());
+            throwWorkflowPermissionException(comment.getResource(), comment.getAction(), userRole.getUser(), userRole.getRole());
         }
         entityService.getOrCreate(userRole);
     }
 
-    private void executeRemoveUserRole(UserRole userRole) throws DeduplicationException {
+    private void executeRemoveUserRole(UserRole userRole, Comment comment) throws DeduplicationException {
         UserRole persistentRole = entityService.getDuplicateEntity(userRole);
         if (persistentRole != null) {
             deleteUserRoles(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole().getId());
@@ -240,11 +263,11 @@ public class RoleService {
                 || (roleDAO.getExcludingRoles(userRole, comment).isEmpty() && isRoleAssignmentPermitted(userRole));
     }
 
-    private void executeUpdateUserRole(UserRole userRole, UserRole transitionRole) throws DeduplicationException {
+    private void executeUpdateUserRole(UserRole userRole, UserRole transitionRole, Comment comment) throws DeduplicationException {
         UserRole persistentRole = entityService.getDuplicateEntity(userRole);
         if (persistentRole == null) {
-            throw new WorkflowEngineException("Found no role of type " + userRole.getRole().getAuthority() + " for " + userRole.getResource().getCode()
-                    + " to update for user " + userRole.getUser().toString());
+            actionService.throwWorkflowEngineException(comment.getResource(), comment.getAction(), "Found no role of type " + userRole.getRole().getAuthority()
+                    + " for " + userRole.getResource().getCode() + " to update for user " + userRole.getUser().toString());
         }
         deleteUserRoles(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole().getId());
         entityService.getOrCreate(transitionRole);
@@ -276,10 +299,10 @@ public class RoleService {
             resource.setUser(newOwner);
         }
     }
-    
-    private void throwWorkflowPermissionException(Resource resource, Action action, Role role) {
-        actionService.throwWorkflowPermissionException(resource, action, "Unable to assign role of type "
-                + role.getAuthority() + " for " + resource.getCode() + " due to existing permission conflicts");
+
+    private void throwWorkflowPermissionException(Resource resource, Action action, User user, Role role) {
+        actionService.throwWorkflowPermissionException(resource, action, "Unable to assign role of type " + role.getAuthority() + " for " + resource.getCode()
+                + " to " + user.toString() + " due to existing permission conflicts");
     }
 
 }

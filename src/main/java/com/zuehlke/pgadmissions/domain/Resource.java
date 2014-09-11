@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.domain;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 public abstract class Resource implements IUniqueEntity {
 
@@ -101,11 +101,7 @@ public abstract class Resource implements IUniqueEntity {
         if (getResourceScope().equals(resourceScope)) {
             return this;
         } else {
-            try {
-                return (Resource) PropertyUtils.getSimpleProperty(this, resourceScope.getLowerCaseName());
-            } catch (Exception e) {
-                throw new Error(e);
-            }
+            return (Resource) IntrospectionUtils.getProperty(this, resourceScope.getLowerCaseName());
         }
     }
     

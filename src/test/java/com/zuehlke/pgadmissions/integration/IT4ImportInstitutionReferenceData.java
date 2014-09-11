@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.services.helpers.ImportedEntityServiceHelper;
+import com.zuehlke.pgadmissions.services.helpers.ImportedEntityServiceHelperInstitution;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.services.helpers.ImportedEntityServiceHelper;
 public class IT4ImportInstitutionReferenceData {
 
     @Autowired
-    private ImportedEntityServiceHelper entityImportHelper;
+    private ImportedEntityServiceHelperInstitution entityImportHelper;
 
     @Autowired
     private ImportedEntityService importedEntityService;

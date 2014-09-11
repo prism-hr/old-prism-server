@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -73,8 +72,6 @@ public class StateService {
 
     @Autowired
     private SystemService systemService;
-
-    protected final ConcurrentSkipListSet<DeferredStateTransitionDTO> deferredTransitions = new ConcurrentSkipListSet<DeferredStateTransitionDTO>();
 
     public State getById(PrismState id) {
         return entityService.getById(State.class, id);
@@ -340,21 +337,13 @@ public class StateService {
             throws DeduplicationException {
         Resource resource = resourceService.getById(transitionDTO.getResourceClass(), transitionDTO.getResourceId());
         Action action = actionService.getById(transitionDTO.getActionId());
-        
-        if (deferredTransitions.contains(transitionDTO)) {
-            logger.info("Skipping " + action.getId() + " on " + resource.getCode() + " - already queued");
-            return;
-        }
-        
-        deferredTransitions.add(transitionDTO);
 
-        logger.info("Calling " + action.getId() + " on " + resource.getCode());
+        logger.debug("Calling " + action.getId() + " on " + resource.getCode());
 
         Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action).withDeclinedResponse(false)
                 .withCreatedTimestamp(new DateTime());
         executeStateTransition(resource, action, comment);
 
-        deferredTransitions.remove(transitionDTO);
         entityService.flushAndEvict(resource, action, comment);
     }
 

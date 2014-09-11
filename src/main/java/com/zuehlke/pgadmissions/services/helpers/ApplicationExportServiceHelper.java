@@ -11,14 +11,15 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.services.ApplicationExportService;
 
 @Component
-public class ApplicationExportServiceHelper {
+public class ApplicationExportServiceHelper extends AbstractServiceHelper {
     
     private final Logger logger = LoggerFactory.getLogger(ApplicationExportService.class);
     
     @Autowired
     protected ApplicationExportService applicationExportService;
 
-    public void exportUclApplications() {
+    @Override
+    public void execute() {
         List<Application> applications = applicationExportService.getUclApplicationsForExport();
         for (Application application : applications) {
             try {

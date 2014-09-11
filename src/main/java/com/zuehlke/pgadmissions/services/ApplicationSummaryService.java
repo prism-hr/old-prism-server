@@ -48,8 +48,7 @@ public class ApplicationSummaryService {
         ApplicationProcessing processing = createOrUpdateApplicationProcessing(application, stateGroup, baseline);
         createOrUpdateApplicationProcessingSummary(application, processing, stateGroup);
 
-        Integer stateDuration = updatePreviousApplicationProcessing(application, previousStateGroup, baseline);
-        updatePreviousApplicationProcessingSummary(application, previousStateGroup, stateDuration);
+        updatePreviousApplicationProcessing(application, previousStateGroup, baseline);
     }
 
     public void incrementApplicationCreatedCount(Application application) {
@@ -98,15 +97,20 @@ public class ApplicationSummaryService {
         }
     }
 
-    private Integer updatePreviousApplicationProcessing(Application application, StateGroup previousStateGroup, LocalDate baseline) {
+    private void updatePreviousApplicationProcessing(Application application, StateGroup previousStateGroup, LocalDate baseline) {
         ApplicationProcessing previousProcessing = applicationSummaryDAO.getProcessing(application, previousStateGroup);
+        
+        if (previousProcessing == null) {
+            return;
+        }
+        
         Integer stateDuration = Days.daysBetween(previousProcessing.getLastUpdatedDate(), baseline).getDays();
 
         previousProcessing.setDayDurationAverage(SummaryHelper.computeRunningAverage((previousProcessing.getInstanceCount() - 1),
                 previousProcessing.getDayDurationAverage(), stateDuration));
         previousProcessing.setLastUpdatedDate(baseline);
 
-        return stateDuration;
+        updatePreviousApplicationProcessingSummary(application, previousStateGroup, stateDuration);
     }
 
     private void createOrUpdateApplicationProcessingSummary(Application application, ApplicationProcessing processing, StateGroup stateGroup)
@@ -132,6 +136,9 @@ public class ApplicationSummaryService {
     private void updatePreviousApplicationProcessingSummary(Application application, StateGroup previousStateGroup, Integer stateDuration) {
         for (ParentResource parentResource : application.getParentResources()) {
             ApplicationProcessingSummary summary = applicationSummaryDAO.getProcessingSummary(parentResource, previousStateGroup);
+            if (summary == null) {
+                continue;
+            }
             summary.setInstanceCountLive(SummaryHelper.decrementRunningCount(summary.getInstanceCountLive()));
             summary.setDayDurationAverage(SummaryHelper.computeRunningAverage(summary.getInstanceCount(), summary.getDayDurationAverage(), stateDuration));
         }

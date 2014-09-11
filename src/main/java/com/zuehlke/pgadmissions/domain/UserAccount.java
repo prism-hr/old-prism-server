@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.Column;

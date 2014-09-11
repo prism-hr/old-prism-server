@@ -2,11 +2,13 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.ProgramStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import org.joda.time.LocalDate;
 
 public class ProgramDetailRepresentation {
 
-    private Integer studyOption;
+    private PrismStudyOption studyOption;
 
     private LocalDate startDate;
 
@@ -14,11 +16,11 @@ public class ProgramDetailRepresentation {
 
     private List<ApplicationSuggestedSupervisorRepresentation> supervisors;
 
-    public Integer getStudyOption() {
+    public PrismStudyOption getStudyOption() {
         return studyOption;
     }
 
-    public void setStudyOption(Integer studyOption) {
+    public void setStudyOption(PrismStudyOption studyOption) {
         this.studyOption = studyOption;
     }
 

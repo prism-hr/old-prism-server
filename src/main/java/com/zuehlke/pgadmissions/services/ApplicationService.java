@@ -1,8 +1,21 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Iterator;
-import java.util.List;
-
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
+import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
+import com.zuehlke.pgadmissions.rest.dto.UserDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.*;
+import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationValidator;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
@@ -12,66 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.ValidationUtils;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
-import com.zuehlke.pgadmissions.dao.ApplicationDAO;
-import com.zuehlke.pgadmissions.domain.Address;
-import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.ApplicationPassport;
-import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.ApplicationProgramDetail;
-import com.zuehlke.pgadmissions.domain.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.Disability;
-import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.Ethnicity;
-import com.zuehlke.pgadmissions.domain.FundingSource;
-import com.zuehlke.pgadmissions.domain.Gender;
-import com.zuehlke.pgadmissions.domain.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.ProgramStudyOption;
-import com.zuehlke.pgadmissions.domain.QualificationType;
-import com.zuehlke.pgadmissions.domain.ReferralSource;
-import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.Title;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
-import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
-import com.zuehlke.pgadmissions.rest.dto.UserDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.AddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositionDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationFundingDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationLanguageQualificationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPassportDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
-import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationValidator;
+import java.util.Iterator;
+import java.util.List;
 
 @Service
 @Transactional
@@ -223,7 +178,7 @@ public class ApplicationService {
             application.setProgramDetail(programDetail);
         }
 
-        StudyOption studyOption = importedEntityService.getById(StudyOption.class, institution, programDetailDTO.getStudyOption());
+        StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, institution, programDetailDTO.getStudyOption().name());
         ReferralSource referralSource = importedEntityService.getById(ReferralSource.class, institution, programDetailDTO.getReferralSource());
         programDetail.setStudyOption(studyOption);
         programDetail.setStartDate(programDetailDTO.getStartDate());
@@ -272,7 +227,7 @@ public class ApplicationService {
         Gender gender = importedEntityService.getById(Gender.class, institution, personalDetailDTO.getGender());
         Country country = importedEntityService.getById(Country.class, institution, personalDetailDTO.getCountry());
         Language firstNationality = importedEntityService.getById(Language.class, institution, personalDetailDTO.getFirstNationality());
-        Language secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.<Language> getById(Language.class, institution,
+        Language secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.<Language>getById(Language.class, institution,
                 personalDetailDTO.getSecondNationality()) : null;
         Domicile residenceCountry = importedEntityService.getById(Domicile.class, institution, personalDetailDTO.getResidenceCountry());
         Ethnicity ethnicity = importedEntityService.getById(Ethnicity.class, institution, personalDetailDTO.getEthnicity());
@@ -393,7 +348,7 @@ public class ApplicationService {
     }
 
     public ApplicationEmploymentPosition saveEmploymentPosition(Integer applicationId, Integer employmentPositionId,
-            ApplicationEmploymentPositionDTO employmentPositionDTO) {
+                                                                ApplicationEmploymentPositionDTO employmentPositionDTO) {
         Application application = entityService.getById(Application.class, applicationId);
 
         ApplicationEmploymentPosition employmentPosition;

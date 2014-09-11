@@ -344,8 +344,10 @@ public class SystemService {
 
     private void initialiseStateActions() throws DeduplicationException, WorkflowConfigurationException {
         maintenanceService.submit(MaintenanceTask.SYSTEM_EXECUTE_DEFERRED_STATE_TRANSITION);
+        logger.info("Deleting state actions");
         stateService.deleteStateActions();
 
+        logger.info("Initializing states");
         for (State state : stateService.getStates()) {
             for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
                 Action action = actionService.getById(prismStateAction.getAction());
@@ -362,10 +364,12 @@ public class SystemService {
             }
         }
 
+        logger.info("Deleting obsolete state durations");
         stateService.deleteObsoleteStateDurations();
         notificationService.deleteObseleteNotificationConfigurations();
         roleService.deleteInactiveRoles();
 
+        logger.info("Verifying backward resource compatibility");
         verifyBackwardResourceCompatibility();
     }
 

@@ -27,7 +27,7 @@ public class ResourceListRowRepresentation {
 
     private LocalDate closingDate;
 
-    private PrismStateGroup state;
+    private PrismStateGroup stateGroupId;
 
     private LocalDate dueDate;
 
@@ -95,12 +95,12 @@ public class ResourceListRowRepresentation {
         this.closingDate = closingDate;
     }
 
-    public PrismStateGroup getState() {
-        return state;
+    public PrismStateGroup getStateGroupId() {
+        return stateGroupId;
     }
 
-    public void setState(PrismStateGroup state) {
-        this.state = state;
+    public void setStateGroupId(PrismStateGroup stateGroupId) {
+        this.stateGroupId = stateGroupId;
     }
 
     public LocalDate getDueDate() {

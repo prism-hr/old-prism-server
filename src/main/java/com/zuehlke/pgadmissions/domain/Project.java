@@ -38,22 +38,22 @@ import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 @Table(name = "PROJECT")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Project extends ParentResource {
-    
+
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
-    
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-    
+
     @Column(name = "code")
     private String code;
-    
+
     @ManyToOne
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
@@ -65,10 +65,10 @@ public class Project extends ParentResource {
     @ManyToOne
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
-    
+
     @Column(name = "referrer")
     private String referrer;
-    
+
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
@@ -85,51 +85,51 @@ public class Project extends ParentResource {
     @Column(name = "title", nullable = false)
     @Field(analyzer = @Analyzer(definition = "advertAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String title;
-    
+
     @Column(name = "application_created_count")
     private Integer applicationCreatedCount;
-    
+
     @Column(name = "application_submitted_count")
     private Integer applicationSubmittedCount;
-    
+
     @Column(name = "application_approved_count")
     private Integer applicationApprovedCount;
-    
+
     @Column(name = "application_rejected_count")
     private Integer applicationRejectedCount;
-    
+
     @Column(name = "application_withdrawn_count")
     private Integer applicationWithdrawnCount;
-    
+
     @Column(name = "application_rating_count")
     private Integer applicationRatingCount;
-    
+
     @Column(name = "application_rating_count_average_non_zero")
     private BigDecimal applicationRatingCountAverageNonZero;
-    
+
     @Column(name = "application_rating_average")
-    private BigDecimal applicatingRatingAverage;
-    
+    private BigDecimal applicationRatingAverage;
+
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
-    
+
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
-    
+
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     private Set<Application> applications = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "project")
     private Set<Comment> comments = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "project")
     private Set<UserRole> userRoles = Sets.newHashSet();
-    
+
     @Override
     public Integer getId() {
         return id;
@@ -139,15 +139,15 @@ public class Project extends ParentResource {
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     public Advert getAdvert() {
         return advert;
     }
-    
+
     public void setAdvert(Advert advert) {
         this.advert = advert;
     }
-    
+
     @Override
     public User getUser() {
         return user;
@@ -157,12 +157,12 @@ public class Project extends ParentResource {
     public void setUser(User user) {
         this.user = user;
     }
-    
+
     @Override
     public String getCode() {
         return code;
     }
-    
+
     @Override
     public void setCode(String code) {
         this.code = code;
@@ -225,37 +225,35 @@ public class Project extends ParentResource {
     public void setApplicationWithdrawnCount(Integer applicationWithdrawnCount) {
         this.applicationWithdrawnCount = applicationWithdrawnCount;
     }
-    
+
     @Override
     public final Integer getApplicationRatingCount() {
         return applicationRatingCount;
     }
-    
+
     @Override
     public final void setApplicationRatingCount(Integer applicationRatingCountSum) {
         this.applicationRatingCount = applicationRatingCountSum;
     }
-    
+
     @Override
     public final BigDecimal getApplicationRatingCountAverageNonZero() {
         return applicationRatingCountAverageNonZero;
     }
-    
+
     @Override
     public final void setApplicationRatingCountAverageNonZero(BigDecimal applicationRatingCountAverage) {
         this.applicationRatingCountAverageNonZero = applicationRatingCountAverage;
     }
 
-    @Override
     public BigDecimal getApplicationRatingAverage() {
-        return applicatingRatingAverage;
+        return applicationRatingAverage;
     }
 
-    @Override
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
-        this.applicatingRatingAverage = applicationRatingAverage;
+        this.applicationRatingAverage = applicationRatingAverage;
     }
-    
+
     @Override
     public State getState() {
         return state;
@@ -265,7 +263,7 @@ public class Project extends ParentResource {
     public void setState(State state) {
         this.state = state;
     }
-    
+
     public Set<Application> getApplications() {
         return applications;
     }
@@ -273,7 +271,7 @@ public class Project extends ParentResource {
     public Set<Comment> getComments() {
         return comments;
     }
-    
+
     public final Set<UserRole> getUserRoles() {
         return userRoles;
     }
@@ -321,12 +319,12 @@ public class Project extends ParentResource {
     public Application getApplication() {
         return null;
     }
-    
+
     @Override
     public String getReferrer() {
         return referrer;
     }
-    
+
     @Override
     public void setReferrer (String referrer) {
         this.referrer = referrer;
@@ -356,7 +354,7 @@ public class Project extends ParentResource {
     public DateTime getCreatedTimestamp() {
         return createdTimestamp;
     }
-    
+
     @Override
     public void setCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
@@ -371,7 +369,7 @@ public class Project extends ParentResource {
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
-    
+
     @Override
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
@@ -381,11 +379,11 @@ public class Project extends ParentResource {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
-    
+
     public LocalDate getRecommendedStartDate() {
         return program.getProgramType().getPrismProgramType().getImmediateStartDate();
     }
-    
+
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();

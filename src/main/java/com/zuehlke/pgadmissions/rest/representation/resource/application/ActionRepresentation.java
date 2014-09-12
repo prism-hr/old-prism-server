@@ -8,6 +8,9 @@ public class ActionRepresentation {
 
     private Boolean raisesUrgentFlag;
 
+    public ActionRepresentation() {
+    }
+
     public ActionRepresentation(PrismAction prismAction, Boolean raisesUrgentFlag) {
         this.name = prismAction;
         this.raisesUrgentFlag = raisesUrgentFlag;
@@ -28,5 +31,5 @@ public class ActionRepresentation {
     public void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
     }
-    
+
 }

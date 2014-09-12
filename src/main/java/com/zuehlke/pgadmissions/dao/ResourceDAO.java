@@ -97,7 +97,7 @@ public class ResourceDAO {
             projectionList.add(Projections.property(parentScopeName + ".id"), parentScopeName + "Id");
         }
 
-        projectionList.add(Projections.property("id"), scopeId.getLowerCaseName() + ".Id") //
+        projectionList.add(Projections.property("id"), scopeId.getLowerCaseName() + "Id") //
                 .add(Projections.property("user.firstName"), "creatorFirstName") //
                 .add(Projections.property("user.firstName2"), "creatorFirstName2") //
                 .add(Projections.property("user.firstName3"), "creatorFirstName3") //
@@ -131,7 +131,7 @@ public class ResourceDAO {
             boolean prefixColumnName = !tableName.equals(scopeId.getLowerCaseName());
             for (String columnName : customColumns.get(tableName)) {
                 projectionList.add(Projections.property(prefixColumnName ? tableName + "." + columnName : columnName),
-                        prefixColumnName ? tableName + WordUtils.capitalize(columnName) : columnName);
+                        tableName + WordUtils.capitalize(columnName));
             }
         }
     }

@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -15,14 +17,18 @@ public class ApplicationRefereeDTO {
     private UserDTO user;
 
     @NotEmpty
+    @Size(max = 50)
     private String phoneNumber;
 
+    @Size(min = 6, max = 32)
     private String skype;
 
     @NotEmpty
+    @Size(max = 200)
     private String jobEmployer;
 
     @NotEmpty
+    @Size(max = 200)
     private String jobTitle;
 
     @NotNull

@@ -30,6 +30,9 @@ public class CommentDTOValidator extends AbstractValidator {
         PrismAction action = comment.getAction();
 
         PrismActionValidationDefinition validationDefinition = action.getValidationDefinition();
+        if (validationDefinition == null) {
+            return;
+        }
         Map<PrismActionCommentField, List<PrismActionValidationFieldResolution>> fieldDefinitions = validationDefinition.getFieldResolutions();
 
         for (PrismActionCommentField field : PrismActionCommentField.values()) {

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
+import com.zuehlke.pgadmissions.domain.ResidenceState;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
@@ -11,6 +12,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+
+import javax.validation.constraints.Size;
 
 public class CommentDTO {
 
@@ -20,6 +23,7 @@ public class CommentDTO {
 
     private PrismAction action;
 
+    @Size(max = 50000)
     private String content;
 
     private PrismState transitionState;
@@ -32,7 +36,7 @@ public class CommentDTO {
 
     private YesNoUnsureResponse competentInWorkLanguage;
 
-    private String residenceState;
+    private Integer residenceState;
 
     private Boolean suitableForInstitution;
 
@@ -50,10 +54,13 @@ public class CommentDTO {
 
     private Integer interviewDuration;
 
+    @Size(max = 1000)
     private String intervieweeInstructions;
 
+    @Size(max = 1000)
     private String interviewerInstructions;
 
+    @Size(max = 100)
     private String interviewLocation;
 
     private Set<LocalDateTime> appointmentTimeslots;
@@ -62,8 +69,10 @@ public class CommentDTO {
 
     private Boolean recruiterAcceptAppointment;
 
+    @Size(max = 255)
     private String positionTitle;
 
+    @Size(max = 2000)
     private String positionDescription;
 
     private LocalDate positionProvisionalStartDate;
@@ -150,11 +159,11 @@ public class CommentDTO {
         this.competentInWorkLanguage = competentInWorkLanguage;
     }
 
-    public String getResidenceState() {
+    public Integer getResidenceState() {
         return residenceState;
     }
 
-    public void setResidenceState(String residenceState) {
+    public void setResidenceState(Integer residenceState) {
         this.residenceState = residenceState;
     }
 

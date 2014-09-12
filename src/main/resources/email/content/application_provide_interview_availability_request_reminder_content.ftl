@@ -28,7 +28,7 @@
             <p>
                 <font face="Arial, Helvetica, sans-serif" size="2">
                     We recently informed you that we wish to schedule an interview in connection with
-                    Application ${applicationCode} for ${application.programAndProjectTitle}.
+                    Application ${applicationCode} for ${projectOrProgramTitle}.
                 </font>
             </p>
 

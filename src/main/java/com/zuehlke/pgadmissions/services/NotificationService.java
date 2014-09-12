@@ -282,6 +282,7 @@ public class NotificationService {
         model.put("activationCode", user.getActivationCode());
 
         model.put("resourceId", resource.getId().toString());
+        // TODO construct action url, example: http://localhost:9000/#/application/15101/action?action=APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY&user=franek@pieczka.pl
         model.put("actionUrl", "to be defined");
 
         System system = resource.getSystem();

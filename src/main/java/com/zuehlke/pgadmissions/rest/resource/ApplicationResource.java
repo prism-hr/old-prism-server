@@ -75,7 +75,7 @@ public class ApplicationResource {
     private EntityService entityService;
 
     @Autowired
-    private ImportedEntityService importedEntitytService;
+    private ImportedEntityService importedEntityService;
 
     @Autowired
     private ApplicationService applicationService;
@@ -212,12 +212,11 @@ public class ApplicationResource {
         User delegateUser = userService.getById(commentDTO.getDelegateUser());
         State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
         Institution institution = application.getInstitution();
-        ResidenceState residenceState = importedEntitytService.getImportedEntityByCode(ResidenceState.class, institution, commentDTO.getResidenceState());
         LocalDate positionProvisionalStartDate = commentDTO.getPositionProvisionalStartDate();
         Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withDelegateUser(delegateUser).withAction(action)
                 .withTransitionState(transitionState).withCreatedTimestamp(new DateTime())
                 .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withQualified(commentDTO.getQualified())
-                .withCompetentInWorkLanguage(commentDTO.getCompetentInWorkLanguage()).withResidenceState(residenceState)
+                .withCompetentInWorkLanguage(commentDTO.getCompetentInWorkLanguage())
                 .withInterviewDateTime(commentDTO.getInterviewDateTime()).withInterviewTimeZone(commentDTO.getInterviewTimeZone())
                 .withInterviewDuration(commentDTO.getInterviewDuration()).withInterviewerInstructions(commentDTO.getInterviewerInstructions())
                 .withIntervieweeInstructions(commentDTO.getIntervieweeInstructions()).withInterviewLocation(commentDTO.getInterviewLocation())
@@ -225,6 +224,11 @@ public class ApplicationResource {
                 .withDesireToInterview(commentDTO.getDesireToInterview()).withDesireToRecruit(commentDTO.getDesireToRecruit())
                 .withPositionTitle(commentDTO.getPositionTitle()).withPositionDescription(commentDTO.getPositionDescription())
                 .withPositionProvisionalStartDate(positionProvisionalStartDate).withAppointmentConditions(commentDTO.getAppointmentConditions());
+
+        if (commentDTO.getResidenceState() != null) {
+            ResidenceState residenceState = entityService.getById(ResidenceState.class, commentDTO.getResidenceState());
+            comment.setResidenceState(residenceState);
+        }
 
         if (commentDTO.getDocuments() != null) {
             for (FileDTO fileDTO : commentDTO.getDocuments()) {

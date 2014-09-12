@@ -3,43 +3,41 @@ package com.zuehlke.pgadmissions.rest.dto;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import org.joda.time.LocalDate;
 
 public class ProgramDTO {
 
-    @NotNull
-    private Integer institutionId;
+    private Integer institution;
 
     @NotNull
     private PrismProgramType programType;
 
+    @NotEmpty
+    @Size(max = 255)
+    private String title;
+
+    @Size(min = 1)
+    private PrismStudyOption[] studyOptions;
+
     @NotNull
     private Boolean requireProjectDefinition;
 
-    @NotEmpty
-    private String title;
-
-    @NotEmpty
-    private String description;
+    @NotNull
+    private LocalDate dueDate;
 
     @NotNull
-    private LocalDate startDate;
+    private AdvertDTO advert;
 
-    @NotNull
-    private LocalDate closeDate;
-
-    @Size(min = 1)
-    private Integer[] studyOptions;
-
-    public final Integer getInstitutionId() {
-        return institutionId;
+    public Integer getInstitution() {
+        return institution;
     }
 
-    public final void setInstitutionId(Integer institutionId) {
-        this.institutionId = institutionId;
+    public void setInstitution(Integer institution) {
+        this.institution = institution;
     }
 
     public PrismProgramType getProgramType() {
@@ -50,14 +48,6 @@ public class ProgramDTO {
         this.programType = programType;
     }
 
-    public Boolean getRequireProjectDefinition() {
-        return requireProjectDefinition;
-    }
-
-    public void setRequireProjectDefinition(Boolean requireProjectDefinition) {
-        this.requireProjectDefinition = requireProjectDefinition;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -66,35 +56,35 @@ public class ProgramDTO {
         this.title = title;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public LocalDate getCloseDate() {
-        return closeDate;
-    }
-
-    public void setCloseDate(LocalDate closeDate) {
-        this.closeDate = closeDate;
-    }
-
-    public Integer[] getStudyOptions() {
+    public PrismStudyOption[] getStudyOptions() {
         return studyOptions;
     }
 
-    public void setStudyOptions(Integer[] studyOptions) {
+    public void setStudyOptions(PrismStudyOption[] studyOptions) {
         this.studyOptions = studyOptions;
+    }
+
+    public Boolean getRequireProjectDefinition() {
+        return requireProjectDefinition;
+    }
+
+    public void setRequireProjectDefinition(Boolean requireProjectDefinition) {
+        this.requireProjectDefinition = requireProjectDefinition;
+    }
+
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public AdvertDTO getAdvert() {
+        return advert;
+    }
+
+    public void setAdvert(AdvertDTO advert) {
+        this.advert = advert;
     }
 }

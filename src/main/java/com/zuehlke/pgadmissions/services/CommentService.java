@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -194,19 +195,24 @@ public class CommentService {
         Resource resource = comment.getResource();
         Action action = comment.getAction();
 
-        if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
-            comment.setRole(PrismRole.SYSTEM_ADMINISTRATOR.toString());
-        } else {
-            if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
-                comment.setRole(roleService.getCreatorRole(resource).getId().toString());
-            } else {
-                comment.setRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action)));
-                if (comment.getDelegateUser() != null) {
-                    comment.setDelegateRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getDelegateUser(), resource, action)));
-                }
-            }
-        }
+        setCommentAuthorRoles(comment, resource, action);
+        
+        Set<CommentAssignedUser> transientAssignees = comment.getAssignedUsers();
+        Set<CommentAssignedUser> persistentAssignees = Sets.newHashSet(transientAssignees);
+        transientAssignees.clear();
+        
+        Set<CommentAppointmentTimeslot> transientTimeslots = comment.getAppointmentTimeslots();
+        Set<CommentAppointmentTimeslot> persistentTimeslots = Sets.newHashSet(transientTimeslots);
+        transientTimeslots.clear();
+        
+        Set<CommentAppointmentPreference> transientPreferences = comment.getAppointmentPreferences();
+        Set<CommentAppointmentPreference> persistentPreferences = Sets.newHashSet(transientPreferences);
+        
         entityService.save(comment);
+        
+        comment.getAssignedUsers().addAll(persistentAssignees);
+        comment.getAppointmentTimeslots().addAll(persistentTimeslots);
+        comment.getAppointmentPreferences().addAll(persistentPreferences);
     }
 
     public void updateComment(Integer commentId, CommentDTO commentDTO) {
@@ -223,21 +229,6 @@ public class CommentService {
         }
     }
 
-    private Set<ApplicationAssignedSupervisorRepresentation> buildApplicationSupervisorRepresentation(Comment assignmentComment) {
-        Set<ApplicationAssignedSupervisorRepresentation> supervisors = Sets.newLinkedHashSet();
-
-        for (CommentAssignedUser assignee : commentDAO.getAssignedSupervisors(assignmentComment)) {
-            User user = assignee.getUser();
-            UserRepresentation userRepresentation = new UserRepresentation().withFirstName(user.getFirstName()).withLastName(user.getLastName())
-                    .withEmail(user.getEmail());
-            ApplicationAssignedSupervisorRepresentation assignedSupervisorRepresentation = new ApplicationAssignedSupervisorRepresentation()
-                    .withUser(userRepresentation).withRole(assignee.getRole().getId()).withAcceptedSupervision(true);
-            supervisors.add(assignedSupervisorRepresentation);
-        }
-
-        return supervisors;
-    }
-
     public <T extends Resource> List<Comment> getTransitionComments(Class<T> resourceClass, Integer resourceId, DateTime rangeStart, DateTime rangeClose) {
         return commentDAO.getTransitionComments(resourceClass, resourceId, rangeStart, rangeClose);
     }
@@ -245,6 +236,14 @@ public class CommentService {
     public void recordStateTransition(Comment comment, State state, State transitionState) {
         comment.setState(state);
         comment.setTransitionState(transitionState);
+    }
+    
+    public void delete(Application application, Comment exclusion) {
+        for (Comment comment: application.getComments()) {
+            if (comment != exclusion) {
+                entityService.delete(comment);
+            }
+        }
     }
 
     private Comment getLatestAppointmentPreferenceComment(Application application, Comment schedulingComment, User user) {
@@ -259,6 +258,36 @@ public class CommentService {
                 .withPositionProvisionalStartDate(sourceComment.getPositionProvisionalStartDate())
                 .withAppointmentConditions(sourceComment.getAppointmentConditions());
         return offerRepresentation;
+    }
+    
+    private void setCommentAuthorRoles(Comment comment, Resource resource, Action action) {
+        if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
+            comment.setRole(PrismRole.SYSTEM_ADMINISTRATOR.toString());
+        } else {
+            if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
+                comment.setRole(roleService.getCreatorRole(resource).getId().toString());
+            } else {
+                comment.setRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action)));
+                if (comment.getDelegateUser() != null) {
+                    comment.setDelegateRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getDelegateUser(), resource, action)));
+                }
+            }
+        }
+    }
+    
+    private Set<ApplicationAssignedSupervisorRepresentation> buildApplicationSupervisorRepresentation(Comment assignmentComment) {
+        Set<ApplicationAssignedSupervisorRepresentation> supervisors = Sets.newLinkedHashSet();
+
+        for (CommentAssignedUser assignee : commentDAO.getAssignedSupervisors(assignmentComment)) {
+            User user = assignee.getUser();
+            UserRepresentation userRepresentation = new UserRepresentation().withFirstName(user.getFirstName()).withLastName(user.getLastName())
+                    .withEmail(user.getEmail());
+            ApplicationAssignedSupervisorRepresentation assignedSupervisorRepresentation = new ApplicationAssignedSupervisorRepresentation()
+                    .withUser(userRepresentation).withRole(assignee.getRole().getId()).withAcceptedSupervision(true);
+            supervisors.add(assignedSupervisorRepresentation);
+        }
+
+        return supervisors;
     }
 
 }

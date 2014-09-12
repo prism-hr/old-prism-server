@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssi
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
-public class PrismApplicationApprovedCompleted extends PrismWorkflowState {
+public class PrismApplicationApprovedCompletedPurged extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {
@@ -88,15 +88,6 @@ public class PrismApplicationApprovedCompleted extends PrismWorkflowState {
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR), // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR)))); //
-        
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.APPLICATION_PURGE) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-                .withTransitions(Arrays.asList( // 
-                    new PrismStateTransition() // 
-                        .withTransitionState(PrismState.APPLICATION_APPROVED_COMPLETED_PURGED) // 
-                        .withTransitionAction(PrismAction.APPLICATION_ESCALATE)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //

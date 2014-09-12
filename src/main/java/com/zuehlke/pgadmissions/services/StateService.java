@@ -148,6 +148,8 @@ public class StateService {
         }
 
         commentService.save(comment);
+        resource.addComment(comment);
+        
         StateTransition stateTransition = getStateTransition(resource, action, comment);
 
         if (stateTransition != null) {

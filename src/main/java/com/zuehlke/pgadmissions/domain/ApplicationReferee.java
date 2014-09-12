@@ -22,14 +22,14 @@ public class ApplicationReferee {
     private Integer id;
 
     @ManyToOne
+    @JoinColumn(name = "application_id", nullable = false, updatable = false, insertable = false)
+    private Application application;
+    
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "application_id", nullable = false, updatable = false, insertable = false)
-    private Application application;
-
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id")
     private Comment comment;
 

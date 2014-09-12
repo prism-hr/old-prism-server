@@ -19,7 +19,7 @@ public class CommentAppointmentPreference {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "comment_id", insertable = false, updatable = false)
+    @JoinColumn(name = "comment_id", nullable = false, insertable = false, updatable = false)
     private Comment comment;
 
     @ManyToOne

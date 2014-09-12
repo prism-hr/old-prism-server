@@ -13,7 +13,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationPassport;
 import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -79,15 +78,6 @@ public class ApplicationCopyHelper {
             additionalInformation.setApplication(to);
             copyAdditionalInformation(additionalInformation, from.getAdditionalInformation());
         }
-    }
-
-    public void copyProgramDetail(ApplicationProgramDetail to, ApplicationProgramDetail from) {
-        Institution toInstitution = to.getApplication().getInstitution();
-        to.setStudyOption(getEnabledImportedObject(toInstitution, from.getStudyOption()));
-        to.setStartDate(from.getStartDate());
-        to.setReferralSource(getEnabledImportedObject(toInstitution, from.getReferralSource()));
-        to.setSourceOfInterestText(from.getSourceOfInterestText());
-        to.getSupervisors().addAll(from.getSupervisors());
     }
 
     public void copyAdditionalInformation(ApplicationAdditionalInformation to, ApplicationAdditionalInformation from) {

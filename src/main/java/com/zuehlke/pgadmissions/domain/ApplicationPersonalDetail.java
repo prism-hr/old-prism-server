@@ -23,6 +23,9 @@ public class ApplicationPersonalDetail {
     @Id
     @GeneratedValue
     private Integer id;
+    
+    @OneToOne(mappedBy = "personalDetail")
+    private Application application;
 
     @Column(name = "skype")
     @Size(min = 6, max = 32)
@@ -87,9 +90,6 @@ public class ApplicationPersonalDetail {
     @ManyToOne
     @JoinColumn(name = "domicile_id", nullable = false)
     private Domicile residenceCountry;
-
-    @OneToOne(mappedBy = "personalDetail")
-    private Application application;
 
     public void setId(Integer id) {
         this.id = id;

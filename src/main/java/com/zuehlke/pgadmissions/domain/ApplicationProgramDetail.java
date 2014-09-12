@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.Arrays;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -12,7 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -30,6 +28,9 @@ public class ApplicationProgramDetail {
     @GeneratedValue
     private Integer id;
 
+    @OneToOne(mappedBy = "programDetail")
+    private Application application;
+    
     @ManyToOne
     @JoinColumn(name = "study_option_id", nullable = false)
     private StudyOption studyOption;
@@ -44,18 +45,10 @@ public class ApplicationProgramDetail {
 
     @Transient
     private String sourceOfInterestText;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_program_detail_id", nullable = false)
-    private Set<ApplicationSupervisor> supervisors = Sets.newHashSet();
     
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "APPLICATION_OTHER_PROJECT", joinColumns = @JoinColumn(name = "application_program_detail_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "project_id", nullable = false))
     private Set<AdvertCategory> categories = Sets.newHashSet();
-
-
-    @OneToOne(mappedBy = "programDetail")
-    private Application application;
 
     public Integer getId() {
         return id;
@@ -97,10 +90,6 @@ public class ApplicationProgramDetail {
         this.sourceOfInterestText = sourceOfInterest;
     }
 
-    public Set<ApplicationSupervisor> getSupervisors() {
-        return supervisors;
-    }
-
     public Application getApplication() {
         return application;
     }
@@ -131,11 +120,6 @@ public class ApplicationProgramDetail {
     
     public ApplicationProgramDetail withSourceOfInterestText(String sourceOfInterestText) {
         this.sourceOfInterestText = sourceOfInterestText;
-        return this;
-    }
-    
-    public ApplicationProgramDetail withSuggestedSupervisors(ApplicationSupervisor... suggestedSupervisors) {
-        this.supervisors.addAll(Arrays.asList(suggestedSupervisors));
         return this;
     }
     

@@ -6,6 +6,8 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,6 +79,8 @@ import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationVal
 @Transactional
 public class ApplicationService {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     @Autowired
     private ApplicationDAO applicationDAO;
 
@@ -115,6 +119,9 @@ public class ApplicationService {
 
     @Autowired
     private RoleService roleService;
+    
+    @Autowired
+    private CommentService commentService;
 
     @Autowired
     private CompleteApplicationValidator completeApplicationValidator;
@@ -229,7 +236,7 @@ public class ApplicationService {
         programDetail.setStartDate(programDetailDTO.getStartDate());
         programDetail.setReferralSource(referralSource);
 
-        Iterator<ApplicationSupervisor> supervisorsIterator = programDetail.getSupervisors().iterator();
+        Iterator<ApplicationSupervisor> supervisorsIterator = application.getSupervisors().iterator();
         while (supervisorsIterator.hasNext()) {
             final ApplicationSupervisor supervisor = supervisorsIterator.next();
             Optional<ApplicationSupervisorDTO> supervisorDTO = Iterables.tryFind(programDetailDTO.getSupervisors(), new Predicate<ApplicationSupervisorDTO>() {
@@ -249,7 +256,7 @@ public class ApplicationService {
             User user = userService.getOrCreateUser(supervisorDTO.getUser().getFirstName(), supervisorDTO.getUser().getLastName(), supervisorDTO.getUser()
                     .getEmail());
             ApplicationSupervisor supervisor = new ApplicationSupervisor().withAware(supervisorDTO.getAware()).withUser(user);
-            programDetail.getSupervisors().add(supervisor);
+            application.getSupervisors().add(supervisor);
         }
     }
 
@@ -571,14 +578,34 @@ public class ApplicationService {
         if (comment.isApplicationWithdrawnComment()) {
             applicationSummaryService.incrementApplicationWithdrawnCount(application);
         }
+        
+        if (comment.isApplicationPurgeComment()) {
+            purgeApplication(application, comment);
+        }
     }
-
+    
+    private void purgeApplication(Application application, Comment comment) {
+        logger.info("Purging application " + application.getCode());
+        if (!application.getRetain()) {
+            application.setProgramDetail(null);
+            application.getSupervisors().clear();
+            application.setPersonalDetail(null);
+            application.setAddress(null);
+            application.getQualifications().clear();
+            application.getEmploymentPositions().clear();
+            application.getFundings().clear();
+            application.getReferees().clear();
+            application.setAdditionalInformation(null);
+        }
+        commentService.delete(application, comment);
+    }
+    
     private void synchroniseProjectSupervisors(Application application) {
         Role supervisorRole = roleService.getById(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR);
         List<User> supervisorUsers = roleService.getRoleUsers(application, supervisorRole);
 
         for (User supervisorUser : supervisorUsers) {
-            application.getProgramDetail().getSupervisors().add(new ApplicationSupervisor().withUser(supervisorUser).withAware(true));
+            application.getSupervisors().add(new ApplicationSupervisor().withUser(supervisorUser).withAware(true));
         }
     }
 

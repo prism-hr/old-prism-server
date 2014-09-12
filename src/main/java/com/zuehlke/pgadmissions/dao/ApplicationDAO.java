@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
@@ -18,6 +19,8 @@ import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.dto.ApplicationPurgeDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -104,6 +107,21 @@ public class ApplicationDAO {
                 .add(Restrictions.eq("application", application)) //
                 .add(Restrictions.eq("user", user)) //
                 .uniqueResult();
+    }
+    
+    public List<ApplicationPurgeDTO> getApplicationsToPurge() {
+        return (List<ApplicationPurgeDTO>) sessionFactory.getCurrentSession().createCriteria(Application.class, "application") //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("id"), "id")
+                        .add(Projections.property("retain"), "retain")) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED)) //
+                        .add(Restrictions.conjunction()
+                                .add(Restrictions.in("state.id",
+                                        Arrays.asList(PrismState.APPLICATION_APPROVED_COMPLETED, PrismState.APPLICATION_REJECTED_COMPLETED, //
+                                                PrismState.APPLICATION_WITHDRAWN_COMPLETED)))
+                                .add(Restrictions.eq("retain", false)))) //
+                .list();
     }
 
 }

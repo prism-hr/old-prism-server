@@ -261,7 +261,7 @@ public class ApplicationResource {
                 assignedUsers.add(new CommentAssignedUser().withComment(comment).withUser(referee.getUser()).withRole(refereeRole));
             }
             Role supervisorRole = entityService.getById(Role.class, PrismRole.APPLICATION_SUGGESTED_SUPERVISOR);
-            for (ApplicationSupervisor supervisor : application.getProgramDetail().getSupervisors()) {
+            for (ApplicationSupervisor supervisor : application.getSupervisors()) {
                 assignedUsers.add(new CommentAssignedUser().withComment(comment).withUser(supervisor.getUser()).withRole(supervisorRole));
             }
         } else if (commentDTO.getAssignedUsers() != null) {

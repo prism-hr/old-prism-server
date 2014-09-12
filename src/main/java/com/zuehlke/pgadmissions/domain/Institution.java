@@ -141,6 +141,9 @@ public class Institution extends ParentResource {
 
     @OneToMany(mappedBy = "institution")
     private Set<UserRole> userRoles = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "institution")
+    private Set<Comment> comments = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -480,6 +483,11 @@ public class Institution extends ParentResource {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
+    @Override
+    public void addComment(Comment comment) {
+        comments.add(comment);
+    }
+    
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();

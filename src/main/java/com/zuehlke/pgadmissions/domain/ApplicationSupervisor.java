@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "APPLICATION_SUPERVISOR", uniqueConstraints = {@UniqueConstraint(columnNames = {"application_program_detail_id", "user_id"})})
+@Table(name = "APPLICATION_SUPERVISOR", uniqueConstraints = {@UniqueConstraint(columnNames = {"application_id", "user_id"})})
 public class ApplicationSupervisor {
 
     @Id
@@ -18,8 +18,8 @@ public class ApplicationSupervisor {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "application_program_detail_id", insertable = false, updatable = false)
-    private ApplicationProgramDetail programDetail;
+    @JoinColumn(name = "application_id", insertable = false, updatable = false)
+    private Application application;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -36,12 +36,12 @@ public class ApplicationSupervisor {
         this.id = id;
     }
 
-    public ApplicationProgramDetail getProgramDetail() {
-        return programDetail;
+    public final Application getApplication() {
+        return application;
     }
 
-    public void setProgramDetail(ApplicationProgramDetail programDetail) {
-        this.programDetail = programDetail;
+    public final void setApplication(Application application) {
+        this.application = application;
     }
 
     public User getUser() {
@@ -52,11 +52,11 @@ public class ApplicationSupervisor {
         this.user = user;
     }
 
-    public boolean isAware() {
+    public Boolean getAware() {
         return aware;
     }
 
-    public void setAware(boolean aware) {
+    public void setAware(Boolean aware) {
         this.aware = aware;
     }
 

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,14 +27,15 @@ public class CommentAppointmentTimeslot {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "comment_id", insertable = false, updatable = false)
+    @JoinColumn(name = "comment_id", nullable = false, insertable = false, updatable = false)
     private Comment comment;
 
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
     @Column(name = "timeslot_datetime", nullable = false)
     private LocalDateTime dateTime;
 
-    @OneToMany(mappedBy = "appointmentTimeslot")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "comment_appointment_preference_id", nullable = false)
     private Set<CommentAppointmentPreference> appointmentPreferences;
 
     public Integer getId() {

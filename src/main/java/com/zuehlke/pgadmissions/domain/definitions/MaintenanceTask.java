@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain.definitions;
 
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.AbstractServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelper;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.ApplicationExportServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperInstitution;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperSystem;
@@ -24,7 +23,8 @@ public enum MaintenanceTask {
 //    SYSTEM_EXPORT_APPLICATION(ApplicationExportServiceHelper.class, false),
     SYSTEM_SEND_DEFERRED_WORKFLOW_NOTIFICATION(NotificationServiceHelperWorkflow.class, false),
     SYSTEM_SEND_RECOMMENDATION_NOTIFICATION(NotificationServiceHelperRecommendation.class, true),
-    SYSTEM_DELETE_UNUSED_DOCUMENT(DocumentServiceHelper.class, true);    
+    SYSTEM_DELETE_UNUSED_DOCUMENT(DocumentServiceHelper.class, true);
+    
     private Class<? extends AbstractServiceHelper> executor;
     
     boolean parallelize;

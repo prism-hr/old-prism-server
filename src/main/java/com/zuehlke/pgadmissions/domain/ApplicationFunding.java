@@ -24,6 +24,10 @@ public class ApplicationFunding {
     private Integer id;
 
     @ManyToOne
+    @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
+    private Application application;
+    
+    @ManyToOne
     @JoinColumn(name = "funding_source_id", nullable = false)
     private FundingSource fundingSource;
 
@@ -42,10 +46,6 @@ public class ApplicationFunding {
     @Column(name = "award_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate awardDate;
-
-    @ManyToOne
-    @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
-    private Application application;
 
     public void setId(Integer id) {
         this.id = id;

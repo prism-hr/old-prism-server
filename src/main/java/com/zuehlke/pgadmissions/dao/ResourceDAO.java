@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
 import org.apache.commons.lang.WordUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -119,7 +120,7 @@ public class ResourceDAO {
                 .add(Subqueries.propertyIn("id", ResourceListConstraintBuilder.getVisibleResourcesCriteria(user, resourceClass, parentScopeIds, filterDTO)));
 
         return ResourceListConstraintBuilder
-                .appendResourceListDisplayFilterExpression(Application.class, criteria, filterDTO.getSortOrder(), lastSequenceIdentifier) //
+                .appendResourceListDisplayFilterExpression(Application.class, criteria, filterDTO == null ? FilterSortOrder.DESCENDING : filterDTO.getSortOrder(), lastSequenceIdentifier) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowDTO.class)) //
                 .list();
     }
@@ -134,7 +135,7 @@ public class ResourceDAO {
             }
         }
     }
-    
+
     private void addResourceListCustomJoins(PrismScope scopeId, String resourceReference, Criteria criteria) {
         for (String tableName : scopeId.getConsoleListCustomColumns().keySet()) {
             if (!tableName.equals(resourceReference)) {

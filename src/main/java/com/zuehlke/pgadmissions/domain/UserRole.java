@@ -61,11 +61,11 @@ public class UserRole implements IUniqueEntity {
     @ManyToOne
     @JoinColumn(name = "notification_template_id")
     private NotificationTemplate notificationTemplate;
-    
+
     @Column(name = "last_notified_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedDate;
-    
+
     @Column(name = "assigned_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime assignedTimestamp;
@@ -157,7 +157,7 @@ public class UserRole implements IUniqueEntity {
     public void setAssignedTimestamp(DateTime assignedTimestamp) {
         this.assignedTimestamp = assignedTimestamp;
     }
-    
+
     public UserRole withResource(Resource resource) {
         setResource(resource);
         return this;

@@ -8,18 +8,18 @@ import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
 public class ResourceListFilterDTO {
 
     private Boolean urgentOnly;
-    
+
     private FilterMatchMode matchMode;
-    
+
     private FilterSortOrder sortOrder;
-    
+
     private String valueString;
-    
+
     private List<ResourceListFilterConstraintDTO> constraints;
-    
+
     private Boolean saveAsDefaultFilter;
 
-    public final Boolean isUrgentOnly() {
+    public final Boolean getUrgentOnly() {
         return urgentOnly;
     }
 
@@ -42,29 +42,29 @@ public class ResourceListFilterDTO {
     public final Boolean isSaveAsDefaultFilter() {
         return saveAsDefaultFilter;
     }
-    
+
     public ResourceListFilterDTO withUrgentOnly(Boolean urgentOnly) {
         this.urgentOnly = urgentOnly;
         return this;
     }
-    
+
     public ResourceListFilterDTO withMatchMode(FilterMatchMode matchMode) {
         this.matchMode = matchMode;
         return this;
     }
-    
+
     public ResourceListFilterDTO withSortOrder(FilterSortOrder sortOrder) {
         this.sortOrder = sortOrder;
         return this;
     }
-    
+
     public ResourceListFilterDTO withValueString(String valueString) {
         this.valueString = valueString;
         return this;
     }
-    
+
     public void addConstraint(ResourceListFilterConstraintDTO constraint) {
         constraints.add(constraint);
     }
-    
+
 }

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -53,6 +54,8 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
     private OfferRepresentation offerRecommendation;
 
     private List<ApplicationAssignedSupervisorRepresentation> supervisors;
+
+    private List<PrismStudyOption> availableStudyOptions;
 
     public InstitutionRepresentation getInstitution() {
         return institution;
@@ -212,5 +215,13 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     public void setSupervisors(List<ApplicationAssignedSupervisorRepresentation> supervisors) {
         this.supervisors = supervisors;
+    }
+
+    public List<PrismStudyOption> getAvailableStudyOptions() {
+        return availableStudyOptions;
+    }
+
+    public void setAvailableStudyOptions(List<PrismStudyOption> availableStudyOptions) {
+        this.availableStudyOptions = availableStudyOptions;
     }
 }

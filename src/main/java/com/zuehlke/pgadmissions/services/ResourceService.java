@@ -140,7 +140,7 @@ public class ResourceService {
         resource.setPreviousState(state);
         resource.setState(transitionState);
     }
-    
+
     public void processResource(Resource resource, Comment comment) {
         LocalDate baselineCustom;
         LocalDate baseline = new LocalDate();
@@ -220,16 +220,17 @@ public class ResourceService {
         return resourceDAO.getRecentlyUpdatedResources(resourceClass, rangeStart, rangeClose);
     }
 
-    public <T extends Resource> List<ResourceConsoleListRowDTO> getResourceConsoleList(User user, PrismScope scopeId, ResourceListFilterDTO filterDTO,
+    public <T extends Resource> List<ResourceConsoleListRowDTO> getResourceConsoleList(PrismScope scopeId, ResourceListFilterDTO filterDTO,
             String lastSequenceIdentifier) throws DeduplicationException {
+        User user = userService.getCurrentUser();
         if (scopeId == PrismScope.SYSTEM) {
             throw new Error("The system resource does not support resource listing");
         }
-        
+
         List<PrismScope> parentScopeIds = scopeService.getParentScopesAscending(scopeId);
         filterDTO = resourceListFilterService.saveOrGetByUserAndScope(user, scopeId, filterDTO);
-        
+
         return resourceDAO.getResourceConsoleList(user, scopeId, parentScopeIds, filterDTO, lastSequenceIdentifier);
     }
-    
+
 }

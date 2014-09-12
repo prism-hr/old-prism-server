@@ -67,10 +67,6 @@
             <a>projectTitle</a>
             <b>project.title</b>
         </field>
-        <field custom-converter="com.zuehlke.pgadmissions.rest.converter.CommaSeparatedActionsToListConverter">
-            <a>actions</a>
-            <b>actions</b>
-        </field>
     </mapping>
 
     <mapping>

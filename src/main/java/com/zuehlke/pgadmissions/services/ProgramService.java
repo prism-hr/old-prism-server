@@ -139,12 +139,11 @@ public class ProgramService {
                 entityService.save(programStudyOption);
                 program.getStudyOptions().add(programStudyOption);
             }
+            advert.setTitle(title);
         }
 
         advert.setDescription(advertDTO.getDescription());
         advert.setSummary(advertDTO.getSummary());
-
-        advert.setTitle(title);
     }
 
     public void postProcessProgram(Program program, Comment comment) {

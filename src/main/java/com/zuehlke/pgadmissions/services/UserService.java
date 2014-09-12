@@ -77,7 +77,8 @@ public class UserService {
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof User) {
-            return (User) authentication.getPrincipal();
+            User user = (User) authentication.getPrincipal();
+            return entityService.getById(User.class, user.getId());
         }
         return null;
     }
@@ -114,7 +115,7 @@ public class UserService {
 
         ActionOutcomeDTO outcome = actionService.getRegistrationOutcome(user, registrationDTO, referrer);
         notificationService.sendNotification(user, outcome.getTransitionResource(), PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST,
-                ImmutableMap.<String, String> of("action", outcome.getTransitionAction().getId().name()));
+                ImmutableMap.<String, String>of("action", outcome.getTransitionAction().getId().name()));
         return user;
     }
 

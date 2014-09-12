@@ -55,6 +55,8 @@ public enum PrismScope {
         this.precedence = precedence;
         this.shortCode = shortCode;
         this.resourceListRecordsToRetrieve = resourceListRecordsToRetrieve;
+        this.consoleListCustomColumns = consoleListColumns;
+        this.reportListCustomColumns = reportListColumns;
     }
 
     public Class<? extends Resource> getResourceClass() {
@@ -88,20 +90,20 @@ public enum PrismScope {
     public String getLowerCaseName() {
         return resourceClass.getSimpleName().toLowerCase();
     }
-    
+
     private static class ColumnDefinitionBuilder {
-        
+
         private final HashMultimap<String, String> definitions = HashMultimap.create();
-        
+
         public ColumnDefinitionBuilder addDefinition(String table, String column) {
             definitions.put(table, column);
             return this;
         }
-        
+
         public HashMultimap<String, String> getDefinitions() {
             return definitions;
         }
-        
+
     }
-    
+
 }

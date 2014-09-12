@@ -4,6 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Set;
 
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import org.apache.commons.beanutils.MethodUtils;
 import org.dozer.Mapper;
 import org.slf4j.Logger;
@@ -22,14 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -151,11 +145,11 @@ public class ResourceResource {
             @RequestBody(required = false) ResourceListFilterDTO filterDTO, @RequestParam(required = false) String lastSequenceIdentifier) {
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
         try {
-            User user = userService.getCurrentUser();
             PrismScope resourceScope = resourceDescriptor.getResourceScope();
-            for (ResourceConsoleListRowDTO rowDTO : resourceService.getResourceConsoleList(user, resourceScope, filterDTO, lastSequenceIdentifier)) {
+            for (ResourceConsoleListRowDTO rowDTO : resourceService.getResourceConsoleList(resourceScope, filterDTO, lastSequenceIdentifier)) {
                 ResourceListRowRepresentation representation = dozerBeanMapper.map(rowDTO, ResourceListRowRepresentation.class);
                 representation.setResourceScope(resourceDescriptor.getResourceScope());
+            User user = userService.getCurrentUser();
                 representation.setActions(actionService.getPermittedActions(rowDTO.getSystemId(), rowDTO.getInstitutionId(), rowDTO.getProgramId(),
                         rowDTO.getProjectId(), rowDTO.getApplicationId(), rowDTO.getStateId(), user));
                 representations.add(representation);
@@ -237,6 +231,12 @@ public class ResourceResource {
 
         applicationRepresentation.setOfferRecommendation(commentService.getOfferRecommendation(application));
         applicationRepresentation.setSupervisors(commentService.getApplicationSupervisors(application));
+        List<ProgramStudyOption> enabledProgramStudyOptions = programService.getEnabledProgramStudyOptions(application.getProgram());
+        List<PrismStudyOption> availableStudyOptions = Lists.newArrayListWithCapacity(enabledProgramStudyOptions.size());
+        for (ProgramStudyOption studyOption : enabledProgramStudyOptions) {
+            availableStudyOptions.add(studyOption.getStudyOption().getPrismStudyOption());
+        }
+        applicationRepresentation.setAvailableStudyOptions(availableStudyOptions);
     }
 
     public void enrichProgramRepresentation(Program program, ProgramExtendedRepresentation programRepresentation) {

@@ -42,12 +42,12 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
                                 DetachedCriteria.forClass(UserRole.class) //
                                         .setProjection(Projections.groupProperty("application.id")) //
                                         .createAlias("role", "role", JoinType.INNER_JOIN) //
-                                        .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                                        .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
+                                        .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                                        .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
                                         .add(Restrictions.eq("user", user)) //
                                         .add(Restrictions.isNotNull(PrismScope.getResourceScope(resourceClass).getLowerCaseName())))));
 
-        boolean getUrgentOnly = filterDTO.isUrgentOnly();
+        boolean getUrgentOnly = filterDTO == null ? false : filterDTO.getUrgentOnly();
 
         if (getUrgentOnly) {
             criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
@@ -57,14 +57,12 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
             String parentResourceReference = parentScopeId.getLowerCaseName();
 
             DetachedCriteria stateCriteria = DetachedCriteria.forClass(StateAction.class)
-                    //
                     .setProjection(Projections.groupProperty("state.id"))
-                    //
-                    .createAlias("stateActionAssignments", "stateActionAssigment", JoinType.INNER_JOIN)
+                    .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN)
                     .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                     .add(Restrictions.eq("role.scope.id", parentScopeId));
 
-            if (filterDTO.isUrgentOnly()) {
+            if (getUrgentOnly) {
                 stateCriteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
             }
 
@@ -74,6 +72,10 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
                                     .setProjection(Projections.groupProperty(parentResourceReference + ".id")) //
                                     .add(Restrictions.eq("user", user)).add(Restrictions.isNotNull(parentResourceReference)))) //
                     .add(Subqueries.propertyIn("state", stateCriteria)));
+        }
+
+        if (filterDTO == null) {
+            return criteria;
         }
 
         Junction conditions = Restrictions.conjunction();
@@ -153,7 +155,7 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
         }
 
         appendResourceListOrderExpression(criteria, order);
-        appentResourceListLimitExpression(resourceClass, criteria);
+        appendResourceListLimitExpression(resourceClass, criteria);
 
         return criteria;
     }
@@ -227,7 +229,7 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
         }
     }
 
-    private static <T extends Resource> void appentResourceListLimitExpression(Class<T> resourceClass, Criteria criteria) {
+    private static <T extends Resource> void appendResourceListLimitExpression(Class<T> resourceClass, Criteria criteria) {
         Integer recordsToRetrieve = PrismScope.getResourceScope(resourceClass).getResourceListRecordsToRetrieve();
         if (recordsToRetrieve == null) {
             return;

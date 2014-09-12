@@ -66,6 +66,8 @@ public abstract class Resource implements IUniqueEntity {
     
     public abstract void setSequenceIdentifier(String sequenceIdentifier);
     
+    public abstract void addComment(Comment comment);
+    
     public Resource getParentResource() {
         PrismScope resourceScope = PrismScope.getResourceScope(this.getClass());
         switch (resourceScope) {

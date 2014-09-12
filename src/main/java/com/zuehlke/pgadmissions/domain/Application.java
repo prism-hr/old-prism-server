@@ -77,12 +77,16 @@ public class Application extends Resource {
     private LocalDate previousClosingDate;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_personal_detail_id", unique = true)
-    private ApplicationPersonalDetail personalDetail;
-
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_program_detail_id", unique = true)
     private ApplicationProgramDetail programDetail;
+    
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_id", nullable = false)
+    private Set<ApplicationSupervisor> supervisors = Sets.newHashSet();
+    
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_personal_detail_id", unique = true)
+    private ApplicationPersonalDetail personalDetail;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_address_id", unique = true)
@@ -134,8 +138,8 @@ public class Application extends Resource {
     @Enumerated(EnumType.STRING)
     private PrismOfferType confirmedOfferType;
 
-    @Column(name = "do_retain", nullable = false)
-    private Boolean doRetain;
+    @Column(name = "retain", nullable = false)
+    private Boolean retain;
 
     @Column(name = "submitted_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -342,6 +346,10 @@ public class Application extends Resource {
         this.programDetail = programDetail;
     }
 
+    public final Set<ApplicationSupervisor> getSupervisors() {
+        return supervisors;
+    }
+
     public ApplicationAdditionalInformation getAdditionalInformation() {
         return additionalInformation;
     }
@@ -398,12 +406,12 @@ public class Application extends Resource {
         this.confirmedOfferType = confirmedOfferType;
     }
 
-    public final Boolean isDoRetain() {
-        return doRetain;
+    public final Boolean getRetain() {
+        return retain;
     }
 
-    public final void setDoRetain(Boolean doRetain) {
-        this.doRetain = doRetain;
+    public final void setRetain(Boolean retain) {
+        this.retain = retain;
     }
 
     public Set<ApplicationQualification> getQualifications() {
@@ -506,7 +514,7 @@ public class Application extends Resource {
     }
 
     public Application withDoRetain(Boolean doRetain) {
-        this.doRetain = doRetain;
+        this.retain = doRetain;
         return this;
     }
 
@@ -570,6 +578,11 @@ public class Application extends Resource {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
+    @Override
+    public void addComment(Comment comment) {
+        comments.add(comment);
+    }
+    
     public LocalDate getRecommendedStartDate() {
         return project == null ? program.getRecommendedStartDate() : project.getRecommendedStartDate();
     }

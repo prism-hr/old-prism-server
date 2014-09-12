@@ -36,31 +36,31 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
         DetachedCriteria criteria = DetachedCriteria.forClass(resourceClass) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("userRoles", "userRole", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Subqueries.propertyIn("id", //
-                                DetachedCriteria.forClass(UserRole.class) //
-                                        .setProjection(Projections.groupProperty("application.id")) //
-                                        .createAlias("role", "role", JoinType.INNER_JOIN) //
-                                        .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                                        .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
-                                        .add(Restrictions.eq("user", user)) //
-                                        .add(Restrictions.isNotNull(PrismScope.getResourceScope(resourceClass).getLowerCaseName())))));
-
+                .createAlias("userRoles", "userRole", JoinType.LEFT_OUTER_JOIN);
+       
+        DetachedCriteria application = DetachedCriteria.forClass(UserRole.class) //
+                .setProjection(Projections.groupProperty("application.id")) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.isNotNull(PrismScope.getResourceScope(resourceClass).getLowerCaseName()));
+        
         boolean getUrgentOnly = filterDTO.isUrgentOnly();
 
         if (getUrgentOnly) {
-            criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
+            application.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
         }
 
+        Junction disjunction = Restrictions.disjunction() //
+                .add(Subqueries.propertyIn("id", application));
+        
         for (PrismScope parentScopeId : parentScopeIds) {
             String parentResourceReference = parentScopeId.getLowerCaseName();
 
-            DetachedCriteria stateCriteria = DetachedCriteria.forClass(StateAction.class)
-                    //
-                    .setProjection(Projections.groupProperty("state.id"))
-                    //
-                    .createAlias("stateActionAssignments", "stateActionAssigment", JoinType.INNER_JOIN)
+            DetachedCriteria stateCriteria = DetachedCriteria.forClass(StateAction.class) //
+                    .setProjection(Projections.groupProperty("state.id")) //
+                    .createAlias("stateActionAssignments", "stateActionAssigment", JoinType.INNER_JOIN) //
                     .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                     .add(Restrictions.eq("role.scope.id", parentScopeId));
 
@@ -68,14 +68,17 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
                 stateCriteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
             }
 
-            criteria.add(Restrictions.conjunction() //
+            disjunction.add(Restrictions.conjunction() //
                     .add(Subqueries.propertyIn(parentResourceReference, //
                             DetachedCriteria.forClass(UserRole.class) //
                                     .setProjection(Projections.groupProperty(parentResourceReference + ".id")) //
-                                    .add(Restrictions.eq("user", user)).add(Restrictions.isNotNull(parentResourceReference)))) //
+                                    .add(Restrictions.eq("user", user)) //
+                                    .add(Restrictions.isNotNull(parentResourceReference)))) //
                     .add(Subqueries.propertyIn("state", stateCriteria)));
         }
 
+        criteria.add(disjunction);
+        
         Junction conditions = Restrictions.conjunction();
         if (filterDTO.getMatchMode() == FilterMatchMode.ANY) {
             conditions = Restrictions.disjunction();

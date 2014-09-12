@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssi
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
-public class PrismApplicationApprovedCompleted extends PrismWorkflowState {
+public class PrismApplicationRejectedCompletedPurged extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {
@@ -21,10 +21,6 @@ public class PrismApplicationApprovedCompleted extends PrismWorkflowState {
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
                 .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_SECONDARY_SUPERVISOR), // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_VIEWER_RECRUITER), // 
                     new PrismStateActionAssignment() // 
@@ -58,7 +54,7 @@ public class PrismApplicationApprovedCompleted extends PrismWorkflowState {
                         .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
-                        .withTransitionState(PrismState.APPLICATION_APPROVED_COMPLETED) // 
+                        .withTransitionState(PrismState.APPLICATION_REJECTED_COMPLETED) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST)))); //
     
         stateActions.add(new PrismStateAction() //
@@ -66,10 +62,6 @@ public class PrismApplicationApprovedCompleted extends PrismWorkflowState {
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
                 .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_SECONDARY_SUPERVISOR), // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_VIEWER_RECRUITER), // 
                     new PrismStateActionAssignment() // 
@@ -88,15 +80,6 @@ public class PrismApplicationApprovedCompleted extends PrismWorkflowState {
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR), // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR)))); //
-        
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.APPLICATION_PURGE) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-                .withTransitions(Arrays.asList( // 
-                    new PrismStateTransition() // 
-                        .withTransitionState(PrismState.APPLICATION_APPROVED_COMPLETED_PURGED) // 
-                        .withTransitionAction(PrismAction.APPLICATION_ESCALATE)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //
@@ -134,5 +117,5 @@ public class PrismApplicationApprovedCompleted extends PrismWorkflowState {
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
                         .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER)))); //
     }
-
+    
 }

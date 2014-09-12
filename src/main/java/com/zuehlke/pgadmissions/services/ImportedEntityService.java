@@ -376,7 +376,7 @@ public class ImportedEntityService {
         Role invokerRole = roleService.getCreatorRole(program);
 
         Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
-                .withAssignedUser(invoker, invokerRole);
+                .addAssignedUser(invoker, invokerRole);
         actionService.executeSystemAction(program, action, comment);
     }
 

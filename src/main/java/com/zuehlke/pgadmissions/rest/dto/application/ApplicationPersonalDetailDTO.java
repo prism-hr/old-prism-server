@@ -4,11 +4,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.zuehlke.pgadmissions.rest.validation.annotation.DatePast;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
+import com.zuehlke.pgadmissions.rest.validation.annotation.DatePast;
 
 public class ApplicationPersonalDetailDTO {
 

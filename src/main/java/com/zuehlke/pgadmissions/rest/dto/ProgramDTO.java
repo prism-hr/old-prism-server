@@ -3,11 +3,11 @@ package com.zuehlke.pgadmissions.rest.dto;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import org.joda.time.LocalDate;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
 public class ProgramDTO {
 

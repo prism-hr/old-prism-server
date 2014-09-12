@@ -35,7 +35,7 @@ public class CommentAppointmentTimeslot {
     private LocalDateTime dateTime;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "comment_appointment_preference_id", nullable = false)
+    @JoinColumn(name = "comment_appointment_timeslot_id", nullable = false)
     private Set<CommentAppointmentPreference> appointmentPreferences;
 
     public Integer getId() {

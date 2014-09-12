@@ -587,6 +587,8 @@ public class ApplicationService {
     private void purgeApplication(Application application, Comment comment) {
         logger.info("Purging application " + application.getCode());
         if (!application.getRetain()) {
+            application.setApplicationRatingCount(null);
+            application.setApplicationRatingAverage(null);
             application.setProgramDetail(null);
             application.getSupervisors().clear();
             application.setPersonalDetail(null);

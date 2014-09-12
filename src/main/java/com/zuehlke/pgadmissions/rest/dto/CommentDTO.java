@@ -4,16 +4,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
-import com.zuehlke.pgadmissions.domain.ResidenceState;
-import org.joda.time.DateTime;
+import javax.validation.constraints.Size;
+
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-
-import javax.validation.constraints.Size;
 
 public class CommentDTO {
 

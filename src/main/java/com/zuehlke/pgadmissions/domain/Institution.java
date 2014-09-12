@@ -139,7 +139,7 @@ public class Institution extends ParentResource {
     @OneToMany(mappedBy = "institution")
     private Set<ImportedEntityFeed> importedEntityFeeds = Sets.newHashSet();
     
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "institution")
     private Set<UserRole> userRoles = Sets.newHashSet();
 
     @Override

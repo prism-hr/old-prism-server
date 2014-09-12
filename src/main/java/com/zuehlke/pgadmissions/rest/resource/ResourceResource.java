@@ -1,23 +1,46 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
-import com.google.common.base.Functions;
-import com.google.common.base.Optional;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.beanutils.MethodUtils;
+import org.dozer.Mapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.ActionDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
@@ -26,23 +49,19 @@ import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionExtended
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProjectExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
-import com.zuehlke.pgadmissions.services.*;
-import org.apache.commons.beanutils.MethodUtils;
-import org.dozer.Mapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.Set;
+import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.CommentService;
+import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.services.ProgramService;
+import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.StateService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
-@RequestMapping(value = {"api/{resourceScope}"})
+@RequestMapping(value = { "api/{resourceScope}" })
 public class ResourceResource {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -89,26 +108,19 @@ public class ResourceResource {
 
         // set visible comments
         List<Comment> comments = commentService.getVisibleComments(resource, currentUser);
-        representation.setComments(Lists.<CommentRepresentation>newArrayListWithExpectedSize(comments.size()));
+        representation.setComments(Lists.<CommentRepresentation> newArrayListWithExpectedSize(comments.size()));
         for (Comment comment : comments) {
             representation.getComments().add(dozerBeanMapper.map(comment, CommentRepresentation.class));
         }
 
         // set list of available actions
-        List<PrismAction> permittedActions = actionService.getPermittedActions(resource, currentUser);
+        List<ActionRepresentation> permittedActions = actionService.getPermittedActions(resource, currentUser);
         if (permittedActions.isEmpty()) {
             Action viewEditAction = actionService.getViewEditAction(resource);
             actionService.throwWorkflowPermissionException(resource, viewEditAction);
         }
         representation.setActions(permittedActions);
-
-        Optional<PrismAction> completeAction = Iterables.tryFind(
-                permittedActions,
-                Predicates.compose(Predicates.containsPattern("^((\\w+)_COMPLETE_(\\w+)_STAGE|APPLICATION_MOVE_TO_DIFFERENT_STAGE)$"),
-                        Functions.toStringFunction()));
-        if (completeAction.isPresent()) {
-            representation.setNextStates(stateService.getAvailableNextStates(resource, completeAction.get()));
-        }
+        representation.setNextStates(stateService.getAvailableNextStates(resource, permittedActions));
 
         // set list of available action enhancements (viewing and editing permissions)
         List<PrismActionEnhancement> permittedActionEnhancements = actionService.getPermittedActionEnhancements(resource, currentUser);
@@ -130,26 +142,33 @@ public class ResourceResource {
             userRolesRepresentations.add(userRolesRepresentation);
         }
         representation.setUsers(userRolesRepresentations);
-        MethodUtils.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", new Object[]{resource, representation});
+        MethodUtils.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", new Object[] { resource, representation });
         return representation;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
-                                                            @RequestParam(value = "page") Integer loadIndex) {
-        List<ResourceConsoleListRowDTO> consoleListBlock = resourceService.getConsoleListBlock(resourceDescriptor.getType(), loadIndex);
+            @RequestBody(required = false) ResourceListFilterDTO filterDTO, @RequestParam(required = false) String lastSequenceIdentifier) {
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
-        for (ResourceConsoleListRowDTO appDTO : consoleListBlock) {
-            ResourceListRowRepresentation representation = dozerBeanMapper.map(appDTO, ResourceListRowRepresentation.class);
-            representation.setResourceScope(resourceDescriptor.getResourceScope());
-            representations.add(representation);
+        try {
+            User user = userService.getCurrentUser();
+            PrismScope resourceScope = resourceDescriptor.getResourceScope();
+            for (ResourceConsoleListRowDTO rowDTO : resourceService.getResourceConsoleList(user, resourceScope, filterDTO, lastSequenceIdentifier)) {
+                ResourceListRowRepresentation representation = dozerBeanMapper.map(rowDTO, ResourceListRowRepresentation.class);
+                representation.setResourceScope(resourceDescriptor.getResourceScope());
+                representation.setActions(actionService.getPermittedActions(rowDTO.getSystemId(), rowDTO.getInstitutionId(), rowDTO.getProgramId(),
+                        rowDTO.getProjectId(), rowDTO.getApplicationId(), rowDTO.getStateId(), user));
+                representations.add(representation);
+            }
+            return representations;
+        } catch (DeduplicationException e) {
+            throw new ResourceNotFoundException("Error saving default filter", e);
         }
-        return representations;
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public ActionOutcomeRepresentation createResource(@ModelAttribute ResourceDescriptor resourceDescriptor, @RequestBody ActionDTO actionDTO,
-                                                      @RequestHeader(value = "referer", required = false) String referrer) throws WorkflowEngineException {
+            @RequestHeader(value = "referer", required = false) String referrer) throws WorkflowEngineException {
         if (actionDTO.getActionId().getActionCategory() != PrismActionCategory.CREATE_RESOURCE) {
             throw new Error(actionDTO.getActionId().name() + " is not a creation action.");
         }
@@ -168,7 +187,7 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.PUT)
     public void changeRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                           @RequestBody List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
+            @RequestBody List<AbstractResourceRepresentation.RoleRepresentation> roles) throws WorkflowEngineException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
 
@@ -183,12 +202,12 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     public void addUserToResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                                  @RequestBody AbstractResourceRepresentation.UserRolesRepresentation userRolesRepresentation) throws WorkflowEngineException {
+            @RequestBody AbstractResourceRepresentation.UserRolesRepresentation userRolesRepresentation) throws WorkflowEngineException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
 
         try {
-            userService.getOrCreateUserWithRoles(userRolesRepresentation.getFirstName(), userRolesRepresentation.getLastName(), userRolesRepresentation.getEmail(),
-                    resource, userRolesRepresentation.getRoles());
+            userService.getOrCreateUserWithRoles(userRolesRepresentation.getFirstName(), userRolesRepresentation.getLastName(),
+                    userRolesRepresentation.getEmail(), resource, userRolesRepresentation.getRoles());
             // TODO: return validation error if workflow engine exception is thrown.
         } catch (DeduplicationException e) {
             logger.error(e.getMessage());
@@ -230,13 +249,13 @@ public class ResourceResource {
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
         if ("applications".equals(resourceScope)) {
-            return new ResourceDescriptor(Application.class, ApplicationExtendedRepresentation.class, "APPLICATION");
+            return new ResourceDescriptor(Application.class, ApplicationExtendedRepresentation.class, PrismScope.APPLICATION);
         } else if ("projects".equals(resourceScope)) {
-            return new ResourceDescriptor(Project.class, ProjectExtendedRepresentation.class, "PROJECT");
+            return new ResourceDescriptor(Project.class, ProjectExtendedRepresentation.class, PrismScope.PROJECT);
         } else if ("programs".equals(resourceScope)) {
-            return new ResourceDescriptor(Program.class, ProgramExtendedRepresentation.class, "PROGRAM");
+            return new ResourceDescriptor(Program.class, ProgramExtendedRepresentation.class, PrismScope.PROGRAM);
         } else if ("institutions".equals(resourceScope)) {
-            return new ResourceDescriptor(Institution.class, InstitutionExtendedRepresentation.class, "INSTITUTION");
+            return new ResourceDescriptor(Institution.class, InstitutionExtendedRepresentation.class, PrismScope.INSTITUTION);
         }
         throw new ResourceNotFoundException("Unknown resource type '" + resourceScope + "'.");
     }
@@ -247,9 +266,9 @@ public class ResourceResource {
 
         private Class<? extends AbstractResourceRepresentation> representationType;
 
-        private String resourceScope;
+        private PrismScope resourceScope;
 
-        private ResourceDescriptor(Class<? extends Resource> type, Class<? extends AbstractResourceRepresentation> representationType, String resourceScope) {
+        private ResourceDescriptor(Class<? extends Resource> type, Class<? extends AbstractResourceRepresentation> representationType, PrismScope resourceScope) {
             this.type = type;
             this.representationType = representationType;
             this.resourceScope = resourceScope;
@@ -263,7 +282,7 @@ public class ResourceResource {
             return representationType;
         }
 
-        public String getResourceScope() {
+        public PrismScope getResourceScope() {
             return resourceScope;
         }
     }

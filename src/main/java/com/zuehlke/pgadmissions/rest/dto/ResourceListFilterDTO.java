@@ -39,6 +39,10 @@ public class ResourceListFilterDTO {
         return constraints;
     }
 
+    public void setConstraints(List<ResourceListFilterConstraintDTO> constraints) {
+        this.constraints = constraints;
+    }
+
     public final Boolean isSaveAsDefaultFilter() {
         return saveAsDefaultFilter;
     }

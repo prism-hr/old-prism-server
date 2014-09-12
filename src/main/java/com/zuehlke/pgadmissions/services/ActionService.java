@@ -48,7 +48,7 @@ public class ActionService {
     private UserService userService;
 
     public Action getById(PrismAction id) {
-        return entityService.getByProperty(Action.class, "id", id);
+        return entityService.getById(Action.class, id);
     }
 
     public void validateInvokeAction(Resource resource, Action action, Comment comment) {

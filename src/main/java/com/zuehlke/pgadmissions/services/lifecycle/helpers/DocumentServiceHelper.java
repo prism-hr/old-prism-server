@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.helpers;
+package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

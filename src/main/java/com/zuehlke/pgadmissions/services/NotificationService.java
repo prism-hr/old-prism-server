@@ -319,7 +319,7 @@ public class NotificationService {
             model.put(parameter, extraParameters.get(parameter));
         }
 
-        model.put("systemName", system.getName());
+        model.put("systemName", system.getTitle());
         model.put("time", new Date());
         model.put("host", host);
         return model;

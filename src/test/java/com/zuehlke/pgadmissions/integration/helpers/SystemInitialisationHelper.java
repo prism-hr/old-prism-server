@@ -183,7 +183,7 @@ public class SystemInitialisationHelper {
 
     public void verifySystemCreation() {
         System system = systemService.getSystem();
-        assertEquals(system.getName(), systemName);
+        assertEquals(system.getTitle(), systemName);
         assertEquals(system.getCode(), resourceService.generateResourceCode(system));
         assertEquals(system.getState().getId(), PrismState.SYSTEM_RUNNING);
     }

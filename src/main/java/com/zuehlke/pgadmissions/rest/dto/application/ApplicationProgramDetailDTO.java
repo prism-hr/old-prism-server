@@ -1,11 +1,12 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import com.zuehlke.pgadmissions.domain.ProgramStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import org.joda.time.LocalDate;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
+
+import org.joda.time.LocalDate;
+
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
 public class ApplicationProgramDetailDTO {
 

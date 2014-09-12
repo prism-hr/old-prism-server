@@ -16,8 +16,8 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ParentResource;
 import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.services.helpers.SummaryHelper;
 import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
+import com.zuehlke.pgadmissions.utils.SummaryUtils;
 
 @Service
 @Transactional
@@ -31,8 +31,8 @@ public class ApplicationSummaryService {
 
     public void summariseApplication(Application application, Comment comment) {
         Integer currentRatingCount = application.getApplicationRatingCount();
-        application.setApplicationRatingCount(SummaryHelper.incrementRunningCount(currentRatingCount));
-        application.setApplicationRatingAverage(SummaryHelper.computeRunningAverage(currentRatingCount, application.getApplicationRatingAverage(),
+        application.setApplicationRatingCount(SummaryUtils.incrementRunningCount(currentRatingCount));
+        application.setApplicationRatingAverage(SummaryUtils.computeRunningAverage(currentRatingCount, application.getApplicationRatingAverage(),
                 comment.getApplicationRating()));
 
         for (ParentResource parentResource : application.getParentResources()) {
@@ -73,10 +73,10 @@ public class ApplicationSummaryService {
 
     private void updateApplicationSummary(ParentResource parentResource, Application application) {
         Integer currentRatingCountSum = parentResource.getApplicationRatingCount();
-        parentResource.setApplicationRatingCount(SummaryHelper.incrementRunningCount(currentRatingCountSum));
-        parentResource.setApplicationRatingCountAverageNonZero(SummaryHelper.computeRunningAverage(currentRatingCountSum,
+        parentResource.setApplicationRatingCount(SummaryUtils.incrementRunningCount(currentRatingCountSum));
+        parentResource.setApplicationRatingCountAverageNonZero(SummaryUtils.computeRunningAverage(currentRatingCountSum,
                 parentResource.getApplicationRatingCountAverageNonZero(), application.getApplicationRatingCount()));
-        parentResource.setApplicationRatingAverage(SummaryHelper.computeRunningAverage(currentRatingCountSum, parentResource.getApplicationRatingAverage(),
+        parentResource.setApplicationRatingAverage(SummaryUtils.computeRunningAverage(currentRatingCountSum, parentResource.getApplicationRatingAverage(),
                 application.getApplicationRatingAverage()));
     }
 
@@ -91,7 +91,7 @@ public class ApplicationSummaryService {
             entityService.save(transientProcessing);
             return transientProcessing;
         } else {
-            persistentProcessing.setInstanceCount(SummaryHelper.incrementRunningCount(persistentProcessing.getInstanceCount()));
+            persistentProcessing.setInstanceCount(SummaryUtils.incrementRunningCount(persistentProcessing.getInstanceCount()));
             persistentProcessing.setLastUpdatedDate(baseline);
             return persistentProcessing;
         }
@@ -106,7 +106,7 @@ public class ApplicationSummaryService {
         
         Integer stateDuration = Days.daysBetween(previousProcessing.getLastUpdatedDate(), baseline).getDays();
 
-        previousProcessing.setDayDurationAverage(SummaryHelper.computeRunningAverage((previousProcessing.getInstanceCount() - 1),
+        previousProcessing.setDayDurationAverage(SummaryUtils.computeRunningAverage((previousProcessing.getInstanceCount() - 1),
                 previousProcessing.getDayDurationAverage(), stateDuration));
         previousProcessing.setLastUpdatedDate(baseline);
 
@@ -125,9 +125,9 @@ public class ApplicationSummaryService {
                 transientSummary.setInstanceCountAverageNonZero(new BigDecimal(1.00));
                 entityService.save(transientSummary);
             } else {
-                persistentSummary.setInstanceCount(SummaryHelper.incrementRunningCount(persistentSummary.getInstanceCount()));
-                persistentSummary.setInstanceCountLive(SummaryHelper.incrementRunningCount(persistentSummary.getInstanceCountLive()));
-                persistentSummary.setInstanceCountAverageNonZero(SummaryHelper.computeRunningAverage(persistentSummary.getInstanceCount(),
+                persistentSummary.setInstanceCount(SummaryUtils.incrementRunningCount(persistentSummary.getInstanceCount()));
+                persistentSummary.setInstanceCountLive(SummaryUtils.incrementRunningCount(persistentSummary.getInstanceCountLive()));
+                persistentSummary.setInstanceCountAverageNonZero(SummaryUtils.computeRunningAverage(persistentSummary.getInstanceCount(),
                         persistentSummary.getInstanceCountAverageNonZero(), 1));
             }
         }
@@ -139,8 +139,8 @@ public class ApplicationSummaryService {
             if (summary == null) {
                 continue;
             }
-            summary.setInstanceCountLive(SummaryHelper.decrementRunningCount(summary.getInstanceCountLive()));
-            summary.setDayDurationAverage(SummaryHelper.computeRunningAverage(summary.getInstanceCount(), summary.getDayDurationAverage(), stateDuration));
+            summary.setInstanceCountLive(SummaryUtils.decrementRunningCount(summary.getInstanceCountLive()));
+            summary.setDayDurationAverage(SummaryUtils.computeRunningAverage(summary.getInstanceCount(), summary.getDayDurationAverage(), stateDuration));
         }
     }
 
@@ -148,7 +148,7 @@ public class ApplicationSummaryService {
         for (ParentResource parentResource : application.getParentResources()) {
             ParentResource parent = (ParentResource) IntrospectionUtils.getProperty(application, parentResource.getResourceScope().getLowerCaseName());
             Integer currentCount = (Integer) IntrospectionUtils.getProperty(parent, eventCountProperty);
-            IntrospectionUtils.setProperty(parent, eventCountProperty, SummaryHelper.incrementRunningCount(currentCount));
+            IntrospectionUtils.setProperty(parent, eventCountProperty, SummaryUtils.incrementRunningCount(currentCount));
         }
     }
 

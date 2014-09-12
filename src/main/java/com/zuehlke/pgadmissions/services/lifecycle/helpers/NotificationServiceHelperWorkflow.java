@@ -1,9 +1,11 @@
-package com.zuehlke.pgadmissions.services.helpers;
+package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
 import java.util.List;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +21,8 @@ import com.zuehlke.pgadmissions.services.SystemService;
 @Component
 public class NotificationServiceHelperWorkflow extends AbstractServiceHelper {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     @Autowired
     private CommentService commentService;
     
@@ -39,8 +43,11 @@ public class NotificationServiceHelperWorkflow extends AbstractServiceHelper {
         LocalDate baseline = new LocalDate();
         List<PrismScope> scopeIds = scopeService.getScopesDescending();
         for (PrismScope scopeId : scopeIds) {
+            logger.info("Sending individual request reminders for " + scopeId.name() + " scope");
             sendIndividualRequestReminders(scopeId, baseline);
+            logger.info("Sending syndicated request notifications for " + scopeId.name() + " scope");
             sendSyndicatedRequestNotifications(scopeId, baseline);
+            logger.info("Sending syndicated update notifications for " + scopeId.name() + " scope");
             sendSyndicatedUpdateNotifications(scopeId, baseline);
         }
     }

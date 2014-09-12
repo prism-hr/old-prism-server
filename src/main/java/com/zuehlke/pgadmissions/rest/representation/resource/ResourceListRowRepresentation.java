@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -19,11 +20,11 @@ public class ResourceListRowRepresentation {
 
     private UserExtendedRepresentation user;
 
-    private InstitutionRepresentation institution;
+    private String institutionTitle;
 
-    private ProgramRepresentation program;
+    private String programTitle;
 
-    private ProjectRepresentation project;
+    private String projectTitle;
 
     private LocalDate closingDate;
 
@@ -31,11 +32,11 @@ public class ResourceListRowRepresentation {
 
     private LocalDate dueDate;
 
-    private Date displayTimestamp;
+    private DateTime updatedTimestamp;
 
     private List<ActionRepresentation> actions;
 
-    private BigDecimal averageRating;
+    private BigDecimal applicationRatingAverage;
 
     private PrismScope resourceScope;
 
@@ -45,14 +46,6 @@ public class ResourceListRowRepresentation {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public ProgramRepresentation getProgram() {
-        return program;
-    }
-
-    public void setProgram(ProgramRepresentation program) {
-        this.program = program;
     }
 
     public String getCode() {
@@ -71,20 +64,28 @@ public class ResourceListRowRepresentation {
         this.user = user;
     }
 
-    public InstitutionRepresentation getInstitution() {
-        return institution;
+    public String getInstitutionTitle() {
+        return institutionTitle;
     }
 
-    public void setInstitution(InstitutionRepresentation institution) {
-        this.institution = institution;
+    public void setInstitutionTitle(String institutionTitle) {
+        this.institutionTitle = institutionTitle;
     }
 
-    public ProjectRepresentation getProject() {
-        return project;
+    public String getProgramTitle() {
+        return programTitle;
     }
 
-    public void setProject(ProjectRepresentation project) {
-        this.project = project;
+    public void setProgramTitle(String programTitle) {
+        this.programTitle = programTitle;
+    }
+
+    public String getProjectTitle() {
+        return projectTitle;
+    }
+
+    public void setProjectTitle(String projectTitle) {
+        this.projectTitle = projectTitle;
     }
 
     public LocalDate getClosingDate() {
@@ -111,12 +112,12 @@ public class ResourceListRowRepresentation {
         this.dueDate = dueDate;
     }
 
-    public Date getDisplayTimestamp() {
-        return displayTimestamp;
+    public DateTime getUpdatedTimestamp() {
+        return updatedTimestamp;
     }
 
-    public void setDisplayTimestamp(Date displayTimestamp) {
-        this.displayTimestamp = displayTimestamp;
+    public void setUpdatedTimestamp(DateTime updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
     }
 
     public List<ActionRepresentation> getActions() {
@@ -127,12 +128,12 @@ public class ResourceListRowRepresentation {
         this.actions = actions;
     }
 
-    public BigDecimal getAverageRating() {
-        return averageRating;
+    public BigDecimal getApplicationRatingAverage() {
+        return applicationRatingAverage;
     }
 
-    public void setAverageRating(BigDecimal averageRating) {
-        this.averageRating = averageRating;
+    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+        this.applicationRatingAverage = applicationRatingAverage;
     }
 
     public PrismScope getResourceScope() {

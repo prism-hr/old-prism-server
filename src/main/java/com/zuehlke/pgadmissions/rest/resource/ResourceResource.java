@@ -211,6 +211,9 @@ public class ResourceResource {
             potentiallyInterestedRepresentations.add(dozerBeanMapper.map(user, UserExtendedRepresentation.class));
         }
 
+        applicationRepresentation.setProgramTitle(application.getProgram().getTitle());
+        applicationRepresentation.setProjectTitle(application.getProject() != null ? application.getProject().getTitle() : null);
+
         applicationRepresentation.setUsersInterestedInApplication(interestedRepresentations);
         applicationRepresentation.setUsersPotentiallyInterestedInApplication(potentiallyInterestedRepresentations);
 

@@ -55,18 +55,6 @@
             <a>creatorLastName</a>
             <b>user.lastName</b>
         </field>
-        <field>
-            <a>institutionTitle</a>
-            <b>institution.title</b>
-        </field>
-        <field>
-            <a>programTitle</a>
-            <b>program.title</b>
-        </field>
-        <field>
-            <a>projectTitle</a>
-            <b>project.title</b>
-        </field>
     </mapping>
 
     <mapping>

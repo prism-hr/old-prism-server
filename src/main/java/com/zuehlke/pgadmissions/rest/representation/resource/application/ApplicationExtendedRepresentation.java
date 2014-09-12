@@ -1,25 +1,22 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ProjectRepresentation;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import java.util.List;
 
 public class ApplicationExtendedRepresentation extends AbstractResourceRepresentation {
 
     private InstitutionRepresentation institution;
 
-    private ProgramRepresentation program;
+    private String programTitle;
 
-    private ProjectRepresentation project;
+    private String projectTitle;
 
     private LocalDate closingDate;
 
@@ -65,20 +62,20 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
         this.institution = institution;
     }
 
-    public ProgramRepresentation getProgram() {
-        return program;
+    public String getProgramTitle() {
+        return programTitle;
     }
 
-    public void setProgram(ProgramRepresentation program) {
-        this.program = program;
+    public void setProgramTitle(String programTitle) {
+        this.programTitle = programTitle;
     }
 
-    public ProjectRepresentation getProject() {
-        return project;
+    public String getProjectTitle() {
+        return projectTitle;
     }
 
-    public void setProject(ProjectRepresentation project) {
-        this.project = project;
+    public void setProjectTitle(String projectTitle) {
+        this.projectTitle = projectTitle;
     }
 
     public LocalDate getClosingDate() {

@@ -60,7 +60,7 @@ public class CommentDAO {
         String parentResourceReference = parentResource.getResourceScope().getLowerCaseName();
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ". " + parentResourceReference, parentResourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + "." + parentResourceReference, parentResourceReference, JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("action.id", actionId)) //
                 .add(Restrictions.eq(parentResourceReference + ".id", parentResource.getId())) //
                 .addOrder(Order.asc("createdTimestamp")) //

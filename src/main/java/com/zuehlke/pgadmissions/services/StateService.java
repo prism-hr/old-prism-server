@@ -274,7 +274,7 @@ public class StateService {
     }
 
     public StateTransition getApplicationRecruitedOutcome(Resource resource, Comment comment) {
-        Comment recruitedComment = commentService.getEarliestComment((ParentResource) resource, Resource.class, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
+        Comment recruitedComment = commentService.getEarliestComment((ParentResource) resource, Application.class, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), null);
     }
 

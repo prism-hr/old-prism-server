@@ -1,60 +1,45 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import java.util.Set;
-
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.services.helpers.AbstractServiceHelper;
-import com.zuehlke.pgadmissions.services.helpers.AdvertServiceHelper;
-import com.zuehlke.pgadmissions.services.helpers.ApplicationExportServiceHelper;
-import com.zuehlke.pgadmissions.services.helpers.DocumentServiceHelper;
-import com.zuehlke.pgadmissions.services.helpers.ImportedEntityServiceHelperSystem;
-import com.zuehlke.pgadmissions.services.helpers.NotificationServiceHelperRecommendation;
-import com.zuehlke.pgadmissions.services.helpers.NotificationServiceHelperWorkflow;
-import com.zuehlke.pgadmissions.services.helpers.ProgramServiceHelper;
-import com.zuehlke.pgadmissions.services.helpers.StateServiceHelper;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.AbstractServiceHelper;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelper;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.ApplicationExportServiceHelper;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelper;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperInstitution;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperSystem;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.NotificationServiceHelperRecommendation;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.NotificationServiceHelperWorkflow;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.ProgramServiceHelper;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperEscalation;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperPropagation;
 
 public enum MaintenanceTask {
 
-    SYSTEM_EXECUTE_DEFERRED_STATE_TRANSITION(StateServiceHelper.class),
-    SYSTEM_IMPORT_SYSTEM_REFERENCE_DATA(ImportedEntityServiceHelperSystem.class),
-    SYSTEM_IMPORT_INSTITUTION_REFERENCE_DATA(null),
-    SYSTEM_UPDATE_PROGRAM_STUDY_OPTION(ProgramServiceHelper.class),
-    SYSTEM_UPDATE_ADVERT_CLOSING_DATE(AdvertServiceHelper.class),
-    SYSTEM_EXPORT_APPLICATION(ApplicationExportServiceHelper.class),
-    SYSTEM_SEND_DEFERRED_WORKFLOW_NOTIFICATION(NotificationServiceHelperWorkflow.class),
-    SYSTEM_SEND_RECOMMENDATION_NOTIFICATION(NotificationServiceHelperRecommendation.class),
-    SYSTEM_DELETE_UNUSED_DOCUMENT(DocumentServiceHelper.class);
-    
+    SYSTEM_EXECUTE_ESCALATED_STATE_TRANSITION(StateServiceHelperEscalation.class, false),
+    SYSTEM_EXECUTE_PROPAGATED_STATE_TRANSITION(StateServiceHelperPropagation.class, false),
+    SYSTEM_IMPORT_SYSTEM_REFERENCE_DATA(ImportedEntityServiceHelperSystem.class, true),
+    SYSTEM_IMPORT_INSTITUTION_REFERENCE_DATA(ImportedEntityServiceHelperInstitution.class, true),
+    SYSTEM_UPDATE_PROGRAM_STUDY_OPTION(ProgramServiceHelper.class, true),
+    SYSTEM_UPDATE_ADVERT_CLOSING_DATE(AdvertServiceHelper.class, true),
+//    TODO: Fix the null pointer exception    
+//    SYSTEM_EXPORT_APPLICATION(ApplicationExportServiceHelper.class, false),
+    SYSTEM_SEND_DEFERRED_WORKFLOW_NOTIFICATION(NotificationServiceHelperWorkflow.class, false),
+    SYSTEM_SEND_RECOMMENDATION_NOTIFICATION(NotificationServiceHelperRecommendation.class, true),
+    SYSTEM_DELETE_UNUSED_DOCUMENT(DocumentServiceHelper.class, true);    
     private Class<? extends AbstractServiceHelper> executor;
     
-    private static final HashMultimap<MaintenanceTask, MaintenanceTask> preconditions = HashMultimap.create();
-    
-    static {
-        for (MaintenanceTask task : values()) {
-            if (task != SYSTEM_EXECUTE_DEFERRED_STATE_TRANSITION) {
-                preconditions.put(task, SYSTEM_EXECUTE_DEFERRED_STATE_TRANSITION);
-            }
-        }
-        preconditions.put(SYSTEM_IMPORT_INSTITUTION_REFERENCE_DATA, SYSTEM_IMPORT_SYSTEM_REFERENCE_DATA);
-        preconditions.put(SYSTEM_UPDATE_PROGRAM_STUDY_OPTION, SYSTEM_IMPORT_INSTITUTION_REFERENCE_DATA);
-        preconditions.put(SYSTEM_UPDATE_ADVERT_CLOSING_DATE, SYSTEM_IMPORT_INSTITUTION_REFERENCE_DATA);
-        preconditions.put(SYSTEM_EXPORT_APPLICATION, SYSTEM_IMPORT_INSTITUTION_REFERENCE_DATA);
-    }
+    boolean parallelize;
 
-    private MaintenanceTask(Class<? extends AbstractServiceHelper> executor) {
+    private MaintenanceTask(Class<? extends AbstractServiceHelper> executor, boolean parallelize) {
         this.executor = executor;
+        this.parallelize = parallelize;
     }
 
     public final Class<? extends AbstractServiceHelper> getExecutor() {
         return executor;
     }
 
-    public final void setExecutor(Class<? extends AbstractServiceHelper> executor) {
-        this.executor = executor;
-    }
-    
-    public Set<MaintenanceTask> getPreconditions(MaintenanceTask task) {
-        return preconditions.get(task);
+    public final boolean isParallelize() {
+        return parallelize;
     }
     
 }

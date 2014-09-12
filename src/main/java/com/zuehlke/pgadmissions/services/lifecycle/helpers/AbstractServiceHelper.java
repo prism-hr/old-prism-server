@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.helpers;
+package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
 import java.io.IOException;
 

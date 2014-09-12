@@ -2,9 +2,9 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.ProgramStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import org.joda.time.LocalDate;
+
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
 public class ProgramDetailRepresentation {
 

@@ -36,10 +36,10 @@ public class System extends Resource {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "name", unique = true)
-    private String name;
+    @Column(name = "title", unique = true)
+    private String title;
     
-    @Column(name = "due_date")
+    @Column(name = "last_data_imported_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastDataImportDate;
 
@@ -86,12 +86,12 @@ public class System extends Resource {
         this.code = code;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public final LocalDate getLastDataImportDate() {
@@ -102,8 +102,8 @@ public class System extends Resource {
         this.lastDataImportDate = lastDataImportDate;
     }
 
-    public System withName(String name) {
-        this.name = name;
+    public System withTitle(String title) {
+        this.title = title;
         return this;
     }
     
@@ -252,7 +252,7 @@ public class System extends Resource {
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
         HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("name", name);
+        properties.put("title", title);
         propertiesWrapper.add(properties);
         return new ResourceSignature(propertiesWrapper);
     }

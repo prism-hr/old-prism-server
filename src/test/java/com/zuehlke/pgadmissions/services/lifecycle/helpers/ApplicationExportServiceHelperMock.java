@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.helpers;
+package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -13,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.ApplicationExportServiceHelper;
 
 public class ApplicationExportServiceHelperMock extends ApplicationExportServiceHelper {
 

@@ -25,8 +25,7 @@ public class IT2ImportSystemReferenceData {
     @Test
     public void run() throws Exception {
         it1.run();
-        systemDataImportHelper.verifyInstitutionDomicileImport();
-        systemDataImportHelper.verifyAdvertCategoryImport();
+        systemDataImportHelper.importData();
     }
     
 }

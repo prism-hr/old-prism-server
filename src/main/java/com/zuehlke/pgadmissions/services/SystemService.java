@@ -44,7 +44,6 @@ import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.MaintenanceTask;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
@@ -61,7 +60,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvalu
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
-import com.zuehlke.pgadmissions.services.helpers.StateServiceHelper;
+import com.zuehlke.pgadmissions.services.lifecycle.MaintenanceService;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperEscalation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
@@ -115,20 +115,20 @@ public class SystemService {
     private StateService stateService;
 
     @Autowired
-    private StateServiceHelper stateTransitionHelper;
+    private StateServiceHelperEscalation stateTransitionHelper;
 
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private MaintenanceService maintenanceService;
-
+    
     @Autowired
     private SessionFactory sessionFactory;
 
     @Transactional
     public System getSystem() {
-        return entityService.getByProperty(System.class, "name", systemName);
+        return entityService.getByProperty(System.class, "title", systemName);
     }
 
     @Transactional(timeout = 600)
@@ -177,7 +177,7 @@ public class SystemService {
     }
 
     @Transactional
-    public void initialiseSearchIndexes() throws InterruptedException {
+    public void initialiseSearchIndex() throws InterruptedException {
         FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
         fullTextSession.createIndexer().startAndWait();
     }
@@ -276,7 +276,7 @@ public class SystemService {
         User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail);
         State systemRunning = stateService.getById(PrismState.SYSTEM_RUNNING);
         DateTime startupTimestamp = new DateTime();
-        System transientSystem = new System().withName(systemName).withUser(systemUser).withState(systemRunning).withCreatedTimestamp(startupTimestamp)
+        System transientSystem = new System().withTitle(systemName).withUser(systemUser).withState(systemRunning).withCreatedTimestamp(startupTimestamp)
                 .withUpdatedTimestamp(startupTimestamp);
         System system = entityService.createOrUpdate(transientSystem);
         system.setCode(resourceService.generateResourceCode(system));
@@ -343,11 +343,8 @@ public class SystemService {
     }
 
     private void initialiseStateActions() throws DeduplicationException, WorkflowConfigurationException {
-        maintenanceService.submit(MaintenanceTask.SYSTEM_EXECUTE_DEFERRED_STATE_TRANSITION);
-        logger.info("Deleting state actions");
         stateService.deleteStateActions();
 
-        logger.info("Initializing states");
         for (State state : stateService.getStates()) {
             for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
                 Action action = actionService.getById(prismStateAction.getAction());
@@ -364,12 +361,10 @@ public class SystemService {
             }
         }
 
-        logger.info("Deleting obsolete state durations");
         stateService.deleteObsoleteStateDurations();
         notificationService.deleteObseleteNotificationConfigurations();
         roleService.deleteInactiveRoles();
 
-        logger.info("Verifying backward resource compatibility");
         verifyBackwardResourceCompatibility();
     }
 

@@ -74,9 +74,6 @@ public class Program extends ParentResource {
     @Column(name = "require_project_definition", nullable = false)
     private Boolean requireProjectDefinition;
     
-    @Column(name = "month_group_start_frequency")
-    private Integer groupStartFrequency;
-    
     @Column(name = "imported", nullable = false)
     private Boolean imported;
     
@@ -256,14 +253,6 @@ public class Program extends ParentResource {
     
     public void setRequireProjectDefinition(Boolean requireProjectDefinition) {
         this.requireProjectDefinition = requireProjectDefinition;
-    }
-    
-    public final Integer getGroupStartFrequency() {
-        return groupStartFrequency;
-    }
-
-    public final void setGroupStartFrequency(Integer groupStartFrequency) {
-        this.groupStartFrequency = groupStartFrequency;
     }
 
     public final Boolean isImported() {
@@ -472,11 +461,6 @@ public class Program extends ParentResource {
 
     public Program withRequireProjectDefinition(boolean requireProjectDefinition) {
         this.requireProjectDefinition = requireProjectDefinition;
-        return this;
-    }
-    
-    public Program withGroupStartFrequency(Integer groupStartFrequency) {
-        this.groupStartFrequency = groupStartFrequency;
         return this;
     }
 

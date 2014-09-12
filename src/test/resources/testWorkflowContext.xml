@@ -71,7 +71,7 @@
 
     <bean id="mailSender" class="com.zuehlke.pgadmissions.mail.MailSenderMock" primary="true"/>
     
-    <bean id="applicationExportServiceHelper" class="com.zuehlke.pgadmissions.services.helpers.ApplicationExportServiceHelperMock" primary="true"/>
+    <bean id="applicationExportServiceHelper" class="com.zuehlke.pgadmissions.services.lifecycle.helpers.ApplicationExportServiceHelperMock" primary="true"/>
 
     <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PrismAuthenticationProvider"/>
 

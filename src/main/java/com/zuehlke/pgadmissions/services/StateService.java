@@ -34,7 +34,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
-import com.zuehlke.pgadmissions.dto.DeferredStateTransitionDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
@@ -152,14 +151,12 @@ public class StateService {
         StateTransition stateTransition = getStateTransition(resource, action, comment);
 
         if (stateTransition != null) {
-            State oldState = resource.getState();
-            State newState = stateTransition.getTransitionState();
+            State transitionState = stateTransition.getTransitionState();
+            State state = resource.getState();
+            state = state == null ? transitionState : state;
 
-            resource.setState(newState);
-            resource.setPreviousState(oldState);
-
-            comment.setState(oldState == null ? newState : oldState);
-            comment.setTransitionState(newState);
+            resourceService.recordStateTransition(resource, state, transitionState);
+            commentService.recordStateTransition(comment, state, transitionState);
 
             resourceService.processResource(resource, comment);
             roleService.executeRoleTransitions(stateTransition, comment);
@@ -171,8 +168,7 @@ public class StateService {
 
             notificationService.sendWorkflowNotifications(resource, comment);
         } else {
-            comment.setState(resource.getState());
-            comment.setTransitionState(resource.getState());
+            commentService.recordStateTransition(comment, resource.getState(), resource.getState());
         }
 
         resourceService.updateResource(resource, comment);
@@ -333,12 +329,12 @@ public class StateService {
         return null;
     }
 
-    public synchronized <T extends Resource> void executeDeferredStateTransition(DeferredStateTransitionDTO transitionDTO)
+    public synchronized <T extends Resource> void executeDeferredStateTransition(Class<T> resourceClass, Integer resourceId, PrismAction actionId)
             throws DeduplicationException {
-        Resource resource = resourceService.getById(transitionDTO.getResourceClass(), transitionDTO.getResourceId());
-        Action action = actionService.getById(transitionDTO.getActionId());
+        Resource resource = resourceService.getById(resourceClass, resourceId);
+        Action action = actionService.getById(actionId);
 
-        logger.debug("Calling " + action.getId() + " on " + resource.getCode());
+        logger.info("Calling " + action.getId() + " on " + resource.getCode());
 
         Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action).withDeclinedResponse(false)
                 .withCreatedTimestamp(new DateTime());

@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -135,6 +136,11 @@ public class ResourceService {
         return "PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId());
     }
 
+    public void recordStateTransition(Resource resource, State state, State transitionState) {
+        resource.setPreviousState(state);
+        resource.setState(transitionState);
+    }
+    
     public void processResource(Resource resource, Comment comment) {
         LocalDate baselineCustom;
         LocalDate baseline = new LocalDate();

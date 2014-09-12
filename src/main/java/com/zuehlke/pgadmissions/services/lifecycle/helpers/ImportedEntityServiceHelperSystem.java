@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.helpers;
+package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -63,7 +63,7 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
         }
     }
 
-    public void importInstitutionDomiciles() throws DataImportException {
+    private void importInstitutionDomiciles() throws DataImportException {
         logger.info("Starting the import from file: " + institutionDomicileImportLocation);
         try {
             List<CountryType> unmarshalled = unmarshalInstitutionDomiciles(institutionDomicileImportLocation);
@@ -74,7 +74,7 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
         }
     }
     
-    public void importAdvertCategories() throws DataImportException, IOException  {
+    private void importAdvertCategories() throws DataImportException, IOException  {
         logger.info("Starting the import from file: " + advertCategoryImportLocation);
         URL fileUrl = new DefaultResourceLoader().getResource(advertCategoryImportLocation).getURL();
         CSVReader reader = new CSVReader(new InputStreamReader(fileUrl.openStream(), Charsets.UTF_8));

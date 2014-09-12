@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.ParentResource;
 import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
@@ -239,6 +240,11 @@ public class CommentService {
 
     public <T extends Resource> List<Comment> getTransitionComments(Class<T> resourceClass, Integer resourceId, DateTime rangeStart, DateTime rangeClose) {
         return commentDAO.getTransitionComments(resourceClass, resourceId, rangeStart, rangeClose);
+    }
+    
+    public void recordStateTransition(Comment comment, State state, State transitionState) {
+        comment.setState(state);
+        comment.setTransitionState(transitionState);
     }
 
     private Comment getLatestAppointmentPreferenceComment(Application application, Comment schedulingComment, User user) {

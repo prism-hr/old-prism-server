@@ -382,6 +382,11 @@ public class Project extends ParentResource {
         this.sequenceIdentifier = sequenceIdentifier;
     }
     
+    @Override
+    public void addComment(Comment comment) {
+        comments.add(comment);
+    }
+    
     public LocalDate getRecommendedStartDate() {
         return program.getProgramType().getPrismProgramType().getImmediateStartDate();
     }

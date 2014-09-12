@@ -426,7 +426,7 @@ public class SystemService {
         if (user.getUserAccount() == null) {
             Action action = actionService.getById(PrismAction.SYSTEM_STARTUP);
             Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
-                    .withAssignedUser(user, roleService.getCreatorRole(system));
+                    .addAssignedUser(user, roleService.getCreatorRole(system));
             ActionOutcomeDTO outcome = actionService.executeSystemAction(system, action, comment);
             notificationService.sendNotification(user, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST,
                     ImmutableMap.of("action", outcome.getTransitionAction().getId().name()));

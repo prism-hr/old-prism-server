@@ -403,6 +403,11 @@ public class Program extends ParentResource {
         this.sequenceIdentifier = sequenceIdentifier;
     }
     
+    @Override
+    public void addComment(Comment comment) {
+        comments.add(comment);
+    }
+    
     public final Set<ProgramStudyOption> getStudyOptions() {
         return studyOptions;
     }

@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicat
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationApprovalPendingFeedback;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationApproved;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationApprovedCompleted;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationApprovedCompletedPurged;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationApprovedPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationApprovedPendingExport;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationInterview;
@@ -22,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicat
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationInterviewPendingScheduling;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationRejected;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationRejectedCompleted;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationRejectedCompletedPurged;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationRejectedPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationRejectedPendingExport;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReview;
@@ -33,6 +35,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicat
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidationPendingCompletion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidationPendingFeedback;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnCompleted;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnCompletedPurged;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnCompletedUnsubmitted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnPendingExport;
@@ -70,7 +73,8 @@ public enum PrismState {
     APPLICATION_APPROVED(PrismStateGroup.APPLICATION_APPROVED, null, PrismScope.APPLICATION, PrismApplicationApproved.class), //
     APPLICATION_APPROVED_COMPLETED(PrismStateGroup.APPLICATION_APPROVED, null, PrismScope.APPLICATION, PrismApplicationApprovedCompleted.class), //
     APPLICATION_APPROVED_PENDING_CORRECTION(PrismStateGroup.APPLICATION_APPROVED, 28, PrismScope.APPLICATION, PrismApplicationApprovedPendingCorrection.class), //
-    APPLICATION_APPROVED_PENDING_EXPORT(PrismStateGroup.APPLICATION_APPROVED, null, PrismScope.APPLICATION, PrismApplicationApprovedPendingExport.class), //
+    APPLICATION_APPROVED_PENDING_EXPORT(PrismStateGroup.APPLICATION_APPROVED, 168, PrismScope.APPLICATION, PrismApplicationApprovedPendingExport.class), //
+    APPLICATION_APPROVED_COMPLETED_PURGED(PrismStateGroup.APPLICATION_APPROVED, null, PrismScope.APPLICATION, PrismApplicationApprovedCompletedPurged.class), //
     APPLICATION_INTERVIEW(PrismStateGroup.APPLICATION_INTERVIEW, null, PrismScope.APPLICATION, PrismApplicationInterview.class), //
     APPLICATION_INTERVIEW_PENDING_AVAILABILITY(PrismStateGroup.APPLICATION_INTERVIEW, //
             3, PrismScope.APPLICATION, PrismApplicationInterviewPendingAvailability.class), //
@@ -82,9 +86,10 @@ public enum PrismState {
     APPLICATION_INTERVIEW_PENDING_SCHEDULING(PrismStateGroup.APPLICATION_INTERVIEW, //
             null, PrismScope.APPLICATION, PrismApplicationInterviewPendingScheduling.class), //
     APPLICATION_REJECTED(PrismStateGroup.APPLICATION_REJECTED, null, PrismScope.APPLICATION, PrismApplicationRejected.class), //
-    APPLICATION_REJECTED_COMPLETED(PrismStateGroup.APPLICATION_REJECTED, null, PrismScope.APPLICATION, PrismApplicationRejectedCompleted.class), //
+    APPLICATION_REJECTED_COMPLETED(PrismStateGroup.APPLICATION_REJECTED, 168, PrismScope.APPLICATION, PrismApplicationRejectedCompleted.class), //
     APPLICATION_REJECTED_PENDING_CORRECTION(PrismStateGroup.APPLICATION_REJECTED, 28, PrismScope.APPLICATION, PrismApplicationRejectedPendingCorrection.class), //
     APPLICATION_REJECTED_PENDING_EXPORT(PrismStateGroup.APPLICATION_REJECTED, null, PrismScope.APPLICATION, PrismApplicationRejectedPendingExport.class), //
+    APPLICATION_REJECTED_COMPLETED_PURGED(PrismStateGroup.APPLICATION_REJECTED, null, PrismScope.APPLICATION, PrismApplicationRejectedCompletedPurged.class), //
     APPLICATION_REVIEW(PrismStateGroup.APPLICATION_REVIEW, null, PrismScope.APPLICATION, PrismApplicationReview.class), //
     APPLICATION_REVIEW_PENDING_COMPLETION(PrismStateGroup.APPLICATION_REVIEW, null, PrismScope.APPLICATION, PrismApplicationReviewPendingCompletion.class), //
     APPLICATION_REVIEW_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_REVIEW, 7, PrismScope.APPLICATION, PrismApplicationReviewPendingFeedback.class), //
@@ -96,11 +101,13 @@ public enum PrismState {
             null, PrismScope.APPLICATION, PrismApplicationValidationPendingCompletion.class), //
     APPLICATION_VALIDATION_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_VALIDATION, 3, PrismScope.APPLICATION, PrismApplicationValidationPendingFeedback.class), //
     APPLICATION_WITHDRAWN_PENDING_EXPORT(PrismStateGroup.APPLICATION_WITHDRAWN, null, PrismScope.APPLICATION, PrismApplicationWithdrawnPendingExport.class), //
-    APPLICATION_WITHDRAWN_COMPLETED(PrismStateGroup.APPLICATION_WITHDRAWN, null, PrismScope.APPLICATION, PrismApplicationWithdrawnCompleted.class), //
-    APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED(PrismStateGroup.APPLICATION_WITHDRAWN, null, PrismScope.APPLICATION,
+    APPLICATION_WITHDRAWN_COMPLETED(PrismStateGroup.APPLICATION_WITHDRAWN, 168, PrismScope.APPLICATION, PrismApplicationWithdrawnCompleted.class), //
+    APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED(PrismStateGroup.APPLICATION_WITHDRAWN, 168, PrismScope.APPLICATION,
             PrismApplicationWithdrawnCompletedUnsubmitted.class), //
     APPLICATION_WITHDRAWN_PENDING_CORRECTION(PrismStateGroup.APPLICATION_WITHDRAWN, //
             28, PrismScope.APPLICATION, PrismApplicationWithdrawnPendingCorrection.class), //
+    APPLICATION_WITHDRAWN_COMPLETED_PURGED(PrismStateGroup.APPLICATION_WITHDRAWN, null, PrismScope.APPLICATION, PrismApplicationWithdrawnCompletedPurged.class), //
+    APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_PURGED(PrismStateGroup.APPLICATION_WITHDRAWN, null, PrismScope.APPLICATION, PrismApplicationWithdrawnCompletedPurged.class), //
     INSTITUTION_APPROVAL(PrismStateGroup.INSTITUTION_APPROVAL, 28, PrismScope.INSTITUTION, PrismInstitutionApproval.class), //
     INSTITUTION_APPROVAL_PENDING_CORRECTION(PrismStateGroup.INSTITUTION_APPROVAL, 28, PrismScope.INSTITUTION, PrismInstitutionApprovalPendingCorrection.class), //
     INSTITUTION_APPROVED(PrismStateGroup.INSTITUTION_APPROVED, null, PrismScope.INSTITUTION, PrismInstitutionApproved.class), //

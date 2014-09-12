@@ -121,7 +121,7 @@ public class RoleService {
             role.getExcludedRoles().clear();
         }
     }
-
+    
     public boolean isRoleAssignmentPermitted(UserRole userRole) {
         return roleDAO.getExcludingUserRoles(userRole).isEmpty();
     }
@@ -241,7 +241,7 @@ public class RoleService {
             throwWorkflowPermissionException(comment.getResource(), comment.getAction(), userRole.getUser(), userRole.getRole());
         }
         entityService.getOrCreate(transitionRole);
-        comment.withAssignedUser(transitionRole.getUser(), transitionRole.getRole());
+        comment.addAssignedUser(transitionRole.getUser(), transitionRole.getRole());
     }
 
     private void executeCreateUserRole(UserRole userRole, Comment comment) throws DeduplicationException {

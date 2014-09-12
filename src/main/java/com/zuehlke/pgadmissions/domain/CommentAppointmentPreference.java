@@ -19,11 +19,11 @@ public class CommentAppointmentPreference {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "comment_id", insertable = false, updatable = false)
+    @JoinColumn(name = "comment_id", nullable = false, insertable = false, updatable = false)
     private Comment comment;
-
+    
     @ManyToOne
-    @JoinColumn(name = "comment_appointment_timeslot_id", nullable = false)
+    @JoinColumn(name = "comment_appointment_timeslot_id", nullable = false, insertable = false, updatable = false)
     private CommentAppointmentTimeslot appointmentTimeslot;
 
     public Integer getId() {

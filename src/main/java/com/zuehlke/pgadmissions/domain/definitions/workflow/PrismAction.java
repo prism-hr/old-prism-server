@@ -214,6 +214,7 @@ public enum PrismAction {
                     .addResolution(SUITABLE_FOR_OPPORTUNITY, NOT_NULL)
                     .addResolution(DESIRE_TO_RECRUIT, NOT_NULL)
                     .build()),
+    APPLICATION_PURGE(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.ESCALATE_RESOURCE, false, false, PrismScope.APPLICATION, null, null, null),
     APPLICATION_TERMINATE(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.PROPAGATE_RESOURCE, false, true, PrismScope.APPLICATION, null, null, null),
     APPLICATION_UPDATE_INTERVIEW_AVAILABILITY(PrismActionType.USER_INVOCATION, PrismActionCategory.PROCESS_RESOURCE, false, false, PrismScope.APPLICATION, null,
             Arrays.asList(new PrismActionRedaction().withRole(PrismRole.APPLICATION_CREATOR).withRedactionType(PrismRedactionType.ALL_CONTENT),

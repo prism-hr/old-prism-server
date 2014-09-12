@@ -280,7 +280,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        if (form.getProgramDetail().getSupervisors().isEmpty()) {
+        if (form.getSupervisors().isEmpty()) {
             table = new PdfPTable(2);
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             table.addCell(newTableCell("Supervisor", SMALL_BOLD_FONT));
@@ -289,7 +289,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             pdfDocument.add(addSectionSeparators());
         } else {
             int counter = 1;
-            for (ApplicationSupervisor supervisor : form.getProgramDetail().getSupervisors()) {
+            for (ApplicationSupervisor supervisor : form.getSupervisors()) {
                 table = new PdfPTable(2);
                 table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                 PdfPCell headerCell = newTableCell("Supervisor (" + counter++ + ")", SMALL_BOLD_FONT);
@@ -307,7 +307,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
                 table.addCell(newTableCell("Is this supervisor aware of your application?", SMALL_BOLD_FONT));
 
-                if (BooleanUtils.isTrue(supervisor.isAware())) {
+                if (BooleanUtils.isTrue(supervisor.getAware())) {
                     table.addCell(newTableCell("Yes", SMALL_FONT));
                 } else {
                     table.addCell(newTableCell("No", SMALL_FONT));

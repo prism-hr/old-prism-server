@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -19,6 +21,7 @@ import org.joda.time.LocalDate;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "SYSTEM")
@@ -65,6 +68,9 @@ public class System extends Resource {
     
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
+    
+    @OneToMany(mappedBy = "system")
+    private Set<Comment> comments = Sets.newHashSet();
     
     @Override
     public Integer getId() {
@@ -246,6 +252,11 @@ public class System extends Resource {
     @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
+    }
+    
+    @Override
+    public void addComment(Comment comment) {
+        comments.add(comment);
     }
 
     @Override

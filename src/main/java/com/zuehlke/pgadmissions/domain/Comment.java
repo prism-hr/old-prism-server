@@ -194,19 +194,19 @@ public class Comment {
     private DateTime createdTimestamp;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "comment_id")
+    @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentAssignedUser> assignedUsers = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "comment_id")
+    @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentAppointmentTimeslot> appointmentTimeslots = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "comment_id")
+    @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentAppointmentPreference> appointmentPreferences = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "comment_id")
+    @JoinColumn(name = "comment_id", nullable = false)
     private Set<Document> documents = Sets.newHashSet();
 
     public Integer getId() {
@@ -729,7 +729,7 @@ public class Comment {
         return this;
     }
 
-    public Comment withAssignedUser(User user, Role role) {
+    public Comment addAssignedUser(User user, Role role) {
         CommentAssignedUser newAssignment = new CommentAssignedUser().withUser(user).withRole(role).withComment(this);
         assignedUsers.add(newAssignment);
         return this;
@@ -737,7 +737,7 @@ public class Comment {
 
     public Comment withAssignedUsers(Set<CommentAssignedUser> assignedUsers) {
         for (CommentAssignedUser assignedUser : this.assignedUsers) {
-            withAssignedUser(assignedUser.getUser(), assignedUser.getRole());
+            addAssignedUser(assignedUser.getUser(), assignedUser.getRole());
         }
         return this;
     }
@@ -867,25 +867,29 @@ public class Comment {
     }
 
     public boolean isApplicationCreatedComment() {
-        return this.transitionState.getId() == PrismState.APPLICATION_UNSUBMITTED;
+        return transitionState.getId() == PrismState.APPLICATION_UNSUBMITTED;
     }
 
     public boolean isApplicationSubmittedComment() {
-        return this.transitionState.getId() == PrismState.APPLICATION_VALIDATION;
+        return transitionState.getId() == PrismState.APPLICATION_VALIDATION;
     }
 
     public boolean isApplicationApprovedComment() {
-        return this.transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED
+        return transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED
                 && transitionState.getId() != PrismState.APPLICATION_APPROVED;
     }
     
     public boolean isApplicationRejectedComment() {
-        return this.transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED
+        return transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED
                 && transitionState.getId() != PrismState.APPLICATION_REJECTED;
     }
     
     public boolean isApplicationWithdrawnComment() {
         return this.transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_WITHDRAWN;
+    }
+    
+    public boolean isApplicationPurgeComment() {
+        return action.getId() == PrismAction.APPLICATION_PURGE;
     }
 
     public boolean isRatingComment() {

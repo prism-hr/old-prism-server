@@ -1,0 +1,1 @@
+ALTER TABLE TELEPHONE DROP FOREIGN KEY referee_tel_fkey, DROP COLUMN referee_id;

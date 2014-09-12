@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;

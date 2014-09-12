@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.dto;
 import java.math.BigDecimal;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;

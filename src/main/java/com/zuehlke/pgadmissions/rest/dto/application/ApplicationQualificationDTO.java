@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
@@ -15,8 +16,10 @@ public class ApplicationQualificationDTO {
     private Integer id;
 
     @NotEmpty
+    @Size(max = 200)
     private String subject;
 
+    @Size(max = 200)
     private String title;
 
     @DatePast
@@ -27,12 +30,14 @@ public class ApplicationQualificationDTO {
     private LocalDate awardDate;
 
     @NotEmpty
+    @Size(max = 70)
     private String language;
 
     @NotNull
     private Integer type;
 
     @NotEmpty
+    @Size(max = 200)
     private String grade;
 
     private FileDTO document;

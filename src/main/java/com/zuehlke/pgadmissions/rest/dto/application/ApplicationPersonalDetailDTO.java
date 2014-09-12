@@ -2,7 +2,9 @@ package com.zuehlke.pgadmissions.rest.dto.application;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
+import com.zuehlke.pgadmissions.rest.validation.annotation.DatePast;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
@@ -13,9 +15,11 @@ public class ApplicationPersonalDetailDTO {
     @NotNull
     private UserDTO user;
 
+    @Size(min = 6, max = 32)
     private String messenger;
 
     @NotEmpty
+    @Size(max = 50)
     private String phoneNumber;
 
     @NotNull
@@ -41,6 +45,7 @@ public class ApplicationPersonalDetailDTO {
     private Integer gender;
 
     @NotNull
+    @DatePast
     private LocalDate dateOfBirth;
 
     @NotNull

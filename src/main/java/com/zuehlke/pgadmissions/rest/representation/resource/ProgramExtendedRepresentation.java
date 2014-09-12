@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.rest.representation.AdvertRepresentation;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
@@ -9,21 +11,17 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
 
     private InstitutionRepresentation institution;
 
+    private Boolean imported;
+
     private PrismProgramType programType;
 
     private String title;
 
-    private String description;
-
-    private String[] studyOptions;
-
-    private LocalDate startDate;
-
-    private LocalDate endDate;
+    private PrismStudyOption[] studyOptions;
 
     private Boolean requireProjectDefinition;
 
-    private Boolean immediateStart;
+    private AdvertRepresentation advert;
 
     public InstitutionRepresentation getInstitution() {
         return institution;
@@ -31,6 +29,14 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
 
     public void setInstitution(InstitutionRepresentation institution) {
         this.institution = institution;
+    }
+
+    public Boolean getImported() {
+        return imported;
+    }
+
+    public void setImported(Boolean imported) {
+        this.imported = imported;
     }
 
     public PrismProgramType getProgramType() {
@@ -49,36 +55,12 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
         this.title = title;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String[] getStudyOptions() {
+    public PrismStudyOption[] getStudyOptions() {
         return studyOptions;
     }
 
-    public void setStudyOptions(String[] studyOptions) {
+    public void setStudyOptions(PrismStudyOption[] studyOptions) {
         this.studyOptions = studyOptions;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
     }
 
     public Boolean getRequireProjectDefinition() {
@@ -89,11 +71,11 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
         this.requireProjectDefinition = requireProjectDefinition;
     }
 
-    public Boolean getImmediateStart() {
-        return immediateStart;
+    public AdvertRepresentation getAdvert() {
+        return advert;
     }
 
-    public void setImmediateStart(Boolean immediateStart) {
-        this.immediateStart = immediateStart;
+    public void setAdvert(AdvertRepresentation advert) {
+        this.advert = advert;
     }
 }

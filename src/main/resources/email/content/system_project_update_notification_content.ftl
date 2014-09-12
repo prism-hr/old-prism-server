@@ -28,13 +28,7 @@
 				</p>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
-						Please
-						<#if user.enabled>
-							login
-						<#else>
-							register
-						</#if>
-						to view the applications and see the updates. Updates can be found in the application timeline.
+						Please login to view the applications and see the updates. Updates can be found in the application timeline.
 					</font>
 				</p>
 				<p>

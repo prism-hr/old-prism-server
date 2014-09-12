@@ -28,13 +28,7 @@
 				</p>
 				<p>
 					<font face="Arial, Helvetica, sans-serif" size="2">
-						Please
-						<#if user.enabled>
-							login
-						<#else>
-							register
-						</#if>
-						to view the requests and to check any updates. Details can be found in the Programme Requests tab.
+						Please login to view the requests and to check any updates. Details can be found in the Programme Requests tab.
 					</font>
 				</p>
 				<p>

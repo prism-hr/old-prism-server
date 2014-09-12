@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
@@ -13,18 +14,21 @@ public class ApplicationEmploymentPositionDTO {
     private Integer id;
 
     @NotEmpty
+    @Size(max = 200)
     private String employerName;
 
     @NotNull
     private AddressDTO employerAddress;
 
     @NotEmpty
+    @Size(max = 200)
     private String position;
 
     @NotNull
     private Boolean current;
 
     @NotEmpty
+    @Size(max = 2000)
     private String remit;
 
     @NotNull

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.math.BigDecimal;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -10,13 +11,13 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 public class ResourceConsoleListRowDTO {
 
     private Integer systemId;
-    
+
     private Integer institutionId;
-    
+
     private Integer programId;
-    
+
     private Integer projectId;
-    
+
     private Integer applicationId;
 
     private String creatorFirstName;
@@ -26,24 +27,24 @@ public class ResourceConsoleListRowDTO {
     private String creatorFirstName3;
 
     private String creatorLastName;
-    
+
     private String code;
 
     private String institutionTitle;
-    
+
     private String programTitle;
 
     private String projectTitle;
-    
+
     private BigDecimal applicationRatingAverage;
-    
+
     private PrismState stateId;
-    
+
     private PrismStateGroup stateGroupId;
-    
+
     private String creatorEmail;
 
-    private LocalDate updatedTimestamp;
+    private DateTime updatedTimestamp;
 
     public final Integer getSystemId() {
         return systemId;
@@ -181,12 +182,12 @@ public class ResourceConsoleListRowDTO {
         this.creatorEmail = creatorEmail;
     }
 
-    public final LocalDate getUpdatedTimestamp() {
+    public final DateTime getUpdatedTimestamp() {
         return updatedTimestamp;
     }
 
-    public final void setUpdatedTimestamp(LocalDate updatedTimestamp) {
+    public final void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
-    
+
 }

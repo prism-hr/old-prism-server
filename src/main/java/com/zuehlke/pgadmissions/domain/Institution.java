@@ -56,17 +56,17 @@ public class Institution extends ParentResource {
     @ManyToOne
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
-    
+
     @Column(name = "referrer")
     private String referrer;
-    
+
     @Column(name = "code")
     private String code;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    
+
     @ManyToOne
     @JoinColumn(name = "institution_domicile_id", nullable = false)
     private InstitutionDomicile domicile;
@@ -77,7 +77,7 @@ public class Institution extends ParentResource {
 
     @Column(name = "homepage", nullable = false)
     private String homepage;
-    
+
     @OneToOne
     @JoinColumn(name = "logo_document_id")
     private Document logoDocument;
@@ -85,34 +85,34 @@ public class Institution extends ParentResource {
     @JoinColumn(name = "institution_address_id")
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private InstitutionAddress address;
-    
+
     @Column(name = "is_ucl_institution", nullable = false)
     private Boolean uclInstitution = false;
-    
+
     @Column(name = "application_created_count")
     private Integer applicationCreatedCount;
-    
+
     @Column(name = "application_submitted_count")
     private Integer applicationSubmittedCount;
-    
+
     @Column(name = "application_approved_count")
     private Integer applicationApprovedCount;
-    
+
     @Column(name = "application_rejected_count")
     private Integer applicationRejectedCount;
-    
+
     @Column(name = "application_withdrawn_count")
     private Integer applicationWithdrawnCount;
-    
+
     @Column(name = "application_rating_count")
     private Integer applicationRatingCount;
-    
+
     @Column(name = "application_rating_count_average_non_zero")
     private BigDecimal applicationRatingCountAverageNonZero;
-    
+
     @Column(name = "application_rating_average")
-    private BigDecimal applicatingRatingAverage;
-    
+    private BigDecimal applicationRatingAverage;
+
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
@@ -132,13 +132,13 @@ public class Institution extends ParentResource {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
-    
+
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
-    
+
     @OneToMany(mappedBy = "institution")
     private Set<ImportedEntityFeed> importedEntityFeeds = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "institution")
     private Set<UserRole> userRoles = Sets.newHashSet();
 
@@ -151,12 +151,12 @@ public class Institution extends ParentResource {
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     @Override
     public String getCode() {
         return code;
     }
-    
+
     @Override
     public void setCode(String code) {
         this.code = code;
@@ -209,7 +209,7 @@ public class Institution extends ParentResource {
     public void setUclInstitution(boolean uclInstitution) {
         this.uclInstitution = uclInstitution;
     }
-    
+
     @Override
     public Integer getApplicationCreatedCount() {
         return applicationCreatedCount;
@@ -264,33 +264,31 @@ public class Institution extends ParentResource {
     public final Integer getApplicationRatingCount() {
         return applicationRatingCount;
     }
-    
+
     @Override
     public final void setApplicationRatingCount(Integer applicationRatingCountSum) {
         this.applicationRatingCount = applicationRatingCountSum;
     }
-    
-    
+
+
     @Override
     public final BigDecimal getApplicationRatingCountAverageNonZero() {
         return applicationRatingCountAverageNonZero;
     }
-    
+
     @Override
     public final void setApplicationRatingCountAverageNonZero(BigDecimal applicationRatingCountAverage) {
         this.applicationRatingCountAverageNonZero = applicationRatingCountAverage;
     }
 
-    @Override
     public BigDecimal getApplicationRatingAverage() {
-        return applicatingRatingAverage;
+        return applicationRatingAverage;
     }
 
-    @Override
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
-        this.applicatingRatingAverage = applicationRatingAverage;
+        this.applicationRatingAverage = applicationRatingAverage;
     }
-    
+
     public final Set<ImportedEntityFeed> getImportedEntityFeeds() {
         return importedEntityFeeds;
     }
@@ -313,7 +311,7 @@ public class Institution extends ParentResource {
         this.user = user;
         return this;
     }
-    
+
     public Institution withDomicile(InstitutionDomicile domicile) {
         this.domicile = domicile;
         return this;
@@ -333,7 +331,7 @@ public class Institution extends ParentResource {
         this.homepage = homepage;
         return this;
     }
-    
+
     public Institution withLogoDocument(Document logoDocument) {
         this.logoDocument = logoDocument;
         return this;
@@ -343,7 +341,7 @@ public class Institution extends ParentResource {
         this.address = address;
         return this;
     }
-    
+
     public Institution withUclInstitution(boolean uclInstitution) {
         this.uclInstitution = uclInstitution;
         return this;
@@ -400,12 +398,12 @@ public class Institution extends ParentResource {
     public Application getApplication() {
         return null;
     }
-    
+
     @Override
     public String getReferrer() {
         return referrer;
     }
-    
+
     @Override
     public void setReferrer (String referrer) {
         this.referrer = referrer;
@@ -450,7 +448,7 @@ public class Institution extends ParentResource {
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
-    
+
     @Override
     public DateTime getCreatedTimestamp() {
         return createdTimestamp;
@@ -481,7 +479,7 @@ public class Institution extends ParentResource {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
-    
+
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();

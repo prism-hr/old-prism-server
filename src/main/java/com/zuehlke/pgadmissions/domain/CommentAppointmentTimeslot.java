@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,7 +34,8 @@ public class CommentAppointmentTimeslot {
     @Column(name = "timeslot_datetime", nullable = false)
     private LocalDateTime dateTime;
 
-    @OneToMany(mappedBy = "appointmentTimeslot")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "comment_appointment_preference_id", nullable = false)
     private Set<CommentAppointmentPreference> appointmentPreferences;
 
     public Integer getId() {

@@ -595,6 +595,7 @@ public class ApplicationService {
             application.getEmploymentPositions().clear();
             application.getFundings().clear();
             application.getReferees().clear();
+            application.setDocument(null);
             application.setAdditionalInformation(null);
         }
         commentService.delete(application, comment);

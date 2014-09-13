@@ -64,9 +64,10 @@ public final class MailMessageDTO {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("to", to)
+                .add("to", to.getEmail())
+                .add("actionUrl", model.get("actionUrl"))
                 .add("resourceId", model.get("resourceId"))
-                .add("template", template)
+                .add("template", template.getNotificationTemplate().getId())
                 .toString();
     }
 

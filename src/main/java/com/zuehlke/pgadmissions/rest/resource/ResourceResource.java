@@ -228,7 +228,7 @@ public class ResourceResource {
         applicationRepresentation.setAppointmentPreferences(commentService.getAppointmentPreferences(application));
 
         applicationRepresentation.setOfferRecommendation(commentService.getOfferRecommendation(application));
-        applicationRepresentation.setSupervisors(commentService.getApplicationSupervisors(application));
+        applicationRepresentation.setAssignedSupervisors(commentService.getApplicationSupervisors(application));
         List<ProgramStudyOption> enabledProgramStudyOptions = programService.getEnabledProgramStudyOptions(application.getProgram());
         List<PrismStudyOption> availableStudyOptions = Lists.newArrayListWithCapacity(enabledProgramStudyOptions.size());
         for (ProgramStudyOption studyOption : enabledProgramStudyOptions) {

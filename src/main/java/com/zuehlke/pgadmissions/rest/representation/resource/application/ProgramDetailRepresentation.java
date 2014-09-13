@@ -14,8 +14,6 @@ public class ProgramDetailRepresentation {
 
     private Integer referralSource;
 
-    private List<ApplicationSuggestedSupervisorRepresentation> supervisors;
-
     public PrismStudyOption getStudyOption() {
         return studyOption;
     }
@@ -40,11 +38,4 @@ public class ProgramDetailRepresentation {
         this.referralSource = referralSource;
     }
 
-    public List<ApplicationSuggestedSupervisorRepresentation> getSupervisors() {
-        return supervisors;
-    }
-
-    public void setSupervisors(List<ApplicationSuggestedSupervisorRepresentation> supervisors) {
-        this.supervisors = supervisors;
-    }
 }

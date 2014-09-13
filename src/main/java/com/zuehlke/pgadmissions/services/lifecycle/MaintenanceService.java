@@ -27,12 +27,12 @@ public class MaintenanceService {
 
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final ExecutorService executor = Executors.newFixedThreadPool(MaintenanceTask.values().length);
 
-    @Scheduled(initialDelay = 60000, fixedDelay = 60000)
+//    @Scheduled(initialDelay = 60000, fixedDelay = 60000)
     public void maintain() {
         for (MaintenanceTask task : MaintenanceTask.values()) {
             if (task.isParallelize()) {
@@ -42,7 +42,7 @@ public class MaintenanceService {
             }
         }
     }
-    
+
     public void shutdown() throws InterruptedException {
         executor.shutdown();
         executor.awaitTermination(5, TimeUnit.MINUTES);
@@ -58,7 +58,7 @@ public class MaintenanceService {
         });
         logger.info("Scheduling maintenance task " + task.name());
     }
-    
+
     private void execute(final MaintenanceTask task) {
         logger.info("Executing maintenance task " + task.name());
         try {

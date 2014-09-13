@@ -220,6 +220,7 @@ public class ResourceResource {
         }
     }
 
+    @SuppressWarnings("unused")
     public void enrichApplicationRepresentation(Application application, ApplicationExtendedRepresentation applicationRepresentation) {
         List<User> interested = userService.getUsersInterestedInApplication(application);
         List<User> potentiallyInterested = userService.getUsersPotentiallyInterestedInApplication(application, interested);
@@ -253,9 +254,11 @@ public class ResourceResource {
         applicationRepresentation.setAvailableStudyOptions(availableStudyOptions);
     }
 
+    @SuppressWarnings("unused")
     public void enrichProgramRepresentation(Program program, ProgramExtendedRepresentation programRepresentation) {
     }
 
+    @SuppressWarnings("unused")
     public void enrichInstitutionRepresentation(Institution institution, InstitutionExtendedRepresentation institutionRepresentation) {
 
     }

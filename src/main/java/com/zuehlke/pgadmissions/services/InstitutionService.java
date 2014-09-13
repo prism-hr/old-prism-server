@@ -42,9 +42,6 @@ public class InstitutionService {
     private ImportedEntityService importedEntityService;
 
     @Autowired
-    private ApplicationService applicationService;
-    
-    @Autowired
     private SystemService systemService;
 
     @Autowired
@@ -52,22 +49,15 @@ public class InstitutionService {
 
     @Autowired
     private UserService userService;
-    
-    @Autowired
-    private ResourceService resourceService;
 
     public Institution getById(Integer id) {
         return entityService.getById(Institution.class, id);
-    }
-    
-    public Institution getByCode(String code) {
-        return entityService.getByProperty(Institution.class, "code", code);
     }
 
     public List<InstitutionDomicileRegion> getTopLevelRegions(InstitutionDomicile domicile) {
         return institutionDAO.getTopLevelRegions(domicile);
     }
-    
+
     public List<Institution> listApprovedInstitutionsByCountry(InstitutionDomicile domicile) {
         return institutionDAO.listApprovedInstitutionsByCountry(domicile);
     }

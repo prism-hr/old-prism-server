@@ -32,7 +32,7 @@ public class MaintenanceService {
 
     private final ExecutorService executor = Executors.newFixedThreadPool(MaintenanceTask.values().length);
 
-//    @Scheduled(initialDelay = 60000, fixedDelay = 60000)
+    @Scheduled(initialDelay = 60000, fixedDelay = 60000)
     public void maintain() {
         for (MaintenanceTask task : MaintenanceTask.values()) {
             if (task.isParallelize()) {

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services.builders;
 
 import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
@@ -47,7 +48,7 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
                 .add(Restrictions.eqProperty("role", "stateActionAssignment.role")) //
                 .add(Restrictions.isNotNull(PrismScope.getResourceScope(resourceClass).getLowerCaseName()));
 
-        boolean getUrgentOnly = filterDTO == null ? false : filterDTO.getUrgentOnly();
+        boolean getUrgentOnly = filterDTO == null ? false : BooleanUtils.toBoolean(filterDTO.getUrgentOnly());
 
         if (getUrgentOnly) {
             application.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
@@ -80,7 +81,7 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
 
         criteria.add(disjunction);
 
-        if (filterDTO == null) {
+        if (filterDTO == null || filterDTO.getConstraints() == null) {
             return criteria;
         }
 

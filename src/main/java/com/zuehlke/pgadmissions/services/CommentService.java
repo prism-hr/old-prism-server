@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.util.List;
 import java.util.Set;
 
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,6 @@ import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.OfferRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.UserAppointmentPreferencesRepresentation;
 
@@ -196,20 +196,20 @@ public class CommentService {
         Action action = comment.getAction();
 
         setCommentAuthorRoles(comment, resource, action);
-        
+
         Set<CommentAssignedUser> transientAssignees = comment.getAssignedUsers();
         Set<CommentAssignedUser> persistentAssignees = Sets.newHashSet(transientAssignees);
         transientAssignees.clear();
-        
+
         Set<CommentAppointmentTimeslot> transientTimeslots = comment.getAppointmentTimeslots();
         Set<CommentAppointmentTimeslot> persistentTimeslots = Sets.newHashSet(transientTimeslots);
         transientTimeslots.clear();
-        
+
         Set<CommentAppointmentPreference> transientPreferences = comment.getAppointmentPreferences();
         Set<CommentAppointmentPreference> persistentPreferences = Sets.newHashSet(transientPreferences);
-        
+
         entityService.save(comment);
-        
+
         comment.getAssignedUsers().addAll(persistentAssignees);
         comment.getAppointmentTimeslots().addAll(persistentTimeslots);
         comment.getAppointmentPreferences().addAll(persistentPreferences);
@@ -232,12 +232,12 @@ public class CommentService {
     public <T extends Resource> List<Comment> getTransitionComments(Class<T> resourceClass, Integer resourceId, DateTime rangeStart, DateTime rangeClose) {
         return commentDAO.getTransitionComments(resourceClass, resourceId, rangeStart, rangeClose);
     }
-    
+
     public void recordStateTransition(Comment comment, State state, State transitionState) {
         comment.setState(state);
         comment.setTransitionState(transitionState);
     }
-    
+
     public void delete(Application application, Comment exclusion) {
         for (Comment comment: application.getComments()) {
             if (comment != exclusion) {
@@ -259,7 +259,7 @@ public class CommentService {
                 .withAppointmentConditions(sourceComment.getAppointmentConditions());
         return offerRepresentation;
     }
-    
+
     private void setCommentAuthorRoles(Comment comment, Resource resource, Action action) {
         if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
             comment.setRole(PrismRole.SYSTEM_ADMINISTRATOR.toString());
@@ -274,7 +274,7 @@ public class CommentService {
             }
         }
     }
-    
+
     private Set<ApplicationAssignedSupervisorRepresentation> buildApplicationSupervisorRepresentation(Comment assignmentComment) {
         Set<ApplicationAssignedSupervisorRepresentation> supervisors = Sets.newLinkedHashSet();
 

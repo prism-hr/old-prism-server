@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import com.zuehlke.pgadmissions.rest.dto.application.*;
 import org.apache.commons.lang.BooleanUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
@@ -49,14 +50,6 @@ import com.zuehlke.pgadmissions.rest.dto.CommentAssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositionDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationFundingDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationValidator;
 import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentDTOValidator;
@@ -103,6 +96,31 @@ public class ApplicationResource {
             throw new ResourceNotFoundException();
         }
     }
+
+    @RequestMapping(value = "/{applicationId}/supervisors", method = RequestMethod.POST)
+    public Map<String, Object> createRsupervisor(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationSupervisorDTO supervisorDTO) {
+        try {
+            ApplicationSupervisor supervisor = applicationService.saveSupervisor(applicationId, null, supervisorDTO);
+            return ImmutableMap.of("id", (Object) supervisor.getId());
+        } catch (DeduplicationException e) {
+            throw new ResourceNotFoundException();
+        }
+    }
+
+    @RequestMapping(value = "/{applicationId}/supervisors/{supervisorId}", method = RequestMethod.PUT)
+    public void deleteSupervisor(@PathVariable Integer applicationId, @PathVariable Integer supervisorId, @Valid @RequestBody ApplicationSupervisorDTO supervisorDTO) {
+        try {
+            applicationService.saveSupervisor(applicationId, supervisorId, supervisorDTO);
+        } catch (DeduplicationException e) {
+            throw new ResourceNotFoundException();
+        }
+    }
+
+    @RequestMapping(value = "/{applicationId}/supervisors/{supervisorId}", method = RequestMethod.DELETE)
+    public void updateSupervisor(@PathVariable Integer applicationId, @PathVariable Integer supervisorId) {
+        applicationService.deleteSupervisor(applicationId, supervisorId);
+    }
+
 
     @RequestMapping(value = "/{applicationId}/personalDetail", method = RequestMethod.PUT)
     public void savePersonalDetail(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationPersonalDetailDTO personalDetailDTO) {

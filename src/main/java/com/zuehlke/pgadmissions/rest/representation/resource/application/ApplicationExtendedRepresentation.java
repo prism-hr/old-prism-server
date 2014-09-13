@@ -25,6 +25,8 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     private PersonalDetailRepresentation personalDetail;
 
+    private List<ApplicationSuggestedSupervisorRepresentation> supervisors;
+
     private ProgramDetailRepresentation programDetail;
 
     private ApplicationAddressRepresentation address;
@@ -51,7 +53,7 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     private OfferRepresentation offerRecommendation;
 
-    private List<ApplicationAssignedSupervisorRepresentation> supervisors;
+    private List<ApplicationAssignedSupervisorRepresentation> assignedSupervisors;
 
     private List<PrismStudyOption> availableStudyOptions;
 
@@ -109,6 +111,14 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     public void setProgramDetail(ProgramDetailRepresentation programDetail) {
         this.programDetail = programDetail;
+    }
+
+    public List<ApplicationSuggestedSupervisorRepresentation> getSupervisors() {
+        return supervisors;
+    }
+
+    public void setSupervisors(List<ApplicationSuggestedSupervisorRepresentation> supervisors) {
+        this.supervisors = supervisors;
     }
 
     public ApplicationAddressRepresentation getAddress() {
@@ -207,12 +217,12 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
         this.offerRecommendation = offerRecommendation;
     }
 
-    public List<ApplicationAssignedSupervisorRepresentation> getSupervisors() {
-        return supervisors;
+    public List<ApplicationAssignedSupervisorRepresentation> getAssignedSupervisors() {
+        return assignedSupervisors;
     }
 
-    public void setSupervisors(List<ApplicationAssignedSupervisorRepresentation> supervisors) {
-        this.supervisors = supervisors;
+    public void setAssignedSupervisors(List<ApplicationAssignedSupervisorRepresentation> assignedSupervisors) {
+        this.assignedSupervisors = assignedSupervisors;
     }
 
     public List<PrismStudyOption> getAvailableStudyOptions() {

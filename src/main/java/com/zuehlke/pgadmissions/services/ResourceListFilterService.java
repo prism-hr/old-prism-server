@@ -45,7 +45,7 @@ public class ResourceListFilterService {
             FilterProperty filterProperty = constraintDTO.getFilterProperty();
 
             ResourceListFilterConstraint transientConstraint = new ResourceListFilterConstraint().withFilter(persistentFilter)
-                    .withFilterProperty(filterProperty).withFilterExpression(constraintDTO.getFilterExpression()).withNegated(constraintDTO.isNegated())
+                    .withFilterProperty(filterProperty).withFilterExpression(constraintDTO.getFilterExpression()).withNegated(constraintDTO.getNegated())
                     .withDisplayPosition(constraintDTO.getDisplayPosition()).withValueString(constraintDTO.getValueString())
                     .withValueDateStart(constraintDTO.getValueDateStart()).withValueDateClose(constraintDTO.getValueDateClose())
                     .withValueDecimalStart(constraintDTO.getValueDecimalStart()).withValueDecimalClose(constraintDTO.getValueDecimalClose());

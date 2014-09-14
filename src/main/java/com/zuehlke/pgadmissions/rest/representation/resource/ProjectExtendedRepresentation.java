@@ -7,6 +7,8 @@ public class ProjectExtendedRepresentation extends AbstractResourceRepresentatio
 
     private InstitutionRepresentation institution;
 
+    private ProgramRepresentation program;
+
     private String title;
 
     private AdvertRepresentation advert;
@@ -17,6 +19,14 @@ public class ProjectExtendedRepresentation extends AbstractResourceRepresentatio
 
     public void setInstitution(InstitutionRepresentation institution) {
         this.institution = institution;
+    }
+
+    public ProgramRepresentation getProgram() {
+        return program;
+    }
+
+    public void setProgram(ProgramRepresentation program) {
+        this.program = program;
     }
 
     public String getTitle() {

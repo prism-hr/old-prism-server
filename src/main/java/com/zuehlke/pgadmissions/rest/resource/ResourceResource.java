@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.ActionDTO;
+import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
@@ -37,6 +38,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -203,6 +205,16 @@ public class ResourceResource {
         }
     }
 
+    @RequestMapping(value = "/{resourceId}/comments", method = RequestMethod.POST)
+    public ActionOutcomeRepresentation performAction(@PathVariable Integer resourceId, @Valid @RequestBody CommentDTO commentDTO) {
+        try {
+            ActionOutcomeDTO actionOutcome = resourceService.performAction(resourceId, commentDTO);
+            return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException();
+        }
+    }
+
     @SuppressWarnings("unused")
     public void enrichApplicationRepresentation(Application application, ApplicationExtendedRepresentation applicationRepresentation) {
         List<User> interested = userService.getUsersInterestedInApplication(application);
@@ -261,7 +273,7 @@ public class ResourceResource {
         } else if ("institutions".equals(resourceScope)) {
             return new ResourceDescriptor(Institution.class, InstitutionExtendedRepresentation.class, PrismScope.INSTITUTION);
         }
-        throw new ResourceNotFoundException("Unknown resource type '" + resourceScope + "'.");
+        throw new ResourceNotFoundException();
     }
 
     private static class ResourceDescriptor {

@@ -281,9 +281,9 @@ public class ImportedEntityService {
     }
 
     private StudyOption mergeStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) throws DeduplicationException {
-        String externalcode = modeOfAttendance.getCode();
-        PrismStudyOption internalCode = PrismStudyOption.findValueFromString(externalcode);
-        StudyOption studyOption = new StudyOption().withInstitution(institution).withCode(internalCode.name()).withName(externalcode).withEnabled(true);
+        String externalCode = modeOfAttendance.getCode();
+        PrismStudyOption internalCode = PrismStudyOption.findValueFromString(externalCode);
+        StudyOption studyOption = new StudyOption().withInstitution(institution).withCode(internalCode.name()).withName(externalCode).withEnabled(true);
         return entityService.createOrUpdate(studyOption);
     }
 
@@ -291,7 +291,8 @@ public class ImportedEntityService {
         ImportedEntity persistentImportedEntity = entityService.getDuplicateEntity(transientImportedEntity);
 
         if (persistentImportedEntity == null) {
-            persistentImportedEntity = (ImportedEntity) entityService.save(transientImportedEntity);
+            transientImportedEntity.setEnabled(true);
+            entityService.save(transientImportedEntity);
         } else if (!transientImportedEntity.equals(persistentImportedEntity)) {
             String transientCode = transientImportedEntity.getCode();
             String transientName = transientImportedEntity.getName();
@@ -307,9 +308,9 @@ public class ImportedEntityService {
                     persistentImportedEntity.setCode(transientCode);
                 }
             }
+            persistentImportedEntity.setEnabled(true);
         }
 
-        persistentImportedEntity.setEnabled(true);
     }
 
     private ImportedEntity getSimilarEntityByCode(ImportedEntity transientImportedEntity) {

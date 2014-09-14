@@ -238,6 +238,10 @@ public class ResourceResource {
     }
 
     @SuppressWarnings("unused")
+    public void enrichProjectRepresentation(Project program, ProjectExtendedRepresentation programRepresentation) {
+    }
+
+    @SuppressWarnings("unused")
     public void enrichProgramRepresentation(Program program, ProgramExtendedRepresentation programRepresentation) {
     }
 

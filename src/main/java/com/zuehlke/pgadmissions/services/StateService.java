@@ -360,5 +360,5 @@ public class StateService {
     public List<PrismStateGroup> getAssignableStateGroups(PrismScope scopeId) {
         return stateDAO.getAssignableStateGroups(scopeId);
     }
-
+    
 }

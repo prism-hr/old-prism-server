@@ -29,8 +29,8 @@ public class ScopeService {
         return scopeDAO.getScopesDescending();
     }
     
-    public <T extends Resource> List<PrismScope> getParentScopesAscending(PrismScope scopeId) {
-        return scopeDAO.getParentScopesAscending(scopeId);
+    public <T extends Resource> List<PrismScope> getParentScopesDescending(PrismScope scopeId) {
+        return scopeDAO.getParentScopesDescending(scopeId);
     }
     
 }

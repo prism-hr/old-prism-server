@@ -136,7 +136,6 @@ public class ResourceDAO {
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.isNotNull(resourceReference)) //
                 .add(Restrictions.eqProperty("stateAction.state", resourceReference + ".state"));
         
         if (urgentOnly) {
@@ -159,7 +158,6 @@ public class ResourceDAO {
                 .createAlias(parentResourceReference, parentResourceReference, JoinType.INNER_JOIN) //
                 .createAlias(parentResourceReference + "." + resourceReference + "s", resourceReference, JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.isNotNull(parentResourceReference))
                 .add(Restrictions.eqProperty("stateAction.state", resourceReference + ".state")) //
                 .add(Restrictions.not(Restrictions.in(resourceReference + ".id", knownAlready))); //
         

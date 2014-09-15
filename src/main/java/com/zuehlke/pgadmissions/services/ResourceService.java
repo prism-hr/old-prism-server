@@ -78,7 +78,6 @@ public class ResourceService {
         return entityService.getById(resourceClass, id);
     }
 
-
     public ActionOutcomeDTO performAction(Integer resourceId, CommentDTO commentDTO) throws Exception {
         switch (commentDTO.getAction().getScope()) {
             case INSTITUTION:
@@ -257,7 +256,7 @@ public class ResourceService {
     private List<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, boolean urgentOnly) {
         List<Integer> assigned = resourceDAO.getAssignedResources(user, scopeId, urgentOnly);
         for (PrismScope parentScopeId : parentScopeIds) {
-            assigned.addAll(resourceDAO.getAssignedResources(user, parentScopeId, parentScopeId, assigned, urgentOnly));
+            assigned.addAll(resourceDAO.getAssignedResources(user, parentScopeId, scopeId, assigned, urgentOnly));
         }
         return assigned;
     }

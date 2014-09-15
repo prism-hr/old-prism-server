@@ -198,19 +198,19 @@ public class ApplicationExportBuilder {
 
     private PassportTp buildPassport(Application application) {
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
-        if (personalDetail.getPassportAvailable()) {
-            PassportTp passportTp = objectFactory.createPassportTp();
-            passportTp.setName(personalDetail.getPassport().getName());
-            passportTp.setNumber(personalDetail.getPassport().getNumber());
-            passportTp.setExpiryDate(applicationExportBuilderHelper.buildXmlDate(personalDetail.getPassport().getExpiryDate()));
-            passportTp.setIssueDate(applicationExportBuilderHelper.buildXmlDate(personalDetail.getPassport().getIssueDate()));
-            return passportTp;
-        } else {
+        if (personalDetail.getPassport() == null) {
             PassportTp passportTp = objectFactory.createPassportTp();
             passportTp.setName(exportNotProvided);
             passportTp.setNumber(exportNotProvided);
             passportTp.setExpiryDate(applicationExportBuilderHelper.buildXmlDate(new LocalDate().plusYears(1)));
             passportTp.setIssueDate(applicationExportBuilderHelper.buildXmlDate(new LocalDate().minusYears(1)));
+            return passportTp;
+        } else {
+            PassportTp passportTp = objectFactory.createPassportTp();
+            passportTp.setName(personalDetail.getPassport().getName());
+            passportTp.setNumber(personalDetail.getPassport().getNumber());
+            passportTp.setExpiryDate(applicationExportBuilderHelper.buildXmlDate(personalDetail.getPassport().getExpiryDate()));
+            passportTp.setIssueDate(applicationExportBuilderHelper.buildXmlDate(personalDetail.getPassport().getIssueDate()));
             return passportTp;
         }
     }

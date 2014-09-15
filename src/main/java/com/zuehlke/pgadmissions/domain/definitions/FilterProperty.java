@@ -1,21 +1,23 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import static com.zuehlke.pgadmissions.domain.definitions.FilterValueType.DATE;
+import static com.zuehlke.pgadmissions.domain.definitions.FilterValueType.NUMBER;
+import static com.zuehlke.pgadmissions.domain.definitions.FilterValueType.STRING;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import static com.zuehlke.pgadmissions.domain.definitions.FilterValueType.*;
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public enum FilterProperty {
 
     USER("user", Arrays.asList(FilterExpression.CONTAIN), STRING, Arrays.asList(PrismScope.APPLICATION)),
     CODE("code", Arrays.asList(FilterExpression.CONTAIN), STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
-    INSTITUTION("institution", Arrays.asList(FilterExpression.CONTAIN), STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM)),
-    PROGRAM("program", Arrays.asList(FilterExpression.CONTAIN), STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT)),
-    PROJECT("project", Arrays.asList(FilterExpression.CONTAIN), STRING, Arrays.asList(PrismScope.APPLICATION)),
+    INSTITUTION("institution", Arrays.asList(FilterExpression.CONTAIN), STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
+    PROGRAM("program", Arrays.asList(FilterExpression.CONTAIN), STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM)),
+    PROJECT("project", Arrays.asList(FilterExpression.CONTAIN), STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT)),
     STATE_GROUP("stateGroup", Arrays.asList(FilterExpression.EQUAL), FilterValueType.STATE_GROUP, Arrays.asList(PrismScope.APPLICATION)),
     CREATED_TIMESTAMP("createdTimestamp", Arrays.asList(FilterExpression.BETWEEN, FilterExpression.GREATER, FilterExpression.LESSER),
             DATE, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),

@@ -1,19 +1,27 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.zuehlke.pgadmissions.dao.ProjectDAO;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
-import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
+import java.util.List;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.zuehlke.pgadmissions.dao.ProjectDAO;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
 
 @Service
 @Transactional

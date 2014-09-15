@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.mail;
 
-import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
-import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
-import freemarker.template.Template;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +18,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
+import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
+import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
+
+import freemarker.template.Template;
 
 @Service
 public class MailSender {

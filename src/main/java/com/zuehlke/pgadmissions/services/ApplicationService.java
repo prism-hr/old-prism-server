@@ -1,32 +1,14 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
-import com.zuehlke.pgadmissions.dao.ApplicationDAO;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.rest.dto.*;
-import com.zuehlke.pgadmissions.rest.dto.application.*;
-import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
-import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationValidator;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,15 +17,44 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.validation.Valid;
-import java.util.Iterator;
-import java.util.List;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.ApplicationQualification;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.CommentAppointmentPreference;
+import com.zuehlke.pgadmissions.domain.CommentAppointmentTimeslot;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.ProgramStudyOption;
+import com.zuehlke.pgadmissions.domain.RejectionReason;
+import com.zuehlke.pgadmissions.domain.ResidenceState;
+import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
+import com.zuehlke.pgadmissions.rest.dto.CommentAssignedUserDTO;
+import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
+import com.zuehlke.pgadmissions.rest.dto.UserDTO;
+import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationValidator;
 
 @Service
 @Transactional
 public class ApplicationService {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private ApplicationDAO applicationDAO;
@@ -324,7 +335,6 @@ public class ApplicationService {
     }
 
     private void purgeApplication(Application application, Comment comment) {
-        logger.info("Purging application " + application.getCode());
         if (!application.getRetain()) {
             application.setApplicationRatingCount(null);
             application.setApplicationRatingAverage(null);

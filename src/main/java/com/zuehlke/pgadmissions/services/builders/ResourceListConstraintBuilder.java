@@ -67,7 +67,7 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
                     .add(Restrictions.eq("role.scope.id", parentScopeId));
 
             if (getUrgentOnly) {
-                stateCriteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
+                stateCriteria.add(Restrictions.eq("raisesUrgentFlag", true));
             }
 
             disjunction.add(Restrictions.conjunction() //

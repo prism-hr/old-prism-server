@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
+import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -121,16 +123,19 @@ public class ResourceListFilterService {
         List<ResourceListFilterConstraintDTO> constraintDTOs = filterDTO.getConstraints();
 
         if (!Strings.isNullOrEmpty(valueString) && constraintDTOs == null) {
+            List<ResourceListFilterConstraintDTO> constraints = Lists.newLinkedList();
             for (FilterProperty property : FilterProperty.getPermittedFilterProperties(scope.getId())) {
                 int displayPosition = 0;
                 if (property.getPermittedExpressions().contains(FilterExpression.CONTAIN)) {
                     ResourceListFilterConstraintDTO constraintDTO = new ResourceListFilterConstraintDTO().withFilterProperty(property)
                             .withFilterExpression(FilterExpression.CONTAIN).withNegated(false).withDisplayPosition(displayPosition)
                             .withValueString(valueString);
-                    filterDTO.setConstraints(Collections.singletonList(constraintDTO));
+                    constraints.add(constraintDTO);
                     displayPosition++;
                 }
             }
+            filterDTO.setConstraints(constraints);
+            filterDTO.withMatchMode(FilterMatchMode.ANY);
         }
     }
 

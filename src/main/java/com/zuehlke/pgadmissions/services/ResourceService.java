@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -244,10 +245,21 @@ public class ResourceService {
             throw new Error("The system resource does not support resource listing");
         }
 
-        List<PrismScope> parentScopeIds = scopeService.getParentScopesAscending(scopeId);
+        List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(scopeId);
         filterDTO = resourceListFilterService.saveOrGetByUserAndScope(user, scopeId, filterDTO);
 
-        return resourceDAO.getResourceConsoleList(user, scopeId, parentScopeIds, filterDTO, lastSequenceIdentifier);
+        boolean urgentOnly = filterDTO == null ? false : BooleanUtils.toBoolean(filterDTO.getUrgentOnly());
+        List<Integer> assignedResources = getAssignedResources(user, scopeId, parentScopeIds, urgentOnly);
+        
+        return resourceDAO.getResourceConsoleList(user, scopeId, parentScopeIds, assignedResources, filterDTO, lastSequenceIdentifier);
+    }
+    
+    private List<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, boolean urgentOnly) {
+        List<Integer> assigned = resourceDAO.getAssignedResources(user, scopeId, urgentOnly);
+        for (PrismScope parentScopeId : parentScopeIds) {
+            assigned.addAll(resourceDAO.getAssignedResources(user, parentScopeId, parentScopeId, assigned, urgentOnly));
+        }
+        return assigned;
     }
 
 }

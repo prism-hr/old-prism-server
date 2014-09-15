@@ -1,16 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ResourceListFilter;
 import com.zuehlke.pgadmissions.domain.ResourceListFilterConstraint;
 import com.zuehlke.pgadmissions.domain.Role;

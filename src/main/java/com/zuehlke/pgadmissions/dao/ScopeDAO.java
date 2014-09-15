@@ -29,11 +29,11 @@ public class ScopeDAO {
                 .list();
     }
   
-    public List<PrismScope> getParentScopesAscending(PrismScope scopeId) {
+    public List<PrismScope> getParentScopesDescending(PrismScope scopeId) {
         return (List<PrismScope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.lt("precedence", scopeId.getPrecedence())) //
-                .addOrder(Order.asc("precedence")) //
+                .addOrder(Order.desc("precedence")) //
                 .list();
     }
     

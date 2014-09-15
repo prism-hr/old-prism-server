@@ -28,10 +28,6 @@ public class EntityService {
         return entityDAO.getByProperty(klass, propertyName, propertyValue);
     }
 
-    public <T> T getByPropertyNotNull(Class<T> klass, String propertyName) {
-        return entityDAO.getByPropertyNotNull(klass, propertyName);
-    }
-
     public <T> T getByProperties(Class<T> klass, Map<String, Object> properties) {
         return entityDAO.getByProperties(klass, properties);
     }
@@ -49,11 +45,11 @@ public class EntityService {
     }
 
     public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) throws DeduplicationException {
-        return (T) entityDAO.getDuplicateEntity(uniqueResource);
+        return entityDAO.getDuplicateEntity(uniqueResource);
     }
 
     public <T extends IUniqueEntity> T getOrCreate(T transientResource) throws DeduplicationException {
-        T persistentResource = (T) getDuplicateEntity(transientResource);
+        T persistentResource = getDuplicateEntity(transientResource);
         if (persistentResource == null) {
             save(transientResource);
             persistentResource = transientResource;
@@ -62,12 +58,12 @@ public class EntityService {
     }
 
     public <T extends IUniqueEntity> T createOrUpdate(T transientResource) throws DeduplicationException {
-        T persistentResource = (T) getDuplicateEntity(transientResource);
+        T persistentResource = getDuplicateEntity(transientResource);
         if (persistentResource == null) {
             save(transientResource);
         } else {
             Object persistentId = IntrospectionUtils.getProperty(persistentResource, "id");
-            IntrospectionUtils.setProperty(transientResource, "id", persistentId);        
+            IntrospectionUtils.setProperty(transientResource, "id", persistentId);
             evict(persistentResource);
             update(transientResource);
         }
@@ -103,7 +99,7 @@ public class EntityService {
             entityDAO.evict(entity);
         }
     }
-    
+
     public void flushAndEvict(Object... entities) {
         flush();
         evict(entities);
@@ -111,10 +107,6 @@ public class EntityService {
 
     public <T> void deleteAll(Class<T> classReference) {
         entityDAO.deleteAll(classReference);
-    }
-
-    public <T> Integer getNotNullValueCount(Class<T> entityClass, String property, Map<String, Object> filters) {
-        return entityDAO.getNotNullValueCount(entityClass, property, filters);
     }
 
 }

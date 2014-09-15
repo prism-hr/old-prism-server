@@ -1,21 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.bind.JAXBElement;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -24,25 +8,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.AdvertCategory;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
-import com.zuehlke.pgadmissions.domain.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramStudyOption;
-import com.zuehlke.pgadmissions.domain.ProgramStudyOptionInstance;
-import com.zuehlke.pgadmissions.domain.ProgramType;
-import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -50,23 +16,32 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.dto.AdvertCategoryImportRowDTO;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.iso.jaxb.CategoryNameType;
-import com.zuehlke.pgadmissions.iso.jaxb.CategoryType;
-import com.zuehlke.pgadmissions.iso.jaxb.CountryType;
-import com.zuehlke.pgadmissions.iso.jaxb.ShortNameType;
-import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionLocaleType;
-import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionType;
+import com.zuehlke.pgadmissions.iso.jaxb.*;
 import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.xml.bind.JAXBElement;
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 @Transactional
 public class ImportedEntityService {
 
-    private static DateTimeFormatter datetFormatter = DateTimeFormat.forPattern("dd-MMM-yy");
+    private static DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("dd-MMM-yy");
 
     @Autowired
     private ImportedEntityDAO importedEntityDAO;
@@ -81,31 +56,19 @@ public class ImportedEntityService {
     private RoleService roleService;
 
     @Autowired
-    private InstitutionService institutionService;
-
-    @Autowired
     private SystemService systemService;
 
     @SuppressWarnings("unchecked")
     public <T extends ImportedEntity> T getById(Class<? extends ImportedEntity> clazz, Institution institution, Integer id) {
-        T entity = (T) entityService.getByProperties(clazz, ImmutableMap.of("institution", institution, "id", id));
-        return entity;
+        return (T) entityService.getByProperties(clazz, ImmutableMap.of("institution", institution, "id", id));
     }
 
     public <T extends ImportedEntity> T getImportedEntityByCode(Class<? extends ImportedEntity> entityClass, Institution institution, String code) {
         return importedEntityDAO.getImportedEntityByCode(entityClass, institution, code);
     }
 
-    public ImportedEntity getImportedEntityByName(Class<? extends ImportedEntity> entityClass, Institution institution, String name) {
-        return importedEntityDAO.getImportedEntityByName(entityClass, institution, name);
-    }
-
     public ImportedInstitution getImportedInstitutionByCode(Institution institution, Domicile domicile, String code) {
         return importedEntityDAO.getImportedInstitutionByCode(institution, domicile, code);
-    }
-
-    public ImportedInstitution getImportedInstitutionByName(Institution institution, Domicile domicile, String name) {
-        return importedEntityDAO.getImportedInstitutionByName(institution, domicile, name);
     }
 
     public ImportedEntityFeed getOrCreateImportedEntityFeed(Institution institution, PrismImportedEntity importedEntityType, String location) throws DeduplicationException {
@@ -140,8 +103,8 @@ public class ImportedEntityService {
         for (ProgrammeOccurrence occurrence : programInstanceDefinitions) {
             StudyOption studyOption = mergeStudyOption(institution, occurrence.getModeOfAttendance());
 
-            LocalDate transientStartDate = datetFormatter.parseLocalDate(occurrence.getStartDate());
-            LocalDate transientCloseDate = datetFormatter.parseLocalDate(occurrence.getEndDate());
+            LocalDate transientStartDate = dateFormatter.parseLocalDate(occurrence.getStartDate());
+            LocalDate transientCloseDate = dateFormatter.parseLocalDate(occurrence.getEndDate());
 
             ProgramStudyOption transientProgramStudyOption = new ProgramStudyOption().withProgram(persistentProgram).withStudyOption(studyOption)
                     .withApplicationStartDate(transientStartDate).withApplicationCloseDate(transientCloseDate)
@@ -254,7 +217,7 @@ public class ImportedEntityService {
         }
         String currency = countryCurrencies.get(alpha2Code);
 
-        if (Strings.isNullOrEmpty(currency) || status.equals("exceptionally-reserved") || status.equals("indeterminately-reserved")) {
+        if (Strings.isNullOrEmpty(currency) || status == null || status.equals("exceptionally-reserved") || status.equals("indeterminately-reserved")) {
             return;
         }
 
@@ -318,9 +281,9 @@ public class ImportedEntityService {
     }
 
     private StudyOption mergeStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) throws DeduplicationException {
-        String externalcode = modeOfAttendance.getCode();
-        PrismStudyOption internalCode = PrismStudyOption.findValueFromString(externalcode);
-        StudyOption studyOption = new StudyOption().withInstitution(institution).withCode(internalCode.name()).withName(externalcode).withEnabled(true);
+        String externalCode = modeOfAttendance.getCode();
+        PrismStudyOption internalCode = PrismStudyOption.findValueFromString(externalCode);
+        StudyOption studyOption = new StudyOption().withInstitution(institution).withCode(internalCode.name()).withName(externalCode).withEnabled(true);
         return entityService.createOrUpdate(studyOption);
     }
 
@@ -328,12 +291,13 @@ public class ImportedEntityService {
         ImportedEntity persistentImportedEntity = entityService.getDuplicateEntity(transientImportedEntity);
 
         if (persistentImportedEntity == null) {
-            persistentImportedEntity = (ImportedEntity) entityService.save(transientImportedEntity);
+            transientImportedEntity.setEnabled(true);
+            entityService.save(transientImportedEntity);
         } else if (!transientImportedEntity.equals(persistentImportedEntity)) {
             String transientCode = transientImportedEntity.getCode();
             String transientName = transientImportedEntity.getName();
 
-            if (transientCode == persistentImportedEntity.getCode()) {
+            if (transientCode.equals(persistentImportedEntity.getCode())) {
                 ImportedEntity otherPersistentEntity = getSimilarEntityByName(transientImportedEntity);
                 if (otherPersistentEntity == null) {
                     persistentImportedEntity.setName(transientName);
@@ -344,9 +308,9 @@ public class ImportedEntityService {
                     persistentImportedEntity.setCode(transientCode);
                 }
             }
+            persistentImportedEntity.setEnabled(true);
         }
 
-        persistentImportedEntity.setEnabled(true);
     }
 
     private ImportedEntity getSimilarEntityByCode(ImportedEntity transientImportedEntity) {

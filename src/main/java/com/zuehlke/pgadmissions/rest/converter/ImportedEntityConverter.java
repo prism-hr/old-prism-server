@@ -1,15 +1,9 @@
 package com.zuehlke.pgadmissions.rest.converter;
 
-import org.dozer.DozerConverter;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
-import com.zuehlke.pgadmissions.services.EntityService;
+import org.dozer.DozerConverter;
 
 public class ImportedEntityConverter extends DozerConverter<ImportedEntity, Integer> {
-
-    @Autowired
-    private EntityService entityService;
 
     public ImportedEntityConverter() {
         super(ImportedEntity.class, Integer.class);

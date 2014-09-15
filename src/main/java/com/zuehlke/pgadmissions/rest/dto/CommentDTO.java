@@ -85,6 +85,8 @@ public class CommentDTO {
 
     private ProgramDTO program;
 
+    private ProjectDTO project;
+
     public Integer getUser() {
         return user;
     }
@@ -339,5 +341,13 @@ public class CommentDTO {
 
     public void setProgram(ProgramDTO program) {
         this.program = program;
+    }
+
+    public ProjectDTO getProject() {
+        return project;
+    }
+
+    public void setProject(ProjectDTO project) {
+        this.project = project;
     }
 }

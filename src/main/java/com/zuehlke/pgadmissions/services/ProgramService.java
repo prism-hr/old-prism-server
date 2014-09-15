@@ -35,9 +35,6 @@ public class ProgramService {
     private ProgramDAO programDAO;
 
     @Autowired
-    private RoleService roleService;
-
-    @Autowired
     private EntityService entityService;
 
     @Autowired
@@ -62,26 +59,13 @@ public class ProgramService {
         return entityService.getById(Program.class, id);
     }
 
-    public ProgramStudyOption getProgramStudyOptionById(Integer id) {
-        return entityService.getById(ProgramStudyOption.class, id);
-    }
-
     public void save(Program program) {
         entityService.save(program);
-    }
-
-    public Program getProgramByCode(String code) {
-        return programDAO.getProgramByCode(code);
     }
 
     public Program getProgramByImportedCode(Institution institution, String importedCode) {
         institution = institution == null ? institutionService.getUclInstitution() : institution;
         return programDAO.getProgramByImportedCode(institution, importedCode);
-    }
-
-    public List<Program> getPrograms(User user) {
-        // TODO implement SQL query for basic list;
-        return null;
     }
 
     public Program create(User user, ProgramDTO programDTO) {
@@ -182,10 +166,6 @@ public class ProgramService {
             return getProgramClosureDate(program);
         }
         return null;
-    }
-
-    public List<ProgramStudyOptionInstance> getProgramStudyOptionInstances(Program program) {
-        return programDAO.getProgramStudyOptionInstances(program);
     }
 
     public List<Program> getProgramsWithElapsedStudyOptions(LocalDate baseline) {

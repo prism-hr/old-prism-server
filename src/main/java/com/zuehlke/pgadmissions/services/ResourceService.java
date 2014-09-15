@@ -301,7 +301,7 @@ public class ResourceService {
                     case CREATED_TIMESTAMP:
                     case UPDATED_TIMESTAMP:
                         ResourceListConstraintBuilder.appendDateTimeFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
-                                constraint.getValueDateTimeStart(), constraint.getValueDateTimeClose(), negated);
+                                constraint.computeValueDateTimeStart(), constraint.computeValueDateTimeClose(), negated);
                         break;
                     case DUE_DATE:
                         ResourceListConstraintBuilder.appendClosingDateFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
@@ -326,7 +326,7 @@ public class ResourceService {
                         break;
                     case SUBMITTED_TIMESTAMP:
                         ResourceListConstraintBuilder.appendDateTimeFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
-                                constraint.getValueDateTimeStart(), constraint.getValueDateTimeClose(), negated);
+                                constraint.computeValueDateTimeStart(), constraint.computeValueDateTimeClose(), negated);
                         break;
                     case USER:
                         List<Integer> userIds = userService.getMatchingUsers(constraint.getValueString());

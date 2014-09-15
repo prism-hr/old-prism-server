@@ -14,13 +14,25 @@ import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 
 public class ResourceListConstraintBuilder extends ConstraintBuilder {
 
     public static final String SEQUENCE_IDENTIFIER = "sequenceIdentifier";
 
-    public static Criteria appendResourceListPagingCriterion(Criteria criteria, FilterSortOrder sortOrder, String lastSequenceIdentifier,
+    public static Criteria appendFilterCriterion(Criteria criteria, ResourceListFilterDTO filter, Junction conditions, String lastSequenceIdentifier,
             Integer recordsToRetrieve) {
+
+        if (filter.isUrgentOnly()) {
+            criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
+        }
+
+        if (conditions != null) {
+            criteria.add(conditions);
+        }
+        
+        FilterSortOrder sortOrder = filter.getSortOrder();
+
         if (lastSequenceIdentifier != null) {
             criteria.add(FilterSortOrder.getPagingRestriction(SEQUENCE_IDENTIFIER, sortOrder, lastSequenceIdentifier));
         }
@@ -33,11 +45,10 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
 
         return criteria;
     }
-    
+
     public static void appendClosingDateFilterCriterion(Junction conditions, String property, FilterExpression expression, LocalDate valueDateStart,
             LocalDate valueDateClose, boolean negated) {
-        Junction restriction = Restrictions.disjunction()
-                .add(getRangeFilterCriterion(property, expression, valueDateStart, valueDateClose))
+        Junction restriction = Restrictions.disjunction().add(getRangeFilterCriterion(property, expression, valueDateStart, valueDateClose))
                 .add(getRangeFilterCriterion("previous" + WordUtils.capitalize(property), expression, valueDateStart, valueDateClose));
         applyOrNegateFilterCriterion(conditions, restriction, negated);
     }

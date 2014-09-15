@@ -226,5 +226,14 @@ public class UserDAO {
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();
     }
+    
+    public List<Integer> getMatchingUsers(String searchTerm) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .setProjection(Projections.property("id")) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.ilike("fullName", searchTerm, MatchMode.ANYWHERE)) //
+                        .add(Restrictions.ilike("email", searchTerm, MatchMode.ANYWHERE)))
+                .list();
+    }
 
 }

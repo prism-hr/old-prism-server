@@ -1,14 +1,19 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.WordUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.joda.time.DateTime;
@@ -17,12 +22,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.ParentResource;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
@@ -85,10 +91,14 @@ public class ResourceDAO {
     }
 
     public List<ResourceConsoleListRowDTO> getResourceConsoleList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds,
-            List<Integer> assignedResources, ResourceListFilterDTO filterDTO, String lastSequenceIdentifier) {
+            TreeSet<String> assignedResources, FilterSortOrder sortOrder, Integer recordsToReturn) {
+        if (assignedResources.isEmpty()) {
+            return new ArrayList<ResourceConsoleListRowDTO>(0);
+        }
+
         Class<? extends Resource> resourceClass = scopeId.getResourceClass();
         String resourceReference = scopeId.getLowerCaseName();
-        
+
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceClass, resourceReference);
 
         ProjectionList projectionList = Projections.projectionList();
@@ -117,57 +127,103 @@ public class ResourceDAO {
 
         addResourceListCustomJoins(scopeId, resourceReference, criteria);
 
-        criteria.createAlias("state", "state", JoinType.INNER_JOIN) //
-                .add(Subqueries.propertyIn("id", ResourceListConstraintBuilder.getVisibleResourcesCriteria(user, resourceClass, assignedResources, filterDTO)));
+        criteria.createAlias("state", "state", JoinType.INNER_JOIN);
 
-        return ResourceListConstraintBuilder
-                .appendResourceListDisplayFilterExpression(Application.class, criteria, filterDTO == null ? FilterSortOrder.DESCENDING : filterDTO.getSortOrder(), lastSequenceIdentifier) //
+        Disjunction conditions = Restrictions.disjunction();
+
+        Iterator<String> iterator;
+        if (sortOrder == FilterSortOrder.DESCENDING) {
+            iterator = assignedResources.descendingIterator();
+        } else {
+            iterator = assignedResources.iterator();
+        }
+
+        int rowCursor = 0;
+        while (iterator.hasNext() && (recordsToReturn == null || rowCursor < recordsToReturn)) {
+            conditions.add(Restrictions.eq(ResourceListConstraintBuilder.SEQUENCE_IDENTIFIER, iterator.next()));
+            rowCursor++;
+        }
+
+        return criteria.add(conditions) //
+                .addOrder(FilterSortOrder.getOrderExpression(ResourceListConstraintBuilder.SEQUENCE_IDENTIFIER, sortOrder)) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowDTO.class)) //
                 .list();
     }
-    
-    public List<Integer> getAssignedResources(User user, PrismScope scopeId, boolean urgentOnly) {
-        String resourceReference = scopeId.getLowerCaseName();
-        
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty(resourceReference + ".id")) //
-                .createAlias("role", "role", JoinType.INNER_JOIN) //
+
+    public List<String> getAssignedResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, Junction conditions, String lastIdentifier,
+            Integer recordsToRetrieve) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
+                .setProjection(Projections.groupProperty(ResourceListConstraintBuilder.SEQUENCE_IDENTIFIER)) //
+                .createAlias("userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.eqProperty("stateAction.state", resourceReference + ".state"));
-        
-        if (urgentOnly) {
+                .add(Restrictions.eq("userRole.user", user)) //
+                .add(Restrictions.eqProperty("stateAction.state", "state"));
+
+        if (filter.isUrgentOnly()) {
             criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
         }
-        
-        return (List<Integer>) criteria.list();
-        
+
+        if (conditions != null) {
+            criteria.add(conditions);
+        }
+
+        ResourceListConstraintBuilder.appendResourceListPagingCriterion(criteria, filter.getSortOrder(), lastIdentifier, recordsToRetrieve);
+        return (List<String>) criteria.list();
     }
-    
-    public List<Integer> getAssignedResources(User user, PrismScope parentScopeId, PrismScope scopeId, List<Integer> knownAlready, boolean urgentOnly) {
-        String resourceReference = scopeId.getLowerCaseName();
+
+    public List<String> getAssignedResources(User user, PrismScope scopeId, PrismScope parentScopeId, ResourceListFilterDTO filter, Junction conditions,
+            String lastIdentifier, Integer recordsToRetrieve, TreeSet<String> exclusions) {
         String parentResourceReference = parentScopeId.getLowerCaseName();
-        
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty(resourceReference + ".id")) //
-                .createAlias("role", "role", JoinType.INNER_JOIN) //
+
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
+                .setProjection(Projections.groupProperty(ResourceListConstraintBuilder.SEQUENCE_IDENTIFIER)) //
+                .createAlias(parentResourceReference, parentResourceReference, JoinType.INNER_JOIN) //
+                .createAlias(parentResourceReference + ".userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias(parentResourceReference, parentResourceReference, JoinType.INNER_JOIN) //
-                .createAlias(parentResourceReference + "." + resourceReference + "s", resourceReference, JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.eqProperty("stateAction.state", resourceReference + ".state")) //
-                .add(Restrictions.not(Restrictions.in(resourceReference + ".id", knownAlready))); //
-        
-        if (urgentOnly) {
+                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("userRole.user", user)) //
+                .add(Restrictions.not(Restrictions.in(ResourceListConstraintBuilder.SEQUENCE_IDENTIFIER, exclusions))); //
+
+        if (filter.isUrgentOnly()) {
             criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
         }
-        
-        return (List<Integer>) criteria.list();
+
+        if (conditions != null) {
+            criteria.add(conditions);
+        }
+
+        if (recordsToRetrieve != null) {
+            criteria.setMaxResults(recordsToRetrieve);
+        }
+
+        ResourceListConstraintBuilder.appendResourceListPagingCriterion(criteria, filter.getSortOrder(), lastIdentifier, recordsToRetrieve);
+        return (List<String>) criteria.list();
     }
-    
+
+    public <T extends ParentResource> List<Integer> getMatchingParentResources(PrismScope parentScopeId, String searchTerm) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(parentScopeId.getResourceClass()) //
+                .setProjection(Projections.property("id")) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.ilike("code", searchTerm, MatchMode.ANYWHERE)) //
+                        .add(Restrictions.ilike("title", searchTerm, MatchMode.ANYWHERE))) //
+                .list();
+    }
+
+    public List<Integer> getByMatchingUsersInRoles(PrismScope scopeId, String searchTerm, List<PrismRole> roleIds) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.property(scopeId.getLowerCaseName())) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.ilike("user.fullName", searchTerm, MatchMode.ANYWHERE)) //
+                        .add(Restrictions.ilike("user.email", searchTerm, MatchMode.ANYWHERE))) //
+                .add(Restrictions.in("role.id", roleIds)) //
+                .list();
+    }
+
     private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {
         HashMultimap<String, String> customColumns = scopeId.getConsoleListCustomColumns();
         for (String tableName : customColumns.keySet()) {

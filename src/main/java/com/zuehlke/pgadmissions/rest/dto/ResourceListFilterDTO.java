@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.rest.dto;
 
 import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
+
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
 
@@ -47,6 +49,11 @@ public class ResourceListFilterDTO {
         return saveAsDefaultFilter;
     }
 
+    public ResourceListFilterDTO withConstraints(List<ResourceListFilterConstraintDTO> constraints) {
+        this.constraints = constraints;
+        return this;
+    }
+    
     public ResourceListFilterDTO withUrgentOnly(Boolean urgentOnly) {
         this.urgentOnly = urgentOnly;
         return this;
@@ -69,6 +76,14 @@ public class ResourceListFilterDTO {
 
     public void addConstraint(ResourceListFilterConstraintDTO constraint) {
         constraints.add(constraint);
+    }
+    
+    public boolean isUrgentOnly() {
+        return BooleanUtils.toBoolean(urgentOnly);
+    }
+    
+    public boolean hasConstraints() {
+        return !constraints.isEmpty();
     }
 
 }

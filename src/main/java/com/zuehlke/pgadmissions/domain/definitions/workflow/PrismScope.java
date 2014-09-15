@@ -15,17 +15,13 @@ public enum PrismScope {
 
     SYSTEM(System.class, 1, "SM", null, null, null), //
     INSTITUTION(Institution.class, 2, "IN", 50, //
-            new ColumnDefinitionBuilder().addDefinition("institution", "title").getDefinitions(), //
-            null), //
+            new ColumnDefinitionBuilder().addDefinition("institution", "title").getDefinitions(), null), //
     PROGRAM(Program.class, 3, "PM", 50, //
-            new ColumnDefinitionBuilder().addDefinition("institution", "title").addDefinition("program", "title").getDefinitions(), //
-            null), //
+            new ColumnDefinitionBuilder().addDefinition("institution", "title").addDefinition("program", "title").getDefinitions(), null), //
     PROJECT(Project.class, 4, "PT", 50, //
-            new ColumnDefinitionBuilder().addDefinition("program", "title").addDefinition("project", "title").getDefinitions(), //
-            null), //
+            new ColumnDefinitionBuilder().addDefinition("program", "title").addDefinition("project", "title").getDefinitions(), null), //
     APPLICATION(Application.class, 5, "AN", 50, //
-            new ColumnDefinitionBuilder().addDefinition("program", "title").addDefinition("project", "title").getDefinitions(), //
-            null);
+            new ColumnDefinitionBuilder().addDefinition("program", "title").addDefinition("project", "title").getDefinitions(), null);
 
     private Class<? extends Resource> resourceClass;
 
@@ -33,7 +29,7 @@ public enum PrismScope {
 
     private String shortCode;
 
-    private Integer resourceListRecordsToRetrieve;
+    private Integer getMaxRecords;
 
     private HashMultimap<String, String> consoleListCustomColumns;
 
@@ -49,12 +45,12 @@ public enum PrismScope {
         resourceScopes.put(Application.class, APPLICATION);
     }
 
-    private PrismScope(Class<? extends Resource> resourceClass, int precedence, String shortCode, Integer resourceListRecordsToRetrieve,
+    private PrismScope(Class<? extends Resource> resourceClass, int precedence, String shortCode, Integer maxRecords,
             HashMultimap<String, String> consoleListColumns, HashMultimap<String, String> reportListColumns) {
         this.resourceClass = resourceClass;
         this.precedence = precedence;
         this.shortCode = shortCode;
-        this.resourceListRecordsToRetrieve = resourceListRecordsToRetrieve;
+        this.getMaxRecords = maxRecords;
         this.consoleListCustomColumns = consoleListColumns;
         this.reportListCustomColumns = reportListColumns;
     }
@@ -71,8 +67,8 @@ public enum PrismScope {
         return shortCode;
     }
 
-    public final Integer getResourceListRecordsToRetrieve() {
-        return resourceListRecordsToRetrieve;
+    public final Integer getMaxRecords() {
+        return getMaxRecords;
     }
 
     public final HashMultimap<String, String> getConsoleListCustomColumns() {

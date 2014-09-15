@@ -1,14 +1,18 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
@@ -20,9 +24,12 @@ import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateDuration;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
+import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -32,7 +39,9 @@ import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
 
 @Service
 @Transactional
@@ -80,16 +89,16 @@ public class ResourceService {
 
     public ActionOutcomeDTO performAction(Integer resourceId, CommentDTO commentDTO) throws Exception {
         switch (commentDTO.getAction().getScope()) {
-            case INSTITUTION:
-                return institutionService.performAction(resourceId, commentDTO);
-            case PROGRAM:
-                return programService.performAction(resourceId, commentDTO);
-            case PROJECT:
-                return projectService.performAction(resourceId, commentDTO);
-            case APPLICATION:
-                return applicationService.performAction(resourceId, commentDTO);
-            default:
-                throw new Error("Couldn't perform action " + commentDTO.getAction());
+        case INSTITUTION:
+            return institutionService.performAction(resourceId, commentDTO);
+        case PROGRAM:
+            return programService.performAction(resourceId, commentDTO);
+        case PROJECT:
+            return projectService.performAction(resourceId, commentDTO);
+        case APPLICATION:
+            return applicationService.performAction(resourceId, commentDTO);
+        default:
+            throw new Error("Couldn't perform action " + commentDTO.getAction());
         }
     }
 
@@ -237,7 +246,7 @@ public class ResourceService {
         return resourceDAO.getRecentlyUpdatedResources(resourceClass, rangeStart, rangeClose);
     }
 
-    public <T extends Resource> List<ResourceConsoleListRowDTO> getResourceConsoleList(PrismScope scopeId, ResourceListFilterDTO filterDTO,
+    public <T extends Resource> List<ResourceConsoleListRowDTO> getResourceConsoleList(PrismScope scopeId, ResourceListFilterDTO filter,
             String lastSequenceIdentifier) throws DeduplicationException {
         User user = userService.getCurrentUser();
         if (scopeId == PrismScope.SYSTEM) {
@@ -245,20 +254,97 @@ public class ResourceService {
         }
 
         List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(scopeId);
-        filterDTO = resourceListFilterService.saveOrGetByUserAndScope(user, scopeId, filterDTO);
+        filter = resourceListFilterService.saveOrGetByUserAndScope(user, scopeId, filter);
 
-        boolean urgentOnly = filterDTO == null ? false : BooleanUtils.toBoolean(filterDTO.getUrgentOnly());
-        List<Integer> assignedResources = getAssignedResources(user, scopeId, parentScopeIds, urgentOnly);
-        
-        return resourceDAO.getResourceConsoleList(user, scopeId, parentScopeIds, assignedResources, filterDTO, lastSequenceIdentifier);
+        Integer maxRecords = scopeId.getMaxRecords();
+        TreeSet<String> assignedResources = getAssignedResources(user, scopeId, parentScopeIds, filter, lastSequenceIdentifier, maxRecords);
+        return resourceDAO.getResourceConsoleList(user, scopeId, parentScopeIds, assignedResources, filter.getSortOrder(), maxRecords);
     }
-    
-    private List<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, boolean urgentOnly) {
-        List<Integer> assigned = resourceDAO.getAssignedResources(user, scopeId, urgentOnly);
+
+    private TreeSet<String> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter,
+            String lastSequenceIdentifier, Integer maxRecords) {
+        TreeSet<String> assigned = Sets.newTreeSet();
+        Junction conditions = getFilterConditions(scopeId, filter);
+        assigned.addAll(resourceDAO.getAssignedResources(user, scopeId, filter, conditions, lastSequenceIdentifier, maxRecords));
         for (PrismScope parentScopeId : parentScopeIds) {
-            assigned.addAll(resourceDAO.getAssignedResources(user, parentScopeId, scopeId, assigned, urgentOnly));
+            assigned.addAll(resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, conditions, lastSequenceIdentifier, maxRecords, assigned));
         }
         return assigned;
     }
 
+    private Junction getFilterConditions(PrismScope scopeId, ResourceListFilterDTO filter) {
+        if (filter.hasConstraints()) {
+            Junction conditions = Restrictions.conjunction();
+            if (filter.getMatchMode() == FilterMatchMode.ANY) {
+                conditions = Restrictions.disjunction();
+            }
+    
+            for (ResourceListFilterConstraintDTO constraint : filter.getConstraints()) {
+                FilterProperty property = constraint.getFilterProperty();
+    
+                if (FilterProperty.isPermittedFilterProperty(scopeId, property)) {
+                    String propertyName = property.getPropertyName();
+                    Boolean negated = BooleanUtils.toBoolean(constraint.getNegated());
+                    switch (property) {
+                    case CLOSING_DATE:
+                        ResourceListConstraintBuilder.appendClosingDateFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
+                                constraint.getValueDateStart(), constraint.getValueDateClose(), negated);
+                        break;
+                    case CODE:
+                    case REFERRER:
+                        ResourceListConstraintBuilder.appendStringFilterCriterion(conditions, propertyName, constraint.getValueString(), negated);
+                        break;
+                    case CONFIRMED_START_DATE:
+                        ResourceListConstraintBuilder.appendDateFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
+                                constraint.getValueDateStart(), constraint.getValueDateClose(), negated);
+                        break;
+                    case CREATED_TIMESTAMP:
+                    case UPDATED_TIMESTAMP:
+                        ResourceListConstraintBuilder.appendDateTimeFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
+                                constraint.getValueDateTimeStart(), constraint.getValueDateTimeClose(), negated);
+                        break;
+                    case DUE_DATE:
+                        ResourceListConstraintBuilder.appendClosingDateFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
+                                constraint.getValueDateStart(), constraint.getValueDateClose(), negated);
+                        break;
+                    case INSTITUTION:
+                    case PROGRAM:
+                    case PROJECT:
+                        List<Integer> parentResourceIds = resourceDAO.getMatchingParentResources(PrismScope.valueOf(property.name()), constraint.getValueString());
+                        ResourceListConstraintBuilder.appendParentResourceFilterCriterion(conditions, propertyName, parentResourceIds, negated);
+                        break;
+                    case TITLE:
+                        ResourceListConstraintBuilder.appendStringFilterCriterion(conditions, propertyName, constraint.getValueString(), negated);
+                        break;
+                    case RATING:
+                        ResourceListConstraintBuilder.appendDecimalFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
+                                constraint.getValueDecimalStart(), constraint.getValueDecimalClose(), negated);
+                        break;
+                    case STATE_GROUP:
+                        List<PrismState> stateIds = stateService.getStatesByStateGroup(constraint.getValueStateGroup());
+                        ResourceListConstraintBuilder.appendStateGroupFilterCriterion(conditions, propertyName, stateIds, negated);
+                        break;
+                    case SUBMITTED_TIMESTAMP:
+                        ResourceListConstraintBuilder.appendDateTimeFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
+                                constraint.getValueDateTimeStart(), constraint.getValueDateTimeClose(), negated);
+                        break;
+                    case USER:
+                        List<Integer> userIds = userService.getMatchingUsers(constraint.getValueString());
+                        ResourceListConstraintBuilder.appendUserFilterCriterion(conditions, propertyName, userIds, negated);
+                        break;
+                    case USER_ROLE:
+                        List<Integer> resourceIds = resourceDAO.getByMatchingUsersInRoles(scopeId, constraint.getValueString(), constraint.getValueRoles());
+                        ResourceListConstraintBuilder.appendUserRoleFilterCriterion(conditions, propertyName, resourceIds, negated);
+                        break;
+                    }
+                } else {
+                    ResourceListConstraintBuilder.throwResourceFilterListMissingPropertyError(scopeId, property);
+                }
+            }
+    
+            return conditions;
+        }
+        return null;
+    }
+    
 }

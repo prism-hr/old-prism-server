@@ -228,5 +228,9 @@ public class UserService {
     public List<User> getEnabledResourceUsers(Resource resource) {
         return userDAO.getEnabledResourceUsers(resource);
     }
+    
+    public List<Integer> getMatchingUsers(String searchTerm) {
+        return userDAO.getMatchingUsers(searchTerm);
+    }
 
 }

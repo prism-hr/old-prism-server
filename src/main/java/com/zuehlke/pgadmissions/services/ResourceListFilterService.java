@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
+import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -101,7 +103,8 @@ public class ResourceListFilterService {
             return filterDTO;
         }
 
-        return null;
+        return new ResourceListFilterDTO().withUrgentOnly(false).withSortOrder(FilterSortOrder.DESCENDING)
+                .withConstraints(new ArrayList<ResourceListFilterConstraintDTO>(0));
     }
 
     public ResourceListFilterDTO saveOrGetByUserAndScope(User user, PrismScope scopeId, ResourceListFilterDTO filterDTO) throws DeduplicationException {
@@ -113,8 +116,8 @@ public class ResourceListFilterService {
             if (BooleanUtils.isTrue(filterDTO.isSaveAsDefaultFilter())) {
                 save(user, scope, filterDTO);
             }
+            return filterDTO;
         }
-        return filterDTO;
     }
 
     private void prepare(Scope scope, ResourceListFilterDTO filterDTO) {

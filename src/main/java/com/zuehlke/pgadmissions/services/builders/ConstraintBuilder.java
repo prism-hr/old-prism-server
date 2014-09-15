@@ -12,7 +12,7 @@ import org.joda.time.LocalDate;
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
 
 public class ConstraintBuilder {
-
+    
     public static void appendStringFilterCriterion(Junction conditions, String property, String value, boolean negated) {
         Criterion restriction = Restrictions.ilike(property, value, MatchMode.ANYWHERE);
         applyOrNegateFilterCriterion(conditions, restriction, negated);
@@ -41,7 +41,7 @@ public class ConstraintBuilder {
         case BETWEEN:
             return Restrictions.between(property, valueStart, valueClose);
         case EQUAL:
-            return getEqualRestriction(property, valueStart);
+            return getRangeEqualRestriction(property, valueStart);
         case GREATER:
             return Restrictions.ge(property, valueStart);
         case LESSER:
@@ -50,20 +50,20 @@ public class ConstraintBuilder {
             throw new Error("Invalid filter expression: " + expression.name() + " for property: " + property);
         }
     }
-
-    private static Criterion getEqualRestriction(String property, Object valueStart) {
-        if (valueStart.getClass().equals(DateTime.class)) {
-            DateTime valueStartDateTime = (DateTime) valueStart;
-            return Restrictions.between(property, valueStartDateTime, valueStartDateTime.plusDays(1).minusSeconds(1));
-        }
-        return Restrictions.eq(property, valueStart);
-    }
     
     protected static void applyOrNegateFilterCriterion(Junction conditions, Criterion restriction, boolean negated) {
         if (negated) {
             restriction = Restrictions.not(restriction);
         }
         conditions.add(restriction);
+    }
+    
+    private static Criterion getRangeEqualRestriction(String property, Object valueStart) {
+        if (valueStart.getClass().equals(DateTime.class)) {
+            DateTime valueStartDateTime = (DateTime) valueStart;
+            return Restrictions.between(property, valueStartDateTime, valueStartDateTime.plusDays(1).minusSeconds(1));
+        }
+        return Restrictions.eq(property, valueStart);
     }
 
 }

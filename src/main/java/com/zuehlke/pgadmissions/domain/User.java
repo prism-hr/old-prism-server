@@ -24,7 +24,6 @@ import org.joda.time.LocalDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -333,7 +332,7 @@ public class User implements UserDetails, IUniqueEntity {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("firstName", firstName).add("lastName", lastName).add("email", email).toString();
+        return firstName + " " + lastName + " " + "(" + email + ")";
     }
 
     @Override

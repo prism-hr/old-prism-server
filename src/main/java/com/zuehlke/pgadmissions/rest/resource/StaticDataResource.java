@@ -136,7 +136,7 @@ public class StaticDataResource {
 
         List<FilterRepresentation> filters = Lists.newArrayListWithCapacity(FilterProperty.values().length);
         for (FilterProperty filterProperty : FilterProperty.values()) {
-            filters.add(new FilterRepresentation(filterProperty, filterProperty.getPermittedExpressions(), filterProperty.getValueType(), filterProperty.getPermittedScopes()));
+            filters.add(new FilterRepresentation(filterProperty, filterProperty.getPermittedExpressions(), filterProperty.getPropertyType(), filterProperty.getPermittedScopes()));
         }
         staticData.put("filters", filters);
 

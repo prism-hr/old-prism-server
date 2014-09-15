@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
-import com.zuehlke.pgadmissions.domain.definitions.FilterValueType;
+import com.zuehlke.pgadmissions.domain.definitions.FilterPropertyType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class FilterRepresentation {
@@ -13,11 +13,11 @@ public class FilterRepresentation {
 
     private List<FilterExpression> permittedExpressions;
 
-    private FilterValueType valueType;
+    private FilterPropertyType valueType;
 
     private List<PrismScope> permittedScopes;
 
-    public FilterRepresentation(FilterProperty propertyName, List<FilterExpression> permittedExpressions, FilterValueType valueType, List<PrismScope> permittedScopes) {
+    public FilterRepresentation(FilterProperty propertyName, List<FilterExpression> permittedExpressions, FilterPropertyType valueType, List<PrismScope> permittedScopes) {
         this.propertyName = propertyName;
         this.permittedExpressions = permittedExpressions;
         this.valueType = valueType;
@@ -32,7 +32,7 @@ public class FilterRepresentation {
         return permittedExpressions;
     }
 
-    public FilterValueType getValueType() {
+    public FilterPropertyType getValueType() {
         return valueType;
     }
 

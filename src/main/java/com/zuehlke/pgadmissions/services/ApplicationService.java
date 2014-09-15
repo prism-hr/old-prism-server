@@ -6,8 +6,6 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,8 +76,6 @@ import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationVal
 @Service
 @Transactional
 public class ApplicationService {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     @Autowired
     private ApplicationDAO applicationDAO;
@@ -585,7 +581,6 @@ public class ApplicationService {
     }
     
     private void purgeApplication(Application application, Comment comment) {
-        logger.info("Purging application " + application.getCode());
         if (!application.getRetain()) {
             application.setApplicationRatingCount(null);
             application.setApplicationRatingAverage(null);

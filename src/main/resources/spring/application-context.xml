@@ -75,6 +75,13 @@
   </bean>
 
   <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+  
+  <!-- threadpool executor config -->
+  <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+	<property name="corePoolSize" value="5" />
+	<property name="maxPoolSize" value="10" />
+	<property name="WaitForTasksToCompleteOnShutdown" value="true" />
+  </bean>
 
   <import resource="data-context.xml" />
   <import resource="ucl-context.xml" />

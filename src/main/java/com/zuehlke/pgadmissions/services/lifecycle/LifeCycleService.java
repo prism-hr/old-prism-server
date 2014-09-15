@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services.lifecycle;
 import java.io.IOException;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +15,7 @@ import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperSystem;
 
 @Service
-public class LifeCycleService implements InitializingBean, DisposableBean {
+public class LifeCycleService implements InitializingBean {
 
     @Value("${startup.workflow.initialize}")
     private Boolean initializeWorkflow;
@@ -49,11 +48,6 @@ public class LifeCycleService implements InitializingBean, DisposableBean {
         if (BooleanUtils.isTrue(initializeSearch)) {
             systemService.initialiseSearchIndex();
         }
-    }
-
-    @Override
-    public void destroy() throws Exception {
-        maintenanceService.shutdown();
     }
 
 }

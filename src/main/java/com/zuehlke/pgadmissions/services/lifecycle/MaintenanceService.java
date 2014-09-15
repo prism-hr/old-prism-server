@@ -1,15 +1,14 @@
 package com.zuehlke.pgadmissions.services.lifecycle;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.domain.definitions.MaintenanceTask;
@@ -19,6 +18,8 @@ import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityService
 @Service
 public class MaintenanceService {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     @Autowired
     private ImportedEntityServiceHelperSystem importedEntityServiceHelperSystem;
 
@@ -26,11 +27,10 @@ public class MaintenanceService {
     private SystemService systemService;
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private AbstractRefreshableApplicationContext applicationContext;
     
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    private final ExecutorService executor = Executors.newFixedThreadPool(MaintenanceTask.values().length);
+    @Resource(name = "taskExecutor")
+    private ThreadPoolTaskExecutor executor;
 
     @Scheduled(initialDelay = 60000, fixedDelay = 60000)
     public void maintain() {
@@ -41,12 +41,6 @@ public class MaintenanceService {
                 execute(task);
             }
         }
-    }
-    
-    public void shutdown() throws InterruptedException {
-        executor.shutdown();
-        executor.awaitTermination(5, TimeUnit.MINUTES);
-        executor.shutdownNow();
     }
 
     private void submit(final MaintenanceTask task) {
@@ -62,7 +56,9 @@ public class MaintenanceService {
     private void execute(final MaintenanceTask task) {
         logger.info("Executing maintenance task " + task.name());
         try {
-            applicationContext.getBean(task.getExecutor()).execute();
+            if (applicationContext.isActive()) {
+                applicationContext.getBean(task.getExecutor()).execute();
+            }
         } catch (BeansException e) {
             throw new Error(e);
         } catch (Exception e) {

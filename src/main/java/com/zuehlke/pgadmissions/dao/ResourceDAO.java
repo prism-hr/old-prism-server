@@ -161,15 +161,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eqProperty("stateAction.state", "state"));
 
-        if (filter.isUrgentOnly()) {
-            criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
-        }
-
-        if (conditions != null) {
-            criteria.add(conditions);
-        }
-
-        ResourceListConstraintBuilder.appendResourceListPagingCriterion(criteria, filter.getSortOrder(), lastIdentifier, recordsToRetrieve);
+        ResourceListConstraintBuilder.appendFilterCriterion(criteria, filter, conditions, lastIdentifier, recordsToRetrieve);
         return (List<String>) criteria.list();
     }
 
@@ -188,19 +180,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.not(Restrictions.in(ResourceListConstraintBuilder.SEQUENCE_IDENTIFIER, exclusions))); //
 
-        if (filter.isUrgentOnly()) {
-            criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
-        }
-
-        if (conditions != null) {
-            criteria.add(conditions);
-        }
-
-        if (recordsToRetrieve != null) {
-            criteria.setMaxResults(recordsToRetrieve);
-        }
-
-        ResourceListConstraintBuilder.appendResourceListPagingCriterion(criteria, filter.getSortOrder(), lastIdentifier, recordsToRetrieve);
+        ResourceListConstraintBuilder.appendFilterCriterion(criteria, filter, conditions, lastIdentifier, recordsToRetrieve);
         return (List<String>) criteria.list();
     }
 

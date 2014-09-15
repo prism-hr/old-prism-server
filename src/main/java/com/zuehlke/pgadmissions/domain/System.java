@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -68,6 +69,18 @@ public class System extends Resource {
     
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "system")
+    private Set<Institution> institutions = Sets.newHashSet();    
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "system")
+    private Set<Program> programs = Sets.newHashSet();
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "system")
+    private Set<Project> projects = Sets.newHashSet();
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "system")
+    private Set<Application> applications = Sets.newHashSet();
     
     @OneToMany(mappedBy = "system")
     private Set<Comment> comments = Sets.newHashSet();
@@ -254,6 +267,18 @@ public class System extends Resource {
         this.sequenceIdentifier = sequenceIdentifier;
     }
     
+    public final Set<Institution> getInstitutions() {
+        return institutions;
+    }
+
+    public final Set<Program> getPrograms() {
+        return programs;
+    }
+
+    public final Set<Application> getApplications() {
+        return applications;
+    }
+
     @Override
     public void addComment(Comment comment) {
         comments.add(comment);

@@ -138,7 +138,16 @@ public class Institution extends ParentResource {
 
     @OneToMany(mappedBy = "institution")
     private Set<ImportedEntityFeed> importedEntityFeeds = Sets.newHashSet();
-
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "institution")
+    private Set<Program> programs = Sets.newHashSet();
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "institution")
+    private Set<Project> projects = Sets.newHashSet();
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "institution")
+    private Set<Application> applications = Sets.newHashSet();
+    
     @OneToMany(mappedBy = "institution")
     private Set<UserRole> userRoles = Sets.newHashSet();
     
@@ -481,6 +490,18 @@ public class Institution extends ParentResource {
     @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
+    }
+
+    public final Set<Program> getPrograms() {
+        return programs;
+    }
+
+    public final Set<Project> getProjects() {
+        return projects;
+    }
+
+    public final Set<Application> getApplications() {
+        return applications;
     }
 
     @Override

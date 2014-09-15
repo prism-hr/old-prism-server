@@ -70,7 +70,7 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
                 case CREATED_TIMESTAMP:
                 case UPDATED_TIMESTAMP:
                     ResourceListConstraintBuilder.appendDateTimeFilterCriterion(conditions, propertyName, constraintDTO.getFilterExpression(),
-                            constraintDTO.getValueDateTimeStart(), constraintDTO.getValueDateTimeClose(), negated);
+                            constraintDTO.computeValueDateTimeStart(), constraintDTO.computeValueDateTimeClose(), negated);
                     break;
                 case DUE_DATE:
                     ResourceListConstraintBuilder.appendClosingDateFilterCriterion(resourceClass, conditions, propertyName,
@@ -94,7 +94,7 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
                     break;
                 case SUBMITTED_TIMESTAMP:
                     ResourceListConstraintBuilder.appendDateTimeFilterCriterion(conditions, propertyName, constraintDTO.getFilterExpression(),
-                            constraintDTO.getValueDateTimeStart(), constraintDTO.getValueDateTimeClose(), negated);
+                            constraintDTO.computeValueDateTimeStart(), constraintDTO.computeValueDateTimeClose(), negated);
                     break;
                 case USER:
                     ResourceListConstraintBuilder.appendUserFilterCriterion(conditions, propertyName, constraintDTO.getValueString(), negated);

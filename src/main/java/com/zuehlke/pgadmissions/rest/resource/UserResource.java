@@ -1,13 +1,21 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.inject.Named;
-import javax.validation.Valid;
-import javax.ws.rs.WebApplicationException;
-
+import com.google.common.collect.ImmutableMap;
+import com.zuehlke.pgadmissions.domain.Scope;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
+import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.validation.validator.UserRegistrationValidator;
+import com.zuehlke.pgadmissions.security.AuthenticationTokenUtils;
+import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.services.ResourceListFilterService;
+import com.zuehlke.pgadmissions.services.UserService;
 import org.dozer.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,25 +27,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.google.common.collect.ImmutableMap;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
-import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.validation.validator.UserRegistrationValidator;
-import com.zuehlke.pgadmissions.security.AuthenticationTokenUtils;
-import com.zuehlke.pgadmissions.services.UserService;
+import javax.annotation.Resource;
+import javax.inject.Named;
+import javax.validation.Valid;
+import javax.ws.rs.WebApplicationException;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
@@ -59,6 +56,12 @@ public class UserResource {
     private UserService userService;
 
     @Autowired
+    private EntityService entityService;
+
+    @Autowired
+    private ResourceListFilterService resourceListFilterService;
+
+    @Autowired
     private Mapper dozerBeanMapper;
 
     @RequestMapping(method = RequestMethod.GET)
@@ -74,7 +77,7 @@ public class UserResource {
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public Map<String, String> authenticate(@RequestParam(required = false, value = "username") String username,
-            @RequestParam(required = false, value = "password") String password) {
+                                            @RequestParam(required = false, value = "password") String password) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
         Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -84,7 +87,7 @@ public class UserResource {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public void submitRegistration(@RequestHeader(value = "referer", required = false) String referrer,
-            @Valid @RequestBody UserRegistrationDTO userRegistrationDTO) throws WorkflowEngineException {
+                                   @Valid @RequestBody UserRegistrationDTO userRegistrationDTO) throws WorkflowEngineException {
         try {
             userService.registerUser(userRegistrationDTO, referrer);
         } catch (DeduplicationException e) {
@@ -111,6 +114,19 @@ public class UserResource {
     @RequestMapping(value = "/suggestion", method = RequestMethod.GET, params = "searchTerm")
     public List<UserRepresentation> getSimilarUsers(@RequestParam String searchTerm) {
         return userService.getSimilarUsers(searchTerm);
+    }
+
+
+    @RequestMapping(value = "/filter/{resourceScope}", method = RequestMethod.PUT)
+    public void saveFilter(@PathVariable String resourceScope, @RequestBody ResourceListFilterDTO filter) throws DeduplicationException {
+        PrismScope scope = PrismScope.valueOf(resourceScope.toUpperCase().substring(0, resourceScope.length() - 1));
+        resourceListFilterService.save(userService.getCurrentUser(), entityService.getById(Scope.class, scope), filter);
+    }
+
+    @RequestMapping(value = "/filter/{resourceScope}", method = RequestMethod.GET)
+    public ResourceListFilterDTO getFilter(@PathVariable String resourceScope) throws DeduplicationException {
+        PrismScope scope = PrismScope.valueOf(resourceScope.toUpperCase().substring(0, resourceScope.length() - 1));
+        return resourceListFilterService.getByUserAndScope(userService.getCurrentUser(), entityService.getById(Scope.class, scope));
     }
 
     @InitBinder(value = "userRegistrationDTO")

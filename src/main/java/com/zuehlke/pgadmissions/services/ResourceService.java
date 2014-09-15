@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
+import com.google.common.base.Joiner;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -249,15 +250,16 @@ public class ResourceService {
 
         boolean urgentOnly = filterDTO == null ? false : BooleanUtils.toBoolean(filterDTO.getUrgentOnly());
         List<Integer> assignedResources = getAssignedResources(user, scopeId, parentScopeIds, urgentOnly);
-        
+
         return resourceDAO.getResourceConsoleList(user, scopeId, parentScopeIds, assignedResources, filterDTO, lastSequenceIdentifier);
     }
-    
+
     private List<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, boolean urgentOnly) {
         List<Integer> assigned = resourceDAO.getAssignedResources(user, scopeId, urgentOnly);
         for (PrismScope parentScopeId : parentScopeIds) {
             assigned.addAll(resourceDAO.getAssignedResources(user, parentScopeId, scopeId, assigned, urgentOnly));
         }
+        System.out.println("IDS: " + Joiner.on(", ").join(assigned));
         return assigned;
     }
 

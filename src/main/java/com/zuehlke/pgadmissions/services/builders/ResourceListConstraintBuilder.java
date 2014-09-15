@@ -127,6 +127,10 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
                         ResourceListConstraintBuilder.appendParentResourceFilterCriterion(resourceClass, conditions, propertyName, constraintDTO.getValueString(),
                                 negated);
                         break;
+                    case TITLE:
+                        ResourceListConstraintBuilder.appendStringFilterCriterion(conditions, propertyName, constraintDTO.getValueString(),
+                                negated);
+                        break;
                     case RATING:
                         ResourceListConstraintBuilder.appendDecimalFilterCriterion(conditions, propertyName, constraintDTO.getFilterExpression(),
                                 constraintDTO.getValueDecimalStart(), constraintDTO.getValueDecimalClose(), negated);

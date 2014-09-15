@@ -1,9 +1,5 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.FilterValueType.DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.FilterValueType.NUMBER;
-import static com.zuehlke.pgadmissions.domain.definitions.FilterValueType.STRING;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -13,41 +9,42 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public enum FilterProperty {
 
-    USER("user", Arrays.asList(FilterExpression.CONTAIN), STRING, Arrays.asList(PrismScope.APPLICATION)),
-    CODE("code", Arrays.asList(FilterExpression.CONTAIN), STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
-    INSTITUTION("institution", Arrays.asList(FilterExpression.CONTAIN), STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
-    PROGRAM("program", Arrays.asList(FilterExpression.CONTAIN), STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM)),
-    PROJECT("project", Arrays.asList(FilterExpression.CONTAIN), STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT)),
-    STATE_GROUP("stateGroup", Arrays.asList(FilterExpression.EQUAL), FilterValueType.STATE_GROUP, Arrays.asList(PrismScope.APPLICATION)),
+    USER("user", Arrays.asList(FilterExpression.CONTAIN), FilterPropertyType.STRING, Arrays.asList(PrismScope.APPLICATION)),
+    CODE("code", Arrays.asList(FilterExpression.CONTAIN), FilterPropertyType.STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
+    INSTITUTION("institution", Arrays.asList(FilterExpression.CONTAIN), FilterPropertyType.STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM)),
+    PROGRAM("program", Arrays.asList(FilterExpression.CONTAIN), FilterPropertyType.STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT)),
+    PROJECT("project", Arrays.asList(FilterExpression.CONTAIN), FilterPropertyType.STRING, Arrays.asList(PrismScope.APPLICATION)),
+    TITLE("title", Arrays.asList(FilterExpression.CONTAIN), FilterPropertyType.STRING, Arrays.asList(PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
+    STATE_GROUP("stateGroup", Arrays.asList(FilterExpression.EQUAL), FilterPropertyType.STATE_GROUP, Arrays.asList(PrismScope.APPLICATION)),
     CREATED_TIMESTAMP("createdTimestamp", Arrays.asList(FilterExpression.BETWEEN, FilterExpression.GREATER, FilterExpression.LESSER),
-            DATE, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
+            FilterPropertyType.DATE, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
     SUBMITTED_TIMESTAMP("submittedTimestamp",
             Arrays.asList(FilterExpression.BETWEEN, FilterExpression.EQUAL, FilterExpression.GREATER, FilterExpression.LESSER),
-            DATE, Arrays.asList(PrismScope.APPLICATION)),
+            FilterPropertyType.DATE, Arrays.asList(PrismScope.APPLICATION)),
     UPDATED_TIMESTAMP("updatedTimestamp",
             Arrays.asList(FilterExpression.BETWEEN, FilterExpression.EQUAL, FilterExpression.GREATER, FilterExpression.LESSER),
-            DATE, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
+            FilterPropertyType.DATE, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
     DUE_DATE("dueDate",
             Arrays.asList(FilterExpression.BETWEEN, FilterExpression.EQUAL, FilterExpression.GREATER, FilterExpression.LESSER),
-            DATE, Arrays.asList(PrismScope.APPLICATION)),
+            FilterPropertyType.DATE, Arrays.asList(PrismScope.APPLICATION)),
     CLOSING_DATE("closingDate",
             Arrays.asList(FilterExpression.BETWEEN, FilterExpression.EQUAL, FilterExpression.GREATER, FilterExpression.LESSER),
-            DATE, Arrays.asList(PrismScope.APPLICATION)),
+            FilterPropertyType.DATE, Arrays.asList(PrismScope.APPLICATION)),
     CONFIRMED_START_DATE("confirmed_start_date",
             Arrays.asList(FilterExpression.BETWEEN, FilterExpression.EQUAL, FilterExpression.GREATER, FilterExpression.LESSER),
-            DATE, Arrays.asList(PrismScope.APPLICATION)),
+            FilterPropertyType.DATE, Arrays.asList(PrismScope.APPLICATION)),
     RATING("applicationRatingAverage", Arrays.asList(FilterExpression.BETWEEN, FilterExpression.GREATER, FilterExpression.LESSER),
-            NUMBER, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
+            FilterPropertyType.NUMBER, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
     REFERRER("referrer",
             Arrays.asList(FilterExpression.CONTAIN),
-            STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
-    USER_ROLE("userRole", Arrays.asList(FilterExpression.CONTAIN), STRING, Arrays.asList(PrismScope.APPLICATION));
+            FilterPropertyType.STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
+    USER_ROLE("userRole", Arrays.asList(FilterExpression.CONTAIN), FilterPropertyType.STRING, Arrays.asList(PrismScope.APPLICATION));
 
     private String propertyName;
 
+    private FilterPropertyType propertyType;
+    
     private List<FilterExpression> permittedExpressions;
-
-    private FilterValueType valueType;
 
     private List<PrismScope> permittedScopes;
 
@@ -61,10 +58,10 @@ public enum FilterProperty {
         }
     }
 
-    private FilterProperty(String propertyName, List<FilterExpression> permittedExpressions, FilterValueType valueType, List<PrismScope> permittedScopes) {
+    private FilterProperty(String propertyName, List<FilterExpression> permittedExpressions, FilterPropertyType valueType, List<PrismScope> permittedScopes) {
         this.propertyName = propertyName;
         this.permittedExpressions = permittedExpressions;
-        this.valueType = valueType;
+        this.propertyType = valueType;
         this.permittedScopes = permittedScopes;
     }
 
@@ -76,8 +73,8 @@ public enum FilterProperty {
         return permittedExpressions;
     }
 
-    public FilterValueType getValueType() {
-        return valueType;
+    public FilterPropertyType getPropertyType() {
+        return propertyType;
     }
 
     public final List<PrismScope> getPermittedScopes() {

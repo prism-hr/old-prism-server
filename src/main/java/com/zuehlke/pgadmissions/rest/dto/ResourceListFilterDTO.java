@@ -19,8 +19,6 @@ public class ResourceListFilterDTO {
 
     private List<ResourceListFilterConstraintDTO> constraints;
 
-    private Boolean saveAsDefaultFilter;
-
     public final Boolean getUrgentOnly() {
         return urgentOnly;
     }
@@ -43,10 +41,6 @@ public class ResourceListFilterDTO {
 
     public void setConstraints(List<ResourceListFilterConstraintDTO> constraints) {
         this.constraints = constraints;
-    }
-
-    public final Boolean isSaveAsDefaultFilter() {
-        return saveAsDefaultFilter;
     }
 
     public ResourceListFilterDTO withConstraints(List<ResourceListFilterConstraintDTO> constraints) {

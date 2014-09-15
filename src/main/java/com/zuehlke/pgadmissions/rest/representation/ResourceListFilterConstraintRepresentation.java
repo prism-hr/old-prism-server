@@ -1,17 +1,16 @@
-package com.zuehlke.pgadmissions.rest.dto;
-
-import java.math.BigDecimal;
-import java.util.List;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
+package com.zuehlke.pgadmissions.rest.representation;
 
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
-public class ResourceListFilterConstraintDTO {
+import java.math.BigDecimal;
+import java.util.List;
+
+public class ResourceListFilterConstraintRepresentation {
 
     private FilterProperty filterProperty;
 
@@ -95,11 +94,11 @@ public class ResourceListFilterConstraintDTO {
         return valueStateGroup;
     }
 
-    public final DateTime computeValueDateTimeStart() {
+    public final DateTime getValueDateTimeStart() {
         return valueDateStart.toDateTimeAtStartOfDay();
     }
 
-    public final DateTime computeValueDateTimeClose() {
+    public final DateTime getValueDateTimeClose() {
         return valueDateClose.plusDays(1).toDateTimeAtStartOfDay().minusSeconds(1);
     }
 
@@ -131,52 +130,52 @@ public class ResourceListFilterConstraintDTO {
         this.valueRoles = valueRoles;
     }
 
-    public ResourceListFilterConstraintDTO withFilterProperty(FilterProperty filterProperty) {
+    public ResourceListFilterConstraintRepresentation withFilterProperty(FilterProperty filterProperty) {
         this.filterProperty = filterProperty;
         return this;
     }
 
-    public ResourceListFilterConstraintDTO withFilterExpression(FilterExpression filterExpression) {
+    public ResourceListFilterConstraintRepresentation withFilterExpression(FilterExpression filterExpression) {
         this.filterExpression = filterExpression;
         return this;
     }
 
-    public ResourceListFilterConstraintDTO withNegated(Boolean negated) {
+    public ResourceListFilterConstraintRepresentation withNegated(Boolean negated) {
         this.negated = negated;
         return this;
     }
 
-    public ResourceListFilterConstraintDTO withDisplayPosition(Integer displayPosition) {
+    public ResourceListFilterConstraintRepresentation withDisplayPosition(Integer displayPosition) {
         this.displayPosition = displayPosition;
         return this;
     }
 
-    public ResourceListFilterConstraintDTO withValueString(String valueString) {
+    public ResourceListFilterConstraintRepresentation withValueString(String valueString) {
         this.valueString = valueString;
         return this;
     }
 
-    public ResourceListFilterConstraintDTO withValueStateGroup(PrismStateGroup valueStateGroup) {
+    public ResourceListFilterConstraintRepresentation withValueStateGroup(PrismStateGroup valueStateGroup) {
         this.valueStateGroup = valueStateGroup;
         return this;
     }
 
-    public ResourceListFilterConstraintDTO withValueDateStart(LocalDate valueDateStart) {
+    public ResourceListFilterConstraintRepresentation withValueDateStart(LocalDate valueDateStart) {
         this.valueDateStart = valueDateStart;
         return this;
     }
 
-    public ResourceListFilterConstraintDTO withValueDateClose(LocalDate valueDateClose) {
+    public ResourceListFilterConstraintRepresentation withValueDateClose(LocalDate valueDateClose) {
         this.valueDateClose = valueDateClose;
         return this;
     }
 
-    public ResourceListFilterConstraintDTO withValueDecimalStart(BigDecimal valueDecimalStart) {
+    public ResourceListFilterConstraintRepresentation withValueDecimalStart(BigDecimal valueDecimalStart) {
         this.valueDecimalStart = valueDecimalStart;
         return this;
     }
 
-    public ResourceListFilterConstraintDTO withValueDecimalClose(BigDecimal valueDecimalClose) {
+    public ResourceListFilterConstraintRepresentation withValueDecimalClose(BigDecimal valueDecimalClose) {
         this.valueDecimalClose = valueDecimalClose;
         return this;
     }

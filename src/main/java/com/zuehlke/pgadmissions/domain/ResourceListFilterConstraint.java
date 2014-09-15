@@ -1,35 +1,21 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.math.BigDecimal;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Set;
 
 @Entity
 @Table(name = "RESOURCE_LIST_FILTER_CONSTRAINT", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "resource_list_filter_id", "filter_property", "filter_expression", "value_string" }),
-        @UniqueConstraint(columnNames = { "resource_list_filter_id", "filter_property", "filter_expression", "value_date_start", "value_date_close" }),
-        @UniqueConstraint(columnNames = { "resource_list_filter_id", "filter_property", "filter_expression", "value_state_group_id" }),
-        @UniqueConstraint(columnNames = { "resource_list_filter_id", "filter_property", "filter_expression", "value_decimal_start", "value_decimal_close" }) })
+        @UniqueConstraint(columnNames = {"resource_list_filter_id", "filter_property", "filter_expression", "value_string"}),
+        @UniqueConstraint(columnNames = {"resource_list_filter_id", "filter_property", "filter_expression", "value_date_start", "value_date_close"}),
+        @UniqueConstraint(columnNames = {"resource_list_filter_id", "filter_property", "filter_expression", "value_state_group_id"}),
+        @UniqueConstraint(columnNames = {"resource_list_filter_id", "filter_property", "filter_expression", "value_decimal_start", "value_decimal_close"})})
 public class ResourceListFilterConstraint {
 
     @Id
@@ -37,20 +23,20 @@ public class ResourceListFilterConstraint {
     private Integer Id;
 
     @ManyToOne
-    @JoinColumn(name = "resource_list_filter_id", nullable = false)
+    @JoinColumn(name = "resource_list_filter_id", updatable = false, insertable = false)
     private ResourceListFilter filter;
 
     @Column(name = "filter_property", nullable = false)
     @Enumerated(EnumType.STRING)
     private FilterProperty filterProperty;
-    
+
     @Column(name = "filter_expression", nullable = false)
     @Enumerated(EnumType.STRING)
     private FilterExpression filterExpression;
 
     @Column(name = "negated", nullable = false)
     private Boolean negated;
-    
+
     @Column(name = "display_position", nullable = false)
     private Integer displayPosition;
 
@@ -68,7 +54,7 @@ public class ResourceListFilterConstraint {
     @ManyToOne
     @JoinColumn(name = "value_state_group_id")
     private StateGroup valueStateGroup;
-    
+
     @Column(name = "value_decimal_start")
     private BigDecimal valueDecimalStart;
 
@@ -76,7 +62,7 @@ public class ResourceListFilterConstraint {
     private BigDecimal valueDecimalClose;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "RESOURCE_LIST_FILTER_CONSTRAINT_ROLE", joinColumns = { @JoinColumn(name = "resource_list_filter_constraint_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "role_id", nullable = false) })
+    @JoinTable(name = "RESOURCE_LIST_FILTER_CONSTRAINT_ROLE", joinColumns = {@JoinColumn(name = "resource_list_filter_constraint_id", nullable = false)}, inverseJoinColumns = {@JoinColumn(name = "role_id", nullable = false)})
     private Set<Role> valueRoles = Sets.newHashSet();
 
     public final Integer getId() {
@@ -188,47 +174,47 @@ public class ResourceListFilterConstraint {
         this.filterProperty = filterProperty;
         return this;
     }
-    
+
     public ResourceListFilterConstraint withFilterExpression(FilterExpression filterExpression) {
         this.filterExpression = filterExpression;
         return this;
     }
-    
+
     public ResourceListFilterConstraint withNegated(Boolean negated) {
         this.negated = negated;
         return this;
     }
-    
+
     public ResourceListFilterConstraint withDisplayPosition(Integer displayPosition) {
         this.displayPosition = displayPosition;
         return this;
     }
-    
+
     public ResourceListFilterConstraint withValueString(String valueString) {
         this.valueString = valueString;
         return this;
     }
-    
+
     public ResourceListFilterConstraint withValueDateStart(LocalDate valueDateStart) {
         this.valueDateStart = valueDateStart;
         return this;
     }
-    
+
     public ResourceListFilterConstraint withValueDateClose(LocalDate valueDateClose) {
         this.valueDateClose = valueDateClose;
         return this;
     }
-    
+
     public ResourceListFilterConstraint withValueDecimalStart(BigDecimal valueDecimalStart) {
         this.valueDecimalStart = valueDecimalStart;
         return this;
     }
-    
+
     public ResourceListFilterConstraint withValueDecimalClose(BigDecimal valueDecimalClose) {
         this.valueDecimalClose = valueDecimalClose;
         return this;
     }
-    
+
     public void addValueRole(Role role) {
         valueRoles.add(role);
     }

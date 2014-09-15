@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.rest.representation.workflow;
 
+import java.util.List;
+
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.FilterValueType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-
-import java.util.List;
 
 public class FilterRepresentation {
 

@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
-import java.util.List;
-
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;

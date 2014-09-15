@@ -37,7 +37,6 @@ import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.UserRegistrationValidator;
 import com.zuehlke.pgadmissions.security.AuthenticationTokenUtils;
-import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController

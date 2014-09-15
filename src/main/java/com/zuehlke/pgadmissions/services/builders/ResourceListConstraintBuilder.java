@@ -1,5 +1,21 @@
 package com.zuehlke.pgadmissions.services.builders;
 
+import java.util.List;
+
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.text.WordUtils;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
+import org.hibernate.sql.JoinType;
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.User;
@@ -13,14 +29,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.*;
-import org.hibernate.sql.JoinType;
-import org.joda.time.LocalDate;
-
-import java.util.List;
 
 public class ResourceListConstraintBuilder extends ConstraintBuilder {
 

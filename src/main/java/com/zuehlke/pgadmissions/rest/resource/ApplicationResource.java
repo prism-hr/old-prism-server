@@ -1,25 +1,45 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
+import java.util.Map;
+
+import javax.validation.Valid;
+
+import org.dozer.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.ApplicationFunding;
+import com.zuehlke.pgadmissions.domain.ApplicationQualification;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.*;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositionDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationFundingDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentDTOValidator;
 import com.zuehlke.pgadmissions.services.ApplicationSectionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
-import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = {"api/applications"})

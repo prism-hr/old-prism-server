@@ -149,7 +149,7 @@ public class StateService {
 
         commentService.save(comment);
         resource.addComment(comment);
-        
+
         StateTransition stateTransition = getStateTransition(resource, action, comment);
 
         if (stateTransition != null) {
@@ -327,6 +327,11 @@ public class StateService {
     }
 
     public StateTransition getProgramViewEditOutcome(Resource resource, Comment comment) {
+        // TODO implement
+        return null;
+    }
+
+    public StateTransition getProjectViewEditOutcome(Resource resource, Comment comment) {
         // TODO implement
         return null;
     }

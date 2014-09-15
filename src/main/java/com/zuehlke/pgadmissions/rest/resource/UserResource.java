@@ -57,9 +57,6 @@ public class UserResource {
     private UserRegistrationValidator userRegistrationValidator;
 
     @Autowired
-    private ProgramService programService;
-
-    @Autowired
     private UserService userService;
 
     @Autowired
@@ -69,7 +66,7 @@ public class UserResource {
     public UserExtendedRepresentation getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
-        if (principal instanceof String && ((String) principal).equals("anonymousUser")) {
+        if (principal instanceof String && principal.equals("anonymousUser")) {
             throw new WebApplicationException(401);
         }
         User user = (User) principal;

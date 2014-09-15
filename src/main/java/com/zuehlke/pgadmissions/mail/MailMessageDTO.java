@@ -1,18 +1,15 @@
 package com.zuehlke.pgadmissions.mail;
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-
+import com.google.common.base.MoreObjects;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 
-public final class MailMessageDTO {
+import java.util.List;
+import java.util.Map;
 
-    private Application application;
+public final class MailMessageDTO {
 
     private String replyToAddress;
 
@@ -64,17 +61,14 @@ public final class MailMessageDTO {
         this.replyToAddress = replyToAddress;
     }
 
-    public Application getApplication() {
-        return application;
-    }
-
-    public void setApplication(final Application application) {
-        this.application = application;
-    }
-
     @Override
     public String toString() {
-        return ReflectionToStringBuilder.toString(this);
+        return MoreObjects.toStringHelper(this)
+                .add("to", to.getEmail())
+                .add("actionUrl", model.get("actionUrl"))
+                .add("resourceId", model.get("resourceId"))
+                .add("template", template.getNotificationTemplate().getId())
+                .toString();
     }
 
 }

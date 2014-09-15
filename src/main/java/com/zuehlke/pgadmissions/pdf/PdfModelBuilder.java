@@ -307,7 +307,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
                 table.addCell(newTableCell("Is this supervisor aware of your application?", SMALL_BOLD_FONT));
 
-                if (BooleanUtils.isTrue(supervisor.getAware())) {
+                if (BooleanUtils.isTrue(supervisor.getAcceptedSupervision())) {
                     table.addCell(newTableCell("Yes", SMALL_FONT));
                 } else {
                     table.addCell(newTableCell("No", SMALL_FONT));

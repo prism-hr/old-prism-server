@@ -64,9 +64,6 @@ public class UserService {
     private CommentService commentService;
 
     @Autowired
-    private ResourceService resourceService;
-
-    @Autowired
     private SystemService systemService;
 
     public User getById(Integer id) {
@@ -115,7 +112,7 @@ public class UserService {
 
         ActionOutcomeDTO outcome = actionService.getRegistrationOutcome(user, registrationDTO, referrer);
         notificationService.sendNotification(user, outcome.getTransitionResource(), PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST,
-                ImmutableMap.<String, String>of("action", outcome.getTransitionAction().getId().name()));
+                ImmutableMap.of("action", outcome.getTransitionAction().getId().name()));
         return user;
     }
 
@@ -154,10 +151,6 @@ public class UserService {
             userDAO.refreshParentUser(linkIntoUser);
             linkFromUser.setParentUser(linkIntoUser);
         }
-    }
-
-    public Integer getNumberOfActiveApplicationsForApplicant(User applicant) {
-        return userDAO.getNumberOfActiveApplicationsForApplicant(applicant);
     }
 
     public List<User> getUsersForResourceAndRole(Resource resource, PrismRole authority) {

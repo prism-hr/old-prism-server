@@ -26,7 +26,7 @@ public class ApplicationSupervisor {
     private User user;
 
     @Column(name = "aware_of_application", nullable = false)
-    private Boolean aware = false;
+    private Boolean acceptedSupervision = false;
 
     public Integer getId() {
         return id;
@@ -52,12 +52,12 @@ public class ApplicationSupervisor {
         this.user = user;
     }
 
-    public Boolean getAware() {
-        return aware;
+    public Boolean getAcceptedSupervision() {
+        return acceptedSupervision;
     }
 
-    public void setAware(Boolean aware) {
-        this.aware = aware;
+    public void setAcceptedSupervision(Boolean acceptedSupervision) {
+        this.acceptedSupervision = acceptedSupervision;
     }
 
     public ApplicationSupervisor withId(Integer id) {
@@ -71,7 +71,7 @@ public class ApplicationSupervisor {
     }
 
     public ApplicationSupervisor withAware(boolean aware) {
-        this.aware = aware;
+        this.acceptedSupervision = aware;
         return this;
     }
 

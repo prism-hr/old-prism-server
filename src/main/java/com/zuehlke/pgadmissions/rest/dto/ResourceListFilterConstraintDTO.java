@@ -14,11 +14,11 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 public class ResourceListFilterConstraintDTO {
 
     private FilterProperty filterProperty;
-    
+
     private FilterExpression filterExpression;
 
     private Boolean negated;
-    
+
     private Integer displayPosition;
 
     private String valueString;
@@ -28,11 +28,11 @@ public class ResourceListFilterConstraintDTO {
     private LocalDate valueDateClose;
 
     private PrismStateGroup valueStateGroup;
-    
+
     private BigDecimal valueDecimalStart;
 
     private BigDecimal valueDecimalClose;
-    
+
     private List<PrismRole> valueRoles;
 
     public final FilterProperty getFilterProperty() {
@@ -51,7 +51,7 @@ public class ResourceListFilterConstraintDTO {
         this.filterExpression = filterExpression;
     }
 
-    public final Boolean isNegated() {
+    public final Boolean getNegated() {
         return negated;
     }
 
@@ -94,11 +94,11 @@ public class ResourceListFilterConstraintDTO {
     public final PrismStateGroup getValueStateGroup() {
         return valueStateGroup;
     }
-    
+
     public final DateTime getValueDateTimeStart() {
         return valueDateStart.toDateTimeAtStartOfDay();
     }
-    
+
     public final DateTime getValueDateTimeClose() {
         return valueDateClose.plusDays(1).toDateTimeAtStartOfDay().minusSeconds(1);
     }
@@ -130,59 +130,59 @@ public class ResourceListFilterConstraintDTO {
     public final void setValueRoles(List<PrismRole> valueRoles) {
         this.valueRoles = valueRoles;
     }
-    
+
     public ResourceListFilterConstraintDTO withFilterProperty(FilterProperty filterProperty) {
         this.filterProperty = filterProperty;
         return this;
     }
-    
+
     public ResourceListFilterConstraintDTO withFilterExpression(FilterExpression filterExpression) {
         this.filterExpression = filterExpression;
         return this;
     }
-    
+
     public ResourceListFilterConstraintDTO withNegated(Boolean negated) {
         this.negated = negated;
         return this;
     }
-    
+
     public ResourceListFilterConstraintDTO withDisplayPosition(Integer displayPosition) {
         this.displayPosition = displayPosition;
         return this;
     }
-    
+
     public ResourceListFilterConstraintDTO withValueString(String valueString) {
         this.valueString = valueString;
         return this;
     }
-    
+
     public ResourceListFilterConstraintDTO withValueStateGroup(PrismStateGroup valueStateGroup) {
         this.valueStateGroup = valueStateGroup;
         return this;
     }
-    
+
     public ResourceListFilterConstraintDTO withValueDateStart(LocalDate valueDateStart) {
         this.valueDateStart = valueDateStart;
         return this;
     }
-    
+
     public ResourceListFilterConstraintDTO withValueDateClose(LocalDate valueDateClose) {
         this.valueDateClose = valueDateClose;
         return this;
     }
-    
+
     public ResourceListFilterConstraintDTO withValueDecimalStart(BigDecimal valueDecimalStart) {
         this.valueDecimalStart = valueDecimalStart;
         return this;
     }
-    
+
     public ResourceListFilterConstraintDTO withValueDecimalClose(BigDecimal valueDecimalClose) {
         this.valueDecimalClose = valueDecimalClose;
         return this;
     }
-    
+
     public void addValueRole(PrismRole role) {
         valueRoles.add(role);
     }
-    
+
 }

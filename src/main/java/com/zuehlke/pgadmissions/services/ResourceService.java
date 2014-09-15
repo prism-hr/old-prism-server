@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.rest.dto.*;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +27,6 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
-import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 
 @Service
 @Transactional
@@ -74,6 +70,22 @@ public class ResourceService {
 
     public <T extends Resource> Resource getById(Class<T> resourceClass, Integer id) {
         return entityService.getById(resourceClass, id);
+    }
+
+
+    public ActionOutcomeDTO performAction(Integer resourceId, CommentDTO commentDTO) throws Exception {
+        switch (commentDTO.getAction().getScope()) {
+            case INSTITUTION:
+                return institutionService.performAction(resourceId, commentDTO);
+            case PROGRAM:
+                return programService.performAction(resourceId, commentDTO);
+            case PROJECT:
+                return projectService.performAction(resourceId, commentDTO);
+            case APPLICATION:
+                return applicationService.performAction(resourceId, commentDTO);
+            default:
+                throw new Error("Couldn't perform action " + commentDTO.getAction());
+        }
     }
 
     public ActionOutcomeDTO createResource(User user, Action action, Object newResourceDTO, String referrer) throws DeduplicationException {

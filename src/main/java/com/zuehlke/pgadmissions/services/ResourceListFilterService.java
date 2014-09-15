@@ -1,19 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Strings;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.ResourceListFilter;
-import com.zuehlke.pgadmissions.domain.ResourceListFilterConstraint;
-import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.Scope;
-import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -21,6 +9,14 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import org.apache.commons.lang.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -38,7 +34,7 @@ public class ResourceListFilterService {
     @Autowired
     private StateService stateService;
 
-    public <T extends Resource> void save(User user, Scope scope, ResourceListFilterDTO filterDTO) throws DeduplicationException {
+    public void save(User user, Scope scope, ResourceListFilterDTO filterDTO) throws DeduplicationException {
         ResourceListFilter transientFilter = new ResourceListFilter().withUserAccount(user.getUserAccount()).withScope(scope)
                 .withMatchMode(filterDTO.getMatchMode()).withSortOrder(filterDTO.getSortOrder());
         ResourceListFilter persistentFilter = entityService.createOrUpdate(transientFilter);
@@ -49,7 +45,7 @@ public class ResourceListFilterService {
             FilterProperty filterProperty = constraintDTO.getFilterProperty();
 
             ResourceListFilterConstraint transientConstraint = new ResourceListFilterConstraint().withFilter(persistentFilter)
-                    .withFilterProperty(filterProperty).withFilterExpression(constraintDTO.getFilterExpression()).withNegated(constraintDTO.isNegated())
+                    .withFilterProperty(filterProperty).withFilterExpression(constraintDTO.getFilterExpression()).withNegated(constraintDTO.getNegated())
                     .withDisplayPosition(constraintDTO.getDisplayPosition()).withValueString(constraintDTO.getValueString())
                     .withValueDateStart(constraintDTO.getValueDateStart()).withValueDateClose(constraintDTO.getValueDateClose())
                     .withValueDecimalStart(constraintDTO.getValueDecimalStart()).withValueDecimalClose(constraintDTO.getValueDecimalClose());
@@ -108,7 +104,7 @@ public class ResourceListFilterService {
             return getByUserAndScope(user, scope);
         } else {
             prepare(scope, filterDTO);
-            if (filterDTO.isSaveAsDefaultFilter()) {
+            if (BooleanUtils.isTrue(filterDTO.isSaveAsDefaultFilter())) {
                 save(user, scope, filterDTO);
             }
         }
@@ -118,19 +114,19 @@ public class ResourceListFilterService {
     private void prepare(Scope scope, ResourceListFilterDTO filterDTO) {
         String valueString = filterDTO.getValueString();
         List<ResourceListFilterConstraintDTO> constraintDTOs = filterDTO.getConstraints();
-        
-        if (!Strings.isNullOrEmpty(valueString) && constraintDTOs.isEmpty()) {
+
+        if (!Strings.isNullOrEmpty(valueString) && constraintDTOs == null) {
             for (FilterProperty property : FilterProperty.getPermittedFilterProperties(scope.getId())) {
                 int displayPosition = 0;
                 if (property.getPermittedExpressions().contains(FilterExpression.CONTAIN)) {
                     ResourceListFilterConstraintDTO constraintDTO = new ResourceListFilterConstraintDTO().withFilterProperty(property)
                             .withFilterExpression(FilterExpression.CONTAIN).withNegated(false).withDisplayPosition(displayPosition)
                             .withValueString(valueString);
-                    filterDTO.addConstraint(constraintDTO);
+                    filterDTO.setConstraints(Collections.singletonList(constraintDTO));
                     displayPosition++;
                 }
             }
         }
     }
-    
+
 }

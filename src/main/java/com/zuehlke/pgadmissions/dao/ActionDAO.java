@@ -1,7 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.List;
-
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -11,20 +12,7 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.ActionRedaction;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.StateAction;
-import com.zuehlke.pgadmissions.domain.StateActionAssignment;
-import com.zuehlke.pgadmissions.domain.StateTransitionPending;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -90,20 +78,22 @@ public class ActionDAO {
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.eq("action", action)) //
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
-                .add(Restrictions.disjunction().add(Restrictions.isNull("stateActionAssignment.id"))
-                        .add(Restrictions.conjunction().add(Restrictions.disjunction() //
-                                .add(Restrictions.eq("userRole.application", resource.getApplication())) //
-                                .add(Restrictions.eq("userRole.project", resource.getProject())) //
-                                .add(Restrictions.eq("userRole.program", resource.getProgram())) //
-                                .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
-                                .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.isNull("stateActionAssignment.id"))
+                        .add(Restrictions.conjunction()
+                                .add(Restrictions.disjunction() //
+                                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
+                                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
+                                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
+                                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
+                                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
                                 .add(Restrictions.eq("userRole.user", user)) //
                                 .add(Restrictions.eq("userAccount.enabled", true)))) //
                 .uniqueResult();
     }
 
     public List<ActionRepresentation> getPermittedActions(Integer systemId, Integer institutionId, Integer programId, Integer projectId, Integer applicationId,
-            PrismState stateId, User user) {
+                                                          PrismState stateId, User user) {
         return (List<ActionRepresentation>) sessionFactory.getCurrentSession().createCriteria(StateAction.class, "stateAction") //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("action.id"), "name") //

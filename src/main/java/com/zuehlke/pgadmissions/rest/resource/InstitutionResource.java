@@ -32,16 +32,6 @@ public class InstitutionResource {
     @Autowired
     private CommentDTOValidator commentDTOValidator;
 
-    @RequestMapping(value = "/{institutionId}/comments", method = RequestMethod.POST)
-    public ActionOutcomeRepresentation performAction(@PathVariable Integer institutionId, @Valid @RequestBody CommentDTO commentDTO) {
-        try {
-            ActionOutcomeDTO actionOutcome = institutionService.performAction(institutionId, commentDTO);
-            return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
-        } catch (Exception e) {
-            throw new ResourceNotFoundException();
-        }
-    }
-
     @InitBinder(value = "commentDTO")
     public void configureCommentBinding(WebDataBinder binder) {
         binder.setValidator(commentDTOValidator);

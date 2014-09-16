@@ -13,15 +13,19 @@ import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 
 public class ResourceListConstraintBuilder extends ConstraintBuilder {
 
     public static final String SEQUENCE_IDENTIFIER = "sequenceIdentifier";
 
-    public static Criteria appendFilterCriterion(Criteria criteria, ResourceListFilterDTO filter, Junction conditions, String lastSequenceIdentifier,
-            Integer recordsToRetrieve) {
+    public static Criteria appendLimitCriterion(Criteria criteria, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords) {
+        return appendLimitCriterion(criteria, filter, null, lastSequenceIdentifier, maxRecords);
+    }
+    
+    public static Criteria appendLimitCriterion(Criteria criteria, ResourceListFilterDTO filter, Junction conditions, String lastSequenceIdentifier,
+            Integer maxRecords) {
 
         if (filter.isUrgentOnly()) {
             criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
@@ -39,8 +43,8 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
 
         criteria.addOrder(FilterSortOrder.getOrderExpression(SEQUENCE_IDENTIFIER, sortOrder));
 
-        if (recordsToRetrieve != null) {
-            criteria.setMaxResults(recordsToRetrieve);
+        if (maxRecords != null) {
+            criteria.setMaxResults(maxRecords);
         }
 
         return criteria;
@@ -57,15 +61,15 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
         applyOrNegateFilterCriterion(conditions, Restrictions.in(property, parentResourceIds), negated);
     }
 
-    public static void appendStateGroupFilterCriterion(Junction conditions, String property, List<PrismState> stateIds, boolean negated) {
-        applyOrNegateFilterCriterion(conditions, Restrictions.in(property, stateIds), negated);
+    public static void appendStateGroupFilterCriterion(Junction conditions, String property, PrismStateGroup stateGroupId, boolean negated) {
+        applyOrNegateFilterCriterion(conditions, Restrictions.eq(property, stateGroupId), negated);
     }
 
     public static void appendUserFilterCriterion(Junction conditions, String property, List<Integer> userIds, boolean negated) {
-        applyOrNegateFilterCriterion(conditions, Restrictions.in(property, userIds), negated);
+        appendPropertyInFilterCriterion(conditions, property, userIds, negated);
     }
 
-    public static void appendUserRoleFilterCriterion(Junction conditions, String property, List<Integer> userRoleIds, boolean negated) {
+    public static void appendUserRoleFilterCriterion(PrismScope scopeId, Junction conditions, String property, List<Integer> userRoleIds, boolean negated) {
         applyOrNegateFilterCriterion(conditions, Restrictions.in(property, userRoleIds), negated);
     }
 

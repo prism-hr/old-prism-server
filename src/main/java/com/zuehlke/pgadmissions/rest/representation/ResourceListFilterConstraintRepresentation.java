@@ -1,14 +1,15 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 public class ResourceListFilterConstraintRepresentation {
 

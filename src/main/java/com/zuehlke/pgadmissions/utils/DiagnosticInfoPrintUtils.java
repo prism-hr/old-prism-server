@@ -10,7 +10,6 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.User;
 
@@ -35,7 +34,7 @@ public final class DiagnosticInfoPrintUtils {
         });
         String params = Joiner.on("\n").withKeyValueSeparator(" -> ").join(parameterMap);
 
-        return "Request handling error for: " + request.getMethod() + " " + request.getRequestURI() + ", user: " + Objects.firstNonNull(currentUser, "<none>")
+        return "Request handling error for: " + request.getMethod() + " " + request.getRequestURI() + ", user: " + currentUser == null ? "<none>" : currentUser
                 + ", params:\n" + params;
     }
 

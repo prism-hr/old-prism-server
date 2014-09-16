@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
+import java.util.List;
+
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
-
-import java.util.List;
 
 public class ResourceListFilterRepresentation {
 

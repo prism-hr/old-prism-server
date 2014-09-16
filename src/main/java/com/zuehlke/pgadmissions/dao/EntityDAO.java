@@ -156,8 +156,8 @@ public class EntityDAO {
         return getByProperty(klass, "code", code);
     }
 
-    public void merge(Object entity) {
-        sessionFactory.getCurrentSession().merge(entity);
+    public Object merge(Object entity) {
+        return sessionFactory.getCurrentSession().merge(entity);
     }
 
     public void evict(Object entity) {

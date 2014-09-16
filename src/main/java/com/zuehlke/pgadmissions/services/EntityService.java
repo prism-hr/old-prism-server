@@ -64,8 +64,9 @@ public class EntityService {
         } else {
             Object persistentId = IntrospectionUtils.getProperty(persistentResource, "id");
             IntrospectionUtils.setProperty(transientResource, "id", persistentId);
-            evict(persistentResource);
+            flushAndEvict(persistentResource);
             update(transientResource);
+            entityDAO.refresh(transientResource);
         }
         return transientResource;
     }

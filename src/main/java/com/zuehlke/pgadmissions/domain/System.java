@@ -32,7 +32,7 @@ public class System extends Resource {
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @Column(name = "code")
     private String code;
 
@@ -42,7 +42,7 @@ public class System extends Resource {
 
     @Column(name = "title", unique = true)
     private String title;
-    
+
     @Column(name = "last_data_imported_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastDataImportDate;
@@ -50,7 +50,7 @@ public class System extends Resource {
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
-    
+
     @ManyToOne
     @JoinColumn(name = "previous_state_id")
     private State previousState;
@@ -66,25 +66,28 @@ public class System extends Resource {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
-    
+
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "system")
-    private Set<Institution> institutions = Sets.newHashSet();    
-    
+    private Set<Institution> institutions = Sets.newHashSet();
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "system")
     private Set<Program> programs = Sets.newHashSet();
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "system")
     private Set<Project> projects = Sets.newHashSet();
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "system")
     private Set<Application> applications = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "system")
     private Set<Comment> comments = Sets.newHashSet();
-    
+
+    @OneToMany(mappedBy = "system")
+    private Set<UserRole> userRoles = Sets.newHashSet();
+
     @Override
     public Integer getId() {
         return id;
@@ -94,12 +97,12 @@ public class System extends Resource {
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     @Override
     public String getCode() {
         return code;
     }
-    
+
     @Override
     public void setCode(String code) {
         this.code = code;
@@ -121,31 +124,43 @@ public class System extends Resource {
         this.lastDataImportDate = lastDataImportDate;
     }
 
+    public Set<UserRole> getUserRoles() {
+        return userRoles;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public Set<Project> getProjects() {
+        return projects;
+    }
+
     public System withTitle(String title) {
         this.title = title;
         return this;
     }
-    
+
     public System withUser(User user) {
         this.user = user;
         return this;
     }
-    
+
     public System withState(State state) {
         this.state = state;
         return this;
     }
-    
+
     public System withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
         return this;
     }
-    
+
     public System withUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
         return this;
     }
-    
+
     @Override
     public State getState() {
         return state;
@@ -201,12 +216,12 @@ public class System extends Resource {
     public String getReferrer() {
         return null;
     }
-    
+
     @Override
     public void setReferrer (String referrer) {
     }
 
-    
+
     @Override
     public User getUser() {
         return user;
@@ -256,7 +271,7 @@ public class System extends Resource {
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
-    
+
     @Override
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
@@ -266,7 +281,7 @@ public class System extends Resource {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
-    
+
     public final Set<Institution> getInstitutions() {
         return institutions;
     }
@@ -292,5 +307,5 @@ public class System extends Resource {
         propertiesWrapper.add(properties);
         return new ResourceSignature(propertiesWrapper);
     }
-    
+
 }

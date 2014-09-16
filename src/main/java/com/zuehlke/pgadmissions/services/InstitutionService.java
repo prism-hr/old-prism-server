@@ -136,7 +136,12 @@ public class InstitutionService {
         address.setAddressDistrict(addressDTO.getAddressDistrict());
         address.setAddressCode(addressDTO.getAddressCode());
 
+        institution.setCurrency(institutionDTO.getCurrency());
         institution.setHomepage(institutionDTO.getHomepage());
+    }
+
+    public List<String> listAvailableCurrencies(){
+        return institutionDAO.listAvailableCurrencies();
     }
 
 }

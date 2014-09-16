@@ -12,6 +12,8 @@ public class InstitutionDTO {
     @NotEmpty
     private String title;
 
+    private String currency;
+
     @NotEmpty
     private String homepage;
 
@@ -27,6 +29,14 @@ public class InstitutionDTO {
 
     public void setDomicile(String domicile) {
         this.domicile = domicile;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public String getTitle() {

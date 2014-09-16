@@ -75,6 +75,9 @@ public class Institution extends ParentResource {
     @Field(analyzer = @Analyzer(definition = "institutionNameAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String title;
 
+    @Column(name = "currency", nullable = false)
+    private String currency;
+
     @Column(name = "homepage", nullable = false)
     private String homepage;
 
@@ -138,19 +141,19 @@ public class Institution extends ParentResource {
 
     @OneToMany(mappedBy = "institution")
     private Set<ImportedEntityFeed> importedEntityFeeds = Sets.newHashSet();
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "institution")
     private Set<Program> programs = Sets.newHashSet();
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "institution")
     private Set<Project> projects = Sets.newHashSet();
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "institution")
     private Set<Application> applications = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "institution")
     private Set<UserRole> userRoles = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "institution")
     private Set<Comment> comments = Sets.newHashSet();
 
@@ -188,6 +191,14 @@ public class Institution extends ParentResource {
 
     public void setDomicile(InstitutionDomicile domicile) {
         this.domicile = domicile;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public String getHomepage() {
@@ -508,7 +519,7 @@ public class Institution extends ParentResource {
     public void addComment(Comment comment) {
         comments.add(comment);
     }
-    
+
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();

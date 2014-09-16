@@ -1,21 +1,17 @@
 package com.zuehlke.pgadmissions.dao;
 
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.ParentResource;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang.WordUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.*;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.joda.time.DateTime;
@@ -23,15 +19,22 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.TreeSet;
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.ParentResource;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
 
 @Repository
 @SuppressWarnings("unchecked")
 public class ResourceDAO {
-
+    
     @Autowired
     private SessionFactory sessionFactory;
 
@@ -46,7 +49,7 @@ public class ResourceDAO {
     }
 
     public List<Integer> getResourcesToPropagate(PrismScope propagatingResourceScope, Integer propagatingResourceId, PrismScope propagatedResourceScope,
-                                                 PrismAction actionId) {
+            PrismAction actionId) {
         String propagatedAlias = propagatedResourceScope.getLowerCaseName();
         String propagatedReference = propagatingResourceScope.getPrecedence() > propagatedResourceScope.getPrecedence() ? propagatedAlias : propagatedAlias
                 + "s";
@@ -85,7 +88,7 @@ public class ResourceDAO {
     }
 
     public List<ResourceConsoleListRowDTO> getResourceConsoleList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds,
-                                                                  TreeSet<String> assignedResources, FilterSortOrder sortOrder, Integer recordsToReturn) {
+            Set<Integer> assignedResources, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords) {
         if (assignedResources.isEmpty()) {
             return new ArrayList<ResourceConsoleListRowDTO>(0);
         }
@@ -117,37 +120,22 @@ public class ResourceDAO {
                 .add(Projections.property("updatedTimestamp"), "updatedTimestamp"); //
 
         criteria.setProjection(projectionList) //
-                .createAlias("user", "user", JoinType.INNER_JOIN);
-
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN);
+        
         addResourceListCustomJoins(scopeId, resourceReference, criteria);
-
-        criteria.createAlias("state", "state", JoinType.INNER_JOIN);
-
-        Disjunction conditions = Restrictions.disjunction();
-
-        Iterator<String> iterator;
-        if (sortOrder == FilterSortOrder.DESCENDING) {
-            iterator = assignedResources.descendingIterator();
-        } else {
-            iterator = assignedResources.iterator();
-        }
-
-        int rowCursor = 0;
-        while (iterator.hasNext() && (recordsToReturn == null || rowCursor < recordsToReturn)) {
-            conditions.add(Restrictions.eq(ResourceListConstraintBuilder.SEQUENCE_IDENTIFIER, iterator.next()));
-            rowCursor++;
-        }
-
-        return criteria.add(conditions) //
-                .addOrder(FilterSortOrder.getOrderExpression(ResourceListConstraintBuilder.SEQUENCE_IDENTIFIER, sortOrder)) //
+        
+        criteria.add(Restrictions.in("id", assignedResources));
+        
+        return ResourceListConstraintBuilder.appendLimitCriterion(criteria, filter, lastSequenceIdentifier, maxRecords)
                 .setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowDTO.class)) //
                 .list();
     }
 
-    public List<String> getAssignedResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, Junction conditions, String lastIdentifier,
-                                             Integer recordsToRetrieve) {
+    public List<Integer> getAssignedResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, Junction conditions, String lastIdentifier,
+            Integer recordsToRetrieve) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
-                .setProjection(Projections.groupProperty(ResourceListConstraintBuilder.SEQUENCE_IDENTIFIER)) //
+                .setProjection(Projections.groupProperty("id")) //
                 .createAlias("userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
@@ -155,30 +143,27 @@ public class ResourceDAO {
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eqProperty("stateAction.state", "state"));
 
-        ResourceListConstraintBuilder.appendFilterCriterion(criteria, filter, conditions, lastIdentifier, recordsToRetrieve);
-        return (List<String>) criteria.list();
+        ResourceListConstraintBuilder.appendLimitCriterion(criteria, filter, conditions, lastIdentifier, recordsToRetrieve);
+        return (List<Integer>) criteria.list();
     }
 
-    public List<String> getAssignedResources(User user, PrismScope scopeId, PrismScope parentScopeId, ResourceListFilterDTO filter, Junction conditions,
-                                             String lastIdentifier, Integer recordsToRetrieve, TreeSet<String> exclusions) {
+    public List<Integer> getAssignedResources(User user, PrismScope scopeId, PrismScope parentScopeId, ResourceListFilterDTO filter, Junction conditions,
+            String lastIdentifier, Integer recordsToRetrieve) {
         String parentResourceReference = parentScopeId.getLowerCaseName();
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
-                .setProjection(Projections.groupProperty(ResourceListConstraintBuilder.SEQUENCE_IDENTIFIER)) //
+                .setProjection(Projections.groupProperty("id")) //
                 .createAlias(parentResourceReference, parentResourceReference, JoinType.INNER_JOIN) //
                 .createAlias(parentResourceReference + ".userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("userRole.user", user)); //
+                .add(Restrictions.eq("userRole.user", user)) //
+                .add(Restrictions.eqProperty("stateAction.state", "state"));
 
-        if (!exclusions.isEmpty()) {
-            criteria.add(Restrictions.not(Restrictions.in(ResourceListConstraintBuilder.SEQUENCE_IDENTIFIER, exclusions)));
-        }
-
-        ResourceListConstraintBuilder.appendFilterCriterion(criteria, filter, conditions, lastIdentifier, recordsToRetrieve);
-        return (List<String>) criteria.list();
+        ResourceListConstraintBuilder.appendLimitCriterion(criteria, filter, conditions, lastIdentifier, recordsToRetrieve);
+        return (List<Integer>) criteria.list();
     }
 
     public <T extends ParentResource> List<Integer> getMatchingParentResources(PrismScope parentScopeId, String searchTerm) {
@@ -190,14 +175,14 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getByMatchingUsersInRoles(PrismScope scopeId, String searchTerm, List<PrismRole> roleIds) {
+    public List<Integer> getByMatchingUsersInRole(PrismScope scopeId, String searchTerm, PrismRole roleId) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.property(scopeId.getLowerCaseName())) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.ilike("user.fullName", searchTerm, MatchMode.ANYWHERE)) //
                         .add(Restrictions.ilike("user.email", searchTerm, MatchMode.ANYWHERE))) //
-                .add(Restrictions.in("role.id", roleIds)) //
+                .add(Restrictions.eq("role.id", roleId)) //
                 .list();
     }
 

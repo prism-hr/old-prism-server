@@ -2,10 +2,12 @@ package com.zuehlke.pgadmissions.services.lifecycle;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -19,6 +21,9 @@ import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityService
 public class MaintenanceService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    
+    @Value("${maintenance.run}")
+    private Boolean maintenanceRun;
     
     @Autowired
     private ImportedEntityServiceHelperSystem importedEntityServiceHelperSystem;
@@ -34,12 +39,14 @@ public class MaintenanceService {
 
     @Scheduled(initialDelay = 60000, fixedDelay = 60000)
     public void maintain() {
-        for (MaintenanceTask task : MaintenanceTask.values()) {
-            if (task.isParallelize()) {
-                submit(task);
-            } else {
-                execute(task);
-            }
+        if (BooleanUtils.isTrue(maintenanceRun)) {
+            for (MaintenanceTask task : MaintenanceTask.values()) {
+                if (task.isParallelize()) {
+                    submit(task);
+                } else {
+                    execute(task);
+                }
+            }  
         }
     }
 

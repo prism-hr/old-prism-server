@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services.builders;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Junction;
@@ -34,6 +35,12 @@ public class ConstraintBuilder {
             BigDecimal valueClose, boolean negated) {
         Criterion restriction = getRangeFilterCriterion(property, expression, valueStart, valueClose);
         applyOrNegateFilterCriterion(conditions, restriction, negated);
+    }
+    
+    public static void appendPropertyInFilterCriterion(Junction conditions, String property, List<?> valueIds, boolean negated) {
+        for (Object value : valueIds) {
+            applyOrNegateFilterCriterion(conditions, Restrictions.eq(property, value), negated);
+        }
     }
 
     protected static Criterion getRangeFilterCriterion(String property, FilterExpression expression, Object valueStart, Object valueClose) {

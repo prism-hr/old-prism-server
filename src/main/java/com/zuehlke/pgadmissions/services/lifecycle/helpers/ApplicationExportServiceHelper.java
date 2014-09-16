@@ -12,9 +12,9 @@ import com.zuehlke.pgadmissions.services.ApplicationExportService;
 
 @Component
 public class ApplicationExportServiceHelper extends AbstractServiceHelper {
-    
+
     private final Logger logger = LoggerFactory.getLogger(ApplicationExportService.class);
-    
+
     @Autowired
     protected ApplicationExportService applicationExportService;
 
@@ -25,15 +25,16 @@ public class ApplicationExportServiceHelper extends AbstractServiceHelper {
             try {
                 String applicationCode = application.getCode();
                 logger.info("Exporting data for application: " + applicationCode);
-                String exportReference = applicationExportService.sendDataExportRequest(application);
-                if (exportReference != null) {
-                    logger.info("Exporting documents for application: " + applicationCode);
-                    applicationExportService.sendDocumentExportRequest(application, exportReference);
-                }
+                // TODO uncomment and fix
+//                String exportReference = applicationExportService.sendDataExportRequest(application);
+//                if (exportReference != null) {
+//                    logger.info("Exporting documents for application: " + applicationCode);
+//                    applicationExportService.sendDocumentExportRequest(application, exportReference);
+//                }
             } catch (Exception e) {
                 throw new Error(e);
             }
         }
     }
-    
+
 }

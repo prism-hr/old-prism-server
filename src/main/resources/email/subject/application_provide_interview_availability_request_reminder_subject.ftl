@@ -1,0 +1,1 @@
+REMINDER: ${user} Application ${applicationCode} for UCL ${projectOrProgramTitle} - Interview Scheduling Request

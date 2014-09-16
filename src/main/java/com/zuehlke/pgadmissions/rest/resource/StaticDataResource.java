@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 import java.util.List;
 import java.util.Map;
 
+import com.zuehlke.pgadmissions.services.InstitutionService;
 import org.apache.commons.lang.WordUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,9 @@ public class StaticDataResource {
     private EntityService entityService;
 
     @Autowired
+    private InstitutionService institutionService;
+
+    @Autowired
     private Mapper dozerBeanMapper;
 
     @Autowired
@@ -116,6 +120,9 @@ public class StaticDataResource {
 
         List<InstitutionDomicile> institutionDomiciles = entityService.listByProperty(InstitutionDomicile.class, "enabled", true);
         staticData.put("institutionDomiciles", institutionDomiciles);
+
+        List<String> currencies = institutionService.listAvailableCurrencies();
+        staticData.put("currencies", currencies);
 
         // Display names for enum classes
         for (Class<?> enumClass : new Class[]{PrismProgramType.class, YesNoUnsureResponse.class, PrismStudyOption.class}) {

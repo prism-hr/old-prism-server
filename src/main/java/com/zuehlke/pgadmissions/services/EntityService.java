@@ -57,18 +57,17 @@ public class EntityService {
         return persistentResource;
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends IUniqueEntity> T createOrUpdate(T transientResource) throws DeduplicationException {
         T persistentResource = getDuplicateEntity(transientResource);
         if (persistentResource == null) {
             save(transientResource);
+            return transientResource;
         } else {
             Object persistentId = IntrospectionUtils.getProperty(persistentResource, "id");
             IntrospectionUtils.setProperty(transientResource, "id", persistentId);
-            flushAndEvict(persistentResource);
-            update(transientResource);
-            entityDAO.refresh(transientResource);
+            return (T) merge(transientResource);
         }
-        return transientResource;
     }
 
     public Serializable save(Object entity) {
@@ -91,8 +90,8 @@ public class EntityService {
         entityDAO.clear();
     }
 
-    public void merge(Object entity) {
-        entityDAO.merge(entity);
+    public Object merge(Object entity) {
+        return entityDAO.merge(entity);
     }
 
     public void evict(Object... entities) {

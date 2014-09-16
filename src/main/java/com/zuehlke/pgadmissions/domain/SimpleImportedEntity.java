@@ -120,7 +120,7 @@ public abstract class SimpleImportedEntity extends ImportedEntity {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this.getClass()).add("code", code).add("name", name).toString();
+        return code + ": " + name;
     }
 
     @Override

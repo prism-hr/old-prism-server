@@ -7,12 +7,8 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.CredentialsExpiredException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -37,9 +33,6 @@ public class PrismAuthenticationProvider implements AuthenticationProvider {
     @Transactional
     public Authentication authenticate(Authentication preProcessToken) throws AuthenticationException {
         UsernamePasswordAuthenticationToken authentication = null;
-        if (preProcessToken.getPrincipal() == null || preProcessToken.getCredentials() == null) {
-            throw new BadCredentialsException("missing username or password");
-        }
         UserDetails user;
         try {
             user = findAndValidateUser(preProcessToken);
@@ -53,26 +46,13 @@ public class PrismAuthenticationProvider implements AuthenticationProvider {
 
     private UserDetails findAndValidateUser(Authentication preProcessToken) throws NoSuchAlgorithmException {
         String username = (String) preProcessToken.getPrincipal();
+        String password = (String) preProcessToken.getCredentials();
 
         User user = (User) userDetailsService.loadUserByUsername(username);
-        if (!user.isEnabled()) {
-            throw new DisabledException("account \"" + username + "\" disabled");
+        if (username == null || password == null || user == null || !user.isEnabled() || !checkPassword(user, password)) {
+            throw new BadCredentialsException("Bad login attempt");
         }
-        if (!user.isAccountNonExpired()) {
-            throw new AccountExpiredException("account \"" + username + "\" expired");
-        }
-        String password = (String) preProcessToken.getCredentials();
-        if (!checkPassword(password, user.getPassword())) {
-            DateTime temporaryPasswordExpiryTimestamp = user.getUserAccount().getTemporaryPasswordExpiryTimestamp();
-            if (temporaryPasswordExpiryTimestamp == null || new DateTime().isAfter(temporaryPasswordExpiryTimestamp) || !checkPassword(password, user.getUserAccount().getTemporaryPassword()))
-                throw new BadCredentialsException("Invalid username/password combination");
-        }
-        if (!user.isAccountNonLocked()) {
-            throw new LockedException("account \"" + username + "\" locked");
-        }
-        if (!user.isCredentialsNonExpired()) {
-            throw new CredentialsExpiredException("credentials for \"" + username + "\" expired");
-        }
+
         return user;
     }
 
@@ -81,7 +61,14 @@ public class PrismAuthenticationProvider implements AuthenticationProvider {
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(clazz);
     }
 
-    private boolean checkPassword(String providedPassword, String storedPassword) {
-        return StringUtils.equals(storedPassword, encryptionUtils.getMD5Hash(providedPassword));
+    private boolean checkPassword(User user, String providedPassword) {
+        return StringUtils.equals(user.getUserAccount().getPassword(), encryptionUtils.getMD5Hash(providedPassword))
+                || checkTemporaryPassword(user, providedPassword);
+    }
+
+    private boolean checkTemporaryPassword(User user, String providedPassword) {
+        DateTime temporaryPasswordExpiryTimestamp = user.getUserAccount().getTemporaryPasswordExpiryTimestamp();
+        return temporaryPasswordExpiryTimestamp != null && new DateTime().isAfter(temporaryPasswordExpiryTimestamp)
+                && StringUtils.equals(user.getUserAccount().getTemporaryPassword(), encryptionUtils.getMD5Hash(providedPassword));
     }
 }

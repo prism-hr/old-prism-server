@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.dto.AdvertCategoryImportRowDTO;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -96,12 +97,13 @@ public class ImportedEntityService {
         return importedEntityDAO.getImportedInstitutionByCode(institution, domicile, code);
     }
 
-    public ImportedEntityFeed getOrCreateImportedEntityFeed(Institution institution, PrismImportedEntity importedEntityType, String location) throws DeduplicationException {
+    public ImportedEntityFeed getOrCreateImportedEntityFeed(Institution institution, PrismImportedEntity importedEntityType, String location)
+            throws DeduplicationException {
         return getOrCreateImportedEntityFeed(institution, importedEntityType, location, null, null);
     }
 
     public ImportedEntityFeed getOrCreateImportedEntityFeed(Institution institution, PrismImportedEntity importedEntityType, String location, String username,
-                                                            String password) throws DeduplicationException {
+            String password) throws DeduplicationException {
         ImportedEntityFeed transientImportedEntityFeed = new ImportedEntityFeed().withImportedEntityType(importedEntityType).withLocation(location)
                 .withUserName(username).withPassword(password).withInstitution(institution);
         return entityService.getOrCreate(transientImportedEntityFeed);
@@ -121,7 +123,8 @@ public class ImportedEntityService {
         importedEntityDAO.disableAllImportedProgramStudyOptionInstances(institution);
     }
 
-    public void mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline) throws DeduplicationException {
+    public void mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline)
+            throws DeduplicationException {
         Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
         Program persistentProgram = mergeProgram(institution, programDefinition);
 
@@ -365,7 +368,7 @@ public class ImportedEntityService {
         Role invokerRole = roleService.getCreatorRole(program);
 
         Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
-                .addAssignedUser(invoker, invokerRole);
+                .addAssignedUser(invoker, invokerRole, PrismRoleTransitionType.CREATE);
         actionService.executeSystemAction(program, action, comment);
     }
 
@@ -390,7 +393,8 @@ public class ImportedEntityService {
 
         private Map<Short, String> categories;
 
-        public InstitutionDomicileSubdivisionToRegionConverter(InstitutionDomicile domicile, InstitutionDomicileRegion parentRegion, Map<Short, String> categories) {
+        public InstitutionDomicileSubdivisionToRegionConverter(InstitutionDomicile domicile, InstitutionDomicileRegion parentRegion,
+                Map<Short, String> categories) {
             this.domicile = domicile;
             this.parentRegion = parentRegion;
             this.categories = categories;
@@ -416,7 +420,8 @@ public class ImportedEntityService {
             if (subdivision.getSubdivision().isEmpty()) {
                 return Lists.newArrayList(currentRegion);
             }
-            InstitutionDomicileSubdivisionToRegionConverter subConverter = new InstitutionDomicileSubdivisionToRegionConverter(domicile, currentRegion, categories);
+            InstitutionDomicileSubdivisionToRegionConverter subConverter = new InstitutionDomicileSubdivisionToRegionConverter(domicile, currentRegion,
+                    categories);
             Iterable<InstitutionDomicileRegion> subregions = Iterables.concat(Iterables.transform(subdivision.getSubdivision(), subConverter));
             return Iterables.concat(Collections.singleton(currentRegion), subregions);
         }

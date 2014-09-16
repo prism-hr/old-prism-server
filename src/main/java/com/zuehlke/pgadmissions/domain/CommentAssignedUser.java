@@ -3,7 +3,10 @@ package com.zuehlke.pgadmissions.domain;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -14,6 +17,7 @@ import javax.persistence.UniqueConstraint;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 
 @Entity
 @Table(name = "COMMENT_ASSIGNED_USER", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "user_id", "role_id" }) })
@@ -34,6 +38,10 @@ public class CommentAssignedUser implements IUniqueEntity {
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
+    
+    @Column(name = "role_transition_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismRoleTransitionType roleTransitionType;
 
     public Integer getId() {
         return id;
@@ -67,6 +75,14 @@ public class CommentAssignedUser implements IUniqueEntity {
         this.role = role;
     }
 
+    public final PrismRoleTransitionType getRoleTransitionType() {
+        return roleTransitionType;
+    }
+
+    public final void setRoleTransitionType(PrismRoleTransitionType roleTransitionType) {
+        this.roleTransitionType = roleTransitionType;
+    }
+
     public CommentAssignedUser withComment(Comment comment) {
         this.comment = comment;
         return this;
@@ -79,6 +95,11 @@ public class CommentAssignedUser implements IUniqueEntity {
 
     public CommentAssignedUser withRole(final Role role) {
         this.role = role;
+        return this;
+    }
+    
+    public CommentAssignedUser withRoleTransitionType(PrismRoleTransitionType roleTransitionType) {
+        this.roleTransitionType = roleTransitionType;
         return this;
     }
 

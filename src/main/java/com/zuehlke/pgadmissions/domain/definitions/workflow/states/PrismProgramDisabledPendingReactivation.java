@@ -69,7 +69,7 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                                 .withRestrictToOwner(false),
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
                                 .withTransitionRole(PrismRole.PROGRAM_ADMINISTRATOR) //
                                 .withRestrictToOwner(false),
                             new PrismRoleTransition() //
@@ -79,7 +79,7 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                                 .withRestrictToOwner(false),
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROGRAM_APPROVER) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
                                 .withTransitionRole(PrismRole.PROGRAM_VIEWER) //
                                 .withRestrictToOwner(false),
                             new PrismRoleTransition() //
@@ -89,7 +89,7 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                                 .withRestrictToOwner(false),
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROGRAM_VIEWER) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
                                 .withTransitionRole(PrismRole.PROGRAM_VIEWER) //
                                 .withRestrictToOwner(false))), //
                     new PrismStateTransition() // 
@@ -104,7 +104,7 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                                 .withRestrictToOwner(false),
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
                                 .withTransitionRole(PrismRole.PROGRAM_ADMINISTRATOR) //
                                 .withRestrictToOwner(false),
                             new PrismRoleTransition() //
@@ -114,7 +114,7 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                                 .withRestrictToOwner(false),
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROGRAM_APPROVER) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
                                 .withTransitionRole(PrismRole.PROGRAM_VIEWER) //
                                 .withRestrictToOwner(false),
                             new PrismRoleTransition() //
@@ -124,7 +124,7 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                                 .withRestrictToOwner(false),
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROGRAM_VIEWER) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
                                 .withTransitionRole(PrismRole.PROGRAM_VIEWER) //
                                 .withRestrictToOwner(false))), // 
                     new PrismStateTransition() // 
@@ -143,7 +143,7 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                                 .withRestrictToOwner(false),
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
                                 .withTransitionRole(PrismRole.PROGRAM_ADMINISTRATOR) //
                                 .withRestrictToOwner(false),
                             new PrismRoleTransition() //
@@ -153,7 +153,7 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                                 .withRestrictToOwner(false),
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROGRAM_APPROVER) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
                                 .withTransitionRole(PrismRole.PROGRAM_VIEWER) //
                                 .withRestrictToOwner(false),
                             new PrismRoleTransition() //
@@ -163,7 +163,7 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                                 .withRestrictToOwner(false),
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROGRAM_VIEWER) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
                                 .withTransitionRole(PrismRole.PROGRAM_VIEWER) //
                                 .withRestrictToOwner(false))) // 
                         .withPropagatedActions(Arrays.asList( //

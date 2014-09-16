@@ -182,4 +182,7 @@ public class EntityDAO {
                 .uniqueResult();
     }
 
+    public void refresh(Object transientResource) {
+        sessionFactory.getCurrentSession().refresh(transientResource);
+    }
 }

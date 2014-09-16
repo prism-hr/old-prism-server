@@ -62,12 +62,14 @@ public class EntityService {
         T persistentResource = getDuplicateEntity(transientResource);
         if (persistentResource == null) {
             save(transientResource);
-            return transientResource;
+            persistentResource = transientResource;
         } else {
             Object persistentId = IntrospectionUtils.getProperty(persistentResource, "id");
             IntrospectionUtils.setProperty(transientResource, "id", persistentId);
-            return (T) merge(transientResource);
+            persistentResource = (T) merge(transientResource);
+            flush();
         }
+        return persistentResource;
     }
 
     public Serializable save(Object entity) {

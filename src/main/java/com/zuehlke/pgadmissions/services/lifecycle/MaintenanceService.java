@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.support.AbstractRefreshableApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class MaintenanceService {
     private SystemService systemService;
 
     @Autowired
-    private AbstractRefreshableApplicationContext applicationContext;
+    private AbstractApplicationContext applicationContext;
 
     @Resource(name = "taskExecutor")
     private ThreadPoolTaskExecutor executor;

@@ -71,9 +71,9 @@ public enum PrismState {
     APPLICATION_APPROVAL_PENDING_COMPLETION(PrismStateGroup.APPLICATION_APPROVAL, null, PrismScope.APPLICATION, PrismApplicationApprovalPendingCompletion.class), //
     APPLICATION_APPROVAL_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_APPROVAL, 7, PrismScope.APPLICATION, PrismApplicationApprovalPendingFeedback.class), //
     APPLICATION_APPROVED(PrismStateGroup.APPLICATION_APPROVED, null, PrismScope.APPLICATION, PrismApplicationApproved.class), //
-    APPLICATION_APPROVED_COMPLETED(PrismStateGroup.APPLICATION_APPROVED, null, PrismScope.APPLICATION, PrismApplicationApprovedCompleted.class), //
+    APPLICATION_APPROVED_COMPLETED(PrismStateGroup.APPLICATION_APPROVED, 168, PrismScope.APPLICATION, PrismApplicationApprovedCompleted.class), //
     APPLICATION_APPROVED_PENDING_CORRECTION(PrismStateGroup.APPLICATION_APPROVED, 28, PrismScope.APPLICATION, PrismApplicationApprovedPendingCorrection.class), //
-    APPLICATION_APPROVED_PENDING_EXPORT(PrismStateGroup.APPLICATION_APPROVED, 168, PrismScope.APPLICATION, PrismApplicationApprovedPendingExport.class), //
+    APPLICATION_APPROVED_PENDING_EXPORT(PrismStateGroup.APPLICATION_APPROVED, null, PrismScope.APPLICATION, PrismApplicationApprovedPendingExport.class), //
     APPLICATION_APPROVED_COMPLETED_PURGED(PrismStateGroup.APPLICATION_APPROVED, null, PrismScope.APPLICATION, PrismApplicationApprovedCompletedPurged.class), //
     APPLICATION_INTERVIEW(PrismStateGroup.APPLICATION_INTERVIEW, null, PrismScope.APPLICATION, PrismApplicationInterview.class), //
     APPLICATION_INTERVIEW_PENDING_AVAILABILITY(PrismStateGroup.APPLICATION_INTERVIEW, //

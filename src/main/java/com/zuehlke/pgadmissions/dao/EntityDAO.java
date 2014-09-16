@@ -66,29 +66,6 @@ public class EntityDAO {
                 .list();
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> List<T> listByProperty(Class<T> klass, String propertyName, Object propertyValue) {
-        return (List<T>) sessionFactory.getCurrentSession().createCriteria(klass)
-                .add(Restrictions.eq(propertyName, propertyValue))
-                .list();
-    }
-
-
-    @SuppressWarnings("unchecked")
-    public <T> List<T> listByProperties(Class<T> klass, Map<String, Object> properties) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(klass);
-
-        for (String property : properties.keySet()) {
-            if (property == null) {
-                criteria.add(Restrictions.isNull(property));
-            } else {
-                criteria.add(Restrictions.eq(property, properties.get(property)));
-            }
-        }
-
-        return (List<T>) criteria.list();
-    }
-
     public Serializable save(Object entity) {
         return sessionFactory.getCurrentSession().save(entity);
     }

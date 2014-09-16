@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.services.InstitutionService;
 
 @RequestMapping("api/domiciles/{domicileId}")
 @RestController
-public class DomicileInstitutionResource {
+public class InstitutionDomicileResource {
 
     @Autowired
     private EntityService entityService;

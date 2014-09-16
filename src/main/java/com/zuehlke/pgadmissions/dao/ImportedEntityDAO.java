@@ -24,28 +24,10 @@ public class ImportedEntityDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public <T extends ImportedEntity> List<T> getImportedEntities(Class<T> clazz) {
-        return sessionFactory.getCurrentSession().createCriteria(clazz)//
-                .addOrder(Order.asc("name")).list();
-    }
-
     public <T extends ImportedEntity> T getById(Integer id) {
         return (T) sessionFactory.getCurrentSession().get(ImportedEntity.class, id);
     }
-
-    public List<ImportedEntityFeed> getImportedEntityFeedsToImport() {
-        return sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
-                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
-                .createAlias("institution.state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.lt("lastImportedDate", new LocalDate())) //
-                        .add(Restrictions.isNull("lastImportedDate"))) //
-                .addOrder(Order.asc("institution")) //
-                .addOrder(Order.asc("importedEntityType")) //
-                .list();
-    }
-
+    
     public <T extends ImportedEntity> T getImportedEntityByCode(Class<? extends ImportedEntity> entityClass, Institution institution, String code) {
         return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
                 .add(Restrictions.eq("institution", institution)) //
@@ -60,20 +42,47 @@ public class ImportedEntityDAO {
                 .uniqueResult();
     }
     
-    public ImportedInstitution getImportedInstitutionByCode(Institution institution, Domicile domicile, String code) {
+    public ImportedInstitution getImportedInstitutionByCode(Domicile domicile, String code) {
         return (ImportedInstitution) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class) //
-                .add(Restrictions.eq("institution", institution)) //
                 .add(Restrictions.eq("domicile", domicile)) //
                 .add(Restrictions.eq("code", code)) //
                 .uniqueResult();
     }
     
-    public ImportedInstitution getImportedInstitutionByName(Institution institution, Domicile domicile, String name) {
+    public ImportedInstitution getImportedInstitutionByName(Domicile domicile, String name) {
         return (ImportedInstitution) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class) //
-                .add(Restrictions.eq("institution", institution)) //
                 .add(Restrictions.eq("domicile", domicile)) //
                 .add(Restrictions.eq("name", name)) //
                 .uniqueResult();
+    }
+    
+    public <T extends ImportedEntity> List<T> getEnabledImportedEntities(Institution institution, Class<T> entityClass) {
+        return sessionFactory.getCurrentSession().createCriteria(entityClass)//
+                .add(Restrictions.eq("institution", institution)) //
+                .add(Restrictions.eq("enabled", true)) //
+                .addOrder(Order.asc("name"))
+                .list();
+    }
+    
+    public List<ImportedInstitution> getEnabledImportedInstitutions(Domicile domicile) {
+        return sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class)//
+                .add(Restrictions.eq("domicile", domicile)) //
+                .add(Restrictions.eq("enabled", true)) //
+                .addOrder(Order.asc("name"))
+                .list();
+    }
+
+    public List<ImportedEntityFeed> getImportedEntityFeedsToImport() {
+        return sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
+                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
+                .createAlias("institution.state", "state", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.lt("lastImportedDate", new LocalDate())) //
+                        .add(Restrictions.isNull("lastImportedDate"))) //
+                .addOrder(Order.asc("institution")) //
+                .addOrder(Order.asc("importedEntityType")) //
+                .list();
     }
 
     public void save(ImportedEntity entity) {

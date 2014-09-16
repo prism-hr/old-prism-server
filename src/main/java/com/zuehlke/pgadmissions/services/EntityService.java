@@ -36,14 +36,6 @@ public class EntityService {
         return entityDAO.list(klass);
     }
 
-    public <T> List<T> listByProperty(Class<T> klass, String propertyName, Object propertyValue) {
-        return entityDAO.listByProperty(klass, propertyName, propertyValue);
-    }
-
-    public <T> List<T> listByProperties(Class<T> klass, Map<String, Object> properties) {
-        return entityDAO.listByProperties(klass, properties);
-    }
-
     public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) throws DeduplicationException {
         return entityDAO.getDuplicateEntity(uniqueResource);
     }

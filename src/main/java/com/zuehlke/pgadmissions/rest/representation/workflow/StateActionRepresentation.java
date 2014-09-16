@@ -1,35 +1,31 @@
 package com.zuehlke.pgadmissions.rest.representation.workflow;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+
 public class StateActionRepresentation {
 
-    private String state;
+    private PrismState state;
 
-    private String action;
+    private PrismAction action;
 
     private boolean raisesUrgentFlag;
 
-    public String getState() {
+    public StateActionRepresentation(PrismState state, PrismAction action, boolean raisesUrgentFlag) {
+        this.state = state;
+        this.action = action;
+        this.raisesUrgentFlag = raisesUrgentFlag;
+    }
+
+    public PrismState getState() {
         return state;
     }
 
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getAction() {
+    public PrismAction getAction() {
         return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
     }
 
     public boolean isRaisesUrgentFlag() {
         return raisesUrgentFlag;
     }
-
-    public void setRaisesUrgentFlag(boolean raisesUrgentFlag) {
-        this.raisesUrgentFlag = raisesUrgentFlag;
-    }
-
 }

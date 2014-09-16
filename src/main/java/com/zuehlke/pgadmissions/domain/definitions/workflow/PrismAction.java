@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.rest.validation.validator.comment.AssignInterviewersCommentCustomValidator;
@@ -263,6 +264,10 @@ public enum PrismAction {
     SYSTEM_VIEW_INSTITUTION_LIST(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE_LIST, false, false, PrismScope.SYSTEM, null, null, null),
     SYSTEM_VIEW_PROGRAM_LIST(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE_LIST, false, false, PrismScope.SYSTEM, null, null, null),
     SYSTEM_VIEW_PROJECT_LIST(PrismActionType.USER_INVOCATION, PrismActionCategory.VIEW_RESOURCE_LIST, false, false, PrismScope.SYSTEM, null, null, null);
+
+    public static void main(String[] args) {
+        System.out.println(Joiner.on("\n").join(PrismAction.values()));
+    }
 
     private PrismActionType actionType;
 

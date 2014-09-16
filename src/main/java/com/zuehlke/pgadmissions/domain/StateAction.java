@@ -88,11 +88,11 @@ public class StateAction implements IUniqueEntity {
         this.action = action;
     }
 
-    public boolean isRaisesUrgentFlag() {
+    public Boolean getRaisesUrgentFlag() {
         return raisesUrgentFlag;
     }
 
-    public void setRaisesUrgentFlag(boolean raisesUrgentFlag) {
+    public void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
     }
 
@@ -156,7 +156,7 @@ public class StateAction implements IUniqueEntity {
         this.actionEnhancement = actionEnhancement;
         return this;
     }
-    
+
     public StateAction withNotificationTemplate(NotificationTemplate notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
         return this;

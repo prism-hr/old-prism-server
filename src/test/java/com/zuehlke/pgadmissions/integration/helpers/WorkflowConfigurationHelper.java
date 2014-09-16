@@ -143,12 +143,12 @@ public class WorkflowConfigurationHelper {
 
             if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
                 assertNotSame(stateAction.getState(), stateAction.getStateTransitions().iterator().next());
-                assertFalse(stateAction.isRaisesUrgentFlag());
+                assertFalse(stateAction.getRaisesUrgentFlag());
                 assertNull(stateAction.getNotificationTemplate());
                 assertTrue(stateAction.getStateActionAssignments().isEmpty());
             }
 
-            if (stateAction.isRaisesUrgentFlag()) {
+            if (stateAction.getRaisesUrgentFlag()) {
                 assertNotNull(stateAction.getNotificationTemplate());
             }
 

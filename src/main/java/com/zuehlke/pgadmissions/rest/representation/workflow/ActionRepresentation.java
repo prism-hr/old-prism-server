@@ -1,34 +1,24 @@
 package com.zuehlke.pgadmissions.rest.representation.workflow;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+
 public class ActionRepresentation {
 
-    private String id;
+    private PrismAction id;
 
-    private String category;
+    private PrismActionCategory actionCategory;
 
-    private String name;
+    public ActionRepresentation(PrismAction id, PrismActionCategory actionCategory) {
+        this.id = id;
+        this.actionCategory = actionCategory;
+    }
 
-    public String getId() {
+    public PrismAction getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public PrismActionCategory getActionCategory() {
+        return actionCategory;
     }
 }

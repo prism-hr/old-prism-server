@@ -239,7 +239,7 @@ public class SystemInitialisationHelper {
         for (StateAction stateAction : stateActions) {
             PrismStateAction prismStateAction = PrismState.getStateAction(stateAction.getState().getId(), stateAction.getAction().getId());
             assertNotNull(prismStateAction);
-            assertEquals(prismStateAction.isRaisesUrgentFlag(), stateAction.isRaisesUrgentFlag());
+            assertEquals(prismStateAction.isRaisesUrgentFlag(), stateAction.getRaisesUrgentFlag());
             assertEquals(prismStateAction.isDefaultAction(), stateAction.isDefaultAction());
             assertEquals(prismStateAction.getActionEnhancement(), stateAction.getActionEnhancement());
 
@@ -299,7 +299,7 @@ public class SystemInitialisationHelper {
 
         for (StateTransition stateTransition : stateTransitions) {
             StateTransitionEvaluation evaluation = stateTransition.getStateTransitionEvaluation();
-            
+
             PrismStateTransition prismStateTransition = new PrismStateTransition().withTransitionState(stateTransition.getTransitionState().getId())
                     .withTransitionAction(stateTransition.getTransitionAction().getId())
                     .withTransitionEvaluation(evaluation == null ? null : evaluation.getId());

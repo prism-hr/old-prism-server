@@ -58,28 +58,6 @@
     </mapping>
 
     <mapping>
-        <class-a>com.zuehlke.pgadmissions.domain.StateAction</class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.representation.workflow.StateActionRepresentation</class-b>
-        <field>
-            <a>state.id</a>
-            <b>state</b>
-        </field>
-        <field>
-            <a>action.id</a>
-            <b>action</b>
-        </field>
-    </mapping>
-
-    <mapping>
-        <class-a>com.zuehlke.pgadmissions.domain.Action</class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation</class-b>
-        <field>
-            <a>actionCategory</a>
-            <b>category</b>
-        </field>
-    </mapping>
-
-    <mapping>
         <class-a>com.zuehlke.pgadmissions.domain.ApplicationProgramDetail</class-a>
         <class-b>com.zuehlke.pgadmissions.rest.representation.resource.application.ProgramDetailRepresentation</class-b>
         <field>

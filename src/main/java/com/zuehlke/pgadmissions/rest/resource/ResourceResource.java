@@ -169,6 +169,7 @@ public class ResourceResource {
         try {
             PrismScope resourceScope = resourceDescriptor.getResourceScope();
             List<ResourceConsoleListRowDTO> rowDTOs = resourceService.getResourceConsoleList(resourceScope, filterDTO, lastSequenceIdentifier);
+            logger.info("Got the " + resourceScope.getLowerCaseName() + " list");
             for (ResourceConsoleListRowDTO rowDTO : rowDTOs) {
                 ResourceListRowRepresentation representation = dozerBeanMapper.map(rowDTO, ResourceListRowRepresentation.class);
                 User user = userService.getCurrentUser();
@@ -191,6 +192,7 @@ public class ResourceResource {
         if (actionDTO.getActionId().getActionCategory() != PrismActionCategory.CREATE_RESOURCE) {
             throw new Error(actionDTO.getActionId().name() + " is not a creation action.");
         }
+        
         User user = userService.getCurrentUser();
         Object newResourceDTO = actionDTO.getOperativeResourceDTO();
         Action action = actionService.getById(actionDTO.getActionId());

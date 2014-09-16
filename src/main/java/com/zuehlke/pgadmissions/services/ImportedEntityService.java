@@ -93,8 +93,12 @@ public class ImportedEntityService {
         return importedEntityDAO.getImportedEntityByCode(entityClass, institution, code);
     }
 
-    public ImportedInstitution getImportedInstitutionByCode(Institution institution, Domicile domicile, String code) {
-        return importedEntityDAO.getImportedInstitutionByCode(institution, domicile, code);
+    public <T extends ImportedEntity> List<T> getEnabledImportedEntities(Institution institution, Class<T> entityClass) {
+        return importedEntityDAO.getEnabledImportedEntities(institution, entityClass);
+    }
+
+    public List<ImportedInstitution> getEnabledImportedInstitutions(Domicile domicile) {
+        return importedEntityDAO.getEnabledImportedInstitutions(domicile);
     }
 
     public ImportedEntityFeed getOrCreateImportedEntityFeed(Institution institution, PrismImportedEntity importedEntityType, String location)
@@ -345,8 +349,7 @@ public class ImportedEntityService {
         Class<? extends ImportedEntity> entityClass = transientImportedEntity.getClass();
         if (transientImportedEntity.getClass().equals(ImportedInstitution.class)) {
             ImportedInstitution transientImportedInstitution = (ImportedInstitution) transientImportedEntity;
-            return getImportedInstitutionByCode(transientImportedInstitution.getInstitution(), transientImportedInstitution.getDomicile(),
-                    transientImportedInstitution.getCode());
+            return importedEntityDAO.getImportedInstitutionByCode(transientImportedInstitution.getDomicile(), transientImportedInstitution.getCode());
         }
         return getImportedEntityByCode(entityClass, transientImportedEntity.getInstitution(), transientImportedEntity.getCode());
     }
@@ -355,10 +358,9 @@ public class ImportedEntityService {
         Class<? extends ImportedEntity> entityClass = transientImportedEntity.getClass();
         if (transientImportedEntity.getClass().equals(ImportedInstitution.class)) {
             ImportedInstitution transientImportedInstitution = (ImportedInstitution) transientImportedEntity;
-            return getImportedInstitutionByCode(transientImportedInstitution.getInstitution(), transientImportedInstitution.getDomicile(),
-                    transientImportedInstitution.getName());
+            return importedEntityDAO.getImportedInstitutionByName(transientImportedInstitution.getDomicile(), transientImportedInstitution.getName());
         }
-        return getImportedEntityByCode(entityClass, transientImportedEntity.getInstitution(), transientImportedEntity.getName());
+        return importedEntityDAO.getImportedEntityByName(entityClass, transientImportedEntity.getInstitution(), transientImportedEntity.getName());
     }
 
     private void executeProgramImportAction(Program program) throws DeduplicationException {

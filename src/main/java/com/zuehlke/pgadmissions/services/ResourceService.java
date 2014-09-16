@@ -8,6 +8,8 @@ import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +50,8 @@ import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
 @Service
 @Transactional
 public class ResourceService {
+    
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     @Autowired
     private ResourceDAO resourceDAO;
@@ -267,10 +271,12 @@ public class ResourceService {
             String lastSequenceIdentifier, Integer maxRecords) {
         Set<Integer> assigned = Sets.newHashSet();
         Junction conditions = getFilterConditions(scopeId, filter);
-        List<Integer> scopeResources = resourceDAO.getAssignedResources(user, scopeId, filter, conditions, lastSequenceIdentifier, maxRecords); 
+        List<Integer> scopeResources = resourceDAO.getAssignedResources(user, scopeId, filter, conditions, lastSequenceIdentifier, maxRecords);
+        logger.info("Got " + scopeId.getLowerCaseName() + "s for " + scopeId.getLowerCaseName() + " roles");
         assigned.addAll(scopeResources);
         for (PrismScope parentScopeId : parentScopeIds) {
             List<Integer> parentScopeResources = resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, conditions, lastSequenceIdentifier, maxRecords);
+            logger.info("Got " + scopeId.getLowerCaseName() + "s for " + parentScopeId.getLowerCaseName() + " roles");
             assigned.addAll(parentScopeResources);
         }
         return assigned;

@@ -54,6 +54,10 @@ public class InstitutionService {
         return entityService.getById(Institution.class, id);
     }
 
+    public List<InstitutionDomicile> getDomiciles() {
+        return institutionDAO.getDomciles();
+    }
+    
     public List<InstitutionDomicileRegion> getTopLevelRegions(InstitutionDomicile domicile) {
         return institutionDAO.getTopLevelRegions(domicile);
     }

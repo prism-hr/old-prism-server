@@ -5,9 +5,11 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+
 import org.apache.lucene.search.Query;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.FullTextSession;
@@ -25,11 +27,19 @@ public class InstitutionDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
+    public List<InstitutionDomicile> getDomciles() {
+        return sessionFactory.getCurrentSession().createCriteria(InstitutionDomicile.class) //
+                .add(Restrictions.eq("enabled", true)) //
+                .addOrder(Order.asc("name")) //
+                .list();
+    }
+    
     public List<InstitutionDomicileRegion> getTopLevelRegions(InstitutionDomicile domicile) {
         return sessionFactory.getCurrentSession().createCriteria(InstitutionDomicileRegion.class) //
                 .add(Restrictions.eq("domicile", domicile)) //
                 .add(Restrictions.isNull("parentRegion")) //
                 .add(Restrictions.eq("enabled", true)) //
+                .addOrder(Order.asc("name")) //
                 .list();
     }
 
@@ -37,6 +47,7 @@ public class InstitutionDAO {
         return sessionFactory.getCurrentSession().createCriteria(Institution.class) //
                 .add(Restrictions.eq("domicile", domicile)) //
                 .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED)) //
+                .addOrder(Order.asc("title")) //
                 .list();
     }
 
@@ -70,9 +81,10 @@ public class InstitutionDAO {
     }
 
     public List<String> listAvailableCurrencies() {
-        return sessionFactory.getCurrentSession().createCriteria(InstitutionDomicile.class)
-                .setProjection(Projections.distinct(Projections.property("currency")))
-                .add(Restrictions.eq("enabled", true))
+        return sessionFactory.getCurrentSession().createCriteria(InstitutionDomicile.class) //
+                .setProjection(Projections.distinct(Projections.property("currency"))) //
+                .add(Restrictions.eq("enabled", true)) //
+                .addOrder(Order.asc("currency")) //
                 .list();
 
     }

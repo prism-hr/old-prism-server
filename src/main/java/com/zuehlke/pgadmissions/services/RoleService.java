@@ -177,7 +177,7 @@ public class RoleService {
         for (CommentAssignedUser assignee : comment.getAssignedUsers()) {
             if (assignee.getRole() == transitionRole && assignee.getRoleTransitionType() == roleTransitionType) {
                 User transitionUser = assignee.getUser();
-                if (restrictedToUser == null && transitionUser.equals(restrictedToUser)) {
+                if (restrictedToUser == null || transitionUser.equals(restrictedToUser)) {
                     transitionUsers.add(transitionUser);
                 } else {
                     actionService.throwWorkflowEngineException(comment.getResource(), comment.getAction(), "Attempted to "

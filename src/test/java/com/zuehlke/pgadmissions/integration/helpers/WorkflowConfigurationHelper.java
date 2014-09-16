@@ -248,7 +248,7 @@ public class WorkflowConfigurationHelper {
 
             actualProcessedRoles.add(transitionRoleId);
             assertEquals(transitionState.getScope(), transitionRole.getScope());
-            
+
             if (roleTransitionType != PrismRoleTransitionType.RETIRE) {
                 actualRolesCreated.add(transitionRoleId);
 
@@ -262,7 +262,8 @@ public class WorkflowConfigurationHelper {
 
                 if (roleTransitionType == PrismRoleTransitionType.CREATE || roleTransitionType == PrismRoleTransitionType.BRANCH) {
                     for (Role excludedRole : transitionRole.getExcludedRoles()) {
-                        actualRoleExclusions.put(state.getId(), new AbstractMap.SimpleEntry<PrismRole, PrismRole>(role.getId(), excludedRole.getId()));
+                        actualRoleExclusions
+                                .put(state.getId(), new AbstractMap.SimpleEntry<PrismRole, PrismRole>(transitionRole.getId(), excludedRole.getId()));
                     }
                 } else {
                     assertEquals(state.getScope(), role.getScope());

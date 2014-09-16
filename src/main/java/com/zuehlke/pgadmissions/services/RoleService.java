@@ -1,14 +1,12 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
-import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.Action;
@@ -24,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation.RoleRepresentation;
 
 @Service
 @Transactional
@@ -44,6 +42,9 @@ public class RoleService {
 
     @Autowired
     private ResourceService resourceService;
+    
+    @Autowired
+    private UserService userService;
 
     public Role getById(PrismRole roleId) {
         return entityService.getByProperty(Role.class, "id", roleId);
@@ -57,25 +58,35 @@ public class RoleService {
         return entityService.list(Role.class);
     }
 
+    public UserRole getOrCreateUserRole(UserRole userRole) throws DeduplicationException {
+        return getOrCreateUserRole(userRole.getResource(), userRole.getUser(), userRole.getRole().getId());
+    }
+
     public UserRole getOrCreateUserRole(Resource resource, User user, PrismRole newRoleId) throws DeduplicationException {
         Role newRole = getById(newRoleId);
         UserRole transientUserRole = new UserRole().withResource(resource).withUser(user).withRole(newRole).withAssignedTimestamp(new DateTime());
-        if (isRoleAssignmentPermitted(transientUserRole)) {
-            return entityService.getOrCreate(transientUserRole);
+        if (newRole.getExcludedRoles().isEmpty() || roleDAO.getExcludingUserRoles(transientUserRole).isEmpty()) {
+            UserRole persistentUserRole = entityService.getOrCreate(transientUserRole);
+            entityService.flush();
+            return persistentUserRole;
         }
         Action action = actionService.getViewEditAction(resource);
         throwWorkflowPermissionException(resource, action, user, newRole);
         return null;
     }
 
-    public void updateRoles(Resource resource, User user, List<AbstractResourceRepresentation.RoleRepresentation> roles) throws DeduplicationException {
-        for (AbstractResourceRepresentation.RoleRepresentation role : roles) {
-            if (role.getValue()) {
-                getOrCreateUserRole(resource, user, role.getId());
-            } else {
-                deleteUserRoles(resource, user, role.getId());
-            }
+    public void updateUserRoles(Resource resource, User user, List<RoleRepresentation> roleRepresentations) throws DeduplicationException {
+        User invoker = userService.getCurrentUser();
+        Action action = actionService.getViewEditAction(resource);
+        
+        Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false);
+        
+        for (RoleRepresentation roleRepresentation : roleRepresentations) {
+            Role role = getById(roleRepresentation.getId());
+            comment.addAssignedUser(user, role, roleRepresentation.getValue() ? PrismRoleTransitionType.CREATE : PrismRoleTransitionType.DELETE);
         }
+        
+        actionService.executeUserAction(resource, action, comment);
     }
 
     public List<PrismRole> getActionOwnerRoles(User user, Resource resource, Action action) {
@@ -121,87 +132,62 @@ public class RoleService {
             role.getExcludedRoles().clear();
         }
     }
-    
-    public boolean isRoleAssignmentPermitted(UserRole userRole) {
-        return roleDAO.getExcludingUserRoles(userRole).isEmpty();
-    }
 
     public void executeRoleTransitions(StateTransition stateTransition, Comment comment) throws DeduplicationException {
-        for (PrismRoleTransitionType transitionType : PrismRoleTransitionType.values()) {
-            HashMultimap<User, RoleTransition> userRoleTransitions = null;
-            List<RoleTransition> roleTransitions = roleDAO.getRoleTransitions(stateTransition, transitionType);
-
-            if (transitionType == PrismRoleTransitionType.CREATE) {
-                userRoleTransitions = getRoleCreateTransitions(stateTransition, comment, roleTransitions);
-            } else {
-                userRoleTransitions = getRoleUpdateTransitions(stateTransition, comment, roleTransitions);
-            }
-
-            for (User user : userRoleTransitions.keySet()) {
-                for (RoleTransition roleTransition : userRoleTransitions.get(user)) {
+        for (PrismRoleTransitionType roleTransitionType : PrismRoleTransitionType.values()) {
+            for (RoleTransition roleTransition : roleDAO.getRoleTransitions(stateTransition, roleTransitionType)) {
+                List<User> users = getRoleTransitionUsers(stateTransition, comment, roleTransition);
+                for (User user : users) {
                     executeRoleTransition(comment, user, roleTransition);
                 }
             }
         }
     }
 
-    private HashMultimap<User, RoleTransition> getRoleCreateTransitions(StateTransition stateTransition, Comment comment, List<RoleTransition> roleTransitions)
-            throws WorkflowEngineException {
-        HashMultimap<User, RoleTransition> userRoleTransitions = HashMultimap.create();
+    private List<User> getRoleTransitionUsers(StateTransition stateTransition, Comment comment, RoleTransition roleTransition) throws WorkflowEngineException {
+        User actionOwner = comment.getUser();
+        Resource resource = comment.getResource();
+        User restrictedToUser = roleTransition.isRestrictToActionOwner() ? actionOwner : null;
 
-        for (RoleTransition roleTransition : roleTransitions) {
-            User restrictedToUser = roleTransition.isRestrictToActionOwner() ? comment.getUser() : null;
-            List<User> users = getRoleCreateTransitionUsers(comment, roleTransition.getTransitionRole(), restrictedToUser);
-
-            Integer minimumPermitted = roleTransition.getMinimumPermitted();
-            Integer maximumPermitted = roleTransition.getMaximumPermitted();
-
-            if ((minimumPermitted == null || users.size() >= minimumPermitted) && (maximumPermitted == null || users.size() <= maximumPermitted)) {
-                for (User user : users) {
-                    userRoleTransitions.put(user, roleTransition);
-                }
-            } else {
-                actionService.throwWorkflowEngineException(comment.getResource(), comment.getAction(), "Attempted to "
-                        + roleTransition.getRoleTransitionType().name() + " " + users.size() + " users of role: " + roleTransition.getRole().getAuthority()
-                        + ". Expected " + minimumPermitted + " <= n <=" + maximumPermitted);
-            }
+        List<User> users = Lists.newArrayList();
+        if (roleTransition.getRoleTransitionType().isSpecified()) {
+            users = getSpecifiedRoleTransitionUsers(comment, roleTransition, restrictedToUser);
+        } else {
+            users = roleDAO.getUnspecifiedRoleTransitionUsers(resource, roleTransition, restrictedToUser);
         }
 
-        return userRoleTransitions;
+        Integer minimumPermitted = roleTransition.getMinimumPermitted();
+        Integer maximumPermitted = roleTransition.getMaximumPermitted();
+
+        if (!(minimumPermitted == null || users.size() >= minimumPermitted) && (maximumPermitted == null || users.size() <= maximumPermitted)) {
+            actionService.throwWorkflowEngineException(comment.getResource(), comment.getAction(), "Attempted to "
+                    + roleTransition.getRoleTransitionType().name() + " " + users.size() + " users of role: " + roleTransition.getRole().getAuthority()
+                    + ". Expected " + minimumPermitted + " <= n <=" + maximumPermitted);
+        }
+
+        return users;
     }
 
-    private List<User> getRoleCreateTransitionUsers(Comment comment, Role transitionRole, User restrictedToUser) {
+    private List<User> getSpecifiedRoleTransitionUsers(Comment comment, RoleTransition roleTransition, User restrictedToUser) {
         List<User> transitionUsers = Lists.newArrayList();
-        Set<CommentAssignedUser> assignees = comment.getAssignedUsers();
 
-        for (CommentAssignedUser assignee : assignees) {
-            if (assignee.getRole() == transitionRole) {
+        Role transitionRole = roleTransition.getTransitionRole();
+        PrismRoleTransitionType roleTransitionType = roleTransition.getRoleTransitionType();
+
+        for (CommentAssignedUser assignee : comment.getAssignedUsers()) {
+            if (assignee.getRole() == transitionRole && assignee.getRoleTransitionType() == roleTransitionType) {
                 User transitionUser = assignee.getUser();
-                if (restrictedToUser != null && !transitionUser.equals(restrictedToUser)) {
-                    actionService.throwWorkflowEngineException(comment.getResource(), comment.getAction(),
-                            "Attempted to create user :" + transitionUser.toString() + " in role " + transitionRole.getAuthority()
-                                    + ". Role is restricted to creator " + restrictedToUser.toString());
+                if (restrictedToUser == null && transitionUser.equals(restrictedToUser)) {
+                    transitionUsers.add(transitionUser);
+                } else {
+                    actionService.throwWorkflowEngineException(comment.getResource(), comment.getAction(), "Attempted to "
+                            + roleTransitionType.name().toLowerCase() + " user role: " + comment.getResource().getCode() + " " + transitionUser.toString()
+                            + " in role " + transitionRole.getAuthority() + ". Transition is restricted to invoker: " + restrictedToUser.toString());
                 }
-                transitionUsers.add(transitionUser);
             }
         }
 
         return transitionUsers;
-    }
-
-    private HashMultimap<User, RoleTransition> getRoleUpdateTransitions(StateTransition stateTransition, Comment comment, List<RoleTransition> roleTransitions) {
-        HashMultimap<User, RoleTransition> userRoleTransitions = HashMultimap.create();
-
-        for (RoleTransition roleTransition : roleTransitions) {
-            User restrictedToUser = roleTransition.isRestrictToActionOwner() ? comment.getUser() : null;
-            List<User> users = roleDAO.getRoleTransitionUsers(comment.getResource(), roleTransition, restrictedToUser);
-
-            for (User user : users) {
-                userRoleTransitions.put(user, roleTransition);
-            }
-        }
-
-        return userRoleTransitions;
     }
 
     private void executeRoleTransition(Comment comment, User user, RoleTransition roleTransition) throws DeduplicationException {
@@ -217,67 +203,66 @@ public class RoleService {
         UserRole transientTransitionRole = new UserRole().withResource(transitionResource).withUser(user).withRole(transitionRole)
                 .withAssignedTimestamp(baseline);
 
-        switch (roleTransition.getRoleTransitionType()) {
+        PrismRoleTransitionType roleTransitionType = roleTransition.getRoleTransitionType();
+
+        switch (roleTransitionType) {
         case BRANCH:
             executeBranchUserRole(transientRole, transientTransitionRole, comment);
             break;
         case CREATE:
-            executeCreateUserRole(transientTransitionRole, comment);
+            executeCreateUserRole(transientTransitionRole);
             break;
-        case REMOVE:
+        case DELETE:
+            executeRemoveUserRole(transientTransitionRole, comment);
+            break;
+        case RETIRE:
             executeRemoveUserRole(transientTransitionRole, comment);
             break;
         case UPDATE:
             executeUpdateUserRole(transientRole, transientTransitionRole, comment);
+            break;
         }
+
     }
 
-    private void executeBranchUserRole(UserRole userRole, UserRole transitionRole, Comment comment) throws DeduplicationException {
+    private void executeBranchUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
         UserRole persistentRole = entityService.getDuplicateEntity(userRole);
         if (persistentRole == null) {
             actionService.throwWorkflowEngineException(comment.getResource(), comment.getAction(), "Found no role of type " + userRole.getRole().getAuthority()
-                    + " to branch for user " + userRole.getUser().toString());
-        } else if (!isRoleAssignmentPermitted(userRole, comment)) {
-            throwWorkflowPermissionException(comment.getResource(), comment.getAction(), userRole.getUser(), userRole.getRole());
+                    + " for " + userRole.getResource().getCode() + " to branch for user " + userRole.getUser().toString());
         }
-        entityService.getOrCreate(transitionRole);
-        comment.addAssignedUser(transitionRole.getUser(), transitionRole.getRole());
+        comment.addAssignedUser(transitionUserRole.getUser(), transitionUserRole.getRole(), PrismRoleTransitionType.CREATE);
+        getOrCreateUserRole(transitionUserRole);
     }
 
-    private void executeCreateUserRole(UserRole userRole, Comment comment) throws DeduplicationException {
-        if (!isRoleAssignmentPermitted(userRole, comment)) {
-            throwWorkflowPermissionException(comment.getResource(), comment.getAction(), userRole.getUser(), userRole.getRole());
-        }
-        entityService.getOrCreate(userRole);
+    private void executeCreateUserRole(UserRole userRole) throws DeduplicationException {
+        getOrCreateUserRole(userRole);
     }
 
     private void executeRemoveUserRole(UserRole userRole, Comment comment) throws DeduplicationException {
         UserRole persistentRole = entityService.getDuplicateEntity(userRole);
         if (persistentRole != null) {
-            deleteUserRoles(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole().getId());
+            deleteUserRole(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole());
+            comment.addAssignedUser(userRole.getUser(), userRole.getRole(), PrismRoleTransitionType.DELETE);
         }
     }
 
-    private boolean isRoleAssignmentPermitted(UserRole userRole, Comment comment) {
-        return userRole.getRole().getExcludedRoles().isEmpty()
-                || (roleDAO.getExcludingRoles(userRole, comment).isEmpty() && isRoleAssignmentPermitted(userRole));
-    }
-
-    private void executeUpdateUserRole(UserRole userRole, UserRole transitionRole, Comment comment) throws DeduplicationException {
+    private void executeUpdateUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
         UserRole persistentRole = entityService.getDuplicateEntity(userRole);
         if (persistentRole == null) {
             actionService.throwWorkflowEngineException(comment.getResource(), comment.getAction(), "Found no role of type " + userRole.getRole().getAuthority()
                     + " for " + userRole.getResource().getCode() + " to update for user " + userRole.getUser().toString());
         }
-        deleteUserRoles(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole().getId());
-        entityService.getOrCreate(transitionRole);
+        comment.addAssignedUser(userRole.getUser(), userRole.getRole(), PrismRoleTransitionType.DELETE);
+        comment.addAssignedUser(transitionUserRole.getUser(), transitionUserRole.getRole(), PrismRoleTransitionType.CREATE);
+        deleteUserRole(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole());
+        getOrCreateUserRole(transitionUserRole);
     }
 
-    private void deleteUserRoles(Resource resource, User user, PrismRole... rolesToRemove) {
-        for (UserRole roleToRemove : roleDAO.getUserRoles(resource, user, rolesToRemove)) {
-            validateUserRoleRemoval(resource, roleToRemove.getRole());
-            entityService.delete(roleToRemove);
-        }
+    private void deleteUserRole(Resource resource, User user, Role role) {
+        UserRole userRole = roleDAO.getUserRole(resource, user, role);
+        validateUserRoleRemoval(resource, userRole.getRole());
+        entityService.delete(userRole);
         reassignResourceOwner(resource);
     }
 

@@ -37,7 +37,7 @@ public class PrismSystemApproved extends PrismWorkflowState {
                                 .withRestrictToOwner(false),
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.SYSTEM_ADMINISTRATOR) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
                                 .withTransitionRole(PrismRole.SYSTEM_ADMINISTRATOR) //
                                 .withRestrictToOwner(false)))))); //
     

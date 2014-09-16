@@ -70,7 +70,7 @@ public class UserHelper {
         for (PrismRole role : roles) {
             roleRepresentations.add(new AbstractResourceRepresentation.RoleRepresentation(role, true));
         }
-        roleService.updateRoles(resource, user, roleRepresentations);
+        roleService.updateUserRoles(resource, user, roleRepresentations);
     }
 
     public void registerAndActivateUserInRoles(PrismAction createAction, Resource resource, User user, PrismNotificationTemplate activationTemplate,

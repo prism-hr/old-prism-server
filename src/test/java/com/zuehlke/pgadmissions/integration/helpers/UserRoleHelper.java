@@ -32,7 +32,7 @@ public class UserRoleHelper {
         Program program = programService.getProgramByImportedCode(null, "RRDSCSSING01");
         User program2NewAdmin = userService.getOrCreateUserWithRoles("Alex", "Salmond", "alex@salmond.com", program,
                 Lists.newArrayList(new AbstractResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_ADMINISTRATOR, true)));
-        roleService.updateRoles(program, program.getUser(),
+        roleService.updateUserRoles(program, program.getUser(),
                 Lists.newArrayList(new AbstractResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_ADMINISTRATOR, false)));
         assertEquals(program2NewAdmin, program.getUser());
     }

@@ -174,5 +174,12 @@ public class StateDAO {
                 .addOrder(Order.asc("stateGroup.sequenceOrder")) //
                 .list();  
     }
+    
+    public List<PrismState> getStatesByStateGroup(PrismStateGroup stateGroupId) {
+        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class) //
+                .setProjection(Projections.property("id")) //
+                .add(Restrictions.eq("stateGroup.id", stateGroupId)) //
+                .list();
+    }
 
 }

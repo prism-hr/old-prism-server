@@ -361,4 +361,8 @@ public class StateService {
         return stateDAO.getAssignableStateGroups(scopeId);
     }
     
+    public List<PrismState> getStatesByStateGroup(PrismStateGroup stateGroupId) {
+        return stateDAO.getStatesByStateGroup(stateGroupId);
+    }
+    
 }

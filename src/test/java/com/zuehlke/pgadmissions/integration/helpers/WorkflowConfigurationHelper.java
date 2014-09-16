@@ -247,14 +247,14 @@ public class WorkflowConfigurationHelper {
             logger.info("Verifying role transition: " + role.getId().toString() + " " + roleTransitionType + " " + transitionRoleId.toString());
 
             actualProcessedRoles.add(transitionRoleId);
-
-            if (roleTransitionType != PrismRoleTransitionType.REMOVE) {
+            assertEquals(transitionState.getScope(), transitionRole.getScope());
+            
+            if (roleTransitionType != PrismRoleTransitionType.RETIRE) {
                 actualRolesCreated.add(transitionRoleId);
 
                 PrismActionCategory actionCategory = action.getActionCategory();
                 if (transitionRole.isScopeCreator() && roleTransitionType == PrismRoleTransitionType.CREATE
                         && (actionCategory == PrismActionCategory.CREATE_RESOURCE || actionCategory == PrismActionCategory.INITIALISE_RESOURCE)) {
-                    assertEquals(transitionState.getScope(), transitionRole.getScope());
                     assertTrue(roleTransition.getMinimumPermitted() == 1);
                     assertTrue(roleTransition.getMaximumPermitted() == 1);
                     actualCreatorRoles.put(transitionState.getScope().getId(), transitionRoleId);
@@ -313,6 +313,7 @@ public class WorkflowConfigurationHelper {
             PrismRole excludedRole = roleExclusion.getValue();
 
             logger.info("Verifying role transition exclusion: " + role + " " + excludedRole);
+            assertEquals(role.getScope(), excludedRole.getScope());
             assertNotSame(role, excludedRole);
             assertTrue(actualRolesCreated.contains(excludedRole));
         }

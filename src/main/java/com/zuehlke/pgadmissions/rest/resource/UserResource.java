@@ -127,9 +127,14 @@ public class UserResource {
 
 
     @RequestMapping(value = "/filter/{resourceScope}", method = RequestMethod.PUT)
-    public void saveFilter(@PathVariable String resourceScope, @RequestBody ResourceListFilterDTO filter) throws DeduplicationException {
+    public void saveFilter(@PathVariable String resourceScope, @RequestBody ResourceListFilterDTO filter) {
         PrismScope scope = PrismScope.valueOf(resourceScope.toUpperCase().substring(0, resourceScope.length() - 1));
-        resourceListFilterService.save(userService.getCurrentUser(), entityService.getById(Scope.class, scope), filter);
+        User currentUser = userService.getCurrentUser();
+        try {
+            resourceListFilterService.save(currentUser, entityService.getById(Scope.class, scope), filter);
+        } catch (Exception e) {
+            logger.info("Error saving filter for user " + currentUser.toString(), e);
+        }
     }
 
     @RequestMapping(value = "/filter/{resourceScope}", method = RequestMethod.GET)

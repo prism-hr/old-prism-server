@@ -62,7 +62,7 @@ public class IT5AssignInstitutionUsers {
         assertTrue(roleService.hasUserRole(program, user, PrismRole.PROGRAM_APPROVER));
         assertFalse(roleService.hasUserRole(program, user, PrismRole.PROGRAM_ADMINISTRATOR));
 
-        roleService.updateRoles(program, user, Lists.newArrayList(new AbstractResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_VIEWER, true), new AbstractResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_APPROVER, false), new AbstractResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_ADMINISTRATOR, true)));
+        roleService.updateUserRoles(program, user, Lists.newArrayList(new AbstractResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_VIEWER, true), new AbstractResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_APPROVER, false), new AbstractResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_ADMINISTRATOR, true)));
 
         assertTrue(roleService.hasUserRole(program, user, PrismRole.PROGRAM_VIEWER));
         assertFalse(roleService.hasUserRole(program, user, PrismRole.PROGRAM_APPROVER));

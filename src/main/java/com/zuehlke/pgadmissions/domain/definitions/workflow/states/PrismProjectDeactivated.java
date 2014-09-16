@@ -63,7 +63,7 @@ public class PrismProjectDeactivated extends PrismWorkflowState {
                                 .withMaximumPermitted(1), //
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROJECT_ADMINISTRATOR) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
                                 .withTransitionRole(PrismRole.PROJECT_ADMINISTRATOR) //
                                 .withRestrictToOwner(false), //
                             new PrismRoleTransition() //
@@ -75,7 +75,7 @@ public class PrismProjectDeactivated extends PrismWorkflowState {
                                 .withMaximumPermitted(1), //
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
                                 .withTransitionRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
                                 .withRestrictToOwner(false), //
                             new PrismRoleTransition() //
@@ -86,7 +86,7 @@ public class PrismProjectDeactivated extends PrismWorkflowState {
                                 .withMaximumPermitted(1),
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROJECT_SECONDARY_SUPERVISOR) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
                                 .withTransitionRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
                                 .withRestrictToOwner(false))), // 
                     new PrismStateTransition() // 
@@ -102,7 +102,7 @@ public class PrismProjectDeactivated extends PrismWorkflowState {
                                 .withMaximumPermitted(1), //
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROJECT_ADMINISTRATOR) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
                                 .withTransitionRole(PrismRole.PROJECT_ADMINISTRATOR) //
                                 .withRestrictToOwner(false), //
                             new PrismRoleTransition() //
@@ -114,7 +114,7 @@ public class PrismProjectDeactivated extends PrismWorkflowState {
                                 .withMaximumPermitted(1), //
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
                                 .withTransitionRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
                                 .withRestrictToOwner(false), //
                             new PrismRoleTransition() //
@@ -125,7 +125,7 @@ public class PrismProjectDeactivated extends PrismWorkflowState {
                                 .withMaximumPermitted(1),
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROJECT_SECONDARY_SUPERVISOR) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
                                 .withTransitionRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
                                 .withRestrictToOwner(false))), //  
                     new PrismStateTransition() // 

@@ -41,7 +41,7 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
                                 .withRestrictToOwner(false),
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
                                 .withTransitionRole(PrismRole.INSTITUTION_ADMINISTRATOR) //
                                 .withRestrictToOwner(false),
                             new PrismRoleTransition() //
@@ -51,7 +51,7 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
                                 .withRestrictToOwner(false),
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.INSTITUTION_ADMITTER) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
                                 .withTransitionRole(PrismRole.INSTITUTION_ADMITTER) //
                                 .withRestrictToOwner(false)))))); //
     

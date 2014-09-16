@@ -27,6 +27,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
@@ -729,16 +730,8 @@ public class Comment {
         return this;
     }
 
-    public Comment addAssignedUser(User user, Role role) {
-        CommentAssignedUser newAssignment = new CommentAssignedUser().withUser(user).withRole(role).withComment(this);
-        assignedUsers.add(newAssignment);
-        return this;
-    }
-
-    public Comment withAssignedUsers(Set<CommentAssignedUser> assignedUsers) {
-        for (CommentAssignedUser assignedUser : this.assignedUsers) {
-            addAssignedUser(assignedUser.getUser(), assignedUser.getRole());
-        }
+    public Comment addAssignedUser(User user, Role role, PrismRoleTransitionType roleTransitionType) {
+        assignedUsers.add(new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(roleTransitionType).withComment(this));
         return this;
     }
 
@@ -875,19 +868,17 @@ public class Comment {
     }
 
     public boolean isApplicationApprovedComment() {
-        return transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED
-                && transitionState.getId() != PrismState.APPLICATION_APPROVED;
+        return transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED && transitionState.getId() != PrismState.APPLICATION_APPROVED;
     }
-    
+
     public boolean isApplicationRejectedComment() {
-        return transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED
-                && transitionState.getId() != PrismState.APPLICATION_REJECTED;
+        return transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED && transitionState.getId() != PrismState.APPLICATION_REJECTED;
     }
-    
+
     public boolean isApplicationWithdrawnComment() {
         return this.transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_WITHDRAWN;
     }
-    
+
     public boolean isApplicationPurgeComment() {
         return action.getId() == PrismAction.APPLICATION_PURGE;
     }

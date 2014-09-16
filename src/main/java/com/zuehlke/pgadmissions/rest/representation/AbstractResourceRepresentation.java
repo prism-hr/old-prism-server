@@ -220,14 +220,16 @@ public class AbstractResourceRepresentation {
             this.id = id;
         }
 
-        public Boolean getValue() {
+        public final Boolean getValue() {
             return value;
         }
 
-        public void setValue(Boolean value) {
+        public final void setValue(Boolean value) {
             this.value = value;
         }
+
     }
+    
 }
 
 

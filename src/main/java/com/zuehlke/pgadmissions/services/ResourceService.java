@@ -29,7 +29,9 @@ import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -128,7 +130,7 @@ public class ResourceService {
 
         resource.setReferrer(referrer);
         Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
-                .addAssignedUser(user, roleService.getCreatorRole(resource));
+                .addAssignedUser(user, roleService.getCreatorRole(resource), PrismRoleTransitionType.CREATE);
 
         return actionService.executeUserAction(resource, action, comment);
     }
@@ -265,9 +267,11 @@ public class ResourceService {
             String lastSequenceIdentifier, Integer maxRecords) {
         Set<Integer> assigned = Sets.newHashSet();
         Junction conditions = getFilterConditions(scopeId, filter);
-        assigned.addAll(resourceDAO.getAssignedResources(user, scopeId, filter, conditions, lastSequenceIdentifier, maxRecords));
+        List<Integer> scopeResources = resourceDAO.getAssignedResources(user, scopeId, filter, conditions, lastSequenceIdentifier, maxRecords); 
+        assigned.addAll(scopeResources);
         for (PrismScope parentScopeId : parentScopeIds) {
-            assigned.addAll(resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, conditions, lastSequenceIdentifier, maxRecords));
+            List<Integer> parentScopeResources = resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, conditions, lastSequenceIdentifier, maxRecords);
+            assigned.addAll(parentScopeResources);
         }
         return assigned;
     }
@@ -321,7 +325,8 @@ public class ResourceService {
                                 constraint.getValueDecimalStart(), constraint.getValueDecimalClose(), negated);
                         break;
                     case STATE_GROUP:
-                        ResourceListConstraintBuilder.appendStateGroupFilterCriterion(conditions, propertyName, constraint.getValueStateGroup(), negated);
+                        List<PrismState> stateIds = stateService.getStatesByStateGroup(constraint.getValueStateGroup());
+                        ResourceListConstraintBuilder.appendStateGroupFilterCriterion(conditions, propertyName, stateIds, negated);
                         break;
                     case SUBMITTED_TIMESTAMP:
                         ResourceListConstraintBuilder.appendDateTimeFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),

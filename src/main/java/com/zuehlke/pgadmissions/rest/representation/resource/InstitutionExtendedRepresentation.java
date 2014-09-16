@@ -10,6 +10,8 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
 
     private InstitutionAddressRepresentation address;
 
+    private String currency;
+
     private String homepage;
 
     public String getDomicile() {
@@ -34,6 +36,14 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
 
     public void setAddress(InstitutionAddressRepresentation address) {
         this.address = address;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public String getHomepage() {

@@ -132,10 +132,10 @@ public class ResourceDAO {
         Disjunction conditions = Restrictions.disjunction();
 
         Iterator<String> iterator;
-        if (sortOrder == FilterSortOrder.DESCENDING) {
-            iterator = assignedResources.descendingIterator();
-        } else {
+        if (sortOrder == FilterSortOrder.ASCENDING) {
             iterator = assignedResources.iterator();
+        } else {
+            iterator = assignedResources.descendingIterator();
         }
 
         int rowCursor = 0;

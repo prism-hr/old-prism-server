@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
-import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation.RoleRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -116,10 +116,10 @@ public class UserService {
         return user;
     }
 
-    public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource,
-            List<AbstractResourceRepresentation.RoleRepresentation> roles) throws DeduplicationException {
+    public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource, List<RoleRepresentation> roles)
+            throws DeduplicationException {
         User user = getOrCreateUser(firstName, lastName, email);
-        roleService.updateRoles(resource, user, roles);
+        roleService.updateUserRoles(resource, user, roles);
         return user;
     }
 
@@ -228,7 +228,7 @@ public class UserService {
     public List<User> getEnabledResourceUsers(Resource resource) {
         return userDAO.getEnabledResourceUsers(resource);
     }
-    
+
     public List<Integer> getMatchingUsers(String searchTerm) {
         return userDAO.getMatchingUsers(searchTerm);
     }

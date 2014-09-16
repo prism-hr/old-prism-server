@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 
 public class ResourceListConstraintBuilder extends ConstraintBuilder {
@@ -61,8 +61,8 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
         applyOrNegateFilterCriterion(conditions, Restrictions.in(property, parentResourceIds), negated);
     }
 
-    public static void appendStateGroupFilterCriterion(Junction conditions, String property, PrismStateGroup stateGroupId, boolean negated) {
-        applyOrNegateFilterCriterion(conditions, Restrictions.eq(property, stateGroupId), negated);
+    public static void appendStateGroupFilterCriterion(Junction conditions, String property, List<PrismState> stateIds, boolean negated) {
+       appendPropertyInFilterCriterion(conditions, property, stateIds, negated);
     }
 
     public static void appendUserFilterCriterion(Junction conditions, String property, List<Integer> userIds, boolean negated) {

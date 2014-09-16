@@ -115,7 +115,7 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
                                 .withRestrictToOwner(false), // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_INTERVIEWEE) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.RETIRE) //
                                 .withTransitionRole(PrismRole.APPLICATION_INTERVIEWEE) //
                                 .withRestrictToOwner(false), // 
                             new PrismRoleTransition() //
@@ -135,7 +135,7 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
                                 .withRestrictToOwner(false), // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_INTERVIEWEE) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.RETIRE) //
                                 .withTransitionRole(PrismRole.APPLICATION_INTERVIEWEE) //
                                 .withRestrictToOwner(false), // 
                             new PrismRoleTransition() //
@@ -161,7 +161,7 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
                                 .withRestrictToOwner(false), // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_INTERVIEWEE) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.RETIRE) //
                                 .withTransitionRole(PrismRole.APPLICATION_INTERVIEWEE) //
                                 .withRestrictToOwner(false), // 
                             new PrismRoleTransition() //
@@ -181,7 +181,7 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
                                 .withRestrictToOwner(false), // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_INTERVIEWEE) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.RETIRE) //
                                 .withTransitionRole(PrismRole.APPLICATION_INTERVIEWEE) //
                                 .withRestrictToOwner(false), // 
                             new PrismRoleTransition() //
@@ -207,7 +207,7 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
                                 .withRestrictToOwner(false), // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_INTERVIEWEE) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.RETIRE) //
                                 .withTransitionRole(PrismRole.APPLICATION_INTERVIEWEE) //
                                 .withRestrictToOwner(false), // 
                             new PrismRoleTransition() //
@@ -257,7 +257,7 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_INTERVIEWEE) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.RETIRE) //
                                 .withTransitionRole(PrismRole.APPLICATION_INTERVIEWEE) //
                                 .withRestrictToOwner(false)))))); //
     
@@ -320,7 +320,7 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
                                 .withRestrictToOwner(false), // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_INTERVIEWEE) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.RETIRE) //
                                 .withTransitionRole(PrismRole.APPLICATION_INTERVIEWEE) //
                                 .withRestrictToOwner(false), // 
                             new PrismRoleTransition() //
@@ -345,7 +345,7 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
                                 .withRestrictToOwner(false), // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_INTERVIEWEE) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.RETIRE) //
                                 .withTransitionRole(PrismRole.APPLICATION_INTERVIEWEE) //
                                 .withRestrictToOwner(false), // 
                             new PrismRoleTransition() //
@@ -472,7 +472,7 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
                                 .withRestrictToOwner(false), // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_INTERVIEWEE) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.RETIRE) //
                                 .withTransitionRole(PrismRole.APPLICATION_INTERVIEWEE) //
                                 .withRestrictToOwner(false), // 
                             new PrismRoleTransition() //
@@ -497,7 +497,7 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
                                 .withRestrictToOwner(false), // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_INTERVIEWEE) //
-                                .withTransitionType(PrismRoleTransitionType.REMOVE) //
+                                .withTransitionType(PrismRoleTransitionType.RETIRE) //
                                 .withTransitionRole(PrismRole.APPLICATION_INTERVIEWEE) //
                                 .withRestrictToOwner(false), // 
                             new PrismRoleTransition() //

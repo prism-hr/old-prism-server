@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import org.joda.time.LocalDate;
 
-public class PrismProgramTypeImmediate extends PrismProgramTypeConfiguration {
+public class PrismProgramTypeStartImmediate extends PrismProgramTypeStartConfiguration {
 
     private Integer weekStartDelay;
 
@@ -14,12 +14,12 @@ public class PrismProgramTypeImmediate extends PrismProgramTypeConfiguration {
         this.weekStartDelay = weekStartDelay;
     }
     
-    public PrismProgramTypeImmediate withWeekStartDelay(Integer weekStartDelay) {
+    public PrismProgramTypeStartImmediate withWeekStartDelay(Integer weekStartDelay) {
         this.weekStartDelay = weekStartDelay;
         return this;
     }
     
-    public PrismProgramTypeImmediate withStartDay(Integer startDay) {
+    public PrismProgramTypeStartImmediate withStartDay(Integer startDay) {
         setStartDay(startDay);
         return this;
     }

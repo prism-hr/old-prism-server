@@ -3,7 +3,7 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd      
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 
         http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx.xsd">
 
@@ -50,15 +50,6 @@
 
     <!-- bean definitions -->
 
-    <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
-        <property name="templateLoaderPath" value="/WEB-INF/freemarker/"/>
-        <property name="freemarkerVariables">
-            <map>
-                <entry key="encrypter" value-ref="encryptionHelper"/>
-            </map>
-        </property>
-    </bean>
-
     <bean id="webServiceTemplate" class="com.zuehlke.pgadmissions.utils.EasyMockFactoryBean" primary="true">
         <constructor-arg value="org.springframework.ws.client.core.WebServiceTemplate"/>
     </bean>
@@ -70,7 +61,7 @@
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
 
     <bean id="mailSender" class="com.zuehlke.pgadmissions.mail.MailSenderMock" primary="true"/>
-    
+
     <bean id="applicationExportServiceHelper" class="com.zuehlke.pgadmissions.services.lifecycle.helpers.ApplicationExportServiceHelperMock" primary="true"/>
 
     <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PrismAuthenticationProvider"/>
@@ -96,7 +87,7 @@
             </list>
         </property>
     </bean>
-    
+
      <!-- threadpool executor config -->
     <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
 	    <property name="corePoolSize" value="5" />

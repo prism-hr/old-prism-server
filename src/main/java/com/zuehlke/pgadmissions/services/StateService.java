@@ -357,10 +357,6 @@ public class StateService {
         entityService.flushAndEvict(pending);
     }
 
-    public List<PrismStateGroup> getAssignableStateGroups(PrismScope scopeId) {
-        return stateDAO.getAssignableStateGroups(scopeId);
-    }
-    
     public List<PrismState> getStatesByStateGroup(PrismStateGroup stateGroupId) {
         return stateDAO.getStatesByStateGroup(stateGroupId);
     }

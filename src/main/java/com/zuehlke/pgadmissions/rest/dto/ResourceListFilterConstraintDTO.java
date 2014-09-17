@@ -1,14 +1,12 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
 public class ResourceListFilterConstraintDTO {
@@ -32,8 +30,6 @@ public class ResourceListFilterConstraintDTO {
     private BigDecimal valueDecimalStart;
 
     private BigDecimal valueDecimalClose;
-
-    private List<PrismRole> valueRoles;
 
     public final FilterProperty getFilterProperty() {
         return filterProperty;
@@ -123,14 +119,6 @@ public class ResourceListFilterConstraintDTO {
         this.valueDecimalClose = valueDecimalClose;
     }
 
-    public final List<PrismRole> getValueRoles() {
-        return valueRoles;
-    }
-
-    public final void setValueRoles(List<PrismRole> valueRoles) {
-        this.valueRoles = valueRoles;
-    }
-
     public ResourceListFilterConstraintDTO withFilterProperty(FilterProperty filterProperty) {
         this.filterProperty = filterProperty;
         return this;
@@ -179,10 +167,6 @@ public class ResourceListFilterConstraintDTO {
     public ResourceListFilterConstraintDTO withValueDecimalClose(BigDecimal valueDecimalClose) {
         this.valueDecimalClose = valueDecimalClose;
         return this;
-    }
-
-    public void addValueRole(PrismRole role) {
-        valueRoles.add(role);
     }
 
 }

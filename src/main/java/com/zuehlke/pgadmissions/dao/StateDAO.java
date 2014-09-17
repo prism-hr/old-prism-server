@@ -165,16 +165,6 @@ public class StateDAO {
                 .list();
     }
     
-    public List<PrismStateGroup> getAssignableStateGroups(PrismScope scopeId) {
-        return (List<PrismStateGroup>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.groupProperty("stateGroup.id")) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("stateGroup.scope.id", scopeId)) //
-                .addOrder(Order.asc("stateGroup.sequenceOrder")) //
-                .list();  
-    }
-    
     public List<PrismState> getStatesByStateGroup(PrismStateGroup stateGroupId) {
         return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class) //
                 .setProjection(Projections.property("id")) //

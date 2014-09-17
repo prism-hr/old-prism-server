@@ -1,9 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.math.BigDecimal;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,8 +9,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -20,7 +16,6 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 
@@ -74,10 +69,6 @@ public class ResourceListFilterConstraint {
 
     @Column(name = "value_decimal_close")
     private BigDecimal valueDecimalClose;
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "RESOURCE_LIST_FILTER_CONSTRAINT_ROLE", joinColumns = {@JoinColumn(name = "resource_list_filter_constraint_id", nullable = false)}, inverseJoinColumns = {@JoinColumn(name = "role_id", nullable = false)})
-    private Set<Role> valueRoles = Sets.newHashSet();
 
     public final Integer getId() {
         return Id;
@@ -175,10 +166,6 @@ public class ResourceListFilterConstraint {
         this.valueDecimalClose = valueDecimalClose;
     }
 
-    public final Set<Role> getValueRoles() {
-        return valueRoles;
-    }
-
     public ResourceListFilterConstraint withFilter(ResourceListFilter filter) {
         this.filter = filter;
         return this;
@@ -227,10 +214,6 @@ public class ResourceListFilterConstraint {
     public ResourceListFilterConstraint withValueDecimalClose(BigDecimal valueDecimalClose) {
         this.valueDecimalClose = valueDecimalClose;
         return this;
-    }
-
-    public void addValueRole(Role role) {
-        valueRoles.add(role);
     }
 
 }

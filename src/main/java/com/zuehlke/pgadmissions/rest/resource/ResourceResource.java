@@ -169,7 +169,6 @@ public class ResourceResource {
         try {
             PrismScope resourceScope = resourceDescriptor.getResourceScope();
             List<ResourceConsoleListRowDTO> rowDTOs = resourceService.getResourceConsoleList(resourceScope, filterDTO, lastSequenceIdentifier);
-            logger.info("Got the " + resourceScope.getLowerCaseName() + " list");
             for (ResourceConsoleListRowDTO rowDTO : rowDTOs) {
                 ResourceListRowRepresentation representation = dozerBeanMapper.map(rowDTO, ResourceListRowRepresentation.class);
                 User user = userService.getCurrentUser();

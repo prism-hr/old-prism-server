@@ -143,7 +143,9 @@ public class ResourceDAO {
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eqProperty("stateAction.state", "state"));
 
-        ResourceListConstraintBuilder.appendLimitCriterion(criteria, filter, conditions, lastIdentifier, recordsToRetrieve);
+        ResourceListConstraintBuilder.appendFilterCriterion(criteria, conditions, filter);
+        ResourceListConstraintBuilder.appendLimitCriterion(criteria, filter, lastIdentifier, recordsToRetrieve);
+        
         return (List<Integer>) criteria.list();
     }
 
@@ -162,7 +164,9 @@ public class ResourceDAO {
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eqProperty("stateAction.state", "state"));
 
-        ResourceListConstraintBuilder.appendLimitCriterion(criteria, filter, conditions, lastIdentifier, recordsToRetrieve);
+        ResourceListConstraintBuilder.appendFilterCriterion(criteria, conditions, filter);
+        ResourceListConstraintBuilder.appendLimitCriterion(criteria, filter, lastIdentifier, recordsToRetrieve);
+        
         return (List<Integer>) criteria.list();
     }
 
@@ -177,7 +181,7 @@ public class ResourceDAO {
 
     public List<Integer> getByMatchingUsersInRole(PrismScope scopeId, String searchTerm, PrismRole roleId) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.property(scopeId.getLowerCaseName())) //
+                .setProjection(Projections.property(scopeId.getLowerCaseName() + ".id")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.ilike("user.fullName", searchTerm, MatchMode.ANYWHERE)) //

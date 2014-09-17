@@ -12,14 +12,12 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ResourceListFilter;
 import com.zuehlke.pgadmissions.domain.ResourceListFilterConstraint;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
@@ -52,16 +50,12 @@ public class ResourceListFilterService {
 
             ResourceListFilterConstraint transientConstraint = new ResourceListFilterConstraint().withFilter(persistentFilter)
                     .withFilterProperty(filterProperty).withFilterExpression(constraintDTO.getFilterExpression()).withNegated(constraintDTO.getNegated())
-                    .withDisplayPosition(i).withValueString(constraintDTO.getValueString())
-                    .withValueDateStart(constraintDTO.getValueDateStart()).withValueDateClose(constraintDTO.getValueDateClose())
-                    .withValueDecimalStart(constraintDTO.getValueDecimalStart()).withValueDecimalClose(constraintDTO.getValueDecimalClose());
+                    .withDisplayPosition(i).withValueString(constraintDTO.getValueString()).withValueDateStart(constraintDTO.getValueDateStart())
+                    .withValueDateClose(constraintDTO.getValueDateClose()).withValueDecimalStart(constraintDTO.getValueDecimalStart())
+                    .withValueDecimalClose(constraintDTO.getValueDecimalClose());
 
             if (filterProperty == FilterProperty.STATE_GROUP) {
                 transientConstraint.setValueStateGroup(stateService.getStateGroupById(constraintDTO.getValueStateGroup()));
-            } else if (filterProperty == FilterProperty.USER_ROLE) {
-                for (PrismRole roleId : constraintDTO.getValueRoles()) {
-                    transientConstraint.addValueRole(roleService.getById(roleId));
-                }
             }
 
             persistentFilter.getConstraints().add(transientConstraint);
@@ -89,12 +83,6 @@ public class ResourceListFilterService {
                         .withValueStateGroup(constraint.getValueStateGroup() != null ? constraint.getValueStateGroup().getId() : null)
                         .withValueDateStart(constraint.getValueDateStart()).withValueDateClose(constraint.getValueDateClose())
                         .withValueDecimalStart(constraint.getValueDecimalStart()).withValueDecimalClose(constraint.getValueDecimalClose());
-
-                if (filterProperty == FilterProperty.USER_ROLE) {
-                    for (Role role : constraint.getValueRoles()) {
-                        constraintDTO.addValueRole(role.getId());
-                    }
-                }
 
                 constraints.add(constraintDTO);
             }

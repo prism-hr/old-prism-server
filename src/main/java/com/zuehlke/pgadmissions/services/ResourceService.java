@@ -1,15 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,9 +50,7 @@ import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
 @Service
 @Transactional
 public class ResourceService {
-    
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     @Autowired
     private ResourceDAO resourceDAO;
 
@@ -272,11 +270,10 @@ public class ResourceService {
         Set<Integer> assigned = Sets.newHashSet();
         Junction conditions = getFilterConditions(scopeId, filter);
         List<Integer> scopeResources = resourceDAO.getAssignedResources(user, scopeId, filter, conditions, lastSequenceIdentifier, maxRecords);
-        logger.info("Got " + scopeId.getLowerCaseName() + "s for " + scopeId.getLowerCaseName() + " roles");
         assigned.addAll(scopeResources);
         for (PrismScope parentScopeId : parentScopeIds) {
-            List<Integer> parentScopeResources = resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, conditions, lastSequenceIdentifier, maxRecords);
-            logger.info("Got " + scopeId.getLowerCaseName() + "s for " + parentScopeId.getLowerCaseName() + " roles");
+            List<Integer> parentScopeResources = resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, conditions, lastSequenceIdentifier,
+                    maxRecords);
             assigned.addAll(parentScopeResources);
         }
         return assigned;
@@ -288,10 +285,10 @@ public class ResourceService {
             if (filter.getMatchMode() == FilterMatchMode.ANY) {
                 conditions = Restrictions.disjunction();
             }
-    
+
             for (ResourceListFilterConstraintDTO constraint : filter.getConstraints()) {
                 FilterProperty property = constraint.getFilterProperty();
-    
+
                 if (FilterProperty.isPermittedFilterProperty(scopeId, property)) {
                     String propertyName = property.getPropertyName();
                     Boolean negated = BooleanUtils.toBoolean(constraint.getNegated());
@@ -305,6 +302,7 @@ public class ResourceService {
                         ResourceListConstraintBuilder.appendStringFilterCriterion(conditions, propertyName, constraint.getValueString(), negated);
                         break;
                     case CONFIRMED_START_DATE:
+                    case DUE_DATE:
                         ResourceListConstraintBuilder.appendDateFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
                                 constraint.getValueDateStart(), constraint.getValueDateClose(), negated);
                         break;
@@ -313,15 +311,12 @@ public class ResourceService {
                         ResourceListConstraintBuilder.appendDateTimeFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
                                 constraint.computeValueDateTimeStart(), constraint.computeValueDateTimeClose(), negated);
                         break;
-                    case DUE_DATE:
-                        ResourceListConstraintBuilder.appendClosingDateFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
-                                constraint.getValueDateStart(), constraint.getValueDateClose(), negated);
-                        break;
                     case INSTITUTION:
                     case PROGRAM:
                     case PROJECT:
-                        List<Integer> parentResourceIds = resourceDAO.getMatchingParentResources(PrismScope.valueOf(property.name()), constraint.getValueString());
-                        ResourceListConstraintBuilder.appendParentResourceFilterCriterion(conditions, propertyName, parentResourceIds, negated);
+                        List<Integer> parentResourceIds = resourceDAO.getMatchingParentResources(PrismScope.valueOf(property.name()),
+                                constraint.getValueString());
+                        ResourceListConstraintBuilder.appendPropertyInFilterCriterion(conditions, propertyName, parentResourceIds, negated);
                         break;
                     case TITLE:
                         ResourceListConstraintBuilder.appendStringFilterCriterion(conditions, propertyName, constraint.getValueString(), negated);
@@ -332,7 +327,7 @@ public class ResourceService {
                         break;
                     case STATE_GROUP:
                         List<PrismState> stateIds = stateService.getStatesByStateGroup(constraint.getValueStateGroup());
-                        ResourceListConstraintBuilder.appendStateGroupFilterCriterion(conditions, propertyName, stateIds, negated);
+                        ResourceListConstraintBuilder.appendPropertyInFilterCriterion(conditions, propertyName, stateIds, negated);
                         break;
                     case SUBMITTED_TIMESTAMP:
                         ResourceListConstraintBuilder.appendDateTimeFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
@@ -340,32 +335,40 @@ public class ResourceService {
                         break;
                     case USER:
                         List<Integer> userIds = userService.getMatchingUsers(constraint.getValueString());
-                        ResourceListConstraintBuilder.appendUserFilterCriterion(conditions, propertyName, userIds, negated);
+                        ResourceListConstraintBuilder.appendPropertyInFilterCriterion(conditions, propertyName, userIds, negated);
                         break;
-                    case USER_ROLE:
-                        appendUserRoleFilterCriteria(scopeId, conditions, constraint, propertyName, negated);
+                    case SUPERVISOR:
+                        appendUserRoleFilterCriteria(scopeId, conditions, constraint, propertyName, Arrays.asList(PrismRole.PROJECT_PRIMARY_SUPERVISOR,
+                                PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.APPLICATION_SUGGESTED_SUPERVISOR, PrismRole.APPLICATION_PRIMARY_SUPERVISOR,
+                                PrismRole.APPLICATION_SECONDARY_SUPERVISOR), negated);
                         break;
                     }
                 } else {
                     ResourceListConstraintBuilder.throwResourceFilterListMissingPropertyError(scopeId, property);
                 }
             }
-    
+
             return conditions;
         }
         return null;
     }
 
     private void appendUserRoleFilterCriteria(PrismScope scopeId, Junction conditions, ResourceListFilterConstraintDTO constraint, String propertyName,
-            Boolean negated) {
-        for (PrismRole valueRole : constraint.getValueRoles()) {
+            List<PrismRole> valueRoles, Boolean negated) {
+        boolean doAddCondition = false;
+        Disjunction condition = Restrictions.disjunction();
+        for (PrismRole valueRole : valueRoles) {
             PrismScope roleScope = valueRole.getScope();
-            if (scopeId != valueRole.getScope()) {
-                propertyName = roleScope.getLowerCaseName() + "." + propertyName;
-            }
+            String actualPropertyName = scopeId == roleScope ? propertyName : roleScope.getLowerCaseName();
             List<Integer> resourceIds = resourceDAO.getByMatchingUsersInRole(scopeId, constraint.getValueString(), valueRole);
-            ResourceListConstraintBuilder.appendUserRoleFilterCriterion(scopeId, conditions, propertyName, resourceIds, negated);
+            if (!resourceIds.isEmpty()) {
+                ResourceListConstraintBuilder.appendPropertyInFilterCriterion(condition, actualPropertyName, resourceIds, negated);
+                doAddCondition = true;
+            }
+        }
+        if (doAddCondition) {
+            conditions.add(condition);
         }
     }
-    
+
 }

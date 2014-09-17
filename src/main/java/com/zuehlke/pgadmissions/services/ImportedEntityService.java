@@ -342,7 +342,6 @@ public class ImportedEntityService {
             }
             persistentImportedEntity.setEnabled(true);
         }
-
     }
 
     private ImportedEntity getSimilarEntityByCode(ImportedEntity transientImportedEntity) {

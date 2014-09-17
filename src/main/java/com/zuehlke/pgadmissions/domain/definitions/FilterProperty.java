@@ -38,7 +38,7 @@ public enum FilterProperty {
     REFERRER("referrer",
             Arrays.asList(FilterExpression.CONTAIN),
             FilterPropertyType.STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
-    USER_ROLE("id", Arrays.asList(FilterExpression.CONTAIN), FilterPropertyType.STRING, Arrays.asList(PrismScope.APPLICATION));
+    SUPERVISOR("id", Arrays.asList(FilterExpression.CONTAIN), FilterPropertyType.STRING, Arrays.asList(PrismScope.APPLICATION));
 
     private String propertyName;
 

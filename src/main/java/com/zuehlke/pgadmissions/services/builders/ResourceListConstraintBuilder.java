@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services.builders;
 
-import java.util.List;
-
 import org.apache.commons.lang3.text.WordUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Junction;
@@ -13,20 +11,13 @@ import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 
 public class ResourceListConstraintBuilder extends ConstraintBuilder {
 
     public static final String SEQUENCE_IDENTIFIER = "sequenceIdentifier";
 
-    public static Criteria appendLimitCriterion(Criteria criteria, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords) {
-        return appendLimitCriterion(criteria, filter, null, lastSequenceIdentifier, maxRecords);
-    }
-    
-    public static Criteria appendLimitCriterion(Criteria criteria, ResourceListFilterDTO filter, Junction conditions, String lastSequenceIdentifier,
-            Integer maxRecords) {
-
+    public static void appendFilterCriterion(Criteria criteria, Junction conditions, ResourceListFilterDTO filter) {
         if (filter.isUrgentOnly()) {
             criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
         }
@@ -34,7 +25,9 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
         if (conditions != null) {
             criteria.add(conditions);
         }
-        
+    }
+    
+    public static Criteria appendLimitCriterion(Criteria criteria, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords) {
         FilterSortOrder sortOrder = filter.getSortOrder();
 
         if (lastSequenceIdentifier != null) {
@@ -55,22 +48,6 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
         Junction restriction = Restrictions.disjunction().add(getRangeFilterCriterion(property, expression, valueDateStart, valueDateClose))
                 .add(getRangeFilterCriterion("previous" + WordUtils.capitalize(property), expression, valueDateStart, valueDateClose));
         applyOrNegateFilterCriterion(conditions, restriction, negated);
-    }
-
-    public static void appendParentResourceFilterCriterion(Junction conditions, String property, List<Integer> parentResourceIds, boolean negated) {
-        applyOrNegateFilterCriterion(conditions, Restrictions.in(property, parentResourceIds), negated);
-    }
-
-    public static void appendStateGroupFilterCriterion(Junction conditions, String property, List<PrismState> stateIds, boolean negated) {
-       appendPropertyInFilterCriterion(conditions, property, stateIds, negated);
-    }
-
-    public static void appendUserFilterCriterion(Junction conditions, String property, List<Integer> userIds, boolean negated) {
-        appendPropertyInFilterCriterion(conditions, property, userIds, negated);
-    }
-
-    public static void appendUserRoleFilterCriterion(PrismScope scopeId, Junction conditions, String property, List<Integer> userRoleIds, boolean negated) {
-        applyOrNegateFilterCriterion(conditions, Restrictions.in(property, userRoleIds), negated);
     }
 
     public static <T extends Resource> void throwResourceFilterListMissingPropertyError(PrismScope scopeId, FilterProperty property) {

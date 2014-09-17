@@ -47,35 +47,17 @@
     </property>
   </bean>
 
-  <bean id="encryptionHelper" class="com.zuehlke.pgadmissions.interceptors.EncryptionHelper" />
-
-  <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-    <property name="basenames">
-      <list>
-        <value>enumLabels</value>
-      </list>
-    </property>
-  </bean>
-
   <!-- freemarker config -->
   <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
     <property name="templateLoaderPaths">
     	<list>
-    		<value>/WEB-INF/freemarker/</value>
      		<value>/WEB-INF/classes/email/</value>
-    		<value>/WEB-INF/classes/sql/</value>
-     		<value>/WEB-INF/classes/xml/</value>
     	</list>
-    </property>
-    <property name="freemarkerVariables">
-      <map>
-        <entry key="encrypter" value-ref="encryptionHelper" />
-      </map>
     </property>
   </bean>
 
   <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
-  
+
   <!-- threadpool executor config -->
   <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
 	<property name="corePoolSize" value="5" />

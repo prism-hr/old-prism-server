@@ -345,6 +345,11 @@ public class Institution extends ParentResource {
         return this;
     }
 
+    public Institution withCurrency(final String currency) {
+        this.currency = currency;
+        return this;
+    }
+
     public Institution withState(State state) {
         this.state = state;
         return this;

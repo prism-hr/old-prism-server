@@ -57,7 +57,7 @@ public class InstitutionService {
     public List<InstitutionDomicile> getDomiciles() {
         return institutionDAO.getDomciles();
     }
-    
+
     public List<InstitutionDomicileRegion> getTopLevelRegions(InstitutionDomicile domicile) {
         return institutionDAO.getTopLevelRegions(domicile);
     }
@@ -85,7 +85,8 @@ public class InstitutionService {
         Document logoDocument = documentService.getByid(institutionDTO.getLogoDocumentId());
 
         return new Institution().withSystem(systemService.getSystem()).withDomicile(institutionCountry).withAddress(institutionAddress)
-                .withTitle(institutionDTO.getTitle()).withHomepage(institutionDTO.getHomepage()).withLogoDocument(logoDocument).withUser(user);
+                .withTitle(institutionDTO.getTitle()).withHomepage(institutionDTO.getHomepage()).withLogoDocument(logoDocument)
+                .withCurrency(institutionDTO.getCurrency()).withUser(user);
     }
 
     public void save(Institution institution) {

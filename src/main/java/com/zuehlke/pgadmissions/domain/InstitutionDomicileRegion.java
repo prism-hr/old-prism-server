@@ -25,15 +25,18 @@ public class InstitutionDomicileRegion {
     @ManyToOne
     @JoinColumn(name = "parent_region_id")
     private InstitutionDomicileRegion parentRegion;
+    
+    @Column(name = "nested_path", nullable = false)
+    private String nestedPath;
+
+    @Column(name = "nested_level", nullable = false)
+    private Integer nestedLevel;
 
     @Column(name = "region_type", nullable = false)
     private String regionType;
 
     @Column(name = "name", nullable = false)
     private String name;
-
-    @Column(name = "other_name")
-    private String otherName;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
@@ -65,6 +68,22 @@ public class InstitutionDomicileRegion {
         this.parentRegion = parentRegion;
     }
 
+    public final String getNestedPath() {
+        return nestedPath;
+    }
+
+    public final void setNestedPath(String nestedPath) {
+        this.nestedPath = nestedPath;
+    }
+
+    public final Integer getNestedLevel() {
+        return nestedLevel;
+    }
+
+    public final void setNestedLevel(Integer nestedLevel) {
+        this.nestedLevel = nestedLevel;
+    }
+
     public String getRegionType() {
         return regionType;
     }
@@ -81,19 +100,11 @@ public class InstitutionDomicileRegion {
         this.name = name;
     }
 
-    public String getOtherName() {
-        return otherName;
-    }
-
-    public void setOtherName(String otherName) {
-        this.otherName = otherName;
-    }
-
-    public boolean isEnabled() {
+    public Boolean getEnabled() {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -115,6 +126,16 @@ public class InstitutionDomicileRegion {
         this.parentRegion = parentRegion;
         return this;
     }
+    
+    public InstitutionDomicileRegion withNestedPath(String nestedPath) {
+        this.nestedPath = nestedPath;
+        return this;
+    }
+    
+    public InstitutionDomicileRegion withNestedLevel(Integer nestedLevel) {
+        this.nestedLevel = nestedLevel;
+        return this;
+    }
 
     public InstitutionDomicileRegion withRegionType(String regionType) {
         this.regionType = regionType;
@@ -123,11 +144,6 @@ public class InstitutionDomicileRegion {
 
     public InstitutionDomicileRegion withName(String name) {
         this.name = name;
-        return this;
-    }
-
-    public InstitutionDomicileRegion withOtherName(String otherName) {
-        this.otherName = otherName;
         return this;
     }
 

@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.rest.representation;
 
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
 public class InstitutionDomicileRegionRepresentation {
 
     private String id;
@@ -11,6 +13,8 @@ public class InstitutionDomicileRegionRepresentation {
     private String regionType;
 
     private String name;
+    
+    private Integer nestedLevel;
 
     public String getId() {
         return id;
@@ -42,5 +46,13 @@ public class InstitutionDomicileRegionRepresentation {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public final Integer getNestedLevel() {
+        return nestedLevel;
+    }
+
+    public final void setNestedLevel(Integer nestedLevel) {
+        this.nestedLevel = nestedLevel;
     }
 }

@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,11 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
@@ -55,12 +50,12 @@ import com.zuehlke.pgadmissions.iso.jaxb.CategoryNameType;
 import com.zuehlke.pgadmissions.iso.jaxb.CategoryType;
 import com.zuehlke.pgadmissions.iso.jaxb.CountryType;
 import com.zuehlke.pgadmissions.iso.jaxb.ShortNameType;
-import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionLocaleType;
 import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionType;
 import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
+import com.zuehlke.pgadmissions.utils.ConversionUtils;
 import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Service
@@ -176,16 +171,16 @@ public class ImportedEntityService {
     public void mergeImportedLanguageQualificationType(Institution institution, LanguageQualificationType languageQualificationTypeDefinition) throws Exception {
         ImportedLanguageQualificationType transientImportedLanguageQualificationType = new ImportedLanguageQualificationType().withInstitution(institution)
                 .withCode(languageQualificationTypeDefinition.getCode()).withName(languageQualificationTypeDefinition.getName())
-                .withMinimumOverallScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMinimumOverallScore()))
-                .withMaximumOverallScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMaximumOverallScore()))
-                .withMinimumReadingScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMinimumReadingScore()))
-                .withMaximumReadingScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMaximumReadingScore()))
-                .withMinimumWritingScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMinimumWritingScore()))
-                .withMaximumWritingScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMaximumWritingScore()))
-                .withMinimumSpeakingScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMinimumSpeakingScore()))
-                .withMaximumSpeakingScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMaximumSpeakingScore()))
-                .withMinimumListeningScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMinimumListeningScore()))
-                .withMaximumListeningScore(convertFloatToBigDecimal(languageQualificationTypeDefinition.getMaximumListeningScore()));
+                .withMinimumOverallScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumOverallScore()))
+                .withMaximumOverallScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumOverallScore()))
+                .withMinimumReadingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumReadingScore()))
+                .withMaximumReadingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumReadingScore()))
+                .withMinimumWritingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumWritingScore()))
+                .withMaximumWritingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumWritingScore()))
+                .withMinimumSpeakingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumSpeakingScore()))
+                .withMaximumSpeakingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumSpeakingScore()))
+                .withMinimumListeningScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumListeningScore()))
+                .withMaximumListeningScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumListeningScore()));
 
         createOrUpdateImportedEntity(transientImportedLanguageQualificationType);
     }
@@ -225,6 +220,7 @@ public class ImportedEntityService {
         String alpha2Code = null;
         List<SubdivisionType> subdivisions = Lists.newLinkedList();
         Map<Short, String> categories = Maps.newHashMap();
+
         for (JAXBElement<?> element : country.getAlpha2CodeOrAlpha3CodeOrNumericCode()) {
             String elementName = element.getName().getLocalPart();
             if (elementName.equals("status")) {
@@ -247,14 +243,17 @@ public class ImportedEntityService {
                 }
             }
         }
+
         String currency = countryCurrencies.get(alpha2Code);
 
         if (Strings.isNullOrEmpty(currency) || status == null || status.equals("exceptionally-reserved") || status.equals("indeterminately-reserved")) {
             return;
         }
 
-        InstitutionDomicile institutionDomicile = new InstitutionDomicile().withId(alpha2Code).withName(countryName).withCurrency(currency).withEnabled(true);
-        entityService.merge(institutionDomicile);
+        InstitutionDomicile transientInstitutionDomicile = new InstitutionDomicile().withId(alpha2Code).withName(countryName).withCurrency(currency)
+                .withEnabled(true);
+        InstitutionDomicile institutionDomicile = (InstitutionDomicile) entityService.merge(transientInstitutionDomicile);
+
         mergeInstitutionDomicileRegions(institutionDomicile, subdivisions, categories);
     }
 
@@ -374,59 +373,32 @@ public class ImportedEntityService {
     }
 
     private void mergeInstitutionDomicileRegions(InstitutionDomicile domicile, List<SubdivisionType> subdivisions, Map<Short, String> categories) {
-        InstitutionDomicileSubdivisionToRegionConverter converter = new InstitutionDomicileSubdivisionToRegionConverter(domicile, null, categories);
-        Iterable<InstitutionDomicileRegion> regions = Iterables.concat(Iterables.transform(subdivisions, converter));
-
-        for (InstitutionDomicileRegion region : regions) {
-            entityService.merge(region);
+        for (SubdivisionType subdivision : subdivisions) {
+            String name = subdivision.getSubdivisionLocale().get(0).getSubdivisionLocaleName();
+            InstitutionDomicileRegion transientRegion = new InstitutionDomicileRegion().withId(subdivision.getSubdivisionCode().getValue()).withEnabled(true)
+                    .withDomicile(domicile).withParentRegion(null).withNestedPath(truncateString(name, 20)).withNestedLevel(0).withName(name)
+                    .withRegionType(categories.get(subdivision.getCategoryId()));
+            InstitutionDomicileRegion persistentRegion = (InstitutionDomicileRegion) entityService.merge(transientRegion);
+            mergeNestedInstitutionDomicileRegions(domicile, persistentRegion, subdivision, categories);
         }
     }
 
-    private BigDecimal convertFloatToBigDecimal(Float input) throws Exception {
-        return input == null ? null : BigDecimal.valueOf(input);
+    private void mergeNestedInstitutionDomicileRegions(InstitutionDomicile domicile, InstitutionDomicileRegion persistentRegion, SubdivisionType subdivision,
+            Map<Short, String> categories) {
+        for (SubdivisionType nestedSubdivision : subdivision.getSubdivision()) {
+            String name = nestedSubdivision.getSubdivisionLocale().get(0).getSubdivisionLocaleName();
+            InstitutionDomicileRegion transientNestedRegion = new InstitutionDomicileRegion().withId(nestedSubdivision.getSubdivisionCode().getValue())
+                    .withEnabled(true).withDomicile(domicile).withParentRegion(persistentRegion)
+                    .withNestedPath(persistentRegion.getNestedPath() + "." + truncateString(name, 20)).withNestedLevel(persistentRegion.getNestedLevel() + 1)
+                    .withName(name).withRegionType(categories.get(nestedSubdivision.getCategoryId()));
+            InstitutionDomicileRegion persistentNestedRegion = (InstitutionDomicileRegion) entityService.merge(transientNestedRegion);
+            mergeNestedInstitutionDomicileRegions(domicile, persistentNestedRegion, nestedSubdivision, categories);
+        }
     }
 
-    private static class InstitutionDomicileSubdivisionToRegionConverter implements Function<SubdivisionType, Iterable<InstitutionDomicileRegion>> {
-
-        private InstitutionDomicile domicile;
-
-        private InstitutionDomicileRegion parentRegion;
-
-        private Map<Short, String> categories;
-
-        public InstitutionDomicileSubdivisionToRegionConverter(InstitutionDomicile domicile, InstitutionDomicileRegion parentRegion,
-                Map<Short, String> categories) {
-            this.domicile = domicile;
-            this.parentRegion = parentRegion;
-            this.categories = categories;
-        }
-
-        @Override
-        public Iterable<InstitutionDomicileRegion> apply(SubdivisionType subdivision) {
-            List<SubdivisionLocaleType> locales = subdivision.getSubdivisionLocale();
-            String name = locales.get(0).getSubdivisionLocaleName();
-            List<String> otherNames = Lists.newLinkedList();
-            for (int i = 1; i < locales.size(); i++) {
-                otherNames.add(locales.get(i).getSubdivisionLocaleName());
-            }
-            String otherName = null;
-            if (!otherNames.isEmpty()) {
-                otherName = Joiner.on(",").join(otherNames);
-            }
-            String regionType = categories.get(subdivision.getCategoryId());
-
-            InstitutionDomicileRegion currentRegion = new InstitutionDomicileRegion().withId(subdivision.getSubdivisionCode().getValue()).withEnabled(true)
-                    .withDomicile(domicile).withParentRegion(parentRegion).withName(name).withOtherName(otherName).withRegionType(regionType);
-
-            if (subdivision.getSubdivision().isEmpty()) {
-                return Lists.newArrayList(currentRegion);
-            }
-            InstitutionDomicileSubdivisionToRegionConverter subConverter = new InstitutionDomicileSubdivisionToRegionConverter(domicile, currentRegion,
-                    categories);
-            Iterable<InstitutionDomicileRegion> subregions = Iterables.concat(Iterables.transform(subdivision.getSubdivision(), subConverter));
-            return Iterables.concat(Collections.singleton(currentRegion), subregions);
-        }
-
+    private String truncateString(String string, int characters) {
+        int length = string.length();
+        return string.substring(0, length < characters ? length : characters);
     }
 
 }

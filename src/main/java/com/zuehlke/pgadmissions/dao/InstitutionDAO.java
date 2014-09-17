@@ -34,12 +34,11 @@ public class InstitutionDAO {
                 .list();
     }
     
-    public List<InstitutionDomicileRegion> getTopLevelRegions(InstitutionDomicile domicile) {
+    public List<InstitutionDomicileRegion> getRegionsByDomicile(InstitutionDomicile domicile) {
         return sessionFactory.getCurrentSession().createCriteria(InstitutionDomicileRegion.class) //
                 .add(Restrictions.eq("domicile", domicile)) //
-                .add(Restrictions.isNull("parentRegion")) //
                 .add(Restrictions.eq("enabled", true)) //
-                .addOrder(Order.asc("name")) //
+                .addOrder(Order.asc("nestedPath")) //
                 .list();
     }
 

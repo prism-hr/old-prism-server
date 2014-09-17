@@ -15,7 +15,7 @@ public enum FilterProperty {
     PROGRAM("program.id", Arrays.asList(FilterExpression.CONTAIN), FilterPropertyType.STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT)),
     PROJECT("project.id", Arrays.asList(FilterExpression.CONTAIN), FilterPropertyType.STRING, Arrays.asList(PrismScope.APPLICATION)),
     TITLE("title", Arrays.asList(FilterExpression.CONTAIN), FilterPropertyType.STRING, Arrays.asList(PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
-    STATE_GROUP("state.id", Arrays.asList(FilterExpression.EQUAL), FilterPropertyType.STATE_GROUP, Arrays.asList(PrismScope.APPLICATION)),
+    STATE_GROUP("state.id", Arrays.asList(FilterExpression.EQUAL), FilterPropertyType.STATE_GROUP, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
     CREATED_TIMESTAMP("createdTimestamp", Arrays.asList(FilterExpression.BETWEEN, FilterExpression.GREATER, FilterExpression.LESSER),
             FilterPropertyType.DATE, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
     SUBMITTED_TIMESTAMP("submittedTimestamp",

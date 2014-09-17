@@ -48,15 +48,15 @@ public class Advert {
     @Column(name = "month_study_duration_maximum")
     private Integer studyDurationMaximum;
 
-    @Column(name = "currency")
-    private String currency;
-
-    @Column(name = "currency_at_locale")
-    private String currencyAtLocale;
-
     @Column(name = "fee_interval")
     @Enumerated(EnumType.STRING)
     private DurationUnit feeInterval;
+    
+    @Column(name = "fee_currency")
+    private String feeCurrency;
+
+    @Column(name = "fee_currency_at_locale")
+    private String feeCurrencyAtLocale;
 
     @Column(name = "month_fee_minimum_specified")
     private BigDecimal monthFeeMinimumSpecified;
@@ -82,6 +82,12 @@ public class Advert {
     @Column(name = "year_fee_maximum_at_locale")
     private BigDecimal yearFeeMaximumAtLocale;
 
+    @Column(name = "pay_currency")
+    private String payCurrency;
+
+    @Column(name = "pay_currency_at_locale")
+    private String payCurrencyAtLocale;
+    
     @Column(name = "pay_interval")
     @Enumerated(EnumType.STRING)
     private DurationUnit payInterval;
@@ -198,28 +204,28 @@ public class Advert {
         this.studyDurationMaximum = studyDurationMaximum;
     }
 
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
-
-    public String getCurrencyAtLocale() {
-        return currencyAtLocale;
-    }
-
-    public void setCurrencyAtLocale(String currencyAtLocale) {
-        this.currencyAtLocale = currencyAtLocale;
-    }
-
     public DurationUnit getFeeInterval() {
         return feeInterval;
     }
 
     public void setFeeInterval(DurationUnit feeInterval) {
         this.feeInterval = feeInterval;
+    }
+    
+    public String getFeeCurrency() {
+        return feeCurrency;
+    }
+
+    public void setFeeCurrency(String feeCurrency) {
+        this.feeCurrency = feeCurrency;
+    }
+
+    public String getCurrencyAtLocale() {
+        return feeCurrencyAtLocale;
+    }
+
+    public void setCurrencyAtLocale(String currencyAtLocale) {
+        this.feeCurrencyAtLocale = currencyAtLocale;
     }
 
     public BigDecimal getMonthFeeMinimumSpecified() {
@@ -284,6 +290,14 @@ public class Advert {
 
     public void setYearFeeMaximumAtLocale(BigDecimal yearFeeMaximumAtLocale) {
         this.yearFeeMaximumAtLocale = yearFeeMaximumAtLocale;
+    }
+
+    public final String getPayCurrencyAtLocale() {
+        return payCurrencyAtLocale;
+    }
+
+    public final void setPayCurrencyAtLocale(String payCurrencyAtLocale) {
+        this.payCurrencyAtLocale = payCurrencyAtLocale;
     }
 
     public DurationUnit getPayInterval() {

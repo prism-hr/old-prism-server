@@ -6,27 +6,31 @@ import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramTypeConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramTypeImmediate;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramTypeScheduled;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramTypeStartConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramTypeStartImmediate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramTypeStartScheduled;
 
 public enum PrismProgramType {
 
-    UNDERGRADUATE_STUDY(new PrismProgramTypeScheduled().withStartMonth(DateTimeConstants.SEPTEMBER).withStartWeek(3).withStartDay(DateTimeConstants.MONDAY), //
+    UNDERGRADUATE_STUDY(true, false, new PrismProgramTypeStartScheduled().withStartMonth(DateTimeConstants.SEPTEMBER).withStartWeek(3).withStartDay(DateTimeConstants.MONDAY), //
             new String[] {}), //
-    POSTGRADUATE_STUDY(new PrismProgramTypeScheduled().withStartMonth(DateTimeConstants.SEPTEMBER).withStartWeek(3).withStartDay(DateTimeConstants.MONDAY), //
+    POSTGRADUATE_STUDY(true, false, new PrismProgramTypeStartScheduled().withStartMonth(DateTimeConstants.SEPTEMBER).withStartWeek(3).withStartDay(DateTimeConstants.MONDAY), //
             new String[] { "mres", "md(res)" }), //
-    POSTGRADUATE_RESEARCH(new PrismProgramTypeScheduled().withStartMonth(DateTimeConstants.SEPTEMBER).withStartWeek(3).withStartDay(DateTimeConstants.MONDAY), //
+    POSTGRADUATE_RESEARCH(true, true, new PrismProgramTypeStartScheduled().withStartMonth(DateTimeConstants.SEPTEMBER).withStartWeek(3).withStartDay(DateTimeConstants.MONDAY), //
             new String[] { "research degree", "engineering doctorate" }), //
-    STUDY_SCHOLARSHIP(new PrismProgramTypeScheduled().withStartMonth(DateTimeConstants.SEPTEMBER).withStartWeek(3).withStartDay(DateTimeConstants.MONDAY),
+    CONTINUING_PROFESSIONAL_DEVELOPMENT(true, false, new PrismProgramTypeStartImmediate().withStartDay(DateTimeConstants.MONDAY), new String[] {}), //
+    STUDY_SCHOLARSHIP(false, true, new PrismProgramTypeStartScheduled().withStartMonth(DateTimeConstants.SEPTEMBER).withStartWeek(3).withStartDay(DateTimeConstants.MONDAY),
             new String[] {}), //
-    INTERNSHIP(new PrismProgramTypeImmediate().withStartDay(DateTimeConstants.MONDAY), new String[] {}), //
-    SECONDMENT(new PrismProgramTypeImmediate().withStartDay(DateTimeConstants.MONDAY), new String[] { "visiting research" }), //
-    EMPLOYMENT(new PrismProgramTypeImmediate().withStartDay(DateTimeConstants.MONDAY), new String[] {}), //
-    CONTINUING_PROFESSIONAL_DEVELOPMENT(new PrismProgramTypeImmediate().withStartDay(DateTimeConstants.MONDAY), new String[] {}), //
-    UNCLASSIFIED(new PrismProgramTypeImmediate().withStartDay(DateTimeConstants.MONDAY), new String[] {});
+    INTERNSHIP(false, true, new PrismProgramTypeStartImmediate().withStartDay(DateTimeConstants.MONDAY), new String[] {}), //
+    SECONDMENT(false, true, new PrismProgramTypeStartImmediate().withStartDay(DateTimeConstants.MONDAY), new String[] { "visiting research" }), //
+    EMPLOYMENT(false, true, new PrismProgramTypeStartImmediate().withStartDay(DateTimeConstants.MONDAY), new String[] {}), //
+    UNCLASSIFIED(false, false, new PrismProgramTypeStartImmediate().withStartDay(DateTimeConstants.MONDAY), new String[] {});
 
-    private PrismProgramTypeConfiguration configuration;
+    private boolean expectFee;
+    
+    private boolean expectPay;
+
+    private PrismProgramTypeStartConfiguration startConfiguration;
 
     private String[] prefixes;
 
@@ -40,9 +44,25 @@ public enum PrismProgramType {
         }
     }
 
-    private PrismProgramType(PrismProgramTypeConfiguration configuration, String[] prefixes) {
-        this.configuration = configuration;
+    private PrismProgramType(boolean expectFee, boolean expectPay, PrismProgramTypeStartConfiguration startConfiguration, String[] prefixes) {
+        this.startConfiguration = startConfiguration;
         this.prefixes = prefixes;
+    }
+
+    public final boolean isExpectFee() {
+        return expectFee;
+    }
+
+    public final void setExpectFee(boolean expectFee) {
+        this.expectFee = expectFee;
+    }
+
+    public final boolean isExpectPay() {
+        return expectPay;
+    }
+
+    public final void setExpectPay(boolean expectPay) {
+        this.expectPay = expectPay;
     }
 
     public static PrismProgramType findValueFromString(String toSearchIn) {
@@ -63,11 +83,11 @@ public enum PrismProgramType {
     }
 
     public LocalDate getImmediateStartDate() {
-        return configuration.getImmediateStartDate();
+        return startConfiguration.getImmediateStartDate();
     }
 
     public LocalDate getRecommendedStartDate() {
-        return configuration.getRecommendedStartDate();
+        return startConfiguration.getRecommendedStartDate();
     }
 
 }

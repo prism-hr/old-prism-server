@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import org.joda.time.LocalDate;
 
-public abstract class PrismProgramTypeConfiguration {
+public abstract class PrismProgramTypeStartConfiguration {
     
     private Integer startDay;
     
@@ -17,7 +17,7 @@ public abstract class PrismProgramTypeConfiguration {
     }
     
     public boolean isImmediateStart() {
-        return this.getClass() == PrismProgramTypeImmediate.class;
+        return this.getClass() == PrismProgramTypeStartImmediate.class;
     }
 
     public LocalDate getImmediateStartDate() {

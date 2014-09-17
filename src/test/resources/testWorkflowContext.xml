@@ -94,5 +94,14 @@
 	    <property name="maxPoolSize" value="10" />
 	    <property name="WaitForTasksToCompleteOnShutdown" value="true" />
     </bean>
+    
+    <!-- freemarker config -->
+  	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+    	<property name="templateLoaderPaths">
+    		<list>
+     			<value>/WEB-INF/classes/email/</value>
+    		</list>
+    	</property>
+  	</bean>
 
 </beans>

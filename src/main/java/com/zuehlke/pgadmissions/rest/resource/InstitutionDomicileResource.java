@@ -48,7 +48,7 @@ public class InstitutionDomicileResource {
     @ResponseBody
     public List<InstitutionDomicileRegionRepresentation> getRegions(@PathVariable String domicileId) {
         InstitutionDomicile domicile = entityService.getByProperty(InstitutionDomicile.class, "id", domicileId);
-        List<InstitutionDomicileRegion> regions = institutionService.getTopLevelRegions(domicile);
+        List<InstitutionDomicileRegion> regions = institutionService.getRegionsByDomicile(domicile);
 
         List<InstitutionDomicileRegionRepresentation> regionRepresentations = Lists.newArrayListWithCapacity(regions.size());
         for (InstitutionDomicileRegion region : regions) {

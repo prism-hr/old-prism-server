@@ -1,46 +1,19 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.math.BigDecimal;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
-import org.apache.solr.analysis.LowerCaseFilterFactory;
-import org.apache.solr.analysis.SnowballPorterFilterFactory;
-import org.apache.solr.analysis.StandardTokenizerFactory;
-import org.apache.solr.analysis.StopFilterFactory;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.AnalyzerDef;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Parameter;
-import org.hibernate.search.annotations.Store;
-import org.hibernate.search.annotations.TokenFilterDef;
-import org.hibernate.search.annotations.TokenizerDef;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
+import org.apache.solr.analysis.*;
+import org.hibernate.search.annotations.*;
+import org.hibernate.search.annotations.Parameter;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Set;
 
 @AnalyzerDef(name = "advertAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
         @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
-        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class) })
+        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class)})
 @Entity
 @Table(name = "ADVERT")
 @Indexed
@@ -161,27 +134,27 @@ public class Advert {
     @OneToMany(mappedBy = "advert")
     private Set<AdvertRecruitmentPreference> preferences = Sets.newHashSet();
 
-    public final Integer getId() {
+    public Integer getId() {
         return id;
     }
 
-    public final void setId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public final String getTitle() {
+    public String getTitle() {
         return title;
     }
 
-    public final void setTitle(String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public final String getSummary() {
+    public String getSummary() {
         return summary;
     }
 
-    public final void setSummary(String summary) {
+    public void setSummary(String summary) {
         this.summary = summary;
     }
 
@@ -193,11 +166,11 @@ public class Advert {
         this.description = description;
     }
 
-    public final String getApplyLink() {
+    public String getApplyLink() {
         return applyLink;
     }
 
-    public final void setApplyLink(String applyLink) {
+    public void setApplyLink(String applyLink) {
         this.applyLink = applyLink;
     }
 
@@ -209,179 +182,179 @@ public class Advert {
         this.address = address;
     }
 
-    public final Integer getStudyDurationMinimum() {
+    public Integer getStudyDurationMinimum() {
         return studyDurationMinimum;
     }
 
-    public final void setStudyDurationMinimum(Integer studyDurationMinimum) {
+    public void setStudyDurationMinimum(Integer studyDurationMinimum) {
         this.studyDurationMinimum = studyDurationMinimum;
     }
 
-    public final Integer getStudyDurationMaximum() {
+    public Integer getStudyDurationMaximum() {
         return studyDurationMaximum;
     }
 
-    public final void setStudyDurationMaximum(Integer studyDurationMaximum) {
+    public void setStudyDurationMaximum(Integer studyDurationMaximum) {
         this.studyDurationMaximum = studyDurationMaximum;
     }
 
-    public final String getCurrency() {
+    public String getCurrency() {
         return currency;
     }
 
-    public final void setCurrency(String currency) {
+    public void setCurrency(String currency) {
         this.currency = currency;
     }
 
-    public final String getCurrencyAtLocale() {
+    public String getCurrencyAtLocale() {
         return currencyAtLocale;
     }
 
-    public final void setCurrencyAtLocale(String currencyAtLocale) {
+    public void setCurrencyAtLocale(String currencyAtLocale) {
         this.currencyAtLocale = currencyAtLocale;
     }
 
-    public final DurationUnit getFeeInterval() {
+    public DurationUnit getFeeInterval() {
         return feeInterval;
     }
 
-    public final void setFeeInterval(DurationUnit feeInterval) {
+    public void setFeeInterval(DurationUnit feeInterval) {
         this.feeInterval = feeInterval;
     }
 
-    public final BigDecimal getMonthFeeMinimumSpecified() {
+    public BigDecimal getMonthFeeMinimumSpecified() {
         return monthFeeMinimumSpecified;
     }
 
-    public final void setMonthFeeMinimumSpecified(BigDecimal monthFeeMinimumSpecified) {
+    public void setMonthFeeMinimumSpecified(BigDecimal monthFeeMinimumSpecified) {
         this.monthFeeMinimumSpecified = monthFeeMinimumSpecified;
     }
 
-    public final BigDecimal getMonthFeeMaximumSpecified() {
+    public BigDecimal getMonthFeeMaximumSpecified() {
         return monthFeeMaximumSpecified;
     }
 
-    public final void setMonthFeeMaximumSpecified(BigDecimal monthFeeMaximumSpecified) {
+    public void setMonthFeeMaximumSpecified(BigDecimal monthFeeMaximumSpecified) {
         this.monthFeeMaximumSpecified = monthFeeMaximumSpecified;
     }
 
-    public final BigDecimal getYearFeeMinimumSpecified() {
+    public BigDecimal getYearFeeMinimumSpecified() {
         return yearFeeMinimumSpecified;
     }
 
-    public final void setYearFeeMinimumSpecified(BigDecimal yearFeeMinimumSpecified) {
+    public void setYearFeeMinimumSpecified(BigDecimal yearFeeMinimumSpecified) {
         this.yearFeeMinimumSpecified = yearFeeMinimumSpecified;
     }
 
-    public final BigDecimal getYearFeeMaximumSpecified() {
+    public BigDecimal getYearFeeMaximumSpecified() {
         return yearFeeMaximumSpecified;
     }
 
-    public final void setYearFeeMaximumSpecified(BigDecimal yearFeeMaximumSpecified) {
+    public void setYearFeeMaximumSpecified(BigDecimal yearFeeMaximumSpecified) {
         this.yearFeeMaximumSpecified = yearFeeMaximumSpecified;
     }
 
-    public final BigDecimal getMonthFeeMinimumAtLocale() {
+    public BigDecimal getMonthFeeMinimumAtLocale() {
         return monthFeeMinimumAtLocale;
     }
 
-    public final void setMonthFeeMinimumAtLocale(BigDecimal monthFeeMinimumAtLocale) {
+    public void setMonthFeeMinimumAtLocale(BigDecimal monthFeeMinimumAtLocale) {
         this.monthFeeMinimumAtLocale = monthFeeMinimumAtLocale;
     }
 
-    public final BigDecimal getMonthFeeMaximumAtLocale() {
+    public BigDecimal getMonthFeeMaximumAtLocale() {
         return monthFeeMaximumAtLocale;
     }
 
-    public final void setMonthFeeMaximumAtLocale(BigDecimal monthFeeMaximumAtLocale) {
+    public void setMonthFeeMaximumAtLocale(BigDecimal monthFeeMaximumAtLocale) {
         this.monthFeeMaximumAtLocale = monthFeeMaximumAtLocale;
     }
 
-    public final BigDecimal getYearFeeMinimumAtLocale() {
+    public BigDecimal getYearFeeMinimumAtLocale() {
         return yearFeeMinimumAtLocale;
     }
 
-    public final void setYearFeeMinimumAtLocale(BigDecimal yearFeeMinimumAtLocale) {
+    public void setYearFeeMinimumAtLocale(BigDecimal yearFeeMinimumAtLocale) {
         this.yearFeeMinimumAtLocale = yearFeeMinimumAtLocale;
     }
 
-    public final BigDecimal getYearFeeMaximumAtLocale() {
+    public BigDecimal getYearFeeMaximumAtLocale() {
         return yearFeeMaximumAtLocale;
     }
 
-    public final void setYearFeeMaximumAtLocale(BigDecimal yearFeeMaximumAtLocale) {
+    public void setYearFeeMaximumAtLocale(BigDecimal yearFeeMaximumAtLocale) {
         this.yearFeeMaximumAtLocale = yearFeeMaximumAtLocale;
     }
 
-    public final DurationUnit getPayInterval() {
+    public DurationUnit getPayInterval() {
         return payInterval;
     }
 
-    public final void setPayInterval(DurationUnit payInterval) {
+    public void setPayInterval(DurationUnit payInterval) {
         this.payInterval = payInterval;
     }
 
-    public final BigDecimal getMonthPayMinimumSpecified() {
+    public BigDecimal getMonthPayMinimumSpecified() {
         return monthPayMinimumSpecified;
     }
 
-    public final void setMonthPayMinimumSpecified(BigDecimal monthPayMinimumSpecified) {
+    public void setMonthPayMinimumSpecified(BigDecimal monthPayMinimumSpecified) {
         this.monthPayMinimumSpecified = monthPayMinimumSpecified;
     }
 
-    public final BigDecimal getMonthPayMaximumSpecified() {
+    public BigDecimal getMonthPayMaximumSpecified() {
         return monthPayMaximumSpecified;
     }
 
-    public final void setMonthPayMaximumSpecified(BigDecimal monthPayMaximumSpecified) {
+    public void setMonthPayMaximumSpecified(BigDecimal monthPayMaximumSpecified) {
         this.monthPayMaximumSpecified = monthPayMaximumSpecified;
     }
 
-    public final BigDecimal getYearPayMinimumSpecified() {
+    public BigDecimal getYearPayMinimumSpecified() {
         return yearPayMinimumSpecified;
     }
 
-    public final void setYearPayMinimumSpecified(BigDecimal yearPayMinimumSpecified) {
+    public void setYearPayMinimumSpecified(BigDecimal yearPayMinimumSpecified) {
         this.yearPayMinimumSpecified = yearPayMinimumSpecified;
     }
 
-    public final BigDecimal getYearPayMaximumSpecified() {
+    public BigDecimal getYearPayMaximumSpecified() {
         return yearPayMaximumSpecified;
     }
 
-    public final void setYearPayMaximumSpecified(BigDecimal yearPayMaximumSpecified) {
+    public void setYearPayMaximumSpecified(BigDecimal yearPayMaximumSpecified) {
         this.yearPayMaximumSpecified = yearPayMaximumSpecified;
     }
 
-    public final BigDecimal getMonthPayMinimumAtLocale() {
+    public BigDecimal getMonthPayMinimumAtLocale() {
         return monthPayMinimumAtLocale;
     }
 
-    public final void setMonthPayMinimumAtLocale(BigDecimal monthPayMinimumAtLocale) {
+    public void setMonthPayMinimumAtLocale(BigDecimal monthPayMinimumAtLocale) {
         this.monthPayMinimumAtLocale = monthPayMinimumAtLocale;
     }
 
-    public final BigDecimal getMonthPayMaximumAtLocale() {
+    public BigDecimal getMonthPayMaximumAtLocale() {
         return monthPayMaximumAtLocale;
     }
 
-    public final void setMonthPayMaximumAtLocale(BigDecimal monthPayMaximumAtLocale) {
+    public void setMonthPayMaximumAtLocale(BigDecimal monthPayMaximumAtLocale) {
         this.monthPayMaximumAtLocale = monthPayMaximumAtLocale;
     }
 
-    public final BigDecimal getYearPayMinimumAtLocale() {
+    public BigDecimal getYearPayMinimumAtLocale() {
         return yearPayMinimumAtLocale;
     }
 
-    public final void setYearPayMinimumAtLocale(BigDecimal yearPayMinimumAtLocale) {
+    public void setYearPayMinimumAtLocale(BigDecimal yearPayMinimumAtLocale) {
         this.yearPayMinimumAtLocale = yearPayMinimumAtLocale;
     }
 
-    public final BigDecimal getYearPayMaximumAtLocale() {
+    public BigDecimal getYearPayMaximumAtLocale() {
         return yearPayMaximumAtLocale;
     }
 
-    public final void setYearPayMaximumAtLocale(BigDecimal yearPayMaximumAtLocale) {
+    public void setYearPayMaximumAtLocale(BigDecimal yearPayMaximumAtLocale) {
         this.yearPayMaximumAtLocale = yearPayMaximumAtLocale;
     }
 
@@ -393,20 +366,28 @@ public class Advert {
         this.closingDate = closingDate;
     }
 
-    public final String getSequenceIdentifier() {
+    public String getSequenceIdentifier() {
         return sequenceIdentifier;
     }
 
-    public final void setSequenceIdentifier(String sequenceIdentifier) {
+    public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public final Program getProgram() {
+    public Program getProgram() {
         return program;
     }
 
-    public final Project getProject() {
+    public void setProgram(Program program) {
+        this.program = program;
+    }
+
+    public Project getProject() {
         return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     public Set<AdvertClosingDate> getClosingDates() {

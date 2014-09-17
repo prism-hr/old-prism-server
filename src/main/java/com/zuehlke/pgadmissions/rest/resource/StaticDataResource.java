@@ -5,8 +5,11 @@ import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 import java.util.List;
 import java.util.Map;
 
+import com.zuehlke.pgadmissions.domain.definitions.*;
 import org.apache.commons.lang.WordUtils;
 import org.dozer.Mapper;
+import org.joda.time.PeriodType;
+import org.joda.time.Years;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -43,10 +46,6 @@ import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.Title;
 import com.zuehlke.pgadmissions.domain.WorkflowResource;
-import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.rest.representation.StateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedEntityRepresentation;
@@ -69,15 +68,12 @@ public class StaticDataResource {
 
     @Autowired
     private ImportedEntityService importedEntityService;
-    
+
     @Autowired
     private InstitutionService institutionService;
 
     @Autowired
     private Mapper dozerBeanMapper;
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     private ToIdFunction toIdFunction = new ToIdFunction();
 
@@ -119,18 +115,13 @@ public class StaticDataResource {
         staticData.put("currencies", currencies);
 
         // Display names for enum classes
-        for (Class<?> enumClass : new Class[]{PrismProgramType.class, YesNoUnsureResponse.class, PrismStudyOption.class}) {
-            List<EnumDefinition> definitions = Lists.newArrayListWithExpectedSize(enumClass.getEnumConstants().length);
+        for (Class<?> enumClass : new Class[]{PrismProgramType.class, PrismStudyOption.class, YesNoUnsureResponse.class, DurationUnit.class}) {
             String simpleName = enumClass.getSimpleName();
             if (simpleName.startsWith("Prism")) {
                 simpleName = simpleName.replaceFirst("Prism", "");
             }
             simpleName = WordUtils.uncapitalize(simpleName);
-            for (java.lang.Object key : enumClass.getEnumConstants()) {
-                String message = applicationContext.getMessage(simpleName + "." + key, null, LocaleContextHolder.getLocale());
-                definitions.add(new EnumDefinition(key.toString(), message));
-            }
-            staticData.put(pluralize(simpleName), definitions);
+            staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
         }
 
         staticData.put("timeZones", TimeZoneList.getInstance().getTimeZoneDefinitions());

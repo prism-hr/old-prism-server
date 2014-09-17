@@ -19,16 +19,16 @@ public class ActionDTO {
 
     @NotNull
     private PrismAction actionId;
-    
+
     @Valid
     private InstitutionDTO newInstitution;
-    
+
     @Valid
     private ProgramDTO newProgram;
-    
+
     @Valid
     private ProjectDTO newProject;
-    
+
     @Valid
     private ApplicationDTO newApplication;
 
@@ -76,33 +76,29 @@ public class ActionDTO {
         this.actionId = actionId;
         return this;
     }
-    
+
     public ActionDTO withNewInstitution(InstitutionDTO newInstitution) {
         this.newInstitution = newInstitution;
         return this;
     }
-    
+
     public ActionDTO withNewProgram(ProgramDTO newProgram) {
         this.newProgram = newProgram;
         return this;
     }
-    
+
     public ActionDTO withNewProject(ProjectDTO newProject) {
         this.newProject = newProject;
         return this;
     }
-    
+
     public ActionDTO withNewApplication(ApplicationDTO newApplication) {
         this.newApplication = newApplication;
         return this;
     }
 
     public Object getOperativeResourceDTO() {
-        List<Object> resourceDTOs = Lists.newArrayList();
-        resourceDTOs.add(getNewInstitution());
-        resourceDTOs.add(getNewProgram());
-        resourceDTOs.add(getNewProject());
-        resourceDTOs.add(getNewApplication());
+        List<Object> resourceDTOs = Lists.newArrayList(getNewInstitution(), getNewProgram(), getNewProject(), getNewApplication());
 
         Collection<Object> notNullResourceDTOs = Collections2.filter(resourceDTOs, Predicates.notNull());
 
@@ -112,5 +108,5 @@ public class ActionDTO {
 
         return notNullResourceDTOs.iterator().next();
     }
-    
+
 }

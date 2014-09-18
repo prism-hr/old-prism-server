@@ -107,7 +107,6 @@ public class ApplicationSectionService {
         }
     }
 
-
     public ApplicationSupervisor saveSupervisor(Integer applicationId, Integer supervisorId, ApplicationSupervisorDTO supervisorDTO) throws DeduplicationException {
         Application application = entityService.getById(Application.class, applicationId);
 

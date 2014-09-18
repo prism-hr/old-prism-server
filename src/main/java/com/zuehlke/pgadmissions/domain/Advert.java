@@ -48,73 +48,37 @@ public class Advert {
     @Column(name = "month_study_duration_maximum")
     private Integer studyDurationMaximum;
 
-    @Column(name = "fee_interval")
-    @Enumerated(EnumType.STRING)
-    private DurationUnit feeInterval;
-    
-    @Column(name = "fee_currency")
-    private String feeCurrency;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "interval", column = @Column(name = "fee_interval")),
+            @AttributeOverride(name = "currency", column = @Column(name = "fee_currency")),
+            @AttributeOverride(name = "currencyAtLocale", column = @Column(name = "fee_currency_at_locale")),
+            @AttributeOverride(name = "monthMinimumSpecified", column = @Column(name = "month_fee_minimum_specified")),
+            @AttributeOverride(name = "monthMaximumSpecified", column = @Column(name = "month_fee_maximum_specified")),
+            @AttributeOverride(name = "yearMinimumSpecified", column = @Column(name = "year_fee_minimum_specified")),
+            @AttributeOverride(name = "yearMaximumSpecified", column = @Column(name = "year_fee_maximum_specified")),
+            @AttributeOverride(name = "monthMinimumAtLocale", column = @Column(name = "month_fee_minimum_at_locale")),
+            @AttributeOverride(name = "monthMaximumAtLocale", column = @Column(name = "month_fee_maximum_at_locale")),
+            @AttributeOverride(name = "yearMinimumAtLocale", column = @Column(name = "year_fee_minimum_at_locale")),
+            @AttributeOverride(name = "yearMaximumAtLocale", column = @Column(name = "year_fee_maximum_at_locale")),
+    })
+    private FinancialDetails fee;
 
-    @Column(name = "fee_currency_at_locale")
-    private String feeCurrencyAtLocale;
-
-    @Column(name = "month_fee_minimum_specified")
-    private BigDecimal monthFeeMinimumSpecified;
-
-    @Column(name = "month_fee_maximum_specified")
-    private BigDecimal monthFeeMaximumSpecified;
-
-    @Column(name = "year_fee_minimum_specified")
-    private BigDecimal yearFeeMinimumSpecified;
-
-    @Column(name = "year_fee_maximum_specified")
-    private BigDecimal yearFeeMaximumSpecified;
-
-    @Column(name = "month_fee_minimum_at_locale")
-    private BigDecimal monthFeeMinimumAtLocale;
-
-    @Column(name = "month_fee_maximum_at_locale")
-    private BigDecimal monthFeeMaximumAtLocale;
-
-    @Column(name = "year_fee_minimum_at_locale")
-    private BigDecimal yearFeeMinimumAtLocale;
-
-    @Column(name = "year_fee_maximum_at_locale")
-    private BigDecimal yearFeeMaximumAtLocale;
-
-    @Column(name = "pay_currency")
-    private String payCurrency;
-
-    @Column(name = "pay_currency_at_locale")
-    private String payCurrencyAtLocale;
-    
-    @Column(name = "pay_interval")
-    @Enumerated(EnumType.STRING)
-    private DurationUnit payInterval;
-
-    @Column(name = "month_pay_minimum_specified")
-    private BigDecimal monthPayMinimumSpecified;
-
-    @Column(name = "month_pay_maximum_specified")
-    private BigDecimal monthPayMaximumSpecified;
-
-    @Column(name = "year_pay_minimum_specified")
-    private BigDecimal yearPayMinimumSpecified;
-
-    @Column(name = "year_pay_maximum_specified")
-    private BigDecimal yearPayMaximumSpecified;
-
-    @Column(name = "month_pay_minimum_at_locale")
-    private BigDecimal monthPayMinimumAtLocale;
-
-    @Column(name = "month_pay_maximum_at_locale")
-    private BigDecimal monthPayMaximumAtLocale;
-
-    @Column(name = "year_pay_minimum_at_locale")
-    private BigDecimal yearPayMinimumAtLocale;
-
-    @Column(name = "year_pay_maximum_at_locale")
-    private BigDecimal yearPayMaximumAtLocale;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "interval", column = @Column(name = "pay_interval")),
+            @AttributeOverride(name = "currency", column = @Column(name = "pay_currency")),
+            @AttributeOverride(name = "currencyAtLocale", column = @Column(name = "pay_currency_at_locale")),
+            @AttributeOverride(name = "monthMinimumSpecified", column = @Column(name = "month_pay_minimum_specified")),
+            @AttributeOverride(name = "monthMaximumSpecified", column = @Column(name = "month_pay_maximum_specified")),
+            @AttributeOverride(name = "yearMinimumSpecified", column = @Column(name = "year_pay_minimum_specified")),
+            @AttributeOverride(name = "yearMaximumSpecified", column = @Column(name = "year_pay_maximum_specified")),
+            @AttributeOverride(name = "monthMinimumAtLocale", column = @Column(name = "month_pay_minimum_at_locale")),
+            @AttributeOverride(name = "monthMaximumAtLocale", column = @Column(name = "month_pay_maximum_at_locale")),
+            @AttributeOverride(name = "yearMinimumAtLocale", column = @Column(name = "year_pay_minimum_at_locale")),
+            @AttributeOverride(name = "yearMaximumAtLocale", column = @Column(name = "year_pay_maximum_at_locale")),
+    })
+    private FinancialDetails pay;
 
     @OneToOne
     @JoinColumn(name = "advert_closing_date_id", unique = true)
@@ -204,172 +168,20 @@ public class Advert {
         this.studyDurationMaximum = studyDurationMaximum;
     }
 
-    public DurationUnit getFeeInterval() {
-        return feeInterval;
+    public FinancialDetails getFee() {
+        return fee;
     }
 
-    public void setFeeInterval(DurationUnit feeInterval) {
-        this.feeInterval = feeInterval;
-    }
-    
-    public String getFeeCurrency() {
-        return feeCurrency;
+    public void setFee(FinancialDetails fee) {
+        this.fee = fee;
     }
 
-    public void setFeeCurrency(String feeCurrency) {
-        this.feeCurrency = feeCurrency;
+    public FinancialDetails getPay() {
+        return pay;
     }
 
-    public String getCurrencyAtLocale() {
-        return feeCurrencyAtLocale;
-    }
-
-    public void setCurrencyAtLocale(String currencyAtLocale) {
-        this.feeCurrencyAtLocale = currencyAtLocale;
-    }
-
-    public BigDecimal getMonthFeeMinimumSpecified() {
-        return monthFeeMinimumSpecified;
-    }
-
-    public void setMonthFeeMinimumSpecified(BigDecimal monthFeeMinimumSpecified) {
-        this.monthFeeMinimumSpecified = monthFeeMinimumSpecified;
-    }
-
-    public BigDecimal getMonthFeeMaximumSpecified() {
-        return monthFeeMaximumSpecified;
-    }
-
-    public void setMonthFeeMaximumSpecified(BigDecimal monthFeeMaximumSpecified) {
-        this.monthFeeMaximumSpecified = monthFeeMaximumSpecified;
-    }
-
-    public BigDecimal getYearFeeMinimumSpecified() {
-        return yearFeeMinimumSpecified;
-    }
-
-    public void setYearFeeMinimumSpecified(BigDecimal yearFeeMinimumSpecified) {
-        this.yearFeeMinimumSpecified = yearFeeMinimumSpecified;
-    }
-
-    public BigDecimal getYearFeeMaximumSpecified() {
-        return yearFeeMaximumSpecified;
-    }
-
-    public void setYearFeeMaximumSpecified(BigDecimal yearFeeMaximumSpecified) {
-        this.yearFeeMaximumSpecified = yearFeeMaximumSpecified;
-    }
-
-    public BigDecimal getMonthFeeMinimumAtLocale() {
-        return monthFeeMinimumAtLocale;
-    }
-
-    public void setMonthFeeMinimumAtLocale(BigDecimal monthFeeMinimumAtLocale) {
-        this.monthFeeMinimumAtLocale = monthFeeMinimumAtLocale;
-    }
-
-    public BigDecimal getMonthFeeMaximumAtLocale() {
-        return monthFeeMaximumAtLocale;
-    }
-
-    public void setMonthFeeMaximumAtLocale(BigDecimal monthFeeMaximumAtLocale) {
-        this.monthFeeMaximumAtLocale = monthFeeMaximumAtLocale;
-    }
-
-    public BigDecimal getYearFeeMinimumAtLocale() {
-        return yearFeeMinimumAtLocale;
-    }
-
-    public void setYearFeeMinimumAtLocale(BigDecimal yearFeeMinimumAtLocale) {
-        this.yearFeeMinimumAtLocale = yearFeeMinimumAtLocale;
-    }
-
-    public BigDecimal getYearFeeMaximumAtLocale() {
-        return yearFeeMaximumAtLocale;
-    }
-
-    public void setYearFeeMaximumAtLocale(BigDecimal yearFeeMaximumAtLocale) {
-        this.yearFeeMaximumAtLocale = yearFeeMaximumAtLocale;
-    }
-
-    public final String getPayCurrencyAtLocale() {
-        return payCurrencyAtLocale;
-    }
-
-    public final void setPayCurrencyAtLocale(String payCurrencyAtLocale) {
-        this.payCurrencyAtLocale = payCurrencyAtLocale;
-    }
-
-    public DurationUnit getPayInterval() {
-        return payInterval;
-    }
-
-    public void setPayInterval(DurationUnit payInterval) {
-        this.payInterval = payInterval;
-    }
-
-    public BigDecimal getMonthPayMinimumSpecified() {
-        return monthPayMinimumSpecified;
-    }
-
-    public void setMonthPayMinimumSpecified(BigDecimal monthPayMinimumSpecified) {
-        this.monthPayMinimumSpecified = monthPayMinimumSpecified;
-    }
-
-    public BigDecimal getMonthPayMaximumSpecified() {
-        return monthPayMaximumSpecified;
-    }
-
-    public void setMonthPayMaximumSpecified(BigDecimal monthPayMaximumSpecified) {
-        this.monthPayMaximumSpecified = monthPayMaximumSpecified;
-    }
-
-    public BigDecimal getYearPayMinimumSpecified() {
-        return yearPayMinimumSpecified;
-    }
-
-    public void setYearPayMinimumSpecified(BigDecimal yearPayMinimumSpecified) {
-        this.yearPayMinimumSpecified = yearPayMinimumSpecified;
-    }
-
-    public BigDecimal getYearPayMaximumSpecified() {
-        return yearPayMaximumSpecified;
-    }
-
-    public void setYearPayMaximumSpecified(BigDecimal yearPayMaximumSpecified) {
-        this.yearPayMaximumSpecified = yearPayMaximumSpecified;
-    }
-
-    public BigDecimal getMonthPayMinimumAtLocale() {
-        return monthPayMinimumAtLocale;
-    }
-
-    public void setMonthPayMinimumAtLocale(BigDecimal monthPayMinimumAtLocale) {
-        this.monthPayMinimumAtLocale = monthPayMinimumAtLocale;
-    }
-
-    public BigDecimal getMonthPayMaximumAtLocale() {
-        return monthPayMaximumAtLocale;
-    }
-
-    public void setMonthPayMaximumAtLocale(BigDecimal monthPayMaximumAtLocale) {
-        this.monthPayMaximumAtLocale = monthPayMaximumAtLocale;
-    }
-
-    public BigDecimal getYearPayMinimumAtLocale() {
-        return yearPayMinimumAtLocale;
-    }
-
-    public void setYearPayMinimumAtLocale(BigDecimal yearPayMinimumAtLocale) {
-        this.yearPayMinimumAtLocale = yearPayMinimumAtLocale;
-    }
-
-    public BigDecimal getYearPayMaximumAtLocale() {
-        return yearPayMaximumAtLocale;
-    }
-
-    public void setYearPayMaximumAtLocale(BigDecimal yearPayMaximumAtLocale) {
-        this.yearPayMaximumAtLocale = yearPayMaximumAtLocale;
+    public void setPay(FinancialDetails pay) {
+        this.pay = pay;
     }
 
     public AdvertClosingDate getClosingDate() {

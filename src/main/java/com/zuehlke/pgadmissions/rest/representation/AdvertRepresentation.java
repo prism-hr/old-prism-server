@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.rest.representation;
 
 import java.math.BigDecimal;
 
+import com.zuehlke.pgadmissions.domain.InstitutionAddress;
+import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
@@ -19,25 +21,15 @@ public class AdvertRepresentation {
 
     private String applyLink;
 
+    private InstitutionAddressRepresentation address;
+
     private Integer studyDurationMinimum;
 
     private Integer studyDurationMaximum;
 
-    private String currency;
+    private FinancialDetailsRepresentation fee;
 
-    private String currencyAtLocale;
-
-    private DurationUnit feeInterval;
-
-    private BigDecimal feeMinimum;
-
-    private BigDecimal feeMaximum;
-
-    private DurationUnit payInterval;
-
-    private BigDecimal payMinimum;
-
-    private BigDecimal payMaximum;
+    private FinancialDetailsRepresentation pay;
 
     private LocalDate closingDate;
 
@@ -85,6 +77,14 @@ public class AdvertRepresentation {
         this.applyLink = applyLink;
     }
 
+    public InstitutionAddressRepresentation getAddress() {
+        return address;
+    }
+
+    public void setAddress(InstitutionAddressRepresentation address) {
+        this.address = address;
+    }
+
     public Integer getStudyDurationMinimum() {
         return studyDurationMinimum;
     }
@@ -101,68 +101,20 @@ public class AdvertRepresentation {
         this.studyDurationMaximum = studyDurationMaximum;
     }
 
-    public String getCurrency() {
-        return currency;
+    public FinancialDetailsRepresentation getFee() {
+        return fee;
     }
 
-    public void setCurrency(String currency) {
-        this.currency = currency;
+    public void setFee(FinancialDetailsRepresentation fee) {
+        this.fee = fee;
     }
 
-    public String getCurrencyAtLocale() {
-        return currencyAtLocale;
+    public FinancialDetailsRepresentation getPay() {
+        return pay;
     }
 
-    public void setCurrencyAtLocale(String currencyAtLocale) {
-        this.currencyAtLocale = currencyAtLocale;
-    }
-
-    public DurationUnit getFeeInterval() {
-        return feeInterval;
-    }
-
-    public void setFeeInterval(DurationUnit feeInterval) {
-        this.feeInterval = feeInterval;
-    }
-
-    public BigDecimal getFeeMinimum() {
-        return feeMinimum;
-    }
-
-    public void setFeeMinimum(BigDecimal feeMinimum) {
-        this.feeMinimum = feeMinimum;
-    }
-
-    public BigDecimal getFeeMaximum() {
-        return feeMaximum;
-    }
-
-    public void setFeeMaximum(BigDecimal feeMaximum) {
-        this.feeMaximum = feeMaximum;
-    }
-
-    public DurationUnit getPayInterval() {
-        return payInterval;
-    }
-
-    public void setPayInterval(DurationUnit payInterval) {
-        this.payInterval = payInterval;
-    }
-
-    public BigDecimal getPayMinimum() {
-        return payMinimum;
-    }
-
-    public void setPayMinimum(BigDecimal payMinimum) {
-        this.payMinimum = payMinimum;
-    }
-
-    public BigDecimal getPayMaximum() {
-        return payMaximum;
-    }
-
-    public void setPayMaximum(BigDecimal payMaximum) {
-        this.payMaximum = payMaximum;
+    public void setPay(FinancialDetailsRepresentation pay) {
+        this.pay = pay;
     }
 
     public LocalDate getClosingDate() {

@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
 
@@ -75,7 +74,6 @@ public class ProjectService {
     }
 
     public void update(Integer projectId, ProjectDTO projectDTO) {
-        AdvertDTO advertDTO = projectDTO.getAdvert();
         String title = projectDTO.getTitle();
         Project project = entityService.getById(Project.class, projectId);
         Advert advert = project.getAdvert();
@@ -83,8 +81,9 @@ public class ProjectService {
         project.setDueDate(projectDTO.getDueDate());
         project.setTitle(title);
         advert.setTitle(title);
-        advert.setDescription(advertDTO.getDescription());
-        advert.setSummary(advertDTO.getSummary());
+        advert.setSummary(projectDTO.getSummary());
+        advert.setStudyDurationMinimum(projectDTO.getStudyDurationMinimum());
+        advert.setStudyDurationMaximum(projectDTO.getStudyDurationMaximum());
     }
 
     public LocalDate resolveDueDateBaseline(Project project, Comment comment) {

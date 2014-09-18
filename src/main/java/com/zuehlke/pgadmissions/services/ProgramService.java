@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 
@@ -111,7 +110,6 @@ public class ProgramService {
     }
 
     public void update(Integer programId, ProgramDTO programDTO) {
-        AdvertDTO advertDTO = programDTO.getAdvert();
         String title = programDTO.getTitle();
         Program program = entityService.getById(Program.class, programId);
         Advert advert = program.getAdvert();
@@ -137,8 +135,9 @@ public class ProgramService {
             advert.setTitle(title);
         }
 
-        advert.setDescription(advertDTO.getDescription());
-        advert.setSummary(advertDTO.getSummary());
+        advert.setSummary(programDTO.getSummary());
+        advert.setStudyDurationMinimum(programDTO.getStudyDurationMinimum());
+        advert.setStudyDurationMaximum(programDTO.getStudyDurationMaximum());
     }
 
     public void postProcessProgram(Program program, Comment comment) {

@@ -1,20 +1,23 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.dao.AdvertDAO;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
+import com.zuehlke.pgadmissions.rest.dto.FeesAndPaymentsDTO;
+import com.zuehlke.pgadmissions.rest.dto.FinancialDetailsDTO;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.dao.AdvertDAO;
-import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @Transactional
@@ -61,18 +64,77 @@ public class AdvertService {
 
         return Joiner.on("<br/>").join(recommendations);
     }
-    
+
     public List<Advert> getAdvertsWithElapsedClosingDates(LocalDate baseline) {
         return advertDAO.getAdvertsWithElapsedClosingDates(baseline);
     }
-    
+
     public void updateAdvertClosingDate(LocalDate baseline, Advert advert) {
         AdvertClosingDate nextClosingDate = advertDAO.getNextAdvertClosingDate(advert, baseline);
         advert.setClosingDate(nextClosingDate);
-        
+
         if (advert.isProjectAdvert() && nextClosingDate == null) {
             advert.getProject().setDueDate(baseline);
         }
     }
 
+    public void saveAdvertDetails(Class<? extends Resource> resourceClass, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
+        Resource resource = entityService.getById(resourceClass, resourceId);
+        Advert advert = (Advert) PropertyUtils.getSimpleProperty(resource, "advert");
+        InstitutionAddress address = advert.getAddress();
+        InstitutionAddressDTO addressDTO = advertDetailsDTO.getAddress();
+
+        InstitutionDomicile country = entityService.getById(InstitutionDomicile.class, addressDTO.getCountry());
+        InstitutionDomicileRegion region = entityService.getById(InstitutionDomicileRegion.class, addressDTO.getRegion());
+
+        advert.setDescription(advertDetailsDTO.getDescription());
+        advert.setApplyLink(advertDetailsDTO.getApplyLink());
+
+        address.setCountry(country);
+        address.setRegion(region);
+        address.setAddressLine1(addressDTO.getAddressLine1());
+        address.setAddressLine2(addressDTO.getAddressLine2());
+        address.setAddressTown(addressDTO.getAddressTown());
+        address.setAddressDistrict(addressDTO.getAddressDistrict());
+        address.setAddressCode(addressDTO.getAddressCode());
+
+
+        if (!country.getId().equals(resource.getInstitution().getDomicile().getId())) {
+            // advert country is different from institution country
+            if (advert.getFee().getInterval() == null) {
+                //fee not specified yet
+                advert.getFee().setCurrency(country.getCurrency());
+            }
+            if (advert.getPay().getInterval() == null) {
+                //pay not specified yet
+                advert.getPay().setCurrency(country.getCurrency());
+            }
+        }
+    }
+
+
+    public void saveFeesAndPayments(Class<? extends Resource> resourceClass, Integer resourceId, FeesAndPaymentsDTO feesAndPaymentsDTO) throws Exception {
+        Resource resource = entityService.getById(resourceClass, resourceId);
+        Advert advert = (Advert) PropertyUtils.getSimpleProperty(resource, "advert");
+
+        updateFinancialDetails(advert.getFee(), feesAndPaymentsDTO.getFee());
+        updateFinancialDetails(advert.getPay(), feesAndPaymentsDTO.getPay());
+    }
+
+    private void updateFinancialDetails(FinancialDetails financialDetails, FinancialDetailsDTO financialDetailsDTO) throws Exception {
+        DurationUnit interval = financialDetailsDTO.getInterval();
+        if (interval != null) {
+            financialDetails.setCurrency(financialDetailsDTO.getCurrency());
+            financialDetails.setInterval(interval);
+
+            BigDecimal minimum = financialDetailsDTO.getMinimum();
+            BigDecimal maximum = financialDetailsDTO.getMaximum();
+
+            DurationUnit otherInterval = interval == DurationUnit.YEAR ? DurationUnit.MONTH : DurationUnit.YEAR;
+            PropertyUtils.setSimpleProperty(financialDetails, interval.name().toLowerCase() + "MinimumSpecified", minimum);
+            PropertyUtils.setSimpleProperty(financialDetails, interval.name().toLowerCase() + "MaximumSpecified", maximum);
+            PropertyUtils.setSimpleProperty(financialDetails, otherInterval.name().toLowerCase() + "MinimumSpecified", null);
+            PropertyUtils.setSimpleProperty(financialDetails, otherInterval.name().toLowerCase() + "MaximumSpecified", null);
+        }
+    }
 }

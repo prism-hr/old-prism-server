@@ -1,13 +1,13 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class ProgramDTO {
 
@@ -29,8 +29,15 @@ public class ProgramDTO {
     @NotNull
     private LocalDate dueDate;
 
-    @NotNull
-    private AdvertDTO advert;
+    @NotEmpty
+    @Size(max = 1000)
+    private String summary;
+
+    @Min(1)
+    private Integer studyDurationMinimum;
+
+    @Min(1)
+    private Integer studyDurationMaximum;
 
     public Integer getInstitution() {
         return institution;
@@ -80,11 +87,27 @@ public class ProgramDTO {
         this.dueDate = dueDate;
     }
 
-    public AdvertDTO getAdvert() {
-        return advert;
+    public String getSummary() {
+        return summary;
     }
 
-    public void setAdvert(AdvertDTO advert) {
-        this.advert = advert;
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public Integer getStudyDurationMinimum() {
+        return studyDurationMinimum;
+    }
+
+    public void setStudyDurationMinimum(Integer studyDurationMinimum) {
+        this.studyDurationMinimum = studyDurationMinimum;
+    }
+
+    public Integer getStudyDurationMaximum() {
+        return studyDurationMaximum;
+    }
+
+    public void setStudyDurationMaximum(Integer studyDurationMaximum) {
+        this.studyDurationMaximum = studyDurationMaximum;
     }
 }

@@ -18,6 +18,10 @@
                 <class-a>com.zuehlke.pgadmissions.domain.ProgramStudyOption</class-a>
                 <class-b>com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption</class-b>
             </converter>
+            <converter type="com.zuehlke.pgadmissions.rest.converter.FinancialDetailsRepresentationConverter">
+                <class-a>com.zuehlke.pgadmissions.domain.FinancialDetails</class-a>
+                <class-b>com.zuehlke.pgadmissions.rest.representation.FinancialDetailsRepresentation</class-b>
+            </converter>
         </custom-converters>
         <copy-by-references>
             <copy-by-reference>java.util.TimeZone</copy-by-reference>

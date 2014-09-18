@@ -9,6 +9,8 @@ public class InstitutionRepresentation {
 
     private String title;
 
+    private InstitutionAddressRepresentation address;
+
     private String currency;
 
     private String homepage;
@@ -35,6 +37,14 @@ public class InstitutionRepresentation {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public InstitutionAddressRepresentation getAddress() {
+        return address;
+    }
+
+    public void setAddress(InstitutionAddressRepresentation address) {
+        this.address = address;
     }
 
     public String getCurrency() {

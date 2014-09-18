@@ -72,14 +72,11 @@ public class ImportedEntityDAO {
                 .list();
     }
 
-    public List<ImportedEntityFeed> getImportedEntityFeedsToImport() {
+    public List<ImportedEntityFeed> getImportedEntityFeeds() {
         return sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
                 .createAlias("institution", "institution", JoinType.INNER_JOIN) //
                 .createAlias("institution.state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.lt("lastImportedDate", new LocalDate())) //
-                        .add(Restrictions.isNull("lastImportedDate"))) //
                 .addOrder(Order.asc("institution")) //
                 .addOrder(Order.asc("importedEntityType")) //
                 .list();

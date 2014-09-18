@@ -6,10 +6,9 @@ import com.google.common.collect.Lists;
 
 public enum PrismStudyOption {
 
-    FULL_TIME(new String[]{"F+++++"}),
-    PART_TIME(new String[]{"P+++++"}),
-    MODULAR_FLEXIBLE(new String[]{"B+++++"}),
-    UNCLASSIFIED(new String[]{});
+    FULL_TIME(new String[]{"f+++++"}),
+    PART_TIME(new String[]{"p+++++"}),
+    MODULAR_FLEXIBLE(new String[]{"b+++++"});
     
     private String[] externalCodes;
     
@@ -17,9 +16,7 @@ public enum PrismStudyOption {
     
     static {
         for (PrismStudyOption studyOption : PrismStudyOption.values()) {
-            if (studyOption != UNCLASSIFIED) {
-                stringValues.add(studyOption.name());
-            }
+            stringValues.add(studyOption.name());
         }
     }
     
@@ -41,7 +38,7 @@ public enum PrismStudyOption {
                 }
             }
         }
-        return UNCLASSIFIED;
+        return null;
     }
     
     public final String[] getExternalCodes() {

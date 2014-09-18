@@ -1,14 +1,39 @@
 package com.zuehlke.pgadmissions.domain;
 
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
-import org.apache.solr.analysis.*;
-import org.hibernate.search.annotations.*;
-import org.hibernate.search.annotations.Parameter;
-
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
+import org.apache.solr.analysis.LowerCaseFilterFactory;
+import org.apache.solr.analysis.SnowballPorterFilterFactory;
+import org.apache.solr.analysis.StandardTokenizerFactory;
+import org.apache.solr.analysis.StopFilterFactory;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.AnalyzerDef;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Parameter;
+import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.TokenFilterDef;
+import org.hibernate.search.annotations.TokenizerDef;
+
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 
 @AnalyzerDef(name = "advertAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
@@ -122,6 +147,14 @@ public class Advert {
 
     @Column(name = "sequence_identifier")
     private String sequenceIdentifier;
+    
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "advert_id", nullable = false)
+    private Set<AdvertTarget> targets = Sets.newHashSet();
+    
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "advert_id", nullable = false)
+    private Set<AdvertKeyword> keywords = Sets.newHashSet();
 
     @OneToOne(mappedBy = "advert")
     private Program program;
@@ -132,13 +165,6 @@ public class Advert {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
     private Set<AdvertClosingDate> closingDates = Sets.newHashSet();
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "ADVERT_CATEGORY", joinColumns = @JoinColumn(name = "advert_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "advert_opportunity_category_id", nullable = false))
-    private Set<AdvertCategory> categories = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "advert")
-    private Set<AdvertRecruitmentPreference> preferences = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -388,6 +414,14 @@ public class Advert {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
+    public final Set<AdvertTarget> getTargets() {
+        return targets;
+    }
+
+    public final Set<AdvertKeyword> getKeywords() {
+        return keywords;
+    }
+
     public Program getProgram() {
         return program;
     }
@@ -406,14 +440,6 @@ public class Advert {
 
     public Set<AdvertClosingDate> getClosingDates() {
         return closingDates;
-    }
-
-    public Set<AdvertCategory> getCategories() {
-        return categories;
-    }
-
-    public Set<AdvertRecruitmentPreference> getPreferences() {
-        return preferences;
     }
 
     public Advert withTitle(String title) {

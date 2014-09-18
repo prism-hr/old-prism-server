@@ -21,7 +21,6 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.AdvertCategory;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
@@ -43,7 +42,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.dto.AdvertCategoryImportRowDTO;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.iso.jaxb.CategoryNameType;
@@ -108,8 +106,8 @@ public class ImportedEntityService {
         return entityService.getOrCreate(transientImportedEntityFeed);
     }
 
-    public List<ImportedEntityFeed> getImportedEntityFeedsToImport() {
-        return importedEntityDAO.getImportedEntityFeedsToImport();
+    public List<ImportedEntityFeed> getImportedEntityFeeds() {
+        return importedEntityDAO.getImportedEntityFeeds();
     }
 
     public void disableAllEntities(Class<? extends ImportedEntity> entityClass, Institution institution) {
@@ -198,20 +196,9 @@ public class ImportedEntityService {
         importedEntityDAO.disableAllEntities(InstitutionDomicileRegion.class);
     }
 
-    public void disableAllAdvertCategories() {
-        importedEntityDAO.disableAllEntities(AdvertCategory.class);
-    }
-
-    public void createOrUpdateAdvertCategory(AdvertCategoryImportRowDTO importRow) throws DeduplicationException {
-        AdvertCategory parentCategory = entityService.getById(AdvertCategory.class, importRow.getId() / 10);
-        AdvertCategory transientCategory = new AdvertCategory().withId(importRow.getId()).withEnabled(true).withName(importRow.getName())
-                .withParentCategory(parentCategory);
-        entityService.createOrUpdate(transientCategory);
-    }
-
     public void setLastImportedDate(ImportedEntityFeed detachedImportedEntityFeed) {
         ImportedEntityFeed persistentImportedEntityFeed = entityService.getById(ImportedEntityFeed.class, detachedImportedEntityFeed.getId());
-        persistentImportedEntityFeed.setLastImportedDate(new LocalDate());
+        persistentImportedEntityFeed.setLastImportedTimestamp(new DateTime());
     }
 
     public void mergeInstitutionDomicile(CountryType country, Map<String, String> countryCurrencies) {
@@ -264,11 +251,13 @@ public class ImportedEntityService {
         Advert transientAdvert = new Advert().withTitle(transientTitle);
 
         DateTime baseline = new DateTime();
-        String programTypeCode = PrismProgramType.findValueFromString(programDefinition.getName()).name();
+        
+        PrismProgramType programTypeId = PrismProgramType.findValueFromString(programDefinition.getName());
+        programTypeId = programTypeId == null ? institution.getDefaultProgramType() : programTypeId;
 
         boolean transientRequireProjectDefinition = programDefinition.isAtasRegistered();
 
-        ProgramType programType = getImportedEntityByCode(ProgramType.class, institution, programTypeCode);
+        ProgramType programType = getImportedEntityByCode(ProgramType.class, institution, programTypeId.name());
         Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution)
                 .withImportedCode(programDefinition.getCode()).withTitle(transientTitle).withRequireProjectDefinition(transientRequireProjectDefinition)
                 .withImported(true).withAdvert(transientAdvert).withProgramType(programType).withUser(proxyCreator).withCreatedTimestamp(baseline)
@@ -313,8 +302,9 @@ public class ImportedEntityService {
 
     private StudyOption mergeStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) throws DeduplicationException {
         String externalCode = modeOfAttendance.getCode();
-        PrismStudyOption internalCode = PrismStudyOption.findValueFromString(externalCode);
-        StudyOption studyOption = new StudyOption().withInstitution(institution).withCode(internalCode.name()).withName(externalCode).withEnabled(true);
+        PrismStudyOption studyOptionId = PrismStudyOption.findValueFromString(externalCode);
+        studyOptionId = studyOptionId == null ? institution.getDefaultStudyOption() : studyOptionId;
+        StudyOption studyOption = new StudyOption().withInstitution(institution).withCode(studyOptionId.name()).withName(externalCode).withEnabled(true);
         return entityService.createOrUpdate(studyOption);
     }
 

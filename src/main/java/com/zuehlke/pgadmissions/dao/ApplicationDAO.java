@@ -17,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.ApplicationPurgeDTO;
@@ -88,17 +87,6 @@ public class ApplicationDAO {
                 .add(Restrictions.eq("application", application)) //
                 .addOrder(Order.desc("awardDate")) //
                 .addOrder(Order.desc("startDate")) //
-                .list();
-    }
-
-    public List<Application> getUclApplicationsForExport() {
-        return (List<Application>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("institution.uclInstitution", true)) //
-                .add(Restrictions.eq("action.actionCategory", PrismActionCategory.EXPORT_RESOURCE)) //
                 .list();
     }
     

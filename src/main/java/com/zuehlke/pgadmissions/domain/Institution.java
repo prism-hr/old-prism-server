@@ -8,6 +8,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -39,6 +41,8 @@ import org.joda.time.LocalDate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
 @AnalyzerDef(name = "institutionNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
@@ -81,6 +85,14 @@ public class Institution extends ParentResource {
     @Column(name = "homepage", nullable = false)
     private String homepage;
 
+    @Column(name = "default_program_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismProgramType defaultProgramType;
+    
+    @Column(name = "default_study_option", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismStudyOption defaultStudyOption;
+    
     @OneToOne
     @JoinColumn(name = "logo_document_id")
     private Document logoDocument;
@@ -207,6 +219,22 @@ public class Institution extends ParentResource {
 
     public void setHomepage(String homepage) {
         this.homepage = homepage;
+    }
+
+    public final PrismProgramType getDefaultProgramType() {
+        return defaultProgramType;
+    }
+
+    public final void setDefaultProgramType(PrismProgramType defaultProgramType) {
+        this.defaultProgramType = defaultProgramType;
+    }
+    
+    public final PrismStudyOption getDefaultStudyOption() {
+        return defaultStudyOption;
+    }
+
+    public final void setDefaultStudyOption(PrismStudyOption defaultStudyOption) {
+        this.defaultStudyOption = defaultStudyOption;
     }
 
     public final Document getLogoDocument() {
@@ -357,6 +385,16 @@ public class Institution extends ParentResource {
 
     public Institution withHomepage(String homepage) {
         this.homepage = homepage;
+        return this;
+    }
+    
+    public Institution withDefaultProgramType(PrismProgramType defaultProgramType) {
+        this.defaultProgramType = defaultProgramType;
+        return this;
+    }
+    
+    public Institution withDefaultStudyOption(PrismStudyOption defaultStudyOption) {
+        this.defaultStudyOption = defaultStudyOption;
         return this;
     }
 

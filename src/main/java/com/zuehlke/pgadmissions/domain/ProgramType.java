@@ -32,5 +32,5 @@ public class ProgramType extends SimpleImportedEntity {
     public PrismProgramType getPrismProgramType() {
         return PrismProgramType.valueOf(getCode());
     }
-
+    
 }

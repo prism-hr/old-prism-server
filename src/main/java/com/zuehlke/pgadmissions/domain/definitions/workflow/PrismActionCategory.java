@@ -6,7 +6,6 @@ public enum PrismActionCategory {
     CREATE_RESOURCE, //
     EMAIL_RESOURCE_CREATOR, //
     ESCALATE_RESOURCE, //
-    EXPORT_RESOURCE, //
     INITIALISE_RESOURCE, //
     PROCESS_RESOURCE, //
     PROPAGATE_RESOURCE, //

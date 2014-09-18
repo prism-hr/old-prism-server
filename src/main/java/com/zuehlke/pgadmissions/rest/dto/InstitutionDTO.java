@@ -4,6 +4,9 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+
 public class InstitutionDTO {
 
     @NotEmpty
@@ -16,6 +19,12 @@ public class InstitutionDTO {
 
     @NotEmpty
     private String homepage;
+    
+    @NotNull
+    private PrismProgramType defaultProgramType;
+    
+    @NotNull
+    private PrismStudyOption defaultStudyOption;
 
     @NotNull
     private Integer logoDocumentId;
@@ -53,6 +62,22 @@ public class InstitutionDTO {
 
     public void setHomepage(String homepage) {
         this.homepage = homepage;
+    }
+
+    public final PrismProgramType getDefaultProgramType() {
+        return defaultProgramType;
+    }
+
+    public final void setDefaultProgramType(PrismProgramType defaultProgramType) {
+        this.defaultProgramType = defaultProgramType;
+    }
+
+    public final PrismStudyOption getDefaultStudyOption() {
+        return defaultStudyOption;
+    }
+
+    public final void setDefaultStudyOption(PrismStudyOption defaultStudyOption) {
+        this.defaultStudyOption = defaultStudyOption;
     }
 
     public final Integer getLogoDocumentId() {

@@ -1,14 +1,13 @@
 package com.zuehlke.pgadmissions.domain;
 
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
-import org.apache.solr.analysis.*;
-import org.hibernate.search.annotations.*;
-import org.hibernate.search.annotations.Parameter;
-
-import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
+import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 
 @Embeddable
 public class FinancialDetails {

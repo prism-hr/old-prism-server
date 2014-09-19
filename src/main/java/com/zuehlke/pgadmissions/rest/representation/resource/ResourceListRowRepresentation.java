@@ -14,6 +14,8 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionR
 public class ResourceListRowRepresentation {
 
     private Integer id;
+    
+    private Boolean raisesUpdateFlag;
 
     private String code;
 
@@ -45,6 +47,14 @@ public class ResourceListRowRepresentation {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public final Boolean getRaisesUpdateFlag() {
+        return raisesUpdateFlag;
+    }
+
+    public final void setRaisesUpdateFlag(Boolean raisesUpdateFlag) {
+        this.raisesUpdateFlag = raisesUpdateFlag;
     }
 
     public String getCode() {

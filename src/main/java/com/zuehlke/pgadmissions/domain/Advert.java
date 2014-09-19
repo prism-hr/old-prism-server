@@ -1,9 +1,27 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.math.BigDecimal;
+import java.io.Serializable;
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
 import org.apache.solr.analysis.LowerCaseFilterFactory;
@@ -22,7 +40,7 @@ import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 
 @AnalyzerDef(name = "advertAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
@@ -101,9 +119,13 @@ public class Advert {
     @Column(name = "sequence_identifier")
     private String sequenceIdentifier;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "ADVERT_TARGET_INSTITUTION", joinColumns = { @JoinColumn(name = "advert_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "institution_id", nullable = false) })
+    private Set<Institution> institutionTargets = Sets.newHashSet();
+    
+    @ManyToMany(cascade = CascadeType.ALL, targetEntity = AdvertTargetProgramType.class)
     @JoinColumn(name = "advert_id", nullable = false)
-    private Set<AdvertTarget> targets = Sets.newHashSet();
+    private Set<PrismProgramType> programTypeTargets = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
@@ -215,8 +237,8 @@ public class Advert {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public final Set<AdvertTarget> getTargets() {
-        return targets;
+    public final Set<Institution> getInstitutionTargets() {
+        return institutionTargets;
     }
 
     public final Set<AdvertKeyword> getKeywords() {
@@ -259,4 +281,36 @@ public class Advert {
     public boolean isProjectAdvert() {
         return project != null;
     }
+    
+    @Entity
+    @Table(name = "ADVERT_TARGET_PROGRAM_TYPE")
+    private static class AdvertTargetProgramType {
+        
+        @EmbeddedId
+        private AdvertTargetProgramTypeId id;
+        
+        @ManyToOne
+        @JoinColumn(name = "advertId", insertable = false, updatable = false)
+        private Advert advert;
+        
+        @Column(name = "program_type", insertable = false, updatable = false)
+        @Enumerated(EnumType.STRING)
+        private PrismProgramType programType;
+        
+        @Embeddable
+        private static class AdvertTargetProgramTypeId implements Serializable {
+            
+            private static final long serialVersionUID = -381523189635209210L;
+
+            @Column(name = "advert_id", nullable = false)
+            private Integer advertId;
+            
+            @Column(name = "program_type", nullable = false)
+            @Enumerated(EnumType.STRING)
+            private PrismProgramType programType;
+            
+        }
+        
+    }
+    
 }

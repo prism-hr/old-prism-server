@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.*;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -97,19 +99,6 @@ public class AdvertService {
         address.setAddressTown(addressDTO.getAddressTown());
         address.setAddressDistrict(addressDTO.getAddressDistrict());
         address.setAddressCode(addressDTO.getAddressCode());
-
-
-        if (!country.getId().equals(resource.getInstitution().getDomicile().getId())) {
-            // advert country is different from institution country
-            if (advert.getFee().getInterval() == null) {
-                //fee not specified yet
-                advert.getFee().setCurrency(country.getCurrency());
-            }
-            if (advert.getPay().getInterval() == null) {
-                //pay not specified yet
-                advert.getPay().setCurrency(country.getCurrency());
-            }
-        }
     }
 
 
@@ -123,7 +112,7 @@ public class AdvertService {
 
     private void updateFinancialDetails(FinancialDetails financialDetails, FinancialDetailsDTO financialDetailsDTO) throws Exception {
         DurationUnit interval = financialDetailsDTO.getInterval();
-        if (interval != null) {
+        if(interval != null){
             financialDetails.setCurrency(financialDetailsDTO.getCurrency());
             financialDetails.setInterval(interval);
 
@@ -135,6 +124,7 @@ public class AdvertService {
             PropertyUtils.setSimpleProperty(financialDetails, interval.name().toLowerCase() + "MaximumSpecified", maximum);
             PropertyUtils.setSimpleProperty(financialDetails, otherInterval.name().toLowerCase() + "MinimumSpecified", null);
             PropertyUtils.setSimpleProperty(financialDetails, otherInterval.name().toLowerCase() + "MaximumSpecified", null);
+
         }
     }
 }

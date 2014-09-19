@@ -2,21 +2,21 @@ package com.zuehlke.pgadmissions.rest.converter;
 
 import org.dozer.DozerConverter;
 
-import com.zuehlke.pgadmissions.domain.ImportedEntityInstitution;
+import com.zuehlke.pgadmissions.domain.ImportedEntity;
 
-public class ImportedEntityConverter extends DozerConverter<ImportedEntityInstitution, Integer> {
+public class ImportedEntityConverter extends DozerConverter<ImportedEntity, Integer> {
 
     public ImportedEntityConverter() {
-        super(ImportedEntityInstitution.class, Integer.class);
+        super(ImportedEntity.class, Integer.class);
     }
 
     @Override
-    public Integer convertTo(ImportedEntityInstitution source, Integer destination) {
+    public Integer convertTo(ImportedEntity source, Integer destination) {
         return source != null ? source.getId() : null;
     }
 
     @Override
-    public ImportedEntityInstitution convertFrom(Integer source, ImportedEntityInstitution destination) {
+    public ImportedEntity convertFrom(Integer source, ImportedEntity destination) {
         throw new UnsupportedOperationException();
     }
 

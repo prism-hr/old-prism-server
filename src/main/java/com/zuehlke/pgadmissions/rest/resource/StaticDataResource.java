@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.FundingSource;
 import com.zuehlke.pgadmissions.domain.Gender;
-import com.zuehlke.pgadmissions.domain.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.ImportedEntityInstitution;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.Institution;
@@ -143,12 +143,12 @@ public class StaticDataResource {
         Institution institution = entityService.getById(Institution.class, institutionId);
 
         // Display names for imported entities
-        for (Class<? extends ImportedEntity> entityClass : new Class[]{ReferralSource.class, Title.class, Ethnicity.class, Disability.class,
+        for (Class<? extends ImportedEntityInstitution> entityClass : new Class[]{ReferralSource.class, Title.class, Ethnicity.class, Disability.class,
                 Gender.class, Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, FundingSource.class,
                 RejectionReason.class, ResidenceState.class}) {
             String simpleName = entityClass.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);
-            List<? extends ImportedEntity> entities = importedEntityService.getEnabledImportedEntities(institution, entityClass);
+            List<? extends ImportedEntityInstitution> entities = importedEntityService.getEnabledImportedEntities(institution, entityClass);
             List<ImportedEntityRepresentation> entityRepresentations = Lists.newArrayListWithCapacity(entities.size());
             for (Object studyOption : entities) {
                 entityRepresentations.add(dozerBeanMapper.map(studyOption, ImportedEntityRepresentation.class));

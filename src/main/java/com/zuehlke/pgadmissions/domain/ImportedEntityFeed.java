@@ -15,7 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
+import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -47,8 +47,8 @@ public class ImportedEntityFeed implements IUniqueEntity {
     private String location;
     
     @Column(name = "last_imported_date")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastImportedDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastImportedTimestamp;
 
     public Integer getId() {
         return id;
@@ -98,12 +98,12 @@ public class ImportedEntityFeed implements IUniqueEntity {
         this.location = location;
     }
     
-    public final LocalDate getLastImportedDate() {
-        return lastImportedDate;
+    public final DateTime getLastImportedTimestamp() {
+        return lastImportedTimestamp;
     }
 
-    public final void setLastImportedDate(LocalDate lastImportedDate) {
-        this.lastImportedDate = lastImportedDate;
+    public final void setLastImportedTimestamp(DateTime lastImportedTimestamp) {
+        this.lastImportedTimestamp = lastImportedTimestamp;
     }
 
     public ImportedEntityFeed withInstitution(Institution institution) {
@@ -131,8 +131,8 @@ public class ImportedEntityFeed implements IUniqueEntity {
         return this;
     }
     
-    public ImportedEntityFeed withLastUploadedDate(LocalDate lastUploadedDate) {
-        this.lastImportedDate = lastUploadedDate;
+    public ImportedEntityFeed withLastUploadedTimestamp(DateTime lastUploadedTimestamp) {
+        this.lastImportedTimestamp = lastUploadedTimestamp;
         return this;
     }
     

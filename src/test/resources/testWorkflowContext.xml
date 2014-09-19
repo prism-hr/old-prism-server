@@ -62,8 +62,6 @@
 
     <bean id="mailSender" class="com.zuehlke.pgadmissions.mail.MailSenderMock" primary="true"/>
 
-    <bean id="applicationExportServiceHelper" class="com.zuehlke.pgadmissions.services.lifecycle.helpers.ApplicationExportServiceHelperMock" primary="true"/>
-
     <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PrismAuthenticationProvider"/>
 
     <bean id="jacksonObjectMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
@@ -103,5 +101,8 @@
     		</list>
     	</property>
   	</bean>
+  	
+  	<!-- exporter config -->
+    <bean id="applicationExportService" class="${xml.export.exporter}" />
 
 </beans>

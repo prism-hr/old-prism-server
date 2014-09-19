@@ -14,6 +14,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -37,7 +39,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 @Table(name = "APPLICATION")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Application extends Resource {
-
+    
     @Id
     @GeneratedValue
     private Integer id;
@@ -122,6 +124,10 @@ public class Application extends Resource {
     @Column(name = "application_rating_average")
     private BigDecimal applicationRatingAverage;
 
+    @Column(name = "completion_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate completionDate;
+    
     @Column(name = "confirmed_start_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate confirmedStartDate;
@@ -145,9 +151,6 @@ public class Application extends Resource {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime submittedTimestamp;
 
-    @Column(name = "sequence_identifier", unique = true)
-    private String sequenceIdentifier;
-
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
@@ -167,6 +170,13 @@ public class Application extends Resource {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
+    
+    @Column(name = "sequence_identifier", unique = true)
+    private String sequenceIdentifier;
+    
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "APPLICATION_SECONDARY_PROJECT", joinColumns = @JoinColumn(name = "application_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "secondary_project_id", nullable = false))
+    private Set<Project> secondaryProjects = Sets.newHashSet();
 
     @OneToMany(mappedBy = "application")
     private Set<Comment> comments = Sets.newHashSet();
@@ -374,6 +384,14 @@ public class Application extends Resource {
         this.applicationRatingAverage = applicationRatingAverage;
     }
 
+    public final LocalDate getCompletionDate() {
+        return completionDate;
+    }
+
+    public final void setCompletionDate(LocalDate completionDate) {
+        this.completionDate = completionDate;
+    }
+
     public final LocalDate getConfirmedStartDate() {
         return confirmedStartDate;
     }
@@ -576,6 +594,10 @@ public class Application extends Resource {
     @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
+    }
+
+    public final Set<Project> getSecondaryProjects() {
+        return secondaryProjects;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.Arrays;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -879,12 +880,21 @@ public class Comment {
         return this.transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_WITHDRAWN;
     }
 
+    public boolean isApplicationExportComment() {
+        return action.getId() == PrismAction.APPLICATION_EXPORT;
+    }
+    
     public boolean isApplicationPurgeComment() {
         return action.getId() == PrismAction.APPLICATION_PURGE;
     }
 
     public boolean isRatingComment() {
         return action.isRatingAction();
+    }
+
+    public boolean isApplicationCompletionComment() {
+        return Arrays.asList(PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION, PrismAction.APPLICATION_CONFIRM_REJECTION, PrismAction.APPLICATION_WITHDRAW)
+                .contains(action.getId());
     }
 
     public boolean isTransitionComment() {

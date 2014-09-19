@@ -31,10 +31,6 @@ public class ApplicationFunding {
     @JoinColumn(name = "funding_source_id", nullable = false)
     private FundingSource fundingSource;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "document_id", nullable = false, unique = true)
-    private Document document;
-
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
     @Column(name = "description", nullable = false)
     private String description;
@@ -46,6 +42,10 @@ public class ApplicationFunding {
     @Column(name = "award_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate awardDate;
+    
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "document_id", nullable = false, unique = true)
+    private Document document;
 
     public void setId(Integer id) {
         this.id = id;
@@ -77,13 +77,6 @@ public class ApplicationFunding {
 
     public void setValue(String value) {
         this.value = value;
-    }
-
-    public Integer getValueAsInteger() {
-        if (value != null) {
-            return Integer.parseInt(getValue());
-        }
-        return 0;
     }
 
     public LocalDate getAwardDate() {

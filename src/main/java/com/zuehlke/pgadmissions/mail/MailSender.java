@@ -60,12 +60,10 @@ public class MailSender {
                     public void prepare(final MimeMessage mimeMessage) throws Exception {
                         final MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
 
-                        // generate subject
                         String templateName = notificationTemplate.getNotificationTemplate().getId().name() + "_subject_" + notificationTemplate.getId();
                         Template subjectTemplate = new Template(templateName, new StringReader(notificationTemplate.getSubject()), freemarkerConfig.getConfiguration());
                         String subject = FreeMarkerTemplateUtils.processTemplateIntoString(subjectTemplate, message.getModel());
 
-                        // generate content
                         templateName = notificationTemplate.getNotificationTemplate().getId().name() + "_content_" + notificationTemplate.getId();
                         Template contentTemplate = new Template(templateName, new StringReader(notificationTemplate.getContent()), freemarkerConfig.getConfiguration());
                         MailToPlainTextConverter htmlFormatter = new MailToPlainTextConverter();
@@ -73,7 +71,6 @@ public class MailSender {
                         String plainText = htmlFormatter.getPlainText(htmlText);
                         plainText = plainText + "\n\n" + emailBrokenLinkMessage;
 
-                        // populate messageHelper
                         messageHelper.setTo(convertToInternetAddresses(message.getTo()));
                         messageHelper.setSubject(subject);
                         messageHelper.setText(plainText, htmlText);

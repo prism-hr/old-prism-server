@@ -85,6 +85,9 @@ public class ApplicationService {
 
     @Autowired
     private CommentService commentService;
+    
+    @Autowired
+    private ApplicationExportService applicationExportService;
 
     @Autowired
     private CompleteApplicationValidator completeApplicationValidator;
@@ -180,10 +183,6 @@ public class ApplicationService {
         return applicationDAO.getApplicationExportReferees(application);
     }
 
-    public List<Application> getUclApplicationsForExport() {
-        return applicationDAO.getUclApplicationsForExport();
-    }
-
     public void validateApplicationCompleteness(Integer applicationId) {
         Application application = entityService.getById(Application.class, applicationId);
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(application, "application");
@@ -247,6 +246,14 @@ public class ApplicationService {
             applicationSummaryService.incrementApplicationWithdrawnCount(application);
         }
 
+        if (comment.isApplicationCompletionComment()) {
+            application.setCompletionDate(comment.getCreatedTimestamp().toLocalDate());
+        }
+        
+        if(comment.isApplicationExportComment()) {
+            applicationExportService.export(comment.getApplication());
+        }
+        
         if (comment.isApplicationPurgeComment()) {
             purgeApplication(application, comment);
         }

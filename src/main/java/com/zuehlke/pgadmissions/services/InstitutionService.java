@@ -85,8 +85,38 @@ public class InstitutionService {
         Document logoDocument = documentService.getByid(institutionDTO.getLogoDocumentId());
 
         return new Institution().withSystem(systemService.getSystem()).withDomicile(institutionCountry).withAddress(institutionAddress)
-                .withTitle(institutionDTO.getTitle()).withHomepage(institutionDTO.getHomepage()).withLogoDocument(logoDocument)
-                .withCurrency(institutionDTO.getCurrency()).withUser(user);
+                .withTitle(institutionDTO.getTitle()).withHomepage(institutionDTO.getHomepage()).withDefaultProgramType(institutionDTO.getDefaultProgramType())
+                .withDefaultStudyOption(institutionDTO.getDefaultStudyOption()).withLogoDocument(logoDocument).withCurrency(institutionDTO.getCurrency())
+                .withUser(user);
+    }
+
+    public void update(Integer institutionId, InstitutionDTO institutionDTO) {
+        Institution institution = entityService.getById(Institution.class, institutionId);
+
+        InstitutionAddress address = institution.getAddress();
+        InstitutionAddressDTO addressDTO = institutionDTO.getAddress();
+        InstitutionDomicile domicile = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
+        InstitutionDomicileRegion region = entityService.getById(InstitutionDomicileRegion.class, addressDTO.getRegion());
+
+        institution.setDomicile(domicile);
+        institution.setTitle(institutionDTO.getTitle());
+
+        address.setRegion(region);
+        address.setAddressLine1(addressDTO.getAddressLine1());
+        address.setAddressLine2(addressDTO.getAddressLine2());
+        address.setAddressTown(addressDTO.getAddressTown());
+        address.setAddressDistrict(addressDTO.getAddressDistrict());
+        address.setAddressCode(addressDTO.getAddressCode());
+
+        institution.setCurrency(institutionDTO.getCurrency());
+        institution.setHomepage(institutionDTO.getHomepage());
+
+        institution.setDefaultProgramType(institutionDTO.getDefaultProgramType());
+        institution.setDefaultStudyOption(institutionDTO.getDefaultStudyOption());
+    }
+
+    public List<String> listAvailableCurrencies() {
+        return institutionDAO.listAvailableCurrencies();
     }
 
     public void save(Institution institution) {
@@ -112,8 +142,8 @@ public class InstitutionService {
         Action action = actionService.getById(actionId);
         User user = userService.getById(commentDTO.getUser());
         State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
-        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withAction(action)
-                .withTransitionState(transitionState).withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
+        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withAction(action).withTransitionState(transitionState)
+                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
 
         InstitutionDTO institutionDTO = commentDTO.getInstitution();
         if (institutionDTO != null) {
@@ -121,32 +151,6 @@ public class InstitutionService {
         }
 
         return actionService.executeUserAction(institution, action, comment);
-    }
-
-    public void update(Integer institutionId, InstitutionDTO institutionDTO) {
-        Institution institution = entityService.getById(Institution.class, institutionId);
-
-        InstitutionAddress address = institution.getAddress();
-        InstitutionAddressDTO addressDTO = institutionDTO.getAddress();
-        InstitutionDomicile domicile = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
-        InstitutionDomicileRegion region = entityService.getById(InstitutionDomicileRegion.class, addressDTO.getRegion());
-
-        institution.setDomicile(domicile);
-        institution.setTitle(institutionDTO.getTitle());
-
-        address.setRegion(region);
-        address.setAddressLine1(addressDTO.getAddressLine1());
-        address.setAddressLine2(addressDTO.getAddressLine2());
-        address.setAddressTown(addressDTO.getAddressTown());
-        address.setAddressDistrict(addressDTO.getAddressDistrict());
-        address.setAddressCode(addressDTO.getAddressCode());
-
-        institution.setCurrency(institutionDTO.getCurrency());
-        institution.setHomepage(institutionDTO.getHomepage());
-    }
-
-    public List<String> listAvailableCurrencies(){
-        return institutionDAO.listAvailableCurrencies();
     }
 
 }

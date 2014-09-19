@@ -13,7 +13,7 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "INSTITUTION_DOMICILE_REGION", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_domicile_id", "parent_region_id", "region_type", "name"})})
-public class InstitutionDomicileRegion {
+public class InstitutionDomicileRegion extends ImportedEntitySystem {
 
     @Id
     private String id;

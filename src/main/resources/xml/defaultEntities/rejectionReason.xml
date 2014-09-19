@@ -7,13 +7,13 @@
 		</name>
 	</rejectionReason>
 	<rejectionReason>
-		<code>UNQUALIFIED_FOR_INSTITUTION(</code>
+		<code>UNQUALIFIED_FOR_INSTITUTION</code>
 		<name>Your qualifications and experience are not sufficient to satisfy
 			the entrance requirements for our organisation.
 		</name>
 	</rejectionReason>
 	<rejectionReason>
-		<code>UNQUALIFIED_FOR_OPPORTUNTIY</code>
+		<code>UNQUALIFIED_FOR_OPPORTUNITYY</code>
 		<name>Your qualifications and experience are not appropriate for your
 			preferred course of study.
 		</name>

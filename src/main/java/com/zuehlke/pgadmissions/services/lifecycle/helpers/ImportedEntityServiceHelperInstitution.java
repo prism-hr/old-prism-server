@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 import java.util.Set;
 
@@ -12,7 +13,9 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +24,7 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.ImportedEntityInstitution;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
@@ -38,7 +41,7 @@ import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Component
-@SuppressWarnings({"unchecked", "rawtypes"})
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(ImportedEntityServiceHelperInstitution.class);
@@ -58,10 +61,10 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
     public void execute() throws DeduplicationException {
         institutionService.populateDefaultImportedEntityFeeds();
 
-        for (ImportedEntityFeed importedEntityFeed : importedEntityService.getImportedEntityFeedsToImport()) {
+        for (ImportedEntityFeed importedEntityFeed : importedEntityService.getImportedEntityFeeds()) {
             String maxRedirects = null;
-            if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat") || (!importedEntityFeed.isAuthenticated()
-                    && importedEntityFeed.getImportedEntityType() != PrismImportedEntity.INSTITUTION)) {
+            if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")
+                    || (!importedEntityFeed.isAuthenticated() && importedEntityFeed.getImportedEntityType() != PrismImportedEntity.INSTITUTION)) {
                 try {
                     maxRedirects = System.getProperty("http.maxRedirects");
                     System.setProperty("http.maxRedirects", "5");
@@ -95,22 +98,24 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
         try {
             List unmarshalled = unmarshalEntities(importedEntityFeed);
 
-            Class<ImportedEntity> importedEntityClass = (Class<ImportedEntity>) importedEntityFeed.getImportedEntityType().getEntityClass();
+            if (unmarshalled != null) {
+                Class<ImportedEntityInstitution> importedEntityClass = (Class<ImportedEntityInstitution>) importedEntityFeed.getImportedEntityType().getEntityClass();
 
-            Institution institution = importedEntityFeed.getInstitution();
-            if (importedEntityClass.equals(Program.class)) {
-                mergeImportedPrograms(institution, (List<ProgrammeOccurrence>) unmarshalled);
-            } else if (importedEntityClass.equals(ImportedInstitution.class)) {
-                mergeImportedInstitutions(institution, (List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution>) unmarshalled);
-            } else if (importedEntityClass.equals(ImportedLanguageQualificationType.class)) {
-                mergeImportedLanguageQualificationTypes(institution,
-                        (List<com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType>) unmarshalled);
-            } else {
-                mergeImportedEntities(importedEntityClass, institution, (List<Object>) unmarshalled);
+                Institution institution = importedEntityFeed.getInstitution();
+                if (importedEntityClass.equals(Program.class)) {
+                    mergeImportedPrograms(institution, (List<ProgrammeOccurrence>) unmarshalled);
+                } else if (importedEntityClass.equals(ImportedInstitution.class)) {
+                    mergeImportedInstitutions(institution, (List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution>) unmarshalled);
+                } else if (importedEntityClass.equals(ImportedLanguageQualificationType.class)) {
+                    mergeImportedLanguageQualificationTypes(institution,
+                            (List<com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType>) unmarshalled);
+                } else {
+                    mergeImportedEntities(importedEntityClass, institution, (List<Object>) unmarshalled);
+                }
+
+                importedEntityService.setLastImportedDate(importedEntityFeed);
+                // TODO: state change to institution ready to use.
             }
-
-            importedEntityService.setLastImportedDate(importedEntityFeed);
-            // TODO: state change to institution ready to use.
         } catch (Exception e) {
             throw new DataImportException("Error during the import of file: " + fileLocation, e);
         }
@@ -124,19 +129,28 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
                 }
             });
 
+            DateTime lastImportedTimestamp = importedEntityFeed.getLastImportedTimestamp();
             PrismImportedEntity importedEntityType = importedEntityFeed.getImportedEntityType();
 
             URL fileUrl = new DefaultResourceLoader().getResource(importedEntityFeed.getLocation()).getURL();
-            JAXBContext jaxbContext = JAXBContext.newInstance(importedEntityType.getJaxbClass());
+            URLConnection connection = fileUrl.openConnection();
+            Long lastModifiedTimestamp = connection.getLastModified();
 
-            SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema schema = schemaFactory.newSchema(new DefaultResourceLoader().getResource(importedEntityType.getSchemaLocation()).getFile());
+            if (lastImportedTimestamp == null || lastModifiedTimestamp == 0
+                    || new LocalDateTime(lastModifiedTimestamp).toDateTime().isAfter(lastImportedTimestamp)) {
+                JAXBContext jaxbContext = JAXBContext.newInstance(importedEntityType.getJaxbClass());
 
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            unmarshaller.setSchema(schema);
+                SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+                Schema schema = schemaFactory.newSchema(new DefaultResourceLoader().getResource(importedEntityType.getSchemaLocation()).getFile());
 
-            Object unmarshalled = unmarshaller.unmarshal(fileUrl);
-            return (List<Object>) IntrospectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
+                Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+                unmarshaller.setSchema(schema);
+
+                Object unmarshalled = unmarshaller.unmarshal(fileUrl);
+                return (List<Object>) IntrospectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
+            }
+
+            return null;
         } finally {
             Authenticator.setDefault(null);
         }
@@ -155,7 +169,7 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
     }
 
     private void mergeImportedInstitutions(Institution institution,
-                                           List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution> institutionDefinitions) throws Exception {
+            List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution> institutionDefinitions) throws Exception {
         importedEntityService.disableAllEntities(ImportedInstitution.class, institution);
         for (com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution transientImportedInstitution : institutionDefinitions) {
             importedEntityService.mergeImportedInstitution(institution, transientImportedInstitution);
@@ -170,7 +184,7 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
         }
     }
 
-    private void mergeImportedEntities(Class<ImportedEntity> importedEntityClass, Institution institution, List<Object> entityDefinitions) throws Exception {
+    private void mergeImportedEntities(Class<ImportedEntityInstitution> importedEntityClass, Institution institution, List<Object> entityDefinitions) throws Exception {
         importedEntityService.disableAllEntities(importedEntityClass, institution);
         for (Object entityDefinition : entityDefinitions) {
             importedEntityService.mergeImportedEntity(importedEntityClass, institution, entityDefinition);

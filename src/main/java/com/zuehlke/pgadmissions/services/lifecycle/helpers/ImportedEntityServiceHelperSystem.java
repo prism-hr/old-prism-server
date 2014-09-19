@@ -24,8 +24,8 @@ import au.com.bytecode.opencsv.CSVReader;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.System;
-import com.zuehlke.pgadmissions.dto.AdvertCategoryImportRowDTO;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.iso.jaxb.CountryCodesType;
 import com.zuehlke.pgadmissions.iso.jaxb.CountryType;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
@@ -35,9 +35,6 @@ import com.zuehlke.pgadmissions.services.SystemService;
 public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(ImportedEntityServiceHelperInstitution.class);
-    
-    @Value("${import.advertCategory.location}")
-    private String advertCategoryImportLocation;
 
     @Value("${import.institutionDomicile.location}")
     private String institutionDomicileImportLocation;
@@ -58,8 +55,9 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
         LocalDate lastImportDate = system.getLastDataImportDate();
         if (lastImportDate == null || lastImportDate.isBefore(baseline)) {
             importInstitutionDomiciles();
-            importAdvertCategories();
             systemService.setLastDataImportDate(baseline);
+        } else {
+            logger.info("Skipped the import from file " + institutionDomicileImportLocation);
         }
     }
 
@@ -71,19 +69,6 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
             mergeInstitutionDomiciles(unmarshalled, countryCurrencies);
         } catch (Exception e) {
             throw new DataImportException("Error during the import of file: " + institutionDomicileImportLocation, e);
-        }
-    }
-    
-    private void importAdvertCategories() throws DataImportException, IOException  {
-        logger.info("Starting the import from file: " + advertCategoryImportLocation);
-        URL fileUrl = new DefaultResourceLoader().getResource(advertCategoryImportLocation).getURL();
-        CSVReader reader = new CSVReader(new InputStreamReader(fileUrl.openStream(), Charsets.UTF_8));
-        try {
-            mergeAdvertCategories(reader);
-        } catch (Exception e) {
-            throw new DataImportException("Error during the import of file: " + advertCategoryImportLocation, e);
-        } finally {
-            reader.close();
         }
     }
 
@@ -100,7 +85,7 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
             }
             return countryCurrencies;
         } catch (Exception e) {
-            throw new DataImportException("Error during the import of file: " + advertCategoryImportLocation, e);
+            throw new DataImportException("Error during the import of file: " + countryCurrencyImportLocation, e);
         } finally {
             reader.close();
         }
@@ -120,36 +105,11 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
         }
     }
     
-    private void mergeInstitutionDomiciles(List<CountryType> countries, Map<String, String> countryCurrencies) throws DataImportException {
+    private void mergeInstitutionDomiciles(List<CountryType> countries, Map<String, String> countryCurrencies) throws DataImportException, DeduplicationException {
         importedEntityService.disableAllInstitutionDomiciles();
         for (CountryType country : countries) {
             importedEntityService.mergeInstitutionDomicile(country, countryCurrencies);
         }
-    }
-
-    private void mergeAdvertCategories(CSVReader reader) throws Exception {
-        importedEntityService.disableAllAdvertCategories();
-        String[] row;
-        while ((row = reader.readNext()) != null) {
-            AdvertCategoryImportRowDTO importRow = getAdvertCategoryRowDescriptor(row);
-            if (importRow != null) {
-                importedEntityService.createOrUpdateAdvertCategory(importRow);
-            }
-        }
-    }
-
-    private AdvertCategoryImportRowDTO getAdvertCategoryRowDescriptor(String[] row) {
-        if (row.length < 5) {
-            return null;
-        }
-        for (int i = 0; i < 4; i++) {
-            try {
-                int id = Integer.parseInt(row[i]);
-                return new AdvertCategoryImportRowDTO(id, row[4]);
-            } catch (NumberFormatException e) {
-            }
-        }
-        return null;
     }
     
 }

@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -91,7 +90,7 @@ public class ApplicationExportBuilder {
     @Autowired
     private ApplicationExportBuilderHelper applicationExportBuilderHelper;
 
-    public SubmitAdmissionsApplicationRequest build(ApplicationExportDTO applicationExportDTO) throws DatatypeConfigurationException {
+    public SubmitAdmissionsApplicationRequest build(ApplicationExportDTO applicationExportDTO) {
         SubmitAdmissionsApplicationRequest request = objectFactory.createSubmitAdmissionsApplicationRequest();
         request.setApplication(buildApplication(applicationExportDTO));
         return request;

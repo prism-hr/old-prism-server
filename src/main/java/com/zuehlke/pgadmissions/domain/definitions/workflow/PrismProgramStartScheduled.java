@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import org.joda.time.LocalDate;
 
-public class PrismProgramTypeStartScheduled extends PrismProgramTypeStartConfiguration {
+public class PrismProgramStartScheduled extends PrismProgramStartAbstract {
 
     private Integer startMonth;
     
@@ -24,17 +24,17 @@ public class PrismProgramTypeStartScheduled extends PrismProgramTypeStartConfigu
         this.startWeek = startWeek;
     }
     
-    public PrismProgramTypeStartScheduled withStartMonth(Integer startMonth) {
+    public PrismProgramStartScheduled withStartMonth(Integer startMonth) {
         this.startMonth = startMonth;
         return this;
     }
     
-    public PrismProgramTypeStartScheduled withStartWeek(Integer startWeek) {
+    public PrismProgramStartScheduled withStartWeek(Integer startWeek) {
         this.startWeek = startWeek;
         return this;
     }
     
-    public PrismProgramTypeStartScheduled withStartDay(Integer startDay) {
+    public PrismProgramStartScheduled withStartDay(Integer startDay) {
         setStartDay(startDay);
         return this;
     }

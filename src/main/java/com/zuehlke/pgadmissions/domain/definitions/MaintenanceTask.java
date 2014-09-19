@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain.definitions;
 
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.AbstractServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelper;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.ApplicationExportServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperInstitution;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperSystem;
@@ -19,8 +18,7 @@ public enum MaintenanceTask {
     SYSTEM_IMPORT_SYSTEM_REFERENCE_DATA(ImportedEntityServiceHelperSystem.class, true),
     SYSTEM_IMPORT_INSTITUTION_REFERENCE_DATA(ImportedEntityServiceHelperInstitution.class, true),
     SYSTEM_UPDATE_PROGRAM_STUDY_OPTION(ProgramServiceHelper.class, true),
-    SYSTEM_UPDATE_ADVERT_CLOSING_DATE(AdvertServiceHelper.class, true),  
-    SYSTEM_EXPORT_APPLICATION(ApplicationExportServiceHelper.class, false),
+    SYSTEM_UPDATE_ADVERT_CLOSING_DATE(AdvertServiceHelper.class, true),
     SYSTEM_SEND_DEFERRED_WORKFLOW_NOTIFICATION(NotificationServiceHelperWorkflow.class, false),
     SYSTEM_SEND_RECOMMENDATION_NOTIFICATION(NotificationServiceHelperRecommendation.class, true),
     SYSTEM_DELETE_UNUSED_DOCUMENT(DocumentServiceHelper.class, true);

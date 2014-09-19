@@ -1,10 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
-import com.zuehlke.pgadmissions.domain.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import java.util.List;
 
 import org.apache.lucene.search.Query;
 import org.hibernate.Criteria;
@@ -18,7 +14,11 @@ import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.zuehlke.pgadmissions.domain.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 @Repository
 @SuppressWarnings("unchecked")

@@ -28,7 +28,7 @@ import org.hibernate.search.annotations.TokenizerDef;
 @Entity
 @Table(name = "INSTITUTION_DOMICILE")
 @Indexed
-public class InstitutionDomicile {
+public class InstitutionDomicile extends ImportedEntitySystem {
 
     @Id
     private String id;
@@ -43,6 +43,7 @@ public class InstitutionDomicile {
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
+    @Override
     public String getId() {
         return id;
     }

@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.ImportedEntityInstitution;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
@@ -24,18 +24,18 @@ public class ImportedEntityDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public <T extends ImportedEntity> T getById(Integer id) {
-        return (T) sessionFactory.getCurrentSession().get(ImportedEntity.class, id);
+    public <T extends ImportedEntityInstitution> T getById(Integer id) {
+        return (T) sessionFactory.getCurrentSession().get(ImportedEntityInstitution.class, id);
     }
     
-    public <T extends ImportedEntity> T getImportedEntityByCode(Class<? extends ImportedEntity> entityClass, Institution institution, String code) {
+    public <T extends ImportedEntityInstitution> T getImportedEntityByCode(Class<? extends ImportedEntityInstitution> entityClass, Institution institution, String code) {
         return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
                 .add(Restrictions.eq("institution", institution)) //
                 .add(Restrictions.eq("code", code)) //
                 .uniqueResult();
     }
 
-    public <T extends ImportedEntity> T getImportedEntityByName(Class<? extends ImportedEntity> entityClass, Institution institution, String name) {
+    public <T extends ImportedEntityInstitution> T getImportedEntityByName(Class<? extends ImportedEntityInstitution> entityClass, Institution institution, String name) {
         return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
                 .add(Restrictions.eq("institution", institution)) //
                 .add(Restrictions.eq("name", name)) //
@@ -56,7 +56,7 @@ public class ImportedEntityDAO {
                 .uniqueResult();
     }
     
-    public <T extends ImportedEntity> List<T> getEnabledImportedEntities(Institution institution, Class<T> entityClass) {
+    public <T extends ImportedEntityInstitution> List<T> getEnabledImportedEntities(Institution institution, Class<T> entityClass) {
         return sessionFactory.getCurrentSession().createCriteria(entityClass)//
                 .add(Restrictions.eq("institution", institution)) //
                 .add(Restrictions.eq("enabled", true)) //
@@ -72,24 +72,21 @@ public class ImportedEntityDAO {
                 .list();
     }
 
-    public List<ImportedEntityFeed> getImportedEntityFeedsToImport() {
+    public List<ImportedEntityFeed> getImportedEntityFeeds() {
         return sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
                 .createAlias("institution", "institution", JoinType.INNER_JOIN) //
                 .createAlias("institution.state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.lt("lastImportedDate", new LocalDate())) //
-                        .add(Restrictions.isNull("lastImportedDate"))) //
                 .addOrder(Order.asc("institution")) //
                 .addOrder(Order.asc("importedEntityType")) //
                 .list();
     }
 
-    public void save(ImportedEntity entity) {
+    public void save(ImportedEntityInstitution entity) {
         sessionFactory.getCurrentSession().save(entity);
     }
 
-    public void update(ImportedEntity entity) {
+    public void update(ImportedEntityInstitution entity) {
         sessionFactory.getCurrentSession().update(entity);
     }
     

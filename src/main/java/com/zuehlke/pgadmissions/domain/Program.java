@@ -11,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -123,6 +125,10 @@ public class Program extends ParentResource {
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
+    
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "PROGRAM_RELATION", joinColumns = @JoinColumn(name = "program_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "program_relation_id", nullable = false))
+    private Set<Program> programRelations = Sets.newHashSet();
 
     @OneToMany(mappedBy = "program")
     private Set<ProgramStudyOption> studyOptions = Sets.newHashSet();
@@ -399,6 +405,10 @@ public class Program extends ParentResource {
     @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
+    }
+
+    public final Set<Program> getProgramRelations() {
+        return programRelations;
     }
 
     @Override

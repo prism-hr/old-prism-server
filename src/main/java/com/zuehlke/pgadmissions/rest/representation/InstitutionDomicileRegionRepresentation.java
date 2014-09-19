@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.rest.representation;
 
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-
 public class InstitutionDomicileRegionRepresentation {
 
     private String id;

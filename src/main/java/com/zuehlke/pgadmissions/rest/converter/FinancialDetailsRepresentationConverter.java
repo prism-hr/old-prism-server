@@ -14,6 +14,9 @@ public class FinancialDetailsRepresentationConverter extends DozerConverter<Fina
 
     @Override
     public FinancialDetailsRepresentation convertTo(FinancialDetails source, FinancialDetailsRepresentation destination) {
+        if(source == null){
+            return null;
+        }
         destination = new FinancialDetailsRepresentation();
         DurationUnit interval = source.getInterval();
 

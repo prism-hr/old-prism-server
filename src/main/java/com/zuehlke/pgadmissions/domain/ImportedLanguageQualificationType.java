@@ -35,7 +35,7 @@ import org.hibernate.search.annotations.TokenizerDef;
 @Table(name = "IMPORTED_LANGUAGE_QUALIFICATION_TYPE", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_id", "code"}),
         @UniqueConstraint(columnNames = {"institution_id", "name"})})
 @Indexed
-public class ImportedLanguageQualificationType extends ImportedEntity {
+public class ImportedLanguageQualificationType extends ImportedEntityInstitution {
 
     @Id
     @GeneratedValue

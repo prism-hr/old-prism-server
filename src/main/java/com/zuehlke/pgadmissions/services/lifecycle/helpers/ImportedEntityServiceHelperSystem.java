@@ -25,6 +25,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.iso.jaxb.CountryCodesType;
 import com.zuehlke.pgadmissions.iso.jaxb.CountryType;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
@@ -55,6 +56,8 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
         if (lastImportDate == null || lastImportDate.isBefore(baseline)) {
             importInstitutionDomiciles();
             systemService.setLastDataImportDate(baseline);
+        } else {
+            logger.info("Skipped the import from file " + institutionDomicileImportLocation);
         }
     }
 
@@ -102,7 +105,7 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
         }
     }
     
-    private void mergeInstitutionDomiciles(List<CountryType> countries, Map<String, String> countryCurrencies) throws DataImportException {
+    private void mergeInstitutionDomiciles(List<CountryType> countries, Map<String, String> countryCurrencies) throws DataImportException, DeduplicationException {
         importedEntityService.disableAllInstitutionDomiciles();
         for (CountryType country : countries) {
             importedEntityService.mergeInstitutionDomicile(country, countryCurrencies);

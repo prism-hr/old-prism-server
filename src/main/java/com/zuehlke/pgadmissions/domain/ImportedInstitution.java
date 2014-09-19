@@ -40,7 +40,7 @@ import com.google.common.collect.Maps;
 @Table(name = "IMPORTED_INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "domicile_id", "code" }),
         @UniqueConstraint(columnNames = { "institution_id", "domicile_id", "name" }) })
 @Indexed
-public class ImportedInstitution extends ImportedEntity {
+public class ImportedInstitution extends ImportedEntityInstitution {
 
     @Id
     @GeneratedValue

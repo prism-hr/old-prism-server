@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -37,6 +38,9 @@ public class InstitutionDomicileRegion extends ImportedEntitySystem {
 
     @Column(name = "name", nullable = false)
     private String name;
+    
+    @Embedded
+    private GeographicLocation location;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
@@ -100,6 +104,14 @@ public class InstitutionDomicileRegion extends ImportedEntitySystem {
         this.name = name;
     }
 
+    public final GeographicLocation getLocation() {
+        return location;
+    }
+
+    public final void setLocation(GeographicLocation location) {
+        this.location = location;
+    }
+
     public Boolean getEnabled() {
         return enabled;
     }
@@ -127,6 +139,16 @@ public class InstitutionDomicileRegion extends ImportedEntitySystem {
         return this;
     }
     
+    public InstitutionDomicileRegion withName(String name) {
+        this.name = name;
+        return this;
+    }
+    
+    public InstitutionDomicileRegion withLocation(GeographicLocation location) {
+        this.location = location;
+        return this;
+    }
+    
     public InstitutionDomicileRegion withNestedPath(String nestedPath) {
         this.nestedPath = nestedPath;
         return this;
@@ -139,11 +161,6 @@ public class InstitutionDomicileRegion extends ImportedEntitySystem {
 
     public InstitutionDomicileRegion withRegionType(String regionType) {
         this.regionType = regionType;
-        return this;
-    }
-
-    public InstitutionDomicileRegion withName(String name) {
-        this.name = name;
         return this;
     }
 

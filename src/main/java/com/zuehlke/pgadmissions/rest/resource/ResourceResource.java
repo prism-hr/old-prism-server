@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.dozer.Mapper;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,6 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.ActionDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
@@ -168,6 +168,7 @@ public class ResourceResource {
         ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
         try {
+            DateTime baseline = new DateTime().minusDays(1);
             PrismScope resourceScope = resourceDescriptor.getResourceScope();
             List<ResourceConsoleListRowDTO> rowDTOs = resourceService.getResourceConsoleList(resourceScope, filterDTO, lastSequenceIdentifier);
             for (ResourceConsoleListRowDTO rowDTO : rowDTOs) {
@@ -178,6 +179,8 @@ public class ResourceResource {
                 representation.setActions(actionService.getPermittedActions(rowDTO.getSystemId(), rowDTO.getInstitutionId(), rowDTO.getProgramId(),
                         rowDTO.getProjectId(), rowDTO.getApplicationId(), rowDTO.getStateId(), user));
                 representation.setId((Integer) PropertyUtils.getSimpleProperty(rowDTO, resourceScope.getLowerCaseName() + "Id"));
+                
+                representation.setRaisesUpdateFlag(rowDTO.getUpdatedTimestamp().isAfter(baseline));
                 representations.add(representation);
             }
             return representations;

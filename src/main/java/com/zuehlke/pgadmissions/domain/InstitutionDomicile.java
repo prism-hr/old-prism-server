@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -39,7 +40,11 @@ public class InstitutionDomicile extends ImportedEntitySystem {
 
     @Column(name = "currency", nullable = false)
     private String currency;
-
+    
+    @Embedded
+    private GeographicLocation location;
+    
+    
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
@@ -68,11 +73,19 @@ public class InstitutionDomicile extends ImportedEntitySystem {
         this.currency = currency;
     }
 
+    public final GeographicLocation getLocation() {
+        return location;
+    }
+
+    public final void setLocation(GeographicLocation location) {
+        this.location = location;
+    }
+
     public Boolean getEnabled() {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -91,6 +104,11 @@ public class InstitutionDomicile extends ImportedEntitySystem {
         return this;
     }
 
+    public InstitutionDomicile withLocation(GeographicLocation location) {
+        this.location = location;
+        return this;
+    }
+    
     public InstitutionDomicile withEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;

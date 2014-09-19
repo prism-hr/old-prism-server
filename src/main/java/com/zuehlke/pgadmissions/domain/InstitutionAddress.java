@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -38,6 +39,9 @@ public class InstitutionAddress {
     
     @Column(name = "address_code")
     private String addressCode;
+    
+    @Embedded
+    private GeographicLocation location;
 
     public Integer getId() {
         return id;
@@ -103,6 +107,14 @@ public class InstitutionAddress {
         this.addressCode = addressCode;
     }
     
+    public final GeographicLocation getLocation() {
+        return location;
+    }
+
+    public final void setLocation(GeographicLocation location) {
+        this.location = location;
+    }
+
     public InstitutionAddress withCountry(InstitutionDomicile country) {
         this.country = country;
         return this;
@@ -135,6 +147,11 @@ public class InstitutionAddress {
     
     public InstitutionAddress withAddressCode(String addressCode) {
         this.addressCode = addressCode;
+        return this;
+    }
+    
+    public InstitutionAddress withLocation(GeographicLocation location) {
+        this.location = location;
         return this;
     }
     

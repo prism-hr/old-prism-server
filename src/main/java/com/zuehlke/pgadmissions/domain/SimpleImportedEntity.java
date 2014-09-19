@@ -44,7 +44,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "imported_entity_type", discriminatorType = DiscriminatorType.STRING)
 @Indexed
-public abstract class SimpleImportedEntity extends ImportedEntityInstitution {
+public abstract class SimpleImportedEntity extends ImportedEntity {
 
     @Id
     @GeneratedValue

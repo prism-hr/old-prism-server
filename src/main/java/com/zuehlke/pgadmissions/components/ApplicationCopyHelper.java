@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.ImportedEntityInstitution;
+import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.Institution;
 @Component
 public class ApplicationCopyHelper {
@@ -214,7 +214,7 @@ public class ApplicationCopyHelper {
         return to;
     }
 
-    private <T extends ImportedEntityInstitution> T getEnabledImportedObject(Institution toInstitution, T fromEntity) {
+    private <T extends ImportedEntity> T getEnabledImportedObject(Institution toInstitution, T fromEntity) {
         if (fromEntity == null || (fromEntity.isEnabled() && fromEntity.getInstitution() == toInstitution)) {
             return fromEntity;
         }

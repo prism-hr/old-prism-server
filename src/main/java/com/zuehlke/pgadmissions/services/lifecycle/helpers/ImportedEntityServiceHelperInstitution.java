@@ -24,7 +24,7 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.ImportedEntityInstitution;
+import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
@@ -99,7 +99,7 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
             List unmarshalled = unmarshalEntities(importedEntityFeed);
 
             if (unmarshalled != null) {
-                Class<ImportedEntityInstitution> importedEntityClass = (Class<ImportedEntityInstitution>) importedEntityFeed.getImportedEntityType().getEntityClass();
+                Class<ImportedEntity> importedEntityClass = (Class<ImportedEntity>) importedEntityFeed.getImportedEntityType().getEntityClass();
 
                 Institution institution = importedEntityFeed.getInstitution();
                 if (importedEntityClass.equals(Program.class)) {
@@ -184,7 +184,7 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
         }
     }
 
-    private void mergeImportedEntities(Class<ImportedEntityInstitution> importedEntityClass, Institution institution, List<Object> entityDefinitions) throws Exception {
+    private void mergeImportedEntities(Class<ImportedEntity> importedEntityClass, Institution institution, List<Object> entityDefinitions) throws Exception {
         importedEntityService.disableAllEntities(importedEntityClass, institution);
         for (Object entityDefinition : entityDefinitions) {
             importedEntityService.mergeImportedEntity(importedEntityClass, institution, entityDefinition);

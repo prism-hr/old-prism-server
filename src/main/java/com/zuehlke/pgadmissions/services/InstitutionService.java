@@ -135,7 +135,7 @@ public class InstitutionService {
         }
     }
 
-    public ActionOutcomeDTO performAction(Integer institutionId, CommentDTO commentDTO) throws Exception {
+    public ActionOutcomeDTO performAction(Integer institutionId, CommentDTO commentDTO) throws DeduplicationException {
         Institution institution = entityService.getById(Institution.class, institutionId);
         PrismAction actionId = commentDTO.getAction();
 

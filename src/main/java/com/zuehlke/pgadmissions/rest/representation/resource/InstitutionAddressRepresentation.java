@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 
 public class InstitutionAddressRepresentation {
 
-    private String country;
+    private String domicile;
 
     private String region;
 
@@ -17,12 +17,12 @@ public class InstitutionAddressRepresentation {
 
     private String addressCode;
 
-    public String getCountry() {
-        return country;
+    public String getDomicile() {
+        return domicile;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public void setDomicile(String domicile) {
+        this.domicile = domicile;
     }
 
     public String getRegion() {

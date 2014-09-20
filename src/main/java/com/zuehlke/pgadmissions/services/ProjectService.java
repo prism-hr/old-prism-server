@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
 
@@ -54,7 +55,7 @@ public class ProjectService {
         entityService.save(project);
     }
 
-    public ActionOutcomeDTO performAction(Integer projectId, CommentDTO commentDTO) throws Exception {
+    public ActionOutcomeDTO performAction(Integer projectId, CommentDTO commentDTO) throws DeduplicationException {
         Project project = entityService.getById(Project.class, projectId);
         PrismAction actionId = commentDTO.getAction();
 

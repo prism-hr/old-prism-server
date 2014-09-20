@@ -44,7 +44,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentAssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
@@ -328,12 +327,8 @@ public class ApplicationService {
             for (CommentAssignedUserDTO assignedUserDTO : commentDTO.getAssignedUsers()) {
                 UserDTO commentUserDTO = assignedUserDTO.getUser();
 
-                try {
-                    User commentUser = userService.getOrCreateUser(commentUserDTO.getFirstName(), commentUserDTO.getLastName(), commentUserDTO.getEmail());
-                    assignedUsers.add(new CommentAssignedUser().withUser(commentUser).withRole(entityService.getById(Role.class, assignedUserDTO.getRole())));
-                } catch (Exception e) {
-                    throw new ResourceNotFoundException();
-                }
+                User commentUser = userService.getOrCreateUser(commentUserDTO.getFirstName(), commentUserDTO.getLastName(), commentUserDTO.getEmail());
+                assignedUsers.add(new CommentAssignedUser().withUser(commentUser).withRole(entityService.getById(Role.class, assignedUserDTO.getRole())));
             }
         }
 

@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 
@@ -91,7 +92,7 @@ public class ProgramService {
         return programDAO.getFirstEnabledProgramStudyOptionInstance(program, studyOption);
     }
 
-    public ActionOutcomeDTO performAction(Integer programId, CommentDTO commentDTO) throws Exception {
+    public ActionOutcomeDTO performAction(Integer programId, CommentDTO commentDTO) throws DeduplicationException {
         Program program = entityService.getById(Program.class, programId);
         PrismAction actionId = commentDTO.getAction();
 

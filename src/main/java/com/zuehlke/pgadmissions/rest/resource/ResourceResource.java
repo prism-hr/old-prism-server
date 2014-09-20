@@ -238,6 +238,7 @@ public class ResourceResource {
         }
     }
 
+    // TODO: fix problem with not assigning user transition type in comment post
     @RequestMapping(value = "/{resourceId}/comments", method = RequestMethod.POST)
     public ActionOutcomeRepresentation performAction(@PathVariable Integer resourceId, @Valid @RequestBody CommentDTO commentDTO) {
         try {

@@ -92,7 +92,7 @@ public class AdvertService {
         advert.setDescription(advertDetailsDTO.getDescription());
         advert.setApplyLink(advertDetailsDTO.getApplyLink());
 
-        address.setCountry(country);
+        address.setDomicile(country);
         address.setRegion(region);
         address.setAddressLine1(addressDTO.getAddressLine1());
         address.setAddressLine2(addressDTO.getAddressLine2());

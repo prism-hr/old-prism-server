@@ -29,7 +29,7 @@ import org.hibernate.search.annotations.TokenizerDef;
 @Entity
 @Table(name = "INSTITUTION_DOMICILE")
 @Indexed
-public class InstitutionDomicile extends ImportedEntitySystem {
+public class InstitutionDomicile extends GeocodableLocation {
 
     @Id
     private String id;
@@ -73,10 +73,12 @@ public class InstitutionDomicile extends ImportedEntitySystem {
         this.currency = currency;
     }
 
+    @Override
     public final GeographicLocation getLocation() {
         return location;
     }
 
+    @Override
     public final void setLocation(GeographicLocation location) {
         this.location = location;
     }
@@ -112,6 +114,11 @@ public class InstitutionDomicile extends ImportedEntitySystem {
     public InstitutionDomicile withEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
+    }
+    
+    @Override
+    public String getLocationString() {
+        return name;
     }
 
 }

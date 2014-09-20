@@ -493,6 +493,17 @@
                             <schemaDirectory>${project.basedir}/src/main/resources/xsd/isoCountryCodes</schemaDirectory>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>xjc-5</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                        <configuration>
+                            <packageName>com.zuehlke.pgadmissions.google.jaxb</packageName>
+                            <outputDirectory>${project.build.directory}/generated-sources/jaxb/google</outputDirectory>
+                            <schemaDirectory>${project.basedir}/src/main/resources/xsd/google</schemaDirectory>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 

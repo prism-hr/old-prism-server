@@ -23,8 +23,8 @@ import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.ImportedEntityInstitution;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
+import com.zuehlke.pgadmissions.domain.ImportedEntityInstitution;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.Institution;
@@ -42,6 +42,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.dto.InstitutionDomicileImportDTO;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.iso.jaxb.CategoryNameType;
@@ -82,7 +83,8 @@ public class ImportedEntityService {
         return (T) entityService.getByProperties(clazz, ImmutableMap.of("institution", institution, "id", id));
     }
 
-    public <T extends ImportedEntityInstitution> T getImportedEntityByCode(Class<? extends ImportedEntityInstitution> entityClass, Institution institution, String code) {
+    public <T extends ImportedEntityInstitution> T getImportedEntityByCode(Class<? extends ImportedEntityInstitution> entityClass, Institution institution,
+            String code) {
         return importedEntityDAO.getImportedEntityByCode(entityClass, institution, code);
     }
 
@@ -167,19 +169,19 @@ public class ImportedEntityService {
     }
 
     public void mergeImportedLanguageQualificationType(Institution institution, LanguageQualificationType languageQualificationTypeDefinition) throws Exception {
+        int precision = 2;
         ImportedLanguageQualificationType transientImportedLanguageQualificationType = new ImportedLanguageQualificationType().withInstitution(institution)
                 .withCode(languageQualificationTypeDefinition.getCode()).withName(languageQualificationTypeDefinition.getName())
-                .withMinimumOverallScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumOverallScore()))
-                .withMaximumOverallScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumOverallScore()))
-                .withMinimumReadingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumReadingScore()))
-                .withMaximumReadingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumReadingScore()))
-                .withMinimumWritingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumWritingScore()))
-                .withMaximumWritingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumWritingScore()))
-                .withMinimumSpeakingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumSpeakingScore()))
-                .withMaximumSpeakingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumSpeakingScore()))
-                .withMinimumListeningScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumListeningScore()))
-                .withMaximumListeningScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumListeningScore()));
-
+                .withMinimumOverallScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumOverallScore(), precision))
+                .withMaximumOverallScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumOverallScore(), precision))
+                .withMinimumReadingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumReadingScore(), precision))
+                .withMaximumReadingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumReadingScore(), precision))
+                .withMinimumWritingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumWritingScore(), precision))
+                .withMaximumWritingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumWritingScore(), precision))
+                .withMinimumSpeakingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumSpeakingScore(), precision))
+                .withMaximumSpeakingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumSpeakingScore(), precision))
+                .withMinimumListeningScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumListeningScore(), precision))
+                .withMaximumListeningScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumListeningScore(), precision));
         createOrUpdateImportedEntity(transientImportedLanguageQualificationType);
     }
 
@@ -201,10 +203,11 @@ public class ImportedEntityService {
         persistentImportedEntityFeed.setLastImportedTimestamp(new DateTime());
     }
 
-    public void mergeInstitutionDomicile(CountryType country, Map<String, String> countryCurrencies) throws DeduplicationException {
+    public InstitutionDomicileImportDTO mergeInstitutionDomicile(CountryType country, Map<String, String> countryCurrencies) throws DeduplicationException {
         String status = null;
         String countryName = null;
         String alpha2Code = null;
+
         List<SubdivisionType> subdivisions = Lists.newLinkedList();
         Map<Short, String> categories = Maps.newHashMap();
 
@@ -234,14 +237,35 @@ public class ImportedEntityService {
         String currency = countryCurrencies.get(alpha2Code);
 
         if (Strings.isNullOrEmpty(currency) || status == null || status.equals("exceptionally-reserved") || status.equals("indeterminately-reserved")) {
-            return;
+            return null;
         }
 
         InstitutionDomicile transientInstitutionDomicile = new InstitutionDomicile().withId(alpha2Code).withName(countryName).withCurrency(currency)
                 .withEnabled(true);
         InstitutionDomicile persistentInstitutionDomicile = entityService.createOrUpdate(transientInstitutionDomicile);
 
-        mergeInstitutionDomicileRegions(persistentInstitutionDomicile, subdivisions, categories);
+        return new InstitutionDomicileImportDTO().withDomicile(persistentInstitutionDomicile).withSubdivisions(subdivisions).withCategories(categories);
+    }
+
+    public InstitutionDomicileRegion mergeInstitutionDomicileRegion(String domicileId, SubdivisionType subdivision, Map<Short, String> categories)
+            throws DeduplicationException {
+        InstitutionDomicile domicile = entityService.getById(InstitutionDomicile.class, domicileId);
+        String name = subdivision.getSubdivisionLocale().get(0).getSubdivisionLocaleName();
+        InstitutionDomicileRegion transientRegion = new InstitutionDomicileRegion().withId(subdivision.getSubdivisionCode().getValue()).withEnabled(true)
+                .withDomicile(domicile).withParentRegion(null).withNestedPath(truncateString(name, 20)).withNestedLevel(0).withName(name)
+                .withRegionType(categories.get(subdivision.getCategoryId()));
+        return entityService.createOrUpdate(transientRegion);
+    }
+
+    public InstitutionDomicileRegion mergeNestedInstitutionDomicileRegion(String domicileId, String regionId,
+            SubdivisionType subdivision, Map<Short, String> categories) throws DeduplicationException {
+        InstitutionDomicile domicile = entityService.getById(InstitutionDomicile.class, domicileId);
+        InstitutionDomicileRegion region = entityService.getById(InstitutionDomicileRegion.class, regionId);
+        String name = subdivision.getSubdivisionLocale().get(0).getSubdivisionLocaleName();
+        InstitutionDomicileRegion transientNestedRegion = new InstitutionDomicileRegion().withId(subdivision.getSubdivisionCode().getValue()).withEnabled(true)
+                .withDomicile(domicile).withParentRegion(region).withNestedPath(region.getNestedPath() + "." + truncateString(name, 20))
+                .withNestedLevel(region.getNestedLevel() + 1).withName(name).withRegionType(categories.get(subdivision.getCategoryId()));
+        return entityService.createOrUpdate(transientNestedRegion);
     }
 
     private Program mergeProgram(Institution institution, Programme programDefinition) throws DeduplicationException {
@@ -251,7 +275,7 @@ public class ImportedEntityService {
         Advert transientAdvert = new Advert().withTitle(transientTitle);
 
         DateTime baseline = new DateTime();
-        
+
         PrismProgramType programTypeId = PrismProgramType.findValueFromString(programDefinition.getName());
         programTypeId = programTypeId == null ? institution.getDefaultProgramType() : programTypeId;
 
@@ -360,30 +384,6 @@ public class ImportedEntityService {
         Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                 .addAssignedUser(invoker, invokerRole, PrismRoleTransitionType.CREATE);
         actionService.executeSystemAction(program, action, comment);
-    }
-
-    private void mergeInstitutionDomicileRegions(InstitutionDomicile domicile, List<SubdivisionType> subdivisions, Map<Short, String> categories) throws DeduplicationException {
-        for (SubdivisionType subdivision : subdivisions) {
-            String name = subdivision.getSubdivisionLocale().get(0).getSubdivisionLocaleName();
-            InstitutionDomicileRegion transientRegion = new InstitutionDomicileRegion().withId(subdivision.getSubdivisionCode().getValue()).withEnabled(true)
-                    .withDomicile(domicile).withParentRegion(null).withNestedPath(truncateString(name, 20)).withNestedLevel(0).withName(name)
-                    .withRegionType(categories.get(subdivision.getCategoryId()));
-            InstitutionDomicileRegion persistentRegion = entityService.createOrUpdate(transientRegion);
-            mergeNestedInstitutionDomicileRegions(domicile, persistentRegion, subdivision, categories);
-        }
-    }
-
-    private void mergeNestedInstitutionDomicileRegions(InstitutionDomicile domicile, InstitutionDomicileRegion persistentRegion, SubdivisionType subdivision,
-            Map<Short, String> categories) {
-        for (SubdivisionType nestedSubdivision : subdivision.getSubdivision()) {
-            String name = nestedSubdivision.getSubdivisionLocale().get(0).getSubdivisionLocaleName();
-            InstitutionDomicileRegion transientNestedRegion = new InstitutionDomicileRegion().withId(nestedSubdivision.getSubdivisionCode().getValue())
-                    .withEnabled(true).withDomicile(domicile).withParentRegion(persistentRegion)
-                    .withNestedPath(persistentRegion.getNestedPath() + "." + truncateString(name, 20)).withNestedLevel(persistentRegion.getNestedLevel() + 1)
-                    .withName(name).withRegionType(categories.get(nestedSubdivision.getCategoryId()));
-            InstitutionDomicileRegion persistentNestedRegion = (InstitutionDomicileRegion) entityService.merge(transientNestedRegion);
-            mergeNestedInstitutionDomicileRegions(domicile, persistentNestedRegion, nestedSubdivision, categories);
-        }
     }
 
     private String truncateString(String string, int characters) {

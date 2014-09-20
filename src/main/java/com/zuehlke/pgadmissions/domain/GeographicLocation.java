@@ -8,22 +8,22 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class GeographicLocation {
 
-    @Column(name = "location_x", nullable = false)
+    @Column(name = "location_x")
     private BigDecimal locationX;
     
-    @Column(name = "location_y", nullable = false)
+    @Column(name = "location_y")
     private BigDecimal locationY;
     
-    @Column(name = "location_view_ne_x", nullable = false)
+    @Column(name = "location_view_ne_x")
     private BigDecimal locationViewNeX;
     
-    @Column(name = "location_view_ne_y", nullable = false)
+    @Column(name = "location_view_ne_y")
     private BigDecimal locationViewNeY;
     
-    @Column(name = "location_view_sw_x", nullable = false)
+    @Column(name = "location_view_sw_x")
     private BigDecimal locationViewSwX;
     
-    @Column(name = "location_view_sw_y", nullable = false)
+    @Column(name = "location_view_sw_y")
     private BigDecimal locationViewSwY;
 
     public final BigDecimal getLocationX() {

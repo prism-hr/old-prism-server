@@ -67,7 +67,7 @@ public class IT4ImportInstitutionReferenceData {
         State institutionState = entityService.getByProperty(State.class, "id", PrismState.INSTITUTION_APPROVED);
 
         InstitutionDomicile poland = entityService.getByProperty(InstitutionDomicile.class, "id", "PL");
-        InstitutionAddress address = new InstitutionAddress().withAddressLine1("test").withAddressTown("test").withCountry(poland);
+        InstitutionAddress address = new InstitutionAddress().withAddressLine1("test").withAddressTown("test").withDomicile(poland);
         entityService.save(address);
         
         User user = new User().withEmail("jerzy@urban.pl").withFirstName("Jerzy").withLastName("Urban").withActivationCode("jurekjurektrzymajsie");

@@ -11,35 +11,35 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "INSTITUTION_ADDRESS")
-public class InstitutionAddress {
+public class InstitutionAddress extends GeocodableLocation {
 
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @ManyToOne
     @JoinColumn(name = "institution_domicile_id", nullable = false)
-    private InstitutionDomicile country;
-    
+    private InstitutionDomicile domicile;
+
     @ManyToOne
     @JoinColumn(name = "institution_domicile_region_id")
     private InstitutionDomicileRegion region;
-    
+
     @Column(name = "address_line_1", nullable = false)
     private String addressLine1;
-    
+
     @Column(name = "address_line_2")
     private String addressLine2;
-    
+
     @Column(name = "address_town", nullable = false)
     private String addressTown;
-    
+
     @Column(name = "address_district")
     private String addressDistrict;
-    
+
     @Column(name = "address_code")
     private String addressCode;
-    
+
     @Embedded
     private GeographicLocation location;
 
@@ -51,12 +51,12 @@ public class InstitutionAddress {
         this.id = id;
     }
 
-    public InstitutionDomicile getCountry() {
-        return country;
+    public InstitutionDomicile getDomicile() {
+        return domicile;
     }
 
-    public void setCountry(InstitutionDomicile country) {
-        this.country = country;
+    public void setDomicile(InstitutionDomicile domicile) {
+        this.domicile = domicile;
     }
 
     public InstitutionDomicileRegion getRegion() {
@@ -106,53 +106,60 @@ public class InstitutionAddress {
     public void setAddressCode(String addressCode) {
         this.addressCode = addressCode;
     }
-    
+
+    @Override
     public final GeographicLocation getLocation() {
         return location;
     }
 
+    @Override
     public final void setLocation(GeographicLocation location) {
         this.location = location;
     }
 
-    public InstitutionAddress withCountry(InstitutionDomicile country) {
-        this.country = country;
+    public InstitutionAddress withDomicile(InstitutionDomicile domicile) {
+        this.domicile = domicile;
         return this;
     }
-    
+
     public InstitutionAddress withRegion(InstitutionDomicileRegion region) {
         this.region = region;
         return this;
     }
-    
+
     public InstitutionAddress withAddressLine1(String addressLine1) {
         this.addressLine1 = addressLine1;
         return this;
     }
-    
+
     public InstitutionAddress withAddressLine2(String addressLine2) {
         this.addressLine2 = addressLine2;
         return this;
     }
-    
+
     public InstitutionAddress withAddressTown(String addressTown) {
         this.addressTown = addressTown;
         return this;
     }
-    
+
     public InstitutionAddress withAddressDistrict(String addressDistrict) {
         this.addressDistrict = addressDistrict;
         return this;
     }
-    
+
     public InstitutionAddress withAddressCode(String addressCode) {
         this.addressCode = addressCode;
         return this;
     }
-    
+
     public InstitutionAddress withLocation(GeographicLocation location) {
         this.location = location;
         return this;
     }
-    
+
+    @Override
+    public String getLocationString() {
+        return buildLocationString(addressLine1, addressLine2, addressTown, addressDistrict, region == null ? null : region.getName(), domicile.getName());
+    }
+
 }

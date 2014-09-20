@@ -2,15 +2,17 @@ package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.Authenticator;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +25,18 @@ import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.GeocodableLocation;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
 import com.zuehlke.pgadmissions.domain.System;
+import com.zuehlke.pgadmissions.dto.InstitutionDomicileImportDTO;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.google.jaxb.GeocodeResponse;
 import com.zuehlke.pgadmissions.iso.jaxb.CountryCodesType;
 import com.zuehlke.pgadmissions.iso.jaxb.CountryType;
+import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionType;
+import com.zuehlke.pgadmissions.services.GeocodableLocationService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
@@ -36,18 +45,29 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(ImportedEntityServiceHelperInstitution.class);
 
+    private static final HashMap<LocalDate, Integer> geocodingRequestTotals = Maps.newHashMap();
+
     @Value("${import.institutionDomicile.location}")
     private String institutionDomicileImportLocation;
 
     @Value("${import.countryCurrency.location}")
     private String countryCurrencyImportLocation;
-    
+
+    @Value("${integration.google.geocoding.code.import.data}")
+    private Boolean googleGeocodeCode;
+
+    @Value("${integration.google.geocoding.api.day.batch.limit}")
+    private Integer googleGeocodeApiBatchLimit;
+
     @Autowired
     private ImportedEntityService importedEntityService;
-    
+
+    @Autowired
+    private GeocodableLocationService geocodableLocationService;
+
     @Autowired
     private SystemService systemService;
-    
+
     @Override
     public void execute() throws DataImportException, IOException {
         LocalDate baseline = new LocalDate();
@@ -90,26 +110,72 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
             reader.close();
         }
     }
-    
+
     @SuppressWarnings("unchecked")
-    public List<CountryType> unmarshalInstitutionDomiciles(final String fileLocation) throws Exception {
-        try {
-            URL fileUrl = new DefaultResourceLoader().getResource(fileLocation).getURL();
-            JAXBContext jaxbContext = JAXBContext.newInstance(CountryCodesType.class);
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            JAXBElement<CountryCodesType> unmarshalled = (JAXBElement<CountryCodesType>) unmarshaller.unmarshal(fileUrl);
-            CountryCodesType countryCodes = (CountryCodesType) unmarshalled.getValue();
-            return countryCodes.getCountry();
-        } finally {
-            Authenticator.setDefault(null);
-        }
+    public List<CountryType> unmarshalInstitutionDomiciles(final String fileLocation) throws IOException, JAXBException {
+        URL fileUrl = new DefaultResourceLoader().getResource(fileLocation).getURL();
+        JAXBContext jaxbContext = JAXBContext.newInstance(CountryCodesType.class);
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        JAXBElement<CountryCodesType> unmarshalled = (JAXBElement<CountryCodesType>) unmarshaller.unmarshal(fileUrl);
+        CountryCodesType countryCodes = (CountryCodesType) unmarshalled.getValue();
+        return countryCodes.getCountry();
     }
-    
-    private void mergeInstitutionDomiciles(List<CountryType> countries, Map<String, String> countryCurrencies) throws DataImportException, DeduplicationException {
+
+    private void mergeInstitutionDomiciles(List<CountryType> countries, Map<String, String> countryCurrencies) throws DataImportException,
+            DeduplicationException, IOException, JAXBException, InterruptedException {
         importedEntityService.disableAllInstitutionDomiciles();
         for (CountryType country : countries) {
-            importedEntityService.mergeInstitutionDomicile(country, countryCurrencies);
+            InstitutionDomicileImportDTO importDTO = importedEntityService.mergeInstitutionDomicile(country, countryCurrencies);
+            if (importDTO != null) {
+                InstitutionDomicile domicile = importDTO.getDomicile();
+                geocodeLocation(domicile);
+                mergeInstitutionDomicileRegions(domicile.getId(), importDTO.getSubdivisions(), importDTO.getCategories());
+            }
         }
     }
-    
+
+    private void mergeInstitutionDomicileRegions(String domicileId, List<SubdivisionType> subdivisions, Map<Short, String> categories)
+            throws DeduplicationException, IOException, JAXBException, InterruptedException {
+        for (SubdivisionType subdivision : subdivisions) {
+            InstitutionDomicileRegion region = importedEntityService.mergeInstitutionDomicileRegion(domicileId, subdivision, categories);
+            geocodeLocation(region);
+            mergeNestedInstitutionDomicileRegions(domicileId, region.getId(), subdivision, categories);
+        }
+    }
+
+    private void mergeNestedInstitutionDomicileRegions(String domicileId, String regionId, SubdivisionType subdivision, Map<Short, String> categories)
+            throws IOException, JAXBException, InterruptedException, DeduplicationException {
+        for (SubdivisionType nestedSubdivision : subdivision.getSubdivision()) {
+            InstitutionDomicileRegion nested = importedEntityService.mergeNestedInstitutionDomicileRegion(domicileId, regionId, nestedSubdivision, categories);
+            geocodeLocation(nested);
+            mergeNestedInstitutionDomicileRegions(domicileId, nested.getId(), nestedSubdivision, categories);
+        }
+    }
+
+    private <T extends GeocodableLocation> void geocodeLocation(T location) throws IOException, JAXBException, InterruptedException {
+        LocalDate baseline = new LocalDate();
+        Integer geocodedCounter = geocodingRequestTotals.get(baseline);
+        geocodedCounter = geocodedCounter == null ? 0 : geocodedCounter;
+        String address = location.getLocationString();
+        if (BooleanUtils.isTrue(googleGeocodeCode) && geocodedCounter < googleGeocodeApiBatchLimit && !location.isGeocoded()) {
+            GeocodeResponse response = geocodableLocationService.getLocation(location, address);
+            if (response.getStatus().equals("OK")) {
+                try {
+                    logger.info("Geocoding location: " + address + " - request " + (geocodedCounter + 1) + " of " + googleGeocodeApiBatchLimit + " today");
+                    geocodableLocationService.setLocation(location, response);
+                    geocodingRequestTotals.put(baseline, geocodedCounter + 1);
+                } catch (Exception e) {
+                    logger.error("Error geocoding location: " + address, e);
+                }
+            } else if (location.getClass().equals(InstitutionDomicileRegion.class)) {
+                geocodableLocationService.setFallbackLocation((InstitutionDomicileRegion) location);
+                logger.info("Setting fallback location for: " + address + " - zero results in geocoding request");
+            } else {
+                logger.info("No geocoding location found for country " + address);
+            }
+        } else {
+            logger.info("Skipped geocoding for location :" + address);
+        }
+    }
+
 }

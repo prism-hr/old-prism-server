@@ -78,7 +78,7 @@ public class InstitutionService {
         InstitutionAddress institutionAddress = new InstitutionAddress().withAddressLine1(institutionAddressDTO.getAddressLine1())
                 .withAddressLine2(institutionAddressDTO.getAddressLine2()).withAddressTown(institutionAddressDTO.getAddressTown())
                 .withAddressDistrict(institutionAddressDTO.getAddressDistrict()).withAddressCode(institutionAddressDTO.getAddressCode())
-                .withRegion(institutionAddressRegion).withCountry(institutionAddressCountry);
+                .withRegion(institutionAddressRegion).withDomicile(institutionAddressCountry);
 
         InstitutionDomicile institutionCountry = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
 

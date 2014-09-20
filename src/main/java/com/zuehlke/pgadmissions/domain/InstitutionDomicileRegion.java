@@ -14,7 +14,7 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "INSTITUTION_DOMICILE_REGION", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_domicile_id", "parent_region_id", "region_type", "name"})})
-public class InstitutionDomicileRegion extends ImportedEntitySystem {
+public class InstitutionDomicileRegion extends GeocodableLocation {
 
     @Id
     private String id;
@@ -104,10 +104,12 @@ public class InstitutionDomicileRegion extends ImportedEntitySystem {
         this.name = name;
     }
 
+    @Override
     public final GeographicLocation getLocation() {
         return location;
     }
 
+    @Override
     public final void setLocation(GeographicLocation location) {
         this.location = location;
     }
@@ -168,4 +170,10 @@ public class InstitutionDomicileRegion extends ImportedEntitySystem {
         this.enabled = enabled;
         return this;
     }
+    
+    @Override
+    public String getLocationString() {
+        return buildLocationString(name, parentRegion == null ? null : parentRegion.getName(), domicile.getName());
+    }
+    
 }

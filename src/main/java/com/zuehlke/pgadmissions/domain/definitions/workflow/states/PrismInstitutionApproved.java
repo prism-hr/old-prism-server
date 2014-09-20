@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 
 public class PrismInstitutionApproved extends PrismWorkflowState {
 
@@ -63,7 +63,7 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVAL) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_PROGRAM_LIST) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CREATED_OUTCOME)
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROGRAM_CREATED_OUTCOME)
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
@@ -75,7 +75,7 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVED) // 
                         .withTransitionAction(PrismAction.INSTITUTION_CREATE_PROGRAM) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_CREATED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROGRAM_CREATED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //

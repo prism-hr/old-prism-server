@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import org.apache.commons.lang.WordUtils;
 
-public enum PrismTransitionEvaluation {
+public enum PrismStateTransitionEvaluation {
 
     APPLICATION_SUPERVISION_CONFIRMED_OUTCOME(false, PrismScope.APPLICATION), //
     APPLICATION_ELIGIBILITY_ASSESSED_OUTCOME(false, PrismScope.APPLICATION), //
@@ -30,7 +30,7 @@ public enum PrismTransitionEvaluation {
     
     private PrismScope scope;
     
-    private PrismTransitionEvaluation(boolean nextStateSelection, PrismScope scope) {
+    private PrismStateTransitionEvaluation(boolean nextStateSelection, PrismScope scope) {
         this.nextStateSelection = nextStateSelection;
         this.scope = scope;
     }

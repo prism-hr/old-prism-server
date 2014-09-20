@@ -74,6 +74,9 @@ public class ImportedEntityService {
 
     @Autowired
     private RoleService roleService;
+    
+    @Autowired
+    private GeocodableLocationService geocodableLocationService;
 
     @Autowired
     private SystemService systemService;
@@ -242,7 +245,7 @@ public class ImportedEntityService {
 
         InstitutionDomicile transientInstitutionDomicile = new InstitutionDomicile().withId(alpha2Code).withName(countryName).withCurrency(currency)
                 .withEnabled(true);
-        InstitutionDomicile persistentInstitutionDomicile = entityService.createOrUpdate(transientInstitutionDomicile);
+        InstitutionDomicile persistentInstitutionDomicile = geocodableLocationService.getOrCreate(transientInstitutionDomicile);
 
         return new InstitutionDomicileImportDTO().withDomicile(persistentInstitutionDomicile).withSubdivisions(subdivisions).withCategories(categories);
     }
@@ -254,18 +257,19 @@ public class ImportedEntityService {
         InstitutionDomicileRegion transientRegion = new InstitutionDomicileRegion().withId(subdivision.getSubdivisionCode().getValue()).withEnabled(true)
                 .withDomicile(domicile).withParentRegion(null).withNestedPath(truncateString(name, 20)).withNestedLevel(0).withName(name)
                 .withRegionType(categories.get(subdivision.getCategoryId()));
-        return entityService.createOrUpdate(transientRegion);
+        return geocodableLocationService.getOrCreate(transientRegion);
     }
 
-    public InstitutionDomicileRegion mergeNestedInstitutionDomicileRegion(String domicileId, String regionId,
-            SubdivisionType subdivision, Map<Short, String> categories) throws DeduplicationException {
+    public InstitutionDomicileRegion mergeNestedInstitutionDomicileRegion(String domicileId, String regionId, SubdivisionType subdivision,
+            Map<Short, String> categories) throws DeduplicationException {
         InstitutionDomicile domicile = entityService.getById(InstitutionDomicile.class, domicileId);
         InstitutionDomicileRegion region = entityService.getById(InstitutionDomicileRegion.class, regionId);
         String name = subdivision.getSubdivisionLocale().get(0).getSubdivisionLocaleName();
         InstitutionDomicileRegion transientNestedRegion = new InstitutionDomicileRegion().withId(subdivision.getSubdivisionCode().getValue()).withEnabled(true)
                 .withDomicile(domicile).withParentRegion(region).withNestedPath(region.getNestedPath() + "." + truncateString(name, 20))
                 .withNestedLevel(region.getNestedLevel() + 1).withName(name).withRegionType(categories.get(subdivision.getCategoryId()));
-        return entityService.createOrUpdate(transientNestedRegion);
+        return geocodableLocationService.getOrCreate(transientNestedRegion);
+        
     }
 
     private Program mergeProgram(Institution institution, Programme programDefinition) throws DeduplicationException {

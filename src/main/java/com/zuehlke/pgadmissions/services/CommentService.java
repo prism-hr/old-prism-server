@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
@@ -111,7 +112,8 @@ public class CommentService {
 
             for (User invitee : commentDAO.getAppointmentInvitees(schedulingComment)) {
                 UserExtendedRepresentation inviteeRepresentation = userService.getUserRepresentation(invitee);
-                UserAppointmentPreferencesRepresentation preferenceRepresentation = new UserAppointmentPreferencesRepresentation().withUser(inviteeRepresentation);
+                UserAppointmentPreferencesRepresentation preferenceRepresentation = new UserAppointmentPreferencesRepresentation()
+                        .withUser(inviteeRepresentation);
 
                 List<Boolean> inviteePreferences = Lists.newLinkedList();
 
@@ -169,7 +171,8 @@ public class CommentService {
                 OfferRepresentation offerRepresentation = buildOfferRepresentation(sourceComment);
 
                 User primarySupervisor = commentDAO.getAssignedUsers(sourceComment, PrismRole.APPLICATION_PRIMARY_SUPERVISOR).get(0);
-                sourceComment = getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS, primarySupervisor, sourceComment.getCreatedTimestamp());
+                sourceComment = getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS, primarySupervisor,
+                        sourceComment.getCreatedTimestamp());
 
                 if (sourceComment != null) {
                     String positionTitle = sourceComment.getPositionTitle();
@@ -210,7 +213,7 @@ public class CommentService {
 
         entityService.save(comment);
 
-        comment.getAssignedUsers().addAll(persistentAssignees);
+        addAssignedUsers(comment, persistentAssignees);
         comment.getAppointmentTimeslots().addAll(persistentTimeslots);
         comment.getAppointmentPreferences().addAll(persistentPreferences);
     }
@@ -239,7 +242,7 @@ public class CommentService {
     }
 
     public void delete(Application application, Comment exclusion) {
-        for (Comment comment: application.getComments()) {
+        for (Comment comment : application.getComments()) {
             if (comment != exclusion) {
                 entityService.delete(comment);
             }
@@ -249,7 +252,8 @@ public class CommentService {
     private Comment getLatestAppointmentPreferenceComment(Application application, Comment schedulingComment, User user) {
         DateTime baseline = schedulingComment.getCreatedTimestamp();
         Comment preferenceComment = getLatestComment(application, PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY, user, baseline);
-        return preferenceComment == null ? getLatestComment(application, PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY, user, baseline) : preferenceComment;
+        return preferenceComment == null ? getLatestComment(application, PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY, user, baseline)
+                : preferenceComment;
     }
 
     private OfferRepresentation buildOfferRepresentation(Comment sourceComment) {
@@ -288,6 +292,13 @@ public class CommentService {
         }
 
         return supervisors;
+    }
+    
+    private void addAssignedUsers(Comment comment, Set<CommentAssignedUser> assignees) {
+        for (CommentAssignedUser assignee : assignees) {
+            PrismRoleTransitionType transitionType = assignee.getRoleTransitionType();
+            comment.addAssignedUser(assignee.getUser(), assignee.getRole(), transitionType == null ? PrismRoleTransitionType.CREATE : transitionType);
+        }
     }
 
 }

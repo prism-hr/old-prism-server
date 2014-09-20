@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 
 public class PrismApplicationValidation extends PrismWorkflowState {
 
@@ -50,11 +50,11 @@ public class PrismApplicationValidation extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION) // 
                         .withTransitionAction(PrismAction.APPLICATION_COMPLETE_VALIDATION_STAGE) //
-                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_ELIGIBILITY_ASSESSED_OUTCOME), // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_ELIGIBILITY_ASSESSED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_VALIDATION_PENDING_FEEDBACK) // 
                         .withTransitionAction(PrismAction.APPLICATION_CONFIRM_ELIGIBILITY) //
-                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_ELIGIBILITY_ASSESSED_OUTCOME)))); //
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_ELIGIBILITY_ASSESSED_OUTCOME)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_COMMENT) //
@@ -125,7 +125,7 @@ public class PrismApplicationValidation extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REJECTED_COMPLETED) // 
                         .withTransitionAction(PrismAction.APPLICATION_TERMINATE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_REFEREE) //
@@ -135,7 +135,7 @@ public class PrismApplicationValidation extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REJECTED_PENDING_EXPORT) // 
                         .withTransitionAction(PrismAction.APPLICATION_TERMINATE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_REFEREE) //
@@ -197,7 +197,7 @@ public class PrismApplicationValidation extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_REFEREE) //
@@ -207,7 +207,7 @@ public class PrismApplicationValidation extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_WITHDRAWN_COMPLETED) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_REFEREE) //

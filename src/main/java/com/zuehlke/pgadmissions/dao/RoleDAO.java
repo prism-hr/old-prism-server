@@ -1,11 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
-import java.util.Set;
 
-import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -56,24 +53,19 @@ public class RoleDAO {
                 .list();
     }
 
-    public List<UserRole> getExcludingUserRoles(UserRole userRole) {
-        Resource resource = userRole.getResource();
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource.getId()))
-                .add(Restrictions.eq("user", userRole.getUser())) //
-                .add(Restrictions.ne("role", userRole.getRole()));
-        
-        Set<Role> exclusions = userRole.getRole().getExcludedRoles();
-        
-        if (!exclusions.isEmpty()) {
-            Disjunction disjunction = Restrictions.disjunction();
-            for (Role excludedRole : exclusions) {
-                disjunction.add(Restrictions.eq("role", excludedRole));
-            }
-            criteria.add(disjunction);
-        }    
-                
-        return criteria.list();
+    public List<Integer> getExcludingUserRoles(Resource resource, User user, Role role) {
+        String resourceReference = resource.getResourceScope().getLowerCaseName();
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.property("excludedUserRole.id")) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.excludedRoles", "excludedRole", JoinType.INNER_JOIN) //
+                .createAlias("excludedRole.userRoles", "excludedUserRole")
+                .add(Restrictions.eq(resourceReference, resource))
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.ne("role", role))
+                .add(Restrictions.eq("excludedUserRole." + resourceReference, resource))
+                .add(Restrictions.eq("excludedUserRole.user", user))
+                .list();
     }
 
     public Role getCreatorRole(Resource resource) {
@@ -121,7 +113,7 @@ public class RoleDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("id", roleTransition.getId())) //
-                .add(Restrictions.eq("userRole." + resource.getResourceScope().getLowerCaseName(), resource.getId())) //
+                .add(Restrictions.eq("userRole." + resource.getResourceScope().getLowerCaseName(), resource)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.eq("restrictToActionOwner", true)) //

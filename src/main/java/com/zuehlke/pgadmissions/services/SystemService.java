@@ -57,7 +57,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssi
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
@@ -253,7 +253,7 @@ public class SystemService {
     }
 
     private void initialiseStateTransitionEvaluations() throws DeduplicationException {
-        for (PrismTransitionEvaluation prismTransitionEvaluation : PrismTransitionEvaluation.values()) {
+        for (PrismStateTransitionEvaluation prismTransitionEvaluation : PrismStateTransitionEvaluation.values()) {
             Scope scope = entityService.getById(Scope.class, prismTransitionEvaluation.getScope());
             StateTransitionEvaluation transientStateTransitionEvaluation = new StateTransitionEvaluation().withId(prismTransitionEvaluation)
                     .withNextStateSelection(prismTransitionEvaluation.isNextStateSelection()).withScope(scope);

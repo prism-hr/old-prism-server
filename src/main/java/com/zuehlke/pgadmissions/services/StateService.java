@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
@@ -80,7 +80,7 @@ public class StateService {
         return entityService.getById(StateGroup.class, stateGroupId);
     }
 
-    public StateTransitionEvaluation getStateTransitionEvaluationById(PrismTransitionEvaluation stateTransitionEvaluationId) {
+    public StateTransitionEvaluation getStateTransitionEvaluationById(PrismStateTransitionEvaluation stateTransitionEvaluationId) {
         return entityService.getById(StateTransitionEvaluation.class, stateTransitionEvaluationId);
     }
 
@@ -182,7 +182,7 @@ public class StateService {
         List<StateTransition> potentialStateTransitions = stateDAO.getStateTransitions(operative, action);
 
         if (potentialStateTransitions.size() > 1) {
-            PrismTransitionEvaluation transitionEvaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation().getId();
+            PrismStateTransitionEvaluation transitionEvaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation().getId();
             return (StateTransition) IntrospectionUtils.invokeMethod(this, transitionEvaluation.getMethodName(), operative, comment);
         }
 

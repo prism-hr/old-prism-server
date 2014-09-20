@@ -91,7 +91,7 @@ public class ResourceService {
         return entityService.getById(resourceClass, id);
     }
 
-    public ActionOutcomeDTO performAction(Integer resourceId, CommentDTO commentDTO) throws Exception {
+    public ActionOutcomeDTO performAction(Integer resourceId, CommentDTO commentDTO) throws DeduplicationException {
         switch (commentDTO.getAction().getScope()) {
         case INSTITUTION:
             return institutionService.performAction(resourceId, commentDTO);
@@ -102,7 +102,7 @@ public class ResourceService {
         case APPLICATION:
             return applicationService.performAction(resourceId, commentDTO);
         default:
-            throw new Error("Couldn't perform action " + commentDTO.getAction());
+            throw new Error("Action " + commentDTO.getAction() + " could not be performed");
         }
     }
 

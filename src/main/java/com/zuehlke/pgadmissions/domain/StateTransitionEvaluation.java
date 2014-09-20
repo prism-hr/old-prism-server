@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 
 @Entity
 @Table(name = "STATE_TRANSITION_EVALUATION")
@@ -22,7 +22,7 @@ public class StateTransitionEvaluation extends WorkflowResource {
     @Id
     @Column(name = "id")
     @Enumerated(EnumType.STRING)
-    private PrismTransitionEvaluation id;
+    private PrismStateTransitionEvaluation id;
     
     @Column(name = "next_state_selection", nullable = false)
     private Boolean nextStateSelection; 
@@ -32,11 +32,11 @@ public class StateTransitionEvaluation extends WorkflowResource {
     private Scope scope;
 
     @Override
-    public final PrismTransitionEvaluation getId() {
+    public final PrismStateTransitionEvaluation getId() {
         return id;
     }
 
-    public final void setId(PrismTransitionEvaluation id) {
+    public final void setId(PrismStateTransitionEvaluation id) {
         this.id = id;
     }
 
@@ -56,7 +56,7 @@ public class StateTransitionEvaluation extends WorkflowResource {
         this.scope = scope;
     }
     
-    public StateTransitionEvaluation withId(PrismTransitionEvaluation id) {
+    public StateTransitionEvaluation withId(PrismStateTransitionEvaluation id) {
         this.id = id;
         return this;
     }

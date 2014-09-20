@@ -67,7 +67,6 @@ public class ProjectService {
 
         ProjectDTO projectDTO = commentDTO.getProject();
         if (projectDTO != null) {
-            // modify project
             update(projectId, projectDTO);
         }
 

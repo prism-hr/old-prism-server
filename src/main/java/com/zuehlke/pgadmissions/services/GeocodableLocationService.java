@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.domain.GeocodableLocation;
 import com.zuehlke.pgadmissions.domain.GeographicLocation;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.google.jaxb.GeocodeResponse;
 import com.zuehlke.pgadmissions.google.jaxb.GeocodeResponse.Result.Geometry;
 import com.zuehlke.pgadmissions.google.jaxb.GeocodeResponse.Result.Geometry.Location;
@@ -45,6 +46,16 @@ public class GeocodableLocationService {
         return (T) entityService.getById(locationClass, id);
     }
 
+    public <T extends GeocodableLocation> T getOrCreate(T transientLocation) throws DeduplicationException {
+        T persistentLocation = entityService.getDuplicateEntity(transientLocation);
+        if (persistentLocation == null) {
+            entityService.save(transientLocation);
+            return transientLocation;
+        }
+        transientLocation.setLocation(persistentLocation.getLocation());
+        return entityService.replace(persistentLocation, transientLocation);
+    }
+    
     public synchronized <T extends GeocodableLocation> GeocodeResponse getLocation(T location, String address) throws InterruptedException, IOException,
             JAXBException {
         wait(googleGeocodeRequestDelayMs);

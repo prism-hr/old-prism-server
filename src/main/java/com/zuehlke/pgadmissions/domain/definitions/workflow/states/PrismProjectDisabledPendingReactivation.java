@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 
 public class PrismProjectDisabledPendingReactivation extends PrismWorkflowState {
 
@@ -27,13 +27,13 @@ public class PrismProjectDisabledPendingReactivation extends PrismWorkflowState 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DISABLED_COMPLETED) // 
                         .withTransitionAction(PrismAction.PROJECT_CONCLUDE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)// 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.APPLICATION_TERMINATE)), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DISABLED_PENDING_REACTIVATION) // 
                         .withTransitionAction(PrismAction.PROJECT_CONCLUDE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)))); //
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_VIEW_EDIT) //
@@ -67,7 +67,7 @@ public class PrismProjectDisabledPendingReactivation extends PrismWorkflowState 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_APPROVED) // 
                         .withTransitionAction(PrismAction.PROJECT_VIEW_EDIT) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_VIEW_EDIT_OUTCOME)
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_VIEW_EDIT_OUTCOME)
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROJECT_ADMINISTRATOR) //
@@ -106,7 +106,7 @@ public class PrismProjectDisabledPendingReactivation extends PrismWorkflowState 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DEACTIVATED) // 
                         .withTransitionAction(PrismAction.PROJECT_VIEW_EDIT) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_VIEW_EDIT_OUTCOME)
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_VIEW_EDIT_OUTCOME)
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROJECT_ADMINISTRATOR) //
@@ -145,11 +145,11 @@ public class PrismProjectDisabledPendingReactivation extends PrismWorkflowState 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DISABLED_COMPLETED) // 
                         .withTransitionAction(PrismAction.PROJECT_VIEW_EDIT) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_VIEW_EDIT_OUTCOME), // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_VIEW_EDIT_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DISABLED_PENDING_REACTIVATION) // 
                         .withTransitionAction(PrismAction.PROJECT_VIEW_EDIT) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_VIEW_EDIT_OUTCOME)
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_VIEW_EDIT_OUTCOME)
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROJECT_ADMINISTRATOR) //

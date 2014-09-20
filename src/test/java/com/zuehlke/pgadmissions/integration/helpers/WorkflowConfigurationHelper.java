@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.StateService;
@@ -196,14 +196,14 @@ public class WorkflowConfigurationHelper {
         State state = stateAction.getState();
         Action action = stateAction.getAction();
 
-        PrismTransitionEvaluation lastTransitionEvaluation = null;
+        PrismStateTransitionEvaluation lastTransitionEvaluation = null;
         Set<StateTransition> stateTransitions = stateAction.getStateTransitions();
         int stateTransitionCount = stateTransitions.size();
 
         for (StateTransition stateTransition : stateTransitions) {
 
             StateTransitionEvaluation thisTransitionEvaluation = stateTransition.getStateTransitionEvaluation();
-            PrismTransitionEvaluation thisTransitionEvaluationId = thisTransitionEvaluation == null ? null : thisTransitionEvaluation.getId();
+            PrismStateTransitionEvaluation thisTransitionEvaluationId = thisTransitionEvaluation == null ? null : thisTransitionEvaluation.getId();
 
             assertTrue(stateTransition.getRoleTransitions().size() > 0 || state != stateTransition.getTransitionState()
                     || action != stateTransition.getTransitionAction() || thisTransitionEvaluationId != null);

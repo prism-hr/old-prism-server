@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 
 public class PrismApplicationWithdrawnPendingExport extends PrismWorkflowState {
 
@@ -90,15 +90,15 @@ public class PrismApplicationWithdrawnPendingExport extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT) // 
                         .withTransitionAction(PrismAction.APPLICATION_EXPORT) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME), // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_WITHDRAWN_COMPLETED) // 
                         .withTransitionAction(PrismAction.APPLICATION_EXPORT) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME), // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_WITHDRAWN_PENDING_CORRECTION) // 
                         .withTransitionAction(PrismAction.APPLICATION_EXPORT) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME)))); //
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //

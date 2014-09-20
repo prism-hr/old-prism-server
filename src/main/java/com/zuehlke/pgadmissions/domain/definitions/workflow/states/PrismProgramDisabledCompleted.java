@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 
 public class PrismProgramDisabledCompleted extends PrismWorkflowState {
 
@@ -43,13 +43,13 @@ public class PrismProgramDisabledCompleted extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVED) // 
                         .withTransitionAction(PrismAction.PROGRAM_RESTORE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_RESTORED_OUTCOME)// 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROGRAM_RESTORED_OUTCOME)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.PROJECT_RESTORE)), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DEACTIVATED) // 
                         .withTransitionAction(PrismAction.PROGRAM_RESTORE) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROGRAM_RESTORED_OUTCOME)// 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROGRAM_RESTORED_OUTCOME)// 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.PROJECT_RESTORE))))); //
     }

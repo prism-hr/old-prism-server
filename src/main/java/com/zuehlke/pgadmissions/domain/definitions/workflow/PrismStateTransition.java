@@ -11,7 +11,7 @@ public class PrismStateTransition {
 
     private PrismAction transitionAction;
 
-    private PrismTransitionEvaluation transitionEvaluation;
+    private PrismStateTransitionEvaluation transitionEvaluation;
 
     private List<PrismRoleTransition> roleTransitions = Lists.newArrayList();
 
@@ -25,7 +25,7 @@ public class PrismStateTransition {
         return transitionAction;
     }
 
-    public PrismTransitionEvaluation getTransitionEvaluation() {
+    public PrismStateTransitionEvaluation getTransitionEvaluation() {
         return transitionEvaluation;
     }
 
@@ -47,7 +47,7 @@ public class PrismStateTransition {
         return this;
     }
 
-    public PrismStateTransition withTransitionEvaluation(PrismTransitionEvaluation transitionEvaluation) {
+    public PrismStateTransition withTransitionEvaluation(PrismStateTransitionEvaluation transitionEvaluation) {
         this.transitionEvaluation = transitionEvaluation;
         return this;
     }

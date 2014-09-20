@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 
 public class PrismInstitutionApproval extends PrismWorkflowState {
 
@@ -36,15 +36,15 @@ public class PrismInstitutionApproval extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.INSTITUTION_APPROVAL_PENDING_CORRECTION) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_INSTITUTION_LIST)
-                        .withTransitionEvaluation(PrismTransitionEvaluation.INSTITUTION_APPROVED_OUTCOME), // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.INSTITUTION_APPROVED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.INSTITUTION_APPROVED) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_INSTITUTION_LIST)
-                        .withTransitionEvaluation(PrismTransitionEvaluation.INSTITUTION_APPROVED_OUTCOME), // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.INSTITUTION_APPROVED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.INSTITUTION_REJECTED) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_INSTITUTION_LIST)
-                        .withTransitionEvaluation(PrismTransitionEvaluation.INSTITUTION_APPROVED_OUTCOME)))); //
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.INSTITUTION_APPROVED_OUTCOME)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.INSTITUTION_EMAIL_CREATOR) //

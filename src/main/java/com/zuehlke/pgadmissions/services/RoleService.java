@@ -42,7 +42,7 @@ public class RoleService {
 
     @Autowired
     private ResourceService resourceService;
-    
+
     @Autowired
     private UserService userService;
 
@@ -64,8 +64,9 @@ public class RoleService {
 
     public UserRole getOrCreateUserRole(Resource resource, User user, PrismRole newRoleId) throws DeduplicationException {
         Role newRole = getById(newRoleId);
-        UserRole transientUserRole = new UserRole().withResource(resource).withUser(user).withRole(newRole).withAssignedTimestamp(new DateTime());
-        if (newRole.getExcludedRoles().isEmpty() || roleDAO.getExcludingUserRoles(transientUserRole).isEmpty()) {
+        List<Integer> excludingUserRoles = roleDAO.getExcludingUserRoles(resource, user, newRole);
+        if (excludingUserRoles.isEmpty()) {
+            UserRole transientUserRole = new UserRole().withResource(resource).withUser(user).withRole(newRole).withAssignedTimestamp(new DateTime());
             UserRole persistentUserRole = entityService.getOrCreate(transientUserRole);
             entityService.flush();
             return persistentUserRole;
@@ -78,14 +79,14 @@ public class RoleService {
     public void updateUserRoles(Resource resource, User user, List<RoleRepresentation> roleRepresentations) throws DeduplicationException {
         User invoker = userService.getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
-        
+
         Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false);
-        
+
         for (RoleRepresentation roleRepresentation : roleRepresentations) {
             Role role = getById(roleRepresentation.getId());
             comment.addAssignedUser(user, role, roleRepresentation.getValue() ? PrismRoleTransitionType.CREATE : PrismRoleTransitionType.DELETE);
         }
-        
+
         actionService.executeUserAction(resource, action, comment);
     }
 
@@ -159,7 +160,7 @@ public class RoleService {
         Integer minimumPermitted = roleTransition.getMinimumPermitted();
         Integer maximumPermitted = roleTransition.getMaximumPermitted();
 
-        if (!(minimumPermitted == null || users.size() >= minimumPermitted) && (maximumPermitted == null || users.size() <= maximumPermitted)) {
+        if (!(minimumPermitted == null || users.size() >= minimumPermitted) && !(maximumPermitted == null || users.size() <= maximumPermitted)) {
             actionService.throwWorkflowEngineException(comment.getResource(), comment.getAction(), "Attempted to "
                     + roleTransition.getRoleTransitionType().name() + " " + users.size() + " users of role: " + roleTransition.getRole().getAuthority()
                     + ". Expected " + minimumPermitted + " <= n <=" + maximumPermitted);

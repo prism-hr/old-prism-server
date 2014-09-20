@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 
 public class PrismProjectApproval extends PrismWorkflowState {
 
@@ -43,15 +43,15 @@ public class PrismProjectApproval extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_APPROVAL_PENDING_CORRECTION) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_PROJECT_LIST) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_APPROVED_OUTCOME), // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_APPROVED) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_PROJECT_LIST) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_APPROVED_OUTCOME), // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_REJECTED) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_PROJECT_LIST) // 
-                        .withTransitionEvaluation(PrismTransitionEvaluation.PROJECT_APPROVED_OUTCOME)))); //
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME)))); //
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_EMAIL_CREATOR) //

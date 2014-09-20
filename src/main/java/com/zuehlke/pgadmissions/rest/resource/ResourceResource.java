@@ -238,13 +238,12 @@ public class ResourceResource {
         }
     }
 
-    // TODO: fix problem with not assigning user transition type in comment post
     @RequestMapping(value = "/{resourceId}/comments", method = RequestMethod.POST)
     public ActionOutcomeRepresentation performAction(@PathVariable Integer resourceId, @Valid @RequestBody CommentDTO commentDTO) {
         try {
             ActionOutcomeDTO actionOutcome = resourceService.performAction(resourceId, commentDTO);
             return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
-        } catch (Exception e) {
+        } catch (DeduplicationException e) {
             PrismAction actionId = commentDTO.getAction();
             logger.error("Could not perform action " + actionId + " on " + actionId.getScope().getLowerCaseName() + " id " + resourceId.toString(), e);
             throw new ResourceNotFoundException();

@@ -77,9 +77,17 @@ public class GeocodableLocationService {
     
     public void setFallbackLocation(InstitutionDomicileRegion region) {
         region = getById(InstitutionDomicileRegion.class, region.getId());
+        InstitutionDomicileRegion cursorRegion = null;
         
-        for (int i = region.getNestedLevel(); i <= 0; i--) {
-            InstitutionDomicileRegion parentRegion = region.getParentRegion();
+        for (int i = region.getNestedLevel(); i < 0; i--) {
+            if (cursorRegion == null) {
+                cursorRegion = region;
+            } else {
+                cursorRegion = cursorRegion.getParentRegion();
+            }
+            
+            InstitutionDomicileRegion parentRegion = cursorRegion.getParentRegion();
+            
             if (parentRegion != null) {
                 GeographicLocation parentLocation = parentRegion.getLocation();
                 if (parentLocation != null) {

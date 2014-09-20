@@ -79,5 +79,9 @@ public class ResourceListFilterDTO {
     public boolean hasConstraints() {
         return constraints != null && !constraints.isEmpty();
     }
+    
+    public boolean hasBasicFilter() {
+        return hasConstraints() && valueString != null;
+    }    
 
 }

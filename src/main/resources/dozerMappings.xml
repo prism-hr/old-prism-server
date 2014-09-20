@@ -93,8 +93,8 @@
         <class-a>com.zuehlke.pgadmissions.domain.InstitutionAddress</class-a>
         <class-b>com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation</class-b>
         <field>
-            <a>country.id</a>
-            <b>country</b>
+            <a>domicile.id</a>
+            <b>domicile</b>
         </field>
         <field>
             <a>region.id</a>

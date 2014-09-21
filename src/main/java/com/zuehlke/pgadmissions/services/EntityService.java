@@ -49,7 +49,7 @@ public class EntityService {
         return persistentResource;
     }
 
-    public <T extends IUniqueEntity> T createOrUpdate(T transientResource) throws DeduplicationException {
+    public <T extends IUniqueEntity> T createOrReplace(T transientResource) throws DeduplicationException {
         T persistentResource = getDuplicateEntity(transientResource);
         if (persistentResource == null) {
             save(transientResource);

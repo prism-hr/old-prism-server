@@ -42,7 +42,7 @@ public class ResourceListFilterService {
     public void save(User user, Scope scope, ResourceListFilterDTO filterDTO) throws DeduplicationException {
         ResourceListFilter transientFilter = new ResourceListFilter().withUserAccount(user.getUserAccount()).withScope(scope)
                 .withMatchMode(filterDTO.getMatchMode()).withSortOrder(filterDTO.getSortOrder()).withUrgentOnly(filterDTO.getUrgentOnly());
-        ResourceListFilter persistentFilter = entityService.createOrUpdate(transientFilter);
+        ResourceListFilter persistentFilter = entityService.createOrReplace(transientFilter);
 
         for (int i = 0; i < filterDTO.getConstraints().size(); i++) {
             ResourceListFilterConstraintDTO constraintDTO = filterDTO.getConstraints().get(i);

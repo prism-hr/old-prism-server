@@ -148,7 +148,7 @@ public class ImportedEntityService {
                     .withAcademicYear(Integer.toString(transientStartDate.getYear())).withIdentifier(occurrence.getIdentifier())
                     .withEnabled(transientCloseDate.isAfter(baseline));
 
-            ProgramStudyOptionInstance persistentProgramStudyOptionInstance = entityService.createOrUpdate(transientProgramStudyOptionInstance);
+            ProgramStudyOptionInstance persistentProgramStudyOptionInstance = entityService.createOrReplace(transientProgramStudyOptionInstance);
             persistentProgramStudyOption.getStudyOptionInstances().add(persistentProgramStudyOptionInstance);
 
             executeProgramImportAction(persistentProgram);
@@ -332,7 +332,7 @@ public class ImportedEntityService {
         PrismStudyOption studyOptionId = PrismStudyOption.findValueFromString(externalCode);
         studyOptionId = studyOptionId == null ? institution.getDefaultStudyOption() : studyOptionId;
         StudyOption studyOption = new StudyOption().withInstitution(institution).withCode(studyOptionId.name()).withName(externalCode).withEnabled(true);
-        return entityService.createOrUpdate(studyOption);
+        return entityService.createOrReplace(studyOption);
     }
 
     private void createOrUpdateImportedEntity(ImportedEntityInstitution transientImportedEntity) throws DeduplicationException {

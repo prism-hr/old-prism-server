@@ -1,8 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.criterion.Disjunction;
@@ -91,7 +94,8 @@ public class ResourceService {
         return entityService.getById(resourceClass, id);
     }
 
-    public ActionOutcomeDTO performAction(Integer resourceId, CommentDTO commentDTO) throws DeduplicationException {
+    public ActionOutcomeDTO performAction(Integer resourceId, CommentDTO commentDTO) throws DeduplicationException, InterruptedException, IOException,
+            JAXBException {
         switch (commentDTO.getAction().getScope()) {
         case INSTITUTION:
             return institutionService.performAction(resourceId, commentDTO);
@@ -106,7 +110,8 @@ public class ResourceService {
         }
     }
 
-    public ActionOutcomeDTO createResource(User user, Action action, Object newResourceDTO, String referrer) throws DeduplicationException {
+    public ActionOutcomeDTO createResource(User user, Action action, Object newResourceDTO, String referrer) throws DeduplicationException,
+            InterruptedException, IOException, JAXBException {
         Resource resource = null;
 
         switch (action.getCreationScope().getId()) {

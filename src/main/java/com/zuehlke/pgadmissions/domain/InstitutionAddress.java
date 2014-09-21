@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.google.common.base.Joiner;
+
 @Entity
 @Table(name = "INSTITUTION_ADDRESS")
 public class InstitutionAddress extends GeocodableLocation {
@@ -159,7 +161,11 @@ public class InstitutionAddress extends GeocodableLocation {
 
     @Override
     public String getLocationString() {
-        return buildLocationString(addressLine1, addressLine2, addressTown, addressDistrict, region == null ? null : region.getName(), domicile.getName());
+        return Joiner.on(", ").join(getLocationTokens());
+    }
+    
+    public String[] getLocationTokens() {
+        return filterLocationTokens(addressLine1, addressLine2, addressTown, addressDistrict, region == null ? null : region.getName(), domicile.getName());
     }
 
 }

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.GeocodableLocation;
 import com.zuehlke.pgadmissions.domain.GeographicLocation;
+import com.zuehlke.pgadmissions.domain.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.google.jaxb.GeocodeResponse;
@@ -56,7 +57,7 @@ public class GeocodableLocationService {
         return entityService.replace(persistentLocation, transientLocation);
     }
     
-    public synchronized <T extends GeocodableLocation> GeocodeResponse getLocation(T location, String address) throws InterruptedException, IOException,
+    public synchronized <T extends GeocodableLocation> GeocodeResponse getLocation(String address) throws InterruptedException, IOException,
             JAXBException {
         wait(googleGeocodeRequestDelayMs);
         String addressEncoded = URLEncoder.encode(address, "UTF-8");
@@ -66,6 +67,24 @@ public class GeocodableLocationService {
         return (GeocodeResponse) JAXBIntrospector.getValue(unmarshaller.unmarshal(request));
     }
 
+    public void setLocation(InstitutionAddress address) throws InterruptedException, IOException, JAXBException {
+        String[] tokens = address.getLocationTokens();
+        for (int i = tokens.length; i > 0; i--) {
+            String location = "";
+            for (int j = 0; j < i; j++) {
+                location = location + tokens[i];
+                if (i != (j - 1)) {
+                    location = location + ", ";
+                }
+            }
+            GeocodeResponse response = getLocation(location);
+            if (response.getStatus().equals("OK")) {
+                setLocation(address, response);
+                return;
+            }
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     public <T extends GeocodableLocation> void setLocation(T location, GeocodeResponse response) {
         location = (T) getById(location.getClass(), location.getId());

@@ -159,7 +159,7 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
         geocodedCounter = geocodedCounter == null ? 0 : geocodedCounter;
         String address = location.getLocationString();
         if (BooleanUtils.isTrue(googleGeocodeCode) && geocodedCounter < googleGeocodeApiBatchLimit && !location.isGeocoded()) {
-            GeocodeResponse response = geocodableLocationService.getLocation(location, address);
+            GeocodeResponse response = geocodableLocationService.getLocation(address);
             if (response.getStatus().equals("OK")) {
                 try {
                     logger.info("Geocoding location: " + address + " - request " + (geocodedCounter + 1) + " of " + googleGeocodeApiBatchLimit + " today");

@@ -1,6 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.io.IOException;
 import java.util.List;
+
+import javax.xml.bind.JAXBException;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +53,9 @@ public class InstitutionService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private GeocodableLocationService geocodableLocationService;
+
     public Institution getById(Integer id) {
         return entityService.getById(Institution.class, id);
     }
@@ -70,7 +76,7 @@ public class InstitutionService {
         return institutionDAO.getUclInstitution();
     }
 
-    public Institution create(User user, InstitutionDTO institutionDTO) {
+    public Institution create(User user, InstitutionDTO institutionDTO) throws InterruptedException, IOException, JAXBException {
         InstitutionAddressDTO institutionAddressDTO = institutionDTO.getAddress();
         InstitutionDomicile institutionAddressCountry = entityService.getById(InstitutionDomicile.class, institutionAddressDTO.getCountry());
         InstitutionDomicileRegion institutionAddressRegion = entityService.getById(InstitutionDomicileRegion.class, institutionAddressDTO.getRegion());
@@ -79,6 +85,8 @@ public class InstitutionService {
                 .withAddressLine2(institutionAddressDTO.getAddressLine2()).withAddressTown(institutionAddressDTO.getAddressTown())
                 .withAddressDistrict(institutionAddressDTO.getAddressDistrict()).withAddressCode(institutionAddressDTO.getAddressCode())
                 .withRegion(institutionAddressRegion).withDomicile(institutionAddressCountry);
+
+        geocodableLocationService.setLocation(institutionAddress);
 
         InstitutionDomicile institutionCountry = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
 
@@ -90,7 +98,7 @@ public class InstitutionService {
                 .withUser(user);
     }
 
-    public void update(Integer institutionId, InstitutionDTO institutionDTO) {
+    public void update(Integer institutionId, InstitutionDTO institutionDTO) throws InterruptedException, IOException, JAXBException {
         Institution institution = entityService.getById(Institution.class, institutionId);
 
         InstitutionAddress address = institution.getAddress();
@@ -107,6 +115,8 @@ public class InstitutionService {
         address.setAddressTown(addressDTO.getAddressTown());
         address.setAddressDistrict(addressDTO.getAddressDistrict());
         address.setAddressCode(addressDTO.getAddressCode());
+
+        geocodableLocationService.setLocation(address);
 
         institution.setCurrency(institutionDTO.getCurrency());
         institution.setHomepage(institutionDTO.getHomepage());
@@ -135,7 +145,8 @@ public class InstitutionService {
         }
     }
 
-    public ActionOutcomeDTO performAction(Integer institutionId, CommentDTO commentDTO) throws DeduplicationException {
+    public ActionOutcomeDTO performAction(Integer institutionId, CommentDTO commentDTO) throws DeduplicationException, InterruptedException, IOException,
+            JAXBException {
         Institution institution = entityService.getById(Institution.class, institutionId);
         PrismAction actionId = commentDTO.getAction();
 

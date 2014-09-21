@@ -202,7 +202,7 @@ public class ResourceResource {
         try {
             ActionOutcomeDTO actionOutcome = resourceService.createResource(user, action, newResourceDTO, referrer);
             return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
-        } catch (DeduplicationException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
             throw new ResourceNotFoundException();
         }
@@ -243,7 +243,7 @@ public class ResourceResource {
         try {
             ActionOutcomeDTO actionOutcome = resourceService.performAction(resourceId, commentDTO);
             return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
-        } catch (DeduplicationException e) {
+        } catch (Exception e) {
             PrismAction actionId = commentDTO.getAction();
             logger.error("Could not perform action " + actionId + " on " + actionId.getScope().getLowerCaseName() + " id " + resourceId.toString(), e);
             throw new ResourceNotFoundException();

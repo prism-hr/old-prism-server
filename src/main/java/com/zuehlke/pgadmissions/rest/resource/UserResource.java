@@ -99,7 +99,7 @@ public class UserResource {
                                    @Valid @RequestBody UserRegistrationDTO userRegistrationDTO) throws WorkflowEngineException {
         try {
             userService.registerUser(userRegistrationDTO, referrer);
-        } catch (DeduplicationException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
             throw new ResourceNotFoundException();
         }

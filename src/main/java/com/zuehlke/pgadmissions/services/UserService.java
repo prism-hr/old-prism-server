@@ -1,8 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
+
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -100,7 +103,8 @@ public class UserService {
         return user;
     }
 
-    public User registerUser(UserRegistrationDTO registrationDTO, String referrer) throws DeduplicationException {
+    public User registerUser(UserRegistrationDTO registrationDTO, String referrer) throws DeduplicationException, InterruptedException, IOException,
+            JAXBException {
         User user = getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail());
         if ((registrationDTO.getActivationCode() != null && !user.getActivationCode().equals(registrationDTO.getActivationCode()))
                 || user.getUserAccount() != null) {

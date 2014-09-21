@@ -68,6 +68,9 @@ public class AdvertService {
 
     @Autowired
     private StateService stateService;
+    
+    @Autowired
+    private GeocodableLocationService geocodableLocationService;
 
     public Advert getById(Integer id) {
         return entityService.getById(Advert.class, id);
@@ -116,7 +119,8 @@ public class AdvertService {
         }
     }
 
-    public void saveAdvertDetails(Class<? extends Resource> resourceClass, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
+    public void saveAdvertDetails(Class<? extends Resource> resourceClass, Integer resourceId, AdvertDetailsDTO advertDetailsDTO)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InterruptedException, IOException, JAXBException {
         Resource resource = entityService.getById(resourceClass, resourceId);
         Advert advert = (Advert) PropertyUtils.getSimpleProperty(resource, "advert");
         InstitutionAddressDTO addressDTO = advertDetailsDTO.getAddress();
@@ -135,6 +139,8 @@ public class AdvertService {
         address.setAddressTown(addressDTO.getAddressTown());
         address.setAddressDistrict(addressDTO.getAddressDistrict());
         address.setAddressCode(addressDTO.getAddressCode());
+        
+        geocodableLocationService.setLocation(address);
     }
 
     public void saveFeesAndPayments(Class<? extends Resource> resourceClass, Integer resourceId, FeesAndPaymentsDTO feesAndPaymentsDTO) throws Exception {

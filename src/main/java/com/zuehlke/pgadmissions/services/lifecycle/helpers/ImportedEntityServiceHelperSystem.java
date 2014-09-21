@@ -43,9 +43,9 @@ import com.zuehlke.pgadmissions.services.SystemService;
 @Component
 public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
 
-    private static final Logger logger = LoggerFactory.getLogger(ImportedEntityServiceHelperInstitution.class);
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private static final HashMap<LocalDate, Integer> geocodingRequestTotals = Maps.newHashMap();
+    private final HashMap<LocalDate, Integer> geocodingRequestTotals = Maps.newHashMap();
 
     @Value("${import.institutionDomicile.location}")
     private String institutionDomicileImportLocation;
@@ -123,37 +123,38 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
 
     private void mergeInstitutionDomiciles(List<CountryType> countries, Map<String, String> countryCurrencies) throws DataImportException,
             DeduplicationException, IOException, JAXBException, InterruptedException {
+        LocalDate baseline = new LocalDate();
+        removeExpiredGeocodingRequestTotals(baseline);
         importedEntityService.disableAllInstitutionDomiciles();
         for (CountryType country : countries) {
             InstitutionDomicileImportDTO importDTO = importedEntityService.mergeInstitutionDomicile(country, countryCurrencies);
             if (importDTO != null) {
                 InstitutionDomicile domicile = importDTO.getDomicile();
-                geocodeLocation(domicile);
-                mergeInstitutionDomicileRegions(domicile.getId(), importDTO.getSubdivisions(), importDTO.getCategories());
+                geocodeLocation(domicile, baseline);
+                mergeInstitutionDomicileRegions(domicile.getId(), importDTO.getSubdivisions(), importDTO.getCategories(), baseline);
             }
         }
     }
 
-    private void mergeInstitutionDomicileRegions(String domicileId, List<SubdivisionType> subdivisions, Map<Short, String> categories)
+    private void mergeInstitutionDomicileRegions(String domicileId, List<SubdivisionType> subdivisions, Map<Short, String> categories, LocalDate baseline)
             throws DeduplicationException, IOException, JAXBException, InterruptedException {
         for (SubdivisionType subdivision : subdivisions) {
             InstitutionDomicileRegion region = importedEntityService.mergeInstitutionDomicileRegion(domicileId, subdivision, categories);
-            geocodeLocation(region);
-            mergeNestedInstitutionDomicileRegions(domicileId, region.getId(), subdivision, categories);
+            geocodeLocation(region, baseline);
+            mergeNestedInstitutionDomicileRegions(domicileId, region.getId(), subdivision, categories, baseline);
         }
     }
 
-    private void mergeNestedInstitutionDomicileRegions(String domicileId, String regionId, SubdivisionType subdivision, Map<Short, String> categories)
-            throws IOException, JAXBException, InterruptedException, DeduplicationException {
+    private void mergeNestedInstitutionDomicileRegions(String domicileId, String regionId, SubdivisionType subdivision, Map<Short, String> categories,
+            LocalDate baseline) throws IOException, JAXBException, InterruptedException, DeduplicationException {
         for (SubdivisionType nestedSubdivision : subdivision.getSubdivision()) {
             InstitutionDomicileRegion nested = importedEntityService.mergeNestedInstitutionDomicileRegion(domicileId, regionId, nestedSubdivision, categories);
-            geocodeLocation(nested);
-            mergeNestedInstitutionDomicileRegions(domicileId, nested.getId(), nestedSubdivision, categories);
+            geocodeLocation(nested, baseline);
+            mergeNestedInstitutionDomicileRegions(domicileId, nested.getId(), nestedSubdivision, categories, baseline);
         }
     }
 
-    private <T extends GeocodableLocation> void geocodeLocation(T location) throws IOException, JAXBException, InterruptedException {
-        LocalDate baseline = new LocalDate();
+    private <T extends GeocodableLocation> void geocodeLocation(T location, LocalDate baseline) throws IOException, JAXBException, InterruptedException {
         Integer geocodedCounter = geocodingRequestTotals.get(baseline);
         geocodedCounter = geocodedCounter == null ? 0 : geocodedCounter;
         String address = location.getLocationString();
@@ -175,6 +176,14 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
             }
         } else {
             logger.info("Skipped geocoding for location :" + address);
+        }
+    }
+    
+    private void removeExpiredGeocodingRequestTotals(LocalDate baseline) {
+        for (LocalDate day : geocodingRequestTotals.keySet()) {
+            if (day.isBefore(baseline)) {
+                geocodingRequestTotals.remove(day);
+            }
         }
     }
 

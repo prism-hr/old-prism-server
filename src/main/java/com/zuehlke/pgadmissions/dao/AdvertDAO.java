@@ -83,5 +83,20 @@ public class AdvertDAO {
                 .add(Restrictions.ge("closingDate", baseline)) //
                 .uniqueResult();
     }
+    
+    public List<Advert> getAdvertsWithElapsedCurrencyConversions(LocalDate baseline) {
+        return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .add(Restrictions.lt("lastCurrencyConversionDate", baseline)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.conjunction()
+                                .add(Restrictions.isNotNull("fee.currencySpecified")) //
+                                .add(Restrictions.isNotNull("fee.currencyAtLocale")) //
+                                .add(Restrictions.neProperty("fee.currencySpecified", "fee.currencyAtLocale")))
+                        .add(Restrictions.conjunction()
+                                .add(Restrictions.isNotNull("pay.currencySpecified")) //
+                                .add(Restrictions.isNotNull("pay.currencyAtLocale")) //
+                                .add(Restrictions.neProperty("pay.currencySpecified", "pay.currencyAtLocale"))))
+                .list();
+    }
 
 }

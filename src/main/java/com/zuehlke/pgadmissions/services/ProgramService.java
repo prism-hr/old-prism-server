@@ -116,7 +116,8 @@ public class ProgramService {
         Program program = entityService.getById(Program.class, programId);
         Advert advert = program.getAdvert();
 
-        ProgramType programType = importedEntityService.getImportedEntityByCode(ProgramType.class, program.getInstitution(), programDTO.getProgramType().name());
+        ProgramType programType = importedEntityService
+                .getImportedEntityByCode(ProgramType.class, program.getInstitution(), programDTO.getProgramType().name());
 
         program.setDueDate(programDTO.getDueDate());
         program.setRequireProjectDefinition(programDTO.getRequireProjectDefinition());
@@ -130,7 +131,8 @@ public class ProgramService {
             program.getStudyOptions().clear();
             for (PrismStudyOption prismStudyOption : programDTO.getStudyOptions()) {
                 StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, program.getInstitution(), prismStudyOption.name());
-                ProgramStudyOption programStudyOption = new ProgramStudyOption().withStudyOption(studyOption).withApplicationStartDate(new LocalDate()).withApplicationCloseDate(program.getDueDate()).withEnabled(true).withProgram(program);
+                ProgramStudyOption programStudyOption = new ProgramStudyOption().withStudyOption(studyOption).withApplicationStartDate(new LocalDate())
+                        .withApplicationCloseDate(program.getDueDate()).withEnabled(true).withProgram(program);
                 entityService.save(programStudyOption);
                 program.getStudyOptions().add(programStudyOption);
             }
@@ -174,6 +176,7 @@ public class ProgramService {
     }
 
     public void updateProgramStudyOptions(Program program, LocalDate baseline) {
+        program = getById(program.getId());
         List<ProgramStudyOption> elapsedOptions = programDAO.getElapsedStudyOptions(program, baseline);
 
         for (ProgramStudyOption elapsedOption : elapsedOptions) {

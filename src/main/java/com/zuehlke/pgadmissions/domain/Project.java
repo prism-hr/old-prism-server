@@ -69,18 +69,6 @@ public class Project extends ParentResource {
     @Column(name = "referrer")
     private String referrer;
 
-    @ManyToOne
-    @JoinColumn(name = "state_id")
-    private State state;
-
-    @ManyToOne
-    @JoinColumn(name = "previous_state_id")
-    private State previousState;
-
-    @Column(name = "due_date")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate dueDate;
-
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     @Column(name = "title", nullable = false)
     @Field(analyzer = @Analyzer(definition = "advertAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
@@ -109,6 +97,18 @@ public class Project extends ParentResource {
 
     @Column(name = "application_rating_average")
     private BigDecimal applicationRatingAverage;
+    
+    @ManyToOne
+    @JoinColumn(name = "state_id")
+    private State state;
+
+    @ManyToOne
+    @JoinColumn(name = "previous_state_id")
+    private State previousState;
+    
+    @Column(name = "due_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate dueDate;
 
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")

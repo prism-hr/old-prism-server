@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.math.BigDecimal;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -12,38 +11,27 @@ import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 @Embeddable
 public class FinancialDetails {
 
-    @Column(name = "fee_interval")
     @Enumerated(EnumType.STRING)
     private DurationUnit interval;
 
-    @Column(name = "fee_currency")
-    private String currency;
+    private String currencySpecified;
 
-    @Column(name = "fee_currency_at_locale")
     private String currencyAtLocale;
 
-    @Column(name = "month_fee_minimum_specified")
     private BigDecimal monthMinimumSpecified;
 
-    @Column(name = "month_fee_maximum_specified")
     private BigDecimal monthMaximumSpecified;
 
-    @Column(name = "year_fee_minimum_specified")
     private BigDecimal yearMinimumSpecified;
 
-    @Column(name = "year_fee_maximum_specified")
     private BigDecimal yearMaximumSpecified;
 
-    @Column(name = "month_fee_minimum_at_locale")
     private BigDecimal monthMinimumAtLocale;
 
-    @Column(name = "month_fee_maximum_at_locale")
     private BigDecimal monthMaximumAtLocale;
 
-    @Column(name = "year_fee_minimum_at_locale")
     private BigDecimal yearMinimumAtLocale;
 
-    @Column(name = "year_fee_maximum_at_locale")
     private BigDecimal yearMaximumAtLocale;
 
     public DurationUnit getInterval() {
@@ -54,12 +42,12 @@ public class FinancialDetails {
         this.interval = interval;
     }
 
-    public String getCurrency() {
-        return currency;
+    public final String getCurrencySpecified() {
+        return currencySpecified;
     }
 
-    public void setCurrency(String currency) {
-        this.currency = currency;
+    public final void setCurrencySpecified(String currencySpecified) {
+        this.currencySpecified = currencySpecified;
     }
 
     public String getCurrencyAtLocale() {

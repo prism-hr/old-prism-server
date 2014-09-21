@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.services.AdvertService;
 
 @Component
-public class AdvertServiceHelper extends AbstractServiceHelper {
+public class AdvertServiceHelperClosingDate extends AbstractServiceHelper {
     
     @Autowired
     private AdvertService advertService;
@@ -19,10 +19,10 @@ public class AdvertServiceHelper extends AbstractServiceHelper {
     public void execute() {
         LocalDate baseline = new LocalDate();
         List<Advert> adverts = advertService.getAdvertsWithElapsedClosingDates(baseline);
-
         for (Advert advert : adverts) {
-            advertService.updateAdvertClosingDate(baseline, advert);
+            advertService.updateAdvertClosingDate(advert, baseline);
         }
     }
     
 }
+

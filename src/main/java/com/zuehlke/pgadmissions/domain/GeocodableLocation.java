@@ -31,17 +31,15 @@ public abstract class GeocodableLocation implements IUniqueEntity {
     }
 
     protected String buildLocationString(String... tokens) {
-        return Joiner.on(", ").join(tokens);
+        return Joiner.on(", ").join(filterLocationTokens(tokens));
     }
     
-    protected String[] filterLocationTokens(String... tokens) {
-        String[] filteredTokens = new String[] {};
-        int counter = 0;
+    protected List<String> filterLocationTokens(String... tokens) {
+        List<String> filteredTokens = Lists.newLinkedList();
         for (String token : tokens) {
             if (token != null) {
-                filteredTokens[counter] = token;
+                filteredTokens.add(token);
             }
-            counter++;
         }
         return filteredTokens;
     }

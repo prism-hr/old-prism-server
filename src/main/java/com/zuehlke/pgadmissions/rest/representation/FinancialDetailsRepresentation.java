@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
-
 import java.math.BigDecimal;
+
+import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 
 public class FinancialDetailsRepresentation {
 

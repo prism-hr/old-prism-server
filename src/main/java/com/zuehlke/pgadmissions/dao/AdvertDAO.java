@@ -30,10 +30,10 @@ public class AdvertDAO {
                 .createAlias("project", "project", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("program"))
+                                .add(Restrictions.isNotNull("program")) //
                                 .add(Restrictions.in("program.state.id", activeProgramStates))) //
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("project"))
+                                .add(Restrictions.isNotNull("project")) //
                                 .add(Restrictions.in("project.state.id", activeProjectStates)))) //
                 .addOrder(Order.desc("sequenceIdentifier")) //
                 .list();
@@ -53,11 +53,9 @@ public class AdvertDAO {
                 .add(Restrictions.neProperty("advert", "application.advert")) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("recommendedAdvert.program"))
-                                .add(Restrictions.in("program.state.id", activeProgramStates))) //
+                                .add(Restrictions.isNotNull("recommendedAdvert.program")).add(Restrictions.in("program.state.id", activeProgramStates))) //
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("recommendedAdvert.project"))
-                                .add(Restrictions.in("project.state.id", activeProjectStates)))) //
+                                .add(Restrictions.isNotNull("recommendedAdvert.project")).add(Restrictions.in("project.state.id", activeProjectStates)))) //
                 .addOrder(Order.desc("application.submittedTimestamp")) //
                 .addOrder(Order.desc("recommendedAdvert.sequenceIdentifier")) //
                 .setMaxResults(25) //
@@ -65,13 +63,17 @@ public class AdvertDAO {
     }
 
     public List<Advert> getAdvertsWithElapsedClosingDates(LocalDate baseline) {
-        return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
-                .createAlias("closingDate", "closingDate", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("closingDates", "otherClosingDate", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.disjunction()
+        return (List<Advert>) sessionFactory.getCurrentSession()
+                .createCriteria(Advert.class)
+                //
+                .createAlias("closingDate", "closingDate", JoinType.LEFT_OUTER_JOIN)
+                //
+                .createAlias("closingDates", "otherClosingDate", JoinType.LEFT_OUTER_JOIN)
+                //
+                .add(Restrictions
+                        .disjunction()
                         .add(Restrictions.lt("closingDate.closingDate", baseline))
-                        .add(Restrictions.conjunction()
-                                .add(Restrictions.isNull("closingDate.id"))
+                        .add(Restrictions.conjunction().add(Restrictions.isNull("closingDate.id"))
                                 .add(Restrictions.ge("otherClosingDate.closingDate", baseline)))) //
                 .list();
     }
@@ -83,20 +85,27 @@ public class AdvertDAO {
                 .add(Restrictions.ge("closingDate", baseline)) //
                 .uniqueResult();
     }
-    
-    public List<Advert> getAdvertsWithElapsedCurrencyConversions(LocalDate baseline) {
+
+    public List<Advert> getAdvertsWithElapsedCurrencyConversions(LocalDate baseline, List<PrismState> activeProgramStates, List<PrismState> activeProjectStates) {
         return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("project", "project", JoinType.LEFT_OUTER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.isNotNull("program")) //
+                                .add(Restrictions.in("program.state.id", activeProgramStates))) //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.isNotNull("project")) //
+                                .add(Restrictions.in("project.state.id", activeProjectStates)))) //
                 .add(Restrictions.lt("lastCurrencyConversionDate", baseline)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction()
+                        .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("fee.currencySpecified")) //
                                 .add(Restrictions.isNotNull("fee.currencyAtLocale")) //
-                                .add(Restrictions.neProperty("fee.currencySpecified", "fee.currencyAtLocale")))
-                        .add(Restrictions.conjunction()
+                                .add(Restrictions.neProperty("fee.currencySpecified", "fee.currencyAtLocale"))).add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("pay.currencySpecified")) //
                                 .add(Restrictions.isNotNull("pay.currencyAtLocale")) //
-                                .add(Restrictions.neProperty("pay.currencySpecified", "pay.currencyAtLocale"))))
-                .list();
+                                .add(Restrictions.neProperty("pay.currencySpecified", "pay.currencyAtLocale")))).list();
     }
 
 }

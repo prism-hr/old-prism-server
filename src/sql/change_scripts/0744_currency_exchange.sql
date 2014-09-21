@@ -10,3 +10,8 @@ ALTER TABLE ADVERT
 ALTER TABLE SYSTEM
 	CHANGE COLUMN last_data_imported_date last_data_import_date DATE
 ;
+
+DELETE 
+FROM INSTITUTION_DOMICILE
+WHERE currency = "TEMPORARY"
+;

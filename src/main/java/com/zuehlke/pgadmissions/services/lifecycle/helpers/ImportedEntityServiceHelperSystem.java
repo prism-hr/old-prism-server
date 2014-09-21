@@ -158,24 +158,27 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
         Integer geocodedCounter = geocodingRequestTotals.get(baseline);
         geocodedCounter = geocodedCounter == null ? 0 : geocodedCounter;
         String address = location.getLocationString();
-        if (BooleanUtils.isTrue(googleGeocodeCode) && geocodedCounter < googleGeocodeApiBatchLimit && !location.isGeocoded()) {
-            GeocodeResponse response = geocodableLocationService.getLocation(address);
-            if (response.getStatus().equals("OK")) {
-                try {
-                    logger.info("Geocoding location: " + address + " - request " + (geocodedCounter + 1) + " of " + googleGeocodeApiBatchLimit + " today");
-                    geocodableLocationService.setLocation(location, response);
-                    geocodingRequestTotals.put(baseline, geocodedCounter + 1);
-                } catch (Exception e) {
-                    logger.error("Error geocoding location: " + address, e);
+        
+        if (BooleanUtils.isTrue(googleGeocodeCode)) {
+            if (geocodedCounter < googleGeocodeApiBatchLimit && !location.isGeocoded()) {
+                GeocodeResponse response = geocodableLocationService.getLocation(address);
+                if (response.getStatus().equals("OK")) {
+                    try {
+                        logger.info("Geocoding location: " + address + " - request " + (geocodedCounter + 1) + " of " + googleGeocodeApiBatchLimit + " today");
+                        geocodableLocationService.setLocation(location, response);
+                        geocodingRequestTotals.put(baseline, geocodedCounter + 1);
+                    } catch (Exception e) {
+                        logger.error("Error geocoding location: " + address, e);
+                    }
+                } else if (location.getClass().equals(InstitutionDomicileRegion.class)) {
+                    geocodableLocationService.setFallbackLocation((InstitutionDomicileRegion) location);
+                    logger.info("Setting fallback location for: " + address + " - zero results in geocoding request");
+                } else {
+                    logger.info("No geocoding location found for country " + address);
                 }
-            } else if (location.getClass().equals(InstitutionDomicileRegion.class)) {
-                geocodableLocationService.setFallbackLocation((InstitutionDomicileRegion) location);
-                logger.info("Setting fallback location for: " + address + " - zero results in geocoding request");
             } else {
-                logger.info("No geocoding location found for country " + address);
+                logger.info("Skipped geocoding for location :" + address);
             }
-        } else {
-            logger.info("Skipped geocoding for location :" + address);
         }
     }
     

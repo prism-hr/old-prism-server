@@ -1,10 +1,8 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
-import org.hibernate.validator.constraints.URL;
-
 import javax.validation.constraints.Size;
-import java.math.BigDecimal;
+
+import org.hibernate.validator.constraints.URL;
 
 public class AdvertDetailsDTO {
 

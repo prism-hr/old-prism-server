@@ -19,7 +19,6 @@ public class ProgramServiceHelper extends AbstractServiceHelper {
     public void execute() {
         LocalDate baseline = new LocalDate();
         List<Program> programs = programService.getProgramsWithElapsedStudyOptions(baseline);
-        
         for (Program program : programs) {
             programService.updateProgramStudyOptions(program, baseline);
         }

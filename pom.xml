@@ -504,6 +504,17 @@
                             <schemaDirectory>${project.basedir}/src/main/resources/xsd/google</schemaDirectory>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>xjc-6</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                        <configuration>
+                            <packageName>com.zuehlke.pgadmissions.yahoo.jaxb</packageName>
+                            <outputDirectory>${project.build.directory}/generated-sources/jaxb/yahoo</outputDirectory>
+                            <schemaDirectory>${project.basedir}/src/main/resources/xsd/yahoo</schemaDirectory>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 

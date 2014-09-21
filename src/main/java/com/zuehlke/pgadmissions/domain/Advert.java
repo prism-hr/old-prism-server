@@ -28,6 +28,7 @@ import org.apache.solr.analysis.LowerCaseFilterFactory;
 import org.apache.solr.analysis.SnowballPorterFilterFactory;
 import org.apache.solr.analysis.StandardTokenizerFactory;
 import org.apache.solr.analysis.StopFilterFactory;
+import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.AnalyzerDef;
@@ -38,6 +39,7 @@ import org.hibernate.search.annotations.Parameter;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
+import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
@@ -83,7 +85,7 @@ public class Advert {
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "interval", column = @Column(name = "fee_interval")),
-            @AttributeOverride(name = "currency", column = @Column(name = "fee_currency")),
+            @AttributeOverride(name = "currencySpecified", column = @Column(name = "fee_currency_specified")),
             @AttributeOverride(name = "currencyAtLocale", column = @Column(name = "fee_currency_at_locale")),
             @AttributeOverride(name = "monthMinimumSpecified", column = @Column(name = "month_fee_minimum_specified")),
             @AttributeOverride(name = "monthMaximumSpecified", column = @Column(name = "month_fee_maximum_specified")),
@@ -99,7 +101,7 @@ public class Advert {
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "interval", column = @Column(name = "pay_interval")),
-            @AttributeOverride(name = "currency", column = @Column(name = "pay_currency")),
+            @AttributeOverride(name = "currencySpecified", column = @Column(name = "pay_currency_specified")),
             @AttributeOverride(name = "currencyAtLocale", column = @Column(name = "pay_currency_at_locale")),
             @AttributeOverride(name = "monthMinimumSpecified", column = @Column(name = "month_pay_minimum_specified")),
             @AttributeOverride(name = "monthMaximumSpecified", column = @Column(name = "month_pay_maximum_specified")),
@@ -115,6 +117,10 @@ public class Advert {
     @OneToOne
     @JoinColumn(name = "advert_closing_date_id", unique = true)
     private AdvertClosingDate closingDate;
+    
+    @Column(name = "last_currency_conversion_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastCurrencyConversionDate;
 
     @Column(name = "sequence_identifier")
     private String sequenceIdentifier;
@@ -221,6 +227,14 @@ public class Advert {
         this.pay = pay;
     }
 
+    public final LocalDate getLastCurrencyConversionDate() {
+        return lastCurrencyConversionDate;
+    }
+
+    public final void setLastCurrencyConversionDate(LocalDate lastCurrencyConversionDate) {
+        this.lastCurrencyConversionDate = lastCurrencyConversionDate;
+    }
+
     public AdvertClosingDate getClosingDate() {
         return closingDate;
     }
@@ -280,6 +294,18 @@ public class Advert {
 
     public boolean isProjectAdvert() {
         return project != null;
+    }
+    
+    public Institution getInstitution() {
+        return isProjectAdvert() ? project.getInstitution() : program.getInstitution();
+    }
+    
+    public boolean hasCovertedFee() {
+        return fee != null && !fee.getCurrencySpecified().equals(fee.getCurrencyAtLocale());
+    }
+    
+    public boolean hasConvertedPay() {
+        return pay != null && !pay.getCurrencySpecified().equals(pay.getCurrencyAtLocale());
     }
     
     @Entity

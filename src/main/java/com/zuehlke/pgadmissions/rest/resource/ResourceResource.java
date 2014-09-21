@@ -334,6 +334,7 @@ public class ResourceResource {
         public PrismScope getResourceScope() {
             return resourceScope;
         }
+        
     }
 
 }

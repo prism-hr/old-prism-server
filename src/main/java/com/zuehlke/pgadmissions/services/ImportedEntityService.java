@@ -246,7 +246,6 @@ public class ImportedEntityService {
         InstitutionDomicile transientInstitutionDomicile = new InstitutionDomicile().withId(alpha2Code).withName(countryName).withCurrency(currency)
                 .withEnabled(true);
         InstitutionDomicile persistentInstitutionDomicile = geocodableLocationService.getOrCreate(transientInstitutionDomicile);
-
         return new InstitutionDomicileImportDTO().withDomicile(persistentInstitutionDomicile).withSubdivisions(subdivisions).withCategories(categories);
     }
 

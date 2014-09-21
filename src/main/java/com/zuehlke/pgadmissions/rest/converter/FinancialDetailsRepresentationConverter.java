@@ -20,7 +20,7 @@ public class FinancialDetailsRepresentationConverter extends DozerConverter<Fina
         destination = new FinancialDetailsRepresentation();
         DurationUnit interval = source.getInterval();
 
-        destination.setCurrency(source.getCurrency());
+        destination.setCurrency(source.getCurrencySpecified());
         destination.setInterval(interval);
         if (interval != null) {
             try {

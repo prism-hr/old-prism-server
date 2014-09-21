@@ -138,6 +138,8 @@ public class AdvertService {
     }
 
     public void saveFeesAndPayments(Class<? extends Resource> resourceClass, Integer resourceId, FeesAndPaymentsDTO feesAndPaymentsDTO) throws Exception {
+        LocalDate baseline = new LocalDate();
+
         Resource resource = entityService.getById(resourceClass, resourceId);
         Advert advert = (Advert) PropertyUtils.getSimpleProperty(resource, "advert");
 
@@ -145,22 +147,23 @@ public class AdvertService {
 
         FinancialDetailsDTO feeDTO = feesAndPaymentsDTO.getFee();
         if (feeDTO.getInterval() != null) {
-            updateFinancialDetails(advert.getFee(), feeDTO, localeCurrency);
+            updateFinancialDetails(advert.getFee(), feeDTO, localeCurrency, baseline);
         }
 
         FinancialDetailsDTO payDTO = feesAndPaymentsDTO.getPay();
         if (payDTO.getInterval() != null) {
-            updateFinancialDetails(advert.getPay(), payDTO, localeCurrency);
+            updateFinancialDetails(advert.getPay(), payDTO, localeCurrency, baseline);
         }
 
-        advert.setLastCurrencyConversionDate(new LocalDate());
+        advert.setLastCurrencyConversionDate(baseline);
     }
 
     public List<Advert> getAdvertsWithElapsedCurrencyConversions(LocalDate baseline) {
         return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline);
     }
 
-    private void updateFinancialDetails(FinancialDetails financialDetails, FinancialDetailsDTO financialDetailsDTO, String localeCurrency) throws Exception {
+    private void updateFinancialDetails(FinancialDetails financialDetails, FinancialDetailsDTO financialDetailsDTO, String localeCurrency, LocalDate baseline)
+            throws Exception {
         DurationUnit interval = financialDetailsDTO.getInterval();
         String currency = financialDetailsDTO.getCurrency();
 
@@ -185,30 +188,33 @@ public class AdvertService {
             minimumGenerated = minimumSpecified.divide(new BigDecimal(12), 2, RoundingMode.HALF_UP);
             maximumGenerated = maximumSpecified.divide(new BigDecimal(12), 2, RoundingMode.HALF_UP);
         }
-
+        
         setMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated, minimumGenerated,
                 maximumGenerated, "Specified");
         if (currency.equals(localeCurrency)) {
             setMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated, minimumGenerated,
                     maximumGenerated, "AtLocale");
         } else {
-            BigDecimal rate = getExchangeRate(currency, localeCurrency);
+            BigDecimal rate = getExchangeRate(currency, localeCurrency, baseline);
             setConvertedMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated,
                     minimumGenerated, maximumGenerated, rate);
         }
     }
 
-    public void updateCurrencyConversion(Advert advert) throws IOException, JAXBException, IllegalAccessException,
-            InvocationTargetException, NoSuchMethodException {
+    public void updateCurrencyConversion(Advert advert) throws IOException, JAXBException, IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
+        LocalDate baseline = new LocalDate();
         advert = getById(advert.getId());
 
         if (advert.hasCovertedFee()) {
-            updateConvertedMonetaryValues(advert.getFee());
+            updateConvertedMonetaryValues(advert.getFee(), baseline);
         }
 
         if (advert.hasConvertedPay()) {
-            updateConvertedMonetaryValues(advert.getPay());
+            updateConvertedMonetaryValues(advert.getPay(), baseline);
         }
+
+        advert.setLastCurrencyConversionDate(baseline);
     }
 
     private String getCurrencyAtLocale(Advert advert) {
@@ -239,11 +245,11 @@ public class AdvertService {
                 maximumGenerated, "AtLocale");
     }
 
-    private void updateConvertedMonetaryValues(FinancialDetails financialDetails) throws IOException, JAXBException,
+    private void updateConvertedMonetaryValues(FinancialDetails financialDetails, LocalDate baseline) throws IOException, JAXBException,
             IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         String currencySpecified = financialDetails.getCurrencySpecified();
         String currencyAtLocale = financialDetails.getCurrencyAtLocale();
-        BigDecimal rate = getExchangeRate(currencySpecified, currencyAtLocale);
+        BigDecimal rate = getExchangeRate(currencySpecified, currencyAtLocale, baseline);
 
         BigDecimal minimumSpecified;
         BigDecimal maximumSpecified;
@@ -271,8 +277,7 @@ public class AdvertService {
                 minimumGenerated, maximumGenerated, rate);
     }
 
-    private BigDecimal getExchangeRate(String currency, String localeCurrency) throws IOException, JAXBException {
-        LocalDate baseline = new LocalDate();
+    private BigDecimal getExchangeRate(String currency, String localeCurrency, LocalDate baseline) throws IOException, JAXBException {
         removeExpiredExchangeRates(baseline);
 
         String pair = currency + localeCurrency;

@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.rest.converter;
 
+import org.apache.commons.beanutils.PropertyUtils;
+import org.dozer.DozerConverter;
+
 import com.zuehlke.pgadmissions.domain.FinancialDetails;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 import com.zuehlke.pgadmissions.rest.representation.FinancialDetailsRepresentation;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.dozer.DozerConverter;
 
 public class FinancialDetailsRepresentationConverter extends DozerConverter<FinancialDetails, FinancialDetailsRepresentation> {
 

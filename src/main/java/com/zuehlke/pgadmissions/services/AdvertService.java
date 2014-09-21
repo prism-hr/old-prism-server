@@ -149,16 +149,16 @@ public class AdvertService {
         Resource resource = entityService.getById(resourceClass, resourceId);
         Advert advert = (Advert) PropertyUtils.getSimpleProperty(resource, "advert");
 
-        String localeCurrency = getCurrencyAtLocale(advert);
+        String currencyAtLocale = getCurrencyAtLocale(advert);
 
         FinancialDetailsDTO feeDTO = feesAndPaymentsDTO.getFee();
         if (feeDTO.getInterval() != null) {
-            updateFinancialDetails(advert.getFee(), feeDTO, localeCurrency, baseline);
+            updateFinancialDetails(advert.getFee(), feeDTO, currencyAtLocale, baseline);
         }
 
         FinancialDetailsDTO payDTO = feesAndPaymentsDTO.getPay();
         if (payDTO.getInterval() != null) {
-            updateFinancialDetails(advert.getPay(), payDTO, localeCurrency, baseline);
+            updateFinancialDetails(advert.getPay(), payDTO, currencyAtLocale, baseline);
         }
 
         advert.setLastCurrencyConversionDate(baseline);
@@ -168,14 +168,14 @@ public class AdvertService {
         return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline);
     }
 
-    private void updateFinancialDetails(FinancialDetails financialDetails, FinancialDetailsDTO financialDetailsDTO, String localeCurrency, LocalDate baseline)
+    private void updateFinancialDetails(FinancialDetails financialDetails, FinancialDetailsDTO financialDetailsDTO, String currencyAtLocale, LocalDate baseline)
             throws Exception {
         DurationUnit interval = financialDetailsDTO.getInterval();
-        String currency = financialDetailsDTO.getCurrency();
+        String currencySpecified = financialDetailsDTO.getCurrency();
 
         financialDetails.setInterval(interval);
-        financialDetails.setCurrencySpecified(currency);
-        financialDetails.setCurrencyAtLocale(localeCurrency);
+        financialDetails.setCurrencySpecified(currencySpecified);
+        financialDetails.setCurrencyAtLocale(currencyAtLocale);
 
         String intervalPrefixSpecified = interval.name().toLowerCase();
         BigDecimal minimumSpecified = financialDetailsDTO.getMinimum();
@@ -197,11 +197,11 @@ public class AdvertService {
         
         setMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated, minimumGenerated,
                 maximumGenerated, "Specified");
-        if (currency.equals(localeCurrency)) {
+        if (currencySpecified.equals(currencyAtLocale)) {
             setMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated, minimumGenerated,
                     maximumGenerated, "AtLocale");
         } else {
-            BigDecimal rate = getExchangeRate(currency, localeCurrency, baseline);
+            BigDecimal rate = getExchangeRate(currencySpecified, currencyAtLocale, baseline);
             setConvertedMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated,
                     minimumGenerated, maximumGenerated, rate);
         }
@@ -246,7 +246,11 @@ public class AdvertService {
             maximumSpecified = maximumSpecified.multiply(rate).setScale(2, RoundingMode.HALF_UP);
             minimumGenerated = minimumGenerated.multiply(rate).setScale(2, RoundingMode.HALF_UP);
             maximumGenerated = maximumGenerated.multiply(rate).setScale(2, RoundingMode.HALF_UP);
+            financialDetails.setConverted(true);
+        } else {
+            financialDetails.setConverted(false);
         }
+        
         setMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated, minimumGenerated,
                 maximumGenerated, "AtLocale");
     }
@@ -283,10 +287,10 @@ public class AdvertService {
                 minimumGenerated, maximumGenerated, rate);
     }
 
-    private BigDecimal getExchangeRate(String currency, String localeCurrency, LocalDate baseline) throws IOException, JAXBException {
+    private BigDecimal getExchangeRate(String specifiedCurrency, String currencyAtLocale, LocalDate baseline) throws IOException, JAXBException {
         removeExpiredExchangeRates(baseline);
 
-        String pair = currency + localeCurrency;
+        String pair = specifiedCurrency + currencyAtLocale;
         HashMap<String, BigDecimal> todaysRates = exchangeRates.get(baseline);
 
         if (todaysRates != null) {

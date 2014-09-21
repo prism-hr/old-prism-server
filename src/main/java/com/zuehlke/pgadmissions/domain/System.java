@@ -43,7 +43,7 @@ public class System extends Resource {
     @Column(name = "title", unique = true)
     private String title;
 
-    @Column(name = "last_data_imported_date")
+    @Column(name = "last_data_import_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastDataImportDate;
 

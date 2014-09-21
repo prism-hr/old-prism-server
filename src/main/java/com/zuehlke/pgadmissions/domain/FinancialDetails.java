@@ -33,6 +33,8 @@ public class FinancialDetails {
     private BigDecimal yearMinimumAtLocale;
 
     private BigDecimal yearMaximumAtLocale;
+    
+    private Boolean converted;
 
     public DurationUnit getInterval() {
         return interval;
@@ -120,5 +122,13 @@ public class FinancialDetails {
 
     public void setYearMaximumAtLocale(BigDecimal yearMaximumAtLocale) {
         this.yearMaximumAtLocale = yearMaximumAtLocale;
+    }
+
+    public final Boolean getConverted() {
+        return converted;
+    }
+
+    public final void setConverted(Boolean converted) {
+        this.converted = converted;
     }
 }

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -161,11 +163,15 @@ public class InstitutionAddress extends GeocodableLocation {
 
     @Override
     public String getLocationString() {
-        return Joiner.on(", ").join(getLocationTokens());
+        return Joiner.on(", ").join(getAddressTokens()) + ", " + Joiner.on(", ").join(getDomicileTokens());
     }
     
-    public String[] getLocationTokens() {
-        return filterLocationTokens(addressLine1, addressLine2, addressTown, addressDistrict, region == null ? null : region.getName(), domicile.getName());
+    public List<String> getAddressTokens() {
+        return filterLocationTokens(addressLine1, addressLine2, addressTown, addressDistrict, addressCode);
+    }
+    
+    public List<String> getDomicileTokens() {
+        return filterLocationTokens(region == null ? null : region.getName(), domicile.getName());
     }
 
 }

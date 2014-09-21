@@ -95,6 +95,7 @@ public class Advert {
             @AttributeOverride(name = "monthMaximumAtLocale", column = @Column(name = "month_fee_maximum_at_locale")),
             @AttributeOverride(name = "yearMinimumAtLocale", column = @Column(name = "year_fee_minimum_at_locale")),
             @AttributeOverride(name = "yearMaximumAtLocale", column = @Column(name = "year_fee_maximum_at_locale")),
+            @AttributeOverride(name = "converted", column = @Column(name = "fee_converted")),
     })
     private FinancialDetails fee;
 
@@ -111,6 +112,7 @@ public class Advert {
             @AttributeOverride(name = "monthMaximumAtLocale", column = @Column(name = "month_pay_maximum_at_locale")),
             @AttributeOverride(name = "yearMinimumAtLocale", column = @Column(name = "year_pay_minimum_at_locale")),
             @AttributeOverride(name = "yearMaximumAtLocale", column = @Column(name = "year_pay_maximum_at_locale")),
+            @AttributeOverride(name = "converted", column = @Column(name = "pay_converted")),
     })
     private FinancialDetails pay;
 

@@ -1,13 +1,9 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-import java.math.BigDecimal;
-
-import com.zuehlke.pgadmissions.domain.InstitutionAddress;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation;
 
 public class AdvertRepresentation {
 

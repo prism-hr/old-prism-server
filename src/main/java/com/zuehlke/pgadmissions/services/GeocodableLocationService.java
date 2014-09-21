@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -15,9 +16,12 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.GeocodableLocation;
 import com.zuehlke.pgadmissions.domain.GeographicLocation;
 import com.zuehlke.pgadmissions.domain.InstitutionAddress;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.google.jaxb.GeocodeResponse;
@@ -56,9 +60,8 @@ public class GeocodableLocationService {
         transientLocation.setLocation(persistentLocation.getLocation());
         return entityService.replace(persistentLocation, transientLocation);
     }
-    
-    public synchronized <T extends GeocodableLocation> GeocodeResponse getLocation(String address) throws InterruptedException, IOException,
-            JAXBException {
+
+    public synchronized <T extends GeocodableLocation> GeocodeResponse getLocation(String address) throws InterruptedException, IOException, JAXBException {
         wait(googleGeocodeRequestDelayMs);
         String addressEncoded = URLEncoder.encode(address, "UTF-8");
         URL request = new DefaultResourceLoader().getResource(googleGeocodeApiUri + "xml?address=" + addressEncoded + "&key=" + googleGeocodeApiKey).getURL();
@@ -68,23 +71,27 @@ public class GeocodableLocationService {
     }
 
     public void setLocation(InstitutionAddress address) throws InterruptedException, IOException, JAXBException {
-        String[] tokens = address.getLocationTokens();
-        for (int i = tokens.length; i > 0; i--) {
-            String location = "";
+        List<String> addressTokens = Lists.reverse(address.getAddressTokens());
+        String domicileTokenString = Joiner.on(", ").join(address.getDomicileTokens());
+
+        for (int i = addressTokens.size(); i > 0; i--) {
+            List<String> requestTokens = Lists.newLinkedList();
             for (int j = 0; j < i; j++) {
-                location = location + tokens[i];
-                if (i != (j - 1)) {
-                    location = location + ", ";
-                }
+                requestTokens.add(addressTokens.get(j));
             }
-            GeocodeResponse response = getLocation(location);
+
+            GeocodeResponse response = getLocation(Joiner.on(", ").join(Lists.reverse(requestTokens)) + ", " + domicileTokenString);
             if (response.getStatus().equals("OK")) {
                 setLocation(address, response);
                 return;
             }
         }
+
+        InstitutionDomicileRegion region = address.getRegion();
+        InstitutionDomicile domicile = address.getDomicile();
+        address.setLocation(region == null ? domicile.getLocation() : region.getLocation());
     }
-    
+
     @SuppressWarnings("unchecked")
     public <T extends GeocodableLocation> void setLocation(T location, GeocodeResponse response) {
         location = (T) getById(location.getClass(), location.getId());
@@ -104,20 +111,20 @@ public class GeocodableLocationService {
 
         location.setLocation(geographicLocation);
     }
-    
+
     public void setFallbackLocation(InstitutionDomicileRegion region) {
         region = getById(InstitutionDomicileRegion.class, region.getId());
         InstitutionDomicileRegion cursorRegion = null;
-        
+
         for (int i = region.getNestedLevel(); i < 0; i--) {
             if (cursorRegion == null) {
                 cursorRegion = region;
             } else {
                 cursorRegion = cursorRegion.getParentRegion();
             }
-            
+
             InstitutionDomicileRegion parentRegion = cursorRegion.getParentRegion();
-            
+
             if (parentRegion != null) {
                 GeographicLocation parentLocation = parentRegion.getLocation();
                 if (parentLocation != null) {
@@ -126,7 +133,7 @@ public class GeocodableLocationService {
                 }
             }
         }
-        
+
         GeographicLocation countryLocation = region.getDomicile().getLocation();
         region.setLocation(countryLocation);
     }

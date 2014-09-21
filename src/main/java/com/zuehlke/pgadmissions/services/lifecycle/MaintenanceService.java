@@ -37,7 +37,7 @@ public class MaintenanceService {
     @Resource(name = "taskExecutor")
     private ThreadPoolTaskExecutor executor;
 
-    @Scheduled(initialDelay = 60000, fixedDelay = 60000)
+    @Scheduled(fixedDelay = 60000)
     public void maintain() {
         if (BooleanUtils.isTrue(maintenanceRun)) {
             for (MaintenanceTask task : MaintenanceTask.values()) {

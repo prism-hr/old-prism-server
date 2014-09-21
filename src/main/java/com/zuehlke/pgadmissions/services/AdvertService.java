@@ -43,7 +43,6 @@ import com.zuehlke.pgadmissions.rest.dto.FinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.utils.ConversionUtils;
 import com.zuehlke.pgadmissions.yahoo.jaxb.Query;
-import com.zuehlke.pgadmissions.yahoo.jaxb.Query.Results.Rate;
 
 @Service
 @Transactional
@@ -68,7 +67,7 @@ public class AdvertService {
 
     @Autowired
     private StateService stateService;
-    
+
     @Autowired
     private GeocodableLocationService geocodableLocationService;
 
@@ -139,7 +138,7 @@ public class AdvertService {
         address.setAddressTown(addressDTO.getAddressTown());
         address.setAddressDistrict(addressDTO.getAddressDistrict());
         address.setAddressCode(addressDTO.getAddressCode());
-        
+
         geocodableLocationService.setLocation(address);
     }
 
@@ -165,7 +164,9 @@ public class AdvertService {
     }
 
     public List<Advert> getAdvertsWithElapsedCurrencyConversions(LocalDate baseline) {
-        return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline);
+        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
+        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
+        return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline, activeProgramStates, activeProjectStates);
     }
 
     private void updateFinancialDetails(FinancialDetails financialDetails, FinancialDetailsDTO financialDetailsDTO, String currencyAtLocale, LocalDate baseline)
@@ -194,7 +195,7 @@ public class AdvertService {
             minimumGenerated = minimumSpecified.divide(new BigDecimal(12), 2, RoundingMode.HALF_UP);
             maximumGenerated = maximumSpecified.divide(new BigDecimal(12), 2, RoundingMode.HALF_UP);
         }
-        
+
         setMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated, minimumGenerated,
                 maximumGenerated, "Specified");
         if (currencySpecified.equals(currencyAtLocale)) {
@@ -241,7 +242,7 @@ public class AdvertService {
     private void setConvertedMonetaryValues(FinancialDetails financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
             BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        if (!rate.equals(new BigDecimal(0.00))) {
+        if (rate.compareTo(new BigDecimal(0)) == 1) {
             minimumSpecified = minimumSpecified.multiply(rate).setScale(2, RoundingMode.HALF_UP);
             maximumSpecified = maximumSpecified.multiply(rate).setScale(2, RoundingMode.HALF_UP);
             minimumGenerated = minimumGenerated.multiply(rate).setScale(2, RoundingMode.HALF_UP);
@@ -250,7 +251,7 @@ public class AdvertService {
         } else {
             financialDetails.setConverted(false);
         }
-        
+
         setMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated, minimumGenerated,
                 maximumGenerated, "AtLocale");
     }
@@ -265,9 +266,9 @@ public class AdvertService {
         BigDecimal maximumSpecified;
         BigDecimal minimumGenerated;
         BigDecimal maximumGenerated;
-        String intervalPrefixGenerated;
-
+        
         DurationUnit interval = financialDetails.getInterval();
+        String intervalPrefixGenerated;
 
         if (interval == DurationUnit.MONTH) {
             minimumSpecified = financialDetails.getMonthMinimumSpecified();
@@ -305,8 +306,8 @@ public class AdvertService {
                 yahooExchangeRateApiUri + "?q=" + query + "&env=" + URLEncoder.encode(yahooExchangeRateApiSchema, "UTF-8")).getURL();
         JAXBContext jaxbContext = JAXBContext.newInstance(Query.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        Rate response = (Rate) JAXBIntrospector.getValue(unmarshaller.unmarshal(request));
-        BigDecimal todaysRate = ConversionUtils.floatToBigDecimal(response.getRate(), 4);
+        Query response = (Query) JAXBIntrospector.getValue(unmarshaller.unmarshal(request));
+        BigDecimal todaysRate = ConversionUtils.floatToBigDecimal(response.getResults().getRate().getRate(), 4);
 
         if (todaysRates == null) {
             todaysRates = new HashMap<String, BigDecimal>();

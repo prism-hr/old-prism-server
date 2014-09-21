@@ -179,7 +179,7 @@ public class SystemService {
     private void initialiseScopes() throws DeduplicationException {
         for (PrismScope prismScope : PrismScope.values()) {
             Scope transientScope = new Scope().withId(prismScope).withPrecedence(prismScope.getPrecedence()).withShortCode(prismScope.getShortCode());
-            entityService.createOrReplace(transientScope);
+            entityService.createOrUpdate(transientScope);
         }
     }
 
@@ -190,7 +190,7 @@ public class SystemService {
         for (PrismRole prismRole : PrismRole.values()) {
             Scope scope = entityService.getById(Scope.class, prismRole.getScope());
             Role transientRole = new Role().withId(prismRole).withScopeCreator(prismRole.isScopeOwner()).withScope(scope);
-            Role role = entityService.createOrReplace(transientRole);
+            Role role = entityService.createOrUpdate(transientRole);
             role.getExcludedRoles().clear();
 
             if (!PrismRole.getExcludedRoles(prismRole).isEmpty()) {
@@ -215,14 +215,14 @@ public class SystemService {
             Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType())
                     .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
                     .withTransitionAction(prismAction.isTransitionAction()).withScope(scope).withCreationScope(creationScope);
-            Action action = entityService.createOrReplace(transientAction);
+            Action action = entityService.createOrUpdate(transientAction);
             action.getRedactions().clear();
 
             for (PrismActionRedaction prismActionRedaction : prismAction.getRedactions()) {
                 Role role = roleService.getById(prismActionRedaction.getRole());
                 ActionRedaction transientActionRedaction = new ActionRedaction().withAction(action).withRole(role)
                         .withRedactionType(prismActionRedaction.getRedactionType());
-                ActionRedaction actionRedaction = entityService.createOrReplace(transientActionRedaction);
+                ActionRedaction actionRedaction = entityService.createOrUpdate(transientActionRedaction);
                 action.getRedactions().add(actionRedaction);
             }
         }
@@ -239,7 +239,7 @@ public class SystemService {
             Scope scope = entityService.getById(Scope.class, prismStateGroup.getScope());
             StateGroup transientStateGroup = new StateGroup().withId(prismStateGroup).withSequenceOrder(prismStateGroup.getSequenceOrder())
                     .withRepeatable(prismStateGroup.isRepeatable()).withScope(scope);
-            entityService.createOrReplace(transientStateGroup);
+            entityService.createOrUpdate(transientStateGroup);
         }
     }
 
@@ -248,7 +248,7 @@ public class SystemService {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismState.getScope());
             StateGroup stateGroup = entityService.getByProperty(StateGroup.class, "id", prismState.getStateGroup());
             State transientState = new State().withId(prismState).withStateGroup(stateGroup).withScope(scope);
-            entityService.createOrReplace(transientState);
+            entityService.createOrUpdate(transientState);
         }
     }
 
@@ -257,7 +257,7 @@ public class SystemService {
             Scope scope = entityService.getById(Scope.class, prismTransitionEvaluation.getScope());
             StateTransitionEvaluation transientStateTransitionEvaluation = new StateTransitionEvaluation().withId(prismTransitionEvaluation)
                     .withNextStateSelection(prismTransitionEvaluation.isNextStateSelection()).withScope(scope);
-            entityService.createOrReplace(transientStateTransitionEvaluation);
+            entityService.createOrUpdate(transientStateTransitionEvaluation);
         }
     }
 
@@ -267,7 +267,7 @@ public class SystemService {
         DateTime startupTimestamp = new DateTime();
         System transientSystem = new System().withTitle(systemName).withUser(systemUser).withState(systemRunning).withCreatedTimestamp(startupTimestamp)
                 .withUpdatedTimestamp(startupTimestamp);
-        System system = entityService.createOrReplace(transientSystem);
+        System system = entityService.createOrUpdate(transientSystem);
         system.setCode(resourceService.generateResourceCode(system));
         return system;
     }
@@ -307,7 +307,7 @@ public class SystemService {
             NotificationConfiguration transientConfiguration = new NotificationConfiguration().withSystem(system).withNotificationTemplate(template)
                     .withNotificationTemplateVersion(createdTemplates.get(template))
                     .withReminderInterval(PrismNotificationTemplate.getReminderInterval(template.getId()));
-            entityService.createOrReplace(transientConfiguration);
+            entityService.createOrUpdate(transientConfiguration);
         }
     }
 
@@ -326,7 +326,7 @@ public class SystemService {
             if (prismState.getDuration() != null) {
                 State state = stateService.getById(prismState);
                 StateDuration transientStateDuration = new StateDuration().withSystem(system).withState(state).withDuration(prismState.getDuration());
-                entityService.createOrReplace(transientStateDuration);
+                entityService.createOrUpdate(transientStateDuration);
             }
         }
     }

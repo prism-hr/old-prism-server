@@ -49,22 +49,20 @@ public class EntityService {
         return persistentResource;
     }
 
-    public <T extends IUniqueEntity> T createOrReplace(T transientResource) throws DeduplicationException {
+    public <T extends IUniqueEntity> T createOrUpdate(T transientResource) throws DeduplicationException {
         T persistentResource = getDuplicateEntity(transientResource);
         if (persistentResource == null) {
             save(transientResource);
             persistentResource = transientResource;
         } else {
-            persistentResource = replace(transientResource, persistentResource);
+            persistentResource = overwriteProperties(persistentResource, transientResource);
+            flush();
         }
         return persistentResource;
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends IUniqueEntity> T replace(T persistentResource, T transientResource) {
-        Object persistentId = IntrospectionUtils.getProperty(persistentResource, "id");
-        IntrospectionUtils.setProperty(transientResource, "id", persistentId);
-        persistentResource = (T) merge(transientResource);
+        persistentResource = overwriteProperties(persistentResource, transientResource);
         flush();
         return persistentResource;
     }
@@ -102,6 +100,13 @@ public class EntityService {
 
     public <T> void deleteAll(Class<T> classReference) {
         entityDAO.deleteAll(classReference);
+    }
+    
+    @SuppressWarnings("unchecked")
+    private <T extends IUniqueEntity> T overwriteProperties(T persistentResource, T transientResource) {
+        Object persistentId = IntrospectionUtils.getProperty(persistentResource, "id");
+        IntrospectionUtils.setProperty(transientResource, "id", persistentId);
+        return (T) merge(transientResource);
     }
 
 }

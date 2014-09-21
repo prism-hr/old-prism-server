@@ -167,7 +167,7 @@ public class ApplicationExportService {
                 .withInstitution(exportInstitution).withIdentityType(PrismUserIdentity.STUDY_APPLICANT)
                 .withIdentitier(exportResponse.getReference().getApplicantID());
 
-        entityService.createOrReplace(transientUserInstitutionIdentity);
+        entityService.createOrUpdate(transientUserInstitutionIdentity);
         return exportReference;
     }
 

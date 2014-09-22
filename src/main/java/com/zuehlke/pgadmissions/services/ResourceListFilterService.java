@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +42,8 @@ public class ResourceListFilterService {
 
     public void save(User user, Scope scope, ResourceListFilterDTO filterDTO) throws DeduplicationException {
         ResourceListFilter transientFilter = new ResourceListFilter().withUserAccount(user.getUserAccount()).withScope(scope)
-                .withMatchMode(filterDTO.getMatchMode()).withSortOrder(filterDTO.getSortOrder()).withUrgentOnly(filterDTO.getUrgentOnly());
+                .withMatchMode(filterDTO.getMatchMode()).withSortOrder(filterDTO.getSortOrder()).withUrgentOnly(filterDTO.getUrgentOnly())
+                .withConstraints(new HashSet<ResourceListFilterConstraint>(0));
         ResourceListFilter persistentFilter = entityService.createOrUpdate(transientFilter);
 
         for (int i = 0; i < filterDTO.getConstraints().size(); i++) {

@@ -148,6 +148,11 @@ public class ResourceListFilter implements IUniqueEntity {
         this.valueString = valueString;
         return this;
     }
+    
+    public ResourceListFilter withConstraints(Set<ResourceListFilterConstraint> constraints) {
+        this.constraints = constraints;
+        return this;
+    }
 
     @Override
     public ResourceSignature getResourceSignature() {

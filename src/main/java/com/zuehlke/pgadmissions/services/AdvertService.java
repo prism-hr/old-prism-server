@@ -152,11 +152,17 @@ public class AdvertService {
 
         FinancialDetailsDTO feeDTO = feesAndPaymentsDTO.getFee();
         if (feeDTO.getInterval() != null) {
+            if(advert.getFee() == null){
+                advert.setFee(new FinancialDetails());
+            }
             updateFinancialDetails(advert.getFee(), feeDTO, currencyAtLocale, baseline);
         }
 
         FinancialDetailsDTO payDTO = feesAndPaymentsDTO.getPay();
         if (payDTO.getInterval() != null) {
+            if(advert.getPay() == null){
+                advert.setPay(new FinancialDetails());
+            }
             updateFinancialDetails(advert.getPay(), payDTO, currencyAtLocale, baseline);
         }
 

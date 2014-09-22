@@ -16,13 +16,13 @@ import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
 public class InstitutionCreationHelper {
-    
+
     @Autowired
     private SystemService systemService;
-    
+
     @Autowired
     private UserService userService;
-    
+
     @Transactional
     public Institution verifyInstitutionCreation() throws WorkflowEngineException {
         UserRegistrationDTO registrationDTO = new UserRegistrationDTO();
@@ -35,7 +35,7 @@ public class InstitutionCreationHelper {
         institutionAddressDTO.setAddressTown("Address town");
         institutionAddressDTO.setAddressDistrict("Address district");
         institutionAddressDTO.setAddressCode("Address code");
-        institutionAddressDTO.setCountry("GB");
+        institutionAddressDTO.setDomicile("GB");
         institutionAddressDTO.setRegion("GB-LND");
 
         institutionDTO.setDomicile("GB");
@@ -54,8 +54,8 @@ public class InstitutionCreationHelper {
         registrationDTO.setPassword("pgadmissions");
 
         // TODO: integration test of institution workflow
-        
+
         return null;
     }
-    
+
 }

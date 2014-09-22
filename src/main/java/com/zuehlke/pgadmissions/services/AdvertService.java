@@ -124,7 +124,7 @@ public class AdvertService {
         Advert advert = (Advert) PropertyUtils.getSimpleProperty(resource, "advert");
         InstitutionAddressDTO addressDTO = advertDetailsDTO.getAddress();
 
-        InstitutionDomicile country = entityService.getById(InstitutionDomicile.class, addressDTO.getCountry());
+        InstitutionDomicile country = entityService.getById(InstitutionDomicile.class, addressDTO.getDomicile());
         InstitutionDomicileRegion region = entityService.getById(InstitutionDomicileRegion.class, addressDTO.getRegion());
 
         advert.setDescription(advertDetailsDTO.getDescription());
@@ -266,7 +266,7 @@ public class AdvertService {
         BigDecimal maximumSpecified;
         BigDecimal minimumGenerated;
         BigDecimal maximumGenerated;
-        
+
         DurationUnit interval = financialDetails.getInterval();
         String intervalPrefixGenerated;
 

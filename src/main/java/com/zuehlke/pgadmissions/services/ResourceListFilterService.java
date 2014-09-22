@@ -42,26 +42,28 @@ public class ResourceListFilterService {
 
     public void save(User user, Scope scope, ResourceListFilterDTO filterDTO) throws DeduplicationException {
         ResourceListFilter transientFilter = new ResourceListFilter().withUserAccount(user.getUserAccount()).withScope(scope)
-                .withMatchMode(filterDTO.getMatchMode()).withSortOrder(filterDTO.getSortOrder()).withUrgentOnly(filterDTO.getUrgentOnly())
-                .withConstraints(new HashSet<ResourceListFilterConstraint>(0));
+                .withMatchMode(filterDTO.getMatchMode()).withSortOrder(filterDTO.getSortOrder()).withUrgentOnly(filterDTO.getUrgentOnly());
         ResourceListFilter persistentFilter = entityService.createOrUpdate(transientFilter);
 
-        for (int i = 0; i < filterDTO.getConstraints().size(); i++) {
-            ResourceListFilterConstraintDTO constraintDTO = filterDTO.getConstraints().get(i);
-            FilterProperty filterProperty = constraintDTO.getFilterProperty();
-
-            ResourceListFilterConstraint transientConstraint = new ResourceListFilterConstraint().withFilter(persistentFilter)
-                    .withFilterProperty(filterProperty).withFilterExpression(constraintDTO.getFilterExpression()).withNegated(constraintDTO.getNegated())
-                    .withDisplayPosition(i).withValueString(constraintDTO.getValueString()).withValueDateStart(constraintDTO.getValueDateStart())
-                    .withValueDateClose(constraintDTO.getValueDateClose()).withValueDecimalStart(constraintDTO.getValueDecimalStart())
-                    .withValueDecimalClose(constraintDTO.getValueDecimalClose());
-
-            if (filterProperty == FilterProperty.STATE_GROUP) {
-                transientConstraint.setValueStateGroup(stateService.getStateGroupById(constraintDTO.getValueStateGroup()));
+        List<ResourceListFilterConstraintDTO> constraints = filterDTO.getConstraints();
+        if (constraints != null) {
+            for (int i = 0; i < constraints.size(); i++) {
+                ResourceListFilterConstraintDTO constraintDTO = filterDTO.getConstraints().get(i);
+                FilterProperty filterProperty = constraintDTO.getFilterProperty();
+    
+                ResourceListFilterConstraint transientConstraint = new ResourceListFilterConstraint().withFilter(persistentFilter)
+                        .withFilterProperty(filterProperty).withFilterExpression(constraintDTO.getFilterExpression()).withNegated(constraintDTO.getNegated())
+                        .withDisplayPosition(i).withValueString(constraintDTO.getValueString()).withValueDateStart(constraintDTO.getValueDateStart())
+                        .withValueDateClose(constraintDTO.getValueDateClose()).withValueDecimalStart(constraintDTO.getValueDecimalStart())
+                        .withValueDecimalClose(constraintDTO.getValueDecimalClose());
+    
+                if (filterProperty == FilterProperty.STATE_GROUP) {
+                    transientConstraint.setValueStateGroup(stateService.getStateGroupById(constraintDTO.getValueStateGroup()));
+                }
+    
+                persistentFilter.getConstraints().add(transientConstraint);
+                entityService.save(transientConstraint);
             }
-
-            persistentFilter.getConstraints().add(transientConstraint);
-            entityService.save(transientConstraint);
         }
 
         user.getUserAccount().getFilters().put(scope, persistentFilter);

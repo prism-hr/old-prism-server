@@ -78,7 +78,7 @@ public class InstitutionService {
 
     public Institution create(User user, InstitutionDTO institutionDTO) throws InterruptedException, IOException, JAXBException {
         InstitutionAddressDTO institutionAddressDTO = institutionDTO.getAddress();
-        InstitutionDomicile institutionAddressCountry = entityService.getById(InstitutionDomicile.class, institutionAddressDTO.getCountry());
+        InstitutionDomicile institutionAddressCountry = entityService.getById(InstitutionDomicile.class, institutionAddressDTO.getDomicile());
         InstitutionDomicileRegion institutionAddressRegion = entityService.getById(InstitutionDomicileRegion.class, institutionAddressDTO.getRegion());
 
         InstitutionAddress institutionAddress = new InstitutionAddress().withAddressLine1(institutionAddressDTO.getAddressLine1())

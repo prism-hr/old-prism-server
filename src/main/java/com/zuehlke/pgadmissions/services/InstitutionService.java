@@ -86,8 +86,6 @@ public class InstitutionService {
                 .withAddressDistrict(institutionAddressDTO.getAddressDistrict()).withAddressCode(institutionAddressDTO.getAddressCode())
                 .withRegion(institutionAddressRegion).withDomicile(institutionAddressCountry);
 
-        geocodableLocationService.setLocation(institutionAddress);
-
         InstitutionDomicile institutionCountry = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
 
         Document logoDocument = documentService.getByid(institutionDTO.getLogoDocumentId());
@@ -133,6 +131,7 @@ public class InstitutionService {
         InstitutionAddress institutionAddress = institution.getAddress();
         entityService.save(institutionAddress);
         entityService.save(institution);
+        geocodableLocationService.setLocation(institutionAddress);
     }
 
     public void populateDefaultImportedEntityFeeds() throws DeduplicationException {

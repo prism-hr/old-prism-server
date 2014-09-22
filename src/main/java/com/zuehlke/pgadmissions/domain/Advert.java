@@ -95,7 +95,7 @@ public class Advert {
             @AttributeOverride(name = "monthMaximumAtLocale", column = @Column(name = "month_fee_maximum_at_locale")),
             @AttributeOverride(name = "yearMinimumAtLocale", column = @Column(name = "year_fee_minimum_at_locale")),
             @AttributeOverride(name = "yearMaximumAtLocale", column = @Column(name = "year_fee_maximum_at_locale")),
-            @AttributeOverride(name = "converted", column = @Column(name = "fee_converted")),
+            @AttributeOverride(name = "converted", column = @Column(name = "fee_converted"))
     })
     private FinancialDetails fee;
 
@@ -112,14 +112,14 @@ public class Advert {
             @AttributeOverride(name = "monthMaximumAtLocale", column = @Column(name = "month_pay_maximum_at_locale")),
             @AttributeOverride(name = "yearMinimumAtLocale", column = @Column(name = "year_pay_minimum_at_locale")),
             @AttributeOverride(name = "yearMaximumAtLocale", column = @Column(name = "year_pay_maximum_at_locale")),
-            @AttributeOverride(name = "converted", column = @Column(name = "pay_converted")),
+            @AttributeOverride(name = "converted", column = @Column(name = "pay_converted"))
     })
     private FinancialDetails pay;
 
     @OneToOne
     @JoinColumn(name = "advert_closing_date_id", unique = true)
     private AdvertClosingDate closingDate;
-    
+
     @Column(name = "last_currency_conversion_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastCurrencyConversionDate;
@@ -130,7 +130,7 @@ public class Advert {
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "ADVERT_TARGET_INSTITUTION", joinColumns = { @JoinColumn(name = "advert_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "institution_id", nullable = false) })
     private Set<Institution> institutionTargets = Sets.newHashSet();
-    
+
     @ManyToMany(cascade = CascadeType.ALL, targetEntity = AdvertTargetProgramType.class)
     @JoinColumn(name = "advert_id", nullable = false)
     private Set<PrismProgramType> programTypeTargets = Sets.newHashSet();
@@ -297,48 +297,48 @@ public class Advert {
     public boolean isProjectAdvert() {
         return project != null;
     }
-    
+
     public Institution getInstitution() {
         return isProjectAdvert() ? project.getInstitution() : program.getInstitution();
     }
-    
+
     public boolean hasCovertedFee() {
         return fee != null && !fee.getCurrencySpecified().equals(fee.getCurrencyAtLocale());
     }
-    
+
     public boolean hasConvertedPay() {
         return pay != null && !pay.getCurrencySpecified().equals(pay.getCurrencyAtLocale());
     }
-    
+
     @Entity
     @Table(name = "ADVERT_TARGET_PROGRAM_TYPE")
     private static class AdvertTargetProgramType {
-        
+
         @EmbeddedId
         private AdvertTargetProgramTypeId id;
-        
+
         @ManyToOne
         @JoinColumn(name = "advertId", insertable = false, updatable = false)
         private Advert advert;
-        
+
         @Column(name = "program_type", insertable = false, updatable = false)
         @Enumerated(EnumType.STRING)
         private PrismProgramType programType;
-        
+
         @Embeddable
         private static class AdvertTargetProgramTypeId implements Serializable {
-            
+
             private static final long serialVersionUID = -381523189635209210L;
 
             @Column(name = "advert_id", nullable = false)
             private Integer advertId;
-            
+
             @Column(name = "program_type", nullable = false)
             @Enumerated(EnumType.STRING)
             private PrismProgramType programType;
-            
+
         }
-        
+
     }
-    
+
 }

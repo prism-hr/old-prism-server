@@ -184,7 +184,7 @@ public class SystemService {
     }
 
     private void initialiseRoles() throws DeduplicationException {
-        roleService.deleteExludedRoles();
+        roleService.deleteExcludedRoles();
         Set<Role> rolesWithExclusions = Sets.newHashSet();
 
         for (PrismRole prismRole : PrismRole.values()) {

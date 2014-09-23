@@ -24,11 +24,11 @@ import com.zuehlke.pgadmissions.domain.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.google.jaxb.GeocodeResponse;
-import com.zuehlke.pgadmissions.google.jaxb.GeocodeResponse.Result.Geometry;
-import com.zuehlke.pgadmissions.google.jaxb.GeocodeResponse.Result.Geometry.Location;
-import com.zuehlke.pgadmissions.google.jaxb.GeocodeResponse.Result.Geometry.Viewport.Northeast;
-import com.zuehlke.pgadmissions.google.jaxb.GeocodeResponse.Result.Geometry.Viewport.Southwest;
+import com.zuehlke.pgadmissions.google.geocode.jaxb.GeocodeResponse;
+import com.zuehlke.pgadmissions.google.geocode.jaxb.GeocodeResponse.Result.Geometry;
+import com.zuehlke.pgadmissions.google.geocode.jaxb.GeocodeResponse.Result.Geometry.Location;
+import com.zuehlke.pgadmissions.google.geocode.jaxb.GeocodeResponse.Result.Geometry.Viewport.Northeast;
+import com.zuehlke.pgadmissions.google.geocode.jaxb.GeocodeResponse.Result.Geometry.Viewport.Southwest;
 import com.zuehlke.pgadmissions.utils.ConversionUtils;
 
 @Service

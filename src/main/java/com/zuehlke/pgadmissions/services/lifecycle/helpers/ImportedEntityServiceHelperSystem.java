@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.dto.InstitutionDomicileImportDTO;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.google.jaxb.GeocodeResponse;
 import com.zuehlke.pgadmissions.iso.jaxb.CountryCodesType;
 import com.zuehlke.pgadmissions.iso.jaxb.CountryType;
 import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionType;

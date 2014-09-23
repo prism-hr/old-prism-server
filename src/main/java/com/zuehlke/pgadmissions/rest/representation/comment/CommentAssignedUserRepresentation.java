@@ -1,19 +1,19 @@
 package com.zuehlke.pgadmissions.rest.representation.comment;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 
 public class CommentAssignedUserRepresentation {
 
-    private UserExtendedRepresentation user;
+    private UserRepresentation user;
 
     private PrismRole role;
 
-    public UserExtendedRepresentation getUser() {
+    public UserRepresentation getUser() {
         return user;
     }
 
-    public void setUser(UserExtendedRepresentation user) {
+    public void setUser(UserRepresentation user) {
         this.user = user;
     }
 

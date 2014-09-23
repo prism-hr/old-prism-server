@@ -15,7 +15,6 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
-import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -75,8 +74,8 @@ public class UserService {
         return null;
     }
 
-    public UserExtendedRepresentation getUserRepresentation(User user) {
-        return new UserExtendedRepresentation().withFirstName(user.getFirstName()).withFirstName2(user.getFirstName2()).withFirstName3(user.getFirstName3())
+    public UserRepresentation getUserRepresentation(User user) {
+        return new UserRepresentation().withFirstName(user.getFirstName()).withFirstName2(user.getFirstName2()).withFirstName3(user.getFirstName3())
                 .withLastName(user.getLastName()).withEmail(user.getEmail());
     }
 

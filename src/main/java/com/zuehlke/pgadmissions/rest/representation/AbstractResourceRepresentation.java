@@ -23,7 +23,7 @@ public class AbstractResourceRepresentation {
 
     private PrismScope resourceScope;
 
-    private UserExtendedRepresentation user;
+    private UserRepresentation user;
 
     private LocalDate dueDate;
 
@@ -73,11 +73,11 @@ public class AbstractResourceRepresentation {
         this.resourceScope = resourceScope;
     }
 
-    public UserExtendedRepresentation getUser() {
+    public UserRepresentation getUser() {
         return user;
     }
 
-    public void setUser(UserExtendedRepresentation user) {
+    public void setUser(UserRepresentation user) {
         this.user = user;
     }
 

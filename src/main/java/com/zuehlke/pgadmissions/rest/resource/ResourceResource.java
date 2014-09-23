@@ -179,7 +179,7 @@ public class ResourceResource {
                 representation.setActions(actionService.getPermittedActions(rowDTO.getSystemId(), rowDTO.getInstitutionId(), rowDTO.getProgramId(),
                         rowDTO.getProjectId(), rowDTO.getApplicationId(), rowDTO.getStateId(), user));
                 representation.setId((Integer) PropertyUtils.getSimpleProperty(rowDTO, resourceScope.getLowerCaseName() + "Id"));
-                
+
                 representation.setRaisesUpdateFlag(rowDTO.getUpdatedTimestamp().isAfter(baseline));
                 representations.add(representation);
             }
@@ -203,7 +203,7 @@ public class ResourceResource {
             ActionOutcomeDTO actionOutcome = resourceService.createResource(user, action, newResourceDTO, referrer);
             return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("Couldn't create resource", e);
             throw new ResourceNotFoundException();
         }
     }
@@ -218,7 +218,7 @@ public class ResourceResource {
             roleService.updateUserRoles(resource, user, roles);
             // TODO: return validation error if workflow engine exception is thrown.
         } catch (DeduplicationException e) {
-            logger.error(e.getMessage());
+            logger.error("Couldn't edit user role", e);
             throw new ResourceNotFoundException();
         }
     }
@@ -233,7 +233,7 @@ public class ResourceResource {
                     userRolesRepresentation.getEmail(), resource, userRolesRepresentation.getRoles());
             // TODO: return validation error if workflow engine exception is thrown.
         } catch (DeduplicationException e) {
-            logger.error(e.getMessage());
+            logger.error("Couldn't add user role", e);
             throw new ResourceNotFoundException();
         }
     }
@@ -334,7 +334,7 @@ public class ResourceResource {
         public PrismScope getResourceScope() {
             return resourceScope;
         }
-        
+
     }
 
 }

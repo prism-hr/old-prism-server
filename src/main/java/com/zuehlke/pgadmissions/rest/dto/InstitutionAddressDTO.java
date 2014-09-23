@@ -5,7 +5,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class InstitutionAddressDTO {
 
     @NotEmpty
-    private String country;
+    private String domicile;
 
     private String region;
 
@@ -21,12 +21,12 @@ public class InstitutionAddressDTO {
 
     private String addressCode;
 
-    public String getCountry() {
-        return country;
+    public String getDomicile() {
+        return domicile;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public void setDomicile(String domicile) {
+        this.domicile = domicile;
     }
 
     public String getRegion() {

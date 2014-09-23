@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
@@ -14,12 +15,12 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.ActionDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.rest.representation.*;
+import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ResourceUserRolesRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionExtendedRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ProgramExtendedRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ProjectExtendedRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.*;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
 import com.zuehlke.pgadmissions.services.*;
@@ -239,15 +240,15 @@ public class ResourceResource {
     public void enrichApplicationRepresentation(Application application, ApplicationExtendedRepresentation applicationRepresentation) {
         List<User> interested = userService.getUsersInterestedInApplication(application);
         List<User> potentiallyInterested = userService.getUsersPotentiallyInterestedInApplication(application, interested);
-        List<UserExtendedRepresentation> interestedRepresentations = Lists.newArrayListWithCapacity(interested.size());
-        List<UserExtendedRepresentation> potentiallyInterestedRepresentations = Lists.newArrayListWithCapacity(potentiallyInterested.size());
+        List<UserRepresentation> interestedRepresentations = Lists.newArrayListWithCapacity(interested.size());
+        List<UserRepresentation> potentiallyInterestedRepresentations = Lists.newArrayListWithCapacity(potentiallyInterested.size());
 
         for (User user : interested) {
-            interestedRepresentations.add(dozerBeanMapper.map(user, UserExtendedRepresentation.class));
+            interestedRepresentations.add(dozerBeanMapper.map(user, UserRepresentation.class));
         }
 
         for (User user : potentiallyInterested) {
-            potentiallyInterestedRepresentations.add(dozerBeanMapper.map(user, UserExtendedRepresentation.class));
+            potentiallyInterestedRepresentations.add(dozerBeanMapper.map(user, UserRepresentation.class));
         }
 
         applicationRepresentation.setProgramTitle(application.getProgram().getTitle());
@@ -278,6 +279,9 @@ public class ResourceResource {
     public void enrichInstitutionRepresentation(Institution institution, InstitutionExtendedRepresentation institutionRepresentation) {
     }
 
+    public void enrichSystemRepresentation(System system, SystemExtendedRepresentation systemRepresentation) {
+    }
+
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
         if ("applications".equals(resourceScope)) {
@@ -289,7 +293,7 @@ public class ResourceResource {
         } else if ("institutions".equals(resourceScope)) {
             return new ResourceDescriptor(Institution.class, InstitutionExtendedRepresentation.class, PrismScope.INSTITUTION);
         } else if ("systems".equals(resourceScope)) {
-            return new ResourceDescriptor(com.zuehlke.pgadmissions.domain.System.class, null, PrismScope.SYSTEM);
+            return new ResourceDescriptor(com.zuehlke.pgadmissions.domain.System.class, SystemExtendedRepresentation.class, PrismScope.SYSTEM);
         }
         logger.error("Unknown resource scope " + resourceScope);
         throw new ResourceNotFoundException();

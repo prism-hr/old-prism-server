@@ -6,11 +6,11 @@ import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 public class ApplicationAssignedSupervisorRepresentation {
 
     private UserRepresentation user;
-    
+
     private PrismRole role;
-    
+
     private Boolean acceptedSupervision;
-    
+
     public final UserRepresentation getUser() {
         return user;
     }
@@ -34,20 +34,20 @@ public class ApplicationAssignedSupervisorRepresentation {
     public final void setAcceptedSupervision(Boolean acceptedSupervision) {
         this.acceptedSupervision = acceptedSupervision;
     }
-    
+
     public ApplicationAssignedSupervisorRepresentation withUser(UserRepresentation user) {
         this.user = user;
         return this;
     }
-    
+
     public ApplicationAssignedSupervisorRepresentation withRole(PrismRole role) {
         this.role = role;
         return this;
     }
-    
+
     public ApplicationAssignedSupervisorRepresentation withAcceptedSupervision(Boolean acceptedSupervision) {
         this.acceptedSupervision = acceptedSupervision;
         return this;
     }
-    
+
 }

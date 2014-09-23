@@ -1,20 +1,20 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
-import java.util.List;
+import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 
-import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
+import java.util.List;
 
 public class UserAppointmentPreferencesRepresentation {
 
     private List<Boolean> preferences;
 
-    private UserExtendedRepresentation user;
+    private UserRepresentation user;
 
-    public UserExtendedRepresentation getUser() {
+    public UserRepresentation getUser() {
         return user;
     }
 
-    public void setUser(UserExtendedRepresentation user) {
+    public void setUser(UserRepresentation user) {
         this.user = user;
     }
 
@@ -26,7 +26,7 @@ public class UserAppointmentPreferencesRepresentation {
         this.preferences = preferences;
     }
 
-    public UserAppointmentPreferencesRepresentation withUser(UserExtendedRepresentation user) {
+    public UserAppointmentPreferencesRepresentation withUser(UserRepresentation user) {
         this.user = user;
         return this;
     }

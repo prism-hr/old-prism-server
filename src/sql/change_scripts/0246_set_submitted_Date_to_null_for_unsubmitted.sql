@@ -1,0 +1,1 @@
+UPDATE APPLICATION_FORM SET submitted_on_timestamp = null where status = 'UNSUBMITTED';

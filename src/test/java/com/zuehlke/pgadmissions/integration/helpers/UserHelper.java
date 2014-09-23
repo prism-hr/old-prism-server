@@ -49,7 +49,7 @@ public class UserHelper {
         mailSenderMock.assertEmailSent(user, activationTemplate);
 
         String testContextReferrer = actionId.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? "http://www.testcontextreferrer.com" : null;
-        
+
         userService.registerUser(
                 new UserRegistrationDTO().withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail())
                         .withActivationCode(user.getActivationCode()).withPassword("password").withResourceId(resourceId)
@@ -63,20 +63,6 @@ public class UserHelper {
 
         userService.activateUser(user.getId());
         assertTrue(user.isEnabled());
-    }
-
-    public void addRoles(Resource resource, User user, PrismRole... roles) throws Exception {
-        List<AbstractResourceRepresentation.RoleRepresentation> roleRepresentations = Lists.newArrayList();
-        for (PrismRole role : roles) {
-            roleRepresentations.add(new AbstractResourceRepresentation.RoleRepresentation(role, true));
-        }
-        roleService.updateUserRoles(resource, user, roleRepresentations);
-    }
-
-    public void registerAndActivateUserInRoles(PrismAction createAction, Resource resource, User user, PrismNotificationTemplate activationTemplate,
-            PrismRole... roles) throws Exception {
-        addRoles(resource, user, roles);
-        registerAndActivateUser(createAction, resource.getId(), user, activationTemplate);
     }
 
 }

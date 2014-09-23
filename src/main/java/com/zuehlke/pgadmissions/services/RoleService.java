@@ -1,28 +1,21 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-
+import com.google.common.collect.Lists;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.dao.RoleDAO;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.RoleTransition;
-import com.zuehlke.pgadmissions.domain.StateTransition;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation.RoleRepresentation;
+import java.util.List;
 
 @Service
 @Transactional
@@ -76,16 +69,12 @@ public class RoleService {
         return null;
     }
 
-    public void updateUserRoles(Resource resource, User user, List<RoleRepresentation> roleRepresentations) throws DeduplicationException {
+    public void updateUserRole(Resource resource, User user, PrismRole role, PrismRoleTransitionType transitionType) throws DeduplicationException {
         User invoker = userService.getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
 
         Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false);
-
-        for (RoleRepresentation roleRepresentation : roleRepresentations) {
-            Role role = getById(roleRepresentation.getId());
-            comment.addAssignedUser(user, role, roleRepresentation.getValue() ? PrismRoleTransitionType.CREATE : PrismRoleTransitionType.DELETE);
-        }
+        comment.getAssignedUsers().add(new CommentAssignedUser().withUser(user).withRole(entityService.getById(Role.class, role)).withRoleTransitionType(transitionType));
 
         actionService.executeUserAction(resource, action, comment);
     }
@@ -112,10 +101,6 @@ public class RoleService {
         return roleDAO.getRoleUsers(resource, role);
     }
 
-    public List<PrismRole> getRoles(Class<? extends Resource> resourceClass) {
-        return roleDAO.getRoles(resourceClass);
-    }
-
     public List<Role> getActiveRoles() {
         return roleDAO.getActiveRoles();
     }
@@ -128,7 +113,7 @@ public class RoleService {
         return roleDAO.getCreatorRole(resource);
     }
 
-    public void deleteExludedRoles() {
+    public void deleteExcludedRoles() {
         for (Role role : entityService.list(Role.class)) {
             role.getExcludedRoles().clear();
         }
@@ -137,7 +122,7 @@ public class RoleService {
     public void executeRoleTransitions(StateTransition stateTransition, Comment comment) throws DeduplicationException {
         for (PrismRoleTransitionType roleTransitionType : PrismRoleTransitionType.values()) {
             for (RoleTransition roleTransition : roleDAO.getRoleTransitions(stateTransition, roleTransitionType)) {
-                List<User> users = getRoleTransitionUsers(stateTransition, comment, roleTransition);
+                List<User> users = getRoleTransitionUsers(comment, roleTransition);
                 for (User user : users) {
                     executeRoleTransition(comment, user, roleTransition);
                 }
@@ -145,12 +130,12 @@ public class RoleService {
         }
     }
 
-    private List<User> getRoleTransitionUsers(StateTransition stateTransition, Comment comment, RoleTransition roleTransition) throws WorkflowEngineException {
+    private List<User> getRoleTransitionUsers(Comment comment, RoleTransition roleTransition) throws WorkflowEngineException {
         User actionOwner = comment.getUser();
         Resource resource = comment.getResource();
         User restrictedToUser = roleTransition.isRestrictToActionOwner() ? actionOwner : null;
 
-        List<User> users = Lists.newArrayList();
+        List<User> users;
         if (roleTransition.getRoleTransitionType().isSpecified()) {
             users = getSpecifiedRoleTransitionUsers(comment, roleTransition, restrictedToUser);
         } else {
@@ -207,21 +192,21 @@ public class RoleService {
         PrismRoleTransitionType roleTransitionType = roleTransition.getRoleTransitionType();
 
         switch (roleTransitionType) {
-        case BRANCH:
-            executeBranchUserRole(transientRole, transientTransitionRole, comment);
-            break;
-        case CREATE:
-            executeCreateUserRole(transientTransitionRole);
-            break;
-        case DELETE:
-            executeRemoveUserRole(transientTransitionRole, comment);
-            break;
-        case RETIRE:
-            executeRemoveUserRole(transientTransitionRole, comment);
-            break;
-        case UPDATE:
-            executeUpdateUserRole(transientRole, transientTransitionRole, comment);
-            break;
+            case BRANCH:
+                executeBranchUserRole(transientRole, transientTransitionRole, comment);
+                break;
+            case CREATE:
+                executeCreateUserRole(transientTransitionRole);
+                break;
+            case DELETE:
+                executeRemoveUserRole(transientTransitionRole, comment);
+                break;
+            case RETIRE:
+                executeRemoveUserRole(transientTransitionRole, comment);
+                break;
+            case UPDATE:
+                executeUpdateUserRole(transientRole, transientTransitionRole, comment);
+                break;
         }
 
     }

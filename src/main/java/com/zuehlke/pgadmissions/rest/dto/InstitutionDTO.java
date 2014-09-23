@@ -15,16 +15,17 @@ public class InstitutionDTO {
     @NotEmpty
     private String title;
 
+    @NotNull
     private String currency;
+
+    @NotNull
+    private PrismProgramType defaultProgramType;
+
+    @NotNull
+    private PrismStudyOption defaultStudyOption;
 
     @NotEmpty
     private String homepage;
-    
-    @NotNull
-    private PrismProgramType defaultProgramType;
-    
-    @NotNull
-    private PrismStudyOption defaultStudyOption;
 
     @NotNull
     private Integer logoDocumentId;

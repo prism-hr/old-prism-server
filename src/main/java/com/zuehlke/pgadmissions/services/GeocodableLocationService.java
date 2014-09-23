@@ -1,28 +1,8 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.List;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.JAXBIntrospector;
-import javax.xml.bind.Unmarshaller;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.GeocodableLocation;
-import com.zuehlke.pgadmissions.domain.GeographicLocation;
-import com.zuehlke.pgadmissions.domain.InstitutionAddress;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
+import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.google.geocode.jaxb.GeocodeResponse;
 import com.zuehlke.pgadmissions.google.geocode.jaxb.GeocodeResponse.Result.Geometry;
@@ -30,10 +10,28 @@ import com.zuehlke.pgadmissions.google.geocode.jaxb.GeocodeResponse.Result.Geome
 import com.zuehlke.pgadmissions.google.geocode.jaxb.GeocodeResponse.Result.Geometry.Viewport.Northeast;
 import com.zuehlke.pgadmissions.google.geocode.jaxb.GeocodeResponse.Result.Geometry.Viewport.Southwest;
 import com.zuehlke.pgadmissions.utils.ConversionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.JAXBIntrospector;
+import javax.xml.bind.Unmarshaller;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.List;
 
 @Service
 @Transactional
 public class GeocodableLocationService {
+
+    private static Logger logger = LoggerFactory.getLogger(GeocodableLocationService.class);
 
     @Value("${integration.google.geocoding.api.uri}")
     private String googleGeocodeApiUri;
@@ -70,31 +68,33 @@ public class GeocodableLocationService {
         return (GeocodeResponse) JAXBIntrospector.getValue(unmarshaller.unmarshal(request));
     }
 
-    public void setLocation(InstitutionAddress address) throws InterruptedException, IOException, JAXBException {
-        List<String> addressTokens = Lists.reverse(address.getAddressTokens());
-        String domicileTokenString = Joiner.on(", ").join(address.getDomicileTokens());
+    public void setLocation(InstitutionAddress address) {
+        try {
+            List<String> addressTokens = Lists.reverse(address.getAddressTokens());
+            String domicileTokenString = Joiner.on(", ").join(address.getDomicileTokens());
 
-        for (int i = addressTokens.size(); i > 0; i--) {
-            List<String> requestTokens = Lists.newLinkedList();
-            for (int j = 0; j < i; j++) {
-                requestTokens.add(addressTokens.get(j));
+            for (int i = addressTokens.size(); i > 0; i--) {
+                List<String> requestTokens = addressTokens.subList(0, i);
+
+                GeocodeResponse response = getLocation(Joiner.on(", ").join(Lists.reverse(requestTokens)) + ", " + domicileTokenString);
+                if (response.getStatus().equals("OK")) {
+                    setLocation(address, response);
+                    return;
+                }
             }
 
-            GeocodeResponse response = getLocation(Joiner.on(", ").join(Lists.reverse(requestTokens)) + ", " + domicileTokenString);
-            if (response.getStatus().equals("OK")) {
-                setLocation(address, response);
-                return;
-            }
+            InstitutionDomicileRegion region = address.getRegion();
+            InstitutionDomicile domicile = address.getDomicile();
+            address.setLocation(region == null ? domicile.getLocation() : region.getLocation());
+        } catch (Exception e) {
+            logger.error("Problem obtaining location for " + address.getLocationString(), e);
         }
-
-        InstitutionDomicileRegion region = address.getRegion();
-        InstitutionDomicile domicile = address.getDomicile();
-        address.setLocation(region == null ? domicile.getLocation() : region.getLocation());
     }
 
     @SuppressWarnings("unchecked")
     public <T extends GeocodableLocation> void setLocation(T location, GeocodeResponse response) {
         location = (T) getById(location.getClass(), location.getId());
+
         int precision = 14;
 
         Geometry geometry = response.getResult().getGeometry();

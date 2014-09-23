@@ -78,15 +78,13 @@ public class InstitutionService {
 
     public Institution create(User user, InstitutionDTO institutionDTO) throws InterruptedException, IOException, JAXBException {
         InstitutionAddressDTO institutionAddressDTO = institutionDTO.getAddress();
-        InstitutionDomicile institutionAddressCountry = entityService.getById(InstitutionDomicile.class, institutionAddressDTO.getCountry());
+        InstitutionDomicile institutionAddressCountry = entityService.getById(InstitutionDomicile.class, institutionAddressDTO.getDomicile());
         InstitutionDomicileRegion institutionAddressRegion = entityService.getById(InstitutionDomicileRegion.class, institutionAddressDTO.getRegion());
 
         InstitutionAddress institutionAddress = new InstitutionAddress().withAddressLine1(institutionAddressDTO.getAddressLine1())
                 .withAddressLine2(institutionAddressDTO.getAddressLine2()).withAddressTown(institutionAddressDTO.getAddressTown())
                 .withAddressDistrict(institutionAddressDTO.getAddressDistrict()).withAddressCode(institutionAddressDTO.getAddressCode())
                 .withRegion(institutionAddressRegion).withDomicile(institutionAddressCountry);
-
-        geocodableLocationService.setLocation(institutionAddress);
 
         InstitutionDomicile institutionCountry = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
 
@@ -133,6 +131,7 @@ public class InstitutionService {
         InstitutionAddress institutionAddress = institution.getAddress();
         entityService.save(institutionAddress);
         entityService.save(institution);
+        geocodableLocationService.setLocation(institutionAddress);
     }
 
     public void populateDefaultImportedEntityFeeds() throws DeduplicationException {

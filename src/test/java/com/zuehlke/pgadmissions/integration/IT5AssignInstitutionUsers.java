@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.integration;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,13 +42,13 @@ public class IT5AssignInstitutionUsers {
 
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     @Autowired
     private EntityService entityService;
-    
+
     @Autowired
     private UserRoleHelper userRoleHelper;
-    
+
     @Autowired
     private IT4ImportInstitutionReferenceData it4;
 
@@ -56,18 +58,19 @@ public class IT5AssignInstitutionUsers {
 
         Program program = programService.getProgramByImportedCode(null, "RRDCOMSING01");
 
-        User user = userService.getOrCreateUserWithRoles("Jozef", "Oleksy", "jozef@oleksy.pl", program, Lists.newArrayList(new AbstractResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_VIEWER, true), new AbstractResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_APPROVER, true)));
+        User user = userService.getOrCreateUserWithRoles("Jozef", "Oleksy", "jozef@oleksy.pl", program, Sets.newHashSet(PrismRole.PROGRAM_VIEWER, PrismRole.PROGRAM_APPROVER));
 
         assertTrue(roleService.hasUserRole(program, user, PrismRole.PROGRAM_VIEWER));
         assertTrue(roleService.hasUserRole(program, user, PrismRole.PROGRAM_APPROVER));
         assertFalse(roleService.hasUserRole(program, user, PrismRole.PROGRAM_ADMINISTRATOR));
 
-        roleService.updateUserRoles(program, user, Lists.newArrayList(new AbstractResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_VIEWER, true), new AbstractResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_APPROVER, false), new AbstractResourceRepresentation.RoleRepresentation(PrismRole.PROGRAM_ADMINISTRATOR, true)));
+        roleService.updateUserRole(program, user, PrismRole.PROGRAM_VIEWER, PrismRoleTransitionType.CREATE);
+        roleService.updateUserRole(program, user, PrismRole.PROGRAM_APPROVER, PrismRoleTransitionType.DELETE);
 
         assertTrue(roleService.hasUserRole(program, user, PrismRole.PROGRAM_VIEWER));
         assertFalse(roleService.hasUserRole(program, user, PrismRole.PROGRAM_APPROVER));
         assertTrue(roleService.hasUserRole(program, user, PrismRole.PROGRAM_ADMINISTRATOR));
-        
+
         userRoleHelper.verifyResourceOwnerReassignment();
     }
 }

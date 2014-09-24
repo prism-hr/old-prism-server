@@ -883,7 +883,7 @@ public class Comment {
     public boolean isApplicationExportComment() {
         return action.getId() == PrismAction.APPLICATION_EXPORT;
     }
-    
+
     public boolean isApplicationPurgeComment() {
         return action.getId() == PrismAction.APPLICATION_PURGE;
     }

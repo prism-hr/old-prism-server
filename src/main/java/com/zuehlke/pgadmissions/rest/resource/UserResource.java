@@ -37,7 +37,6 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
-import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.UserRegistrationValidator;
 import com.zuehlke.pgadmissions.security.AuthenticationTokenUtils;
@@ -74,14 +73,14 @@ public class UserResource {
     private Mapper dozerBeanMapper;
 
     @RequestMapping(method = RequestMethod.GET)
-    public UserExtendedRepresentation getUser() {
+    public UserRepresentation getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         if (principal instanceof String && principal.equals("anonymousUser")) {
             throw new WebApplicationException(401);
         }
         User user = (User) principal;
-        return dozerBeanMapper.map(user, UserExtendedRepresentation.class);
+        return dozerBeanMapper.map(user, UserRepresentation.class);
     }
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)

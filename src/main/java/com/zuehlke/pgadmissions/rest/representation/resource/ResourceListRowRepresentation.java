@@ -1,25 +1,24 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import java.math.BigDecimal;
-import java.util.List;
-
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
+import java.math.BigDecimal;
+import java.util.List;
 
 public class ResourceListRowRepresentation {
 
     private Integer id;
-    
+
     private Boolean raisesUpdateFlag;
 
     private String code;
 
-    private UserExtendedRepresentation user;
+    private UserRepresentation user;
 
     private String institutionTitle;
 
@@ -65,11 +64,11 @@ public class ResourceListRowRepresentation {
         this.code = code;
     }
 
-    public UserExtendedRepresentation getUser() {
+    public UserRepresentation getUser() {
         return user;
     }
 
-    public void setUser(UserExtendedRepresentation user) {
+    public void setUser(UserRepresentation user) {
         this.user = user;
     }
 

@@ -23,7 +23,7 @@ public class AbstractResourceRepresentation {
 
     private PrismScope resourceScope;
 
-    private UserExtendedRepresentation user;
+    private UserRepresentation user;
 
     private LocalDate dueDate;
 
@@ -32,14 +32,14 @@ public class AbstractResourceRepresentation {
     private DateTime updatedTimestamp;
 
     private List<ActionRepresentation> actions;
-    
+
     private List<PrismActionEnhancement> actionEnhancements;
 
     private List<PrismState> nextStates;
 
     private List<CommentRepresentation> comments;
 
-    private List<UserRolesRepresentation> users;
+    private List<ResourceUserRolesRepresentation> users;
 
     public Integer getId() {
         return id;
@@ -73,11 +73,11 @@ public class AbstractResourceRepresentation {
         this.resourceScope = resourceScope;
     }
 
-    public UserExtendedRepresentation getUser() {
+    public UserRepresentation getUser() {
         return user;
     }
 
-    public void setUser(UserExtendedRepresentation user) {
+    public void setUser(UserRepresentation user) {
         this.user = user;
     }
 
@@ -137,65 +137,12 @@ public class AbstractResourceRepresentation {
         this.comments = comments;
     }
 
-    public List<UserRolesRepresentation> getUsers() {
+    public List<ResourceUserRolesRepresentation> getUsers() {
         return users;
     }
 
-    public void setUsers(List<UserRolesRepresentation> users) {
+    public void setUsers(List<ResourceUserRolesRepresentation> users) {
         this.users = users;
-    }
-
-    public static class UserRolesRepresentation {
-
-        private Integer id;
-
-        private String firstName;
-
-        private String lastName;
-
-        private String email;
-
-        private List<RoleRepresentation> roles;
-
-        public Integer getId() {
-            return id;
-        }
-
-        public void setId(Integer id) {
-            this.id = id;
-        }
-
-        public String getFirstName() {
-            return firstName;
-        }
-
-        public void setFirstName(String firstName) {
-            this.firstName = firstName;
-        }
-
-        public String getLastName() {
-            return lastName;
-        }
-
-        public void setLastName(String lastName) {
-            this.lastName = lastName;
-        }
-
-        public String getEmail() {
-            return email;
-        }
-
-        public void setEmail(String email) {
-            this.email = email;
-        }
-
-        public List<RoleRepresentation> getRoles() {
-            return roles;
-        }
-
-        public void setRoles(List<RoleRepresentation> roles) {
-            this.roles = roles;
-        }
     }
 
     public static class RoleRepresentation {
@@ -229,7 +176,7 @@ public class AbstractResourceRepresentation {
         }
 
     }
-    
+
 }
 
 

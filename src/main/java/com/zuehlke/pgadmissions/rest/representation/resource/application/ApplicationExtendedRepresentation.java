@@ -2,12 +2,12 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
 
@@ -43,9 +43,9 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     private AdditionalInformationRepresentation additionalInformation;
 
-    private List<UserExtendedRepresentation> usersInterestedInApplication;
+    private List<UserRepresentation> usersInterestedInApplication;
 
-    private List<UserExtendedRepresentation> usersPotentiallyInterestedInApplication;
+    private List<UserRepresentation> usersPotentiallyInterestedInApplication;
 
     private List<AppointmentTimeslotRepresentation> appointmentTimeslots;
 
@@ -177,19 +177,19 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
         this.additionalInformation = additionalInformation;
     }
 
-    public List<UserExtendedRepresentation> getUsersInterestedInApplication() {
+    public List<UserRepresentation> getUsersInterestedInApplication() {
         return usersInterestedInApplication;
     }
 
-    public void setUsersInterestedInApplication(List<UserExtendedRepresentation> usersInterestedInApplication) {
+    public void setUsersInterestedInApplication(List<UserRepresentation> usersInterestedInApplication) {
         this.usersInterestedInApplication = usersInterestedInApplication;
     }
 
-    public List<UserExtendedRepresentation> getUsersPotentiallyInterestedInApplication() {
+    public List<UserRepresentation> getUsersPotentiallyInterestedInApplication() {
         return usersPotentiallyInterestedInApplication;
     }
 
-    public void setUsersPotentiallyInterestedInApplication(List<UserExtendedRepresentation> usersPotentiallyInterestedInApplication) {
+    public void setUsersPotentiallyInterestedInApplication(List<UserRepresentation> usersPotentiallyInterestedInApplication) {
         this.usersPotentiallyInterestedInApplication = usersPotentiallyInterestedInApplication;
     }
 

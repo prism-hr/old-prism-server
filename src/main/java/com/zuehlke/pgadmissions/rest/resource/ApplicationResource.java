@@ -5,6 +5,8 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.dozer.Mapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -44,6 +46,8 @@ import com.zuehlke.pgadmissions.services.CommentService;
 @RestController
 @RequestMapping(value = {"api/applications"})
 public class ApplicationResource {
+
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationResource.class);
 
     @Autowired
     private ApplicationSectionService applicationSectionService;
@@ -191,6 +195,7 @@ public class ApplicationResource {
             ActionOutcomeDTO actionOutcome = applicationService.performAction(applicationId, commentDTO);
             return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
         } catch (Exception e) {
+            logger.error("Could not perform action " + commentDTO.getAction().getActionType() + " on application " + applicationId, e);
             throw new ResourceNotFoundException();
         }
     }

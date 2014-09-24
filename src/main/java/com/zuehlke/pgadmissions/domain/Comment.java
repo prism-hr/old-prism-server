@@ -190,7 +190,7 @@ public class Comment {
     private Set<CommentAppointmentPreference> appointmentPreferences = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "comment_id", nullable = false)
+    @JoinColumn(name = "comment_id")
     private Set<Document> documents = Sets.newHashSet();
 
     public Integer getId() {

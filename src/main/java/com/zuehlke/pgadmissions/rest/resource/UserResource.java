@@ -99,7 +99,7 @@ public class UserResource {
         try {
             userService.registerUser(userRegistrationDTO, referrer);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("Unable to submit registration for user: " + userRegistrationDTO.getEmail());
             throw new ResourceNotFoundException();
         }
     }
@@ -133,6 +133,7 @@ public class UserResource {
             resourceListFilterService.save(currentUser, entityService.getById(Scope.class, scope), filter);
         } catch (Exception e) {
             logger.info("Error saving filter for user " + currentUser.toString(), e);
+            throw new ResourceNotFoundException();
         }
     }
 

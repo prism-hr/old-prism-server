@@ -68,11 +68,12 @@ public class ProgramInstanceService {
         Date result = null;
         ProgrammeDetails details = applicationForm.getProgrammeDetails();
         Date today = new Date();
-        Date todayPlusConsiderationPeriod = DateUtils.addMonths(today, CONSIDERATION_PERIOD_MONTHS);
+        
         for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
             Date applicationStartDate = instance.getApplicationStartDate();
+			Date todayPlusConsiderationPeriod = DateUtils.addMonths(instance.getApplicationDeadline(), CONSIDERATION_PERIOD_MONTHS);
             boolean startDateInFuture = today.before(applicationStartDate);
-            boolean beforeEndDate = todayPlusConsiderationPeriod.before(instance.getApplicationDeadline());
+            boolean beforeEndDate = todayPlusConsiderationPeriod.after(today);
             boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
             boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
             if (applicationForm.getAdvert().isEnabled() && isActive(instance) && (startDateInFuture || beforeEndDate) && sameStudyOption

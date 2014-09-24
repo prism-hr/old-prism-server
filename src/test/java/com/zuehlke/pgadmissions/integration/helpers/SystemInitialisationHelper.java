@@ -294,7 +294,7 @@ public class SystemInitialisationHelper {
     }
 
     private void verifyStateTransitionCreation(StateAction stateAction, PrismStateAction prismStateAction) {
-        Set<StateTransition> stateTransitions = (Set<StateTransition>) stateAction.getStateTransitions();
+        Set<StateTransition> stateTransitions = stateAction.getStateTransitions();
         assertTrue(prismStateAction.getTransitions().size() == stateTransitions.size());
 
         for (StateTransition stateTransition : stateTransitions) {

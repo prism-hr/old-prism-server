@@ -117,7 +117,7 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
         JAXBContext jaxbContext = JAXBContext.newInstance(CountryCodesType.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         JAXBElement<CountryCodesType> unmarshalled = (JAXBElement<CountryCodesType>) unmarshaller.unmarshal(fileUrl);
-        CountryCodesType countryCodes = (CountryCodesType) unmarshalled.getValue();
+        CountryCodesType countryCodes = unmarshalled.getValue();
         return countryCodes.getCountry();
     }
 
@@ -158,7 +158,7 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
         Integer geocodedCounter = geocodingRequestTotals.get(baseline);
         geocodedCounter = geocodedCounter == null ? 0 : geocodedCounter;
         String address = location.getLocationString();
-        
+
         if (BooleanUtils.isTrue(googleGeocodeCode)) {
             if (geocodedCounter < googleGeocodeApiBatchLimit && !location.isGeocoded()) {
                 LocationQueryResponseDTO response = geocodableLocationService.getLocation(address);
@@ -181,7 +181,7 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
             }
         }
     }
-    
+
     private void removeExpiredGeocodingRequestTotals(LocalDate baseline) {
         for (LocalDate day : geocodingRequestTotals.keySet()) {
             if (day.isBefore(baseline)) {

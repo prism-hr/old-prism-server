@@ -57,7 +57,7 @@ public class PrismAuthenticationProvider implements AuthenticationProvider {
     }
 
     @Override
-    public boolean supports(Class<? extends Object> clazz) {
+    public boolean supports(Class<?> clazz) {
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(clazz);
     }
 

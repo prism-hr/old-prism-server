@@ -22,9 +22,9 @@ public class EntityJsonDeserializer<T> extends JsonDeserializer<T> {
 
     @Override
     @SuppressWarnings("unused")
-    public T deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-        JsonToken token = jp.getCurrentToken();
-        int id = jp.getIntValue();
+    public T deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
+        JsonToken token = parser.getCurrentToken();
+        int id = parser.getIntValue();
         return entityService.getById(klazz, id);
     }
 

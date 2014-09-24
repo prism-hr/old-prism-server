@@ -284,7 +284,11 @@
             <artifactId>opencsv</artifactId>
             <version>2.3</version>
         </dependency>
-
+       	<dependency>
+			<groupId>org.apache.oltu.oauth2</groupId>
+			<artifactId>org.apache.oltu.oauth2.client</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 
         <!-- Logging -->
         <dependency>
@@ -470,8 +474,7 @@
                         </goals>
                         <configuration>
                             <packageName>com.zuehlke.pgadmissions.scoring.jaxb</packageName>
-                            <outputDirectory>${project.build.directory}/generated-sources/jaxb/scoringConfig
-                            </outputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-sources/jaxb/scoringConfig</outputDirectory>
                             <schemaDirectory>${project.basedir}/src/main/resources/xsd/scoring</schemaDirectory>
                         </configuration>
                     </execution>
@@ -484,28 +487,6 @@
                             <packageName>com.zuehlke.pgadmissions.iso.jaxb</packageName>
                             <outputDirectory>${project.build.directory}/generated-sources/jaxb/isoCountryCodes</outputDirectory>
                             <schemaDirectory>${project.basedir}/src/main/resources/xsd/isoCountryCodes</schemaDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>xjc-5</id>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                        <configuration>
-                            <packageName>com.zuehlke.pgadmissions.google.jaxb</packageName>
-                            <outputDirectory>${project.build.directory}/generated-sources/jaxb/google</outputDirectory>
-                            <schemaDirectory>${project.basedir}/src/main/resources/xsd/google</schemaDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>xjc-6</id>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                        <configuration>
-                            <packageName>com.zuehlke.pgadmissions.yahoo.jaxb</packageName>
-                            <outputDirectory>${project.build.directory}/generated-sources/jaxb/yahoo</outputDirectory>
-                            <schemaDirectory>${project.basedir}/src/main/resources/xsd/yahoo</schemaDirectory>
                         </configuration>
                     </execution>
                 </executions>

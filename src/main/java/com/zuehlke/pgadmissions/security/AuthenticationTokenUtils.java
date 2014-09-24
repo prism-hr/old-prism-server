@@ -14,14 +14,7 @@ public class AuthenticationTokenUtils {
         /* Expires in one hour */
         long expires = System.currentTimeMillis() + 1000L * 60 * 60 * 5;
 
-        StringBuilder tokenBuilder = new StringBuilder();
-        tokenBuilder.append(userDetails.getUsername());
-        tokenBuilder.append(":");
-        tokenBuilder.append(expires);
-        tokenBuilder.append(":");
-        tokenBuilder.append(AuthenticationTokenUtils.computeSignature(userDetails, expires));
-
-        return tokenBuilder.toString();
+        return userDetails.getUsername() + ":" + expires + ":" + AuthenticationTokenUtils.computeSignature(userDetails, expires);
     }
 
     public static String computeSignature(UserDetails userDetails, long expires) {

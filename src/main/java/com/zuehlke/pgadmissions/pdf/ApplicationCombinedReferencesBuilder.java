@@ -24,7 +24,7 @@ public class ApplicationCombinedReferencesBuilder extends AbstractPdfModelBuilde
 
     @Value("${xml.export.system.reference}")
     private String noReferenceExplanation;
-    
+
     public void build(final Application application, final Comment referenceComment, final OutputStream outputStream) {
         try {
             Document document = new Document(PageSize.A4, 50, 50, 100, 50);
@@ -42,7 +42,7 @@ public class ApplicationCombinedReferencesBuilder extends AbstractPdfModelBuilde
                 if (application.getState().getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED) {
                     document.add(new Paragraph("Comment:\n" + noReferenceExplanation));
                 } else {
-                    document.add(new Paragraph("Comment:\nReference not yet provided at time of outcome")); 
+                    document.add(new Paragraph("Comment:\nReference not yet provided at time of outcome"));
                 }
             } else {
                 if (BooleanUtils.isTrue(referenceComment.isDeclinedResponse())) {
@@ -50,26 +50,27 @@ public class ApplicationCombinedReferencesBuilder extends AbstractPdfModelBuilde
                 } else {
                     document.add(new Paragraph("Comment:\n" + referenceComment.getContent()));
                 }
-            }
 
-            PdfContentByte cb = writer.getDirectContent();
-            for (com.zuehlke.pgadmissions.domain.Document in : referenceComment.getDocuments()) {
-                try {
-                	PdfReader reader = new PdfReader(in.getContent());
-                    for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-                        document.newPage();
-                        PdfImportedPage page = writer.getImportedPage(reader, i);
-                        cb.addTemplate(page, 0, 0);
+                PdfContentByte cb = writer.getDirectContent();
+                for (com.zuehlke.pgadmissions.domain.Document in : referenceComment.getDocuments()) {
+                    try {
+                        PdfReader reader = new PdfReader(in.getContent());
+                        for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+                            document.newPage();
+                            PdfImportedPage page = writer.getImportedPage(reader, i);
+                            cb.addTemplate(page, 0, 0);
+                        }
+                    } catch (IllegalArgumentException e) {
+                        throw new Error(e);
                     }
-                } catch (IllegalArgumentException e) {
-                    throw new Error(e);
                 }
             }
+
             document.newPage();
             document.close();
         } catch (Exception e) {
             throw new PdfDocumentBuilderException(e);
         }
     }
-    
+
 }

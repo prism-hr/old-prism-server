@@ -1,37 +1,19 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.Arrays;
-import java.util.Set;
-import java.util.TimeZone;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.Size;
-
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.TimeZone;
 
 @Entity
 @Table(name = "COMMENT")
@@ -825,7 +807,7 @@ public class Comment {
     }
 
     public boolean isProgramCreateComment() {
-        return action.getCreationScope() == null ? false : action.getCreationScope().getId() == PrismScope.PROGRAM ? true : false;
+        return action.getCreationScope() != null && action.getCreationScope().getId() == PrismScope.PROGRAM;
     }
 
     public boolean isProgramUpdateComment() {
@@ -837,7 +819,7 @@ public class Comment {
     }
 
     public boolean isProjectCreateComment() {
-        return action.getCreationScope() == null ? false : action.getCreationScope().getId() == PrismScope.PROJECT ? true : false;
+        return action.getCreationScope() != null && action.getCreationScope().getId() == PrismScope.PROJECT;
     }
 
     public boolean isProjectUpdateComment() {

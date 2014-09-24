@@ -26,7 +26,7 @@ public class ApplicationFunding {
     @ManyToOne
     @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
     private Application application;
-    
+
     @ManyToOne
     @JoinColumn(name = "funding_source_id", nullable = false)
     private FundingSource fundingSource;
@@ -36,13 +36,12 @@ public class ApplicationFunding {
     private String description;
 
     @Column(name = "award_value", nullable = false)
-    @ESAPIConstraint(rule = "NumbersOnly", maxLength = 100)
     private String value;
 
     @Column(name = "award_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate awardDate;
-    
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "document_id", nullable = false, unique = true)
     private Document document;
@@ -137,5 +136,5 @@ public class ApplicationFunding {
         this.application = application;
         return this;
     }
-    
+
 }

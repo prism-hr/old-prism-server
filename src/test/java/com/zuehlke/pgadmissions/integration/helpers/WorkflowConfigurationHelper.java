@@ -106,7 +106,7 @@ public class WorkflowConfigurationHelper {
         verifyStateActionNotifications(state);
         verifyRoleTransitionExclusions(state);
 
-        for (State transitionState : stateService.getOrderedTransitionStates(state, statesVisited.toArray(new State[0]))) {
+        for (State transitionState : stateService.getOrderedTransitionStates(state, statesVisited.toArray(new State[statesVisited.size()]))) {
             verifyTransitionState(state, transitionState);
             verifyState(transitionState);
         }

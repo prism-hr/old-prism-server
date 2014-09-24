@@ -20,6 +20,7 @@ import org.springframework.validation.ValidationUtils;
 public abstract class AbstractValidator implements org.springframework.validation.Validator, ApplicationContextAware, ConstraintValidatorFactory {
 
     public static final Integer ERROR_VALUE_FOR_DURATION_OF_STUDY = -1;
+
     public static final Integer ERROR_UNIT_FOR_DURATION_OF_STUDY = -2;
 
     public static final String EMPTY_FIELD_ERROR_MESSAGE = "text.field.empty";

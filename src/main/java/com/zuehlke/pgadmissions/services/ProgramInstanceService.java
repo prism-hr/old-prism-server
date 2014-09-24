@@ -68,24 +68,22 @@ public class ProgramInstanceService {
         Date result = null;
         ProgrammeDetails details = applicationForm.getProgrammeDetails();
         Date today = new Date();
-        
+
         for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
             Date applicationStartDate = instance.getApplicationStartDate();
-			Date todayPlusConsiderationPeriod = DateUtils.addMonths(instance.getApplicationDeadline(), CONSIDERATION_PERIOD_MONTHS);
-            boolean startDateInFuture = today.before(applicationStartDate);
-            boolean beforeEndDate = todayPlusConsiderationPeriod.after(today);
+			Date applicationDeadline = DateUtils.addMonths(instance.getApplicationDeadline(), CONSIDERATION_PERIOD_MONTHS);
+            boolean afterStartDate = today.after(applicationStartDate);
+            boolean beforeEndDate = today.before(applicationDeadline);
             boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
             boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
-            if (applicationForm.getAdvert().isEnabled() && isActive(instance) && (startDateInFuture || beforeEndDate) && sameStudyOption
-                    && sameStudyOptionCode) {
-                if (startDateInFuture && (result == null || result.after(applicationStartDate))) {
-                    result = applicationStartDate;
-                } else if (result == null || result.after(todayPlusConsiderationPeriod)) {
-                    result = todayPlusConsiderationPeriod;
-                }
-            }
+			if (instance.getEnabled() && sameStudyOption && sameStudyOptionCode) {
+				if (afterStartDate && beforeEndDate) {
+					Date suggestedStartDate = DateUtils.addMonths(today, CONSIDERATION_PERIOD_MONTHS);
+					return suggestedStartDate.before(applicationDeadline) ? suggestedStartDate : applicationDeadline;
+				}
+			}
         }
-        return result;
+        return null;
     }
 
     public boolean isPrefferedStartDateWithinBounds(ApplicationForm applicationForm) {

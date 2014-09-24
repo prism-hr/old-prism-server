@@ -457,7 +457,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
         ProgramInstance activeInstance = null;
         for (ProgramInstance instance : program.getInstances()) {
-            if (com.zuehlke.pgadmissions.utils.DateUtils.isToday(instance.getApplicationStartDate()) || instance.getApplicationStartDate().after(new Date())) {
+            if (com.zuehlke.pgadmissions.utils.DateUtils.isToday(instance.getApplicationDeadline()) || instance.getApplicationDeadline().after(new Date())) {
                 if (instance.getStudyOption().equalsIgnoreCase(programmeDetails.getStudyOption())) {
                     activeInstance = instance;
                     break;

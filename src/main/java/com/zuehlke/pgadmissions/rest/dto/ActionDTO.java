@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest;
+package com.zuehlke.pgadmissions.rest.dto;
 
 import java.util.Collection;
 import java.util.List;
@@ -10,10 +10,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
-import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
 
 public class ActionDTO {
 

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.converter;
 
+import java.math.BigDecimal;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.dozer.DozerConverter;
 
@@ -15,7 +17,7 @@ public class FinancialDetailsRepresentationConverter extends DozerConverter<Fina
 
     @Override
     public FinancialDetailsRepresentation convertTo(FinancialDetails source, FinancialDetailsRepresentation destination) {
-        if(source == null){
+        if(source == null) {
             return null;
         }
         destination = new FinancialDetailsRepresentation();
@@ -25,8 +27,8 @@ public class FinancialDetailsRepresentationConverter extends DozerConverter<Fina
         destination.setInterval(interval);
         if (interval != null) {
             try {
-                destination.setMinimum((java.math.BigDecimal) PropertyUtils.getSimpleProperty(source, interval.name().toLowerCase() + "MinimumSpecified"));
-                destination.setMaximum((java.math.BigDecimal) PropertyUtils.getSimpleProperty(source, interval.name().toLowerCase() + "MaximumSpecified"));
+                destination.setMinimum((BigDecimal) PropertyUtils.getSimpleProperty(source, interval.name().toLowerCase() + "MinimumSpecified"));
+                destination.setMaximum((BigDecimal) PropertyUtils.getSimpleProperty(source, interval.name().toLowerCase() + "MaximumSpecified"));
             } catch (Exception e) {
                 throw new Error(e);
             }

@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-
 import java.util.List;
+
+import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 
 public class UserAppointmentPreferencesRepresentation {
 

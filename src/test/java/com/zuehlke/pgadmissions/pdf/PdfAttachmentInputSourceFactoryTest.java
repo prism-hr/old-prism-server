@@ -21,7 +21,7 @@ public class PdfAttachmentInputSourceFactoryTest {
 		assertTrue(inputStream instanceof ByteArrayInputStream);
 
 		byte[] bytes = new byte[pdf.length];
-		((ByteArrayInputStream) inputStream).read(bytes);
+		inputStream.read(bytes);
 
 		assertArrayEquals(pdf, bytes);
 		assertEquals("filename", source.getAttachmentFilename());

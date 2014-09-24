@@ -256,11 +256,10 @@ public class CommentService {
     }
 
     private OfferRepresentation buildOfferRepresentation(Comment sourceComment) {
-        OfferRepresentation offerRepresentation = new OfferRepresentation().withPositionTitle(sourceComment.getPositionTitle())
+        return new OfferRepresentation().withPositionTitle(sourceComment.getPositionTitle())
                 .withPositionDescription(sourceComment.getPositionDescription())
                 .withPositionProvisionalStartDate(sourceComment.getPositionProvisionalStartDate())
                 .withAppointmentConditions(sourceComment.getAppointmentConditions());
-        return offerRepresentation;
     }
 
     private void setCommentAuthorRoles(Comment comment, Resource resource, Action action) {

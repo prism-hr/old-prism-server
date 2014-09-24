@@ -46,7 +46,7 @@ public class GeocodableLocationService {
     private EntityService entityService;
 
     public <T extends GeocodableLocation> T getById(Class<T> locationClass, Object id) {
-        return (T) entityService.getById(locationClass, id);
+        return entityService.getById(locationClass, id);
     }
 
     public <T extends GeocodableLocation> T getOrCreate(T transientLocation) throws DeduplicationException {

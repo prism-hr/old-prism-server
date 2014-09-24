@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public enum FilterProperty {
 
@@ -43,12 +43,12 @@ public enum FilterProperty {
     private String propertyName;
 
     private FilterPropertyType propertyType;
-    
+
     private List<FilterExpression> permittedExpressions;
 
     private List<PrismScope> permittedScopes;
 
-    private static final HashMultimap<PrismScope, FilterProperty> permittedFilterProperties = HashMultimap.create();
+    private static HashMultimap<PrismScope, FilterProperty> permittedFilterProperties = HashMultimap.create();
 
     static {
         for (FilterProperty property : FilterProperty.values()) {
@@ -65,11 +65,11 @@ public enum FilterProperty {
         this.permittedScopes = permittedScopes;
     }
 
-    public final String getPropertyName() {
+    public String getPropertyName() {
         return propertyName;
     }
 
-    public final List<FilterExpression> getPermittedExpressions() {
+    public List<FilterExpression> getPermittedExpressions() {
         return permittedExpressions;
     }
 
@@ -77,11 +77,11 @@ public enum FilterProperty {
         return propertyType;
     }
 
-    public final List<PrismScope> getPermittedScopes() {
+    public List<PrismScope> getPermittedScopes() {
         return permittedScopes;
     }
 
-    public static final Set<FilterProperty> getPermittedFilterProperties(PrismScope scope) {
+    public static Set<FilterProperty> getPermittedFilterProperties(PrismScope scope) {
         return permittedFilterProperties.get(scope);
     }
 

@@ -1,13 +1,8 @@
 package com.zuehlke.pgadmissions.utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.TimeZone;
-
 import com.google.common.collect.Lists;
+
+import java.util.*;
 
 public class TimeZoneList {
 
@@ -114,7 +109,7 @@ public class TimeZoneList {
         ZONEMAPPINGS.add(new TimeZoneMapping("Yakutsk Standard Time", "Asia/Yakutsk", "(GMT +09:00) Yakutsk"));
     }
 
-    private static final TimeZoneList INSTANCE = new TimeZoneList();
+    private static TimeZoneList INSTANCE = new TimeZoneList();
 
     public static final TimeZoneList getInstance() {
         return INSTANCE;

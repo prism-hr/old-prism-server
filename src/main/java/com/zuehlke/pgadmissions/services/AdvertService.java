@@ -4,23 +4,23 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.JAXBIntrospector;
-import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -37,17 +37,18 @@ import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.dto.ExchangeRateQueryResponseDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.FeesAndPaymentsDTO;
 import com.zuehlke.pgadmissions.rest.dto.FinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
-import com.zuehlke.pgadmissions.utils.ConversionUtils;
-import com.zuehlke.pgadmissions.yahoo.jaxb.Query;
 
 @Service
 @Transactional
 public class AdvertService {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     private final HashMap<LocalDate, HashMap<String, BigDecimal>> exchangeRates = Maps.newHashMap();
 
     @Value("${integration.yahoo.exchange.rate.api.uri}")
@@ -152,18 +153,12 @@ public class AdvertService {
 
         FinancialDetailsDTO feeDTO = feesAndPaymentsDTO.getFee();
         if (feeDTO.getInterval() != null) {
-            if(advert.getFee() == null){
-                advert.setFee(new FinancialDetails());
-            }
-            updateFinancialDetails(advert.getFee(), feeDTO, currencyAtLocale, baseline);
+            updateFee(baseline, advert, currencyAtLocale, feeDTO);
         }
 
         FinancialDetailsDTO payDTO = feesAndPaymentsDTO.getPay();
         if (payDTO.getInterval() != null) {
-            if(advert.getPay() == null){
-                advert.setPay(new FinancialDetails());
-            }
-            updateFinancialDetails(advert.getPay(), payDTO, currencyAtLocale, baseline);
+            updatePay(baseline, advert, currencyAtLocale, payDTO);
         }
 
         advert.setLastCurrencyConversionDate(baseline);
@@ -208,9 +203,13 @@ public class AdvertService {
             setMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated, minimumGenerated,
                     maximumGenerated, "AtLocale");
         } else {
-            BigDecimal rate = getExchangeRate(currencySpecified, currencyAtLocale, baseline);
-            setConvertedMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated,
-                    minimumGenerated, maximumGenerated, rate);
+            try { 
+                BigDecimal rate = getExchangeRate(currencySpecified, currencyAtLocale, baseline);
+                setConvertedMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated,
+                        minimumGenerated, maximumGenerated, rate);
+            } catch (Exception e) {
+                logger.error("Problem performing currency conversion", e);
+            }
         }
     }
 
@@ -266,35 +265,40 @@ public class AdvertService {
             IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         String currencySpecified = financialDetails.getCurrencySpecified();
         String currencyAtLocale = financialDetails.getCurrencyAtLocale();
-        BigDecimal rate = getExchangeRate(currencySpecified, currencyAtLocale, baseline);
-
-        BigDecimal minimumSpecified;
-        BigDecimal maximumSpecified;
-        BigDecimal minimumGenerated;
-        BigDecimal maximumGenerated;
-
-        DurationUnit interval = financialDetails.getInterval();
-        String intervalPrefixGenerated;
-
-        if (interval == DurationUnit.MONTH) {
-            minimumSpecified = financialDetails.getMonthMinimumSpecified();
-            maximumSpecified = financialDetails.getMonthMaximumSpecified();
-            minimumGenerated = financialDetails.getYearMinimumSpecified();
-            maximumGenerated = financialDetails.getYearMaximumSpecified();
-            intervalPrefixGenerated = DurationUnit.YEAR.name().toLowerCase();
-        } else {
-            minimumSpecified = financialDetails.getYearMinimumSpecified();
-            maximumSpecified = financialDetails.getYearMaximumSpecified();
-            minimumGenerated = financialDetails.getMonthMinimumSpecified();
-            maximumGenerated = financialDetails.getMonthMaximumSpecified();
-            intervalPrefixGenerated = DurationUnit.MONTH.name().toLowerCase();
+        
+        try {
+            BigDecimal rate = getExchangeRate(currencySpecified, currencyAtLocale, baseline);
+    
+            BigDecimal minimumSpecified;
+            BigDecimal maximumSpecified;
+            BigDecimal minimumGenerated;
+            BigDecimal maximumGenerated;
+    
+            DurationUnit interval = financialDetails.getInterval();
+            String intervalPrefixGenerated;
+    
+            if (interval == DurationUnit.MONTH) {
+                minimumSpecified = financialDetails.getMonthMinimumSpecified();
+                maximumSpecified = financialDetails.getMonthMaximumSpecified();
+                minimumGenerated = financialDetails.getYearMinimumSpecified();
+                maximumGenerated = financialDetails.getYearMaximumSpecified();
+                intervalPrefixGenerated = DurationUnit.YEAR.name().toLowerCase();
+            } else {
+                minimumSpecified = financialDetails.getYearMinimumSpecified();
+                maximumSpecified = financialDetails.getYearMaximumSpecified();
+                minimumGenerated = financialDetails.getMonthMinimumSpecified();
+                maximumGenerated = financialDetails.getMonthMaximumSpecified();
+                intervalPrefixGenerated = DurationUnit.MONTH.name().toLowerCase();
+            }
+    
+            setConvertedMonetaryValues(financialDetails, interval.name().toLowerCase(), minimumSpecified, maximumSpecified, intervalPrefixGenerated,
+                    minimumGenerated, maximumGenerated, rate);
+        } catch (Exception e) {
+            logger.error("Unable to perform currency conversion", e);
         }
-
-        setConvertedMonetaryValues(financialDetails, interval.name().toLowerCase(), minimumSpecified, maximumSpecified, intervalPrefixGenerated,
-                minimumGenerated, maximumGenerated, rate);
     }
 
-    private BigDecimal getExchangeRate(String specifiedCurrency, String currencyAtLocale, LocalDate baseline) throws IOException, JAXBException {
+    private BigDecimal getExchangeRate(String specifiedCurrency, String currencyAtLocale, LocalDate baseline) throws IOException {
         removeExpiredExchangeRates(baseline);
 
         String pair = specifiedCurrency + currencyAtLocale;
@@ -308,12 +312,11 @@ public class AdvertService {
         }
 
         String query = URLEncoder.encode("select Rate from " + yahooExchangeRateApiTable + " where pair = \"" + pair + "\"", "UTF-8");
-        URL request = new DefaultResourceLoader().getResource(
-                yahooExchangeRateApiUri + "?q=" + query + "&env=" + URLEncoder.encode(yahooExchangeRateApiSchema, "UTF-8")).getURL();
-        JAXBContext jaxbContext = JAXBContext.newInstance(Query.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        Query response = (Query) JAXBIntrospector.getValue(unmarshaller.unmarshal(request));
-        BigDecimal todaysRate = ConversionUtils.floatToBigDecimal(response.getResults().getRate().getRate(), 4);
+        URI request = new DefaultResourceLoader().getResource(
+                yahooExchangeRateApiUri + "?q=" + query + "&env=" + URLEncoder.encode(yahooExchangeRateApiSchema, "UTF-8") + "&format=json").getURI();       
+        ExchangeRateQueryResponseDTO response = new RestTemplate().getForObject(request, ExchangeRateQueryResponseDTO.class);
+
+        BigDecimal todaysRate = response.getQuery().getResults().getRate().getRate();
 
         if (todaysRates == null) {
             todaysRates = new HashMap<String, BigDecimal>();
@@ -332,6 +335,20 @@ public class AdvertService {
                 exchangeRates.remove(day);
             }
         }
+    }
+    
+    private void updateFee(LocalDate baseline, Advert advert, String currencyAtLocale, FinancialDetailsDTO feeDTO) throws Exception {
+        if (advert.getFee() == null) {
+            advert.setFee(new FinancialDetails());
+        }
+        updateFinancialDetails(advert.getFee(), feeDTO, currencyAtLocale, baseline);
+    }
+    
+    private void updatePay(LocalDate baseline, Advert advert, String currencyAtLocale, FinancialDetailsDTO payDTO) throws Exception {
+        if (advert.getPay() == null) {
+            advert.setPay(new FinancialDetails());
+        }
+        updateFinancialDetails(advert.getPay(), payDTO, currencyAtLocale, baseline);
     }
 
 }

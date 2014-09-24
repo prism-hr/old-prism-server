@@ -44,10 +44,10 @@ import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
 
 @RestController
-@RequestMapping(value = {"api/applications"})
+@RequestMapping(value = { "api/applications" })
 public class ApplicationResource {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApplicationResource.class);
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private ApplicationSectionService applicationSectionService;
@@ -69,6 +69,7 @@ public class ApplicationResource {
         try {
             applicationSectionService.saveProgramDetail(applicationId, programDetailDTO);
         } catch (DeduplicationException e) {
+            logger.error("Unable to save program detail for application: " + applicationId.toString(), e);
             throw new ResourceNotFoundException();
         }
     }
@@ -79,15 +80,18 @@ public class ApplicationResource {
             ApplicationSupervisor supervisor = applicationSectionService.saveSupervisor(applicationId, null, supervisorDTO);
             return ImmutableMap.of("id", (Object) supervisor.getId());
         } catch (DeduplicationException e) {
+            logger.error("Unable to save supervisor for application: " + applicationId.toString(), e);
             throw new ResourceNotFoundException();
         }
     }
 
     @RequestMapping(value = "/{applicationId}/supervisors/{supervisorId}", method = RequestMethod.PUT)
-    public void deleteSupervisor(@PathVariable Integer applicationId, @PathVariable Integer supervisorId, @Valid @RequestBody ApplicationSupervisorDTO supervisorDTO) {
+    public void deleteSupervisor(@PathVariable Integer applicationId, @PathVariable Integer supervisorId,
+            @Valid @RequestBody ApplicationSupervisorDTO supervisorDTO) {
         try {
             applicationSectionService.saveSupervisor(applicationId, supervisorId, supervisorDTO);
         } catch (DeduplicationException e) {
+            logger.error("Unable to delete supervisor for application: " + applicationId.toString(), e);
             throw new ResourceNotFoundException();
         }
     }
@@ -96,7 +100,6 @@ public class ApplicationResource {
     public void updateSupervisor(@PathVariable Integer applicationId, @PathVariable Integer supervisorId) {
         applicationSectionService.deleteSupervisor(applicationId, supervisorId);
     }
-
 
     @RequestMapping(value = "/{applicationId}/personalDetail", method = RequestMethod.PUT)
     public void savePersonalDetail(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationPersonalDetailDTO personalDetailDTO) {
@@ -116,7 +119,7 @@ public class ApplicationResource {
 
     @RequestMapping(value = "/{applicationId}/qualifications/{qualificationId}", method = RequestMethod.PUT)
     public void updateQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId,
-                                    @Valid @RequestBody ApplicationQualificationDTO qualificationDTO) {
+            @Valid @RequestBody ApplicationQualificationDTO qualificationDTO) {
         applicationSectionService.saveQualification(applicationId, qualificationId, qualificationDTO);
     }
 
@@ -127,14 +130,14 @@ public class ApplicationResource {
 
     @RequestMapping(value = "/{applicationId}/employmentPositions", method = RequestMethod.POST)
     public Map<String, Object> createEmploymentPosition(@PathVariable Integer applicationId,
-                                                        @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
+            @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
         ApplicationEmploymentPosition employmentPosition = applicationSectionService.saveEmploymentPosition(applicationId, null, employmentPositionDTO);
         return ImmutableMap.of("id", (Object) employmentPosition.getId());
     }
 
     @RequestMapping(value = "/{applicationId}/employmentPositions/{employmentPositionId}", method = RequestMethod.PUT)
     public void updateEmploymentPosition(@PathVariable Integer applicationId, @PathVariable Integer employmentPositionId,
-                                         @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
+            @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
         applicationSectionService.saveEmploymentPosition(applicationId, employmentPositionId, employmentPositionDTO);
     }
 
@@ -160,11 +163,12 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/referees", method = RequestMethod.POST)
-    public Map<String, Object> createRreferee(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationRefereeDTO refereeDTO) {
+    public Map<String, Object> createReferee(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationRefereeDTO refereeDTO) {
         try {
             ApplicationReferee referee = applicationSectionService.saveReferee(applicationId, null, refereeDTO);
             return ImmutableMap.of("id", (Object) referee.getId());
         } catch (DeduplicationException e) {
+            logger.error("Unable to create referee for application: " + applicationId.toString(), e);
             throw new ResourceNotFoundException();
         }
     }
@@ -174,6 +178,7 @@ public class ApplicationResource {
         try {
             applicationSectionService.saveReferee(applicationId, refereeId, refereeDTO);
         } catch (DeduplicationException e) {
+            logger.error("Unable to delete referee for application: " + applicationId.toString(), e);
             throw new ResourceNotFoundException();
         }
     }
@@ -188,14 +193,13 @@ public class ApplicationResource {
         applicationSectionService.saveAdditionalInformation(applicationId, additionalInformationDTO);
     }
 
-
     @RequestMapping(value = "/{applicationId}/comments", method = RequestMethod.POST)
     public ActionOutcomeRepresentation performAction(@PathVariable Integer applicationId, @Valid @RequestBody CommentDTO commentDTO) {
         try {
             ActionOutcomeDTO actionOutcome = applicationService.performAction(applicationId, commentDTO);
             return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
         } catch (Exception e) {
-            logger.error("Could not perform action " + commentDTO.getAction().getActionType() + " on application " + applicationId, e);
+            logger.error("Unable to perform action: " + commentDTO.getAction().name() + " on application: " + applicationId.toString(), e);
             throw new ResourceNotFoundException();
         }
     }

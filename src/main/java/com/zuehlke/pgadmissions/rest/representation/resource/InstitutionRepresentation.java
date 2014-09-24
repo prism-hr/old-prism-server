@@ -4,10 +4,6 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
 public class InstitutionRepresentation {
 
     private Integer id;

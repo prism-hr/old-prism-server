@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-
 import java.util.Set;
+
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 
 public class ResourceUserRolesRepresentation {
 

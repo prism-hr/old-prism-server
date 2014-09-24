@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.rest.resource;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -36,12 +37,14 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
@@ -52,15 +55,15 @@ import com.zuehlke.pgadmissions.rest.dto.ActionDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation.RoleRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation.UserRolesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ResourceUserRolesRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProjectExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.SystemExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -73,7 +76,7 @@ import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
-@RequestMapping(value = { "api/{resourceScope}" })
+@RequestMapping(value = {"api/{resourceScope}"})
 public class ResourceResource {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -123,7 +126,7 @@ public class ResourceResource {
 
         // set visible comments
         List<Comment> comments = commentService.getVisibleComments(resource, currentUser);
-        representation.setComments(Lists.<CommentRepresentation> newArrayListWithExpectedSize(comments.size()));
+        representation.setComments(Lists.<CommentRepresentation>newArrayListWithExpectedSize(comments.size()));
         for (Comment comment : comments) {
             representation.getComments().add(dozerBeanMapper.map(comment, CommentRepresentation.class));
         }
@@ -143,21 +146,14 @@ public class ResourceResource {
 
         // set list of user to roles mappings
         List<User> users = userService.getEnabledResourceUsers(resource);
-        List<AbstractResourceRepresentation.UserRolesRepresentation> userRolesRepresentations = Lists.newArrayListWithCapacity(users.size());
+        List<ResourceUserRolesRepresentation> userRolesRepresentations = Lists.newArrayListWithCapacity(users.size());
         for (User user : users) {
-            List<PrismRole> availableRoles = roleService.getRoles(resourceDescriptor.getType());
+            UserRepresentation userRepresentation = dozerBeanMapper.map(user, UserRepresentation.class);
             Set<PrismRole> roles = Sets.newHashSet(roleService.getUserRoles(resource, user));
-            List<AbstractResourceRepresentation.RoleRepresentation> userRoles = Lists.newArrayListWithCapacity(availableRoles.size());
-            for (PrismRole availableRole : availableRoles) {
-                userRoles.add(new AbstractResourceRepresentation.RoleRepresentation(availableRole, roles.contains(availableRole)));
-            }
-            AbstractResourceRepresentation.UserRolesRepresentation userRolesRepresentation = dozerBeanMapper.map(user,
-                    AbstractResourceRepresentation.UserRolesRepresentation.class);
-            userRolesRepresentation.setRoles(userRoles);
-            userRolesRepresentations.add(userRolesRepresentation);
+            userRolesRepresentations.add(new ResourceUserRolesRepresentation(userRepresentation, roles));
         }
         representation.setUsers(userRolesRepresentations);
-        MethodUtils.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", new Object[] { resource, representation });
+        MethodUtils.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", new Object[]{resource, representation});
         return representation;
     }
 
@@ -185,14 +181,13 @@ public class ResourceResource {
             }
             return representations;
         } catch (DeduplicationException e) {
-            logger.error("Unable to list resources ", e);
+            logger.error("Unable to save default filter", e);
             throw new ResourceNotFoundException();
         }
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ActionOutcomeRepresentation createResource(@RequestBody ActionDTO actionDTO, @RequestHeader(value = "referer", required = false) String referrer)
-            throws WorkflowEngineException {
+    public ActionOutcomeRepresentation createResource(@RequestBody ActionDTO actionDTO, @RequestHeader(value = "referer", required = false) String referrer) throws WorkflowEngineException {
         if (actionDTO.getActionId().getActionCategory() != PrismActionCategory.CREATE_RESOURCE) {
             throw new Error(actionDTO.getActionId().name() + " is not a creation action.");
         }
@@ -210,14 +205,29 @@ public class ResourceResource {
         }
     }
 
-    @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.PUT)
-    public void editUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestBody List<RoleRepresentation> roles) throws WorkflowEngineException {
+    @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)
+    public void addUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+                            @RequestBody Map<String, PrismRole> body) throws WorkflowEngineException {
+        PrismRole role = body.get("role");
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
 
         try {
-            roleService.updateUserRoles(resource, user, roles);
+            roleService.updateUserRole(resource, user, role, PrismRoleTransitionType.CREATE);
+            // TODO: return validation error if workflow engine exception is thrown.
+        } catch (DeduplicationException e) {
+            logger.error("Unable to edit user role", e);
+            throw new ResourceNotFoundException();
+        }
+    }
+
+    @RequestMapping(value = "{resourceId}/users/{userId}/roles/{role}", method = RequestMethod.DELETE)
+    public void deleteUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable PrismRole role, @ModelAttribute ResourceDescriptor resourceDescriptor) throws WorkflowEngineException {
+        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        User user = userService.getById(userId);
+
+        try {
+            roleService.updateUserRole(resource, user, role, PrismRoleTransitionType.DELETE);
             // TODO: return validation error if workflow engine exception is thrown.
         } catch (DeduplicationException e) {
             logger.error("Unable to edit user role", e);
@@ -226,18 +236,27 @@ public class ResourceResource {
     }
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
-    public void addUserRole(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestBody UserRolesRepresentation userRolesRepresentation) throws WorkflowEngineException {
+    public UserRepresentation addUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+                                      @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws WorkflowEngineException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        UserRepresentation newUser = userRolesRepresentation.getUser();
 
         try {
-            userService.getOrCreateUserWithRoles(userRolesRepresentation.getFirstName(), userRolesRepresentation.getLastName(),
-                    userRolesRepresentation.getEmail(), resource, userRolesRepresentation.getRoles());
+            User user = userService.getOrCreateUserWithRoles(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource, userRolesRepresentation.getRoles());
+            return dozerBeanMapper.map(user, UserRepresentation.class);
             // TODO: return validation error if workflow engine exception is thrown.
         } catch (DeduplicationException e) {
-            logger.error("Unable to create user role", e);
+            logger.error("Unable to add new user role", e);
             throw new ResourceNotFoundException();
         }
+    }
+
+    @RequestMapping(value = "{resourceId}/users/{userId}", method = RequestMethod.DELETE)
+    public void removeUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor) throws WorkflowEngineException {
+        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        User user = userService.getById(userId);
+
+        // TODO implement remove user
     }
 
     @RequestMapping(value = "/{resourceId}/comments", method = RequestMethod.POST)
@@ -255,15 +274,15 @@ public class ResourceResource {
     public void enrichApplicationRepresentation(Application application, ApplicationExtendedRepresentation applicationRepresentation) {
         List<User> interested = userService.getUsersInterestedInApplication(application);
         List<User> potentiallyInterested = userService.getUsersPotentiallyInterestedInApplication(application, interested);
-        List<UserExtendedRepresentation> interestedRepresentations = Lists.newArrayListWithCapacity(interested.size());
-        List<UserExtendedRepresentation> potentiallyInterestedRepresentations = Lists.newArrayListWithCapacity(potentiallyInterested.size());
+        List<UserRepresentation> interestedRepresentations = Lists.newArrayListWithCapacity(interested.size());
+        List<UserRepresentation> potentiallyInterestedRepresentations = Lists.newArrayListWithCapacity(potentiallyInterested.size());
 
         for (User user : interested) {
-            interestedRepresentations.add(dozerBeanMapper.map(user, UserExtendedRepresentation.class));
+            interestedRepresentations.add(dozerBeanMapper.map(user, UserRepresentation.class));
         }
 
         for (User user : potentiallyInterested) {
-            potentiallyInterestedRepresentations.add(dozerBeanMapper.map(user, UserExtendedRepresentation.class));
+            potentiallyInterestedRepresentations.add(dozerBeanMapper.map(user, UserRepresentation.class));
         }
 
         applicationRepresentation.setProgramTitle(application.getProgram().getTitle());
@@ -294,6 +313,9 @@ public class ResourceResource {
     public void enrichInstitutionRepresentation(Institution institution, InstitutionExtendedRepresentation institutionRepresentation) {
     }
 
+    public void enrichSystemRepresentation(System system, SystemExtendedRepresentation systemRepresentation) {
+    }
+
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
         if ("applications".equals(resourceScope)) {
@@ -305,7 +327,7 @@ public class ResourceResource {
         } else if ("institutions".equals(resourceScope)) {
             return new ResourceDescriptor(Institution.class, InstitutionExtendedRepresentation.class, PrismScope.INSTITUTION);
         } else if ("systems".equals(resourceScope)) {
-            return new ResourceDescriptor(com.zuehlke.pgadmissions.domain.System.class, null, PrismScope.SYSTEM);
+            return new ResourceDescriptor(com.zuehlke.pgadmissions.domain.System.class, SystemExtendedRepresentation.class, PrismScope.SYSTEM);
         }
         logger.error("Unknown resource scope " + resourceScope);
         throw new ResourceNotFoundException();

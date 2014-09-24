@@ -48,7 +48,7 @@ import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.ActionDTO;
+import com.zuehlke.pgadmissions.rest.dto.ActionDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
@@ -73,7 +73,7 @@ import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
-@RequestMapping(value = {"api/{resourceScope}"})
+@RequestMapping(value = { "api/{resourceScope}" })
 public class ResourceResource {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -123,7 +123,7 @@ public class ResourceResource {
 
         // set visible comments
         List<Comment> comments = commentService.getVisibleComments(resource, currentUser);
-        representation.setComments(Lists.<CommentRepresentation>newArrayListWithExpectedSize(comments.size()));
+        representation.setComments(Lists.<CommentRepresentation> newArrayListWithExpectedSize(comments.size()));
         for (Comment comment : comments) {
             representation.getComments().add(dozerBeanMapper.map(comment, CommentRepresentation.class));
         }
@@ -157,7 +157,7 @@ public class ResourceResource {
             userRolesRepresentations.add(userRolesRepresentation);
         }
         representation.setUsers(userRolesRepresentations);
-        MethodUtils.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", new Object[]{resource, representation});
+        MethodUtils.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", new Object[] { resource, representation });
         return representation;
     }
 
@@ -185,12 +185,14 @@ public class ResourceResource {
             }
             return representations;
         } catch (DeduplicationException e) {
-            throw new ResourceNotFoundException("Error saving default filter", e);
+            logger.error("Unable to list resources ", e);
+            throw new ResourceNotFoundException();
         }
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ActionOutcomeRepresentation createResource(@RequestBody ActionDTO actionDTO, @RequestHeader(value = "referer", required = false) String referrer) throws WorkflowEngineException {
+    public ActionOutcomeRepresentation createResource(@RequestBody ActionDTO actionDTO, @RequestHeader(value = "referer", required = false) String referrer)
+            throws WorkflowEngineException {
         if (actionDTO.getActionId().getActionCategory() != PrismActionCategory.CREATE_RESOURCE) {
             throw new Error(actionDTO.getActionId().name() + " is not a creation action.");
         }
@@ -203,14 +205,14 @@ public class ResourceResource {
             ActionOutcomeDTO actionOutcome = resourceService.createResource(user, action, newResourceDTO, referrer);
             return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
         } catch (Exception e) {
-            logger.error("Couldn't create resource", e);
+            logger.error("Unable to create resource", e);
             throw new ResourceNotFoundException();
         }
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.PUT)
     public void editUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                             @RequestBody List<RoleRepresentation> roles) throws WorkflowEngineException {
+            @RequestBody List<RoleRepresentation> roles) throws WorkflowEngineException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
 
@@ -218,14 +220,14 @@ public class ResourceResource {
             roleService.updateUserRoles(resource, user, roles);
             // TODO: return validation error if workflow engine exception is thrown.
         } catch (DeduplicationException e) {
-            logger.error("Couldn't edit user role", e);
+            logger.error("Unable to edit user role", e);
             throw new ResourceNotFoundException();
         }
     }
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     public void addUserRole(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                            @RequestBody UserRolesRepresentation userRolesRepresentation) throws WorkflowEngineException {
+            @RequestBody UserRolesRepresentation userRolesRepresentation) throws WorkflowEngineException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
 
         try {
@@ -233,7 +235,7 @@ public class ResourceResource {
                     userRolesRepresentation.getEmail(), resource, userRolesRepresentation.getRoles());
             // TODO: return validation error if workflow engine exception is thrown.
         } catch (DeduplicationException e) {
-            logger.error("Couldn't add user role", e);
+            logger.error("Unable to create user role", e);
             throw new ResourceNotFoundException();
         }
     }

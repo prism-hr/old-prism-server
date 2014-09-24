@@ -1,15 +1,10 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.google.geocode.jaxb.GeocodeResponse;
-import com.zuehlke.pgadmissions.google.geocode.jaxb.GeocodeResponse.Result.Geometry;
-import com.zuehlke.pgadmissions.google.geocode.jaxb.GeocodeResponse.Result.Geometry.Location;
-import com.zuehlke.pgadmissions.google.geocode.jaxb.GeocodeResponse.Result.Geometry.Viewport.Northeast;
-import com.zuehlke.pgadmissions.google.geocode.jaxb.GeocodeResponse.Result.Geometry.Viewport.Southwest;
-import com.zuehlke.pgadmissions.utils.ConversionUtils;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +12,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.JAXBIntrospector;
-import javax.xml.bind.Unmarshaller;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.List;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.GeocodableLocation;
+import com.zuehlke.pgadmissions.domain.GeographicLocation;
+import com.zuehlke.pgadmissions.domain.InstitutionAddress;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
+import com.zuehlke.pgadmissions.dto.LocationQueryResponseDTO;
+import com.zuehlke.pgadmissions.dto.LocationQueryResponseDTO.Results.Geometry;
+import com.zuehlke.pgadmissions.dto.LocationQueryResponseDTO.Results.Geometry.Location;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 
 @Service
 @Transactional
@@ -59,13 +58,11 @@ public class GeocodableLocationService {
         return entityService.replace(persistentLocation, transientLocation);
     }
 
-    public synchronized <T extends GeocodableLocation> GeocodeResponse getLocation(String address) throws InterruptedException, IOException, JAXBException {
+    public synchronized <T extends GeocodableLocation> LocationQueryResponseDTO getLocation(String address) throws InterruptedException, IOException {
         wait(googleGeocodeRequestDelayMs);
         String addressEncoded = URLEncoder.encode(address, "UTF-8");
-        URL request = new DefaultResourceLoader().getResource(googleGeocodeApiUri + "xml?address=" + addressEncoded + "&key=" + googleGeocodeApiKey).getURL();
-        JAXBContext jaxbContext = JAXBContext.newInstance(GeocodeResponse.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        return (GeocodeResponse) JAXBIntrospector.getValue(unmarshaller.unmarshal(request));
+        URI request = new DefaultResourceLoader().getResource(googleGeocodeApiUri + "json?address=" + addressEncoded + "&key=" + googleGeocodeApiKey).getURI();
+        return new RestTemplate().getForObject(request, LocationQueryResponseDTO.class);
     }
 
     public void setLocation(InstitutionAddress address) {
@@ -76,7 +73,7 @@ public class GeocodableLocationService {
             for (int i = addressTokens.size(); i > 0; i--) {
                 List<String> requestTokens = addressTokens.subList(0, i);
 
-                GeocodeResponse response = getLocation(Joiner.on(", ").join(Lists.reverse(requestTokens)) + ", " + domicileTokenString);
+                LocationQueryResponseDTO response = getLocation(Joiner.on(", ").join(Lists.reverse(requestTokens)) + ", " + domicileTokenString);
                 if (response.getStatus().equals("OK")) {
                     setLocation(address, response);
                     return;
@@ -92,22 +89,17 @@ public class GeocodableLocationService {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends GeocodableLocation> void setLocation(T location, GeocodeResponse response) {
+    public <T extends GeocodableLocation> void setLocation(T location, LocationQueryResponseDTO response) {
         location = (T) getById(location.getClass(), location.getId());
 
-        int precision = 14;
-
-        Geometry geometry = response.getResult().getGeometry();
+        Geometry geometry = response.getResults().get(0).getGeometry();
         Location gLocation = geometry.getLocation();
-        Northeast gViewportNe = geometry.getViewport().getNortheast();
-        Southwest gViewportSw = geometry.getViewport().getSouthwest();
+        Location gViewportNe = geometry.getViewPort().getNorthEast();
+        Location gViewportSw = geometry.getViewPort().getSouthWest();
 
-        GeographicLocation geographicLocation = new GeographicLocation().withLocationX(ConversionUtils.floatToBigDecimal(gLocation.getLat(), precision))
-                .withLocationY(ConversionUtils.floatToBigDecimal(gLocation.getLng(), precision))
-                .withLocationViewNeX(ConversionUtils.floatToBigDecimal(gViewportNe.getLat(), precision))
-                .withLocationViewNeY(ConversionUtils.floatToBigDecimal(gViewportNe.getLng(), precision))
-                .withLocationViewSwX(ConversionUtils.floatToBigDecimal(gViewportSw.getLat(), precision))
-                .withLocationViewSwY(ConversionUtils.floatToBigDecimal(gViewportSw.getLng(), precision));
+        GeographicLocation geographicLocation = new GeographicLocation().withLocationX(gLocation.getLat()).withLocationY(gLocation.getLng())
+                .withLocationViewNeX(gViewportNe.getLat()).withLocationViewNeY(gViewportNe.getLng()).withLocationViewSwX(gViewportSw.getLat())
+                .withLocationViewSwY(gViewportSw.getLng());
 
         location.setLocation(geographicLocation);
     }

@@ -162,9 +162,5 @@ public class InstitutionService {
 
         return actionService.executeUserAction(institution, action, comment);
     }
-    
-    public getSimilarInstitution(String searchTerm) {
-        
-    }
 
 }

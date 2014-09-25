@@ -93,13 +93,14 @@ public class ActionService {
     }
 
     public List<ActionRepresentation> getPermittedActions(Integer systemId, Integer institutionId, Integer programId, Integer projectId, Integer applicationId,
-                                                          PrismState stateId, User user) {
+            PrismState stateId, User user) {
         return actionDAO.getPermittedActions(systemId, institutionId, programId, projectId, applicationId, stateId, user);
     }
 
     public List<ActionRepresentation> getPermittedActions(Resource resource, User user) {
-        return actionDAO.getPermittedActions(getResourceId(resource.getSystem()), getResourceId(resource.getInstitution()), getResourceId(resource.getProgram()),
-                getResourceId(resource.getProject()), getResourceId(resource.getApplication()), resource.getState().getId(), user);
+        return actionDAO.getPermittedActions(resourceService.getResourceId(resource.getSystem()), resourceService.getResourceId(resource.getInstitution()),
+                resourceService.getResourceId(resource.getProgram()), resourceService.getResourceId(resource.getProject()),
+                resourceService.getResourceId(resource.getApplication()), resource.getState().getId(), user);
     }
 
     public List<PrismActionEnhancement> getPermittedActionEnhancements(Resource resource, User user) {
@@ -203,10 +204,6 @@ public class ActionService {
                 Objects.equal(owner.getId(), currentUser.getId()) || Objects.equal(delegateOwner.getId(), currentUser.getId()))) {
             throw new Error();
         }
-    }
-
-    private Integer getResourceId(Resource resource) {
-        return resource == null ? null : resource.getId();
     }
 
 }

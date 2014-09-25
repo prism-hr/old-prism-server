@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.dto.InstitutionDomicileImportDTO;
-import com.zuehlke.pgadmissions.dto.LocationQueryResponseDTO;
+import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.iso.jaxb.CountryCodesType;
@@ -161,7 +161,7 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
 
         if (BooleanUtils.isTrue(googleGeocodeCode)) {
             if (geocodedCounter < googleGeocodeApiBatchLimit && !location.isGeocoded()) {
-                LocationQueryResponseDTO response = geocodableLocationService.getLocation(address);
+                LocationSearchResponseDTO response = geocodableLocationService.getLocation(address);
                 if (response.getStatus().equals("OK")) {
                     try {
                         logger.info("Geocoding location: " + address + " - request " + (geocodedCounter + 1) + " of " + googleGeocodeApiBatchLimit + " today");

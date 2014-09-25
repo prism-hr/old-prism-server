@@ -21,9 +21,9 @@ import com.zuehlke.pgadmissions.domain.GeographicLocation;
 import com.zuehlke.pgadmissions.domain.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
-import com.zuehlke.pgadmissions.dto.LocationQueryResponseDTO;
-import com.zuehlke.pgadmissions.dto.LocationQueryResponseDTO.Results.Geometry;
-import com.zuehlke.pgadmissions.dto.LocationQueryResponseDTO.Results.Geometry.Location;
+import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO;
+import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO.Results.Geometry;
+import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO.Results.Geometry.Location;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 
 @Service
@@ -32,17 +32,20 @@ public class GeocodableLocationService {
 
     private static Logger logger = LoggerFactory.getLogger(GeocodableLocationService.class);
 
+    @Value("${integration.google.api.key}")
+    private String googleApiKey;
+    
     @Value("${integration.google.geocoding.api.uri}")
     private String googleGeocodeApiUri;
-
-    @Value("${integration.google.geocoding.api.key}")
-    private String googleGeocodeApiKey;
 
     @Value("${integration.google.geocoding.api.request.delay.ms}")
     private Integer googleGeocodeRequestDelayMs;
 
     @Autowired
     private EntityService entityService;
+    
+    @Autowired
+    private RestTemplate restTemplate;
 
     public <T extends GeocodableLocation> T getById(Class<T> locationClass, Object id) {
         return entityService.getById(locationClass, id);
@@ -58,11 +61,11 @@ public class GeocodableLocationService {
         return entityService.replace(persistentLocation, transientLocation);
     }
 
-    public synchronized <T extends GeocodableLocation> LocationQueryResponseDTO getLocation(String address) throws InterruptedException, IOException {
+    public synchronized <T extends GeocodableLocation> LocationSearchResponseDTO getLocation(String address) throws InterruptedException, IOException {
         wait(googleGeocodeRequestDelayMs);
         String addressEncoded = URLEncoder.encode(address, "UTF-8");
-        URI request = new DefaultResourceLoader().getResource(googleGeocodeApiUri + "json?address=" + addressEncoded + "&key=" + googleGeocodeApiKey).getURI();
-        return new RestTemplate().getForObject(request, LocationQueryResponseDTO.class);
+        URI request = new DefaultResourceLoader().getResource(googleGeocodeApiUri + "json?address=" + addressEncoded + "&key=" + googleApiKey).getURI();
+        return restTemplate.getForObject(request, LocationSearchResponseDTO.class);
     }
 
     public void setLocation(InstitutionAddress address) {
@@ -73,7 +76,7 @@ public class GeocodableLocationService {
             for (int i = addressTokens.size(); i > 0; i--) {
                 List<String> requestTokens = addressTokens.subList(0, i);
 
-                LocationQueryResponseDTO response = getLocation(Joiner.on(", ").join(Lists.reverse(requestTokens)) + ", " + domicileTokenString);
+                LocationSearchResponseDTO response = getLocation(Joiner.on(", ").join(Lists.reverse(requestTokens)) + ", " + domicileTokenString);
                 if (response.getStatus().equals("OK")) {
                     setLocation(address, response);
                     return;
@@ -89,7 +92,7 @@ public class GeocodableLocationService {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends GeocodableLocation> void setLocation(T location, LocationQueryResponseDTO response) {
+    public <T extends GeocodableLocation> void setLocation(T location, LocationSearchResponseDTO response) {
         location = (T) getById(location.getClass(), location.getId());
 
         Geometry geometry = response.getResults().get(0).getGeometry();
@@ -128,6 +131,10 @@ public class GeocodableLocationService {
 
         GeographicLocation countryLocation = region.getDomicile().getLocation();
         region.setLocation(countryLocation);
+    }
+    
+    public void getSimilarInstitution(String searchTerm) {
+        
     }
 
 }

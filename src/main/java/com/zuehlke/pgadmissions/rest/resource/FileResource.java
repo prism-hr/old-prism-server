@@ -33,7 +33,7 @@ public class FileResource {
 
     @RequestMapping(value = "/{fileId}", method = RequestMethod.GET)
     public void downloadFile(@PathVariable(value = "fileId") Integer documentId, HttpServletResponse response) throws IOException {
-        Document document = documentService.getByid(documentId);
+        Document document = documentService.getById(documentId);
 
         response.setHeader("Content-Disposition", "attachment; filename=\"" + document.getFileName() + "\"");
         response.setHeader("File-Name", document.getFileName());

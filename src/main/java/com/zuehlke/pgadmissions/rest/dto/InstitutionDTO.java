@@ -27,9 +27,14 @@ public class InstitutionDTO {
     @NotEmpty
     private String homepage;
 
-    @NotNull
     private Integer logoDocumentId;
+    
+    private String logoUri;
 
+    private String googleIdentifier;
+    
+    private String linkedinIdentifier;
+    
     @NotNull
     private InstitutionAddressDTO address;
 
@@ -87,6 +92,30 @@ public class InstitutionDTO {
 
     public final void setLogoDocumentId(Integer logoDocumentId) {
         this.logoDocumentId = logoDocumentId;
+    }
+
+    public final String getLogoUri() {
+        return logoUri;
+    }
+
+    public final void setLogoUri(String logoUri) {
+        this.logoUri = logoUri;
+    }
+
+    public final String getGoogleIdentifier() {
+        return googleIdentifier;
+    }
+
+    public final void setGoogleIdentifier(String googleIdentifier) {
+        this.googleIdentifier = googleIdentifier;
+    }
+
+    public final String getLinkedinIdentifier() {
+        return linkedinIdentifier;
+    }
+
+    public final void setLinkedinIdentifier(String linkedinIdentifier) {
+        this.linkedinIdentifier = linkedinIdentifier;
     }
 
     public InstitutionAddressDTO getAddress() {

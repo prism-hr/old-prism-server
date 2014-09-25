@@ -26,13 +26,17 @@ public class DocumentService {
     @Autowired
     private UserService userService;
 
-    public Document getByid(Integer id) {
+    public Document getById(Integer id) {
         return entityService.getById(Document.class, id);
     }
 
     public Document create(Part uploadStream) throws IOException {
-        Document document = new Document().withContent(Streams.readAll(uploadStream.getInputStream())).withContentType(uploadStream.getContentType())
-                .withFileName(getFileName(uploadStream)).withUser(userService.getCurrentUser()).withCreatedTimestamp(new DateTime());
+        return create(getFileName(uploadStream), Streams.readAll(uploadStream.getInputStream()), uploadStream.getContentType());
+    }
+
+    public Document create(String fileName, byte[] content, String contentType) throws IOException {
+        Document document = new Document().withContent(content).withContentType(contentType).withFileName(fileName).withUser(userService.getCurrentUser())
+                .withCreatedTimestamp(new DateTime());
         entityService.save(document);
         return document;
     }

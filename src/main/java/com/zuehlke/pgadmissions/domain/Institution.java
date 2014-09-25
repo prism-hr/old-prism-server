@@ -49,7 +49,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
         @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
         @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class)})
 @Entity
-@Table(name = "INSTITUTION", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_domicile_id", "title"})})
+@Table(name = "INSTITUTION", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_domicile_id", "title"}), @UniqueConstraint(columnNames = {"title", "google_identifier"})})
 @Indexed
 public class Institution extends ParentResource {
 
@@ -84,6 +84,12 @@ public class Institution extends ParentResource {
 
     @Column(name = "homepage", nullable = false)
     private String homepage;
+    
+    @Column(name = "google_identifier")
+    private String googleIdentifier;
+    
+    @Column(name = "linkedin_identifier")
+    private String linkedinIdentifier;
 
     @Column(name = "default_program_type", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -219,6 +225,22 @@ public class Institution extends ParentResource {
 
     public void setHomepage(String homepage) {
         this.homepage = homepage;
+    }
+
+    public final String getGoogleIdentifier() {
+        return googleIdentifier;
+    }
+
+    public final void setGoogleIdentifier(String googleIdentifier) {
+        this.googleIdentifier = googleIdentifier;
+    }
+
+    public final String getLinkedinIndentifier() {
+        return linkedinIdentifier;
+    }
+
+    public final void setLinkedinIndentifier(String linkedinIndentifier) {
+        this.linkedinIdentifier = linkedinIndentifier;
     }
 
     public final PrismProgramType getDefaultProgramType() {
@@ -383,6 +405,16 @@ public class Institution extends ParentResource {
         return this;
     }
 
+    public Institution withGoogleIdentifier(String googleIdentifier) {
+        this.googleIdentifier = googleIdentifier;
+        return this;
+    }
+    
+    public Institution withLinkedinIdentifier(String linkedinIdentifier) {
+        this.linkedinIdentifier = linkedinIdentifier;
+        return this;
+    }
+    
     public Institution withHomepage(String homepage) {
         this.homepage = homepage;
         return this;

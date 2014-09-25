@@ -1,11 +1,11 @@
-package com.zuehlke.pgadmissions.dto;
+package com.zuehlke.pgadmissions.dto.json;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class LocationQueryResponseDTO {
+public class LocationSearchResponseDTO {
 
     private List<Results> results;
     
@@ -29,45 +29,7 @@ public class LocationQueryResponseDTO {
 
     public static class Results {
         
-        @JsonProperty("address_components")
-        private List<AddressComponent> addressComponents;
-        
-        @JsonProperty("formatted_address")
-        private String formattedAddress;
-        
-        @JsonProperty("postcode_localities")
-        private List<String> postcodeLocalities;
-        
         private Geometry geometry;
-
-        @JsonProperty("partial_match")
-        private String partialMatch;
-        
-        private List<String> types;
-        
-        public final List<AddressComponent> getAddressComponents() {
-            return addressComponents;
-        }
-
-        public final void setAddressComponents(List<AddressComponent> addressComponents) {
-            this.addressComponents = addressComponents;
-        }
-        
-        public final List<String> getPostcodeLocalities() {
-            return postcodeLocalities;
-        }
-
-        public final void setPostcodeLocalities(List<String> postcodeLocalities) {
-            this.postcodeLocalities = postcodeLocalities;
-        }
-
-        public final String getFormattedAddress() {
-            return formattedAddress;
-        }
-
-        public final void setFormattedAddress(String formattedAddress) {
-            this.formattedAddress = formattedAddress;
-        }
 
         public final Geometry getGeometry() {
             return geometry;
@@ -77,61 +39,7 @@ public class LocationQueryResponseDTO {
             this.geometry = geometry;
         }
         
-        public final String getPartialMatch() {
-            return partialMatch;
-        }
-
-        public final void setPartialMatch(String partialMatch) {
-            this.partialMatch = partialMatch;
-        }
-
-        public final List<String> getTypes() {
-            return types;
-        }
-
-        public final void setTypes(List<String> types) {
-            this.types = types;
-        }
-
-        public static class AddressComponent {
-           
-            @JsonProperty("long_name")
-            private String longName;
-            
-            @JsonProperty("short_name")
-            private String shortName;
-            
-            private List<String> types;
-            
-            public final String getLongName() {
-                return longName;
-            }
-
-            public final void setLongName(String longName) {
-                this.longName = longName;
-            }
-
-            public final String getShortName() {
-                return shortName;
-            }
-
-            public final void setShortName(String shortName) {
-                this.shortName = shortName;
-            }
-
-            public final List<String> getTypes() {
-                return types;
-            }
-
-            public final void setTypes(List<String> types) {
-                this.types = types;
-            }
-            
-        }
-        
         public static class Geometry {
-            
-            private Region bounds;
             
             private Location location;
             
@@ -140,14 +48,6 @@ public class LocationQueryResponseDTO {
 
             @JsonProperty("viewport")
             private Region viewPort;
-            
-            public final Region getBounds() {
-                return bounds;
-            }
-
-            public final void setBounds(Region bounds) {
-                this.bounds = bounds;
-            }
 
             public final Location getLocation() {
                 return location;

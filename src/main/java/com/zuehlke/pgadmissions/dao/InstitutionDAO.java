@@ -2,15 +2,12 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
-import org.apache.lucene.search.Query;
-import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.search.FullTextSession;
-import org.hibernate.search.Search;
-import org.hibernate.search.query.dsl.QueryBuilder;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -19,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionSuggestionDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -63,22 +61,6 @@ public class InstitutionDAO {
                 .list();
     }
 
-    public List<String> getSimilarInsitutions(String searchTerm, String domicileCode) {
-        FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
-
-        QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(ImportedInstitution.class).get();
-        Query query = queryBuilder.phrase().onField("name").sentence(searchTerm).createQuery();
-
-        Criteria filterCriteria = fullTextSession.createCriteria(ImportedInstitution.class) //
-                .add(Restrictions.eq("domicileCode", domicileCode));
-
-        return fullTextSession.createFullTextQuery(query, ImportedInstitution.class) //
-                .setProjection("name") //
-                .setCriteriaQuery(filterCriteria) //
-                .setMaxResults(10) //
-                .list();
-    }
-
     public List<String> listAvailableCurrencies() {
         return sessionFactory.getCurrentSession().createCriteria(InstitutionDomicile.class) //
                 .setProjection(Projections.distinct(Projections.property("currency"))) //
@@ -87,4 +69,20 @@ public class InstitutionDAO {
                 .list();
 
     }
+    
+    public List<InstitutionSuggestionDTO> getSimilarImportedInsitutions(Integer domicileId, String searchTerm) {
+        return (List<InstitutionSuggestionDTO>) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class, "institution") //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("id"), "id") //
+                        .add(Projections.property("name"), "title")) //
+                .add(Restrictions.eq("domicile.id", "domicileId")) //
+                .add(Restrictions.eq("domicile.enabled", true)) //
+                .add(Restrictions.eq("enabled", true)) //
+                .add(Restrictions.ilike("name", "searchTerm", MatchMode.ANYWHERE)) //
+                .addOrder(Order.asc("name")) //
+                .setMaxResults(10) //
+                .setResultTransformer(Transformers.aliasToBean(InstitutionSuggestionDTO.class)) //
+                .list();
+    }
+    
 }

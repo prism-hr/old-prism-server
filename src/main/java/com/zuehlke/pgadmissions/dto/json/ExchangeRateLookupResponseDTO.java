@@ -1,14 +1,10 @@
-package com.zuehlke.pgadmissions.dto;
+package com.zuehlke.pgadmissions.dto.json;
 
 import java.math.BigDecimal;
 
-import org.joda.time.DateTime;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.zuehlke.pgadmissions.dto.converters.JsonDateTimeDeserializer;
 
-public class ExchangeRateQueryResponseDTO {
+public class ExchangeRateLookupResponseDTO {
 
     private Query query;
     
@@ -22,13 +18,6 @@ public class ExchangeRateQueryResponseDTO {
 
     public static class Query {
         
-        private Integer count;
-        
-        @JsonDeserialize(using = JsonDateTimeDeserializer.class)
-        private DateTime created;
-        
-        private String lang;
-        
         private Results results;
         
         public final Results getResults() {
@@ -37,30 +26,6 @@ public class ExchangeRateQueryResponseDTO {
 
         public final void setResults(Results results) {
             this.results = results;
-        }
-
-        public final Integer getCount() {
-            return count;
-        }
-
-        public final void setCount(Integer count) {
-            this.count = count;
-        }
-
-        public final DateTime getCreated() {
-            return created;
-        }
-
-        public final void setCreated(DateTime created) {
-            this.created = created;
-        }
-
-        public final String getLang() {
-            return lang;
-        }
-
-        public final void setLang(String lang) {
-            this.lang = lang;
         }
 
         public static class Results {
@@ -89,7 +54,9 @@ public class ExchangeRateQueryResponseDTO {
                 }
                 
             }
+            
         }
+        
     }
     
 }

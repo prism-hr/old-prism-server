@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.dto.ExchangeRateQueryResponseDTO;
+import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.FeesAndPaymentsDTO;
 import com.zuehlke.pgadmissions.rest.dto.FinancialDetailsDTO;
@@ -71,6 +71,9 @@ public class AdvertService {
 
     @Autowired
     private GeocodableLocationService geocodableLocationService;
+    
+    @Autowired
+    private RestTemplate restTemplate;
 
     public Advert getById(Integer id) {
         return entityService.getById(Advert.class, id);
@@ -134,6 +137,7 @@ public class AdvertService {
         InstitutionAddress address = advert.getAddress();
         address.setDomicile(country);
         address.setRegion(region);
+        address.setInstitution(resource.getInstitution());
         address.setAddressLine1(addressDTO.getAddressLine1());
         address.setAddressLine2(addressDTO.getAddressLine2());
         address.setAddressTown(addressDTO.getAddressTown());
@@ -314,7 +318,7 @@ public class AdvertService {
         String query = URLEncoder.encode("select Rate from " + yahooExchangeRateApiTable + " where pair = \"" + pair + "\"", "UTF-8");
         URI request = new DefaultResourceLoader().getResource(
                 yahooExchangeRateApiUri + "?q=" + query + "&env=" + URLEncoder.encode(yahooExchangeRateApiSchema, "UTF-8") + "&format=json").getURI();       
-        ExchangeRateQueryResponseDTO response = new RestTemplate().getForObject(request, ExchangeRateQueryResponseDTO.class);
+        ExchangeRateLookupResponseDTO response = restTemplate.getForObject(request, ExchangeRateLookupResponseDTO.class);
 
         BigDecimal todaysRate = response.getQuery().getResults().getRate().getRate();
 

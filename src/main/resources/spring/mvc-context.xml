@@ -45,11 +45,24 @@
                 <util:constant static-field="com.fasterxml.jackson.databind.DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT"/>
             </array>
         </property>
+        <property name="featuresToDisable">
+            <array>
+                <util:constant static-field="com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES"/>
+            </array>
+        </property>
     </bean>
 
     <bean id="jacksonMessageConverter"
           class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
         <property name="objectMapper" ref="jacksonObjectMapper"/>
+    </bean>
+    
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+    	<property name="messageConverters">
+    		<list>
+    			<ref bean="jacksonMessageConverter"/>
+    		</list>
+    	</property>
     </bean>
 
     <bean class="org.dozer.spring.DozerBeanMapperFactoryBean">

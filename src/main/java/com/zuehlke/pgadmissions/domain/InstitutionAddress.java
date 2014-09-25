@@ -28,6 +28,10 @@ public class InstitutionAddress extends GeocodableLocation {
     @ManyToOne
     @JoinColumn(name = "institution_domicile_region_id")
     private InstitutionDomicileRegion region;
+    
+    @ManyToOne
+    @JoinColumn(name = "institution", nullable = false)
+    private Institution institution;
 
     @Column(name = "address_line_1", nullable = false)
     private String addressLine1;
@@ -43,7 +47,7 @@ public class InstitutionAddress extends GeocodableLocation {
 
     @Column(name = "address_code")
     private String addressCode;
-
+    
     @Embedded
     private GeographicLocation location;
 
@@ -69,6 +73,14 @@ public class InstitutionAddress extends GeocodableLocation {
 
     public void setRegion(InstitutionDomicileRegion region) {
         this.region = region;
+    }
+
+    public final Institution getInstitution() {
+        return institution;
+    }
+
+    public final void setInstitution(Institution institution) {
+        this.institution = institution;
     }
 
     public String getAddressLine1() {
@@ -110,7 +122,7 @@ public class InstitutionAddress extends GeocodableLocation {
     public void setAddressCode(String addressCode) {
         this.addressCode = addressCode;
     }
-
+    
     @Override
     public final GeographicLocation getLocation() {
         return location;

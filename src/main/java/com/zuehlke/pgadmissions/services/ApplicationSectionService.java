@@ -95,7 +95,7 @@ public class ApplicationSectionService {
             });
             if (supervisorDTO.isPresent()) {
                 programDetailDTO.getSupervisors().remove(supervisorDTO.get());
-                supervisor.setAcceptedSupervision(supervisorDTO.get().getAware());
+                supervisor.setAcceptedSupervision(supervisorDTO.get().getAcceptedSupervision());
             } else {
                 supervisorsIterator.remove();
             }
@@ -103,7 +103,7 @@ public class ApplicationSectionService {
         for (ApplicationSupervisorDTO supervisorDTO : programDetailDTO.getSupervisors()) {
             User user = userService.getOrCreateUser(supervisorDTO.getUser().getFirstName(), supervisorDTO.getUser().getLastName(), supervisorDTO.getUser()
                     .getEmail());
-            ApplicationSupervisor supervisor = new ApplicationSupervisor().withAware(supervisorDTO.getAware()).withUser(user);
+            ApplicationSupervisor supervisor = new ApplicationSupervisor().withAware(supervisorDTO.getAcceptedSupervision()).withUser(user);
             application.getSupervisors().add(supervisor);
         }
     }
@@ -123,7 +123,7 @@ public class ApplicationSectionService {
         User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
         supervisor.setUser(user);
 
-        supervisor.setAcceptedSupervision(supervisorDTO.getAware());
+        supervisor.setAcceptedSupervision(supervisorDTO.getAcceptedSupervision());
         return supervisor;
     }
 

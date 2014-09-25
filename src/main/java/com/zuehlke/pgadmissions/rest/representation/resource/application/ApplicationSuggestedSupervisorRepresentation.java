@@ -6,7 +6,7 @@ public class ApplicationSuggestedSupervisorRepresentation {
 
     private UserRepresentation user;
 
-    private boolean aware;
+    private Boolean acceptedSupervision;
 
     public UserRepresentation getUser() {
         return user;
@@ -16,12 +16,11 @@ public class ApplicationSuggestedSupervisorRepresentation {
         this.user = user;
     }
 
-    public boolean isAware() {
-        return aware;
+    public Boolean getAcceptedSupervision() {
+        return acceptedSupervision;
     }
 
-    public void setAware(boolean aware) {
-        this.aware = aware;
+    public void setAcceptedSupervision(Boolean acceptedSupervision) {
+        this.acceptedSupervision = acceptedSupervision;
     }
-    
 }

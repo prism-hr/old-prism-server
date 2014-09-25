@@ -6,7 +6,7 @@ public class ApplicationSupervisorDTO {
 
     private UserDTO user;
 
-    private Boolean aware;
+    private Boolean acceptedSupervision;
 
     public UserDTO getUser() {
         return user;
@@ -16,11 +16,11 @@ public class ApplicationSupervisorDTO {
         this.user = user;
     }
 
-    public Boolean getAware() {
-        return aware;
+    public Boolean getAcceptedSupervision() {
+        return acceptedSupervision;
     }
 
-    public void setAware(Boolean aware) {
-        this.aware = aware;
+    public void setAcceptedSupervision(Boolean acceptedSupervision) {
+        this.acceptedSupervision = acceptedSupervision;
     }
 }

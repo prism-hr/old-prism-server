@@ -30,7 +30,7 @@ public class InstitutionAddress extends GeocodableLocation {
     private InstitutionDomicileRegion region;
     
     @ManyToOne
-    @JoinColumn(name = "institution", nullable = false)
+    @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
     @Column(name = "address_line_1", nullable = false)

@@ -49,7 +49,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
         @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
         @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class)})
 @Entity
-@Table(name = "INSTITUTION", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_domicile_id", "title"}), @UniqueConstraint(columnNames = {"title", "google_identifier"})})
+@Table(name = "INSTITUTION", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_domicile_id", "title"}), @UniqueConstraint(columnNames = {"title", "google_id"})})
 @Indexed
 public class Institution extends ParentResource {
 
@@ -78,6 +78,12 @@ public class Institution extends ParentResource {
     @Column(name = "title", nullable = false, unique = true)
     @Field(analyzer = @Analyzer(definition = "institutionNameAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String title;
+    
+    @Column(name = "summary", nullable = false)
+    private String summary;
+    
+    @Column(name = "description")
+    private String description;
 
     @Column(name = "currency", nullable = false)
     private String currency;
@@ -85,11 +91,17 @@ public class Institution extends ParentResource {
     @Column(name = "homepage", nullable = false)
     private String homepage;
     
-    @Column(name = "google_identifier")
-    private String googleIdentifier;
+    @Column(name = "google_id")
+    private String googleId;
     
-    @Column(name = "linkedin_identifier")
-    private String linkedinIdentifier;
+    @Column(name = "linkedin_uri")
+    private String linkedinUri;
+    
+    @Column(name = "twitter_uri")
+    private String twitterUri;
+    
+    @Column(name = "facebook_uri")
+    private String facebookUri;
 
     @Column(name = "default_program_type", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -203,6 +215,22 @@ public class Institution extends ParentResource {
         this.title = title;
     }
 
+    public final String getSummary() {
+        return summary;
+    }
+
+    public final void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public final String getDescription() {
+        return description;
+    }
+
+    public final void setDescription(String description) {
+        this.description = description;
+    }
+
     public InstitutionDomicile getDomicile() {
         return domicile;
     }
@@ -227,20 +255,36 @@ public class Institution extends ParentResource {
         this.homepage = homepage;
     }
 
-    public final String getGoogleIdentifier() {
-        return googleIdentifier;
+    public final String getGoogleId() {
+        return googleId;
     }
 
-    public final void setGoogleIdentifier(String googleIdentifier) {
-        this.googleIdentifier = googleIdentifier;
+    public final void setGoogleId(String googleId) {
+        this.googleId = googleId;
     }
 
-    public final String getLinkedinIndentifier() {
-        return linkedinIdentifier;
+    public final String getLinkedinUri() {
+        return linkedinUri;
     }
 
-    public final void setLinkedinIndentifier(String linkedinIndentifier) {
-        this.linkedinIdentifier = linkedinIndentifier;
+    public final void setLinkedinUri(String linkedinUri) {
+        this.linkedinUri = linkedinUri;
+    }
+
+    public final String getTwitterUri() {
+        return twitterUri;
+    }
+
+    public final void setTwitterUri(String twitterUri) {
+        this.twitterUri = twitterUri;
+    }
+
+    public final String getFacebookUri() {
+        return facebookUri;
+    }
+
+    public final void setFacebookUri(String facebookUri) {
+        this.facebookUri = facebookUri;
     }
 
     public final PrismProgramType getDefaultProgramType() {
@@ -394,6 +438,11 @@ public class Institution extends ParentResource {
         this.title = title;
         return this;
     }
+    
+    public Institution withSummary(String summary) {
+        this.summary = summary;
+        return this;
+    }
 
     public Institution withCurrency(final String currency) {
         this.currency = currency;
@@ -405,13 +454,23 @@ public class Institution extends ParentResource {
         return this;
     }
 
-    public Institution withGoogleIdentifier(String googleIdentifier) {
-        this.googleIdentifier = googleIdentifier;
+    public Institution withGoogleId(String googleId) {
+        this.googleId = googleId;
         return this;
     }
     
-    public Institution withLinkedinIdentifier(String linkedinIdentifier) {
-        this.linkedinIdentifier = linkedinIdentifier;
+    public Institution withLinkedinUri(String linkedinUri) {
+        this.linkedinUri = linkedinUri;
+        return this;
+    }
+    
+    public Institution withTwitterUri(String twitterUri) {
+        this.twitterUri = twitterUri;
+        return this;
+    }
+    
+    public Institution withFacebookUri(String facebookUri) {
+        this.facebookUri = facebookUri;
         return this;
     }
     

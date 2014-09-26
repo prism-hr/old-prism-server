@@ -1,12 +1,18 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 
 import javax.servlet.http.Part;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.util.io.Streams;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +47,16 @@ public class DocumentService {
         return document;
     }
 
+    public Document getExternalDocument(String documentLink) throws IOException {
+        URL logoDocumentUri = new DefaultResourceLoader().getResource(documentLink).getURL();
+        URLConnection connection = logoDocumentUri.openConnection();
+        InputStream stream = connection.getInputStream();
+        byte[] content = IOUtils.toByteArray(stream);
+        String contentType = connection.getContentType();
+        String fileName = FilenameUtils.getName(documentLink);
+        return create(fileName, content, contentType);
+    }
+    
     public void deleteOrphanDocuments() {
         documentDAO.deleteOrphanDocuments();
     }

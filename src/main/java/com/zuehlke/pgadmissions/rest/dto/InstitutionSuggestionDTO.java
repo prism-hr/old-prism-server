@@ -7,8 +7,6 @@ public class InstitutionSuggestionDTO {
     private String title;
     
     private String fullAddress;
-    
-    private String googleIdentifier;
 
     public final Integer getId() {
         return id;
@@ -32,14 +30,6 @@ public class InstitutionSuggestionDTO {
 
     public final void setFullAddress(String fullAddress) {
         this.fullAddress = fullAddress;
-    }
-
-    public final String getGoogleIdentifier() {
-        return googleIdentifier;
-    }
-
-    public final void setGoogleIdentifier(String googleIdentifier) {
-        this.googleIdentifier = googleIdentifier;
     }
     
 }

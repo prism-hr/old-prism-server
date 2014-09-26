@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
+import com.zuehlke.pgadmissions.rest.representation.SocialPresenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -67,6 +68,9 @@ public class UserService {
 
     @Autowired
     private SystemService systemService;
+    
+    @Autowired
+    private SocialPresenceService socialPresenceService;
 
     public User getById(Integer id) {
         return entityService.getById(User.class, id);
@@ -236,6 +240,10 @@ public class UserService {
 
     public List<Integer> getMatchingUsers(String searchTerm) {
         return userDAO.getMatchingUsers(searchTerm);
+    }
+    
+    public SocialPresenceRepresentation getSocialProfiles(String userFullName) throws IOException {
+        return socialPresenceService.getPotentialProfiles(User.class, userFullName);
     }
 
 }

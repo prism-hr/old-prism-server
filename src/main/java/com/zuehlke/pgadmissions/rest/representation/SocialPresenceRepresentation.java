@@ -2,38 +2,27 @@ package com.zuehlke.pgadmissions.rest.representation;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.SocialPresence;
 
 public class SocialPresenceRepresentation {
 
-    private List<ExtendedSocialProfile> potentialLinkedinProfiles;
+    private final List<ExtendedSocialProfile> potentialLinkedinProfiles = Lists.newLinkedList();
     
-    private List<SocialProfile> potentialTwitterProfiles;
+    private final List<SocialProfile> potentialTwitterProfiles = Lists.newLinkedList();
     
-    private List<SocialProfile> potentialFacebookProfiles;
+    private final List<SocialProfile> potentialFacebookProfiles = Lists.newLinkedList();
     
     public final List<ExtendedSocialProfile> getPotentialLinkedinProfiles() {
         return potentialLinkedinProfiles;
     }
 
-    public final void setPotentialLinkedinProfiles(List<ExtendedSocialProfile> potentialLinkedinProfiles) {
-        this.potentialLinkedinProfiles = potentialLinkedinProfiles;
-    }
-
     public final List<SocialProfile> getPotentialTwitterProfiles() {
         return potentialTwitterProfiles;
     }
-
-    public final void setPotentialTwitterProfiles(List<SocialProfile> potentialTwitterProfiles) {
-        this.potentialTwitterProfiles = potentialTwitterProfiles;
-    }
-
+    
     public final List<SocialProfile> getPotentialFacebookProfiles() {
         return potentialFacebookProfiles;
-    }
-
-    public final void setPotentialFacebookProfiles(List<SocialProfile> potentialFacebookProfiles) {
-        this.potentialFacebookProfiles = potentialFacebookProfiles;
     }
 
     public SocialPresenceRepresentation addPotentialProfile(SocialPresence presence, SocialProfile potentialProfile) {

@@ -94,7 +94,7 @@ public class SocialPresenceService {
     }
 
     private void setLinkedinCompanyLogoImage(ExtendedSocialProfile extendedProfile, Document bodyDiv) {
-        List<Element> logoDivs = bodyDiv.getElementsByClass("div.image-wrapper");
+        List<Element> logoDivs = bodyDiv.getElementsByClass("image-wrapper");
         for (Element logoDiv : logoDivs) {
             List<Element> logoImgs = logoDiv.getElementsByTag("img");
             for (Element logoImg : logoImgs) {
@@ -140,9 +140,9 @@ public class SocialPresenceService {
                 } else {
                     String title = WordUtils.capitalizeFully(extractedTitle);
                     String extractedPosition = getLinkedinPersonCurrentRole(vCardLi);
-                    title = title + extractedPosition == null ? "" : " - " + WordUtils.capitalizeFully(extractedPosition);
+                    title = title + (extractedPosition == null ? "" : title + " - " + WordUtils.capitalizeFully(extractedPosition));
                     ExtendedSocialProfile profile = new ExtendedSocialProfile().withTitle(title).withUri(profileA.attr("href"));
-                    List<Element> portraitSrcs = profileA.getElementsByTag("src");
+                    List<Element> portraitSrcs = profileA.getElementsByTag("img");
                     for (Element portraitSrc : portraitSrcs) {
                         profile.setImageUri(portraitSrc.attr("src"));
                     }
@@ -153,12 +153,9 @@ public class SocialPresenceService {
     }
 
     private String getLinkedinPersonCurrentRole(Element vCardLi) {
-        List<Element> currentContentDds = vCardLi.getElementsByClass("current-content");
-        for (Element currentContentDd : currentContentDds) {
-            List<Element> spans = currentContentDd.getElementsByTag("span");
-            for (Element span : spans) {
-                return span.text();
-            }
+        List<Element> titleDds = vCardLi.getElementsByClass("title");
+        for (Element titleDd : titleDds) {
+            return titleDd.text();
         }
         return null;
     }

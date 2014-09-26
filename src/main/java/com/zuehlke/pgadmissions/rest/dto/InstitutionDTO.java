@@ -24,6 +24,11 @@ public class InstitutionDTO {
     @NotNull
     private PrismStudyOption defaultStudyOption;
 
+    @NotNull
+    private String summary;
+    
+    private String description;
+    
     @NotEmpty
     private String homepage;
 
@@ -60,6 +65,22 @@ public class InstitutionDTO {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public final String getSummary() {
+        return summary;
+    }
+
+    public final void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public final String getDescription() {
+        return description;
+    }
+
+    public final void setDescription(String description) {
+        this.description = description;
     }
 
     public String getHomepage() {

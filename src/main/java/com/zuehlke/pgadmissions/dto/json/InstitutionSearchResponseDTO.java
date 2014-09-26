@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.dto.json;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class InstitutionSearchResponseDTO {
     
     private List<Item> items;
@@ -18,32 +16,26 @@ public class InstitutionSearchResponseDTO {
     
     public static class Item {
 
-        @JsonProperty("metatags")
-        private MetaData metaData;
+        private String title;
         
-        public final MetaData getMetaData() {
-            return metaData;
+        private String link;
+
+        public final String getTitle() {
+            return title;
         }
 
-        public final void setMetaData(MetaData metaData) {
-            this.metaData = metaData;
+        public final void setTitle(String title) {
+            this.title = title;
         }
 
-        public static class MetaData {
-            
-            @JsonProperty("og:url")
-            private String uri;
-
-            public final String getUri() {
-                return uri;
-            }
-
-            public final void setUri(String uri) {
-                this.uri = uri;
-            }
-            
+        public final String getLink() {
+            return link;
         }
+
+        public final void setLink(String link) {
+            this.link = link;
+        } 
         
     }
- 
+
 }

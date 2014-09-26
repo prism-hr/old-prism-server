@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class User implements UserDetails, IUniqueEntity {
 
-    private static final long serialVersionUID = 7913035836949510857L;
+    private static final long serialVersionUID = 5910410212695389060L;
 
     @Id
     @GeneratedValue
@@ -63,6 +63,16 @@ public class User implements UserDetails, IUniqueEntity {
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
     @Column(name = "email", nullable = false, unique = true)
     private String email;
+    
+    @OneToOne
+    @JoinColumn(name = "portrait_document_id")
+    private Document portraitDocument;
+    
+    @Column(name = "linkedin_uri")
+    private String linkedinUri;
+    
+    @Column(name = "twitter_uri")
+    private String twitterUri;
     
     @Column(name = "activation_code", nullable = false, unique = true)
     private String activationCode;
@@ -155,6 +165,34 @@ public class User implements UserDetails, IUniqueEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public final Document getPortraitDocument() {
+        return portraitDocument;
+    }
+
+    public final void setPortraitDocument(Document portraitDocument) {
+        this.portraitDocument = portraitDocument;
+    }
+
+    public final String getLinkedinUri() {
+        return linkedinUri;
+    }
+
+    public final void setLinkedinUri(String linkedinUri) {
+        this.linkedinUri = linkedinUri;
+    }
+
+    public final String getTwitterUri() {
+        return twitterUri;
+    }
+
+    public final void setTwitterUri(String twitterUri) {
+        this.twitterUri = twitterUri;
+    }
+
+    public final void setUserRoles(Set<UserRole> userRoles) {
+        this.userRoles = userRoles;
     }
 
     public String getActivationCode() {

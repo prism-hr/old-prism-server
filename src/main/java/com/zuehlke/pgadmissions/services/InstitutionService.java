@@ -1,27 +1,14 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -29,7 +16,6 @@ import org.springframework.web.client.RestTemplate;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
@@ -39,37 +25,17 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.json.InstitutionLookupResponseDTO;
-import com.zuehlke.pgadmissions.dto.json.InstitutionSearchResponseDTO;
-import com.zuehlke.pgadmissions.dto.json.InstitutionSearchResponseDTO.Item;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.representation.SocialPresenceRepresentation;
 
 @Service
 @Transactional
 public class InstitutionService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Value("${integration.google.api.key}")
-    private String googleApiKey;
-
-    @Value("${integration.google.search.api.uri}")
-    private String googleSearchApiUri;
-
-    @Value("${integration.google.search.api.cse.key}")
-    private String googleCustomSearchEngineKey;
-
-    @Value("${linkedin.company.uri.prefix}")
-    private String linkedinCompanyUriPrefix;
-
-    @Value("${integration.linkedin.api.token}")
-    private String linkedinApiToken;
-
-    @Value("${integration.linkedin.companies.api.uri}")
-    private String linkedinCompaniesApiUri;
 
     @Autowired
     private InstitutionDAO institutionDAO;
@@ -94,6 +60,9 @@ public class InstitutionService {
 
     @Autowired
     private GeocodableLocationService geocodableLocationService;
+    
+    @Autowired
+    private SocialPresenceService socialPresenceService;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -131,9 +100,10 @@ public class InstitutionService {
         InstitutionDomicile institutionCountry = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
 
         Institution institution = new Institution().withSystem(systemService.getSystem()).withDomicile(institutionCountry).withAddress(address)
-                .withTitle(institutionDTO.getTitle()).withHomepage(institutionDTO.getHomepage()).withDefaultProgramType(institutionDTO.getDefaultProgramType())
-                .withDefaultStudyOption(institutionDTO.getDefaultStudyOption()).withGoogleIdentifier(institutionDTO.getGoogleIdentifier())
-                .withLinkedinIdentifier(institutionDTO.getLinkedinIdentifier()).withCurrency(institutionDTO.getCurrency()).withUser(user);
+                .withTitle(institutionDTO.getTitle()).withSummary(institutionDTO.getSummary()).withHomepage(institutionDTO.getHomepage())
+                .withDefaultProgramType(institutionDTO.getDefaultProgramType()).withDefaultStudyOption(institutionDTO.getDefaultStudyOption())
+                .withGoogleId(institutionDTO.getGoogleIdentifier()).withLinkedinUri(institutionDTO.getLinkedinIdentifier())
+                .withCurrency(institutionDTO.getCurrency()).withUser(user);
 
         setLogoDocument(institution, institutionDTO, PrismAction.SYSTEM_CREATE_INSTITUTION);
         return institution;
@@ -149,6 +119,8 @@ public class InstitutionService {
 
         institution.setDomicile(domicile);
         institution.setTitle(institutionDTO.getTitle());
+        institution.setSummary(institutionDTO.getSummary());
+        institution.setDescription(institutionDTO.getDescription());
 
         address.setRegion(region);
         address.setAddressLine1(addressDTO.getAddressLine1());
@@ -161,8 +133,8 @@ public class InstitutionService {
 
         institution.setCurrency(institutionDTO.getCurrency());
         institution.setHomepage(institutionDTO.getHomepage());
-        institution.setGoogleIdentifier(institutionDTO.getGoogleIdentifier());
-        institution.setLinkedinIndentifier(institutionDTO.getLinkedinIdentifier());
+        institution.setGoogleId(institutionDTO.getGoogleIdentifier());
+        institution.setLinkedinUri(institutionDTO.getLinkedinIdentifier());
 
         institution.setDefaultProgramType(institutionDTO.getDefaultProgramType());
         institution.setDefaultStudyOption(institutionDTO.getDefaultStudyOption());
@@ -209,52 +181,21 @@ public class InstitutionService {
         return actionService.executeUserAction(institution, action, comment);
     }
 
-    public InstitutionLookupResponseDTO getLinkedinInstitution(String institutionTitle) throws IOException {
-        String institutionTitleEncoded = URLEncoder.encode(institutionTitle, "UTF-8");
-        URI searchRequest = new DefaultResourceLoader().getResource(googleSearchApiUri + "?query=" + institutionTitleEncoded + //
-                "&key=" + googleApiKey + "&cx=" + googleCustomSearchEngineKey + "&format=json").getURI();
-        InstitutionSearchResponseDTO searchResponse = restTemplate.getForObject(searchRequest, InstitutionSearchResponseDTO.class);
-
-        List<Item> searchResults = searchResponse.getItems();
-        if (!searchResults.isEmpty()) {
-            String linkedinIdentifier = searchResults.get(0).getMetaData().getUri().replace(linkedinCompanyUriPrefix, "");
-
-            String searchTermEncoded = URLEncoder.encode(linkedinIdentifier, "UTF-8");
-            URI request = new DefaultResourceLoader().getResource(linkedinCompaniesApiUri + "?universal-name=" + searchTermEncoded + //
-                    ":(universal-name,description,website-url,square-logo-url)").getURI();
-            
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("x-li-format", "json");
-            headers.set("Authorization", "Bearer " + linkedinApiToken);
-            HttpEntity<String> requestEntity = new HttpEntity<String>("parameters", headers);
-            
-            ResponseEntity<InstitutionLookupResponseDTO> responseEntity = restTemplate.exchange(request, HttpMethod.GET, requestEntity,
-                    InstitutionLookupResponseDTO.class);
-            return responseEntity.getBody();
-        }
-
-        return null;
+    public SocialPresenceRepresentation getSocialProfiles(String institutionTitle) throws IOException {
+        return socialPresenceService.getPotentialProfiles(Institution.class, institutionTitle);
     }
 
     private void setLogoDocument(Institution institution, InstitutionDTO institutionDTO, PrismAction actionId) {
         Integer logoDocumentId = institutionDTO.getLogoDocumentId();
-        String logoDocumentUriString = institutionDTO.getLogoUri();
+        String logoDocumentLink = institutionDTO.getLogoUri();
 
-        if (logoDocumentId == null && logoDocumentUriString == null) {
+        if (logoDocumentId == null && logoDocumentLink == null) {
             return;
         } else if (logoDocumentId == null) {
             try {
-                URL logoDocumentUri = new DefaultResourceLoader().getResource(logoDocumentUriString).getURL();
-                URLConnection connection = logoDocumentUri.openConnection();
-                InputStream stream = connection.getInputStream();
-                byte[] content = IOUtils.toByteArray(stream);
-                String contentType = connection.getContentType();
-                String fileType = FilenameUtils.getExtension(logoDocumentUriString);
-                String fileName = institution.getLinkedinIndentifier().replace("-", "") + "." + fileType;
-                Document logoDocument = documentService.create(fileName, content, contentType);
-                institution.setLogoDocument(logoDocument);
+                institution.setLogoDocument(documentService.getExternalDocument(logoDocumentLink));
             } catch (IOException e) {
-                logger.error("Unable to download logo document: " + logoDocumentUriString, e);
+                logger.error("Unable to download logo document for: " + institution.getTitle() + " (" + logoDocumentLink + ")", e);
                 Action action = actionService.getById(actionId);
                 actionService.throwWorkflowPermissionException(institution, action);
             }

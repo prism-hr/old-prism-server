@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -8,6 +9,7 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
@@ -39,7 +41,8 @@ import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.FeesAndPaymentsDTO;
+import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
+import com.zuehlke.pgadmissions.rest.dto.AdvertFilterMetadataDTO;
 import com.zuehlke.pgadmissions.rest.dto.FinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 
@@ -62,9 +65,15 @@ public class AdvertService {
 
     @Autowired
     private AdvertDAO advertDAO;
-
+    
     @Autowired
     private EntityService entityService;
+    
+    @Autowired
+    private ResourceService resourceService;
+    
+    @Autowired
+    private InstitutionService institutionService;
 
     @Autowired
     private StateService stateService;
@@ -124,7 +133,7 @@ public class AdvertService {
 
     public void saveAdvertDetails(Class<? extends Resource> resourceClass, Integer resourceId, AdvertDetailsDTO advertDetailsDTO)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InterruptedException, IOException, JAXBException {
-        Resource resource = entityService.getById(resourceClass, resourceId);
+        Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) PropertyUtils.getSimpleProperty(resource, "advert");
         InstitutionAddressDTO addressDTO = advertDetailsDTO.getAddress();
 
@@ -147,10 +156,10 @@ public class AdvertService {
         geocodableLocationService.setLocation(address);
     }
 
-    public void saveFeesAndPayments(Class<? extends Resource> resourceClass, Integer resourceId, FeesAndPaymentsDTO feesAndPaymentsDTO) throws Exception {
+    public void saveFeesAndPayments(Class<? extends Resource> resourceClass, Integer resourceId, AdvertFeesAndPaymentsDTO feesAndPaymentsDTO) throws Exception {
         LocalDate baseline = new LocalDate();
 
-        Resource resource = entityService.getById(resourceClass, resourceId);
+        Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) PropertyUtils.getSimpleProperty(resource, "advert");
 
         String currencyAtLocale = getCurrencyAtLocale(advert);
@@ -168,12 +177,55 @@ public class AdvertService {
         advert.setLastCurrencyConversionDate(baseline);
     }
 
+    @SuppressWarnings("unchecked")
+    public void saveFilterMetadata(Class<? extends Resource> resourceClass, Integer resourceId, AdvertFilterMetadataDTO metadataDTO) {
+        try {
+            Resource resource = resourceService.getById(resourceClass, resourceId);
+            Advert advert = (Advert) PropertyUtils.getSimpleProperty(resource, "advert");
+            
+            Field[] properties = metadataDTO.getClass().getDeclaredFields();
+            for (Field property : properties) {
+                String propertyName = property.getName();
+                List<Object> values = (List<Object>) PropertyUtils.getSimpleProperty(metadataDTO, propertyName);
+                
+                if (values != null) {
+                    Set<Object> persistentMetadata = (Set<Object>) PropertyUtils.getSimpleProperty(advert, propertyName);
+                    persistentMetadata.clear();
+                    
+                    boolean isTargetInstitutionsProperty = propertyName.equals("targetInstitution");  
+                    for (Object value : values) {
+                        value = isTargetInstitutionsProperty ? institutionService.getById((Integer) value) : value;
+                        persistentMetadata.add(value);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new Error(e);
+        }
+    }
+    
+    public void updateCurrencyConversion(Advert advert) throws IOException, JAXBException, IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
+        LocalDate baseline = new LocalDate();
+        advert = getById(advert.getId());
+
+        if (advert.hasCovertedFee()) {
+            updateConvertedMonetaryValues(advert.getFee(), baseline);
+        }
+
+        if (advert.hasConvertedPay()) {
+            updateConvertedMonetaryValues(advert.getPay(), baseline);
+        }
+
+        advert.setLastCurrencyConversionDate(baseline);
+    }
+
     public List<Advert> getAdvertsWithElapsedCurrencyConversions(LocalDate baseline) {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline, activeProgramStates, activeProjectStates);
     }
-
+    
     private void updateFinancialDetails(FinancialDetails financialDetails, FinancialDetailsDTO financialDetailsDTO, String currencyAtLocale, LocalDate baseline)
             throws Exception {
         DurationUnit interval = financialDetailsDTO.getInterval();
@@ -216,23 +268,7 @@ public class AdvertService {
             }
         }
     }
-
-    public void updateCurrencyConversion(Advert advert) throws IOException, JAXBException, IllegalAccessException, InvocationTargetException,
-            NoSuchMethodException {
-        LocalDate baseline = new LocalDate();
-        advert = getById(advert.getId());
-
-        if (advert.hasCovertedFee()) {
-            updateConvertedMonetaryValues(advert.getFee(), baseline);
-        }
-
-        if (advert.hasConvertedPay()) {
-            updateConvertedMonetaryValues(advert.getPay(), baseline);
-        }
-
-        advert.setLastCurrencyConversionDate(baseline);
-    }
-
+    
     private String getCurrencyAtLocale(Advert advert) {
         InstitutionAddress localeAddress = advert.getAddress();
         localeAddress = localeAddress == null ? advert.getInstitution().getAddress() : localeAddress;

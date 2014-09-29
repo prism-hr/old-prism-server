@@ -8,5 +8,5 @@ ALTER TABLE COMMENT
 ;
 
 INSERT INTO COMMENT (institution_id, user_id, role_id, action_id, declined_response, content, transition_state_id, created_timestamp)
-VALUES (5243, 1024, "SYSTEM_ADMINISTRATOR", "SYSTEM_CREATE_INSTITUTION", 0, "New institution created", "INSTITUTION_APPROVED", "2012-10-01 00:09:00")
+VALUES (5243, 2048, "SYSTEM_ADMINISTRATOR", "SYSTEM_CREATE_INSTITUTION", 0, "New institution created", "INSTITUTION_APPROVED", "2012-10-01 00:09:00")
 ;

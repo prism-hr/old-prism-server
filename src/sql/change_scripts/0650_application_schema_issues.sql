@@ -7,11 +7,11 @@ VALUES ("INSTITUTION_ADMINISTRATOR")
 ;
 
 INSERT INTO USER_ROLE (institution_id, user_id, role_id, requesting_user_id)
-VALUES (5243, 1024, "INSTITUTION_ADMINISTRATOR", 1024)
+VALUES (5243, 2048, "INSTITUTION_ADMINISTRATOR", 2048)
 ;
 
 UPDATE USER_ROLE
-SET requesting_user_id = 1024
+SET requesting_user_id = 2048
 WHERE system_id IS NOT NULL
 ;
 

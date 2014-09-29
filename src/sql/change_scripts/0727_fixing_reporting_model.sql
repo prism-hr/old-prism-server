@@ -356,7 +356,6 @@ ALTER TABLE APPLICATION
 	DROP INDEX submitted_timestamp,
 	DROP INDEX updated_timestamp,
 	DROP INDEX code,
-	DROP INDEX user_id_2,
 	DROP INDEX institution_id,
 	DROP INDEX rating_count_2,
 	DROP INDEX average_rating_2,

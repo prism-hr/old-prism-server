@@ -42,6 +42,9 @@ import org.hibernate.search.annotations.TokenizerDef;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 
 @AnalyzerDef(name = "advertAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
@@ -126,18 +129,26 @@ public class Advert {
 
     @Column(name = "sequence_identifier")
     private String sequenceIdentifier;
+    
+    @ManyToMany(cascade = CascadeType.ALL, targetEntity = AdvertDomain.class)
+    @JoinColumn(name = "advert_id", nullable = false)
+    private Set<PrismAdvertDomain> domains = Sets.newHashSet();
+    
+    @ManyToMany(cascade = CascadeType.ALL, targetEntity = AdvertIndustry.class)
+    @JoinColumn(name = "advert_id", nullable = false)
+    private Set<PrismAdvertIndustry> industries = Sets.newHashSet();
+    
+    @ManyToMany(cascade = CascadeType.ALL, targetEntity = AdvertFunction.class)
+    @JoinColumn(name = "advert_id", nullable = false)
+    private Set<PrismAdvertFunction> functions = Sets.newHashSet();
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "ADVERT_TARGET_INSTITUTION", joinColumns = { @JoinColumn(name = "advert_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "institution_id", nullable = false) })
-    private Set<Institution> institutionTargets = Sets.newHashSet();
+    private Set<Institution> targetInstitutions = Sets.newHashSet();
 
     @ManyToMany(cascade = CascadeType.ALL, targetEntity = AdvertTargetProgramType.class)
     @JoinColumn(name = "advert_id", nullable = false)
-    private Set<PrismProgramType> programTypeTargets = Sets.newHashSet();
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "advert_id", nullable = false)
-    private Set<AdvertKeyword> keywords = Sets.newHashSet();
+    private Set<PrismProgramType> targetProgramTypes = Sets.newHashSet();
 
     @OneToOne(mappedBy = "advert")
     private Program program;
@@ -253,12 +264,24 @@ public class Advert {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public final Set<Institution> getInstitutionTargets() {
-        return institutionTargets;
+    public final Set<PrismAdvertDomain> getDomains() {
+        return domains;
     }
 
-    public final Set<AdvertKeyword> getKeywords() {
-        return keywords;
+    public final Set<PrismAdvertIndustry> getIndustries() {
+        return industries;
+    }
+
+    public final Set<PrismAdvertFunction> getFunctions() {
+        return functions;
+    }
+
+    public final Set<Institution> getTargetInstitutions() {
+        return targetInstitutions;
+    }
+
+    public final Set<PrismProgramType> getTargetProgramTypes() {
+        return targetProgramTypes;
     }
 
     public Program getProgram() {
@@ -310,6 +333,99 @@ public class Advert {
         return pay != null && !pay.getCurrencySpecified().equals(pay.getCurrencyAtLocale());
     }
 
+    @Entity
+    @Table(name = "ADVERT_DOMAIN")
+    private static class AdvertDomain {
+
+        @EmbeddedId
+        private AdvertDomainId id;
+
+        @ManyToOne
+        @JoinColumn(name = "advertId", insertable = false, updatable = false)
+        private Advert advert;
+
+        @Column(name = "domain", insertable = false, updatable = false)
+        @Enumerated(EnumType.STRING)
+        private PrismAdvertDomain domain;
+
+        @Embeddable
+        private static class AdvertDomainId implements Serializable {
+
+            private static final long serialVersionUID = -381523189635209210L;
+
+            @Column(name = "advert_id", nullable = false)
+            private Integer advertId;
+
+            @Column(name = "domain", nullable = false)
+            @Enumerated(EnumType.STRING)
+            private PrismAdvertDomain domain;
+
+        }
+
+    }
+    
+    @Entity
+    @Table(name = "ADVERT_INDUSTRY")
+    private static class AdvertIndustry {
+
+        @EmbeddedId
+        private AdvertIndustryId id;
+
+        @ManyToOne
+        @JoinColumn(name = "advertId", insertable = false, updatable = false)
+        private Advert advert;
+
+        @Column(name = "industry", insertable = false, updatable = false)
+        @Enumerated(EnumType.STRING)
+        private PrismAdvertIndustry industry;
+
+        @Embeddable
+        private static class AdvertIndustryId implements Serializable {
+
+            private static final long serialVersionUID = -381523189635209210L;
+
+            @Column(name = "advert_id", nullable = false)
+            private Integer advertId;
+
+            @Column(name = "industry", nullable = false)
+            @Enumerated(EnumType.STRING)
+            private PrismAdvertIndustry industry;
+
+        }
+
+    }
+    
+    @Entity
+    @Table(name = "ADVERT_FUNCTION")
+    private static class AdvertFunction {
+
+        @EmbeddedId
+        private AdvertFunctionId id;
+
+        @ManyToOne
+        @JoinColumn(name = "advertId", insertable = false, updatable = false)
+        private Advert advert;
+
+        @Column(name = "function", insertable = false, updatable = false)
+        @Enumerated(EnumType.STRING)
+        private PrismAdvertFunction industry;
+
+        @Embeddable
+        private static class AdvertFunctionId implements Serializable {
+
+            private static final long serialVersionUID = -381523189635209210L;
+
+            @Column(name = "advert_id", nullable = false)
+            private Integer advertId;
+
+            @Column(name = "function", nullable = false)
+            @Enumerated(EnumType.STRING)
+            private PrismAdvertFunction industry;
+
+        }
+
+    }
+    
     @Entity
     @Table(name = "ADVERT_TARGET_PROGRAM_TYPE")
     private static class AdvertTargetProgramType {

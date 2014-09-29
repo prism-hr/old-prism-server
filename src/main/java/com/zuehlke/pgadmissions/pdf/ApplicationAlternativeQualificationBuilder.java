@@ -42,9 +42,9 @@ public class ApplicationAlternativeQualificationBuilder extends AbstractPdfModel
             Comment approvalComment = commentService.getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
             
             if (approvalComment == null) {
-                exportDocument.add(new Paragraph(String.format("Approval Round Comment:\n%s", NOT_PROVIDED)));
+                exportDocument.add(new Paragraph(String.format("Comment:\n", NOT_PROVIDED)));
             } else {
-                exportDocument.add(new Paragraph(String.format("Approval Round Comment:\n%s", noQualificationExplanation)));
+                exportDocument.add(new Paragraph(String.format("Comment:\n", noQualificationExplanation)));
             }
             
             exportDocument.close();

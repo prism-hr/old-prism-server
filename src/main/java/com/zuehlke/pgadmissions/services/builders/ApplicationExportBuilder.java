@@ -449,8 +449,10 @@ public class ApplicationExportBuilder {
     }
 
     private RefereeListTp buildReferee(List<ApplicationReferee> exportReferees) {
+        int referenceCount = exportReferees.size();
         RefereeListTp resultList = objectFactory.createRefereeListTp();
-        for (int i = 0; i < 2; i++) {
+        
+        for (int i = 0; i < referenceCount; i++) {
             ApplicationReferee referee = exportReferees.get(i);
             RefereeTp refereeTp = objectFactory.createRefereeTp();
             refereeTp.setPosition(referee.getJobTitle());

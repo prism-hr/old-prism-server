@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-public class FeesAndPaymentsDTO {
+public class AdvertFeesAndPaymentsDTO {
 
     private FinancialDetailsDTO fee;
 

@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -21,10 +20,8 @@ public class EntityJsonDeserializer<T> extends JsonDeserializer<T> {
     }
 
     @Override
-    @SuppressWarnings("unused")
     public T deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
-        JsonToken token = parser.getCurrentToken();
-        int id = parser.getIntValue();
+        Integer id = parser.getIntValue();
         return entityService.getById(klazz, id);
     }
 

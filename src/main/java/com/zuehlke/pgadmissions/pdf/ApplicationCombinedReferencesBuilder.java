@@ -39,10 +39,10 @@ public class ApplicationCombinedReferencesBuilder extends AbstractPdfModelBuilde
             document.add(addSectionSeparators());
 
             if (referenceComment == null) {
-                if (application.getState().getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED) {
+                if (application.getState().getId().getStateGroup() == PrismStateGroup.APPLICATION_APPROVED) {
                     document.add(new Paragraph("Comment:\n" + noReferenceExplanation));
                 } else {
-                    document.add(new Paragraph("Comment:\nReference not yet provided at time of outcome"));
+                    document.add(new Paragraph("Comment:\nReference not yet provided at time of outcome."));
                 }
             } else {
                 if (BooleanUtils.isTrue(referenceComment.isDeclinedResponse())) {
@@ -52,9 +52,9 @@ public class ApplicationCombinedReferencesBuilder extends AbstractPdfModelBuilde
                 }
 
                 PdfContentByte cb = writer.getDirectContent();
-                for (com.zuehlke.pgadmissions.domain.Document in : referenceComment.getDocuments()) {
+                for (com.zuehlke.pgadmissions.domain.Document input : referenceComment.getDocuments()) {
                     try {
-                        PdfReader reader = new PdfReader(in.getContent());
+                        PdfReader reader = new PdfReader(input.getContent());
                         for (int i = 1; i <= reader.getNumberOfPages(); i++) {
                             document.newPage();
                             PdfImportedPage page = writer.getImportedPage(reader, i);

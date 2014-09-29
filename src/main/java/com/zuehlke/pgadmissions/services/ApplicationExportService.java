@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.util.List;
 import java.util.Properties;
 
 import javax.xml.bind.JAXBContext;
@@ -34,6 +35,7 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResp
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.ProgramStudyOptionInstance;
@@ -51,7 +53,7 @@ import com.zuehlke.pgadmissions.services.builders.ApplicationExportBuilder;
 public class ApplicationExportService {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     @Value("${xml.data.export.sftp.privatekeyfile}")
     private Resource privateKeyFile;
 
@@ -99,7 +101,7 @@ public class ApplicationExportService {
 
     @Autowired
     private UserService userService;
-    
+
     public void export(Application application) {
         try {
             String applicationCode = application.getCode();
@@ -113,7 +115,7 @@ public class ApplicationExportService {
             logger.error("Error exporting application", e);
         }
     }
-    
+
     @Transactional
     protected SubmitAdmissionsApplicationRequest buildDataExportRequest(Application application) {
         String creatorExportId = userService.getUserInstitutionId(application.getUser(), application.getInstitution(), PrismUserIdentity.STUDY_APPLICANT);
@@ -122,17 +124,18 @@ public class ApplicationExportService {
         User primarySupervisor = applicationService.getPrimarySupervisor(offerRecommendationComment);
         ProgramStudyOptionInstance exportProgramInstance = programService.getFirstEnabledProgramStudyOptionInstance(application.getProgram(), application
                 .getProgramDetail().getStudyOption());
+        List<ApplicationReferee> applicationExportReferees = applicationService.getApplicationExportReferees(application);
 
         return exportProgramInstance == null ? null : applicationExportBuilder.build(new ApplicationExportDTO().withApplication(application)
                 .withCreatorExportId(creatorExportId).withCreatorIpAddress(creatorIpAddress).withOfferRecommendationComment(offerRecommendationComment)
-                .withPrimarySupervisor(primarySupervisor).withExportProgramInstance(exportProgramInstance));
+                .withPrimarySupervisor(primarySupervisor).withExportProgramInstance(exportProgramInstance).withApplicationReferees(applicationExportReferees));
     }
 
     protected OutputStream buildDocumentExportRequest(Application application, String exportReference, OutputStream outputStream) throws IOException {
         applicationDocumentExportBuilder.getDocuments(application, exportReference, outputStream);
         return outputStream;
     }
-    
+
     @Transactional
     private String sendDataExportRequest(Application transientApplication) throws DeduplicationException, JAXBException {
         Application persistentApplication = applicationService.getById(transientApplication.getId());
@@ -190,7 +193,6 @@ public class ApplicationExportService {
             IOUtils.closeQuietly(outputStream);
         }
     }
-    
 
     private Session getSftpSession() throws JSchException, ResourceNotFoundException {
         try {

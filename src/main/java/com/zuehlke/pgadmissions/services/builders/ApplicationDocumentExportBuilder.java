@@ -123,10 +123,10 @@ public class ApplicationDocumentExportBuilder {
         int qualificationCount = qualifications.size();
         
         if (qualificationCount > 0) {
-            for (int i = 0; i < qualificationCount; i ++) {
+            for (int i = 0; i < qualificationCount; i++) {
                 String filename = getRandomFilename();
                 zos.putNextEntry(new ZipEntry(filename));
-                Document transcript = qualifications.get(qualificationCount).getDocument();
+                Document transcript = qualifications.get(i).getDocument();
                 zos.write(getFileContents(application, transcript));
                 zos.closeEntry();
                 int qualificationNumberId = i + 1;

@@ -179,7 +179,12 @@ public class ApplicationService {
     }
 
     public List<ApplicationReferee> getApplicationExportReferees(Application application) {
-        return applicationDAO.getApplicationExportReferees(application);
+        List<ApplicationReferee> referees = applicationDAO.getApplicationRefereesResponded(application);
+        List<ApplicationReferee> refereesNotResponded = applicationDAO.getApplicationRefereesNotResponded(application);
+        for (int i = 0; i < (2 - referees.size()); i++) {
+            referees.add(refereesNotResponded.get(i));
+        }
+        return referees;
     }
 
     public void validateApplicationCompleteness(Integer applicationId) {

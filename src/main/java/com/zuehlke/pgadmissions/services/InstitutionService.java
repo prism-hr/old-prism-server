@@ -182,7 +182,7 @@ public class InstitutionService {
     }
 
     public SocialPresenceRepresentation getSocialProfiles(String institutionTitle) throws IOException {
-        return socialPresenceService.getPotentialProfiles(Institution.class, institutionTitle);
+        return socialPresenceService.getPotentialInstitutionProfiles(institutionTitle);
     }
 
     private void setLogoDocument(Institution institution, InstitutionDTO institutionDTO, PrismAction actionId) {

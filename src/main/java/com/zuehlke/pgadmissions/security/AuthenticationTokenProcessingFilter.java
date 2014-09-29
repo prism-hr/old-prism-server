@@ -16,8 +16,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.GenericFilterBean;
 
-import com.zuehlke.pgadmissions.domain.User;
-
 public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
 
     private final UserDetailsService userDetailsService;

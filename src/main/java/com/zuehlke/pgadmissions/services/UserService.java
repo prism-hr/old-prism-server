@@ -242,8 +242,8 @@ public class UserService {
         return userDAO.getMatchingUsers(searchTerm);
     }
     
-    public SocialPresenceRepresentation getSocialProfiles(String userFullName) throws IOException {
-        return socialPresenceService.getPotentialProfiles(User.class, userFullName);
+    public SocialPresenceRepresentation getSocialProfiles(String firstName, String lastName) throws IOException {
+        return socialPresenceService.getPotentialUserProfiles(firstName, lastName);
     }
 
 }

@@ -9,7 +9,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
@@ -38,18 +37,12 @@ public class ApplicationPersonalDetail {
     @Column(name = "first_language_english", nullable = false)
     private Boolean firstLanguageEnglish;
 
-    @Transient
-    private Boolean languageQualificationAvailable;
-
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_language_qualification_id")
     private ApplicationLanguageQualification languageQualification;
 
     @Column(name = "visa_required", nullable = false)
     private Boolean visaRequired;
-
-    @Transient
-    private Boolean passportAvailable;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_passport_id")
@@ -215,11 +208,7 @@ public class ApplicationPersonalDetail {
     }
 
     public Boolean getPassportAvailable() {
-        return passportAvailable;
-    }
-
-    public void setPassportAvailable(Boolean passportAvailable) {
-        this.passportAvailable = passportAvailable;
+        return passport != null;
     }
 
     public ApplicationPassport getPassport() {
@@ -231,11 +220,7 @@ public class ApplicationPersonalDetail {
     }
 
     public Boolean getLanguageQualificationAvailable() {
-        return languageQualificationAvailable;
-    }
-
-    public void setLanguageQualificationAvailable(Boolean languageQualificationAvailable) {
-        this.languageQualificationAvailable = languageQualificationAvailable;
+        return languageQualification != null;
     }
 
     public ApplicationLanguageQualification getLanguageQualification() {
@@ -291,11 +276,6 @@ public class ApplicationPersonalDetail {
         return this;
     }
 
-    public ApplicationPersonalDetail withLanguageQualificationAvailable(Boolean flag) {
-        this.languageQualificationAvailable = flag;
-        return this;
-    }
-
     public ApplicationPersonalDetail withLanguageQualification(ApplicationLanguageQualification languageQualification) {
         this.languageQualification = languageQualification;
         return this;
@@ -308,11 +288,6 @@ public class ApplicationPersonalDetail {
 
     public ApplicationPersonalDetail withRequiresVisa(Boolean requiresVisa) {
         this.visaRequired = requiresVisa;
-        return this;
-    }
-
-    public ApplicationPersonalDetail withPassportAvailable(Boolean passportAvailable) {
-        this.passportAvailable = passportAvailable;
         return this;
     }
 

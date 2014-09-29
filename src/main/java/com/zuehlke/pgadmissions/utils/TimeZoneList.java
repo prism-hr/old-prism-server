@@ -1,8 +1,13 @@
 package com.zuehlke.pgadmissions.utils;
 
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.TimeZone;
 
-import java.util.*;
+import com.google.common.collect.Lists;
 
 public class TimeZoneList {
 

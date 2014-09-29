@@ -9,12 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.zuehlke.pgadmissions.rest.representation.SocialPresenceRepresentation;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
-@SuppressWarnings("unused")
 public class SocialPresenceServiceTest {
     
     @Autowired
@@ -25,12 +22,12 @@ public class SocialPresenceServiceTest {
     
     @Test
     public void shouldGetCompanyInformation() throws IOException {
-        SocialPresenceRepresentation result = institutionService.getSocialProfiles("University College London");
+        institutionService.getSocialProfiles("University College London");
     }
     
     @Test
     public void shouldGetUserInformation() throws IOException {
-        SocialPresenceRepresentation result = userService.getSocialProfiles("Anthony Finkelstein");
+        userService.getSocialProfiles("Anthony", "Finkelstein");
     }
     
 }

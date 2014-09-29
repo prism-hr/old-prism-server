@@ -17,6 +17,8 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.SocialPresence;
 import com.zuehlke.pgadmissions.dto.json.InstitutionSearchResponseDTO;
 import com.zuehlke.pgadmissions.dto.json.InstitutionSearchResponseDTO.Item;
@@ -34,30 +36,44 @@ public class SocialPresenceService {
 
     @Value("${integration.google.search.api.uri}")
     private String googleSearchApiUri;
+    
+    @Value("${integration.linked.in.people.search.uri}")
+    private String linkedinPeopleSearchUri;
 
     @Autowired
     private RestTemplate restTemplate;
 
-    public SocialPresenceRepresentation getPotentialProfiles(Class<?> subscriber, String searchTerm) throws IOException {
-        String encodedSearchTerm = URLEncoder.encode(searchTerm, "UTF-8");
-
+    public SocialPresenceRepresentation getPotentialUserProfiles(String firstName, String lastName) throws IOException {        
+        String encodedSearchTerm = URLEncoder.encode(firstName + lastName, "UTF-8");
+        SocialPresenceRepresentation representation = getPotentialProfiles(User.class, encodedSearchTerm);
+        
+        String encodedFirstName = URLEncoder.encode(firstName, "UTF-8");
+        String encodedLastName = URLEncoder.encode(lastName, "UTF-8");
+        addLinkedinPersonProfiles(representation, encodedFirstName, encodedLastName);
+        
+        return representation;
+    }
+    
+    public SocialPresenceRepresentation getPotentialInstitutionProfiles(String institutionTitle) throws IOException {
+        String encodedSearchTerm = URLEncoder.encode(institutionTitle, "UTF-8");
+        return getPotentialProfiles(Institution.class, encodedSearchTerm);
+    }
+    
+    private SocialPresenceRepresentation getPotentialProfiles(Class<?> subscriber, String encodedSearchTerm) throws IOException {
         SocialPresenceRepresentation representation = new SocialPresenceRepresentation();
+        
         for (SocialPresence presence : SocialPresence.getClassSubscriptions(subscriber)) {
             URI request = new DefaultResourceLoader().getResource(
-                    googleSearchApiUri + "?q=" + encodedSearchTerm + "&key=" + googleApiKey + "&cx=" + presence.getSearchEngine() + "&format=json").getURI();
+                    googleSearchApiUri + "?q=" + encodedSearchTerm + "&key=" + googleApiKey + "&cx=" + presence.getSearchEngineKey() + "&format=json").getURI();
             InstitutionSearchResponseDTO response = restTemplate.getForObject(request, InstitutionSearchResponseDTO.class);
 
             boolean isLinkedinCompany = presence == SocialPresence.LINKEDIN_COMPANY;
-            boolean isLinkedinPerson = presence == SocialPresence.LINKEDIN_PERSON;
-
             List<Item> items = response.getItems();
-            int gotItems = items.size();
-            int maxItems = presence.getResultsToConsider();
 
-            for (int i = 0; i < (gotItems < maxItems ? gotItems : maxItems); i++) {
+            for (int i = 0; i < items.size(); i++) {
                 Item item = items.get(i);
                 String link = item.getLink();
-                if (SocialPresence.doExclude(presence, link)) {
+                if (link.replaceAll(presence.getSearchEngineUri(), "").contains("/")) {
                     continue;
                 } else {
                     if (isLinkedinCompany) {
@@ -67,12 +83,6 @@ public class SocialPresenceService {
                         } catch (IOException e) {
                             logger.error("Unable to parse linked in company profile", e);
                         }
-                    } else if (isLinkedinPerson) {
-                        try {
-                            unpackLinkedinPersonProfile(representation, item);
-                        } catch (IOException e) {
-                            logger.error("Unable to parse linked in person profile", e);
-                        }
                     } else {
                         SocialProfile profile = new SocialProfile().withTitle(item.getTitle()).withUri(item.getLink());
                         representation.addPotentialProfile(presence, profile);
@@ -81,7 +91,7 @@ public class SocialPresenceService {
             }
 
         }
-
+        
         return representation;
     }
 
@@ -128,8 +138,8 @@ public class SocialPresenceService {
         }
     }
 
-    private void unpackLinkedinPersonProfile(SocialPresenceRepresentation representation, Item item) throws IOException {
-        Document bodyDiv = Jsoup.connect(item.getLink()).get();
+    private void addLinkedinPersonProfiles(SocialPresenceRepresentation representation, String encodedFirstName, String encodedLastName) throws IOException {
+        Document bodyDiv = Jsoup.connect(linkedinPeopleSearchUri + "?first=" + encodedFirstName + "&last=" + encodedLastName).get();
         List<Element> vCardLis = bodyDiv.getElementsByClass("vcard");
         for (Element vCardLi : vCardLis) {
             List<Element> profileAs = vCardLi.getElementsByClass("profile-photo");
@@ -146,7 +156,7 @@ public class SocialPresenceService {
                     for (Element portraitSrc : portraitSrcs) {
                         profile.setImageUri(portraitSrc.attr("src"));
                     }
-                    representation.addPotentialProfile(SocialPresence.LINKEDIN_PERSON, profile);
+                    representation.addPotentialLinkedinProfile(profile);
                 }
             }
         }

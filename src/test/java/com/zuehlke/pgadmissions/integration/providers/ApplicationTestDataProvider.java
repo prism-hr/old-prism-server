@@ -65,7 +65,6 @@ public class ApplicationTestDataProvider {
         personalDetail.setCountry(testObjectProvider.get(Country.class));
         personalDetail.setFirstNationality(testObjectProvider.get(Language.class));
         personalDetail.setSecondNationality(testObjectProvider.get(Language.class));
-        personalDetail.setLanguageQualificationAvailable(true);
         ApplicationLanguageQualification languageQualification = new ApplicationLanguageQualification();
         languageQualification.setType(entityService.getByProperty(ImportedLanguageQualificationType.class, "code", "IELTS_ACADEMIC"));
         languageQualification.setExamDate(new LocalDate(1967, 9, 14));

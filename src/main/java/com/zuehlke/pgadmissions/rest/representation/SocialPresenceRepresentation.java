@@ -24,20 +24,24 @@ public class SocialPresenceRepresentation {
     public final List<SocialProfile> getPotentialFacebookProfiles() {
         return potentialFacebookProfiles;
     }
-
+    
     public SocialPresenceRepresentation addPotentialProfile(SocialPresence presence, SocialProfile potentialProfile) {
         switch (presence) {
         case FACEBOOK:
             potentialFacebookProfiles.add(potentialProfile);
             break;
         case LINKEDIN_COMPANY:
-        case LINKEDIN_PERSON:
-            potentialLinkedinProfiles.add((ExtendedSocialProfile) potentialProfile);
+            addPotentialLinkedinProfile(potentialProfile);
             break;
         case TWITTER:
             potentialTwitterProfiles.add(potentialProfile);
             break;
         }
+        return this;
+    }
+    
+    public SocialPresenceRepresentation addPotentialLinkedinProfile(SocialProfile potentialProfile) {
+        potentialLinkedinProfiles.add((ExtendedSocialProfile) potentialProfile);
         return this;
     }
 

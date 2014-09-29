@@ -201,7 +201,7 @@ public class ImportedEntityService {
         importedEntityDAO.disableAllEntities(InstitutionDomicileRegion.class);
     }
 
-    public void setLastImportedDate(ImportedEntityFeed detachedImportedEntityFeed) {
+    public void setLastImportedTimestamp(ImportedEntityFeed detachedImportedEntityFeed) {
         ImportedEntityFeed persistentImportedEntityFeed = entityService.getById(ImportedEntityFeed.class, detachedImportedEntityFeed.getId());
         persistentImportedEntityFeed.setLastImportedTimestamp(new DateTime());
     }

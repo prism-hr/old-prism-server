@@ -113,7 +113,7 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
                     mergeImportedEntities(importedEntityClass, institution, (List<Object>) unmarshalled);
                 }
 
-                importedEntityService.setLastImportedDate(importedEntityFeed);
+                importedEntityService.setLastImportedTimestamp(importedEntityFeed);
                 // TODO: state change to institution ready to use.
             }
         } catch (Exception e) {

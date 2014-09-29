@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public enum FilterProperty {
 

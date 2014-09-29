@@ -46,7 +46,7 @@ public class ImportedEntityFeed implements IUniqueEntity {
     @Column(name = "location", nullable = false)
     private String location;
     
-    @Column(name = "last_imported_date")
+    @Column(name = "last_imported_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastImportedTimestamp;
 

@@ -49,7 +49,12 @@ public class SocialPresenceService {
         
         String encodedFirstName = URLEncoder.encode(firstName, "UTF-8");
         String encodedLastName = URLEncoder.encode(lastName, "UTF-8");
-        addLinkedinPersonProfiles(representation, encodedFirstName, encodedLastName);
+        
+        try {
+            addLinkedinPersonProfiles(representation, encodedFirstName, encodedLastName);
+        } catch (IOException e) {
+            logger.error("Unable to parse linkedin person profile", e);
+        }
         
         return representation;
     }
@@ -73,7 +78,7 @@ public class SocialPresenceService {
             for (int i = 0; i < items.size(); i++) {
                 Item item = items.get(i);
                 String link = item.getLink();
-                if (link.replaceAll(presence.getSearchEngineUri(), "").contains("/")) {
+                if (link.replace("http://", "https://").replaceAll(presence.getSearchEngineUri(), "").contains("/")) {
                     continue;
                 } else {
                     if (isLinkedinCompany) {
@@ -81,7 +86,7 @@ public class SocialPresenceService {
                             ExtendedSocialProfile profile = new ExtendedSocialProfile().withTitle(item.getTitle()).withUri(item.getLink());
                             representation.addPotentialProfile(presence, getLinkedinCompanyProfile(profile));
                         } catch (IOException e) {
-                            logger.error("Unable to parse linked in company profile", e);
+                            logger.error("Unable to parse linkedin company profile", e);
                         }
                     } else {
                         SocialProfile profile = new SocialProfile().withTitle(item.getTitle()).withUri(item.getLink());

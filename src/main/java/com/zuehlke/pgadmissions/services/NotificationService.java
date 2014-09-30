@@ -32,10 +32,10 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
-import com.zuehlke.pgadmissions.mail.MailMessageDTO;
 import com.zuehlke.pgadmissions.mail.MailSender;
-import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
+import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
 
 @Service
 @Transactional
@@ -255,7 +255,7 @@ public class NotificationService {
         message.setTo(user);
         message.setTemplate(templateVersion);
         message.setModel(createNotificationModel(user, resource, extraParameters));
-        message.setAttachments(Lists.<PdfAttachmentInputSource>newArrayList());
+        message.setAttachments(Lists.<AttachmentInputSource>newArrayList());
 
         mailSender.sendEmail(message);
     }

@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.pdf;
+package com.zuehlke.pgadmissions.services.builders.pdf.mail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -7,12 +7,13 @@ import java.util.Arrays;
 
 import org.springframework.core.io.InputStreamSource;
 
-public class PdfAttachmentInputSource implements InputStreamSource {
+public class AttachmentInputSource implements InputStreamSource {
 
 	private final String attachmentFilename;
+	
 	private byte[] pdf = null;
 	
-	public PdfAttachmentInputSource(String attachmentFilename, byte[] pdf) {
+	public AttachmentInputSource(String attachmentFilename, byte[] pdf) {
 		if (pdf != null) {
 		    this.pdf = Arrays.copyOf(pdf, pdf.length);
 		}
@@ -27,4 +28,5 @@ public class PdfAttachmentInputSource implements InputStreamSource {
 	public String getAttachmentFilename() {
 		return attachmentFilename;
 	}
+	
 }

@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.mail;
+package com.zuehlke.pgadmissions.dto;
 
 import java.util.List;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Map;
 import com.google.common.base.MoreObjects;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
+import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
 
 public final class MailMessageDTO {
 
@@ -18,7 +18,7 @@ public final class MailMessageDTO {
 
     private NotificationTemplateVersion template;
 
-    private List<PdfAttachmentInputSource> attachments;
+    private List<AttachmentInputSource> attachments;
 
     public User getTo() {
         return to;
@@ -44,11 +44,11 @@ public final class MailMessageDTO {
         this.template = template;
     }
 
-    public List<PdfAttachmentInputSource> getAttachments() {
+    public List<AttachmentInputSource> getAttachments() {
         return attachments;
     }
 
-    public void setAttachments(final List<PdfAttachmentInputSource> attachments) {
+    public void setAttachments(final List<AttachmentInputSource> attachments) {
         this.attachments = attachments;
     }
 

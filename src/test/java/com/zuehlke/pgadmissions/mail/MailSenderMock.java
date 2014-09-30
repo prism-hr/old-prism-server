@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
 public class MailSenderMock extends MailSender {

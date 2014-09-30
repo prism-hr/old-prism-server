@@ -22,12 +22,11 @@ public class ApplicationExportServiceDevelopment extends ApplicationExportServic
             SubmitAdmissionsApplicationRequest dataExportRequest = buildDataExportRequest(application);
 
             logger.info("Building document export request for application: " + application.getCode());
-            byte[] documentExportRequest = null;
             outputStream = buildDocumentExportRequest(application, application.getCode(), new ByteArrayOutputStream());
-            outputStream.write(documentExportRequest);
+            ByteArrayOutputStream byteOutputStream = (ByteArrayOutputStream) outputStream; 
 
             ApplicationExportRequest exportRequest = new ApplicationExportRequest().withDataExportRequest(dataExportRequest). //
-                    withDocumentExportRequest(documentExportRequest);
+                    withDocumentExportRequest(byteOutputStream.toByteArray());
             exportRequests.put(application, exportRequest);
         } catch (Exception e) {
             throw new Error(e);

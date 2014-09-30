@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.pdf;
+package com.zuehlke.pgadmissions.services.builders.pdf;
 
 import java.io.OutputStream;
 
@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 
 @Component
-public class ApplicationCombinedReferencesBuilder extends AbstractPdfModelBuilder {
+public class MergedReferenceBuilder extends AbstractModelBuilder {
 
     @Value("${xml.export.system.reference}")
     private String noReferenceExplanation;
@@ -36,7 +36,7 @@ public class ApplicationCombinedReferencesBuilder extends AbstractPdfModelBuilde
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             table.addCell(newGrayTableCell("Referee Comment", BOLD_FONT));
             document.add(table);
-            document.add(addSectionSeparators());
+            document.add(addSectionSeparator());
 
             if (referenceComment == null) {
                 if (application.getState().getId().getStateGroup() == PrismStateGroup.APPLICATION_APPROVED) {

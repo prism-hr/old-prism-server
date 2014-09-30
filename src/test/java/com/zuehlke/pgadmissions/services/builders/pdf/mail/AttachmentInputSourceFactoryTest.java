@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.pdf;
+package com.zuehlke.pgadmissions.services.builders.pdf.mail;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -10,12 +10,15 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
-public class PdfAttachmentInputSourceFactoryTest {
+import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
+import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSourceFactory;
+
+public class AttachmentInputSourceFactoryTest {
 
 	@Test
 	public void shouldGenerateInputSourceWihtPdfByteArrayStream() throws IOException {
 		byte[] pdf = "pdf".getBytes();
-		PdfAttachmentInputSource source = new PdfAttachmentInputSourceFactory().getAttachmentDataSource("filename", pdf);
+		AttachmentInputSource source = new AttachmentInputSourceFactory().getAttachmentDataSource("filename", pdf);
 
 		InputStream inputStream = source.getInputStream();
 		assertTrue(inputStream instanceof ByteArrayInputStream);

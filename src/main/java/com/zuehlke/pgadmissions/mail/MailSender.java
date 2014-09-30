@@ -21,7 +21,8 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
-import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
+import com.zuehlke.pgadmissions.dto.MailMessageDTO;
+import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
 
 import freemarker.template.Template;
 
@@ -47,6 +48,9 @@ public class MailSender {
 
     @Autowired
     private FreeMarkerConfig freemarkerConfig;
+    
+    @Autowired
+    private MailToPlainTextConverter mailToPlainTextConverter;
 
     public void sendEmail(final MailMessageDTO message) {
 
@@ -66,16 +70,15 @@ public class MailSender {
 
                         templateName = notificationTemplate.getNotificationTemplate().getId().name() + "_content_" + notificationTemplate.getId();
                         Template contentTemplate = new Template(templateName, new StringReader(notificationTemplate.getContent()), freemarkerConfig.getConfiguration());
-                        MailToPlainTextConverter htmlFormatter = new MailToPlainTextConverter();
                         String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(contentTemplate, message.getModel());
-                        String plainText = htmlFormatter.getPlainText(htmlText);
+                        String plainText = mailToPlainTextConverter.getPlainText(htmlText);
                         plainText = plainText + "\n\n" + emailBrokenLinkMessage;
 
                         messageHelper.setTo(convertToInternetAddresses(message.getTo()));
                         messageHelper.setSubject(subject);
                         messageHelper.setText(plainText, htmlText);
                         messageHelper.setFrom(emailAddressFrom);
-                        for (PdfAttachmentInputSource attachment : message.getAttachments()) {
+                        for (AttachmentInputSource attachment : message.getAttachments()) {
                             messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");
                         }
                     }

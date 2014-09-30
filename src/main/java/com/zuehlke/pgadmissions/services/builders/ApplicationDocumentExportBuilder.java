@@ -17,11 +17,11 @@ import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.pdf.ApplicationAlternativeQualificationBuilder;
-import com.zuehlke.pgadmissions.pdf.ApplicationCombinedReferencesBuilder;
-import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
-import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.builders.pdf.AlternativeQualificationBuilder;
+import com.zuehlke.pgadmissions.services.builders.pdf.MergedReferenceBuilder;
+import com.zuehlke.pgadmissions.services.builders.pdf.PdfDocumentBuilder;
+import com.zuehlke.pgadmissions.services.builders.pdf.ModelBuilder;
 
 @Component
 public class ApplicationDocumentExportBuilder {
@@ -33,10 +33,10 @@ public class ApplicationDocumentExportBuilder {
     private ApplicationService applicationService;
 
     @Autowired
-    private ApplicationCombinedReferencesBuilder combinedReferenceBuilder;
+    private MergedReferenceBuilder combinedReferenceBuilder;
 
     @Autowired
-    private ApplicationAlternativeQualificationBuilder applicationQualificationTranscriptBuilder;
+    private AlternativeQualificationBuilder applicationQualificationTranscriptBuilder;
 
     public void getDocuments(Application application, String exportReference, OutputStream outputStream) throws IOException {
         Properties contentsProperties = new Properties();
@@ -150,7 +150,7 @@ public class ApplicationDocumentExportBuilder {
         zos.putNextEntry(new ZipEntry(serverfilename));
         try {
             pdfDocumentBuilder.build(
-                    new PdfModelBuilder().includeCriminialConvictions(true).includeDisability(true).includeEthnicity(true).includeAttachments(false), zos,
+                    new ModelBuilder().includeCriminialConvictions(true).includeDisability(true).includeEthnicity(true).includeAttachments(false), zos,
                     application);
         } catch (Exception e) {
             throw new Error("Unable to build application document for " + application.getCode(), e);
@@ -166,7 +166,7 @@ public class ApplicationDocumentExportBuilder {
         String applicationFilename = "MergedApplicationForm" + application.getCode() + ".pdf";
         zos.putNextEntry(new ZipEntry(serverfilename));
         try {
-            pdfDocumentBuilder.build(new PdfModelBuilder().includeReferences(true), zos, application);
+            pdfDocumentBuilder.build(new ModelBuilder().includeReferences(true), zos, application);
         } catch (Exception e) {
            throw new Error ("Unable to merged application document for " + application.getCode(), e);
         }

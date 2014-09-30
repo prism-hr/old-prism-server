@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.pdf;
+package com.zuehlke.pgadmissions.services.builders.pdf;
 
 import java.io.ByteArrayOutputStream;
 
@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.services.CommentService;
 
 @Component
-public class ApplicationAlternativeQualificationBuilder extends AbstractPdfModelBuilder {
+public class AlternativeQualificationBuilder extends AbstractModelBuilder {
     
     @Value("${xml.export.system.qualification}")
     String noQualificationExplanation;
@@ -37,12 +37,12 @@ public class ApplicationAlternativeQualificationBuilder extends AbstractPdfModel
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             table.addCell(newGrayTableCell("No Transcripts Provided", BOLD_FONT));
             exportDocument.add(table);
-            exportDocument.add(addSectionSeparators());
+            exportDocument.add(addSectionSeparator());
 
             Comment approvalComment = commentService.getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
             
             if (approvalComment == null) {
-                exportDocument.add(new Paragraph(String.format("Comment:\n", NOT_PROVIDED)));
+                exportDocument.add(new Paragraph(String.format("Comment:\n", notProvided)));
             } else {
                 exportDocument.add(new Paragraph(String.format("Comment:\n", noQualificationExplanation)));
             }

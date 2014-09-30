@@ -1,9 +1,7 @@
-package com.zuehlke.pgadmissions.pdf;
+package com.zuehlke.pgadmissions.services.builders.pdf;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,9 +9,11 @@ import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -52,11 +52,10 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 
-public class PdfModelBuilder extends AbstractPdfModelBuilder {
+@Component
+public class ModelBuilder extends AbstractModelBuilder {
 
-    private static final String NOT_REQUIRED = "Not Required";
-
-    private final Logger logger = LoggerFactory.getLogger(PdfModelBuilder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModelBuilder.class);
 
     private boolean includeCriminialConvictions = false;
 
@@ -68,8 +67,6 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
     private boolean includeReferences = false;
 
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
-
     private int pageCounter = 0;
 
     private int appendixCounter = 0;
@@ -78,106 +75,56 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
     private HeaderEvent headerEvent;
 
-    public PdfModelBuilder includeReferences(final boolean flag) {
+    public ModelBuilder includeReferences(final boolean flag) {
         this.includeReferences = flag;
         return this;
     }
 
-    public PdfModelBuilder includeCriminialConvictions(final boolean flag) {
+    public ModelBuilder includeCriminialConvictions(final boolean flag) {
         this.includeCriminialConvictions = flag;
         return this;
     }
 
-    public PdfModelBuilder includeAttachments(final boolean flag) {
+    public ModelBuilder includeAttachments(final boolean flag) {
         this.includeAttachments = flag;
         return this;
     }
 
-    public PdfModelBuilder includeDisability(final boolean flag) {
+    public ModelBuilder includeDisability(final boolean flag) {
         this.includeDisability = flag;
         return this;
     }
 
-    public PdfModelBuilder includeEthnicity(final boolean flag) {
+    public ModelBuilder includeEthnicity(final boolean flag) {
         this.includeEthnicity = flag;
         return this;
-    }
-
-    public PdfModelBuilder dateFormat(final SimpleDateFormat format) {
-        this.dateFormat = format;
-        return this;
-    }
-
-    public boolean isIncludeCriminialConvictions() {
-        return includeCriminialConvictions;
-    }
-
-    public boolean isIncludeAttachments() {
-        return includeAttachments;
-    }
-
-    public boolean isIncludeDisability() {
-        return includeDisability;
-    }
-
-    public boolean isIncludeEthnicity() {
-        return includeEthnicity;
-    }
-
-    public boolean isIncludeReferences() {
-        return includeReferences;
-    }
-
-    public Map<Integer, Object> getBookmarkMap() {
-        return bookmarkMap;
     }
 
     public void build(final Application form, final Document pdfDocument, final PdfWriter pdfWriter) throws PdfDocumentBuilderException {
         try {
             addCoverPage(form, pdfDocument, pdfWriter);
-
             addHeaderEvent(form, pdfWriter);
-
             addProgramSection(form, pdfDocument);
-
-            pdfDocument.add(addSectionSeparators());
-
+            pdfDocument.add(addSectionSeparator());
             addPersonalDetailSection(form, pdfDocument);
-
-            pdfDocument.add(addSectionSeparators());
-
+            pdfDocument.add(addSectionSeparator());
             addAddressSection(form, pdfDocument);
-
-            pdfDocument.add(addSectionSeparators());
-
+            pdfDocument.add(addSectionSeparator());
             addQualificationSection(form, pdfDocument);
-
-            pdfDocument.add(addSectionSeparators());
-
+            pdfDocument.add(addSectionSeparator());
             addEmploymentSection(form, pdfDocument);
-
-            pdfDocument.add(addSectionSeparators());
-
+            pdfDocument.add(addSectionSeparator());
             addFundingSection(form, pdfDocument);
-
-            pdfDocument.add(addSectionSeparators());
-
+            pdfDocument.add(addSectionSeparator());
             addReferencesSection(form, pdfDocument);
-
-            pdfDocument.add(addSectionSeparators());
-
+            pdfDocument.add(addSectionSeparator());
             addDocumentsSection(form, pdfDocument);
-
-            pdfDocument.add(addSectionSeparators());
-
+            pdfDocument.add(addSectionSeparator());
             addAdditionalInformationSection(form, pdfDocument);
-
-            pdfDocument.add(addSectionSeparators());
-
+            pdfDocument.add(addSectionSeparator());
             addSupportingDocuments(form, pdfDocument, pdfWriter);
-
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new PdfDocumentBuilderException(e.getMessage(), e);
         }
     }
@@ -185,10 +132,10 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
     protected void addHeaderEvent(final Application form, final PdfWriter writer) {
         Chunk submittedDateHeader = null;
 
-        if (form.getSubmittedTimestamp() != null) {
-            submittedDateHeader = new Chunk(dateFormat.format(form.getSubmittedTimestamp()), SMALLER_FONT);
+        if (form.getSubmittedTimestamp() == null) {
+            submittedDateHeader = new Chunk(null, SMALLER_FONT);
         } else {
-            submittedDateHeader = new Chunk("", SMALLER_FONT);
+            submittedDateHeader = new Chunk(form.getSubmittedTimestamp().toString(dateFormat), SMALLER_FONT);
         }
 
         headerEvent = new HeaderEvent(new Chunk(form.getProgram().getTitle(), SMALLER_FONT), new Chunk(form.getCode(), SMALLER_FONT),
@@ -200,7 +147,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             DocumentException {
         pdfDocument.newPage();
 
-        Image image = Image.getInstance(this.getClass().getResource("/prism_logo.png"));
+        Image image = Image.getInstance(this.getClass().getResource(logoFileLocation));
         image.scalePercent(50f);
 
         image.setAbsolutePosition(pdfDocument.right() - image.getWidth() * 0.5f, pdfDocument.top() + 20f);
@@ -209,14 +156,14 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         LineSeparator lineSeparator = new LineSeparator();
         lineSeparator.drawLine(writer.getDirectContent(), pdfDocument.left(), pdfDocument.right(), pdfDocument.top() + 10f);
 
-        pdfDocument.add(addSectionSeparators());
-        pdfDocument.add(addSectionSeparators());
+        pdfDocument.add(addSectionSeparator());
+        pdfDocument.add(addSectionSeparator());
 
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newGrayTableCell("APPLICATION", BOLD_FONT));
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparators());
+        pdfDocument.add(addSectionSeparator());
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newTableCell("Applicant", SMALL_BOLD_FONT));
@@ -236,7 +183,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
         if (form.getSubmittedTimestamp() != null) {
             table.addCell(newTableCell("Submission date", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(dateFormat.format(form.getSubmittedTimestamp()), SMALL_FONT));
+            table.addCell(newTableCell(form.getSubmittedTimestamp().toString(dateFormat), SMALL_FONT));
         }
 
         pdfDocument.add(table);
@@ -249,7 +196,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.addCell(newGrayTableCell("PROGRAMME", BOLD_FONT));
 
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparators());
+        pdfDocument.add(addSectionSeparator());
 
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
@@ -265,28 +212,28 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
         table.addCell(newTableCell("Start Date", SMALL_BOLD_FONT));
         if (form.getProgramDetail().getStartDate() != null) {
-            table.addCell(newTableCell(dateFormat.format(form.getProgramDetail().getStartDate()), SMALL_FONT));
+            table.addCell(newTableCell(form.getProgramDetail().getStartDate().toString(dateFormat), SMALL_FONT));
         } else {
-            table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+            table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
         }
 
         table.addCell(newTableCell("How did you find us?", SMALL_BOLD_FONT));
         if (form.getProgramDetail().getReferralSource() != null) {
             table.addCell(newTableCell(form.getProgramDetail().getReferralSource().getName(), SMALL_FONT));
         } else {
-            table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+            table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
         }
 
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparators());
+        pdfDocument.add(addSectionSeparator());
 
         if (form.getSupervisors().isEmpty()) {
             table = new PdfPTable(2);
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             table.addCell(newTableCell("Supervisor", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+            table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
             pdfDocument.add(table);
-            pdfDocument.add(addSectionSeparators());
+            pdfDocument.add(addSectionSeparator());
         } else {
             int counter = 1;
             for (ApplicationSupervisor supervisor : form.getSupervisors()) {
@@ -313,7 +260,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                     table.addCell(newTableCell("No", SMALL_FONT));
                 }
                 pdfDocument.add(table);
-                pdfDocument.add(addSectionSeparators());
+                pdfDocument.add(addSectionSeparator());
             }
         }
     }
@@ -323,7 +270,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newGrayTableCell("PERSONAL DETAILS", BOLD_FONT));
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparators());
+        pdfDocument.add(addSectionSeparator());
 
         ApplicationPersonalDetail personalDetail = form.getPersonalDetail();
         table = new PdfPTable(2);
@@ -438,14 +385,14 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 if (passportInformation.getIssueDate() == null) {
                     table.addCell(newTableCell(null, SMALL_FONT));
                 } else {
-                    table.addCell(newTableCell(dateFormat.format(passportInformation.getIssueDate()), SMALL_FONT));
+                    table.addCell(newTableCell(passportInformation.getIssueDate().toString(dateFormat), SMALL_FONT));
                 }
 
                 table.addCell(newTableCell("Passport Expiry Date", SMALL_BOLD_FONT));
                 if (passportInformation.getExpiryDate() == null) {
                     table.addCell(newTableCell(null, SMALL_FONT));
                 } else {
-                    table.addCell(newTableCell(dateFormat.format(passportInformation.getExpiryDate()), SMALL_FONT));
+                    table.addCell(newTableCell(passportInformation.getExpiryDate().toString(dateFormat), SMALL_FONT));
                 }
             }
         }
@@ -470,7 +417,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
 
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparators());
+        pdfDocument.add(addSectionSeparator());
 
         if (personalDetail == null || personalDetail.getLanguageQualification() == null) {
             table = new PdfPTable(2);
@@ -489,7 +436,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             table.addCell(newTableCell(qualification.getType().getName(), SMALL_FONT));
 
             table.addCell(newTableCell("Date of Examination", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(dateFormat.format(qualification.getExamDate()), SMALL_FONT));
+            table.addCell(newTableCell(qualification.getExamDate().toString(dateFormat), SMALL_FONT));
 
             table.addCell(newTableCell("Overall Score", SMALL_BOLD_FONT));
             table.addCell(newTableCell(qualification.getOverallScore(), SMALL_FONT));
@@ -514,13 +461,13 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                     table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
                     bookmarkMap.put(appendixCounter++, qualification.getDocument());
                 } else {
-                    table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+                    table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
                 }
             } else {
                 if (qualification.getDocument() != null) {
-                    table.addCell(newTableCell(PROVIDED, SMALL_FONT));
+                    table.addCell(newTableCell(provided, SMALL_FONT));
                 } else {
-                    table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+                    table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
                 }
             }
 
@@ -535,7 +482,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.addCell(newGrayTableCell("ADDRESS", BOLD_FONT));
 
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparators());
+        pdfDocument.add(addSectionSeparator());
 
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
@@ -577,7 +524,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.addCell(newGrayTableCell("QUALIFICATIONS", BOLD_FONT));
 
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparators());
+        pdfDocument.add(addSectionSeparator());
 
         if (form.getQualifications().isEmpty()) {
             table = new PdfPTable(2);
@@ -612,7 +559,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 table.addCell(newTableCell(qualification.getLanguage(), SMALL_FONT));
 
                 table.addCell(newTableCell("Start Date", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(dateFormat.format(qualification.getStartDate()), SMALL_FONT));
+                table.addCell(newTableCell(qualification.getStartDate().toString(dateFormat), SMALL_FONT));
 
                 table.addCell(newTableCell("Has this Qualification been awarded", SMALL_BOLD_FONT));
                 if (BooleanUtils.isTrue(qualification.getCompleted())) {
@@ -634,9 +581,9 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                     table.addCell(newTableCell("Expected Award Date", SMALL_BOLD_FONT));
                 }
                 if (qualification.getAwardDate() == null) {
-                    table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+                    table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
                 } else {
-                    table.addCell(newTableCell(dateFormat.format(qualification.getAwardDate()), SMALL_FONT));
+                    table.addCell(newTableCell(qualification.getAwardDate().toString(dateFormat), SMALL_FONT));
                 }
 
                 if (qualification.getDocument() != null) {
@@ -650,18 +597,18 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                         table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
                         bookmarkMap.put(appendixCounter++, qualification.getDocument());
                     } else {
-                        table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+                        table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
                     }
                 } else {
                     if (qualification.getDocument() != null) {
-                        table.addCell(newTableCell(PROVIDED, SMALL_FONT));
+                        table.addCell(newTableCell(provided, SMALL_FONT));
                     } else {
-                        table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+                        table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
                     }
                 }
 
                 pdfDocument.add(table);
-                pdfDocument.add(addSectionSeparators());
+                pdfDocument.add(addSectionSeparator());
             }
         }
     }
@@ -672,7 +619,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.addCell(newGrayTableCell("EMPLOYMENT", BOLD_FONT));
 
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparators());
+        pdfDocument.add(addSectionSeparator());
 
         if (form.getEmploymentPositions().isEmpty()) {
             table = new PdfPTable(2);
@@ -704,7 +651,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 table.addCell(newTableCell(position.getRemit(), SMALL_FONT));
 
                 table.addCell(newTableCell("Start Date", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(dateFormat.format(position.getStartDate()), SMALL_FONT));
+                table.addCell(newTableCell(position.getStartDate().toString(dateFormat), SMALL_FONT));
 
                 table.addCell(newTableCell("Is this your Current Position", SMALL_BOLD_FONT));
                 if (BooleanUtils.isTrue(position.isCurrent())) {
@@ -718,11 +665,11 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 if (position.getEndDate() == null) {
                     table.addCell(newTableCell(null, SMALL_GREY_FONT));
                 } else {
-                    table.addCell(newTableCell(dateFormat.format(position.getEndDate()), SMALL_FONT));
+                    table.addCell(newTableCell(position.getEndDate().toString(dateFormat), SMALL_FONT));
                 }
 
                 pdfDocument.add(table);
-                pdfDocument.add(addSectionSeparators());
+                pdfDocument.add(addSectionSeparator());
             }
         }
     }
@@ -733,7 +680,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.addCell(newGrayTableCell("FUNDING", BOLD_FONT));
 
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparators());
+        pdfDocument.add(addSectionSeparator());
 
         if (form.getFundings().isEmpty()) {
             table = new PdfPTable(2);
@@ -759,7 +706,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 table.addCell(newTableCell(funding.getValue(), SMALL_FONT));
 
                 table.addCell(newTableCell("Award Date", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(dateFormat.format(funding.getAwardDate()), SMALL_FONT));
+                table.addCell(newTableCell(funding.getAwardDate().toString(dateFormat), SMALL_FONT));
 
                 table.addCell(newTableCell("Proof Of Award", SMALL_BOLD_FONT));
                 if (includeAttachments) {
@@ -767,18 +714,18 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                         table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
                         bookmarkMap.put(appendixCounter++, funding.getDocument());
                     } else {
-                        table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+                        table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
                     }
                 } else {
                     if (funding.getDocument() != null) {
-                        table.addCell(newTableCell(PROVIDED, SMALL_FONT));
+                        table.addCell(newTableCell(provided, SMALL_FONT));
                     } else {
-                        table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+                        table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
                     }
                 }
 
                 pdfDocument.add(table);
-                pdfDocument.add(addSectionSeparators());
+                pdfDocument.add(addSectionSeparator());
             }
         }
     }
@@ -789,7 +736,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.addCell(newGrayTableCell("REFERENCES", BOLD_FONT));
 
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparators());
+        pdfDocument.add(addSectionSeparator());
 
         if (form.getReferees().isEmpty()) {
             table = new PdfPTable(2);
@@ -838,11 +785,11 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                         table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
                         bookmarkMap.put(appendixCounter++, referee.getComment());
                     } else {
-                        table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+                        table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
                     }
                 }
                 pdfDocument.add(table);
-                pdfDocument.add(addSectionSeparators());
+                pdfDocument.add(addSectionSeparator());
             }
         }
     }
@@ -853,7 +800,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.addCell(newGrayTableCell("DOCUMENTS", BOLD_FONT));
 
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparators());
+        pdfDocument.add(addSectionSeparator());
 
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
@@ -866,13 +813,13 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
                 bookmarkMap.put(appendixCounter++, documents.getPersonalStatement());
             } else {
-                table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+                table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
             }
         } else {
             if (documents.getPersonalStatement() != null) {
-                table.addCell(newTableCell(PROVIDED, SMALL_FONT));
+                table.addCell(newTableCell(provided, SMALL_FONT));
             } else {
-                table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+                table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
             }
         }
 
@@ -882,13 +829,13 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
                 bookmarkMap.put(appendixCounter++, documents.getCv());
             } else {
-                table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+                table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
             }
         } else {
             if (documents.getCv() != null) {
-                table.addCell(newTableCell(PROVIDED, SMALL_FONT));
+                table.addCell(newTableCell(provided, SMALL_FONT));
             } else {
-                table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+                table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
             }
         }
         pdfDocument.add(table);
@@ -904,14 +851,14 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.addCell(newGrayTableCell("ADDITIONAL INFORMATION", BOLD_FONT));
 
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparators());
+        pdfDocument.add(addSectionSeparator());
 
         ApplicationAdditionalInformation additionalInformation = form.getAdditionalInformation();
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newTableCell("Do you have any unspent Criminial Convictions?", SMALL_BOLD_FONT));
         if (additionalInformation == null) {
-            table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+            table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
         } else if (BooleanUtils.isTrue(additionalInformation.getConvictionsText() != null)) {
             table.addCell(newTableCell("Yes", SMALL_FONT));
         } else {
@@ -919,7 +866,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
 
         table.addCell(newTableCell("Description", SMALL_BOLD_FONT));
-        String convictionsText = additionalInformation == null ? "" : Strings.nullToEmpty(additionalInformation.getConvictionsText());
+        String convictionsText = additionalInformation == null ? null : Strings.nullToEmpty(additionalInformation.getConvictionsText());
         table.addCell(newTableCell(convictionsText, SMALL_FONT));
 
         pdfDocument.add(table);
@@ -957,7 +904,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                     try {
                         readPdf(pdfDocument, document, pdfWriter);
                     } catch (Exception e) {
-                        logger.warn("Error reading PDF document", e.getMessage());
+                        LOGGER.warn("Error reading PDF document", e.getMessage());
                     }
                 }
             } else if (object instanceof Comment) {
@@ -966,16 +913,16 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                     pdfDocument.add(new Chunk("APPENDIX (" + integer + ")").setLocalDestination(integer.toString()));
 
                     pdfDocument.add(new Chunk(" - Reference"));
-                    pdfDocument.add(addSectionSeparators());
-                    pdfDocument.add(addSectionSeparators());
-                    pdfDocument.add(addSectionSeparators());
-                    pdfDocument.add(addSectionSeparators());
+                    pdfDocument.add(addSectionSeparator());
+                    pdfDocument.add(addSectionSeparator());
+                    pdfDocument.add(addSectionSeparator());
+                    pdfDocument.add(addSectionSeparator());
 
                     PdfPTable table = new PdfPTable(1);
                     table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                     table.addCell(newGrayTableCell("REFERENCE", BOLD_FONT));
                     pdfDocument.add(table);
-                    pdfDocument.add(addSectionSeparators());
+                    pdfDocument.add(addSectionSeparator());
 
                     table = new PdfPTable(2);
                     table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
@@ -1000,7 +947,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                         try {
                             readPdf(pdfDocument, refDocument, pdfWriter);
                         } catch (Exception e) {
-                            logger.warn("Error reading PDF document", e.getMessage());
+                            LOGGER.warn("Error reading PDF document", e.getMessage());
                         }
                     }
                 }
@@ -1024,14 +971,16 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
     private void addClosingDateToTable(PdfPTable table, final Application form) {
         table.addCell(newTableCell("Closing date", SMALL_BOLD_FONT));
         LocalDate closingDate = form.getClosingDate();
-        table.addCell(newTableCell(closingDate == null ? NOT_REQUIRED : dateFormat.format(closingDate), SMALL_FONT));
+        table.addCell(newTableCell(closingDate == null ? notRequired : closingDate.toString(dateFormat), SMALL_FONT));
     }
 
     private void addProjectTitleToTable(PdfPTable table, final Application form) {
         table.addCell(newTableCell("Project", SMALL_BOLD_FONT));
-        String projectTitle = NOT_REQUIRED;
-        if (form.getProject() != null) {
-            projectTitle = form.getProject().getTitle();
+        String projectTitle;
+        if (form.getProject() == null) {
+            projectTitle = notRequired;
+        } else {
+            projectTitle = form.getProject().getTitle();    
         }
         table.addCell(newTableCell(projectTitle, SMALL_FONT));
     }
@@ -1046,17 +995,20 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             throw new RuntimeException(e);
         }
 
-        String stringValue;
-        if (value instanceof Date) {
-            stringValue = dateFormat.format(value);
+        String valueString;
+        Class<?> classValue = value.getClass();
+        
+        if (classValue.equals(LocalDate.class) || classValue.equals(DateTime.class)) {
+            DateTime valueDateTime = new DateTime(value);
+            valueString = valueDateTime.toString(dateFormat);
         } else {
-            stringValue = (String) value;
+            valueString = (String) value;
         }
 
-        return newTableCell(stringValue, SMALL_FONT);
+        return newTableCell(valueString, SMALL_FONT);
     }
 
-    class HeaderEvent extends PdfPageEventHelper {
+    private class HeaderEvent extends PdfPageEventHelper {
         private final Chunk programHeader;
         private final Chunk applicationHeader;
         private final Chunk submittedDateHeader;
@@ -1129,7 +1081,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
             table.writeSelectedRows(0, -1, document.left(), document.top() + 55f, writer.getDirectContent());
 
-            Image image = Image.getInstance(this.getClass().getResource("/prism_logo.png"));
+            Image image = Image.getInstance(this.getClass().getResource(logoFileLocation));
             image.scalePercent(50f);
 
             image.setAbsolutePosition(document.right() - image.getWidth() * 0.5f, document.top() + 20f);

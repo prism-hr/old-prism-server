@@ -59,7 +59,7 @@ import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 @Component
 public class ModelBuilder {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ModelBuilder.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(ModelBuilder.class);
 
     @Value("${xml.export.provided}")
     public String provided;
@@ -78,15 +78,15 @@ public class ModelBuilder {
 
     @Autowired
     private ModelBuilderHelper modelBuilderHelper;
-    
+
     @Autowired
     private NewPageEvent newPageEvent;
-    
+
     private ApplicationDownloadDTO applicationDownloadDTO;
 
-    private final List<Object> bookmarks = Lists.newLinkedList();
+    private List<Object> bookmarks = Lists.newLinkedList();
 
-    public void build(final ApplicationDownloadDTO applicationDownloadDTO, final Document document, final PdfWriter writer) throws PdfDocumentBuilderException {
+    public void build(ApplicationDownloadDTO applicationDownloadDTO, Document document, PdfWriter writer) throws PdfDocumentBuilderException {
         try {
             initialize(applicationDownloadDTO);
             Application application = applicationDownloadDTO.getApplication();
@@ -117,15 +117,14 @@ public class ModelBuilder {
         }
     }
 
-    private void initialize(final ApplicationDownloadDTO applicationDownloadDTO) {
+    private void initialize(ApplicationDownloadDTO applicationDownloadDTO) {
         this.applicationDownloadDTO = applicationDownloadDTO;
         newPageEvent.setApplication(applicationDownloadDTO.getApplication());
         newPageEvent.setApplyHeaderFooter(true);
         bookmarks.clear();
     }
 
-    private void addCoverPage(final Application application, final Document pdfDocument, final PdfWriter writer) throws MalformedURLException, IOException,
-            DocumentException {
+    private void addCoverPage(Application application, Document pdfDocument, PdfWriter writer) throws MalformedURLException, IOException, DocumentException {
         pdfDocument.newPage();
 
         Image image = Image.getInstance(this.getClass().getResource(logoFileLocation));
@@ -141,12 +140,12 @@ public class ModelBuilder {
         pdfDocument.add(modelBuilderHelper.newSectionSeparator());
 
         PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
         table.addCell(modelBuilderHelper.newColoredTableCell("APPLICATION", ModelBuilderConfiguration.BOLD_FONT));
         pdfDocument.add(table);
         pdfDocument.add(modelBuilderHelper.newSectionSeparator());
         table = new PdfPTable(2);
-        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
         table.addCell(modelBuilderHelper.newTableCell("Applicant", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
 
         User applicant = application.getUser();
@@ -171,16 +170,16 @@ public class ModelBuilder {
         pdfDocument.newPage();
     }
 
-    private void addProgramSection(final Application application, Document pdfDocument) throws DocumentException {
+    private void addProgramSection(Application application, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
         table.addCell(modelBuilderHelper.newColoredTableCell("PROGRAMME", ModelBuilderConfiguration.BOLD_FONT));
 
         pdfDocument.add(table);
         pdfDocument.add(modelBuilderHelper.newSectionSeparator());
 
         table = new PdfPTable(2);
-        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
         table.addCell(modelBuilderHelper.newTableCell("Program", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
         table.addCell(modelBuilderHelper.newTableCell(application.getProgram().getTitle(), ModelBuilderConfiguration.MEDIUM_FONT));
 
@@ -211,7 +210,7 @@ public class ModelBuilder {
 
         if (application.getSupervisors().isEmpty()) {
             table = new PdfPTable(2);
-            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
             table.addCell(modelBuilderHelper.newTableCell("Supervisor", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
             table.addCell(modelBuilderHelper.newTableCell(notProvided, ModelBuilderConfiguration.MEDIUM_GREY_FONT));
             pdfDocument.add(table);
@@ -220,7 +219,7 @@ public class ModelBuilder {
             int counter = 1;
             for (ApplicationSupervisor supervisor : application.getSupervisors()) {
                 table = new PdfPTable(2);
-                table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+                table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
                 PdfPCell headerCell = modelBuilderHelper.newTableCell("Supervisor (" + counter++ + ")", ModelBuilderConfiguration.MEDIUM_BOLD_FONT);
                 headerCell.setColspan(2);
                 table.addCell(headerCell);
@@ -247,16 +246,16 @@ public class ModelBuilder {
         }
     }
 
-    private void addPersonalDetailSection(final Application application, Document pdfDocument) throws DocumentException {
+    private void addPersonalDetailSection(Application application, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
         table.addCell(modelBuilderHelper.newColoredTableCell("PERSONAL DETAILS", ModelBuilderConfiguration.BOLD_FONT));
         pdfDocument.add(table);
         pdfDocument.add(modelBuilderHelper.newSectionSeparator());
 
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         table = new PdfPTable(2);
-        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
 
         table.addCell(modelBuilderHelper.newTableCell("Title", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
         table.addCell(createPropertyCell(application, "personalDetail.title.displayValue"));
@@ -402,13 +401,13 @@ public class ModelBuilder {
 
         if (personalDetail == null || personalDetail.getLanguageQualification() == null) {
             table = new PdfPTable(2);
-            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
             table.addCell(modelBuilderHelper.newTableCell("English Language Qualification", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
             table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
         } else {
             ApplicationLanguageQualification languageQualification = personalDetail.getLanguageQualification();
             table = new PdfPTable(2);
-            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
             PdfPCell headerCell = modelBuilderHelper.newTableCell("English Language Qualification", ModelBuilderConfiguration.MEDIUM_BOLD_FONT);
             headerCell.setColspan(2);
             table.addCell(headerCell);
@@ -441,16 +440,16 @@ public class ModelBuilder {
         pdfDocument.add(table);
     }
 
-    private void addAddressSection(final Application application, Document pdfDocument) throws DocumentException {
+    private void addAddressSection(Application application, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
         table.addCell(modelBuilderHelper.newColoredTableCell("ADDRESS", ModelBuilderConfiguration.BOLD_FONT));
 
         pdfDocument.add(table);
         pdfDocument.add(modelBuilderHelper.newSectionSeparator());
 
         table = new PdfPTable(2);
-        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
 
         ApplicationAddress address = application.getAddress();
         table.addCell(modelBuilderHelper.newTableCell("Current Address", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
@@ -483,9 +482,9 @@ public class ModelBuilder {
         pdfDocument.add(table);
     }
 
-    private void addQualificationSection(final Application application, Document pdfDocument) throws DocumentException {
+    private void addQualificationSection(Application application, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
         table.addCell(modelBuilderHelper.newColoredTableCell("QUALIFICATIONS", ModelBuilderConfiguration.BOLD_FONT));
 
         pdfDocument.add(table);
@@ -493,7 +492,7 @@ public class ModelBuilder {
 
         if (application.getQualifications().isEmpty()) {
             table = new PdfPTable(2);
-            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
             table.addCell(modelBuilderHelper.newTableCell("Qualification", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
             table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
             pdfDocument.add(table);
@@ -501,7 +500,7 @@ public class ModelBuilder {
             int counter = 1;
             for (ApplicationQualification qualification : application.getQualifications()) {
                 table = new PdfPTable(2);
-                table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+                table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
                 PdfPCell headerCell = modelBuilderHelper.newTableCell("Qualification (" + counter++ + ")", ModelBuilderConfiguration.MEDIUM_BOLD_FONT);
                 headerCell.setColspan(2);
                 table.addCell(headerCell);
@@ -564,9 +563,9 @@ public class ModelBuilder {
         }
     }
 
-    private void addEmploymentSection(final Application application, Document pdfDocument) throws DocumentException {
+    private void addEmploymentSection(Application application, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
         table.addCell(modelBuilderHelper.newColoredTableCell("EMPLOYMENT", ModelBuilderConfiguration.BOLD_FONT));
 
         pdfDocument.add(table);
@@ -574,7 +573,7 @@ public class ModelBuilder {
 
         if (application.getEmploymentPositions().isEmpty()) {
             table = new PdfPTable(2);
-            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
             table.addCell(modelBuilderHelper.newTableCell("Position", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
             table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
             pdfDocument.add(table);
@@ -582,7 +581,7 @@ public class ModelBuilder {
             int counter = 1;
             for (ApplicationEmploymentPosition position : application.getEmploymentPositions()) {
                 table = new PdfPTable(2);
-                table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+                table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
                 PdfPCell headerCell = modelBuilderHelper.newTableCell("Position (" + counter++ + ")", ModelBuilderConfiguration.MEDIUM_BOLD_FONT);
                 headerCell.setColspan(2);
                 table.addCell(headerCell);
@@ -625,9 +624,9 @@ public class ModelBuilder {
         }
     }
 
-    private void addFundingSection(final Application application, Document pdfDocument) throws DocumentException {
+    private void addFundingSection(Application application, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
         table.addCell(modelBuilderHelper.newColoredTableCell("FUNDING", ModelBuilderConfiguration.BOLD_FONT));
 
         pdfDocument.add(table);
@@ -635,7 +634,7 @@ public class ModelBuilder {
 
         if (application.getFundings().isEmpty()) {
             table = new PdfPTable(2);
-            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
             table.addCell(modelBuilderHelper.newTableCell("Funding", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
             table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
             pdfDocument.add(table);
@@ -643,7 +642,7 @@ public class ModelBuilder {
             int counter = 1;
             for (ApplicationFunding funding : application.getFundings()) {
                 table = new PdfPTable(2);
-                table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+                table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
                 PdfPCell headerCell = modelBuilderHelper.newTableCell("Funding (" + counter++ + ")", ModelBuilderConfiguration.MEDIUM_BOLD_FONT);
                 headerCell.setColspan(2);
                 table.addCell(headerCell);
@@ -667,9 +666,9 @@ public class ModelBuilder {
         }
     }
 
-    private void addReferencesSection(final Application application, Document pdfDocument) throws DocumentException {
+    private void addReferencesSection(Application application, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
         table.addCell(modelBuilderHelper.newColoredTableCell("REFERENCES", ModelBuilderConfiguration.BOLD_FONT));
 
         pdfDocument.add(table);
@@ -677,7 +676,7 @@ public class ModelBuilder {
 
         if (application.getReferees().isEmpty()) {
             table = new PdfPTable(2);
-            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
             table.addCell(modelBuilderHelper.newTableCell("Reference", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
             table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
             pdfDocument.add(table);
@@ -685,7 +684,7 @@ public class ModelBuilder {
             int counter = 1;
             for (ApplicationReferee referee : application.getReferees()) {
                 table = new PdfPTable(2);
-                table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+                table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
                 PdfPCell headerCell = modelBuilderHelper.newTableCell("Reference (" + counter++ + ")", ModelBuilderConfiguration.MEDIUM_BOLD_FONT);
                 headerCell.setColspan(2);
                 table.addCell(headerCell);
@@ -731,16 +730,16 @@ public class ModelBuilder {
         }
     }
 
-    private void addDocumentsSection(final Application application, Document pdfDocument) throws DocumentException {
+    private void addDocumentsSection(Application application, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
         table.addCell(modelBuilderHelper.newColoredTableCell("DOCUMENTS", ModelBuilderConfiguration.BOLD_FONT));
 
         pdfDocument.add(table);
         pdfDocument.add(modelBuilderHelper.newSectionSeparator());
 
         table = new PdfPTable(2);
-        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
 
         ApplicationDocument documents = application.getDocument();
 
@@ -750,10 +749,10 @@ public class ModelBuilder {
         pdfDocument.add(table);
     }
 
-    private void addAdditionalInformationSection(final Application application, Document pdfDocument) throws DocumentException {
+    private void addAdditionalInformationSection(Application application, Document pdfDocument) throws DocumentException {
         if (applicationDownloadDTO.isIncludeEqualOpportunitiesData()) {
             PdfPTable table = new PdfPTable(1);
-            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
             table.addCell(modelBuilderHelper.newColoredTableCell("ADDITIONAL INFORMATION", ModelBuilderConfiguration.BOLD_FONT));
 
             pdfDocument.add(table);
@@ -761,7 +760,7 @@ public class ModelBuilder {
 
             ApplicationAdditionalInformation additionalInformation = application.getAdditionalInformation();
             table = new PdfPTable(2);
-            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
             table.addCell(modelBuilderHelper.newTableCell("Do you have any unspent Criminial Convictions?", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
             if (additionalInformation == null) {
                 table.addCell(modelBuilderHelper.newTableCell(notProvided, ModelBuilderConfiguration.MEDIUM_GREY_FONT));
@@ -779,7 +778,7 @@ public class ModelBuilder {
         }
     }
 
-    private void addSupportingDocuments(final Application application, final Document pdfDocument, final PdfWriter pdfWriter) throws DocumentException {
+    private void addSupportingDocuments(Application application, Document pdfDocument, PdfWriter pdfWriter) throws DocumentException {
         if (applicationDownloadDTO.isIncludeAttachments()) {
             for (Integer i = 0; i < bookmarks.size(); i++) {
                 pdfDocument.newPage();
@@ -825,13 +824,13 @@ public class ModelBuilder {
                         pdfDocument.add(modelBuilderHelper.newSectionSeparator());
 
                         PdfPTable table = new PdfPTable(1);
-                        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+                        table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
                         table.addCell(modelBuilderHelper.newColoredTableCell("REFERENCE", ModelBuilderConfiguration.BOLD_FONT));
                         pdfDocument.add(table);
                         pdfDocument.add(modelBuilderHelper.newSectionSeparator());
 
                         table = new PdfPTable(2);
-                        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+                        table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
                         table.addCell(modelBuilderHelper.newTableCell("Referee", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
                         table.addCell(modelBuilderHelper.newTableCell(reference.getUser().getFirstName() + " " + reference.getUser().getLastName(),
                                 ModelBuilderConfiguration.MEDIUM_FONT));
@@ -866,7 +865,7 @@ public class ModelBuilder {
         }
     }
 
-    private void readPdf(final Document pdfDocument, final com.zuehlke.pgadmissions.domain.Document document, final PdfWriter pdfWriter) throws IOException {
+    private void readPdf(Document pdfDocument, com.zuehlke.pgadmissions.domain.Document document, PdfWriter pdfWriter) throws IOException {
         PdfReader pdfReader = new PdfReader(document.getContent());
         PdfContentByte cb = pdfWriter.getDirectContent();
         for (int i = 1; i <= pdfReader.getNumberOfPages(); i++) {
@@ -880,14 +879,14 @@ public class ModelBuilder {
         }
     }
 
-    private void addClosingDateToTable(PdfPTable table, final Application application) {
+    private void addClosingDateToTable(PdfPTable table, Application application) {
         table.addCell(modelBuilderHelper.newTableCell("Closing date", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
         LocalDate closingDate = application.getClosingDate();
         table.addCell(modelBuilderHelper.newTableCell(closingDate == null ? notRequired : closingDate.toString(dateFormat),
                 ModelBuilderConfiguration.MEDIUM_FONT));
     }
 
-    private void addProjectTitleToTable(PdfPTable table, final Application application) {
+    private void addProjectTitleToTable(PdfPTable table, Application application) {
         table.addCell(modelBuilderHelper.newTableCell("Project", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
         String projectTitle;
         if (application.getProject() == null) {
@@ -1010,7 +1009,7 @@ public class ModelBuilder {
             this.applyHeaderFooter = applyHeader;
         }
 
-        public final void setApplication(Application application) {
+        public void setApplication(Application application) {
             this.application = application;
         }
 

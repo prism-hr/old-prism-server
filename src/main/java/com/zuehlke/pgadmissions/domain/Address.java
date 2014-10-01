@@ -100,25 +100,20 @@ public class Address {
     }
 
     public String getLocationString() {
-        return Joiner.on('\n').skipNulls().join(addressLine1, addressLine2, addressTown, addressRegion, addressCode);
+        return Joiner.on(", ").skipNulls()
+                .join(addressLine1, addressLine2, addressTown, addressRegion, addressCode, domicile == null ? null : domicile.getName());
     }
 
-    @Override
-    public String toString() {
-        String domicileName = domicile == null ? null : domicile.getName();
-        return Joiner.on('\n').skipNulls().join(getLocationString(), domicileName);
-    }
-    
     public Address withDomicile(Domicile domicile) {
         this.domicile = domicile;
         return this;
     }
-    
+
     public Address withLine1(String addressLine1) {
         this.addressLine1 = addressLine1;
         return this;
     }
-    
+
     public Address withLine2(String addressLine2) {
         this.addressLine2 = addressLine2;
         return this;
@@ -128,15 +123,15 @@ public class Address {
         this.addressTown = town;
         return this;
     }
-    
+
     public Address withRegion(String region) {
         this.addressRegion = region;
         return this;
     }
-    
+
     public Address withCode(String code) {
         this.addressCode = code;
         return this;
     }
-    
+
 }

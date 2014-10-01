@@ -118,11 +118,11 @@ public class ApplicationEmploymentPosition {
         this.employerAddress = employerAdress;
     }
 
-    public boolean isCurrent() {
+    public Boolean getCurrent() {
         return current;
     }
 
-    public void setCurrent(boolean current) {
+    public void setCurrent(Boolean current) {
         this.current = current;
     }
 
@@ -169,6 +169,18 @@ public class ApplicationEmploymentPosition {
     public ApplicationEmploymentPosition withEndDate(LocalDate endDate) {
         this.endDate = endDate;
         return this;
+    }
+    
+    public String getEmployerAddressLocation() {
+        return employerAddress == null ? null : employerAddress.getLocationString();
+    }
+    
+    public String getStartDate(String dateFormat) {
+        return startDate == null ? null : startDate.toString(dateFormat);
+    }
+    
+    public String getEndDate(String dateFormat) {
+        return endDate == null ? null : endDate.toString(dateFormat);
     }
 
 }

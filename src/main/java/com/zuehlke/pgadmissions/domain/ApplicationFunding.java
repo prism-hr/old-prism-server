@@ -136,5 +136,9 @@ public class ApplicationFunding {
         this.application = application;
         return this;
     }
+    
+    public String getAwardDate(String dateFormat) {
+        return awardDate == null ? null : awardDate.toString(dateFormat);
+    }
 
 }

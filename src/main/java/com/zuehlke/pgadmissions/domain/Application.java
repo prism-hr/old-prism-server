@@ -618,7 +618,31 @@ public class Application extends Resource {
         parentResources.add(institution);
         return parentResources;
     }
+    
+    public String getProgramTitle() {
+        return program == null ? null : program.getTitle();
+    }
+    
+    public String getProjectTitle() {
+        return project == null ? null : project.getTitle();
+    }
 
+    public String getSubmittedTimestamp(String dateFormat) {
+        return submittedTimestamp == null ? null : submittedTimestamp.toString(dateFormat);
+    }
+    
+    public String getClosingDate(String dateFormat) {
+        return closingDate == null ? null : closingDate.toString(dateFormat);
+    }
+    
+    public String getConfirmedStartDate(String dateFormat) {
+        return confirmedStartDate == null ? null : confirmedStartDate.toString(dateFormat);
+    }
+    
+    public String getRatingAverage() {
+        return applicationRatingAverage == null ? null : applicationRatingAverage.toPlainString();
+    }
+    
     @Override
     public ResourceSignature getResourceSignature() {
         List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();

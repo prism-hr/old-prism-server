@@ -117,4 +117,8 @@ public class ApplicationProgramDetail {
         return this;
     }
     
+    public String getStartDate(String dateFormat) {
+        return startDate == null ? null : startDate.toString(dateFormat);
+    }
+    
 }

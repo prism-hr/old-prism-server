@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TimeZone;
@@ -901,6 +903,10 @@ public class Comment {
         StateGroup previousStateGroup = state.getStateGroup();
         StateGroup currentStateGroup = transitionState.getStateGroup();
         return action.isTransitionAction() && (previousStateGroup.getId() != currentStateGroup.getId() || previousStateGroup.isRepeatable());
+    }
+
+    public String getRating() {
+        return applicationRating == null ? null : new BigDecimal(applicationRating).setScale(2, RoundingMode.HALF_UP).toPlainString();
     }
 
 }

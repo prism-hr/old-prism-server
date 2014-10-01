@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.ImportedEntityInstitution;
+import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.Institution;
 @Component
 public class ApplicationCopyHelper {
@@ -109,7 +109,7 @@ public class ApplicationCopyHelper {
         to.setPosition(from.getPosition());
         to.setRemit(from.getRemit());
         to.setStartDate(from.getStartDate());
-        to.setCurrent(from.isCurrent());
+        to.setCurrent(from.getCurrent());
         to.setEndDate(from.getEndDate());
         to.setEmployerAddress(copyAddress(toInstitution, from.getEmployerAddress()));
     }
@@ -136,11 +136,11 @@ public class ApplicationCopyHelper {
         to.setCountry(getEnabledImportedObject(toInstitution, from.getCountry()));
         to.setFirstNationality(getEnabledImportedObject(toInstitution, from.getFirstNationality()));
         to.setSecondNationality(getEnabledImportedObject(toInstitution, from.getSecondNationality()));
-        to.setFirstLanguageEnglish(from.getFirstLanguageEnglish());
-        to.setResidenceCountry(getEnabledImportedObject(toInstitution, from.getResidenceCountry()));
+        to.setFirstLanguageLocale(from.getFirstLanguageLocale());
+        to.setDomicile(getEnabledImportedObject(toInstitution, from.getDomicile()));
         to.setVisaRequired(from.getVisaRequired());
-        to.setPhoneNumber(from.getPhoneNumber());
-        to.setMessenger(from.getMessenger());
+        to.setPhone(from.getPhone());
+        to.setSkype(from.getSkype());
         to.setEthnicity(getEnabledImportedObject(toInstitution, from.getEthnicity()));
         to.setDisability(getEnabledImportedObject(toInstitution, from.getDisability()));
         to.setLanguageQualification(copyLanguageQualification(toInstitution, from.getLanguageQualification()));
@@ -212,7 +212,7 @@ public class ApplicationCopyHelper {
         return to;
     }
 
-    private <T extends ImportedEntityInstitution> T getEnabledImportedObject(Institution toInstitution, T fromEntity) {
+    private <T extends ImportedEntity> T getEnabledImportedObject(Institution toInstitution, T fromEntity) {
         if (fromEntity == null || (fromEntity.isEnabled() && fromEntity.getInstitution() == toInstitution)) {
             return fromEntity;
         }

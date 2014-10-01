@@ -70,7 +70,7 @@ public class ModelBuilder {
     @Value("${xml.export.not.required}")
     public String notRequired;
 
-    @Value("${xml.export.date.applicationat}")
+    @Value("${xml.export.date.format}")
     public String dateFormat;
 
     @Value("${xml.export.logo.file.location}")

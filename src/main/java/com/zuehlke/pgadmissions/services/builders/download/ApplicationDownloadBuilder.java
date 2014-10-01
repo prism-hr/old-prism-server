@@ -1,15 +1,11 @@
 package com.zuehlke.pgadmissions.services.builders.download;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +48,8 @@ import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
-import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
 import com.zuehlke.pgadmissions.utils.ConversionUtils;
@@ -67,20 +60,20 @@ public class ApplicationDownloadBuilder {
 
     private static Logger LOGGER = LoggerFactory.getLogger(ApplicationDownloadBuilder.class);
 
+    @Value("${xml.export.logo.file.width.percentage}")
+    private Float logoFileWidthPercentage;
+
     @Value("${xml.export.provided}")
-    public String provided;
+    private String provided;
 
     @Value("${xml.export.not.provided}")
-    public String notProvided;
+    private String notProvided;
 
     @Value("${xml.export.not.submitted}")
-    public String notSubmitted;
+    private String notSubmitted;
 
     @Value("${xml.export.date.format}")
-    public String dateFormat;
-    
-    @Value("${xml.export.logo.file.width.percentage}")
-    public Float logoFileWidthPercentage;
+    private String dateFormat;
 
     @Autowired
     private ImportedEntityService importedEntityService;
@@ -111,18 +104,10 @@ public class ApplicationDownloadBuilder {
             throw new PdfDocumentBuilderException(e.getMessage(), e);
         }
     }
-    
-    public void addContentRowSmall(String title, String content, PdfPTable table) {
-        addContentRow(title, content, ApplicationDownloadBuilderFontSize.SMALL, table);
-    }
-
-    public void addContentRowMedium(String title, String content, PdfPTable table) {
-        addContentRow(title, content, ApplicationDownloadBuilderFontSize.MEDIUM, table);
-    }
 
     private void addCoverPage(Application application, Document pdfDocument, PdfWriter writer) throws MalformedURLException, IOException, DocumentException {
         pdfDocument.newPage();
-        
+
         Image logoImage = applicationDownloadBuilderHelper.newLogoImage();
         logoImage.setAbsolutePosition(pdfDocument.right() - logoImage.getWidth() * 0.5f, pdfDocument.top() + 20f);
         pdfDocument.add(logoImage);
@@ -133,18 +118,18 @@ public class ApplicationDownloadBuilder {
         pdfDocument.add(applicationDownloadBuilderHelper.newSectionSeparator());
         pdfDocument.add(applicationDownloadBuilderHelper.newSectionSeparator());
 
-        PdfPTable body = startSection(pdfDocument, "Application");
+        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, "Application");
 
-        addContentRowMedium("Applicant", application.getUser().getDisplayName(), body);
-        addContentRowMedium("Applicant Rating", application.getRatingAverage(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Applicant", application.getUser().getDisplayName(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Applicant Rating", application.getRatingAverage(), body);
         addApplicationSummaryExtended(application, body, ApplicationDownloadBuilderFontSize.MEDIUM);
 
-        closeSection(pdfDocument, body);
+        applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         pdfDocument.newPage();
     }
 
     private void addProgramSection(Application application, Document pdfDocument) throws DocumentException {
-        PdfPTable body = startSection(pdfDocument, "Program Detail");
+        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, "Program Detail");
         addApplicationSummary(application, body, ApplicationDownloadBuilderFontSize.MEDIUM);
 
         ApplicationProgramDetail programDetail = application.getProgramDetail();
@@ -153,85 +138,92 @@ public class ApplicationDownloadBuilder {
         String tentativeStartDate = programDetailNull ? null : programDetail.getStartDate(dateFormat);
         String confirmedStartDate = programDetailNull ? null : application.getConfirmedStartDate(dateFormat);
 
-        addContentRowMedium(confirmedStartDate == null ? "Start Date" : "Confirmed Start Date", confirmedStartDate == null ? tentativeStartDate
-                : confirmedStartDate, body);
-        addContentRowMedium("How did you find us?", programDetailNull ? null : importedEntityService.getName(programDetail.getReferralSource()), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(confirmedStartDate == null ? "Start Date" : "Confirmed Start Date",
+                confirmedStartDate == null ? tentativeStartDate : confirmedStartDate, body);
+        applicationDownloadBuilderHelper.addContentRowMedium("How did you find us?",
+                programDetailNull ? null : importedEntityService.getName(programDetail.getReferralSource()), body);
 
-        closeSection(pdfDocument, body);
+        applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
     }
 
     private void addSupervisorSection(Application application, Document pdfDocument) throws DocumentException {
-        PdfPTable body = startSection(pdfDocument, "Supervisors");
+        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, "Supervisors");
         Set<ApplicationSupervisor> supervisors = application.getSupervisors();
 
         if (supervisors.isEmpty()) {
-            addContentRow("Supervisor", null, ApplicationDownloadBuilderFontSize.MEDIUM, body);
-            closeSection(pdfDocument, body);
+            applicationDownloadBuilderHelper.addContentRowMedium("Supervisor", null, body);
+            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else {
-            closeSection(pdfDocument, body);
+            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
 
             int counter = 1;
             for (ApplicationSupervisor supervisor : supervisors) {
-                PdfPTable subBody = startSubection(pdfDocument, "Supervisor (" + counter++ + ")");
+                PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument, "Supervisor (" + counter++ + ")");
 
-                addContentRowMedium("Supervisor First Name", supervisor.getUser().getFirstName(), subBody);
-                addContentRowMedium("Supervisor Last Name", supervisor.getUser().getLastName(), subBody);
-                addContentRowMedium("Supervisor Email", supervisor.getUser().getEmail(), subBody);
-                addContentRowMedium("Is this supervisor aware of your application?",
+                applicationDownloadBuilderHelper.addContentRowMedium("Supervisor First Name", supervisor.getUser().getFirstName(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Supervisor Last Name", supervisor.getUser().getLastName(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Supervisor Email", supervisor.getUser().getEmail(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Is this supervisor aware of your application?",
                         ConversionUtils.booleanToString(supervisor.getAcceptedSupervision(), "Yes", "No"), subBody);
 
-                closeSection(pdfDocument, body);
+                applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
             }
         }
     }
 
     private void addPersonalDetailSection(ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument) throws DocumentException {
-        PdfPTable body = startSection(pdfDocument, "Applicant Detail");
+        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, "Applicant Detail");
         Application application = applicationDownloadDTO.getApplication();
 
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         boolean personalDetailNull = personalDetail == null;
 
-        addContentRowMedium("Title", personalDetailNull ? null : importedEntityService.getName(personalDetail.getTitle()), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Title", personalDetailNull ? null : importedEntityService.getName(personalDetail.getTitle()),
+                body);
 
         User applicationCreator = application.getUser();
 
-        addContentRowMedium("First Name", applicationCreator.getFirstName(), body);
-        addContentRowMedium("First Name 2", applicationCreator.getFirstName2(), body);
-        addContentRowMedium("First Name 3", applicationCreator.getFirstName3(), body);
-        addContentRowMedium("Last Name", applicationCreator.getLastName(), body);
-        addContentRowMedium("Email", applicationCreator.getEmail(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("First Name", applicationCreator.getFirstName(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("First Name 2", applicationCreator.getFirstName2(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("First Name 3", applicationCreator.getFirstName3(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Last Name", applicationCreator.getLastName(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Email", applicationCreator.getEmail(), body);
 
-        addContentRowMedium("Telephone Number", personalDetail.getPhone(), body);
-        addContentRowMedium("Skype", personalDetailNull ? null : personalDetail.getSkype(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Telephone Number", personalDetail.getPhone(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Skype", personalDetailNull ? null : personalDetail.getSkype(), body);
 
-        addContentRowMedium("Gender", personalDetailNull ? null : importedEntityService.getName(personalDetail.getGender()), body);
-        addContentRowMedium("Date of Birth", personalDetailNull ? null : personalDetail.getDateOfBirth(dateFormat), body);
-        addContentRowMedium("Country of Birth", personalDetailNull ? null : importedEntityService.getName(personalDetail.getCountry()), body);
-        addContentRowMedium("Country of Domicile", personalDetailNull ? null : importedEntityService.getName(personalDetail.getDomicile()), body);
-        addContentRowMedium("Nationality", personalDetailNull ? null : personalDetail.getNationalities(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Gender", personalDetailNull ? null : importedEntityService.getName(personalDetail.getGender()),
+                body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Date of Birth", personalDetailNull ? null : personalDetail.getDateOfBirth(dateFormat), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Country of Birth",
+                personalDetailNull ? null : importedEntityService.getName(personalDetail.getCountry()), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Country of Domicile",
+                personalDetailNull ? null : importedEntityService.getName(personalDetail.getDomicile()), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Nationality", personalDetailNull ? null : personalDetail.getNationalities(), body);
 
         if (applicationDownloadDTO.isIncludeEqualOpportunitiesData()) {
-            addContentRowMedium("Ethnicity", personalDetailNull ? null : importedEntityService.getName(personalDetail.getEthnicity()), body);
-            addContentRowMedium("Disability", personalDetailNull ? null : importedEntityService.getName(personalDetail.getDisability()), body);
+            applicationDownloadBuilderHelper.addContentRowMedium("Ethnicity",
+                    personalDetailNull ? null : importedEntityService.getName(personalDetail.getEthnicity()), body);
+            applicationDownloadBuilderHelper.addContentRowMedium("Disability",
+                    personalDetailNull ? null : importedEntityService.getName(personalDetail.getDisability()), body);
         }
 
-        addContentRowMedium("Do you Require a Visa to Study in the UK?",
+        applicationDownloadBuilderHelper.addContentRowMedium("Do you Require a Visa to Study in the UK?",
                 ConversionUtils.booleanToString(personalDetail == null ? false : personalDetail.getVisaRequired(), "Yes", "No"), body);
 
         boolean passportAvailable = personalDetailNull ? false : personalDetail.getPassportAvailable();
 
-        addContentRowMedium("Do you have a passport?", ConversionUtils.booleanToString(passportAvailable, "Yes", "No"), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Do you have a passport?", ConversionUtils.booleanToString(passportAvailable, "Yes", "No"), body);
 
-        addContentRowMedium("Is the specified language of work your first language?",
-                personalDetailNull ? null : ConversionUtils.booleanToString(personalDetail.getFirstLanguageLocale(), "Yes", "No"), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Is the specified language of work your first language?", personalDetailNull ? null
+                : ConversionUtils.booleanToString(personalDetail.getFirstLanguageLocale(), "Yes", "No"), body);
 
         boolean languageQualificationAvailable = personalDetailNull ? false : personalDetail.getLanguageQualificationAvailable();
 
-        addContentRowMedium("Do you have a language qualification?",
+        applicationDownloadBuilderHelper.addContentRowMedium("Do you have a language qualification?",
                 personalDetailNull ? null : ConversionUtils.booleanToString(languageQualificationAvailable, "Yes", "No"), body);
 
-        closeSection(pdfDocument, body);
+        applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
 
         if (passportAvailable) {
             addPassport(pdfDocument, personalDetail.getPassport());
@@ -243,153 +235,159 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addPassport(Document pdfDocument, ApplicationPassport passport) throws DocumentException {
-        PdfPTable body = startSection(pdfDocument, "Passport");
+        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, "Passport");
 
-        addContentRowMedium("Passport Number", passport.getNumber(), body);
-        addContentRowMedium("Name on Passport", passport.getName(), body);
-        addContentRowMedium("Passport Issue Date", passport.getIssueDate(dateFormat), body);
-        addContentRowMedium("Passport Expiry Date", passport.getExipryDate(dateFormat), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Passport Number", passport.getNumber(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Name on Passport", passport.getName(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Passport Issue Date", passport.getIssueDate(dateFormat), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Passport Expiry Date", passport.getExipryDate(dateFormat), body);
 
-        closeSection(pdfDocument, body);
+        applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
     }
 
     private void addLanquageQualification(Document pdfDocument, ApplicationDownloadDTO applicationDownloadDTO,
             ApplicationLanguageQualification languageQualification) throws DocumentException {
-        PdfPTable body = startSection(pdfDocument, "Language Qualification");
+        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, "Language Qualification");
 
-        addContentRowMedium("Qualification Type", importedEntityService.getName(languageQualification.getType()), body);
-        addContentRowMedium("Date of Examination", languageQualification.getExamDate(dateFormat), body);
-        addContentRowMedium("Overall Score", languageQualification.getOverallScore(), body);
-        addContentRowMedium("Reading Score", languageQualification.getReadingScore(), body);
-        addContentRowMedium("Essay/Writing Score", languageQualification.getWritingScore(), body);
-        addContentRowMedium("Speaking Score", languageQualification.getSpeakingScore(), body);
-        addContentRowMedium("Listening Score", languageQualification.getListeningScore(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Qualification Type", importedEntityService.getName(languageQualification.getType()), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Date of Examination", languageQualification.getExamDate(dateFormat), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Overall Score", languageQualification.getOverallScore(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Reading Score", languageQualification.getReadingScore(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Essay/Writing Score", languageQualification.getWritingScore(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Speaking Score", languageQualification.getSpeakingScore(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Listening Score", languageQualification.getListeningScore(), body);
         addDocument(body, "Proof of Award", languageQualification.getDocument(), applicationDownloadDTO.isIncludeAttachments());
 
-        closeSection(pdfDocument, body);
+        applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
     }
 
     private void addAddressSection(Application application, Document pdfDocument) throws DocumentException {
-        PdfPTable body = startSection(pdfDocument, "Address Detail");  
+        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, "Address Detail");
         ApplicationAddress address = application.getAddress();
-        
-        addContentRowMedium("Current Address", address == null ? null : address.getCurrentAddressLocation(), body);
-        addContentRowMedium("Contact Address", address == null ? null : address.getConcatAddressLocation(), body);
-        
-        closeSection(pdfDocument, body);
+
+        applicationDownloadBuilderHelper.addContentRowMedium("Current Address", address == null ? null : address.getCurrentAddressLocation(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium("Contact Address", address == null ? null : address.getConcatAddressLocation(), body);
+
+        applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
     }
 
     private void addQualificationSection(ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument) throws DocumentException {
-        PdfPTable body = startSection(pdfDocument, "Qualifications");
+        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, "Qualifications");
         Set<ApplicationQualification> qualifications = applicationDownloadDTO.getApplication().getQualifications();
-        
+
         if (qualifications.isEmpty()) {
-            addContentRowMedium("Qualification", null, body);
-            closeSection(pdfDocument, body);
+            applicationDownloadBuilderHelper.addContentRowMedium("Qualification", null, body);
+            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else {
-            closeSection(pdfDocument, body);
-            
+            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
+
             int counter = 1;
             for (ApplicationQualification qualification : qualifications) {
-                PdfPTable subBody = startSubection(pdfDocument, "Qualification (" + counter++ + ")");
-                
+                PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument, "Qualification (" + counter++ + ")");
+
                 ImportedInstitution institution = qualification.getInstitution();
-                
-                addContentRowMedium("Institution Country", institution == null ? null : importedEntityService.getName(institution.getDomicile()), subBody);
-                addContentRowMedium("Institution/Provider Name", importedEntityService.getName(institution), subBody);
-                addContentRowMedium("Qualification Type", importedEntityService.getName(qualification.getType()), subBody);
-                addContentRowMedium("Qualification Title", qualification.getTitle(), subBody);
-                addContentRowMedium("Qualification Subject", qualification.getSubject(), subBody);
-                addContentRowMedium("Language of Study", qualification.getLanguage(), subBody);
-                addContentRowMedium("Start Date", qualification.getStartDate(dateFormat), subBody);
+
+                applicationDownloadBuilderHelper.addContentRowMedium("Institution Country",
+                        institution == null ? null : importedEntityService.getName(institution.getDomicile()), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Institution/Provider Name", importedEntityService.getName(institution), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Qualification Type", importedEntityService.getName(qualification.getType()), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Qualification Title", qualification.getTitle(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Qualification Subject", qualification.getSubject(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Language of Study", qualification.getLanguage(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Start Date", qualification.getStartDate(dateFormat), subBody);
 
                 boolean completed = BooleanUtils.isTrue(qualification.getCompleted());
-                
-                addContentRowMedium("Has this Qualification been awarded", ConversionUtils.booleanToString(completed, "Yes", "No"), subBody);
-                addContentRowMedium(completed ? "Confirmed Grade/Result/GPA" : "Expected Grade/Result/GPA", qualification.getAwardDate(dateFormat), subBody);
-                addContentRowMedium(completed ? "Confirmed Award Date" : "Expected Award Date", qualification.getAwardDate(dateFormat), subBody);
-                addDocument(subBody, completed ? "Final Transcript" : "Interim Transcript", qualification.getDocument(), applicationDownloadDTO.isIncludeAttachments());
 
-                closeSection(pdfDocument, subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Has this Qualification been awarded",
+                        ConversionUtils.booleanToString(completed, "Yes", "No"), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(completed ? "Confirmed Grade/Result/GPA" : "Expected Grade/Result/GPA",
+                        qualification.getAwardDate(dateFormat), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(completed ? "Confirmed Award Date" : "Expected Award Date",
+                        qualification.getAwardDate(dateFormat), subBody);
+                addDocument(subBody, completed ? "Final Transcript" : "Interim Transcript", qualification.getDocument(),
+                        applicationDownloadDTO.isIncludeAttachments());
+
+                applicationDownloadBuilderHelper.closeSection(pdfDocument, subBody);
             }
         }
     }
 
     private void addEmploymentSection(Application application, Document pdfDocument) throws DocumentException {
-        PdfPTable body = startSection(pdfDocument, "Employment Positions");
+        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, "Employment Positions");
         Set<ApplicationEmploymentPosition> positions = application.getEmploymentPositions();
 
         if (positions.isEmpty()) {
-            addContentRowMedium("Position", null, body);
-            closeSection(pdfDocument, body);
+            applicationDownloadBuilderHelper.addContentRowMedium("Position", null, body);
+            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else {
-            closeSection(pdfDocument, body);
-            
+            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
+
             int counter = 1;
             for (ApplicationEmploymentPosition position : positions) {
-                PdfPTable subBody = startSubection(pdfDocument, "Position (" + counter++ + ")");
-                
-                addContentRowMedium("Employer Name", position.getEmployerName(), subBody);
-                addContentRowMedium("Employer Address", position.getEmployerAddressLocation(), subBody);
-                addContentRowMedium("Position Title", position.getPosition(), subBody);
-                addContentRowMedium("Position Remit", position.getRemit(), subBody);
-                addContentRowMedium("Start Date", position.getStartDate(dateFormat), subBody);
-                addContentRowMedium("Is this your Current Position", ConversionUtils.booleanToString(position.getCurrent(), "Yes", "No"), subBody);
-                addContentRowMedium("End Date", position.getEndDate(dateFormat), subBody);
+                PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument, "Position (" + counter++ + ")");
 
-                closeSection(pdfDocument, subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Employer Name", position.getEmployerName(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Employer Address", position.getEmployerAddressLocation(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Position Title", position.getPosition(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Position Remit", position.getRemit(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Start Date", position.getStartDate(dateFormat), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Is this your Current Position",
+                        ConversionUtils.booleanToString(position.getCurrent(), "Yes", "No"), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("End Date", position.getEndDate(dateFormat), subBody);
+
+                applicationDownloadBuilderHelper.closeSection(pdfDocument, subBody);
             }
         }
     }
 
     private void addFundingSection(ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument) throws DocumentException {
-        PdfPTable body = startSection(pdfDocument, "Funding Awards");
+        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, "Funding Awards");
         Set<ApplicationFunding> fundings = applicationDownloadDTO.getApplication().getFundings();
 
         if (fundings.isEmpty()) {
-            addContentRowMedium("Award", null, body);
-            closeSection(pdfDocument, body);
+            applicationDownloadBuilderHelper.addContentRowMedium("Award", null, body);
+            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else {
-            closeSection(pdfDocument, body);
-            
+            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
+
             int counter = 1;
             for (ApplicationFunding funding : fundings) {
-                PdfPTable subBody = startSubection(pdfDocument, "Award (" + counter++ + ")");
-                
-                addContentRowMedium("Award Type", importedEntityService.getName(funding.getFundingSource()), subBody);
-                addContentRowMedium("Award Description", funding.getDescription(), subBody);
-                addContentRowMedium("Award Value", funding.getValue(), subBody);
-                addContentRowMedium("Award Date", funding.getAwardDate(dateFormat), subBody);
+                PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument, "Award (" + counter++ + ")");
+
+                applicationDownloadBuilderHelper.addContentRowMedium("Award Type", importedEntityService.getName(funding.getFundingSource()), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Award Description", funding.getDescription(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Award Value", funding.getValue(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Award Date", funding.getAwardDate(dateFormat), subBody);
                 addDocument(subBody, "Proof of Award", funding.getDocument(), applicationDownloadDTO.isIncludeAttachments());
 
-                closeSection(pdfDocument, subBody);
+                applicationDownloadBuilderHelper.closeSection(pdfDocument, subBody);
             }
         }
     }
 
     private void addReferencesSection(ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument) throws DocumentException {
-        PdfPTable body = startSection(pdfDocument, "Referees");
+        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, "Referees");
         Set<ApplicationReferee> referees = applicationDownloadDTO.getApplication().getReferees();
 
         if (referees.isEmpty()) {
-            addContentRowMedium("Referee", null, body);
-            closeSection(pdfDocument, body);
+            applicationDownloadBuilderHelper.addContentRowMedium("Referee", null, body);
+            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else {
-            closeSection(pdfDocument, body);
-            
+            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
+
             int counter = 1;
             for (ApplicationReferee referee : referees) {
-                PdfPTable subBody = startSubection(pdfDocument, "Referee (" + counter++ + ")");
+                PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument, "Referee (" + counter++ + ")");
                 User user = referee.getUser();
-                
-                addContentRowMedium("First Name", user == null ? null : user.getFirstName(), subBody);
-                addContentRowMedium("Last Name", user == null ? null : user.getLastName(), subBody);
-                addContentRowMedium("Address", referee.getAddressLocation(), subBody);
-                addContentRowMedium("Email", user == null ? null :user.getEmail(), subBody);
-                addContentRowMedium("Telephone Number", referee.getPhoneNumber(), subBody);
-                addContentRowMedium("Skype", referee.getSkype(), subBody);
-                addContentRowMedium("Employer", referee.getJobEmployer(), subBody);
-                addContentRowMedium("Position Title", referee.getJobTitle(), subBody);
+
+                applicationDownloadBuilderHelper.addContentRowMedium("First Name", user == null ? null : user.getFirstName(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Last Name", user == null ? null : user.getLastName(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Address", referee.getAddressLocation(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Email", user == null ? null : user.getEmail(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Telephone Number", referee.getPhoneNumber(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Skype", referee.getSkype(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Employer", referee.getJobEmployer(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Position Title", referee.getJobTitle(), subBody);
 
                 if (applicationDownloadDTO.isIncludeReferences()) {
                     subBody.addCell(applicationDownloadBuilderHelper.newContentCellMedium("Reference"));
@@ -400,31 +398,32 @@ public class ApplicationDownloadBuilder {
                         addBookmark(subBody, referenceComment);
                     }
                 }
-                
-                closeSection(pdfDocument, subBody);
+
+                applicationDownloadBuilderHelper.closeSection(pdfDocument, subBody);
             }
         }
     }
 
     private void addDocumentsSection(ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument) throws DocumentException {
-        PdfPTable body = startSection(pdfDocument, "Documents");
+        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, "Documents");
         ApplicationDocument documents = applicationDownloadDTO.getApplication().getDocument();
 
         boolean includeAttachments = applicationDownloadDTO.isIncludeAttachments();
         addDocument(body, "Personal Statement", documents.getPersonalStatement(), includeAttachments);
         addDocument(body, "CV/Resume", documents.getCv(), includeAttachments);
 
-        closeSection(pdfDocument, body);
+        applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
     }
 
     private void addAdditionalInformationSection(ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument) throws DocumentException {
         if (applicationDownloadDTO.isIncludeEqualOpportunitiesData()) {
-            PdfPTable body = startSection(pdfDocument, "Additional Information");
+            PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, "Additional Information");
             ApplicationAdditionalInformation additionalInformation = applicationDownloadDTO.getApplication().getAdditionalInformation();
-            
-            addContentRowMedium("Unspent Criminal Convictions", additionalInformation == null ? null : additionalInformation.getConvictionsText(), body);
-            
-            closeSection(pdfDocument, body);
+
+            applicationDownloadBuilderHelper.addContentRowMedium("Unspent Criminal Convictions",
+                    additionalInformation == null ? null : additionalInformation.getConvictionsText(), body);
+
+            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         }
     }
 
@@ -435,12 +434,12 @@ public class ApplicationDownloadBuilder {
 
                 NewPageEvent pageEvent = (NewPageEvent) pdfWriter.getPageEvent();
                 pageEvent.setApplyHeaderFooter(true);
-                
+
                 Object object = bookmarks.get(i);
                 pdfDocument.add(new Chunk("APPENDIX (" + (i + 1) + ")").setLocalDestination(new Integer(i).toString()));
                 if (object.getClass().equals(com.zuehlke.pgadmissions.domain.Document.class)) {
                     com.zuehlke.pgadmissions.domain.Document document = (com.zuehlke.pgadmissions.domain.Document) object;
-                    
+
                     if (document != null) {
                         if (document.getApplicationLanguageQualification() != null) {
                             pdfDocument.add(new Chunk(" - Language Qualification Transcript"));
@@ -452,7 +451,7 @@ public class ApplicationDownloadBuilder {
                             pdfDocument.add(new Chunk(" - Personal Statement"));
                         } else if (document.getApplicationCv() != null) {
                             pdfDocument.add(new Chunk(" - CV/Resume"));
-                        } 
+                        }
 
                         try {
                             readPdf(pdfDocument, document, pdfWriter);
@@ -463,17 +462,19 @@ public class ApplicationDownloadBuilder {
                 } else if (object.getClass().equals(Comment.class)) {
                     Comment reference = (Comment) object;
                     pdfDocument.add(new Chunk(" - Reference"));
-                    
-                    pdfDocument.add(applicationDownloadBuilderHelper.newSectionSeparator());
-                    PdfPTable subBody = startSubection(pdfDocument, "Reference Comment");
-                    
-                    addContentRowMedium("Referee", reference.getUser().getDisplayName(), subBody);
-                    addContentRowMedium("Comment", reference.getContent(), subBody);
-                    addContentRowMedium("Rating", reference.getRating(), subBody);
-                    addContentRowMedium("Suitable for Recruiting Institution?", ConversionUtils.booleanToString(reference.getSuitableForInstitution(), "Yes", "No"), subBody);
-                    addContentRowMedium("Suitable for Recruiting Position?", ConversionUtils.booleanToString(reference.getSuitableForOpportunity(), "Yes", "No"), subBody);
 
-                    closeSection(pdfDocument, subBody);
+                    pdfDocument.add(applicationDownloadBuilderHelper.newSectionSeparator());
+                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument, "Reference Comment");
+
+                    applicationDownloadBuilderHelper.addContentRowMedium("Referee", reference.getUser().getDisplayName(), subBody);
+                    applicationDownloadBuilderHelper.addContentRowMedium("Comment", reference.getContent(), subBody);
+                    applicationDownloadBuilderHelper.addContentRowMedium("Rating", reference.getRating(), subBody);
+                    applicationDownloadBuilderHelper.addContentRowMedium("Suitable for Recruiting Institution?",
+                            ConversionUtils.booleanToString(reference.getSuitableForInstitution(), "Yes", "No"), subBody);
+                    applicationDownloadBuilderHelper.addContentRowMedium("Suitable for Recruiting Position?",
+                            ConversionUtils.booleanToString(reference.getSuitableForOpportunity(), "Yes", "No"), subBody);
+
+                    applicationDownloadBuilderHelper.closeSection(pdfDocument, subBody);
                     for (com.zuehlke.pgadmissions.domain.Document document : reference.getDocuments()) {
                         try {
                             readPdf(pdfDocument, document, pdfWriter);
@@ -499,48 +500,25 @@ public class ApplicationDownloadBuilder {
             pdfDocument.setPageSize(PageSize.A4);
         }
     }
-    
-    private PdfPTable startSection(Document pdfDocument, String title) throws DocumentException {
-        pdfDocument.add(applicationDownloadBuilderHelper.newSectionHeader(title));
-        pdfDocument.add(applicationDownloadBuilderHelper.newSectionSeparator());
-        return applicationDownloadBuilderHelper.newSectionBody();
-    }
 
-    private PdfPTable startSubection(Document pdfDocument, String title) throws DocumentException {
-        PdfPTable subBody = applicationDownloadBuilderHelper.newSectionBody();
-        PdfPCell header = new PdfPCell(applicationDownloadBuilderHelper.newSubsectionHeader(title));
-        header.setColspan(2);
-        subBody.addCell(header);
-        return subBody;
-    }
-
-    private void addApplicationSummary(Application application, PdfPTable table, ApplicationDownloadBuilderFontSize fontSize) {
-        addContentRow("Program", application.getProgramTitle(), fontSize, table);
-        addContentRow("Project", application.getProjectTitle(), fontSize, table);
+    public void addApplicationSummary(Application application, PdfPTable table, ApplicationDownloadBuilderFontSize fontSize) {
+        applicationDownloadBuilderHelper.addContentRow("Program", application.getProgramTitle(), fontSize, table);
+        applicationDownloadBuilderHelper.addContentRow("Project", application.getProjectTitle(), fontSize, table);
 
         ApplicationProgramDetail programDetail = application.getProgramDetail();
-        addContentRow("Study Option", programDetail == null ? null : importedEntityService.getName(programDetail.getStudyOption()), fontSize, table);
+        applicationDownloadBuilderHelper.addContentRow("Study Option",
+                programDetail == null ? null : importedEntityService.getName(programDetail.getStudyOption()), fontSize, table);
     }
 
-    private void addApplicationSummaryExtended(Application application, PdfPTable table, ApplicationDownloadBuilderFontSize fontSize) {
+    public void addApplicationSummaryExtended(Application application, PdfPTable table, ApplicationDownloadBuilderFontSize fontSize) {
         addApplicationSummary(application, table, fontSize);
 
-        addContentRow("Application Code", application.getCode(), fontSize, table);
-        addContentRow("Application Closing Date", application.getClosingDate(dateFormat), fontSize, table);
-        addContentRow("Application Submission Date", application.getSubmittedTimestamp(dateFormat), fontSize, table);
+        applicationDownloadBuilderHelper.addContentRow("Application Code", application.getCode(), fontSize, table);
+        applicationDownloadBuilderHelper.addContentRow("Application Closing Date", application.getClosingDate(dateFormat), fontSize, table);
+        applicationDownloadBuilderHelper.addContentRow("Application Submission Date", application.getSubmittedTimestamp(dateFormat), fontSize, table);
     }
 
-    private void addContentRow(String title, String content, ApplicationDownloadBuilderFontSize fontSize, PdfPTable table) {
-        String fontSizePostfix = WordUtils.capitalizeFully(fontSize.name());
-        try {
-            table.addCell((PdfPCell) MethodUtils.invokeExactMethod(applicationDownloadBuilderHelper, "newTitleCell" + fontSizePostfix, title));
-            table.addCell((PdfPCell) MethodUtils.invokeExactMethod(applicationDownloadBuilderHelper, "newContentCell" + fontSizePostfix, content));
-        } catch (Exception e) {
-            LOGGER.error("No such helper method", e);
-        }
-    }
-
-    private void addDocument(PdfPTable table, String rowTitle, com.zuehlke.pgadmissions.domain.Document document, boolean includeAttachments) {
+    public void addDocument(PdfPTable table, String rowTitle, com.zuehlke.pgadmissions.domain.Document document, boolean includeAttachments) {
         applicationDownloadBuilderHelper.newTitleCellLarge(rowTitle);
         if (includeAttachments) {
             if (document == null) {
@@ -557,108 +535,6 @@ public class ApplicationDownloadBuilder {
         int index = bookmarks.size();
         table.addCell(applicationDownloadBuilderHelper.newBookmarkCellMedium("See APPENDIX(" + (index + 1) + ")", index));
         bookmarks.add(object);
-    }
-
-    private void closeSection(Document pdfDocument, PdfPTable body) throws DocumentException {
-        pdfDocument.add(body);
-        pdfDocument.add(applicationDownloadBuilderHelper.newSectionSeparator());
-    }
-
-    @Component
-    @Scope("prototype")
-    public class ApplicationDownloadAlternativeQualificationBuilder {
-
-        @Value("${xml.export.not.provided}")
-        String notProvided;
-
-        @Value("${xml.export.system.qualification}")
-        String alternativeQualification;
-
-        @Autowired
-        private CommentService commentService;
-
-        @Autowired
-        private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
-
-        public byte[] build(final Application application) {
-            try {
-                Document exportDocument = new Document(PageSize.A4, 50, 50, 100, 50);
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                PdfWriter.getInstance(exportDocument, outputStream);
-                exportDocument.open();
-
-                PdfPTable table = new PdfPTable(1);
-                table.setWidthPercentage(ApplicationDownloadBuilderConfiguration.PAGE_WIDTH);
-                table.addCell(applicationDownloadBuilderHelper.newSectionHeader("No Transcripts Provided"));
-                exportDocument.add(table);
-                exportDocument.add(applicationDownloadBuilderHelper.newSectionSeparator());
-
-                Comment approvalComment = commentService.getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
-                exportDocument.add(applicationDownloadBuilderHelper.newContentCellMedium("Comment: "
-                        + (approvalComment == null ? notProvided : alternativeQualification)));
-
-                exportDocument.close();
-                return outputStream.toByteArray();
-            } catch (Exception e) {
-                throw new PdfDocumentBuilderException(e);
-            }
-        }
-
-    }
-
-    @Component
-    @Scope("prototype")
-    public class ApplicationDownloadReferenceBuilder {
-
-        @Value("${xml.export.system.reference}")
-        private String noReferenceExplanation;
-
-        @Autowired
-        ApplicationDownloadBuilderHelper applicationModelBuilderHelper;
-
-        public void build(final Application application, final Comment referenceComment, final OutputStream outputStream) {
-            try {
-                Document document = new Document(PageSize.A4, 50, 50, 100, 50);
-                PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-                writer.setCloseStream(false);
-                document.open();
-
-                PdfPTable table = new PdfPTable(1);
-                table.setWidthPercentage(ApplicationDownloadBuilderConfiguration.PAGE_WIDTH);
-                table.addCell(applicationModelBuilderHelper.newSectionHeader("Referee Comment"));
-                document.add(table);
-                document.add(applicationModelBuilderHelper.newSectionSeparator());
-
-                if (referenceComment == null) {
-                    document.add(applicationModelBuilderHelper.newContentCellMedium("Comment: "
-                            + (application.getState().getId().getStateGroup() == PrismStateGroup.APPLICATION_APPROVED ? noReferenceExplanation
-                                    : "Reference not yet provided at time of outcome.")));
-                } else {
-                    document.add(applicationModelBuilderHelper.newContentCellMedium("Comment: "
-                            + (BooleanUtils.isTrue(referenceComment.isDeclinedResponse()) ? "Declined to provide a reference." : referenceComment.getContent())));
-
-                    PdfContentByte cb = writer.getDirectContent();
-                    for (com.zuehlke.pgadmissions.domain.Document input : referenceComment.getDocuments()) {
-                        try {
-                            PdfReader reader = new PdfReader(input.getContent());
-                            for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-                                document.newPage();
-                                PdfImportedPage page = writer.getImportedPage(reader, i);
-                                cb.addTemplate(page, 0, 0);
-                            }
-                        } catch (IllegalArgumentException e) {
-                            throw new Error(e);
-                        }
-                    }
-                }
-
-                document.newPage();
-                document.close();
-            } catch (Exception e) {
-                throw new PdfDocumentBuilderException(e);
-            }
-        }
-
     }
 
     private class NewPageEvent extends PdfPageEventHelper {
@@ -682,29 +558,29 @@ public class ApplicationDownloadBuilder {
 
         private void addHeader(PdfWriter writer, Document pdfDocument) throws DocumentException, BadElementException, IOException {
             float textCellWidth = 65f;
-            
+
             PdfPTable body = new PdfPTable(2);
             body.setTotalWidth(pdfDocument.getPageSize().getWidth());
-            body.setWidths(new float[] {textCellWidth, logoFileWidthPercentage});
+            body.setWidths(new float[] { textCellWidth, logoFileWidthPercentage });
 
             PdfPTable subBody = new PdfPTable(2);
             body.setTotalWidth(textCellWidth * ApplicationDownloadBuilderConfiguration.PAGE_WIDTH);
-            subBody.setWidths(new float[] {25f, 75f});
+            subBody.setWidths(new float[] { 25f, 75f });
             addApplicationSummaryExtended(application, subBody, ApplicationDownloadBuilderFontSize.SMALL);
-            
+
             body.addCell(subBody);
-            
+
             PdfPCell logoCell = new PdfPCell(applicationDownloadBuilderHelper.newLogoImage());
             logoCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             logoCell.setVerticalAlignment(Element.ALIGN_TOP);
             body.addCell(logoCell);
-            
+
             body.writeSelectedRows(0, -1, pdfDocument.left(), pdfDocument.top() + 55f, writer.getDirectContent());
-            
+
             LineSeparator lineSeparator = new LineSeparator();
             lineSeparator.drawLine(writer.getDirectContent(), pdfDocument.left(), pdfDocument.right(), pdfDocument.top() + 10f);
         }
-        
+
         private void addFooter(PdfWriter writer, Document document) {
             LineSeparator lineSeparator = new LineSeparator();
             lineSeparator.drawLine(writer.getDirectContent(), document.left(), document.right(), document.bottom() - 15f);
@@ -712,7 +588,7 @@ public class ApplicationDownloadBuilder {
                     ApplicationDownloadBuilderConfiguration.getFont(ApplicationDownloadBuilderFontSize.SMALL));
             ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, footerPhrase, document.left(), document.bottom() - 25f, 0);
         }
-        
+
         public void setApplyHeaderFooter(boolean applyHeader) {
             this.applyHeaderFooter = applyHeader;
         }

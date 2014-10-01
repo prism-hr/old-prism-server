@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.AttributeOverride;
@@ -42,11 +43,14 @@ import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 import org.joda.time.LocalDate;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @AnalyzerDef(name = "advertAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
@@ -347,7 +351,7 @@ public class Advert {
         private PrismAdvertDomain domain;
 
         @Embeddable
-        private static class AdvertDomainId implements Serializable {
+        private static class AdvertDomainId extends AdvertTagId implements Serializable {
 
             private static final long serialVersionUID = -381523189635209210L;
 
@@ -378,7 +382,7 @@ public class Advert {
         private PrismAdvertIndustry industry;
 
         @Embeddable
-        private static class AdvertIndustryId implements Serializable {
+        private static class AdvertIndustryId extends AdvertTagId implements Serializable {
 
             private static final long serialVersionUID = -381523189635209210L;
 
@@ -409,7 +413,7 @@ public class Advert {
         private PrismAdvertFunction function;
 
         @Embeddable
-        private static class AdvertFunctionId implements Serializable {
+        private static class AdvertFunctionId extends AdvertTagId implements Serializable {
 
             private static final long serialVersionUID = -381523189635209210L;
 
@@ -440,7 +444,7 @@ public class Advert {
         private PrismProgramType programType;
 
         @Embeddable
-        private static class AdvertTargetProgramTypeId implements Serializable {
+        private static class AdvertTargetProgramTypeId extends AdvertTagId implements Serializable {
 
             private static final long serialVersionUID = -381523189635209210L;
 
@@ -453,6 +457,33 @@ public class Advert {
 
         }
 
+    }
+    
+    private static abstract class AdvertTagId {
+        
+        @Override 
+        public int hashCode() {
+            List<Object> properties = getPropertyValues();
+            return Objects.hashCode(properties);
+        }
+
+        @Override
+        public boolean equals(Object object) {
+            if (object == null) {
+                return false;
+            }
+            if (getClass() != object.getClass()) {
+                return false;
+            }
+            final AdvertTagId other = (AdvertTagId) object;
+            List<Object> properties = getPropertyValues();
+            List<Object> otherProperties = other.getPropertyValues();
+            return properties.containsAll(otherProperties);
+        }
+        
+        private List<Object> getPropertyValues() {
+            return IntrospectionUtils.getPropertyValues(this);
+        }
     }
 
 }

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services.builders.pdf;
 import java.io.OutputStream;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -20,10 +21,13 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 
 @Component
-public class MergedReferenceBuilder extends AbstractModelBuilder {
+public class MergedReferenceBuilder {
 
     @Value("${xml.export.system.reference}")
     private String noReferenceExplanation;
+    
+    @Autowired
+    ModelBuilderHelper modelBuilderHelper;
 
     public void build(final Application application, final Comment referenceComment, final OutputStream outputStream) {
         try {
@@ -33,10 +37,10 @@ public class MergedReferenceBuilder extends AbstractModelBuilder {
             document.open();
 
             PdfPTable table = new PdfPTable(1);
-            table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-            table.addCell(newGrayTableCell("Referee Comment", BOLD_FONT));
+            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.addCell(modelBuilderHelper.newColoredTableCell("Referee Comment", ModelBuilderConfiguration.BOLD_FONT));
             document.add(table);
-            document.add(addSectionSeparator());
+            document.add(modelBuilderHelper.newSectionSeparator());
 
             if (referenceComment == null) {
                 if (application.getState().getId().getStateGroup() == PrismStateGroup.APPLICATION_APPROVED) {

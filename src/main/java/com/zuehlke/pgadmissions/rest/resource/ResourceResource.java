@@ -169,12 +169,14 @@ public class ResourceResource {
             List<ResourceConsoleListRowDTO> rowDTOs = resourceService.getResourceConsoleList(resourceScope, filterDTO, lastSequenceIdentifier);
             for (ResourceConsoleListRowDTO rowDTO : rowDTOs) {
                 ResourceListRowRepresentation representation = dozerBeanMapper.map(rowDTO, ResourceListRowRepresentation.class);
-                User user = userService.getCurrentUser();
+                User currentUser = userService.getCurrentUser();
 
                 representation.setResourceScope(resourceDescriptor.getResourceScope());
                 representation.setActions(actionService.getPermittedActions(rowDTO.getSystemId(), rowDTO.getInstitutionId(), rowDTO.getProgramId(),
-                        rowDTO.getProjectId(), rowDTO.getApplicationId(), rowDTO.getStateId(), user));
+                        rowDTO.getProjectId(), rowDTO.getApplicationId(), rowDTO.getStateId(), currentUser));
                 representation.setId((Integer) PropertyUtils.getSimpleProperty(rowDTO, resourceScope.getLowerCaseName() + "Id"));
+                
+                resourceService.filterResourceListData(representation, currentUser);
 
                 representation.setRaisesUpdateFlag(rowDTO.getUpdatedTimestamp().isAfter(baseline));
                 representations.add(representation);

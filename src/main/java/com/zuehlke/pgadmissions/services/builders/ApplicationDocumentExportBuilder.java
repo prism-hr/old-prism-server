@@ -14,20 +14,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.ApplicationDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
+import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.builders.pdf.AlternativeQualificationBuilder;
+import com.zuehlke.pgadmissions.services.builders.pdf.DocumentBuilder;
 import com.zuehlke.pgadmissions.services.builders.pdf.MergedReferenceBuilder;
-import com.zuehlke.pgadmissions.services.builders.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.services.builders.pdf.ModelBuilder;
 
 @Component
 public class ApplicationDocumentExportBuilder {
 
     @Autowired
-    private PdfDocumentBuilder pdfDocumentBuilder;
+    private DocumentBuilder pdfDocumentBuilder;
 
     @Autowired
     private ApplicationService applicationService;
@@ -38,6 +42,9 @@ public class ApplicationDocumentExportBuilder {
     @Autowired
     private AlternativeQualificationBuilder applicationQualificationTranscriptBuilder;
 
+    @Autowired
+    private ModelBuilder modelBuilder;
+
     public void getDocuments(Application application, String exportReference, OutputStream outputStream) throws IOException {
         Properties contentsProperties = new Properties();
         ZipOutputStream zos = null;
@@ -45,8 +52,8 @@ public class ApplicationDocumentExportBuilder {
             zos = new ZipOutputStream(outputStream);
             buildContentsFile(application, exportReference, contentsProperties, zos);
             buildAcademicQualifications(application, exportReference, contentsProperties, zos);
-            buildPersonalStatement(application, exportReference, contentsProperties, zos);
             buildLanguageQualification(application, exportReference, contentsProperties, zos);
+            buildPersonalStatement(application, exportReference, contentsProperties, zos);
             buildCv(application, exportReference, contentsProperties, zos);
             buildReferences(application, exportReference, contentsProperties, zos);
             buildStandaloneApplication(application, exportReference, contentsProperties, zos);
@@ -64,64 +71,10 @@ public class ApplicationDocumentExportBuilder {
         zos.closeEntry();
     }
 
-    private void buildReferences(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
-        List<ApplicationReferee> referees = applicationService.getApplicationExportReferees(application);
-
-        for (int i = 0; i < 2; i++) {
-            String filename = getRandomFilename();
-            zos.putNextEntry(new ZipEntry(filename));
-            combinedReferenceBuilder.build(application, referees.get(i).getComment(), zos);
-            zos.closeEntry();
-            int referenceNumberId = i + 1;
-            contentsProperties.put("reference." + referenceNumberId + ".serverFilename", filename);
-            contentsProperties.put("reference." + referenceNumberId + ".applicationFilename", "References.2.pdf");
-        }
-    }
-
-    private void buildCv(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
-        Document document = application.getDocument().getCv();
-        if (document != null) {
-            String filename = getRandomFilename();
-            zos.putNextEntry(new ZipEntry(filename));
-            zos.write(getFileContents(application, document));
-            zos.closeEntry();
-            contentsProperties.put("curriculumVitae.1.serverFilename", filename);
-            contentsProperties.put("curriculumVitae.1.applicationFilename", document != null ? document.getFileName() : "curriculumVitae.pdf");
-        }
-    }
-
-    private void buildLanguageQualification(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
-            throws IOException {
-        Document document = application.getPersonalDetail().getLanguageQualification().getDocument();
-        if (document != null) {
-            String filename = getRandomFilename();
-            zos.putNextEntry(new ZipEntry(filename));
-            zos.write(getFileContents(application, document));
-            zos.closeEntry();
-            contentsProperties.put("englishLanguageTestCertificate.1.serverFilename", filename);
-            contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", document != null ? document.getFileName()
-                    : "englishLanguageTestCertificate.pdf");
-        }
-    }
-
-    private void buildPersonalStatement(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
-            throws IOException {
-        Document document = application.getDocument().getPersonalStatement();
-        if (document != null) {
-            String filename = getRandomFilename();
-            zos.putNextEntry(new ZipEntry(filename));
-            zos.write(getFileContents(application, document));
-            zos.closeEntry();
-            contentsProperties.put("researchProposal.1.serverFilename", filename);
-            contentsProperties.put("researchProposal.1.applicationFilename", document != null ? document.getFileName() : "researchProposal.pdf");
-        }
-    }
-
     private void buildAcademicQualifications(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException {
         List<ApplicationQualification> qualifications = applicationService.getApplicationExportQualifications(application);
         int qualificationCount = qualifications.size();
-        
         if (qualificationCount > 0) {
             for (int i = 0; i < qualificationCount; i++) {
                 String filename = getRandomFilename();
@@ -143,15 +96,70 @@ public class ApplicationDocumentExportBuilder {
         }
     }
 
+    private void buildLanguageQualification(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
+            throws IOException {
+        ApplicationPersonalDetail applicationPersonalDetail = application.getPersonalDetail();
+        ApplicationLanguageQualification applicationLanguageQualification = applicationPersonalDetail == null ? null : applicationPersonalDetail
+                .getLanguageQualification();
+        Document document = applicationLanguageQualification == null ? null : applicationLanguageQualification.getDocument();
+        if (document != null) {
+            String filename = getRandomFilename();
+            zos.putNextEntry(new ZipEntry(filename));
+            zos.write(getFileContents(application, document));
+            zos.closeEntry();
+            contentsProperties.put("englishLanguageTestCertificate.1.serverFilename", filename);
+            contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", document != null ? document.getFileName()
+                    : "englishLanguageTestCertificate.pdf");
+        }
+    }
+
+    private void buildPersonalStatement(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
+        ApplicationDocument applicationDocument = application.getDocument();
+        Document document = applicationDocument == null ? null : applicationDocument.getPersonalStatement();
+        if (document != null) {
+            String filename = getRandomFilename();
+            zos.putNextEntry(new ZipEntry(filename));
+            zos.write(getFileContents(application, document));
+            zos.closeEntry();
+            contentsProperties.put("researchProposal.1.serverFilename", filename);
+            contentsProperties.put("researchProposal.1.applicationFilename", document != null ? document.getFileName() : "researchProposal.pdf");
+        }
+    }
+
+    private void buildCv(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
+        ApplicationDocument applicationDocument = application.getDocument();
+        Document document = applicationDocument == null ? null : applicationDocument.getCv();
+        if (document != null) {
+            String filename = getRandomFilename();
+            zos.putNextEntry(new ZipEntry(filename));
+            zos.write(getFileContents(application, document));
+            zos.closeEntry();
+            contentsProperties.put("curriculumVitae.1.serverFilename", filename);
+            contentsProperties.put("curriculumVitae.1.applicationFilename", document != null ? document.getFileName() : "curriculumVitae.pdf");
+        }
+    }
+
+    private void buildReferences(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
+        List<ApplicationReferee> referees = applicationService.getApplicationExportReferees(application);
+        for (int i = 0; i < 2; i++) {
+            String filename = getRandomFilename();
+            zos.putNextEntry(new ZipEntry(filename));
+            combinedReferenceBuilder.build(application, referees.get(i).getComment(), zos);
+            zos.closeEntry();
+            int referenceNumberId = i + 1;
+            contentsProperties.put("reference." + referenceNumberId + ".serverFilename", filename);
+            contentsProperties.put("reference." + referenceNumberId + ".applicationFilename", "References.2.pdf");
+        }
+    }
+
     private void buildStandaloneApplication(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException {
         String serverfilename = "ApplicationForm" + referenceNumber + ".pdf";
         String applicationFilename = "ApplicationForm" + application.getCode() + ".pdf";
         zos.putNextEntry(new ZipEntry(serverfilename));
         try {
-            pdfDocumentBuilder.build(
-                    new ModelBuilder().includeCriminialConvictions(true).includeDisability(true).includeEthnicity(true).includeAttachments(false), zos,
-                    application);
+            ApplicationDownloadDTO applicationDownloadDTO = new ApplicationDownloadDTO().withApplication(application).withIncludeEqualOpportuntiesData(true);
+            pdfDocumentBuilder.build(applicationDownloadDTO, zos);
         } catch (Exception e) {
             throw new Error("Unable to build application document for " + application.getCode(), e);
         }
@@ -160,15 +168,15 @@ public class ApplicationDocumentExportBuilder {
         contentsProperties.put("applicationForm.1.applicationFilename", applicationFilename);
     }
 
-    private void buildMergedApplication(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
-            throws IOException {
+    private void buildMergedApplication(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
         String serverfilename = "MergedApplicationForm" + referenceNumber + ".pdf";
         String applicationFilename = "MergedApplicationForm" + application.getCode() + ".pdf";
         zos.putNextEntry(new ZipEntry(serverfilename));
         try {
-            pdfDocumentBuilder.build(new ModelBuilder().includeReferences(true), zos, application);
+            ApplicationDownloadDTO applicationDownloadDTO = new ApplicationDownloadDTO().withApplication(application).withIncludeReferences(true);
+            pdfDocumentBuilder.build(applicationDownloadDTO, zos);
         } catch (Exception e) {
-           throw new Error ("Unable to merged application document for " + application.getCode(), e);
+            throw new Error("Unable to merged application document for " + application.getCode(), e);
         }
         zos.closeEntry();
         contentsProperties.put("mergedApplication.1.serverFilename", serverfilename);

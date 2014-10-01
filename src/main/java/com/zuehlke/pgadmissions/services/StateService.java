@@ -270,7 +270,6 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 
-    // FIXME: completed the integration with the exporter
     public StateTransition getApplicationExportedOutcome(Resource resource, Comment comment) {
         State currentState = resource.getState();
         PrismState transitionStateId = currentState.getId();

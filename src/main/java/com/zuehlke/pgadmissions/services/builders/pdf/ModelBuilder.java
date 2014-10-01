@@ -2,8 +2,7 @@ package com.zuehlke.pgadmissions.services.builders.pdf;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -13,10 +12,13 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -48,102 +50,81 @@ import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 
 @Component
-public class ModelBuilder extends AbstractModelBuilder {
+public class ModelBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ModelBuilder.class);
 
-    private boolean includeCriminialConvictions = false;
+    @Value("${xml.export.provided}")
+    public String provided;
 
-    private boolean includeAttachments = true;
+    @Value("${xml.export.not.provided}")
+    public String notProvided;
 
-    private boolean includeDisability = false;
+    @Value("${xml.export.not.required}")
+    public String notRequired;
 
-    private boolean includeEthnicity = false;
+    @Value("${xml.export.date.applicationat}")
+    public String dateFormat;
 
-    private boolean includeReferences = false;
+    @Value("${xml.export.logo.file.location}")
+    public String logoFileLocation;
 
-    private int pageCounter = 0;
+    @Autowired
+    private ModelBuilderHelper modelBuilderHelper;
+    
+    @Autowired
+    private NewPageEvent newPageEvent;
+    
+    private ApplicationDownloadDTO applicationDownloadDTO;
 
-    private int appendixCounter = 0;
+    private final List<Object> bookmarks = Lists.newLinkedList();
 
-    private Map<Integer, Object> bookmarkMap = new HashMap<Integer, Object>();
-
-    private HeaderEvent headerEvent;
-
-    public ModelBuilder includeReferences(final boolean flag) {
-        this.includeReferences = flag;
-        return this;
-    }
-
-    public ModelBuilder includeCriminialConvictions(final boolean flag) {
-        this.includeCriminialConvictions = flag;
-        return this;
-    }
-
-    public ModelBuilder includeAttachments(final boolean flag) {
-        this.includeAttachments = flag;
-        return this;
-    }
-
-    public ModelBuilder includeDisability(final boolean flag) {
-        this.includeDisability = flag;
-        return this;
-    }
-
-    public ModelBuilder includeEthnicity(final boolean flag) {
-        this.includeEthnicity = flag;
-        return this;
-    }
-
-    public void build(final Application form, final Document pdfDocument, final PdfWriter pdfWriter) throws PdfDocumentBuilderException {
+    public void build(final ApplicationDownloadDTO applicationDownloadDTO, final Document document, final PdfWriter writer) throws PdfDocumentBuilderException {
         try {
-            addCoverPage(form, pdfDocument, pdfWriter);
-            addHeaderEvent(form, pdfWriter);
-            addProgramSection(form, pdfDocument);
-            pdfDocument.add(addSectionSeparator());
-            addPersonalDetailSection(form, pdfDocument);
-            pdfDocument.add(addSectionSeparator());
-            addAddressSection(form, pdfDocument);
-            pdfDocument.add(addSectionSeparator());
-            addQualificationSection(form, pdfDocument);
-            pdfDocument.add(addSectionSeparator());
-            addEmploymentSection(form, pdfDocument);
-            pdfDocument.add(addSectionSeparator());
-            addFundingSection(form, pdfDocument);
-            pdfDocument.add(addSectionSeparator());
-            addReferencesSection(form, pdfDocument);
-            pdfDocument.add(addSectionSeparator());
-            addDocumentsSection(form, pdfDocument);
-            pdfDocument.add(addSectionSeparator());
-            addAdditionalInformationSection(form, pdfDocument);
-            pdfDocument.add(addSectionSeparator());
-            addSupportingDocuments(form, pdfDocument, pdfWriter);
+            initialize(applicationDownloadDTO);
+            Application application = applicationDownloadDTO.getApplication();
+            addCoverPage(application, document, writer);
+            writer.setPageEvent(newPageEvent);
+            addProgramSection(application, document);
+            document.add(modelBuilderHelper.newSectionSeparator());
+            addPersonalDetailSection(application, document);
+            document.add(modelBuilderHelper.newSectionSeparator());
+            addAddressSection(application, document);
+            document.add(modelBuilderHelper.newSectionSeparator());
+            addQualificationSection(application, document);
+            document.add(modelBuilderHelper.newSectionSeparator());
+            addEmploymentSection(application, document);
+            document.add(modelBuilderHelper.newSectionSeparator());
+            addFundingSection(application, document);
+            document.add(modelBuilderHelper.newSectionSeparator());
+            addReferencesSection(application, document);
+            document.add(modelBuilderHelper.newSectionSeparator());
+            addDocumentsSection(application, document);
+            document.add(modelBuilderHelper.newSectionSeparator());
+            addAdditionalInformationSection(application, document);
+            document.add(modelBuilderHelper.newSectionSeparator());
+            addSupportingDocuments(application, document, writer);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("Error building download for application " + applicationDownloadDTO.getApplication().getCode(), e);
             throw new PdfDocumentBuilderException(e.getMessage(), e);
         }
     }
 
-    protected void addHeaderEvent(final Application form, final PdfWriter writer) {
-        Chunk submittedDateHeader = null;
-
-        if (form.getSubmittedTimestamp() == null) {
-            submittedDateHeader = new Chunk(null, SMALLER_FONT);
-        } else {
-            submittedDateHeader = new Chunk(form.getSubmittedTimestamp().toString(dateFormat), SMALLER_FONT);
-        }
-
-        headerEvent = new HeaderEvent(new Chunk(form.getProgram().getTitle(), SMALLER_FONT), new Chunk(form.getCode(), SMALLER_FONT),
-                submittedDateHeader);
-        writer.setPageEvent(headerEvent);
+    private void initialize(final ApplicationDownloadDTO applicationDownloadDTO) {
+        this.applicationDownloadDTO = applicationDownloadDTO;
+        newPageEvent.setApplication(applicationDownloadDTO.getApplication());
+        newPageEvent.setApplyHeaderFooter(true);
+        bookmarks.clear();
     }
 
-    protected void addCoverPage(final Application form, final Document pdfDocument, final PdfWriter writer) throws MalformedURLException, IOException,
+    private void addCoverPage(final Application application, final Document pdfDocument, final PdfWriter writer) throws MalformedURLException, IOException,
             DocumentException {
         pdfDocument.newPage();
 
@@ -156,151 +137,152 @@ public class ModelBuilder extends AbstractModelBuilder {
         LineSeparator lineSeparator = new LineSeparator();
         lineSeparator.drawLine(writer.getDirectContent(), pdfDocument.left(), pdfDocument.right(), pdfDocument.top() + 10f);
 
-        pdfDocument.add(addSectionSeparator());
-        pdfDocument.add(addSectionSeparator());
+        pdfDocument.add(modelBuilderHelper.newSectionSeparator());
+        pdfDocument.add(modelBuilderHelper.newSectionSeparator());
 
         PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-        table.addCell(newGrayTableCell("APPLICATION", BOLD_FONT));
+        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.addCell(modelBuilderHelper.newColoredTableCell("APPLICATION", ModelBuilderConfiguration.BOLD_FONT));
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparator());
+        pdfDocument.add(modelBuilderHelper.newSectionSeparator());
         table = new PdfPTable(2);
-        table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-        table.addCell(newTableCell("Applicant", SMALL_BOLD_FONT));
+        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.addCell(modelBuilderHelper.newTableCell("Applicant", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
 
-        User applicant = form.getUser();
+        User applicant = application.getUser();
         String fullName = Joiner.on(" ").skipNulls()
                 .join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3(), applicant.getLastName());
-        table.addCell(newTableCell(fullName, SMALL_FONT));
-        table.addCell(newTableCell("Program", SMALL_BOLD_FONT));
-        table.addCell(newTableCell(form.getProgram().getTitle(), SMALL_FONT));
+        table.addCell(modelBuilderHelper.newTableCell(fullName, ModelBuilderConfiguration.MEDIUM_FONT));
+        table.addCell(modelBuilderHelper.newTableCell("Program", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+        table.addCell(modelBuilderHelper.newTableCell(application.getProgram().getTitle(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-        addProjectTitleToTable(table, form);
-        addClosingDateToTable(table, form);
+        addProjectTitleToTable(table, application);
+        addClosingDateToTable(table, application);
 
-        table.addCell(newTableCell("Application Number", SMALL_BOLD_FONT));
-        table.addCell(newTableCell(form.getCode(), SMALL_FONT));
+        table.addCell(modelBuilderHelper.newTableCell("Application Number", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+        table.addCell(modelBuilderHelper.newTableCell(application.getCode(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-        if (form.getSubmittedTimestamp() != null) {
-            table.addCell(newTableCell("Submission date", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(form.getSubmittedTimestamp().toString(dateFormat), SMALL_FONT));
+        if (application.getSubmittedTimestamp() != null) {
+            table.addCell(modelBuilderHelper.newTableCell("Submission date", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(application.getSubmittedTimestamp().toString(dateFormat), ModelBuilderConfiguration.MEDIUM_FONT));
         }
 
         pdfDocument.add(table);
         pdfDocument.newPage();
     }
 
-    protected void addProgramSection(final Application form, Document pdfDocument) throws DocumentException {
+    private void addProgramSection(final Application application, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-        table.addCell(newGrayTableCell("PROGRAMME", BOLD_FONT));
+        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.addCell(modelBuilderHelper.newColoredTableCell("PROGRAMME", ModelBuilderConfiguration.BOLD_FONT));
 
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparator());
+        pdfDocument.add(modelBuilderHelper.newSectionSeparator());
 
         table = new PdfPTable(2);
-        table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-        table.addCell(newTableCell("Program", SMALL_BOLD_FONT));
-        table.addCell(newTableCell(form.getProgram().getTitle(), SMALL_FONT));
+        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.addCell(modelBuilderHelper.newTableCell("Program", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+        table.addCell(modelBuilderHelper.newTableCell(application.getProgram().getTitle(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-        table.addCell(newTableCell("Study Option", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "programDetail.studyOption"));
+        table.addCell(modelBuilderHelper.newTableCell("Study Option", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+        table.addCell(createPropertyCell(application, "programDetail.studyOption"));
 
-        addProjectTitleToTable(table, form);
+        addProjectTitleToTable(table, application);
 
-        addClosingDateToTable(table, form);
+        addClosingDateToTable(table, application);
 
-        table.addCell(newTableCell("Start Date", SMALL_BOLD_FONT));
-        if (form.getProgramDetail().getStartDate() != null) {
-            table.addCell(newTableCell(form.getProgramDetail().getStartDate().toString(dateFormat), SMALL_FONT));
+        table.addCell(modelBuilderHelper.newTableCell("Start Date", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+        if (application.getProgramDetail().getStartDate() != null) {
+            table.addCell(modelBuilderHelper.newTableCell(application.getProgramDetail().getStartDate().toString(dateFormat),
+                    ModelBuilderConfiguration.MEDIUM_FONT));
         } else {
-            table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(notProvided, ModelBuilderConfiguration.MEDIUM_GREY_FONT));
         }
 
-        table.addCell(newTableCell("How did you find us?", SMALL_BOLD_FONT));
-        if (form.getProgramDetail().getReferralSource() != null) {
-            table.addCell(newTableCell(form.getProgramDetail().getReferralSource().getName(), SMALL_FONT));
+        table.addCell(modelBuilderHelper.newTableCell("How did you find us?", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+        if (application.getProgramDetail().getReferralSource() != null) {
+            table.addCell(modelBuilderHelper.newTableCell(application.getProgramDetail().getReferralSource().getName(), ModelBuilderConfiguration.MEDIUM_FONT));
         } else {
-            table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(notProvided, ModelBuilderConfiguration.MEDIUM_GREY_FONT));
         }
 
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparator());
+        pdfDocument.add(modelBuilderHelper.newSectionSeparator());
 
-        if (form.getSupervisors().isEmpty()) {
+        if (application.getSupervisors().isEmpty()) {
             table = new PdfPTable(2);
-            table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-            table.addCell(newTableCell("Supervisor", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
+            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.addCell(modelBuilderHelper.newTableCell("Supervisor", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(notProvided, ModelBuilderConfiguration.MEDIUM_GREY_FONT));
             pdfDocument.add(table);
-            pdfDocument.add(addSectionSeparator());
+            pdfDocument.add(modelBuilderHelper.newSectionSeparator());
         } else {
             int counter = 1;
-            for (ApplicationSupervisor supervisor : form.getSupervisors()) {
+            for (ApplicationSupervisor supervisor : application.getSupervisors()) {
                 table = new PdfPTable(2);
-                table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-                PdfPCell headerCell = newTableCell("Supervisor (" + counter++ + ")", SMALL_BOLD_FONT);
+                table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+                PdfPCell headerCell = modelBuilderHelper.newTableCell("Supervisor (" + counter++ + ")", ModelBuilderConfiguration.MEDIUM_BOLD_FONT);
                 headerCell.setColspan(2);
                 table.addCell(headerCell);
 
-                table.addCell(newTableCell("Supervisor First Name", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(supervisor.getUser().getFirstName(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Supervisor First Name", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(supervisor.getUser().getFirstName(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Supervisor Last Name", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(supervisor.getUser().getLastName(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Supervisor Last Name", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(supervisor.getUser().getLastName(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Supervisor Email", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(supervisor.getUser().getEmail(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Supervisor Email", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(supervisor.getUser().getEmail(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Is this supervisor aware of your application?", SMALL_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Is this supervisor aware of your application?", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
 
                 if (BooleanUtils.isTrue(supervisor.getAcceptedSupervision())) {
-                    table.addCell(newTableCell("Yes", SMALL_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell("Yes", ModelBuilderConfiguration.MEDIUM_FONT));
                 } else {
-                    table.addCell(newTableCell("No", SMALL_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell("No", ModelBuilderConfiguration.MEDIUM_FONT));
                 }
                 pdfDocument.add(table);
-                pdfDocument.add(addSectionSeparator());
+                pdfDocument.add(modelBuilderHelper.newSectionSeparator());
             }
         }
     }
 
-    protected void addPersonalDetailSection(final Application form, Document pdfDocument) throws DocumentException {
+    private void addPersonalDetailSection(final Application application, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-        table.addCell(newGrayTableCell("PERSONAL DETAILS", BOLD_FONT));
+        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.addCell(modelBuilderHelper.newColoredTableCell("PERSONAL DETAILS", ModelBuilderConfiguration.BOLD_FONT));
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparator());
+        pdfDocument.add(modelBuilderHelper.newSectionSeparator());
 
-        ApplicationPersonalDetail personalDetail = form.getPersonalDetail();
+        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         table = new PdfPTable(2);
-        table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
+        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
 
-        table.addCell(newTableCell("Title", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "personalDetail.title.displayValue"));
+        table.addCell(modelBuilderHelper.newTableCell("Title", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+        table.addCell(createPropertyCell(application, "personalDetail.title.displayValue"));
 
-        table.addCell(newTableCell("First Name", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "applicant.firstName"));
+        table.addCell(modelBuilderHelper.newTableCell("First Name", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+        table.addCell(createPropertyCell(application, "applicant.firstName"));
 
-        table.addCell(newTableCell("First Name 2", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "applicant.firstName2"));
+        table.addCell(modelBuilderHelper.newTableCell("First Name 2", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+        table.addCell(createPropertyCell(application, "applicant.firstName2"));
 
-        table.addCell(newTableCell("First Name 3", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "applicant.firstName3"));
+        table.addCell(modelBuilderHelper.newTableCell("First Name 3", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+        table.addCell(createPropertyCell(application, "applicant.firstName3"));
 
-        table.addCell(newTableCell("Last Name", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "applicant.lastName"));
+        table.addCell(modelBuilderHelper.newTableCell("Last Name", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+        table.addCell(createPropertyCell(application, "applicant.lastName"));
 
-        table.addCell(newTableCell("Gender", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "personalDetail.gender.displayValue"));
+        table.addCell(modelBuilderHelper.newTableCell("Gender", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+        table.addCell(createPropertyCell(application, "personalDetail.gender.displayValue"));
 
-        table.addCell(newTableCell("Date of Birth", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "personalDetail.dateOfBirth"));
+        table.addCell(modelBuilderHelper.newTableCell("Date of Birth", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+        table.addCell(createPropertyCell(application, "personalDetail.dateOfBirth"));
 
-        table.addCell(newTableCell("Country of Birth", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "personalDetail.country.name"));
+        table.addCell(modelBuilderHelper.newTableCell("Country of Birth", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+        table.addCell(createPropertyCell(application, "personalDetail.country.name"));
 
-        table.addCell(newTableCell("Nationality", SMALL_BOLD_FONT));
+        table.addCell(modelBuilderHelper.newTableCell("Nationality", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
         StringBuilder sb = new StringBuilder();
 
         if (personalDetail != null && personalDetail.getFirstNationality() != null) {
@@ -310,644 +292,573 @@ public class ModelBuilder extends AbstractModelBuilder {
             sb.append(", ").append(personalDetail.getSecondNationality().getName());
         }
 
-        table.addCell(newTableCell(sb.toString(), SMALL_FONT));
+        table.addCell(modelBuilderHelper.newTableCell(sb.toString(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-        table.addCell(newTableCell("Is English your first language?", SMALL_BOLD_FONT));
+        table.addCell(modelBuilderHelper.newTableCell("Is English your first language?", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
         if (personalDetail == null || personalDetail.getFirstLanguageEnglish() == null) {
-            table.addCell(newTableCell(null, SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
         } else {
             if (BooleanUtils.isTrue(personalDetail.getFirstLanguageEnglish())) {
-                table.addCell(newTableCell("Yes", SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Yes", ModelBuilderConfiguration.MEDIUM_FONT));
             } else {
-                table.addCell(newTableCell("No", SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("No", ModelBuilderConfiguration.MEDIUM_FONT));
             }
         }
 
-        table.addCell(newTableCell("Do you have an English language qualification?", SMALL_BOLD_FONT));
+        table.addCell(modelBuilderHelper.newTableCell("Do you have an English language qualification?", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
         if (personalDetail == null || personalDetail.getLanguageQualificationAvailable() == null) {
-            table.addCell(newTableCell(null, SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
         } else {
             if (BooleanUtils.isTrue(personalDetail.getLanguageQualificationAvailable())) {
-                table.addCell(newTableCell("Yes", SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Yes", ModelBuilderConfiguration.MEDIUM_FONT));
             } else {
-                table.addCell(newTableCell("No", SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("No", ModelBuilderConfiguration.MEDIUM_FONT));
             }
         }
 
-        table.addCell(newTableCell("Country of Residence", SMALL_BOLD_FONT));
+        table.addCell(modelBuilderHelper.newTableCell("Country of Residence", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
         if (personalDetail == null || personalDetail.getResidenceCountry() == null) {
-            table.addCell(newTableCell(null, SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
         } else {
-            table.addCell(newTableCell(personalDetail.getResidenceCountry().getName(), SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(personalDetail.getResidenceCountry().getName(), ModelBuilderConfiguration.MEDIUM_FONT));
         }
 
-        table.addCell(newTableCell("Do you Require a Visa to Study in the UK?", SMALL_BOLD_FONT));
+        table.addCell(modelBuilderHelper.newTableCell("Do you Require a Visa to Study in the UK?", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
         if (personalDetail == null || personalDetail.getVisaRequired() == null) {
-            table.addCell(newTableCell(null, SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
         } else {
             if (BooleanUtils.isTrue(personalDetail.getVisaRequired())) {
-                table.addCell(newTableCell("Yes", SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Yes", ModelBuilderConfiguration.MEDIUM_FONT));
             } else {
-                table.addCell(newTableCell("No", SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("No", ModelBuilderConfiguration.MEDIUM_FONT));
             }
         }
 
-        table.addCell(newTableCell("Do you have a passport?", SMALL_BOLD_FONT));
+        table.addCell(modelBuilderHelper.newTableCell("Do you have a passport?", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
         if (personalDetail == null || personalDetail.getPassportAvailable() == null) {
-            table.addCell(newTableCell(null, SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
         } else {
             if (BooleanUtils.isTrue(personalDetail.getPassportAvailable())) {
-                table.addCell(newTableCell("Yes", SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Yes", ModelBuilderConfiguration.MEDIUM_FONT));
             } else {
-                table.addCell(newTableCell("No", SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("No", ModelBuilderConfiguration.MEDIUM_FONT));
             }
         }
 
         if (personalDetail != null && BooleanUtils.isTrue(personalDetail.getVisaRequired())) {
             ApplicationPassport passportInformation = personalDetail.getPassport();
             if (passportInformation != null) {
-                table.addCell(newTableCell("Passport Number", SMALL_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Passport Number", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
 
                 if (StringUtils.isBlank(passportInformation.getNumber())) {
-                    table.addCell(newTableCell(null, SMALL_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
                 } else {
-                    table.addCell(newTableCell(passportInformation.getNumber(), SMALL_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell(passportInformation.getNumber(), ModelBuilderConfiguration.MEDIUM_FONT));
                 }
 
-                table.addCell(newTableCell("Name on Passport", SMALL_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Name on Passport", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
                 if (StringUtils.isBlank(passportInformation.getName())) {
-                    table.addCell(newTableCell(null, SMALL_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
                 } else {
-                    table.addCell(newTableCell(passportInformation.getName(), SMALL_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell(passportInformation.getName(), ModelBuilderConfiguration.MEDIUM_FONT));
                 }
 
-                table.addCell(newTableCell("Passport Issue Date", SMALL_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Passport Issue Date", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
                 if (passportInformation.getIssueDate() == null) {
-                    table.addCell(newTableCell(null, SMALL_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
                 } else {
-                    table.addCell(newTableCell(passportInformation.getIssueDate().toString(dateFormat), SMALL_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell(passportInformation.getIssueDate().toString(dateFormat),
+                            ModelBuilderConfiguration.MEDIUM_FONT));
                 }
 
-                table.addCell(newTableCell("Passport Expiry Date", SMALL_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Passport Expiry Date", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
                 if (passportInformation.getExpiryDate() == null) {
-                    table.addCell(newTableCell(null, SMALL_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
                 } else {
-                    table.addCell(newTableCell(passportInformation.getExpiryDate().toString(dateFormat), SMALL_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell(passportInformation.getExpiryDate().toString(dateFormat),
+                            ModelBuilderConfiguration.MEDIUM_FONT));
                 }
             }
         }
 
-        table.addCell(newTableCell("Email", SMALL_BOLD_FONT));
-        table.addCell(newTableCell(form.getUser().getEmail(), SMALL_FONT));
+        table.addCell(modelBuilderHelper.newTableCell("Email", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+        table.addCell(modelBuilderHelper.newTableCell(application.getUser().getEmail(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-        table.addCell(newTableCell("Telephone", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "personalDetail.phoneNumber"));
+        table.addCell(modelBuilderHelper.newTableCell("Telephone", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+        table.addCell(createPropertyCell(application, "personalDetail.phoneNumber"));
 
-        table.addCell(newTableCell("Skype", SMALL_BOLD_FONT));
-        table.addCell(createPropertyCell(form, "personalDetail.messenger"));
+        table.addCell(modelBuilderHelper.newTableCell("Skype", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+        table.addCell(createPropertyCell(application, "personalDetail.messenger"));
 
-        if (includeEthnicity) {
-            table.addCell(newTableCell("Ethnicity", SMALL_BOLD_FONT));
-            table.addCell(createPropertyCell(form, "personalDetail.ethnicity.name"));
-        }
-
-        if (includeDisability) {
-            table.addCell(newTableCell("Disability", SMALL_BOLD_FONT));
-            table.addCell(createPropertyCell(form, "personalDetail.disability.name"));
+        if (applicationDownloadDTO.isIncludeEqualOpportunitiesData()) {
+            table.addCell(modelBuilderHelper.newTableCell("Ethnicity", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+            table.addCell(createPropertyCell(application, "personalDetail.ethnicity.name"));
+            table.addCell(modelBuilderHelper.newTableCell("Disability", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+            table.addCell(createPropertyCell(application, "personalDetail.disability.name"));
         }
 
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparator());
+        pdfDocument.add(modelBuilderHelper.newSectionSeparator());
 
         if (personalDetail == null || personalDetail.getLanguageQualification() == null) {
             table = new PdfPTable(2);
-            table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-            table.addCell(newTableCell("English Language Qualification", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(null, SMALL_FONT));
+            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.addCell(modelBuilderHelper.newTableCell("English Language Qualification", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
         } else {
-            ApplicationLanguageQualification qualification = personalDetail.getLanguageQualification();
+            ApplicationLanguageQualification languageQualification = personalDetail.getLanguageQualification();
             table = new PdfPTable(2);
-            table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-            PdfPCell headerCell = newTableCell("English Language Qualification", SMALL_BOLD_FONT);
+            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            PdfPCell headerCell = modelBuilderHelper.newTableCell("English Language Qualification", ModelBuilderConfiguration.MEDIUM_BOLD_FONT);
             headerCell.setColspan(2);
             table.addCell(headerCell);
 
-            table.addCell(newTableCell("Qualification Type", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(qualification.getType().getName(), SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell("Qualification Type", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(languageQualification.getType().getName(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-            table.addCell(newTableCell("Date of Examination", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(qualification.getExamDate().toString(dateFormat), SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell("Date of Examination", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(languageQualification.getExamDate().toString(dateFormat), ModelBuilderConfiguration.MEDIUM_FONT));
 
-            table.addCell(newTableCell("Overall Score", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(qualification.getOverallScore(), SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell("Overall Score", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(languageQualification.getOverallScore(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-            table.addCell(newTableCell("Reading Score", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(qualification.getReadingScore(), SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell("Reading Score", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(languageQualification.getReadingScore(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-            table.addCell(newTableCell("Essay / Writing Score", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(qualification.getWritingScore(), SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell("Essay / Writing Score", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(languageQualification.getWritingScore(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-            table.addCell(newTableCell("Speaking Score", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(qualification.getSpeakingScore(), SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell("Speaking Score", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(languageQualification.getSpeakingScore(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-            table.addCell(newTableCell("Listening Score", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(qualification.getListeningScore(), SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell("Listening Score", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(languageQualification.getListeningScore(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-            table.addCell(newTableCell("Did you sit the exam online?", SMALL_BOLD_FONT));
-
-            table.addCell(newTableCell("Certificate (PDF)", SMALL_BOLD_FONT));
-            if (includeAttachments) {
-                if (qualification.getDocument() != null) {
-                    table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
-                    bookmarkMap.put(appendixCounter++, qualification.getDocument());
-                } else {
-                    table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
-                }
-            } else {
-                if (qualification.getDocument() != null) {
-                    table.addCell(newTableCell(provided, SMALL_FONT));
-                } else {
-                    table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
-                }
-            }
-
+            table.addCell(modelBuilderHelper.newTableCell("Did you sit the exam online?", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+            addDocument(table, "Certificate (PDF)", languageQualification.getDocument());
         }
 
         pdfDocument.add(table);
     }
 
-    protected void addAddressSection(final Application form, Document pdfDocument) throws DocumentException {
+    private void addAddressSection(final Application application, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-        table.addCell(newGrayTableCell("ADDRESS", BOLD_FONT));
+        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.addCell(modelBuilderHelper.newColoredTableCell("ADDRESS", ModelBuilderConfiguration.BOLD_FONT));
 
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparator());
+        pdfDocument.add(modelBuilderHelper.newSectionSeparator());
 
         table = new PdfPTable(2);
-        table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
+        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
 
-        ApplicationAddress address = form.getAddress();
-        table.addCell(newTableCell("Current Address", SMALL_BOLD_FONT));
+        ApplicationAddress address = application.getAddress();
+        table.addCell(modelBuilderHelper.newTableCell("Current Address", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
         if (address.getCurrentAddress() == null) {
-            table.addCell(newTableCell(null, SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
         } else {
-            table.addCell(newTableCell(address.getCurrentAddress().getLocationString(), SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(address.getCurrentAddress().getLocationString(), ModelBuilderConfiguration.MEDIUM_FONT));
         }
 
-        table.addCell(newTableCell("Country", SMALL_BOLD_FONT));
+        table.addCell(modelBuilderHelper.newTableCell("Country", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
         if (address.getCurrentAddress() == null) {
-            table.addCell(newTableCell(null, SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
         } else {
-            table.addCell(newTableCell(address.getCurrentAddress().getDomicile().getName(), SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(address.getCurrentAddress().getDomicile().getName(), ModelBuilderConfiguration.MEDIUM_FONT));
         }
 
-        table.addCell(newTableCell("Contact Address", SMALL_BOLD_FONT));
+        table.addCell(modelBuilderHelper.newTableCell("Contact Address", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
         if (address.getContactAddress() == null) {
-            table.addCell(newTableCell(null, SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
         } else {
-            table.addCell(newTableCell(address.getContactAddress().getLocationString(), SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(address.getContactAddress().getLocationString(), ModelBuilderConfiguration.MEDIUM_FONT));
         }
 
-        table.addCell(newTableCell("Country", SMALL_BOLD_FONT));
+        table.addCell(modelBuilderHelper.newTableCell("Country", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
         if (address.getContactAddress() == null) {
-            table.addCell(newTableCell(null, SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
         } else {
-            table.addCell(newTableCell(address.getContactAddress().getDomicile().getName(), SMALL_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(address.getContactAddress().getDomicile().getName(), ModelBuilderConfiguration.MEDIUM_FONT));
         }
         pdfDocument.add(table);
     }
 
-    protected void addQualificationSection(final Application form, Document pdfDocument) throws DocumentException {
+    private void addQualificationSection(final Application application, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-        table.addCell(newGrayTableCell("QUALIFICATIONS", BOLD_FONT));
+        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.addCell(modelBuilderHelper.newColoredTableCell("QUALIFICATIONS", ModelBuilderConfiguration.BOLD_FONT));
 
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparator());
+        pdfDocument.add(modelBuilderHelper.newSectionSeparator());
 
-        if (form.getQualifications().isEmpty()) {
+        if (application.getQualifications().isEmpty()) {
             table = new PdfPTable(2);
-            table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-            table.addCell(newTableCell("Qualification", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(null, SMALL_FONT));
+            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.addCell(modelBuilderHelper.newTableCell("Qualification", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
             pdfDocument.add(table);
         } else {
             int counter = 1;
-            for (ApplicationQualification qualification : form.getQualifications()) {
+            for (ApplicationQualification qualification : application.getQualifications()) {
                 table = new PdfPTable(2);
-                table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-                PdfPCell headerCell = newTableCell("Qualification (" + counter++ + ")", SMALL_BOLD_FONT);
+                table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+                PdfPCell headerCell = modelBuilderHelper.newTableCell("Qualification (" + counter++ + ")", ModelBuilderConfiguration.MEDIUM_BOLD_FONT);
                 headerCell.setColspan(2);
                 table.addCell(headerCell);
-                table.addCell(newTableCell("Institution Country", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getInstitution().getDomicile().getName(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Institution Country", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(qualification.getInstitution().getDomicile().getName(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Institution/Provider Name", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getInstitution().getName(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Institution/Provider Name", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(qualification.getInstitution().getName(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Qualification Type", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getType().getName(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Qualification Type", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(qualification.getType().getName(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Qualification Title", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getTitle(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Qualification Title", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(qualification.getTitle(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Qualification Subject", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getSubject(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Qualification Subject", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(qualification.getSubject(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Language of Study", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getLanguage(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Language of Study", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(qualification.getLanguage(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Start Date", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getStartDate().toString(dateFormat), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Start Date", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(qualification.getStartDate().toString(dateFormat), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Has this Qualification been awarded", SMALL_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Has this Qualification been awarded", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+
                 if (BooleanUtils.isTrue(qualification.getCompleted())) {
-                    table.addCell(newTableCell("Yes", SMALL_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell("Yes", ModelBuilderConfiguration.MEDIUM_FONT));
                 } else {
-                    table.addCell(newTableCell("No", SMALL_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell("No", ModelBuilderConfiguration.MEDIUM_FONT));
                 }
 
                 if (qualification.getCompleted()) {
-                    table.addCell(newTableCell("Grade/Result/GPA", SMALL_BOLD_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell("Grade/Result/GPA", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
                 } else {
-                    table.addCell(newTableCell("Expected Grade/Result/GPA", SMALL_BOLD_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell("Expected Grade/Result/GPA", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
                 }
-                table.addCell(newTableCell(qualification.getGrade(), SMALL_FONT));
+
+                table.addCell(modelBuilderHelper.newTableCell(qualification.getGrade(), ModelBuilderConfiguration.MEDIUM_FONT));
 
                 if (BooleanUtils.isTrue(qualification.getCompleted())) {
-                    table.addCell(newTableCell("Award Date", SMALL_BOLD_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell("Award Date", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
                 } else {
-                    table.addCell(newTableCell("Expected Award Date", SMALL_BOLD_FONT));
-                }
-                if (qualification.getAwardDate() == null) {
-                    table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
-                } else {
-                    table.addCell(newTableCell(qualification.getAwardDate().toString(dateFormat), SMALL_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell("Expected Award Date", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
                 }
 
-                if (qualification.getDocument() != null) {
-                    table.addCell(newTableCell("Proof of award", SMALL_BOLD_FONT));
+                boolean awarded = qualification.getAwardDate() != null;
+
+                if (awarded) {
+                    table.addCell(modelBuilderHelper.newTableCell(notProvided, ModelBuilderConfiguration.MEDIUM_GREY_FONT));
                 } else {
-                    table.addCell(newTableCell("Interim Transcript", SMALL_BOLD_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell(qualification.getAwardDate().toString(dateFormat), ModelBuilderConfiguration.MEDIUM_FONT));
                 }
 
-                if (includeAttachments) {
-                    if (qualification.getDocument() != null) {
-                        table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
-                        bookmarkMap.put(appendixCounter++, qualification.getDocument());
-                    } else {
-                        table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
-                    }
-                } else {
-                    if (qualification.getDocument() != null) {
-                        table.addCell(newTableCell(provided, SMALL_FONT));
-                    } else {
-                        table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
-                    }
-                }
+                addDocument(table, awarded ? "Proof of award" : "Interim Transcript", qualification.getDocument());
 
                 pdfDocument.add(table);
-                pdfDocument.add(addSectionSeparator());
+                pdfDocument.add(modelBuilderHelper.newSectionSeparator());
             }
         }
     }
 
-    protected void addEmploymentSection(final Application form, Document pdfDocument) throws DocumentException {
+    private void addEmploymentSection(final Application application, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-        table.addCell(newGrayTableCell("EMPLOYMENT", BOLD_FONT));
+        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.addCell(modelBuilderHelper.newColoredTableCell("EMPLOYMENT", ModelBuilderConfiguration.BOLD_FONT));
 
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparator());
+        pdfDocument.add(modelBuilderHelper.newSectionSeparator());
 
-        if (form.getEmploymentPositions().isEmpty()) {
+        if (application.getEmploymentPositions().isEmpty()) {
             table = new PdfPTable(2);
-            table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-            table.addCell(newTableCell("Position", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(null, SMALL_FONT));
+            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.addCell(modelBuilderHelper.newTableCell("Position", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
             pdfDocument.add(table);
         } else {
             int counter = 1;
-            for (ApplicationEmploymentPosition position : form.getEmploymentPositions()) {
+            for (ApplicationEmploymentPosition position : application.getEmploymentPositions()) {
                 table = new PdfPTable(2);
-                table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-                PdfPCell headerCell = newTableCell("Position (" + counter++ + ")", SMALL_BOLD_FONT);
+                table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+                PdfPCell headerCell = modelBuilderHelper.newTableCell("Position (" + counter++ + ")", ModelBuilderConfiguration.MEDIUM_BOLD_FONT);
                 headerCell.setColspan(2);
                 table.addCell(headerCell);
-                table.addCell(newTableCell("Country", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(position.getEmployerAddress().getDomicile().getName(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Country", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(position.getEmployerAddress().getDomicile().getName(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Employer Name", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(position.getEmployerName(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Employer Name", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(position.getEmployerName(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Employer Address", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(position.getEmployerAddress().getLocationString(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Employer Address", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(position.getEmployerAddress().getLocationString(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Position", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(position.getPosition(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Position", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(position.getPosition(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Roles and Responsibilities", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(position.getRemit(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Roles and Responsibilities", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(position.getRemit(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Start Date", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(position.getStartDate().toString(dateFormat), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Start Date", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(position.getStartDate().toString(dateFormat), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Is this your Current Position", SMALL_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Is this your Current Position", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
                 if (BooleanUtils.isTrue(position.isCurrent())) {
-                    table.addCell(newTableCell("Yes", SMALL_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell("Yes", ModelBuilderConfiguration.MEDIUM_FONT));
                 } else {
-                    table.addCell(newTableCell("No", SMALL_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell("No", ModelBuilderConfiguration.MEDIUM_FONT));
                 }
 
-                table.addCell(newTableCell("End Date", SMALL_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("End Date", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
 
                 if (position.getEndDate() == null) {
-                    table.addCell(newTableCell(null, SMALL_GREY_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_GREY_FONT));
                 } else {
-                    table.addCell(newTableCell(position.getEndDate().toString(dateFormat), SMALL_FONT));
+                    table.addCell(modelBuilderHelper.newTableCell(position.getEndDate().toString(dateFormat), ModelBuilderConfiguration.MEDIUM_FONT));
                 }
 
                 pdfDocument.add(table);
-                pdfDocument.add(addSectionSeparator());
+                pdfDocument.add(modelBuilderHelper.newSectionSeparator());
             }
         }
     }
 
-    protected void addFundingSection(final Application form, Document pdfDocument) throws DocumentException {
+    private void addFundingSection(final Application application, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-        table.addCell(newGrayTableCell("FUNDING", BOLD_FONT));
+        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.addCell(modelBuilderHelper.newColoredTableCell("FUNDING", ModelBuilderConfiguration.BOLD_FONT));
 
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparator());
+        pdfDocument.add(modelBuilderHelper.newSectionSeparator());
 
-        if (form.getFundings().isEmpty()) {
+        if (application.getFundings().isEmpty()) {
             table = new PdfPTable(2);
-            table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-            table.addCell(newTableCell("Funding", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(null, SMALL_FONT));
+            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.addCell(modelBuilderHelper.newTableCell("Funding", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
             pdfDocument.add(table);
         } else {
             int counter = 1;
-            for (ApplicationFunding funding : form.getFundings()) {
+            for (ApplicationFunding funding : application.getFundings()) {
                 table = new PdfPTable(2);
-                table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-                PdfPCell headerCell = newTableCell("Funding (" + counter++ + ")", SMALL_BOLD_FONT);
+                table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+                PdfPCell headerCell = modelBuilderHelper.newTableCell("Funding (" + counter++ + ")", ModelBuilderConfiguration.MEDIUM_BOLD_FONT);
                 headerCell.setColspan(2);
                 table.addCell(headerCell);
-                table.addCell(newTableCell("Funding Type", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(funding.getFundingSource().getName(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Funding Type", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(funding.getFundingSource().getName(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Description", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(funding.getDescription(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Description", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(funding.getDescription(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Value of Award (GBP)", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(funding.getValue(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Value of Award (GBP)", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(funding.getValue(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Award Date", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(funding.getAwardDate().toString(dateFormat), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Award Date", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(funding.getAwardDate().toString(dateFormat), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Proof Of Award", SMALL_BOLD_FONT));
-                if (includeAttachments) {
-                    if (funding.getDocument() != null) {
-                        table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
-                        bookmarkMap.put(appendixCounter++, funding.getDocument());
-                    } else {
-                        table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
-                    }
-                } else {
-                    if (funding.getDocument() != null) {
-                        table.addCell(newTableCell(provided, SMALL_FONT));
-                    } else {
-                        table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
-                    }
-                }
+                addDocument(table, "Proof Of Award", funding.getDocument());
 
                 pdfDocument.add(table);
-                pdfDocument.add(addSectionSeparator());
+                pdfDocument.add(modelBuilderHelper.newSectionSeparator());
             }
         }
     }
 
-    protected void addReferencesSection(final Application form, Document pdfDocument) throws DocumentException {
+    private void addReferencesSection(final Application application, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-        table.addCell(newGrayTableCell("REFERENCES", BOLD_FONT));
+        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.addCell(modelBuilderHelper.newColoredTableCell("REFERENCES", ModelBuilderConfiguration.BOLD_FONT));
 
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparator());
+        pdfDocument.add(modelBuilderHelper.newSectionSeparator());
 
-        if (form.getReferees().isEmpty()) {
+        if (application.getReferees().isEmpty()) {
             table = new PdfPTable(2);
-            table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-            table.addCell(newTableCell("Reference", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(null, SMALL_FONT));
+            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.addCell(modelBuilderHelper.newTableCell("Reference", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+            table.addCell(modelBuilderHelper.newTableCell(null, ModelBuilderConfiguration.MEDIUM_FONT));
             pdfDocument.add(table);
         } else {
             int counter = 1;
-            for (ApplicationReferee referee : form.getReferees()) {
+            for (ApplicationReferee referee : application.getReferees()) {
                 table = new PdfPTable(2);
-                table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-                PdfPCell headerCell = newTableCell("Reference (" + counter++ + ")", SMALL_BOLD_FONT);
+                table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+                PdfPCell headerCell = modelBuilderHelper.newTableCell("Reference (" + counter++ + ")", ModelBuilderConfiguration.MEDIUM_BOLD_FONT);
                 headerCell.setColspan(2);
                 table.addCell(headerCell);
-                table.addCell(newTableCell("First Name", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(referee.getUser().getFirstName(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("First Name", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(referee.getUser().getFirstName(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Last Name", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(referee.getUser().getLastName(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Last Name", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(referee.getUser().getLastName(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Employer", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(referee.getJobEmployer(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Employer", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(referee.getJobEmployer(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Position", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(referee.getJobTitle(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Position", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(referee.getJobTitle(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Address", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(referee.getAddress().getLocationString(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Address", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(referee.getAddress().getLocationString(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Country", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(referee.getAddress().getDomicile().getName(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Country", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(referee.getAddress().getDomicile().getName(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Email", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(referee.getUser().getEmail(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Email", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(referee.getUser().getEmail(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Telephone", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(referee.getPhoneNumber(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Telephone", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(referee.getPhoneNumber(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                table.addCell(newTableCell("Skype", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(referee.getSkype(), SMALL_FONT));
+                table.addCell(modelBuilderHelper.newTableCell("Skype", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                table.addCell(modelBuilderHelper.newTableCell(referee.getSkype(), ModelBuilderConfiguration.MEDIUM_FONT));
 
-                if (includeReferences) {
-                    table.addCell(newTableCell("Reference", SMALL_BOLD_FONT));
-                    if (referee.getComment() != null) {
-                        table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
-                        bookmarkMap.put(appendixCounter++, referee.getComment());
+                if (applicationDownloadDTO.isIncludeReferences()) {
+                    table.addCell(modelBuilderHelper.newTableCell("Reference", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                    Comment referenceComment = referee.getComment();
+                    if (referenceComment != null) {
+                        addBookmark(table, referenceComment);
                     } else {
-                        table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
+                        table.addCell(modelBuilderHelper.newTableCell(notProvided, ModelBuilderConfiguration.MEDIUM_GREY_FONT));
                     }
                 }
                 pdfDocument.add(table);
-                pdfDocument.add(addSectionSeparator());
+                pdfDocument.add(modelBuilderHelper.newSectionSeparator());
             }
         }
     }
 
-    protected void addDocumentsSection(final Application form, Document pdfDocument) throws DocumentException {
+    private void addDocumentsSection(final Application application, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-        table.addCell(newGrayTableCell("DOCUMENTS", BOLD_FONT));
+        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+        table.addCell(modelBuilderHelper.newColoredTableCell("DOCUMENTS", ModelBuilderConfiguration.BOLD_FONT));
 
         pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparator());
+        pdfDocument.add(modelBuilderHelper.newSectionSeparator());
 
         table = new PdfPTable(2);
-        table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
+        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
 
-        ApplicationDocument documents = form.getDocument();
+        ApplicationDocument documents = application.getDocument();
 
-        table.addCell(newTableCell("Personal Statement", SMALL_BOLD_FONT));
-        if (includeAttachments) {
-            if (documents.getPersonalStatement() != null) {
-                table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
-                bookmarkMap.put(appendixCounter++, documents.getPersonalStatement());
-            } else {
-                table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
-            }
-        } else {
-            if (documents.getPersonalStatement() != null) {
-                table.addCell(newTableCell(provided, SMALL_FONT));
-            } else {
-                table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
-            }
-        }
-
-        table.addCell(newTableCell("CV/Resume", SMALL_BOLD_FONT));
-        if (includeAttachments) {
-            if (documents.getCv() != null) {
-                table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
-                bookmarkMap.put(appendixCounter++, documents.getCv());
-            } else {
-                table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
-            }
-        } else {
-            if (documents.getCv() != null) {
-                table.addCell(newTableCell(provided, SMALL_FONT));
-            } else {
-                table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
-            }
-        }
-        pdfDocument.add(table);
-    }
-
-    protected void addAdditionalInformationSection(final Application form, Document pdfDocument) throws DocumentException {
-        if (!includeCriminialConvictions) {
-            return;
-        }
-
-        PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-        table.addCell(newGrayTableCell("ADDITIONAL INFORMATION", BOLD_FONT));
-
-        pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparator());
-
-        ApplicationAdditionalInformation additionalInformation = form.getAdditionalInformation();
-        table = new PdfPTable(2);
-        table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-        table.addCell(newTableCell("Do you have any unspent Criminial Convictions?", SMALL_BOLD_FONT));
-        if (additionalInformation == null) {
-            table.addCell(newTableCell(notProvided, SMALL_GREY_FONT));
-        } else if (BooleanUtils.isTrue(additionalInformation.getConvictionsText() != null)) {
-            table.addCell(newTableCell("Yes", SMALL_FONT));
-        } else {
-            table.addCell(newTableCell("No", SMALL_FONT));
-        }
-
-        table.addCell(newTableCell("Description", SMALL_BOLD_FONT));
-        String convictionsText = additionalInformation == null ? null : Strings.nullToEmpty(additionalInformation.getConvictionsText());
-        table.addCell(newTableCell(convictionsText, SMALL_FONT));
+        addDocument(table, "Personal Statement", documents.getPersonalStatement());
+        addDocument(table, "CV/Resume", documents.getCv());
 
         pdfDocument.add(table);
     }
 
-    protected void addSupportingDocuments(final Application form, final Document pdfDocument, final PdfWriter pdfWriter) throws DocumentException {
-        for (Integer integer : bookmarkMap.keySet()) {
-            pdfDocument.newPage();
+    private void addAdditionalInformationSection(final Application application, Document pdfDocument) throws DocumentException {
+        if (applicationDownloadDTO.isIncludeEqualOpportunitiesData()) {
+            PdfPTable table = new PdfPTable(1);
+            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.addCell(modelBuilderHelper.newColoredTableCell("ADDITIONAL INFORMATION", ModelBuilderConfiguration.BOLD_FONT));
 
-            headerEvent.setAddHeaderAndFooter(true);
+            pdfDocument.add(table);
+            pdfDocument.add(modelBuilderHelper.newSectionSeparator());
 
-            Object object = bookmarkMap.get(integer);
-            if (object instanceof com.zuehlke.pgadmissions.domain.Document) {
+            ApplicationAdditionalInformation additionalInformation = application.getAdditionalInformation();
+            table = new PdfPTable(2);
+            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.addCell(modelBuilderHelper.newTableCell("Do you have any unspent Criminial Convictions?", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+            if (additionalInformation == null) {
+                table.addCell(modelBuilderHelper.newTableCell(notProvided, ModelBuilderConfiguration.MEDIUM_GREY_FONT));
+            } else if (BooleanUtils.isTrue(additionalInformation.getConvictionsText() != null)) {
+                table.addCell(modelBuilderHelper.newTableCell("Yes", ModelBuilderConfiguration.MEDIUM_FONT));
+            } else {
+                table.addCell(modelBuilderHelper.newTableCell("No", ModelBuilderConfiguration.MEDIUM_FONT));
+            }
 
-                if (!includeAttachments) {
-                    continue;
-                }
+            table.addCell(modelBuilderHelper.newTableCell("Description", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+            String convictionsText = additionalInformation == null ? null : Strings.nullToEmpty(additionalInformation.getConvictionsText());
+            table.addCell(modelBuilderHelper.newTableCell(convictionsText, ModelBuilderConfiguration.MEDIUM_FONT));
 
-                com.zuehlke.pgadmissions.domain.Document document = (com.zuehlke.pgadmissions.domain.Document) object;
-                if (document != null) {
-                    pdfDocument.add(new Chunk("APPENDIX (" + integer + ")").setLocalDestination(integer.toString()));
+            pdfDocument.add(table);
+        }
+    }
 
-                    if (document.getApplicationPersonalStatement() != null) {
-                        pdfDocument.add(new Chunk(" - Personal Statement"));
-                    } else if (document.getApplicationCv() != null) {
-                        pdfDocument.add(new Chunk(" - CV"));
-                    } else if (document.getApplicationFunding() != null) {
-                        pdfDocument.add(new Chunk(" - Funding proof of award"));
-                    } else if (document.getApplicationQualification() != null) {
-                        pdfDocument.add(new Chunk(" - Qualification Transcript"));
-                    } else if (document.getApplicationLanguageQualification() != null) {
-                        pdfDocument.add(new Chunk(" - English Language Certificate"));
-                    }
+    private void addSupportingDocuments(final Application application, final Document pdfDocument, final PdfWriter pdfWriter) throws DocumentException {
+        if (applicationDownloadDTO.isIncludeAttachments()) {
+            for (Integer i = 0; i < bookmarks.size(); i++) {
+                pdfDocument.newPage();
 
-                    try {
-                        readPdf(pdfDocument, document, pdfWriter);
-                    } catch (Exception e) {
-                        LOGGER.warn("Error reading PDF document", e.getMessage());
-                    }
-                }
-            } else if (object instanceof Comment) {
-                Comment reference = (Comment) object;
-                if (reference.getAction().getId() == PrismAction.APPLICATION_PROVIDE_REFERENCE) {
-                    pdfDocument.add(new Chunk("APPENDIX (" + integer + ")").setLocalDestination(integer.toString()));
+                NewPageEvent pageEvent = (NewPageEvent) pdfWriter.getPageEvent();
+                pageEvent.setApplyHeaderFooter(true);
 
-                    pdfDocument.add(new Chunk(" - Reference"));
-                    pdfDocument.add(addSectionSeparator());
-                    pdfDocument.add(addSectionSeparator());
-                    pdfDocument.add(addSectionSeparator());
-                    pdfDocument.add(addSectionSeparator());
+                Object object = bookmarks.get(i);
+                String index = i.toString();
+                if (object instanceof com.zuehlke.pgadmissions.domain.Document) {
+                    com.zuehlke.pgadmissions.domain.Document document = (com.zuehlke.pgadmissions.domain.Document) object;
 
-                    PdfPTable table = new PdfPTable(1);
-                    table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-                    table.addCell(newGrayTableCell("REFERENCE", BOLD_FONT));
-                    pdfDocument.add(table);
-                    pdfDocument.add(addSectionSeparator());
+                    if (document != null) {
+                        pdfDocument.add(new Chunk("APPENDIX (" + index + ")").setLocalDestination(index));
 
-                    table = new PdfPTable(2);
-                    table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-                    table.addCell(newTableCell("Referee", SMALL_BOLD_FONT));
-                    table.addCell(newTableCell(reference.getUser().getFirstName() + " " + reference.getUser().getLastName(), SMALL_FONT));
-                    table.addCell(newTableCell("Comment", SMALL_BOLD_FONT));
-                    table.addCell(newTableCell(reference.getContent(), SMALL_FONT));
-                    table.addCell(newTableCell("Is the applicant suitable for postgraduate study at UCL?", SMALL_BOLD_FONT));
-                    if (BooleanUtils.isTrue(reference.getSuitableForInstitution())) {
-                        table.addCell(newTableCell("Yes", SMALL_FONT));
-                    } else {
-                        table.addCell(newTableCell("No", SMALL_FONT));
-                    }
-                    table.addCell(newTableCell("Is the applicant suitable for their chosen postgraduate study program?", SMALL_BOLD_FONT));
-                    if (BooleanUtils.isTrue(reference.getSuitableForOpportunity())) {
-                        table.addCell(newTableCell("Yes", SMALL_FONT));
-                    } else {
-                        table.addCell(newTableCell("No", SMALL_FONT));
-                    }
-                    pdfDocument.add(table);
-                    for (com.zuehlke.pgadmissions.domain.Document refDocument : reference.getDocuments()) {
+                        if (document.getApplicationPersonalStatement() != null) {
+                            pdfDocument.add(new Chunk(" - Personal Statement"));
+                        } else if (document.getApplicationCv() != null) {
+                            pdfDocument.add(new Chunk(" - CV"));
+                        } else if (document.getApplicationFunding() != null) {
+                            pdfDocument.add(new Chunk(" - Funding proof of award"));
+                        } else if (document.getApplicationQualification() != null) {
+                            pdfDocument.add(new Chunk(" - Qualification Transcript"));
+                        } else if (document.getApplicationLanguageQualification() != null) {
+                            pdfDocument.add(new Chunk(" - English Language Certificate"));
+                        }
+
                         try {
-                            readPdf(pdfDocument, refDocument, pdfWriter);
+                            readPdf(pdfDocument, document, pdfWriter);
                         } catch (Exception e) {
                             LOGGER.warn("Error reading PDF document", e.getMessage());
+                        }
+                    }
+                } else if (object instanceof Comment) {
+                    Comment reference = (Comment) object;
+                    if (reference.getAction().getId() == PrismAction.APPLICATION_PROVIDE_REFERENCE) {
+                        pdfDocument.add(new Chunk("APPENDIX (" + index + ")").setLocalDestination(index));
+
+                        pdfDocument.add(new Chunk(" - Reference"));
+                        pdfDocument.add(modelBuilderHelper.newSectionSeparator());
+                        pdfDocument.add(modelBuilderHelper.newSectionSeparator());
+                        pdfDocument.add(modelBuilderHelper.newSectionSeparator());
+                        pdfDocument.add(modelBuilderHelper.newSectionSeparator());
+
+                        PdfPTable table = new PdfPTable(1);
+                        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+                        table.addCell(modelBuilderHelper.newColoredTableCell("REFERENCE", ModelBuilderConfiguration.BOLD_FONT));
+                        pdfDocument.add(table);
+                        pdfDocument.add(modelBuilderHelper.newSectionSeparator());
+
+                        table = new PdfPTable(2);
+                        table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+                        table.addCell(modelBuilderHelper.newTableCell("Referee", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                        table.addCell(modelBuilderHelper.newTableCell(reference.getUser().getFirstName() + " " + reference.getUser().getLastName(),
+                                ModelBuilderConfiguration.MEDIUM_FONT));
+                        table.addCell(modelBuilderHelper.newTableCell("Comment", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                        table.addCell(modelBuilderHelper.newTableCell(reference.getContent(), ModelBuilderConfiguration.MEDIUM_FONT));
+                        table.addCell(modelBuilderHelper.newTableCell("Is the applicant suitable for postgraduate study at UCL?",
+                                ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                        if (BooleanUtils.isTrue(reference.getSuitableForInstitution())) {
+                            table.addCell(modelBuilderHelper.newTableCell("Yes", ModelBuilderConfiguration.MEDIUM_FONT));
+                        } else {
+                            table.addCell(modelBuilderHelper.newTableCell("No", ModelBuilderConfiguration.MEDIUM_FONT));
+                        }
+                        table.addCell(modelBuilderHelper.newTableCell("Is the applicant suitable for their chosen postgraduate study program?",
+                                ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+                        if (BooleanUtils.isTrue(reference.getSuitableForOpportunity())) {
+                            table.addCell(modelBuilderHelper.newTableCell("Yes", ModelBuilderConfiguration.MEDIUM_FONT));
+                        } else {
+                            table.addCell(modelBuilderHelper.newTableCell("No", ModelBuilderConfiguration.MEDIUM_FONT));
+                        }
+
+                        pdfDocument.add(table);
+                        for (com.zuehlke.pgadmissions.domain.Document document : reference.getDocuments()) {
+                            try {
+                                readPdf(pdfDocument, document, pdfWriter);
+                            } catch (Exception e) {
+                                LOGGER.warn("Error reading PDF document", e.getMessage());
+                            }
                         }
                     }
                 }
@@ -962,27 +873,29 @@ public class ModelBuilder extends AbstractModelBuilder {
             PdfImportedPage page = pdfWriter.getImportedPage(pdfReader, i);
             pdfDocument.setPageSize(new Rectangle(page.getWidth(), page.getHeight()));
             pdfDocument.newPage();
-            headerEvent.setAddHeaderAndFooter(false);
+            NewPageEvent pageEvent = (NewPageEvent) pdfWriter.getPageEvent();
+            pageEvent.setApplyHeaderFooter(false);
             cb.addTemplate(page, 0, 0);
             pdfDocument.setPageSize(PageSize.A4);
         }
     }
 
-    private void addClosingDateToTable(PdfPTable table, final Application form) {
-        table.addCell(newTableCell("Closing date", SMALL_BOLD_FONT));
-        LocalDate closingDate = form.getClosingDate();
-        table.addCell(newTableCell(closingDate == null ? notRequired : closingDate.toString(dateFormat), SMALL_FONT));
+    private void addClosingDateToTable(PdfPTable table, final Application application) {
+        table.addCell(modelBuilderHelper.newTableCell("Closing date", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
+        LocalDate closingDate = application.getClosingDate();
+        table.addCell(modelBuilderHelper.newTableCell(closingDate == null ? notRequired : closingDate.toString(dateFormat),
+                ModelBuilderConfiguration.MEDIUM_FONT));
     }
 
-    private void addProjectTitleToTable(PdfPTable table, final Application form) {
-        table.addCell(newTableCell("Project", SMALL_BOLD_FONT));
+    private void addProjectTitleToTable(PdfPTable table, final Application application) {
+        table.addCell(modelBuilderHelper.newTableCell("Project", ModelBuilderConfiguration.MEDIUM_BOLD_FONT));
         String projectTitle;
-        if (form.getProject() == null) {
+        if (application.getProject() == null) {
             projectTitle = notRequired;
         } else {
-            projectTitle = form.getProject().getTitle();    
+            projectTitle = application.getProject().getTitle();
         }
-        table.addCell(newTableCell(projectTitle, SMALL_FONT));
+        table.addCell(modelBuilderHelper.newTableCell(projectTitle, ModelBuilderConfiguration.MEDIUM_FONT));
     }
 
     private PdfPCell createPropertyCell(Object bean, String propertyName) {
@@ -997,7 +910,7 @@ public class ModelBuilder extends AbstractModelBuilder {
 
         String valueString;
         Class<?> classValue = value.getClass();
-        
+
         if (classValue.equals(LocalDate.class) || classValue.equals(DateTime.class)) {
             DateTime valueDateTime = new DateTime(value);
             valueString = valueDateTime.toString(dateFormat);
@@ -1005,79 +918,70 @@ public class ModelBuilder extends AbstractModelBuilder {
             valueString = (String) value;
         }
 
-        return newTableCell(valueString, SMALL_FONT);
+        return modelBuilderHelper.newTableCell(valueString, ModelBuilderConfiguration.MEDIUM_FONT);
     }
 
-    private class HeaderEvent extends PdfPageEventHelper {
-        private final Chunk programHeader;
-        private final Chunk applicationHeader;
-        private final Chunk submittedDateHeader;
-        private boolean addHeaderAndFooter = true;
-        private boolean first = true;
-
-        public HeaderEvent(Chunk programHeader, Chunk applicationHeader, Chunk submittedDateHeader) {
-            this.programHeader = programHeader;
-            this.applicationHeader = applicationHeader;
-            this.submittedDateHeader = submittedDateHeader;
+    private void addDocument(PdfPTable table, String rowTitle, com.zuehlke.pgadmissions.domain.Document document) {
+        modelBuilderHelper.newTableCell(rowTitle, ModelBuilderConfiguration.MEDIUM_BOLD_FONT);
+        if (applicationDownloadDTO.isIncludeAttachments()) {
+            if (document != null) {
+                addBookmark(table, document);
+            } else {
+                table.addCell(modelBuilderHelper.newTableCell(notProvided, ModelBuilderConfiguration.MEDIUM_GREY_FONT));
+            }
+        } else {
+            if (document != null) {
+                table.addCell(modelBuilderHelper.newTableCell(provided, ModelBuilderConfiguration.MEDIUM_FONT));
+            } else {
+                table.addCell(modelBuilderHelper.newTableCell(notProvided, ModelBuilderConfiguration.MEDIUM_GREY_FONT));
+            }
         }
+    }
+
+    private void addBookmark(PdfPTable table, Object object) {
+        int index = bookmarks.size();
+        table.addCell(modelBuilderHelper.newAppendixTableCell("See APPENDIX(" + index + ")", ModelBuilderConfiguration.MEDIUM_LINK_FONT, index));
+        bookmarks.add(object);
+    }
+
+    @Component
+    private class NewPageEvent extends PdfPageEventHelper {
+
+        private Application application;
+
+        private boolean applyHeaderFooter = true;
 
         @Override
         public void onEndPage(PdfWriter writer, Document document) {
-            if (first) {
-                pageCounter = document.getPageNumber();
-                first = false;
-            }
-            try {
-                if (addHeaderAndFooter) {
+            if (applyHeaderFooter) {
+                try {
                     addHeaderToPage(writer, document);
                     addFooterToPage(writer, document);
+                } catch (Exception e) {
+                    LOGGER.error("Error applying header/footer to download", e);
+                    throw new RuntimeException(e);
                 }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
             }
         }
 
         private void addFooterToPage(PdfWriter writer, Document document) {
             LineSeparator lineSeparator = new LineSeparator();
             lineSeparator.drawLine(writer.getDirectContent(), document.left(), document.right(), document.bottom() - 15f);
-            Phrase footerPhrase = new Phrase("Page " + (1 + document.getPageNumber() - pageCounter), SMALLER_FONT);
+            Phrase footerPhrase = new Phrase("Page " + (1 + document.getPageNumber()), ModelBuilderConfiguration.SMALL_FONT);
             ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, footerPhrase, document.left(), document.bottom() - 25f, 0);
         }
 
-        private void addHeaderToPage(PdfWriter writer, Document document) throws DocumentException, BadElementException, MalformedURLException, IOException {
+        private void addHeaderToPage(PdfWriter writer, Document document) throws DocumentException, BadElementException, IOException {
             PdfPTable table = new PdfPTable(2);
-            table.setTotalWidth(0.75f * document.getPageSize().getWidth());
+            table.setTotalWidth(0.65f * document.getPageSize().getWidth());
             table.setWidths(new float[] { 25f, 75f });
 
-            PdfPCell c1 = new PdfPCell(new Phrase("Program", SMALLER_BOLD_FONT));
-            c1.setBorder(0);
-            c1.setHorizontalAlignment(Element.ALIGN_LEFT);
-            table.addCell(c1);
-
-            c1 = new PdfPCell(new Phrase(programHeader));
-            c1.setBorder(0);
-            c1.setHorizontalAlignment(Element.ALIGN_LEFT);
-            table.addCell(c1);
-
-            c1 = new PdfPCell(new Phrase("Application Number", SMALLER_BOLD_FONT));
-            c1.setBorder(0);
-            c1.setHorizontalAlignment(Element.ALIGN_LEFT);
-            table.addCell(c1);
-
-            c1 = new PdfPCell(new Phrase(applicationHeader));
-            c1.setBorder(0);
-            c1.setHorizontalAlignment(Element.ALIGN_LEFT);
-            table.addCell(c1);
-
-            c1 = new PdfPCell(new Phrase("Submitted", SMALLER_BOLD_FONT));
-            c1.setBorder(0);
-            c1.setHorizontalAlignment(Element.ALIGN_LEFT);
-            table.addCell(c1);
-
-            c1 = new PdfPCell(new Phrase(submittedDateHeader));
-            c1.setBorder(0);
-            c1.setHorizontalAlignment(Element.ALIGN_LEFT);
-            table.addCell(c1);
+            addHeaderRow(table, "Program", application.getProgram().getTitle());
+            Project project = application.getProject();
+            addHeaderRow(table, "Project", project == null ? null : project.getTitle());
+            addHeaderRow(table, "Applicant", application.getUser().toString());
+            addHeaderRow(table, "Application", application.getCode());
+            addHeaderRow(table, "Submitted", application.getSubmittedTimestamp().toString(dateFormat));
 
             table.writeSelectedRows(0, -1, document.left(), document.top() + 55f, writer.getDirectContent());
 
@@ -1090,8 +994,24 @@ public class ModelBuilder extends AbstractModelBuilder {
             lineSeparator.drawLine(writer.getDirectContent(), document.left(), document.right(), document.top() + 10f);
         }
 
-        public void setAddHeaderAndFooter(boolean addHeader) {
-            this.addHeaderAndFooter = addHeader;
+        private void addHeaderRow(PdfPTable table, String rowTitle, String rowData) {
+            PdfPCell cell = new PdfPCell(new Phrase(rowTitle, ModelBuilderConfiguration.SMALL_BOLD_FONT));
+            cell.setBorder(0);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            table.addCell(cell);
+
+            cell = new PdfPCell(new Phrase(rowData == null ? notRequired : rowData, ModelBuilderConfiguration.SMALL_FONT));
+            cell.setBorder(0);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            table.addCell(cell);
+        }
+
+        public void setApplyHeaderFooter(boolean applyHeader) {
+            this.applyHeaderFooter = applyHeader;
+        }
+
+        public final void setApplication(Application application) {
+            this.application = application;
         }
 
     }

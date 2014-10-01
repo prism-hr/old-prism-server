@@ -49,6 +49,7 @@ import com.zuehlke.pgadmissions.rest.dto.CommentAssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationValidator;
 
 @Service
@@ -180,8 +181,9 @@ public class ApplicationService {
 
     public List<ApplicationReferee> getApplicationExportReferees(Application application) {
         List<ApplicationReferee> referees = applicationDAO.getApplicationRefereesResponded(application);
+        int refereesResponded = referees.size();
         List<ApplicationReferee> refereesNotResponded = applicationDAO.getApplicationRefereesNotResponded(application);
-        for (int i = 0; i < (2 - referees.size()); i++) {
+        for (int i = 0; i < (2 - refereesResponded); i++) {
             referees.add(refereesNotResponded.get(i));
         }
         return referees;
@@ -339,6 +341,12 @@ public class ApplicationService {
 
         comment.getAssignedUsers().addAll(assignedUsers);
         return actionService.executeUserAction(application, action, comment);
+    }
+    
+    public void filterResourceListData(ResourceListRowRepresentation representation, User currentUser) {
+        if (currentUser.getId() == representation.getUser().getId()) {
+            representation.setApplicationRatingAverage(null);
+        }
     }
 
     private void purgeApplication(Application application, Comment comment) {

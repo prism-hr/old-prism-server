@@ -48,6 +48,7 @@ import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
 
 @Service
@@ -362,6 +363,19 @@ public class ResourceService {
             return conditions;
         }
         return null;
+    }
+    
+    public void filterResourceListData(ResourceListRowRepresentation representation, User currentUser) {
+        switch (representation.getResourceScope()) {
+        case APPLICATION:
+            applicationService.filterResourceListData(representation, currentUser);
+            break;
+        case INSTITUTION:
+        case PROGRAM:
+        case PROJECT:
+        case SYSTEM:
+            break;
+        }
     }
 
     private void appendUserRoleFilterCriteria(PrismScope scopeId, Junction conditions, ResourceListFilterConstraintDTO constraint, String propertyName,

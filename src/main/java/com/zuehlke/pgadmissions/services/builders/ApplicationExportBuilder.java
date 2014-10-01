@@ -13,6 +13,7 @@ import org.joda.time.LocalDate;
 import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.AddressTp;
@@ -65,6 +66,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
 
 @Component
+@Scope("prototype")
 public class ApplicationExportBuilder {
 
     private final ObjectFactory objectFactory = new ObjectFactory();
@@ -129,7 +131,7 @@ public class ApplicationExportBuilder {
         applicant.setCriminalConvictions(application.getAdditionalInformation().getConvictionsText() != null);
         applicant.setQualificationList(buildQualificationDetails(application));
         applicant.setEmployerList(buildEmployer(application));
-        applicant.setEnglishIsFirstLanguage(BooleanUtils.toBoolean(application.getPersonalDetail().getFirstLanguageEnglish()));
+        applicant.setEnglishIsFirstLanguage(BooleanUtils.toBoolean(application.getPersonalDetail().getFirstLanguageLocale()));
         applicant.setEnglishLanguageQualificationList(buildEnglishLanguageQualification(application));
         applicant.setApplicantID(StringUtils.trimToNull(applicationExportDTO.getCreatorExportId()));
 
@@ -138,8 +140,8 @@ public class ApplicationExportBuilder {
 
     private DomicileTp buildDomicile(Application application) {
         DomicileTp domicileTp = objectFactory.createDomicileTp();
-        domicileTp.setCode(application.getPersonalDetail().getResidenceCountry().getCode());
-        domicileTp.setName(application.getPersonalDetail().getResidenceCountry().getName());
+        domicileTp.setCode(application.getPersonalDetail().getDomicile().getCode());
+        domicileTp.setName(application.getPersonalDetail().getDomicile().getName());
         return domicileTp;
     }
 
@@ -246,7 +248,7 @@ public class ApplicationExportBuilder {
         addressTp.setCountry(currentAddress.getDomicile().getCode());
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(application.getUser().getEmail());
-        contactDtlsTp.setLandline(applicationExportBuilderHelper.cleanPhoneNumber(personalDetail.getPhoneNumber()));
+        contactDtlsTp.setLandline(applicationExportBuilderHelper.cleanPhoneNumber(personalDetail.getPhone()));
         return contactDtlsTp;
     }
 
@@ -265,7 +267,7 @@ public class ApplicationExportBuilder {
         addressTp.setCountry(contactAddress.getDomicile().getCode());
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(application.getUser().getEmail());
-        contactDtlsTp.setLandline(applicationExportBuilderHelper.cleanPhoneNumber(application.getPersonalDetail().getPhoneNumber()));
+        contactDtlsTp.setLandline(applicationExportBuilderHelper.cleanPhoneNumber(application.getPersonalDetail().getPhone()));
         return contactDtlsTp;
     }
 

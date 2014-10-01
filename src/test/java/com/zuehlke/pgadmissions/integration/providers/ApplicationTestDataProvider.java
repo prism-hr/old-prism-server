@@ -75,7 +75,7 @@ public class ApplicationTestDataProvider {
         languageQualification.setListeningScore("6");
         languageQualification.setDocument(testObjectProvider.get(Document.class));
         personalDetail.setLanguageQualification(languageQualification);
-        personalDetail.setResidenceCountry(testObjectProvider.get(Domicile.class));
+        personalDetail.setDomicile(testObjectProvider.get(Domicile.class));
         personalDetail.setVisaRequired(true);
         ApplicationPassport passport = new ApplicationPassport();
         passport.setNumber("666");
@@ -83,8 +83,8 @@ public class ApplicationTestDataProvider {
         passport.setIssueDate(new LocalDate(2003, 9, 14));
         passport.setExpiryDate(new LocalDate(2084, 8, 14));
         personalDetail.setPassport(passport);
-        personalDetail.setPhoneNumber("+44(4)5435435");
-        personalDetail.setMessenger("dupajasia");
+        personalDetail.setPhone("+44(4)5435435");
+        personalDetail.setSkype("dupajasia");
         personalDetail.setEthnicity(testObjectProvider.get(Ethnicity.class));
         personalDetail.setDisability(testObjectProvider.get(Disability.class));
         application.setPersonalDetail(personalDetail);

@@ -159,5 +159,9 @@ public class ApplicationLanguageQualification {
         this.document = document;
         return this;
     }
+    
+    public String getExamDate(String dateFormat) {
+        return examDate == null ? null : examDate.toString(dateFormat);
+    }
 
 }

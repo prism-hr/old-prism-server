@@ -169,5 +169,9 @@ public class ApplicationReferee {
         this.address = address;
         return this;
     }
+
+    public String getAddressLocation() {
+        return address == null ? null : address.getLocationString();
+    }
     
 }

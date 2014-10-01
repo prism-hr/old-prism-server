@@ -72,5 +72,13 @@ public class ApplicationAddress {
         this.contactAddress = address;
         return this;
     }
+    
+    public String getCurrentAddressLocation() {
+        return currentAddress == null ? null : currentAddress.getLocationString();
+    }
+    
+    public String getConcatAddressLocation() {
+        return contactAddress == null ? null : contactAddress.getLocationString();
+    }
 
 }

@@ -221,5 +221,13 @@ public class ApplicationQualification {
         this.completed = completed;
         return this;
     }
+    
+    public String getStartDate(String dateFormat) {
+        return startDate == null ? null : startDate.toString(dateFormat);
+    }
+    
+    public String getAwardDate(String dateFormat) {
+        return awardDate == null ? null : awardDate.toString(dateFormat);
+    }
 
 }

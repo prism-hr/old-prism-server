@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 
-public abstract class ImportedEntityInstitution implements IUniqueEntity {
+public abstract class ImportedEntity implements IUniqueEntity {
 
     public abstract Integer getId();
 
@@ -50,7 +50,7 @@ public abstract class ImportedEntityInstitution implements IUniqueEntity {
         if (getClass() != object.getClass()) {
             return false;
         }
-        final ImportedEntityInstitution other = (ImportedEntityInstitution) object;
+        final ImportedEntity other = (ImportedEntity) object;
         return Objects.equal(getInstitution(), other.getInstitution()) && Objects.equal(getType(), other.getType())
                 && Objects.equal(getCode(), other.getCode()) && Objects.equal(getName(), other.getName());
     }

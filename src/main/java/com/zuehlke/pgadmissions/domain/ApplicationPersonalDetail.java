@@ -11,9 +11,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
+
+import com.google.common.base.Joiner;
 
 @Entity
 @Table(name = "APPLICATION_PERSONAL_DETAIL")
@@ -28,14 +29,14 @@ public class ApplicationPersonalDetail {
 
     @Column(name = "skype")
     @Size(min = 6, max = 32)
-    private String messenger;
+    private String skype;
 
     @Column(name = "phone", nullable = false)
     @Size(max = 50)
-    private String phoneNumber;
+    private String phone;
 
-    @Column(name = "first_language_english", nullable = false)
-    private Boolean firstLanguageEnglish;
+    @Column(name = "first_language_locale", nullable = false)
+    private Boolean firstLanguageLocale;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_language_qualification_id")
@@ -82,7 +83,7 @@ public class ApplicationPersonalDetail {
 
     @ManyToOne
     @JoinColumn(name = "domicile_id", nullable = false)
-    private Domicile residenceCountry;
+    private Domicile domicile;
 
     public void setId(Integer id) {
         this.id = id;
@@ -132,12 +133,12 @@ public class ApplicationPersonalDetail {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Domicile getResidenceCountry() {
-        return residenceCountry;
+    public Domicile getDomicile() {
+        return domicile;
     }
 
-    public void setResidenceCountry(Domicile residenceCountry) {
-        this.residenceCountry = residenceCountry;
+    public void setDomicile(Domicile domicile) {
+        this.domicile = domicile;
     }
 
     public Application getApplication() {
@@ -172,31 +173,28 @@ public class ApplicationPersonalDetail {
         return disability;
     }
 
-    public String getMessenger() {
-        return messenger;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setMessenger(String messenger) {
-        if (StringUtils.isBlank(messenger)) {
-            this.messenger = null;
-        }
-        this.messenger = messenger;
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    
+    public String getSkype() {
+        return skype;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public void setSkype(String skype) {
+        this.skype = skype;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public Boolean getFirstLanguageLocale() {
+        return firstLanguageLocale;
     }
 
-    public Boolean getFirstLanguageEnglish() {
-        return firstLanguageEnglish;
-    }
-
-    public void setFirstLanguageEnglish(Boolean firstLanguageEnglish) {
-        this.firstLanguageEnglish = firstLanguageEnglish;
+    public void setFirstLanguageLocale(Boolean firstLanguageLocale) {
+        this.firstLanguageLocale = firstLanguageLocale;
     }
 
     public Boolean getVisaRequired() {
@@ -271,8 +269,8 @@ public class ApplicationPersonalDetail {
         return this;
     }
 
-    public ApplicationPersonalDetail withEnglishFirstLanguage(Boolean englishFirstLanguage) {
-        this.firstLanguageEnglish = englishFirstLanguage;
+    public ApplicationPersonalDetail withFirstLanguageLocale(Boolean firstLanguageLocale) {
+        this.firstLanguageLocale = firstLanguageLocale;
         return this;
     }
 
@@ -282,7 +280,7 @@ public class ApplicationPersonalDetail {
     }
 
     public ApplicationPersonalDetail withResidenceCountry(Domicile residenceCountry) {
-        this.residenceCountry = residenceCountry;
+        this.domicile = residenceCountry;
         return this;
     }
 
@@ -291,18 +289,18 @@ public class ApplicationPersonalDetail {
         return this;
     }
 
-    public ApplicationPersonalDetail withPassportInformation(ApplicationPassport passportInformation) {
-        this.passport = passportInformation;
+    public ApplicationPersonalDetail withPassport(ApplicationPassport passport) {
+        this.passport = passport;
         return this;
     }
 
-    public ApplicationPersonalDetail withPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public ApplicationPersonalDetail withPhone(String phoneNumber) {
+        this.phone = phoneNumber;
         return this;
     }
 
-    public ApplicationPersonalDetail withMessenger(String messenger) {
-        this.messenger = messenger;
+    public ApplicationPersonalDetail withSkype(String skype) {
+        this.skype = skype;
         return this;
     }
 
@@ -314,6 +312,16 @@ public class ApplicationPersonalDetail {
     public ApplicationPersonalDetail withDisability(Disability dis) {
         this.disability = dis;
         return this;
+    }
+    
+    public String getDateOfBirth(String dateFormat) {
+        return dateOfBirth == null ? null : dateOfBirth.toString(dateFormat);
+    }
+    
+    public String getNationalities() {
+        String first = firstNationality == null ? null : firstNationality.getName();
+        String second = secondNationality == null ? null : secondNationality.getName();
+        return Joiner.on(", ").skipNulls().join(first, second);
     }
 
 }

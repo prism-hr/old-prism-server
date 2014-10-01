@@ -167,11 +167,11 @@ public class ApplicationSectionService {
         personalDetail.setCountry(country);
         personalDetail.setFirstNationality(firstNationality);
         personalDetail.setSecondNationality(secondNationality);
-        personalDetail.setFirstLanguageEnglish(personalDetailDTO.getFirstLanguageEnglish());
-        personalDetail.setResidenceCountry(residenceCountry);
+        personalDetail.setFirstLanguageLocale(personalDetailDTO.getFirstLanguageEnglish());
+        personalDetail.setDomicile(residenceCountry);
         personalDetail.setVisaRequired(personalDetailDTO.getVisaRequired());
-        personalDetail.setPhoneNumber(personalDetailDTO.getPhoneNumber());
-        personalDetail.setMessenger(Strings.emptyToNull(personalDetailDTO.getMessenger()));
+        personalDetail.setPhone(personalDetailDTO.getPhoneNumber());
+        personalDetail.setSkype(Strings.emptyToNull(personalDetailDTO.getMessenger()));
         personalDetail.setEthnicity(ethnicity);
         personalDetail.setDisability(disability);
 

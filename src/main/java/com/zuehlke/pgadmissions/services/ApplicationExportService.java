@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,9 +86,6 @@ public class ApplicationExportService {
     private CommentService commentService;
 
     @Autowired
-    private ApplicationExportBuilder applicationExportBuilder;
-
-    @Autowired
     private ApplicationDocumentExportBuilder applicationDocumentExportBuilder;
 
     @Autowired
@@ -101,6 +99,9 @@ public class ApplicationExportService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     public void export(Application application) {
         try {
@@ -126,9 +127,10 @@ public class ApplicationExportService {
                 .getProgramDetail().getStudyOption());
         List<ApplicationReferee> applicationExportReferees = applicationService.getApplicationExportReferees(application);
 
-        return exportProgramInstance == null ? null : applicationExportBuilder.build(new ApplicationExportDTO().withApplication(application)
-                .withCreatorExportId(creatorExportId).withCreatorIpAddress(creatorIpAddress).withOfferRecommendationComment(offerRecommendationComment)
-                .withPrimarySupervisor(primarySupervisor).withExportProgramInstance(exportProgramInstance).withApplicationReferees(applicationExportReferees));
+        return exportProgramInstance == null ? null : applicationContext.getBean(ApplicationExportBuilder.class).build(
+                new ApplicationExportDTO().withApplication(application).withCreatorExportId(creatorExportId).withCreatorIpAddress(creatorIpAddress)
+                        .withOfferRecommendationComment(offerRecommendationComment).withPrimarySupervisor(primarySupervisor)
+                        .withExportProgramInstance(exportProgramInstance).withApplicationReferees(applicationExportReferees));
     }
 
     protected OutputStream buildDocumentExportRequest(Application application, String exportReference, OutputStream outputStream) throws IOException {

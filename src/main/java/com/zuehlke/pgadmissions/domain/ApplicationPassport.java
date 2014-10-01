@@ -94,5 +94,13 @@ public class ApplicationPassport {
         this.expiryDate = expiryDate;
         return this;
     }
+    
+    public String getIssueDate(String dateFormat) {
+        return issueDate == null ? null : issueDate.toString(dateFormat);
+    }
+    
+    public String getExipryDate(String dateFormat) {
+        return expiryDate == null ? null : expiryDate.toString(dateFormat);
+    }
 
 }

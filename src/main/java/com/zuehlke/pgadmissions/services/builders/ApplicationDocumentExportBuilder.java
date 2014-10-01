@@ -11,6 +11,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Application;
@@ -21,29 +22,22 @@ import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
+import com.zuehlke.pgadmissions.services.ApplicationDownloadService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.builders.pdf.AlternativeQualificationBuilder;
-import com.zuehlke.pgadmissions.services.builders.pdf.DocumentBuilder;
-import com.zuehlke.pgadmissions.services.builders.pdf.MergedReferenceBuilder;
-import com.zuehlke.pgadmissions.services.builders.pdf.ModelBuilder;
+import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilder.ApplicationDownloadAlternativeQualificationBuilder;
+import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilder.ApplicationDownloadReferenceBuilder;
 
 @Component
 public class ApplicationDocumentExportBuilder {
 
     @Autowired
-    private DocumentBuilder pdfDocumentBuilder;
-
-    @Autowired
     private ApplicationService applicationService;
 
     @Autowired
-    private MergedReferenceBuilder combinedReferenceBuilder;
+    private ApplicationDownloadService applicationDownloadService;
 
     @Autowired
-    private AlternativeQualificationBuilder applicationQualificationTranscriptBuilder;
-
-    @Autowired
-    private ModelBuilder modelBuilder;
+    private ApplicationContext applicationContext;
 
     public void getDocuments(Application application, String exportReference, OutputStream outputStream) throws IOException {
         Properties contentsProperties = new Properties();
@@ -89,7 +83,7 @@ public class ApplicationDocumentExportBuilder {
         } else {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
-            zos.write(applicationQualificationTranscriptBuilder.build(application));
+            zos.write(applicationContext.getBean(ApplicationDownloadAlternativeQualificationBuilder.class).build(application));
             zos.closeEntry();
             contentsProperties.put("transcript.1.serverFilename", filename);
             contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
@@ -144,7 +138,7 @@ public class ApplicationDocumentExportBuilder {
         for (int i = 0; i < 2; i++) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
-            combinedReferenceBuilder.build(application, referees.get(i).getComment(), zos);
+            applicationContext.getBean(ApplicationDownloadReferenceBuilder.class).build(application, referees.get(i).getComment(), zos);
             zos.closeEntry();
             int referenceNumberId = i + 1;
             contentsProperties.put("reference." + referenceNumberId + ".serverFilename", filename);
@@ -159,7 +153,7 @@ public class ApplicationDocumentExportBuilder {
         zos.putNextEntry(new ZipEntry(serverfilename));
         try {
             ApplicationDownloadDTO applicationDownloadDTO = new ApplicationDownloadDTO().withApplication(application).withIncludeEqualOpportuntiesData(true);
-            pdfDocumentBuilder.build(applicationDownloadDTO, zos);
+            applicationDownloadService.build(applicationDownloadDTO, zos);
         } catch (Exception e) {
             throw new Error("Unable to build application document for " + application.getCode(), e);
         }
@@ -174,7 +168,7 @@ public class ApplicationDocumentExportBuilder {
         zos.putNextEntry(new ZipEntry(serverfilename));
         try {
             ApplicationDownloadDTO applicationDownloadDTO = new ApplicationDownloadDTO().withApplication(application).withIncludeReferences(true);
-            pdfDocumentBuilder.build(applicationDownloadDTO, zos);
+            applicationDownloadService.build(applicationDownloadDTO, zos);
         } catch (Exception e) {
             throw new Error("Unable to merged application document for " + application.getCode(), e);
         }

@@ -24,8 +24,8 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
 import com.zuehlke.pgadmissions.services.ApplicationDownloadService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilder.ApplicationDownloadAlternativeQualificationBuilder;
-import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilder.ApplicationDownloadReferenceBuilder;
+import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadAlternativeQualificationBuilder;
+import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadReferenceBuilder;
 
 @Component
 public class ApplicationDocumentExportBuilder {

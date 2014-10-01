@@ -11,7 +11,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.itextpdf.text.Document;
-import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.User;
@@ -19,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhanceme
 import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilder;
+import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderHelper;
 
 @Component
 public class ApplicationDownloadService {
@@ -30,13 +30,16 @@ public class ApplicationDownloadService {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
 
     @Autowired
     private ApplicationContext applicationContext;
 
     public void build(ApplicationDownloadDTO applicationDownloadDTO, final OutputStream outputStream) {
         try {
-            Document pdfDocument = new Document(PageSize.A4, 50, 50, 100, 50);
+            Document pdfDocument = applicationDownloadBuilderHelper.startDocument();
             PdfWriter pdfWriter = PdfWriter.getInstance(pdfDocument, outputStream);
             pdfWriter.setCloseStream(false);
             pdfDocument.open();
@@ -52,7 +55,7 @@ public class ApplicationDownloadService {
         User currentUser = userService.getCurrentUser();
 
         try {
-            Document pdfDocument = new Document(PageSize.A4, 50, 50, 100, 50);
+            Document pdfDocument = applicationDownloadBuilderHelper.startDocument();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             PdfWriter pdfWriter = PdfWriter.getInstance(pdfDocument, baos);
             pdfDocument.open();

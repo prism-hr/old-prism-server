@@ -43,15 +43,16 @@ public class PrismStateActionAssignment {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
+    public boolean equals(Object object) {
+        if (object == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != object.getClass()) {
             return false;
         }
-        final PrismStateActionAssignment other = (PrismStateActionAssignment) obj;
+        final PrismStateActionAssignment other = (PrismStateActionAssignment) object;
         return Objects.equal(role, other.getRole()) && Objects.equal(actionEnhancement, other.getActionEnhancement())
                 && Objects.equal(delegatedAction, other.getDelegatedAction());
     }
+    
 }

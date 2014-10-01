@@ -40,7 +40,7 @@ public class AlternativeQualificationBuilder {
             exportDocument.open();
 
             PdfPTable table = new PdfPTable(1);
-            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
             table.addCell(modelBuilderHelper.newColoredTableCell("No Transcripts Provided", ModelBuilderConfiguration.BOLD_FONT));
             exportDocument.add(table);
             exportDocument.add(modelBuilderHelper.newSectionSeparator());

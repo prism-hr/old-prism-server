@@ -8,7 +8,7 @@ public class ModelBuilderConfiguration {
     
     protected static final BaseColor GREY_COLOR = new BaseColor(220, 220, 220);
     
-    protected static final float WIDTH_PERCENTAGE = 100f;
+    protected static final float PAGE_WIDTH = 100f;
     
     protected static final int LARGE_FONT_SIZE = 12;
     

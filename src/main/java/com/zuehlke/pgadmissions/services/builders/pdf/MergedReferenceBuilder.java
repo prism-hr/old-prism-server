@@ -37,7 +37,7 @@ public class MergedReferenceBuilder {
             document.open();
 
             PdfPTable table = new PdfPTable(1);
-            table.setWidthPercentage(ModelBuilderConfiguration.WIDTH_PERCENTAGE);
+            table.setWidthPercentage(ModelBuilderConfiguration.PAGE_WIDTH);
             table.addCell(modelBuilderHelper.newColoredTableCell("Referee Comment", ModelBuilderConfiguration.BOLD_FONT));
             document.add(table);
             document.add(modelBuilderHelper.newSectionSeparator());

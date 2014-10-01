@@ -79,9 +79,6 @@ public class ModelBuilder {
     @Autowired
     private ModelBuilderHelper modelBuilderHelper;
 
-    @Autowired
-    private NewPageEvent newPageEvent;
-
     private ApplicationDownloadDTO applicationDownloadDTO;
 
     private List<Object> bookmarks = Lists.newLinkedList();
@@ -91,7 +88,7 @@ public class ModelBuilder {
             initialize(applicationDownloadDTO);
             Application application = applicationDownloadDTO.getApplication();
             addCoverPage(application, document, writer);
-            writer.setPageEvent(newPageEvent);
+            writer.setPageEvent(new NewPageEvent().withApplication(application));
             addProgramSection(application, document);
             document.add(modelBuilderHelper.newSectionSeparator());
             addPersonalDetailSection(application, document);
@@ -119,8 +116,6 @@ public class ModelBuilder {
 
     private void initialize(ApplicationDownloadDTO applicationDownloadDTO) {
         this.applicationDownloadDTO = applicationDownloadDTO;
-        newPageEvent.setApplication(applicationDownloadDTO.getApplication());
-        newPageEvent.setApplyHeaderFooter(true);
         bookmarks.clear();
     }
 
@@ -943,7 +938,6 @@ public class ModelBuilder {
         bookmarks.add(object);
     }
 
-    @Component
     private class NewPageEvent extends PdfPageEventHelper {
 
         private Application application;
@@ -1009,8 +1003,9 @@ public class ModelBuilder {
             this.applyHeaderFooter = applyHeader;
         }
 
-        public void setApplication(Application application) {
+        public NewPageEvent withApplication(Application application) {
             this.application = application;
+            return this;
         }
 
     }

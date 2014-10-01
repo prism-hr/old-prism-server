@@ -7,8 +7,6 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
-
 public class AttachmentInputSourceTest {
 
 	@Test

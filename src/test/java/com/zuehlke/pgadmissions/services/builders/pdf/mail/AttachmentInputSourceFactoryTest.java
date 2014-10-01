@@ -10,9 +10,6 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
-import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSourceFactory;
-
 public class AttachmentInputSourceFactoryTest {
 
 	@Test

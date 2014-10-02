@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,8 +11,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 
 @Entity
@@ -80,22 +75,22 @@ public class UserInstitutionIdentity implements IUniqueEntity {
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
-    
+
     public UserInstitutionIdentity withUser(User user) {
         this.user = user;
         return this;
     }
-    
+
     public UserInstitutionIdentity withInstitution(Institution institution) {
         this.institution = institution;
         return this;
     }
-    
+
     public UserInstitutionIdentity withIdentityType(PrismUserIdentity identityType) {
         this.identityType = identityType;
         return this;
     }
-    
+
     public UserInstitutionIdentity withIdentitier(String identifier) {
         this.identifier = identifier;
         return this;
@@ -103,13 +98,7 @@ public class UserInstitutionIdentity implements IUniqueEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("user", user);
-        properties.put("institution", institution);
-        properties.put("identityType", identityType);
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
+        return new ResourceSignature().addProperty("user", user).addProperty("institution", institution).addProperty("identityType", identityType);
     }
 
 }

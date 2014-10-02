@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,8 +11,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismConfiguration;
 
 @Entity
@@ -134,18 +129,7 @@ public class WorkflowConfiguration extends WorkflowResourceConfiguration {
     
     @Override
     public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        if (system != null) {
-            properties.put("system", system);
-        } else if (institution != null) {
-            properties.put("institution", institution);
-        } else if (program != null) {
-            properties.put("program", program);
-        }
-        properties.put("parameter", parameter);
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
+        return super.getResourceSignature().addProperty("parameter", parameter);
     }
 
 }

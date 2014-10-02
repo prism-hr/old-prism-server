@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -13,9 +10,6 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 @Entity
 @Table(name = "STATE_ACTION_NOTIFICATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "role_id" }) })
@@ -69,17 +63,17 @@ public class StateActionNotification implements IUniqueEntity {
     public void setNotificationTemplate(NotificationTemplate notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
     }
-    
+
     public StateActionNotification withStateAction(StateAction stateAction) {
         this.stateAction = stateAction;
         return this;
     }
-    
+
     public StateActionNotification withRole(Role role) {
         this.role = role;
         return this;
     }
-    
+
     public StateActionNotification withNotificationTemplate(NotificationTemplate notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
         return this;
@@ -87,11 +81,6 @@ public class StateActionNotification implements IUniqueEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("stateAction", stateAction);
-        properties.put("role", role);
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
+        return new ResourceSignature().addProperty("stateAction", stateAction).addProperty("role", role);
     }
 }

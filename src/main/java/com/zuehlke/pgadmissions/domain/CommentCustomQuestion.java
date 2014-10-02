@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -14,19 +12,26 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @Entity
-@Table(name = "COMMENT_CUSTOM_QUESTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_id", "action_id" }) })
-public class CommentCustomQuestion implements IUniqueEntity {
+@Table(name = "COMMENT_CUSTOM_QUESTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "action_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "action_id" }), @UniqueConstraint(columnNames = { "program_id", "action_id" }) })
+public class CommentCustomQuestion extends WorkflowResourceConfiguration {
 
     @Id
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "program_id", nullable = false)
+    @JoinColumn(name = "system_id")
+    private System system;
+
+    @ManyToOne
+    @JoinColumn(name = "institution_id")
+    private Institution institution;
+
+    @ManyToOne
+    @JoinColumn(name = "program_id")
     private Program program;
 
     @ManyToOne
@@ -36,10 +41,10 @@ public class CommentCustomQuestion implements IUniqueEntity {
     @OneToOne
     @JoinColumn(name = "comment_custom_question_version_id")
     private CommentCustomQuestionVersion version;
-    
+
     @Column(name = "is_enabled")
     private Boolean enabled;
-    
+
     @OneToMany(mappedBy = "commentCustomQuestion")
     private Set<CommentCustomQuestionVersion> versions = Sets.newHashSet();
 
@@ -51,10 +56,32 @@ public class CommentCustomQuestion implements IUniqueEntity {
         this.id = id;
     }
 
+    @Override
+    public final System getSystem() {
+        return system;
+    }
+
+    @Override
+    public final void setSystem(System system) {
+        this.system = system;
+    }
+
+    @Override
+    public final Institution getInstitution() {
+        return institution;
+    }
+
+    @Override
+    public final void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
+
+    @Override
     public Program getProgram() {
         return program;
     }
 
+    @Override
     public void setProgram(Program program) {
         this.program = program;
     }
@@ -74,12 +101,12 @@ public class CommentCustomQuestion implements IUniqueEntity {
     public void setVersion(CommentCustomQuestionVersion version) {
         this.version = version;
     }
-    
-    public boolean isEnabled() {
+
+    public Boolean getEnabled() {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -87,16 +114,26 @@ public class CommentCustomQuestion implements IUniqueEntity {
         return versions;
     }
 
+    public CommentCustomQuestion withSystem(System system) {
+        this.system = system;
+        return this;
+    }
+
+    public CommentCustomQuestion withInstitution(Institution institution) {
+        this.institution = institution;
+        return this;
+    }
+
     public CommentCustomQuestion withProgram(Program program) {
         this.program = program;
         return this;
     }
-    
+
     public CommentCustomQuestion withAction(Action action) {
         this.action = action;
         return this;
     }
-    
+
     public CommentCustomQuestion withVersion(CommentCustomQuestionVersion version) {
         this.version = version;
         return this;
@@ -104,12 +141,7 @@ public class CommentCustomQuestion implements IUniqueEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties1 = Maps.newHashMap();
-        properties1.put("program", program);
-        properties1.put("action", action);
-        propertiesWrapper.add(properties1);
-        return new ResourceSignature(propertiesWrapper);
+        return super.getResourceSignature().addProperty("action", action);
     }
 
 }

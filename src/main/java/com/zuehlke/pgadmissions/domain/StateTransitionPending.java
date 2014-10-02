@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -11,24 +8,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.apache.commons.beanutils.PropertyUtils;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 @Entity
 @Table(name = "STATE_TRANSITION_PENDING", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "state_transition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "state_transition_id" }), @UniqueConstraint(columnNames = { "project_id", "state_transition_id" }),
         @UniqueConstraint(columnNames = { "application_id", "state_transition_id" }) })
-public class StateTransitionPending implements IUniqueEntity {
+public class StateTransitionPending extends WorkflowResourceExecution {
 
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @ManyToOne
     @JoinColumn(name = "system_id")
-    private Institution system;
+    private System system;
 
     @ManyToOne
     @JoinColumn(name = "institution_id")
@@ -58,42 +50,52 @@ public class StateTransitionPending implements IUniqueEntity {
         this.id = id;
     }
 
-    public Institution getSystem() {
+    @Override
+    public System getSystem() {
         return system;
     }
 
-    public void setSystem(Institution system) {
+    @Override
+    public void setSystem(System system) {
         this.system = system;
     }
 
+    @Override
     public Institution getInstitution() {
         return institution;
     }
 
+    @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
 
+    @Override
     public Program getProgram() {
         return program;
     }
 
+    @Override
     public void setProgram(Program program) {
         this.program = program;
     }
 
+    @Override
     public Project getProject() {
         return project;
     }
 
+    @Override
     public void setProject(Project project) {
         this.project = project;
     }
 
+    @Override
     public Application getApplication() {
         return application;
     }
 
+    @Override
     public void setApplication(Application application) {
         this.application = application;
     }
@@ -104,32 +106,6 @@ public class StateTransitionPending implements IUniqueEntity {
 
     public void setStateTransition(StateTransition stateTransition) {
         this.stateTransition = stateTransition;
-    }
-
-    public Resource getResource() {
-        if (system != null) {
-            return system;
-        } else if (institution != null) {
-            return institution;
-        } else if (program != null) {
-            return program;
-        } else if (project != null) {
-            return project;
-        }
-        return application;
-    }
-    
-    public void setResource(Resource resource) {
-        this.system = null;
-        this.institution = null;
-        this.program = null;
-        this.project = null;
-        this.application = null;
-        try {
-            PropertyUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
-        } catch (Exception e) {
-            new Error(e);
-        }
     }
 
     public StateTransitionPending withResource(Resource resource) {
@@ -144,22 +120,7 @@ public class StateTransitionPending implements IUniqueEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        if (system != null) {
-            properties.put("system", system);
-        } else if (institution != null) {
-            properties.put("institution", institution);
-        } else if (program != null) {
-            properties.put("program", program);
-        } else if (project != null) {
-            properties.put("program", project);
-        } else if (application != null) {
-            properties.put("application", application);
-        }
-        properties.put("stateTransition", stateTransition);
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
+        return super.getResourceSignature().addProperty("stateTransition", stateTransition);
     }
-    
+
 }

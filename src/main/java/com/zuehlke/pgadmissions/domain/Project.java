@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -27,9 +25,6 @@ import org.hibernate.search.annotations.Store;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
@@ -51,7 +46,7 @@ public class Project extends ParentResource {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "code")
+    @Column(name = "code", unique = true)
     private String code;
 
     @ManyToOne
@@ -97,7 +92,7 @@ public class Project extends ParentResource {
 
     @Column(name = "application_rating_average")
     private BigDecimal applicationRatingAverage;
-    
+
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
@@ -105,7 +100,7 @@ public class Project extends ParentResource {
     @ManyToOne
     @JoinColumn(name = "previous_state_id")
     private State previousState;
-    
+
     @Column(name = "due_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dueDate;
@@ -326,7 +321,7 @@ public class Project extends ParentResource {
     }
 
     @Override
-    public void setReferrer (String referrer) {
+    public void setReferrer(String referrer) {
         this.referrer = referrer;
     }
 
@@ -384,24 +379,16 @@ public class Project extends ParentResource {
     public void addComment(Comment comment) {
         comments.add(comment);
     }
-    
+
     public LocalDate getRecommendedStartDate() {
         return program.getProgramType().getPrismProgramType().getImmediateStartDate();
     }
 
     @Override
     public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("user", getUser());
-        properties.put("program", program);
-        properties.put("title", title);
-        propertiesWrapper.add(properties);
-        HashMultimap<String, Object> exclusions = HashMultimap.create();
-        exclusions.put("state.id", PrismState.PROJECT_DISABLED_COMPLETED);
-        exclusions.put("state.id", PrismState.PROJECT_REJECTED);
-        exclusions.put("state.id", PrismState.PROJECT_WITHDRAWN);
-        return new ResourceSignature(propertiesWrapper, exclusions);
+        return new ResourceSignature().addProperty("user", getUser()).addProperty("program", program).addProperty("title", title)
+                .addExclusion("state.id", PrismState.PROJECT_DISABLED_COMPLETED).addExclusion("state.id", PrismState.PROJECT_REJECTED)
+                .addExclusion("state.id", PrismState.PROJECT_WITHDRAWN);
     }
 
 }

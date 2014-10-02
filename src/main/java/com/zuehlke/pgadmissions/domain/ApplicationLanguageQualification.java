@@ -160,8 +160,12 @@ public class ApplicationLanguageQualification {
         return this;
     }
     
-    public String getExamDate(String dateFormat) {
+    public String getExamDateDisplay(String dateFormat) {
         return examDate == null ? null : examDate.toString(dateFormat);
     }
+    
+    public String getTypeDisplay() {
+        return type == null ? null : type.getName();
+    } 
 
 }

@@ -37,10 +37,9 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 @AnalyzerDef(name = "importedEntityNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
         @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
-        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class)})
+        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class) })
 @Entity
-@Table(name = "imported_entity", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_id", "imported_entity_type", "code"}),
-        @UniqueConstraint(columnNames = {"institution_id", "imported_entity_type", "name"})})
+@Table(name = "imported_entity", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_entity_type", "code" }) })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "imported_entity_type", discriminatorType = DiscriminatorType.STRING)
 @Indexed
@@ -53,7 +52,7 @@ public abstract class SimpleImportedEntity extends ImportedEntity {
     @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
-    
+
     @Column(name = "imported_entity_type", insertable = false, updatable = false)
     @Enumerated(EnumType.STRING)
     private PrismImportedEntity type;
@@ -89,7 +88,6 @@ public abstract class SimpleImportedEntity extends ImportedEntity {
         return type;
     }
 
-    @Override
     public final void setType(PrismImportedEntity type) {
         this.type = type;
     }
@@ -132,8 +130,7 @@ public abstract class SimpleImportedEntity extends ImportedEntity {
             return false;
         }
         final SimpleImportedEntity other = (SimpleImportedEntity) obj;
-        return Objects.equal(this.code, other.code) && Objects.equal(this.name, other.name)
-                && Objects.equal(this.enabled, other.enabled);
+        return Objects.equal(this.code, other.code) && Objects.equal(this.name, other.name) && Objects.equal(this.enabled, other.enabled);
     }
-   
+
 }

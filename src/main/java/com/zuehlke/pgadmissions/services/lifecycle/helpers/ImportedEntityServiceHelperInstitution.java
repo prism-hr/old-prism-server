@@ -24,8 +24,8 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.Institution;
@@ -44,7 +44,7 @@ import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelper {
 
-    private static final Logger logger = LoggerFactory.getLogger(ImportedEntityServiceHelperInstitution.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImportedEntityServiceHelperInstitution.class);
 
     @Value("${context.environment}")
     private String contextEnvironment;
@@ -70,7 +70,7 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
                     System.setProperty("http.maxRedirects", "5");
                     importEntities(importedEntityFeed);
                 } catch (DataImportException e) {
-                    logger.error("Error importing reference data.", e);
+                    LOGGER.error("Error importing reference data", e);
                     String errorMessage = e.getMessage();
                     Throwable cause = e.getCause();
                     if (cause != null) {
@@ -86,14 +86,13 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
                     }
                 }
             } else {
-                logger.info("Skipped the import from file: " + importedEntityFeed.getLocation());
+                LOGGER.info("Skipping the import from file: " + importedEntityFeed.getLocation());
             }
         }
     }
 
     private void importEntities(ImportedEntityFeed importedEntityFeed) throws DataImportException {
         String fileLocation = importedEntityFeed.getLocation();
-        logger.info("Starting the import from file: " + fileLocation);
 
         try {
             List unmarshalled = unmarshalEntities(importedEntityFeed);
@@ -115,6 +114,8 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
 
                 importedEntityService.setLastImportedTimestamp(importedEntityFeed);
                 // TODO: state change to institution ready to use.
+            } else {
+                LOGGER.info("Skipping the import from file: " + fileLocation);
             }
         } catch (Exception e) {
             throw new DataImportException("Error during the import of file: " + fileLocation, e);

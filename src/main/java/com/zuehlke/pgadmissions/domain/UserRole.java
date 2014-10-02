@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,15 +13,11 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
-
 @Entity
 @Table(name = "USER_ROLE", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_id", "role_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "user_id", "role_id" }), @UniqueConstraint(columnNames = { "program_id", "user_id", "role_id" }),
         @UniqueConstraint(columnNames = { "project_id", "user_id", "role_id" }), @UniqueConstraint(columnNames = { "application_id", "user_id", "role_id" }) })
-public class UserRole implements IUniqueEntity {
+public class UserRole extends WorkflowResourceExecution {
 
     @Id
     @GeneratedValue
@@ -78,42 +71,52 @@ public class UserRole implements IUniqueEntity {
         this.id = id;
     }
 
+    @Override
     public System getSystem() {
         return system;
     }
 
+    @Override
     public void setSystem(System system) {
         this.system = system;
     }
 
+    @Override
     public Institution getInstitution() {
         return institution;
     }
 
+    @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
 
+    @Override
     public Program getProgram() {
         return program;
     }
 
+    @Override
     public void setProgram(Program program) {
         this.program = program;
     }
 
+    @Override
     public Project getProject() {
         return project;
     }
 
+    @Override
     public void setProject(Project project) {
         this.project = project;
     }
 
+    @Override
     public Application getApplication() {
         return application;
     }
 
+    @Override
     public void setApplication(Application application) {
         this.application = application;
     }
@@ -178,47 +181,9 @@ public class UserRole implements IUniqueEntity {
         return this;
     }
 
-    public Resource getResource() {
-        if (system != null) {
-            return system;
-        } else if (institution != null) {
-            return institution;
-        } else if (program != null) {
-            return program;
-        } else if (project != null) {
-            return project;
-        }
-        return application;
-    }
-
-    public void setResource(Resource resource) {
-        this.system = null;
-        this.institution = null;
-        this.program = null;
-        this.project = null;
-        this.application = null;
-        IntrospectionUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
-    }
-
     @Override
     public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        if (system != null) {
-            properties.put("system", system);
-        } else if (institution != null) {
-            properties.put("institution", institution);
-        } else if (program != null) {
-            properties.put("program", program);
-        } else if (project != null) {
-            properties.put("project", project);
-        } else if (application != null) {
-            properties.put("application", application);
-        }
-        properties.put("user", user);
-        properties.put("role", role);
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
+        return super.getResourceSignature().addProperty("user", user).addProperty("role", role);
     }
 
 }

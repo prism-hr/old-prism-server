@@ -117,8 +117,16 @@ public class ApplicationProgramDetail {
         return this;
     }
     
-    public String getStartDate(String dateFormat) {
+    public String getStartDateDisplay(String dateFormat) {
         return startDate == null ? null : startDate.toString(dateFormat);
+    }
+    
+    public String getReferralSourceDisplay() {
+        return referralSource == null ? null : referralSource.getName();
+    }
+    
+    public String getStudyOptionDisplay() {
+        return studyOption == null ? null : studyOption.getName();
     }
     
 }

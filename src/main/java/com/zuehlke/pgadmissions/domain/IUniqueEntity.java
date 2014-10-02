@@ -8,6 +8,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 public interface IUniqueEntity {
@@ -16,46 +17,35 @@ public interface IUniqueEntity {
 
     public class ResourceSignature {
 
-        private List<HashMap<String, Object>> properties;
+        private final HashMap<String, Object> properties = Maps.newHashMap();
 
-        private HashMultimap<String, Object> exclusions;
+        private final HashMultimap<String, Object> exclusions = HashMultimap.create();
 
-        public ResourceSignature(List<HashMap<String, Object>> propertiesWrapper) {
-            this(propertiesWrapper, HashMultimap.<String, Object> create());
-        }
-
-        public ResourceSignature(List<HashMap<String, Object>> properties, HashMultimap<String, Object> exclusions) {
-            this.properties = properties;
-            this.exclusions = exclusions;
-        }
-
-        public List<HashMap<String, Object>> getProperties() {
+        public HashMap<String, Object> getProperties() {
             return properties;
-        }
-
-        public void setProperties(List<HashMap<String, Object>> properties) {
-            this.properties = properties;
         }
 
         public HashMultimap<String, Object> getExclusions() {
             return exclusions;
         }
-
-        public void setExclusions(HashMultimap<String, Object> exclusions) {
-            this.exclusions = exclusions;
+        
+        public ResourceSignature addProperty(String key, Object value) {
+            properties.put(key, value);
+            return this;
+        }
+        
+        public ResourceSignature addExclusion(String key, Object value) {
+            exclusions.put(key, value);
+            return this;
         }
         
         @Override
         public String toString() {
-            List<String> readablePropertySet = Lists.newArrayList();
-            for (HashMap<String, Object> property : properties) {
-                List<String> readableProperties = Lists.newArrayList();
-                for (String key : property.keySet()) {
-                    readableProperties.add(key + "=" + propertyToString(property.get(key)));
-                }
-                readablePropertySet.add(Joiner.on(", ").join(readableProperties));
+            List<String> readableProperties = Lists.newArrayList();
+            for (String property : properties.keySet()) {
+                readableProperties.add(property + "=" + propertyToString(properties.get(property)));
             }
-            return Joiner.on("; ").join(readablePropertySet);
+            return Joiner.on(", ").join(readableProperties);
         }
         
         private String propertyToString(Object property) {

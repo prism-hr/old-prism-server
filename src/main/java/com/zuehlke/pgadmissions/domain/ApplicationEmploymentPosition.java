@@ -175,11 +175,11 @@ public class ApplicationEmploymentPosition {
         return employerAddress == null ? null : employerAddress.getLocationString();
     }
     
-    public String getStartDate(String dateFormat) {
+    public String getStartDateDisplay(String dateFormat) {
         return startDate == null ? null : startDate.toString(dateFormat);
     }
     
-    public String getEndDate(String dateFormat) {
+    public String getEndDateDisplay(String dateFormat) {
         return endDate == null ? null : endDate.toString(dateFormat);
     }
 

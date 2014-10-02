@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,8 +14,6 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Entity
@@ -25,7 +21,7 @@ import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
         @UniqueConstraint(columnNames = { "program_id", "state_group_id" }), @UniqueConstraint(columnNames = { "project_id", "state_group_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ApplicationProcessingSummary implements IUniqueEntity {
-    
+
     @Id
     @GeneratedValue
     private Integer Id;
@@ -41,23 +37,23 @@ public class ApplicationProcessingSummary implements IUniqueEntity {
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
-    
+
     @ManyToOne
     @JoinColumn(name = "state_group_id", nullable = false)
     private StateGroup stateGroup;
-    
+
     @Column(name = "instance_count", nullable = false)
     private Integer instanceCount;
-    
+
     @Column(name = "instance_count_live", nullable = false)
     private Integer instanceCountLive;
-    
+
     @Column(name = "instance_count_average_non_zero", nullable = false)
     private BigDecimal instanceCountAverageNonZero;
-    
+
     @Column(name = "day_duration_average")
     private BigDecimal dayDurationAverage;
-    
+
     public final Integer getId() {
         return Id;
     }
@@ -113,7 +109,7 @@ public class ApplicationProcessingSummary implements IUniqueEntity {
     public final void setInstanceCountLive(Integer instanceCountLive) {
         this.instanceCountLive = instanceCountLive;
     }
-    
+
     public final BigDecimal getInstanceCountAverageNonZero() {
         return instanceCountAverageNonZero;
     }
@@ -121,7 +117,7 @@ public class ApplicationProcessingSummary implements IUniqueEntity {
     public final void setInstanceCountAverageNonZero(BigDecimal instanceCountAverageNonZero) {
         this.instanceCountAverageNonZero = instanceCountAverageNonZero;
     }
-    
+
     public final BigDecimal getDayDurationAverage() {
         return dayDurationAverage;
     }
@@ -145,31 +141,21 @@ public class ApplicationProcessingSummary implements IUniqueEntity {
         this.project = null;
         IntrospectionUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
     }
-    
+
     public ApplicationProcessingSummary withResource(Resource resource) {
         setResource(resource);
         return this;
     }
-    
+
     public ApplicationProcessingSummary withStateGroup(StateGroup stateGroup) {
         this.stateGroup = stateGroup;
         return this;
     }
-    
+
     @Override
     public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        if (institution != null) {
-            properties.put("institution", institution);
-        } else if (program != null) {
-            properties.put("program", program);
-        } else if (project != null) {
-            properties.put("project", project);
-        }
-        properties.put("stateGroup", stateGroup);
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
+        Resource resource = getResource();
+        return new ResourceSignature().addProperty(resource.getResourceScope().getLowerCaseName(), resource).addProperty("stateGroup", stateGroup);
     }
-    
+
 }

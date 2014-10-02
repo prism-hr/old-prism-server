@@ -905,8 +905,12 @@ public class Comment {
         return action.isTransitionAction() && (previousStateGroup.getId() != currentStateGroup.getId() || previousStateGroup.isRepeatable());
     }
 
-    public String getRating() {
+    public String getApplicationRatingDisplay() {
         return applicationRating == null ? null : new BigDecimal(applicationRating).setScale(2, RoundingMode.HALF_UP).toPlainString();
+    }
+    
+    public String getUserDisplay() {
+        return user == null ? null : user.getDisplayName();
     }
 
 }

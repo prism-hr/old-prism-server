@@ -170,7 +170,7 @@ public class ApplicationReferee {
         return this;
     }
 
-    public String getAddressLocation() {
+    public String getAddressDisplay() {
         return address == null ? null : address.getLocationString();
     }
     

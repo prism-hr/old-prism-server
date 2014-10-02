@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -19,8 +17,6 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @Entity
@@ -98,16 +94,16 @@ public class StateTransition implements IUniqueEntity {
     public Set<RoleTransition> getRoleTransitions() {
         return roleTransitions;
     }
-    
+
     public Set<Action> getPropagatedActions() {
         return propagatedActions;
     }
-    
+
     public StateTransition withStateAction(StateAction stateAction) {
         this.stateAction = stateAction;
         return this;
     }
-    
+
     public StateTransition withTransitionState(State transitionState) {
         this.transitionState = transitionState;
         return this;
@@ -117,7 +113,7 @@ public class StateTransition implements IUniqueEntity {
         this.transitionAction = transitionAction;
         return this;
     }
-    
+
     public StateTransition withStateTransitionEvaluation(StateTransitionEvaluation stateTransitionEvaluation) {
         this.stateTransitionEvaluation = stateTransitionEvaluation;
         return this;
@@ -125,12 +121,7 @@ public class StateTransition implements IUniqueEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("stateAction", stateAction);
-        properties.put("transitionState", transitionState);
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
+        return new ResourceSignature().addProperty("stateAction", stateAction).addProperty("transitionState", transitionState);
     }
-    
+
 }

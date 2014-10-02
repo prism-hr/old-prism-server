@@ -304,13 +304,13 @@ public class ApplicationPersonalDetail {
         return this;
     }
 
-    public ApplicationPersonalDetail withEthnicity(Ethnicity eth) {
-        ethnicity = eth;
+    public ApplicationPersonalDetail withEthnicity(Ethnicity ethnicity) {
+        this.ethnicity = ethnicity;
         return this;
     }
 
-    public ApplicationPersonalDetail withDisability(Disability dis) {
-        this.disability = dis;
+    public ApplicationPersonalDetail withDisability(Disability disability) {
+        this.disability = disability;
         return this;
     }
     
@@ -318,7 +318,31 @@ public class ApplicationPersonalDetail {
         return dateOfBirth == null ? null : dateOfBirth.toString(dateFormat);
     }
     
-    public String getNationalities() {
+    public String getTitleDisplay() {
+        return title == null ? null : title.getName();
+    }
+    
+    public String getGenderDisplay() {
+        return gender == null ? null : gender.getName();
+    }
+    
+    public String getCountryDisplay() {
+        return country == null ? null : country.getName();
+    }
+    
+    public String getDomicileDisplay() {
+        return domicile == null ? null : domicile.getName();
+    }
+    
+    public String getEthnicityDisplay() {
+        return ethnicity == null ? null : ethnicity.getName();
+    }
+    
+    public String getDisabilityDisplay() {
+        return disability == null ? null : disability.getName();
+    } 
+    
+    public String getNationalityDisplay() {
         String first = firstNationality == null ? null : firstNationality.getName();
         String second = secondNationality == null ? null : secondNationality.getName();
         return Joiner.on(", ").skipNulls().join(first, second);

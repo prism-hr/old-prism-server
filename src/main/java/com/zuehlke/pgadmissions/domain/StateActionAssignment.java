@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -17,8 +14,6 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 
 @Entity
@@ -37,15 +32,15 @@ public class StateActionAssignment implements IUniqueEntity {
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
-    
+
     @Column(name = "action_enhancement")
     @Enumerated(EnumType.STRING)
     private PrismActionEnhancement actionEnhancement;
-    
+
     @ManyToOne
     @JoinColumn(name = "delegated_action_id")
     private Action delegatedAction;
-    
+
     public Integer getId() {
         return id;
     }
@@ -77,7 +72,7 @@ public class StateActionAssignment implements IUniqueEntity {
     public void setActionEnhancement(PrismActionEnhancement actionEnhancement) {
         this.actionEnhancement = actionEnhancement;
     }
-    
+
     public Action getDelegatedAction() {
         return delegatedAction;
     }
@@ -90,30 +85,25 @@ public class StateActionAssignment implements IUniqueEntity {
         this.stateAction = stateAction;
         return this;
     }
-    
+
     public StateActionAssignment withRole(Role role) {
         this.role = role;
         return this;
     }
-    
+
     public StateActionAssignment withActionEnhancement(PrismActionEnhancement actionEnhancement) {
         this.actionEnhancement = actionEnhancement;
         return this;
     }
-    
+
     public StateActionAssignment withDelegatedAction(Action delegatedAction) {
         this.delegatedAction = delegatedAction;
         return this;
     }
-    
+
     @Override
     public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("stateAction", stateAction);
-        properties.put("role", role);
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
+        return new ResourceSignature().addProperty("stateAction", stateAction).addProperty("role", role);
     }
 
 }

@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,9 +8,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 @Entity
 @Table(name = "NOTIFICATION_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "notification_template_id" }),
@@ -132,18 +126,7 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
     
     @Override
     public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        if (system != null) {
-            properties.put("system", system);
-        } else if (institution != null) {
-            properties.put("institution", institution);
-        } else if (program != null) {
-            properties.put("program", program);
-        }
-        properties.put("notificationTemplate", notificationTemplate);
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
+        return super.getResourceSignature().addProperty("notificationTemplate", notificationTemplate);
     }
 
 }

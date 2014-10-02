@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -20,8 +18,6 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @Entity
@@ -33,14 +29,14 @@ public class System extends Resource {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "code")
+    @Column(name = "code",unique = true)
     private String code;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "title", unique = true)
+    @Column(name = "title", nullable = false, unique = true)
     private String title;
 
     @Column(name = "last_data_import_date")
@@ -301,11 +297,7 @@ public class System extends Resource {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("title", title);
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
+        return new ResourceSignature().addProperty("title", title);
     }
 
 }

@@ -40,9 +40,7 @@ public class ApplicationDownloadService {
     public void build(ApplicationDownloadDTO applicationDownloadDTO, final OutputStream outputStream) {
         try {
             Document pdfDocument = applicationDownloadBuilderHelper.startDocument();
-            PdfWriter pdfWriter = PdfWriter.getInstance(pdfDocument, outputStream);
-            pdfWriter.setCloseStream(false);
-            pdfDocument.open();
+            PdfWriter pdfWriter = applicationDownloadBuilderHelper.startDocumentWriter(outputStream, pdfDocument);
             applicationContext.getBean(ApplicationDownloadBuilder.class).build(applicationDownloadDTO, pdfDocument, pdfWriter);
             pdfDocument.newPage();
             pdfDocument.close();

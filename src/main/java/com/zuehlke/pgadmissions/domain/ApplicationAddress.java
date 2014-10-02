@@ -73,11 +73,11 @@ public class ApplicationAddress {
         return this;
     }
     
-    public String getCurrentAddressLocation() {
+    public String getCurrentAddressDisplay() {
         return currentAddress == null ? null : currentAddress.getLocationString();
     }
     
-    public String getConcatAddressLocation() {
+    public String getConcactAddressDisplay() {
         return contactAddress == null ? null : contactAddress.getLocationString();
     }
 

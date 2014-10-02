@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -32,13 +32,6 @@ public class ImportedEntityDAO {
         return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
                 .add(Restrictions.eq("institution", institution)) //
                 .add(Restrictions.eq("code", code)) //
-                .uniqueResult();
-    }
-
-    public <T extends ImportedEntity> T getImportedEntityByName(Class<? extends ImportedEntity> entityClass, Institution institution, String name) {
-        return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
-                .add(Restrictions.eq("institution", institution)) //
-                .add(Restrictions.eq("name", name)) //
                 .uniqueResult();
     }
     

@@ -95,11 +95,11 @@ public class ApplicationPassport {
         return this;
     }
     
-    public String getIssueDate(String dateFormat) {
+    public String getIssueDateDisplay(String dateFormat) {
         return issueDate == null ? null : issueDate.toString(dateFormat);
     }
     
-    public String getExipryDate(String dateFormat) {
+    public String getExipryDateDisplay(String dateFormat) {
         return expiryDate == null ? null : expiryDate.toString(dateFormat);
     }
 

@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -28,23 +26,21 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
 @Entity
 @Table(name = "APPLICATION")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Application extends Resource {
-    
+
     @Id
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "code")
+    @Column(name = "code", unique = true)
     private String code;
 
     @ManyToOne
@@ -81,11 +77,11 @@ public class Application extends Resource {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_program_detail_id", unique = true)
     private ApplicationProgramDetail programDetail;
-    
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     private Set<ApplicationSupervisor> supervisors = Sets.newHashSet();
-    
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_personal_detail_id", unique = true)
     private ApplicationPersonalDetail personalDetail;
@@ -127,7 +123,7 @@ public class Application extends Resource {
     @Column(name = "completion_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate completionDate;
-    
+
     @Column(name = "confirmed_start_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate confirmedStartDate;
@@ -135,7 +131,7 @@ public class Application extends Resource {
     @ManyToOne
     @JoinColumn(name = "confirmed_primary_supervisor_id")
     private User confirmedPrimarySupervisor;
-    
+
     @ManyToOne
     @JoinColumn(name = "confirmed_secondary_supervisor_id")
     private User confirmedSecondarySupervisor;
@@ -170,17 +166,17 @@ public class Application extends Resource {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
-    
+
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
-    
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "APPLICATION_SECONDARY_PROJECT", joinColumns = @JoinColumn(name = "application_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "secondary_project_id", nullable = false))
     private Set<Project> secondaryProjects = Sets.newHashSet();
 
     @OneToMany(mappedBy = "application")
     private Set<Comment> comments = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "application")
     private Set<UserRole> userRoles = Sets.newHashSet();
 
@@ -451,7 +447,7 @@ public class Application extends Resource {
     public final Set<Comment> getComments() {
         return comments;
     }
-    
+
     public final Set<UserRole> getUserRoles() {
         return userRoles;
     }
@@ -604,11 +600,11 @@ public class Application extends Resource {
     public void addComment(Comment comment) {
         comments.add(comment);
     }
-    
+
     public LocalDate getRecommendedStartDate() {
         return project == null ? program.getRecommendedStartDate() : project.getRecommendedStartDate();
     }
-    
+
     public Set<ParentResource> getParentResources() {
         Set<ParentResource> parentResources = Sets.newLinkedHashSet();
         if (project != null) {
@@ -618,46 +614,41 @@ public class Application extends Resource {
         parentResources.add(institution);
         return parentResources;
     }
-    
-    public String getProgramTitle() {
+
+    public String getProgramDisplay() {
         return program == null ? null : program.getTitle();
     }
-    
-    public String getProjectTitle() {
+
+    public String getProjectDisplay() {
         return project == null ? null : project.getTitle();
     }
 
-    public String getSubmittedTimestamp(String dateFormat) {
+    public String getSubmittedTimestampDisplay(String dateFormat) {
         return submittedTimestamp == null ? null : submittedTimestamp.toString(dateFormat);
     }
-    
-    public String getClosingDate(String dateFormat) {
+
+    public String getClosingDateDisplay(String dateFormat) {
         return closingDate == null ? null : closingDate.toString(dateFormat);
     }
-    
-    public String getConfirmedStartDate(String dateFormat) {
+
+    public String getConfirmedStartDateDisplay(String dateFormat) {
         return confirmedStartDate == null ? null : confirmedStartDate.toString(dateFormat);
     }
-    
-    public String getRatingAverage() {
+
+    public String getApplicationRatingAverageDisplay() {
         return applicationRatingAverage == null ? null : applicationRatingAverage.toPlainString();
     }
-    
-    @Override
-    public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("user", user);
-        properties.put("program", program);
-        if (project != null) {
-            properties.put("project", project);
-        }
-        propertiesWrapper.add(properties);
-        HashMultimap<String, Object> exclusions = HashMultimap.create();
-        exclusions.put("state.id", PrismState.APPLICATION_APPROVED_COMPLETED);
-        exclusions.put("state.id", PrismState.APPLICATION_REJECTED_COMPLETED);
-        exclusions.put("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED);
-        return new ResourceSignature(propertiesWrapper, exclusions);
+
+    public boolean isApproved() {
+        return state.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED && state.getId() != PrismState.APPLICATION_APPROVED;
     }
 
+    @Override
+    public ResourceSignature getResourceSignature() {
+        return new ResourceSignature().addProperty("user", user).addProperty("program", program).addProperty("project", project)
+                .addExclusion("state.id", PrismState.APPLICATION_APPROVED_COMPLETED).addExclusion("state.id", PrismState.APPLICATION_REJECTED_COMPLETED)
+                .addExclusion("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED)
+                .addExclusion("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED);
+    }
+    
 }

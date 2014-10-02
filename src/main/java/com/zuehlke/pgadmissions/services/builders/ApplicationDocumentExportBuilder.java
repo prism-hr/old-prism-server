@@ -20,11 +20,14 @@ import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
 import com.zuehlke.pgadmissions.services.ApplicationDownloadService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadAlternativeQualificationBuilder;
+import com.zuehlke.pgadmissions.services.CommentService;
+import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadEquivalentExperienceBuilder;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadReferenceBuilder;
 
 @Component
@@ -36,6 +39,9 @@ public class ApplicationDocumentExportBuilder {
     @Autowired
     private ApplicationDownloadService applicationDownloadService;
 
+    @Autowired
+    private CommentService commentService;
+    
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -83,7 +89,8 @@ public class ApplicationDocumentExportBuilder {
         } else {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
-            zos.write(applicationContext.getBean(ApplicationDownloadAlternativeQualificationBuilder.class).build(application));
+            Comment approvalComment = commentService.getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
+            zos.write(applicationContext.getBean(ApplicationDownloadEquivalentExperienceBuilder.class).build(application, approvalComment));
             zos.closeEntry();
             contentsProperties.put("transcript.1.serverFilename", filename);
             contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
@@ -138,11 +145,11 @@ public class ApplicationDocumentExportBuilder {
         for (int i = 0; i < 2; i++) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
-            applicationContext.getBean(ApplicationDownloadReferenceBuilder.class).build(application, referees.get(i).getComment(), zos);
+            zos.write(applicationContext.getBean(ApplicationDownloadReferenceBuilder.class).build(application, referees.get(i).getComment()));
             zos.closeEntry();
             int referenceNumberId = i + 1;
             contentsProperties.put("reference." + referenceNumberId + ".serverFilename", filename);
-            contentsProperties.put("reference." + referenceNumberId + ".applicationFilename", "References.2.pdf");
+            contentsProperties.put("reference." + referenceNumberId + ".applicationFilename", "References."  + referenceNumberId + ".pdf");
         }
     }
 

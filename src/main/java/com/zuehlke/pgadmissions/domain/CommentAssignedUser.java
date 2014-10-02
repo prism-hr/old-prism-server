@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,8 +12,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 
 @Entity
@@ -38,7 +33,7 @@ public class CommentAssignedUser implements IUniqueEntity {
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
-    
+
     @Column(name = "role_transition_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismRoleTransitionType roleTransitionType;
@@ -97,7 +92,7 @@ public class CommentAssignedUser implements IUniqueEntity {
         this.role = role;
         return this;
     }
-    
+
     public CommentAssignedUser withRoleTransitionType(PrismRoleTransitionType roleTransitionType) {
         this.roleTransitionType = roleTransitionType;
         return this;
@@ -122,13 +117,7 @@ public class CommentAssignedUser implements IUniqueEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("comment", comment);
-        properties.put("user", user);
-        properties.put("role", role);
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
+        return new ResourceSignature().addProperty("comment", comment).addProperty("user", user).addProperty("role", role);
     }
 
 }

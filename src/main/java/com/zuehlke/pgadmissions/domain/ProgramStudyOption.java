@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -19,8 +17,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @Entity
@@ -47,7 +43,7 @@ public class ProgramStudyOption implements IUniqueEntity {
     @Column(name = "application_close_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate applicationCloseDate;
-    
+
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
@@ -125,7 +121,7 @@ public class ProgramStudyOption implements IUniqueEntity {
         this.applicationCloseDate = applicationCloseDate;
         return this;
     }
-    
+
     public ProgramStudyOption withEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
@@ -133,12 +129,7 @@ public class ProgramStudyOption implements IUniqueEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("program", program);
-        properties.put("studyOption", studyOption);
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
+        return new ResourceSignature().addProperty("program", program).addProperty("studyOption", studyOption);
     }
 
 }

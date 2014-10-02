@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -18,15 +16,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
@@ -48,7 +44,7 @@ public class Program extends ParentResource {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "code")
+    @Column(name = "code", unique = true)
     private String code;
 
     @Column(name = "imported_code")
@@ -513,23 +509,16 @@ public class Program extends ParentResource {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        if (imported) {
-            properties.put("institution", institution);
-            properties.put("importedCode", importedCode);
+        ResourceSignature signature = new ResourceSignature().addProperty("institution", institution);
+        if (BooleanUtils.isTrue(imported)) {
+            signature.addProperty("importedCode", importedCode);
         } else {
-            properties.put("institution", institution);
-            properties.put("title", title);
+            signature.addProperty("title", title);
+            signature.addExclusion("state.id", PrismState.PROGRAM_DISABLED_COMPLETED);
         }
-        propertiesWrapper.add(properties);
-        HashMultimap<String, Object> exclusions = HashMultimap.create();
-        if (!imported) {
-            exclusions.put("state.id", PrismState.PROGRAM_DISABLED_COMPLETED);
-        }
-        exclusions.put("state.id", PrismState.PROGRAM_REJECTED);
-        exclusions.put("state.id", PrismState.PROGRAM_WITHDRAWN);
-        return new ResourceSignature(propertiesWrapper, exclusions);
+        signature.addExclusion("state.id", PrismState.PROGRAM_REJECTED);
+        signature.addExclusion("state.id", PrismState.PROGRAM_WITHDRAWN);
+        return signature;
     }
 
 }

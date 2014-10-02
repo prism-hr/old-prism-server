@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.AttributeOverride;
@@ -44,13 +43,11 @@ import org.hibernate.search.annotations.TokenizerDef;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @AnalyzerDef(name = "advertAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
@@ -361,6 +358,17 @@ public class Advert {
             @Column(name = "domain", nullable = false)
             @Enumerated(EnumType.STRING)
             private PrismAdvertDomain domain;
+            
+            @Override
+            protected Integer getAdvertId() {
+                return advertId;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            protected <T extends Enum<T>> T getAdvertTag() {
+                return (T) domain;
+            }
 
         }
 
@@ -392,6 +400,17 @@ public class Advert {
             @Column(name = "industry", nullable = false)
             @Enumerated(EnumType.STRING)
             private PrismAdvertIndustry industry;
+            
+            @Override
+            protected Integer getAdvertId() {
+                return advertId;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            protected <T extends Enum<T>> T getAdvertTag() {
+                return (T) industry;
+            }
 
         }
 
@@ -423,6 +442,17 @@ public class Advert {
             @Column(name = "function", nullable = false)
             @Enumerated(EnumType.STRING)
             private PrismAdvertFunction function;
+            
+            @Override
+            protected Integer getAdvertId() {
+                return advertId;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            protected <T extends Enum<T>> T getAdvertTag() {
+                return (T) function;
+            }
 
         }
 
@@ -455,16 +485,30 @@ public class Advert {
             @Enumerated(EnumType.STRING)
             private PrismProgramType programType;
 
+            @Override
+            protected Integer getAdvertId() {
+                return advertId;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            protected <T extends Enum<T>> T getAdvertTag() {
+                return (T) programType;
+            }
+
         }
 
     }
     
     private static abstract class AdvertTagId {
         
+        protected abstract Integer getAdvertId();
+        
+        protected abstract <T extends Enum<T>> T getAdvertTag();
+        
         @Override 
         public int hashCode() {
-            List<Object> properties = getPropertyValues();
-            return Objects.hashCode(properties);
+            return Objects.hashCode(getAdvertId(), getAdvertTag());
         }
 
         @Override
@@ -476,14 +520,9 @@ public class Advert {
                 return false;
             }
             final AdvertTagId other = (AdvertTagId) object;
-            List<Object> properties = getPropertyValues();
-            List<Object> otherProperties = other.getPropertyValues();
-            return properties.containsAll(otherProperties);
+            return getAdvertId() == other.getAdvertId() && getAdvertTag() == other.getAdvertTag(); 
         }
-        
-        private List<Object> getPropertyValues() {
-            return IntrospectionUtils.getPropertyValues(this);
-        }
+
     }
 
 }

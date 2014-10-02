@@ -1,14 +1,11 @@
 package com.zuehlke.pgadmissions.services.builders.download;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 
-import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -23,34 +20,34 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderColor;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
+import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Component
 public class ApplicationDownloadBuilderHelper {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(ApplicationDownloadBuilderHelper.class);
-    
     @Value("${xml.export.logo.file.location}")
     private String logoFileLocation;
-    
+
     @Value("${xml.export.logo.file.width.percentage}")
     private Float logoFileWidthPercentage;
-    
+
     @Value("${xml.export.not.provided}")
     private String notProvided;
-    
-    @Value("${xml.export.date.format}")
-    private String dateFormat;
-    
-    @Autowired
-    private ImportedEntityService importedEntityService;
 
     public Document startDocument() {
         return new Document(PageSize.A4, 50, 50, 100, 50);
     }
-    
+
+    public PdfWriter startDocumentWriter(final OutputStream outputStream, Document pdfDocument) throws DocumentException {
+        PdfWriter pdfWriter = PdfWriter.getInstance(pdfDocument, outputStream);
+        pdfWriter.setCloseStream(false);
+        pdfDocument.open();
+        return pdfWriter;
+    }
+
     public PdfPTable startSection(Document pdfDocument, String title) throws DocumentException {
         pdfDocument.add(newSectionHeader(title));
         pdfDocument.add(newSectionSeparator());
@@ -67,25 +64,21 @@ public class ApplicationDownloadBuilderHelper {
 
     public void addContentRow(String title, String content, ApplicationDownloadBuilderFontSize fontSize, PdfPTable table) {
         String fontSizePostfix = WordUtils.capitalizeFully(fontSize.name());
-        try {
-            table.addCell((PdfPCell) MethodUtils.invokeExactMethod(this, "newTitleCell" + fontSizePostfix, title));
-            table.addCell((PdfPCell) MethodUtils.invokeExactMethod(this, "newContentCell" + fontSizePostfix, content));
-        } catch (Exception e) {
-            LOGGER.error("No such helper method", e);
-        }
+        table.addCell((PdfPCell) IntrospectionUtils.invokeMethod(this, "newTitleCell" + fontSizePostfix, title));
+        table.addCell((PdfPCell) IntrospectionUtils.invokeMethod(this, "newContentCell" + fontSizePostfix, content == null ? notProvided : content));
     }
 
     public void closeSection(Document pdfDocument, PdfPTable body) throws DocumentException {
         pdfDocument.add(body);
         pdfDocument.add(newSectionSeparator());
     }
-    
+
     public Image newLogoImage() throws BadElementException, MalformedURLException, IOException {
         Image image = Image.getInstance(this.getClass().getResource(logoFileLocation));
         image.setWidthPercentage(logoFileWidthPercentage);
         return image;
     }
-    
+
     public Paragraph newSectionSeparator() {
         return new Paragraph(" ");
     }
@@ -97,49 +90,49 @@ public class ApplicationDownloadBuilderHelper {
     public PdfPTable newSubsectionHeader(String title) {
         return newSectionHeader(WordUtils.capitalizeFully(title), ApplicationDownloadBuilderColor.WHITE);
     }
-    
+
     public PdfPTable newSectionBody() {
         PdfPTable table = new PdfPTable(2);
         table.setWidthPercentage(ApplicationDownloadBuilderConfiguration.PAGE_WIDTH);
         return table;
     }
-    
+
     public PdfPCell newTitleCellSmall(final String content) {
         return newTitleCell(content, ApplicationDownloadBuilderFontSize.SMALL);
     }
-    
+
     public PdfPCell newTitleCellMedium(final String content) {
         return newTitleCell(content, ApplicationDownloadBuilderFontSize.MEDIUM);
     }
-    
+
     public PdfPCell newTitleCellLarge(final String content) {
         return newTitleCell(content, ApplicationDownloadBuilderFontSize.LARGE);
     }
-    
+
     public PdfPCell newContentCellSmall(final String content) {
         return newContentCell(content, ApplicationDownloadBuilderFontSize.SMALL);
     }
-    
+
     public PdfPCell newContentCellMedium(final String content) {
         return newContentCell(content, ApplicationDownloadBuilderFontSize.MEDIUM);
     }
-    
+
     public PdfPCell newContentCellLarge(final String content) {
         return newContentCell(content, ApplicationDownloadBuilderFontSize.LARGE);
     }
-    
+
     public PdfPCell newBookmarkCellSmall(final String content, int index) {
         return newBookmarkCell(content, ApplicationDownloadBuilderFontSize.SMALL, index);
     }
-    
+
     public PdfPCell newBookmarkCellMedium(final String content, int index) {
         return newBookmarkCell(content, ApplicationDownloadBuilderFontSize.MEDIUM, index);
     }
-    
+
     public PdfPCell newBookmarkCellLarge(final String content, int index) {
         return newBookmarkCell(content, ApplicationDownloadBuilderFontSize.LARGE, index);
     }
-    
+
     public PdfPCell newContentCell(final String content, final ApplicationDownloadBuilderFontSize fontSize) {
         return newTableCell(content, fontSize, null);
     }
@@ -150,7 +143,7 @@ public class ApplicationDownloadBuilderHelper {
         }
         return newTableCell(content, fontSize, null);
     }
-    
+
     public PdfPCell newBookmarkCell(final String content, final ApplicationDownloadBuilderFontSize fontSize, int bookmarkIndex) {
         return newTableCell(content, fontSize, bookmarkIndex);
     }
@@ -162,7 +155,7 @@ public class ApplicationDownloadBuilderHelper {
     public void addContentRowMedium(String title, String content, PdfPTable table) {
         addContentRow(title, content, ApplicationDownloadBuilderFontSize.MEDIUM, table);
     }
-    
+
     private PdfPTable newSectionHeader(String title, ApplicationDownloadBuilderColor background) {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(ApplicationDownloadBuilderConfiguration.PAGE_WIDTH);

@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,37 +16,33 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 @Entity
-@Table(name = "APPLICATION_PROCESSING", uniqueConstraints = {@UniqueConstraint(columnNames = {"application_id", "state_group_id"}) })
+@Table(name = "APPLICATION_PROCESSING", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "state_group_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ApplicationProcessing implements IUniqueEntity {
 
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @ManyToOne
     @JoinColumn(name = "application_id", nullable = false)
     private Application application;
-    
+
     @ManyToOne
     @JoinColumn(name = "state_group_id", nullable = false)
     private StateGroup stateGroup;
-    
+
     @Column(name = "instance_count", nullable = false)
     private Integer instanceCount;
-    
+
     @Column(name = "day_duration_average")
     private BigDecimal dayDurationAverage;
-    
+
     @Column(name = "last_updated_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastUpdatedDate;
-    
-    
+
     public final Integer getId() {
         return id;
     }
@@ -96,27 +90,27 @@ public class ApplicationProcessing implements IUniqueEntity {
     public final void setLastUpdatedDate(LocalDate lastUpdatedDate) {
         this.lastUpdatedDate = lastUpdatedDate;
     }
-    
+
     public ApplicationProcessing withApplication(Application application) {
         this.application = application;
         return this;
     }
-    
+
     public ApplicationProcessing withStateGroup(StateGroup stateGroup) {
         this.stateGroup = stateGroup;
         return this;
     }
-    
+
     public ApplicationProcessing withInstanceCount(Integer instanceCount) {
         this.instanceCount = instanceCount;
         return this;
     }
-    
+
     public ApplicationProcessing withDayDurationAverage(BigDecimal dayDurationAverage) {
         this.dayDurationAverage = dayDurationAverage;
         return this;
     }
-    
+
     public ApplicationProcessing withLastUpdateDate(LocalDate lastUpdatedDate) {
         this.lastUpdatedDate = lastUpdatedDate;
         return this;
@@ -124,12 +118,7 @@ public class ApplicationProcessing implements IUniqueEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("application", application);
-        properties.put("stateGroup", stateGroup);
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
+        return new ResourceSignature().addProperty("application", application).addProperty("stateGroup", stateGroup);
     }
-    
+
 }

@@ -222,12 +222,16 @@ public class ApplicationQualification {
         return this;
     }
     
-    public String getStartDate(String dateFormat) {
+    public String getStartDateDisplay(String dateFormat) {
         return startDate == null ? null : startDate.toString(dateFormat);
     }
     
-    public String getAwardDate(String dateFormat) {
+    public String getAwardDateDisplay(String dateFormat) {
         return awardDate == null ? null : awardDate.toString(dateFormat);
+    }
+    
+    public String getTypeDisplay() {
+        return type == null ? null : type.getName();
     }
 
 }

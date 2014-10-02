@@ -137,8 +137,12 @@ public class ApplicationFunding {
         return this;
     }
     
-    public String getAwardDate(String dateFormat) {
+    public String getAwardDateDisplay(String dateFormat) {
         return awardDate == null ? null : awardDate.toString(dateFormat);
+    }
+    
+    public String getFundingSourceDisplay() {
+        return fundingSource == null ? null : fundingSource.getName(); 
     }
 
 }

@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -38,8 +36,6 @@ import org.hibernate.search.annotations.TokenizerDef;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -47,9 +43,9 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 @AnalyzerDef(name = "institutionNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
         @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
-        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class)})
+        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class) })
 @Entity
-@Table(name = "INSTITUTION", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_domicile_id", "title"}), @UniqueConstraint(columnNames = {"title", "google_id"})})
+@Table(name = "INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_domicile_id", "title", "google_id" }) })
 @Indexed
 public class Institution extends ParentResource {
 
@@ -64,7 +60,7 @@ public class Institution extends ParentResource {
     @Column(name = "referrer")
     private String referrer;
 
-    @Column(name = "code")
+    @Column(name = "code", unique = true)
     private String code;
 
     @ManyToOne
@@ -78,10 +74,10 @@ public class Institution extends ParentResource {
     @Column(name = "title", nullable = false, unique = true)
     @Field(analyzer = @Analyzer(definition = "institutionNameAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String title;
-    
+
     @Column(name = "summary", nullable = false)
     private String summary;
-    
+
     @Column(name = "description")
     private String description;
 
@@ -90,27 +86,27 @@ public class Institution extends ParentResource {
 
     @Column(name = "homepage", nullable = false)
     private String homepage;
-    
+
     @Column(name = "google_id")
     private String googleId;
-    
+
     @Column(name = "linkedin_uri")
     private String linkedinUri;
-    
+
     @Column(name = "twitter_uri")
     private String twitterUri;
-    
+
     @Column(name = "facebook_uri")
     private String facebookUri;
 
     @Column(name = "default_program_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismProgramType defaultProgramType;
-    
+
     @Column(name = "default_study_option", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismStudyOption defaultStudyOption;
-    
+
     @OneToOne
     @JoinColumn(name = "logo_document_id")
     private Document logoDocument;
@@ -294,7 +290,7 @@ public class Institution extends ParentResource {
     public final void setDefaultProgramType(PrismProgramType defaultProgramType) {
         this.defaultProgramType = defaultProgramType;
     }
-    
+
     public final PrismStudyOption getDefaultStudyOption() {
         return defaultStudyOption;
     }
@@ -387,7 +383,6 @@ public class Institution extends ParentResource {
         this.applicationRatingCount = applicationRatingCountSum;
     }
 
-
     @Override
     public final BigDecimal getApplicationRatingCountAverageNonZero() {
         return applicationRatingCountAverageNonZero;
@@ -438,7 +433,7 @@ public class Institution extends ParentResource {
         this.title = title;
         return this;
     }
-    
+
     public Institution withSummary(String summary) {
         this.summary = summary;
         return this;
@@ -458,32 +453,32 @@ public class Institution extends ParentResource {
         this.googleId = googleId;
         return this;
     }
-    
+
     public Institution withLinkedinUri(String linkedinUri) {
         this.linkedinUri = linkedinUri;
         return this;
     }
-    
+
     public Institution withTwitterUri(String twitterUri) {
         this.twitterUri = twitterUri;
         return this;
     }
-    
+
     public Institution withFacebookUri(String facebookUri) {
         this.facebookUri = facebookUri;
         return this;
     }
-    
+
     public Institution withHomepage(String homepage) {
         this.homepage = homepage;
         return this;
     }
-    
+
     public Institution withDefaultProgramType(PrismProgramType defaultProgramType) {
         this.defaultProgramType = defaultProgramType;
         return this;
     }
-    
+
     public Institution withDefaultStudyOption(PrismStudyOption defaultStudyOption) {
         this.defaultStudyOption = defaultStudyOption;
         return this;
@@ -562,7 +557,7 @@ public class Institution extends ParentResource {
     }
 
     @Override
-    public void setReferrer (String referrer) {
+    public void setReferrer(String referrer) {
         this.referrer = referrer;
     }
 
@@ -656,12 +651,7 @@ public class Institution extends ParentResource {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        List<HashMap<String, Object>> propertiesWrapper = Lists.newArrayList();
-        HashMap<String, Object> properties = Maps.newHashMap();
-        properties.put("domicile", domicile);
-        properties.put("title", title);
-        propertiesWrapper.add(properties);
-        return new ResourceSignature(propertiesWrapper);
+        return new ResourceSignature().addProperty("domicile", domicile).addProperty("title", title).addProperty("googleId", googleId);
     }
 
 }

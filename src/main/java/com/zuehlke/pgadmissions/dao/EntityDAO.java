@@ -7,8 +7,6 @@ import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Conjunction;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,30 +75,20 @@ public class EntityDAO {
     @SuppressWarnings("unchecked")
     public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) throws DeduplicationException {
         IUniqueEntity.ResourceSignature signature = uniqueResource.getResourceSignature();
+        
         Class<T> resourceClass = (Class<T>) uniqueResource.getClass();
-
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceClass);
-        Disjunction indices = Restrictions.disjunction();
 
-        List<HashMap<String, Object>> propertyWrapper = signature.getProperties();
-        if (propertyWrapper.size() > 0) {
-            for (HashMap<String, Object> properties : propertyWrapper) {
-                Conjunction index = Restrictions.conjunction();
-                for (Map.Entry<String, Object> property : properties.entrySet()) {
-                    String key = property.getKey();
-                    if (key == null) {
-                        throw new Error("Tried to deduplicate entity with null property key " + property.getKey());
-                    }
-                    if (property.getValue() == null) {
-                        index.add(Restrictions.isNull(property.getKey()));
-                    } else {
-                        index.add(Restrictions.eq(property.getKey(), property.getValue()));
-                    }
+        HashMap<String, Object> properties = signature.getProperties();
+        if (properties.size() > 0) {
+            for (Map.Entry<String, Object> property : properties.entrySet()) {
+                String key = property.getKey();
+                if (key == null) {
+                    throw new Error("Tried to deduplicate entity with null property key " + property.getKey());
                 }
-                indices.add(index);
+                Object value = property.getValue();
+                criteria.add(value == null ? Restrictions.isNull(key) : Restrictions.eq(key, value));
             }
-
-            criteria.add(indices);
 
             HashMultimap<String, Object> exclusions = signature.getExclusions();
             for (String key : exclusions.keySet()) {

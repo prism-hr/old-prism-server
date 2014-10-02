@@ -65,7 +65,7 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 @Service
 public class SystemService {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(SystemService.class);
 
     @Value("${system.name}")
     private String systemName;
@@ -122,43 +122,43 @@ public class SystemService {
 
     @Transactional(timeout = 600)
     public void initialiseSystem() throws WorkflowConfigurationException, DeduplicationException {
-        logger.info("Initialising scope definitions");
+        LOGGER.info("Initialising scope definitions");
         verifyBackwardCompatibility(Scope.class);
         initialiseScopes();
 
-        logger.info("Initialising role definitions");
+        LOGGER.info("Initialising role definitions");
         verifyBackwardCompatibility(Role.class);
         initialiseRoles();
 
-        logger.info("Initialising action definitions");
+        LOGGER.info("Initialising action definitions");
         verifyBackwardCompatibility(Action.class);
         initialiseActions();
 
-        logger.info("Initialising state group definitions");
+        LOGGER.info("Initialising state group definitions");
         verifyBackwardCompatibility(StateGroup.class);
         initialiseStateGroups();
 
-        logger.info("Initialising state definitions");
+        LOGGER.info("Initialising state definitions");
         verifyBackwardCompatibility(State.class);
         initialiseStates();
 
-        logger.info("Initialising state transition evaluation definitions");
+        LOGGER.info("Initialising state transition evaluation definitions");
         verifyBackwardCompatibility(StateTransitionEvaluation.class);
         initialiseStateTransitionEvaluations();
 
-        logger.info("Initialising system");
+        LOGGER.info("Initialising system");
         System system = initialiseSystemResource();
 
-        logger.info("Initialising notification definitions");
+        LOGGER.info("Initialising notification definitions");
         initialiseNotificationTemplates(system);
 
-        logger.info("Initialising state duration definitions");
+        LOGGER.info("Initialising state duration definitions");
         initialiseStateDurations(system);
 
-        logger.info("Initialising workflow definitions");
+        LOGGER.info("Initialising workflow definitions");
         initialiseStateActions();
 
-        logger.info("Initialising system user");
+        LOGGER.info("Initialising system user");
         initialiseSystemUser(system);
 
         entityService.flush();

@@ -21,12 +21,8 @@ public class SocialPresenceServiceTest {
     private UserService userService;
     
     @Test
-    public void shouldGetCompanyInformation() throws IOException {
+    public void shouldGetSocialPresenceInformation() throws IOException {
         institutionService.getSocialProfiles("University College London");
-    }
-    
-    @Test
-    public void shouldGetUserInformation() throws IOException {
         userService.getSocialProfiles("Anthony", "Finkelstein");
     }
     

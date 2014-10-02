@@ -346,8 +346,7 @@ public class StateService {
                 .withCreatedTimestamp(new DateTime());
         executeStateTransition(resource, action, comment);
         
-        entityService.flush();
-        entityService.clear();
+        
     }
 
     public void deleteStateTransitionPending(Integer stateTransitionPendingId) {

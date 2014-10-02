@@ -55,8 +55,7 @@ public class EntityService {
             save(transientResource);
             persistentResource = transientResource;
         } else {
-            persistentResource = overwriteProperties(persistentResource, transientResource);
-            flush();
+            persistentResource = replace(persistentResource, transientResource);
         }
         return persistentResource;
     }

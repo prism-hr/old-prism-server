@@ -125,10 +125,6 @@ public class EntityDAO {
         return sessionFactory.getCurrentSession().merge(entity);
     }
 
-    public void evict(Object entity) {
-        sessionFactory.getCurrentSession().evict(entity);
-    }
-
     public <T> void deleteAll(Class<T> classReference) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete " + classReference.getSimpleName()) //

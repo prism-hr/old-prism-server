@@ -96,8 +96,11 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
 
         try {
             List unmarshalled = unmarshalEntities(importedEntityFeed);
-
-            if (unmarshalled != null) {
+            if (unmarshalled == null) {
+                LOGGER.info("Skipping the import from file: " + fileLocation);
+            } else {
+                LOGGER.info("Starting the import from file: " + fileLocation);
+                
                 Class<ImportedEntity> importedEntityClass = (Class<ImportedEntity>) importedEntityFeed.getImportedEntityType().getEntityClass();
 
                 Institution institution = importedEntityFeed.getInstitution();
@@ -114,8 +117,6 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
 
                 importedEntityService.setLastImportedTimestamp(importedEntityFeed);
                 // TODO: state change to institution ready to use.
-            } else {
-                LOGGER.info("Skipping the import from file: " + fileLocation);
             }
         } catch (Exception e) {
             throw new DataImportException("Error during the import of file: " + fileLocation, e);

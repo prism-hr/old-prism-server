@@ -43,7 +43,7 @@ import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 @Transactional
 public class StateService {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(StateService.class);
 
     @Autowired
     private StateDAO stateDAO;
@@ -335,16 +335,19 @@ public class StateService {
         return null;
     }
 
-    public synchronized <T extends Resource> void executeDeferredStateTransition(Class<T> resourceClass, Integer resourceId, PrismAction actionId)
+    public <T extends Resource> void executeDeferredStateTransition(Class<T> resourceClass, Integer resourceId, PrismAction actionId)
             throws DeduplicationException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Action action = actionService.getById(actionId);
 
-        logger.info("Calling " + action.getId() + " on " + resource.getCode());
+        LOGGER.info("Calling " + action.getId() + " on " + resource.getCode());
 
         Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action).withDeclinedResponse(false)
                 .withCreatedTimestamp(new DateTime());
         executeStateTransition(resource, action, comment);
+        
+        entityService.flush();
+        entityService.clear();
     }
 
     public void deleteStateTransitionPending(Integer stateTransitionPendingId) {
@@ -355,5 +358,5 @@ public class StateService {
     public List<PrismState> getStatesByStateGroup(PrismStateGroup stateGroupId) {
         return stateDAO.getStatesByStateGroup(stateGroupId);
     }
-    
+
 }

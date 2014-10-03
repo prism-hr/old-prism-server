@@ -345,8 +345,6 @@ public class StateService {
         Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action).withDeclinedResponse(false)
                 .withCreatedTimestamp(new DateTime());
         executeStateTransition(resource, action, comment);
-        
-        
     }
 
     public void deleteStateTransitionPending(Integer stateTransitionPendingId) {

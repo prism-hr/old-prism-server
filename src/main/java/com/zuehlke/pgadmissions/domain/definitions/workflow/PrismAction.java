@@ -168,7 +168,7 @@ public enum PrismAction {
     APPLICATION_CORRECT(PrismActionType.USER_INVOCATION, PrismActionCategory.PROCESS_RESOURCE, false, false, PrismScope.APPLICATION, null, null, null),
     APPLICATION_EMAIL_CREATOR(PrismActionType.USER_INVOCATION, PrismActionCategory.EMAIL_RESOURCE_CREATOR, false, false, PrismScope.APPLICATION, null, null, null),
     APPLICATION_ESCALATE(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.ESCALATE_RESOURCE, false, true, PrismScope.APPLICATION, null, null, null),
-    APPLICATION_EXPORT(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.ESCALATE_RESOURCE, false, false, PrismScope.APPLICATION, null, null, null),
+    APPLICATION_EXPORT(PrismActionType.SYSTEM_INVOCATION, PrismActionCategory.EXPORT_RESOURCE, false, false, PrismScope.APPLICATION, null, null, null),
     APPLICATION_MOVE_TO_DIFFERENT_STAGE(PrismActionType.USER_INVOCATION, PrismActionCategory.PROCESS_RESOURCE, false, true, PrismScope.APPLICATION, null,
             Arrays.asList(new PrismActionRedaction().withRole(PrismRole.APPLICATION_CREATOR).withRedactionType(PrismRedactionType.ALL_CONTENT),
                     new PrismActionRedaction().withRole(PrismRole.APPLICATION_REFEREE).withRedactionType(PrismRedactionType.ALL_CONTENT)),

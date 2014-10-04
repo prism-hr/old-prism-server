@@ -60,7 +60,6 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
 
     public void execute() throws DeduplicationException {
         institutionService.populateDefaultImportedEntityFeeds();
-
         for (ImportedEntityFeed importedEntityFeed : importedEntityService.getImportedEntityFeeds()) {
             String maxRedirects = null;
             if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")

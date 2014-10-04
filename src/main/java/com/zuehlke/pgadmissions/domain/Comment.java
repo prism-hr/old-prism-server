@@ -11,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -43,23 +44,23 @@ public class Comment {
     @GeneratedValue
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "system_id")
     private System system;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id")
     private Institution institution;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id")
     private Program program;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")
     private Application application;
 
@@ -174,17 +175,11 @@ public class Comment {
     @Column(name = "custom_question_response")
     private String customQuestionResponse;
 
-    @Column(name = "application_export_request")
-    private String exportRequest;
-
-    @Column(name = "application_export_response")
-    private String exportResponse;
-
-    @Column(name = "application_export_error")
-    private String exportError;
-
     @Column(name = "application_export_reference")
     private String exportReference;
+    
+    @Column(name = "application_export_exception")
+    private String exportException;
 
     @ManyToOne
     @JoinColumn(name = "parent_resource_transition_state_id")
@@ -525,36 +520,20 @@ public class Comment {
         this.customQuestionResponse = customQuestionResponse;
     }
 
-    public String getExportRequest() {
-        return exportRequest;
-    }
-
-    public void setExportRequest(String exportRequest) {
-        this.exportRequest = exportRequest;
-    }
-
-    public String getExportResponse() {
-        return exportResponse;
-    }
-
-    public void setExportResponse(String exportResponse) {
-        this.exportResponse = exportResponse;
-    }
-
-    public String getExportError() {
-        return exportError;
-    }
-
-    public void setExportError(String exportError) {
-        this.exportError = exportError;
-    }
-
     public String getExportReference() {
         return exportReference;
     }
 
     public void setExportReference(String exportReference) {
         this.exportReference = exportReference;
+    }
+    
+    public String getExportException() {
+        return exportException;
+    }
+
+    public void setExportException(String exportException) {
+        this.exportException = exportException;
     }
 
     public String getCreatorIpAddress() {
@@ -713,18 +692,13 @@ public class Comment {
         return this;
     }
 
-    public Comment withExportRequest(String exportRequest) {
-        this.exportRequest = exportRequest;
-        return this;
-    }
-
-    public Comment withExportResponse(String exportResponse) {
-        this.exportResponse = exportResponse;
-        return this;
-    }
-
     public Comment withExportReference(String exportReference) {
         this.exportReference = exportReference;
+        return this;
+    }
+    
+    public Comment withExportException(String exportException) {
+        this.exportException = exportException;
         return this;
     }
 
@@ -882,10 +856,6 @@ public class Comment {
         return this.transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_WITHDRAWN;
     }
 
-    public boolean isApplicationExportComment() {
-        return action.getId() == PrismAction.APPLICATION_EXPORT;
-    }
-
     public boolean isApplicationPurgeComment() {
         return action.getId() == PrismAction.APPLICATION_PURGE;
     }
@@ -900,9 +870,9 @@ public class Comment {
     }
 
     public boolean isTransitionComment() {
-        StateGroup previousStateGroup = state.getStateGroup();
-        StateGroup currentStateGroup = transitionState.getStateGroup();
-        return action.isTransitionAction() && (previousStateGroup.getId() != currentStateGroup.getId() || previousStateGroup.isRepeatable());
+        StateGroup stateGroup = state.getStateGroup();
+        StateGroup transitionStateGroup = transitionState.getStateGroup();
+        return action.isTransitionAction() && (stateGroup.getId() != transitionStateGroup.getId() || stateGroup.isRepeatable());
     }
 
     public String getApplicationRatingDisplay() {

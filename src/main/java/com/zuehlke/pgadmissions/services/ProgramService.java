@@ -175,16 +175,16 @@ public class ProgramService {
         return programDAO.getProgramsWithElapsedStudyOptions(baseline);
     }
 
-    public void updateProgramStudyOptions(Program program, LocalDate baseline) {
-        program = getById(program.getId());
-        List<ProgramStudyOption> elapsedOptions = programDAO.getElapsedStudyOptions(program, baseline);
+    public void updateProgramStudyOptions(Program transientProgram, LocalDate baseline) {
+        Program persistentProgram = getById(transientProgram.getId());
+        List<ProgramStudyOption> elapsedOptions = programDAO.getElapsedStudyOptions(persistentProgram, baseline);
 
         for (ProgramStudyOption elapsedOption : elapsedOptions) {
             elapsedOption.setEnabled(false);
         }
 
-        if (program.getStudyOptions().size() == elapsedOptions.size()) {
-            program.setDueDate(baseline);
+        if (persistentProgram.getStudyOptions().size() == elapsedOptions.size()) {
+            persistentProgram.setDueDate(baseline);
         }
     }
 }

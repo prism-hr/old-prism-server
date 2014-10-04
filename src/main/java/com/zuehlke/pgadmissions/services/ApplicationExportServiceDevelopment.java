@@ -5,29 +5,36 @@ import java.io.OutputStream;
 import java.util.HashMap;
 
 import org.apache.commons.io.IOUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Application;
 
+@Service
+@Transactional
 public class ApplicationExportServiceDevelopment extends ApplicationExportService {
 
     protected final HashMap<Application, ApplicationExportRequest> exportRequests = Maps.newHashMap();
 
     @Override
-    public void export(Application application) {
+    public void submitExportRequest(Integer applicationId) {
+        Application application = applicationService.getById(applicationId);
         OutputStream outputStream = null;
         try {
-            logger.info("Building data export request for application: " + application.getCode());
+            LOGGER.info("Building data export request for application: " + application.getCode());
             SubmitAdmissionsApplicationRequest dataExportRequest = buildDataExportRequest(application);
 
-            logger.info("Building document export request for application: " + application.getCode());
+            LOGGER.info("Building document export request for application: " + application.getCode());
             outputStream = buildDocumentExportRequest(application, application.getCode(), new ByteArrayOutputStream());
             ByteArrayOutputStream byteOutputStream = (ByteArrayOutputStream) outputStream; 
 
             ApplicationExportRequest exportRequest = new ApplicationExportRequest().withDataExportRequest(dataExportRequest). //
                     withDocumentExportRequest(byteOutputStream.toByteArray());
             exportRequests.put(application, exportRequest);
+            
+            executeExportAction(application, "TEST EXPORT", "TEST EXPORT USER ID", null);
         } catch (Exception e) {
             throw new Error(e);
         } finally {

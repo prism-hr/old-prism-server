@@ -203,12 +203,13 @@ public class NotificationService {
         entityService.deleteAll(NotificationTemplateVersion.class);
     }
 
-    public void sendRecommendationNotification(User user, LocalDate baseline) {
+    public void sendRecommendationNotification(User transientUser, LocalDate baseline) {
+        User persistentUser = userService.getById(transientUser.getId());
         System system = systemService.getSystem();
         NotificationTemplate template = getById(PrismNotificationTemplate.SYSTEM_RECOMMENDATION_NOTIFICATION);
-        String recommendations = advertService.getRecommendedAdvertsForEmail(user);
-        sendNotification(user, system, template, ImmutableMap.of("author", system.getUser().getDisplayName(), "recommendations", recommendations));
-        user.getUserAccount().setLastNotifiedDateRecommendation(baseline);
+        String recommendations = advertService.getRecommendedAdvertsForEmail(persistentUser);
+        sendNotification(persistentUser, system, template, ImmutableMap.of("author", system.getUser().getDisplayName(), "recommendations", recommendations));
+        persistentUser.getUserAccount().setLastNotifiedDateRecommendation(baseline);
     }
 
     private void sendIndividualRequestNotifications(Resource resource, User invoker, LocalDate baseline) {

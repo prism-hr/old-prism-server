@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 
 @Repository
@@ -100,6 +101,16 @@ public class ApplicationDAO {
                 .add(Restrictions.eq("application", application)) //
                 .add(Restrictions.eq("user", user)) //
                 .uniqueResult();
+    }
+    
+    public List<Integer> getApplicationsForExport() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("action.actionCategory", PrismActionCategory.EXPORT_RESOURCE)) //
+                .list();
     }
 
 }

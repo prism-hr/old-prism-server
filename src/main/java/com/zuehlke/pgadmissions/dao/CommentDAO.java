@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -75,13 +76,6 @@ public class CommentDAO {
                 .uniqueResult();
     }
 
-    public List<Comment> getComments(Resource resource) {
-        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
-                .addOrder(Order.desc("createdTimestamp")) //
-                .list();
-    }
-
     public List<Comment> getApplicationAssessmentComments(Application application) {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq("application", application)) //
@@ -153,12 +147,45 @@ public class CommentDAO {
                 .list();
     }
 
-    public <T extends Resource> List<Comment> getTransitionComments(Class<T> resourceClass, Integer resourceId, DateTime rangeStart, DateTime rangeClose) {
+    public <T extends Resource> List<Comment> getStateTransitionComments(Class<T> resourceClass, Integer resourceId, DateTime rangeStart, DateTime rangeClose) {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(PrismScope.getResourceScope(resourceClass).getLowerCaseName() + ".id", resourceId)) //
                 .add(Restrictions.between("createdTimestamp", rangeStart, rangeClose)) //
                 .add(Restrictions.eq("action.transitionAction", true)) //
+                .list();
+    }
+
+    public List<Comment> getStateGroupTransitionComments(Resource resource) {
+        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
+                .createAlias("transitionState", "transitionState", JoinType.INNER_JOIN) //
+                .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
+                .add(Restrictions.eq("action.transitionAction", true)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id")) //
+                        .add(Restrictions.eq("transitionStateGroup.repeatable", true))) //
+                .addOrder(Order.desc("createdTimestamp")) //
+                .addOrder(Order.desc("id")) //
+                .list();
+    }
+
+    public List<Comment> getStateComments(Resource resource, Comment start, Comment close) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
+                .add(Restrictions.ge("createdTimestamp", start.getCreatedTimestamp())) //
+                .add(Restrictions.ne("id", start.getId()));
+
+        if (close != null) {
+            criteria.add(Restrictions.le("createdTimestamp", close.getCreatedTimestamp())) //
+                    .add(Restrictions.ne("id", close.getId()));
+        }
+
+        return criteria.addOrder(Order.desc("createdTimestamp")) //
+                .addOrder(Order.desc("id")) //
                 .list();
     }
 

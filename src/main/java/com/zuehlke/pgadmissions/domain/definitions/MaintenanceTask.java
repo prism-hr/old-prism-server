@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.definitions;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.AbstractServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelperClosingDate;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelperExchangeRate;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.ApplicationExportServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperInstitution;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperSystem;
@@ -14,6 +15,7 @@ import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperPro
 
 public enum MaintenanceTask {
 
+    SYSTEM_EXPORT_APPLICATION(ApplicationExportServiceHelper.class, false),
     SYSTEM_EXECUTE_ESCALATED_STATE_TRANSITION(StateServiceHelperEscalation.class, false),
     SYSTEM_EXECUTE_PROPAGATED_STATE_TRANSITION(StateServiceHelperPropagation.class, false),
     SYSTEM_IMPORT_SYSTEM_REFERENCE_DATA(ImportedEntityServiceHelperSystem.class, true),

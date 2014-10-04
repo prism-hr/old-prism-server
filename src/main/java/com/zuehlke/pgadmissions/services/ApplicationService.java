@@ -256,10 +256,6 @@ public class ApplicationService {
             application.setCompletionDate(comment.getCreatedTimestamp().toLocalDate());
         }
         
-        if(comment.isApplicationExportComment()) {
-            applicationExportService.export(comment.getApplication());
-        }
-        
         if (comment.isApplicationPurgeComment()) {
             purgeApplication(application, comment);
         }
@@ -347,6 +343,10 @@ public class ApplicationService {
         if (currentUser.getId() == representation.getUser().getId()) {
             representation.setApplicationRatingAverage(null);
         }
+    }
+    
+    public List<Integer> getApplicationsForExport() {
+        return applicationDAO.getApplicationsForExport();
     }
 
     private void purgeApplication(Application application, Comment comment) {

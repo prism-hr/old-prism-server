@@ -92,8 +92,8 @@ public class GeocodableLocationService {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends GeocodableLocation> void setLocation(T location, LocationSearchResponseDTO response) {
-        location = (T) getById(location.getClass(), location.getId());
+    public <T extends GeocodableLocation> void setLocation(T transientLocation, LocationSearchResponseDTO response) {
+        T persistentLocation = (T) getById(transientLocation.getClass(), transientLocation.getId());
 
         Geometry geometry = response.getResults().get(0).getGeometry();
         Location gLocation = geometry.getLocation();
@@ -104,7 +104,7 @@ public class GeocodableLocationService {
                 .withLocationViewNeX(gViewportNe.getLat()).withLocationViewNeY(gViewportNe.getLng()).withLocationViewSwX(gViewportSw.getLat())
                 .withLocationViewSwY(gViewportSw.getLng());
 
-        location.setLocation(geographicLocation);
+        persistentLocation.setLocation(geographicLocation);
     }
 
     public void setFallbackLocation(InstitutionDomicileRegion region) {

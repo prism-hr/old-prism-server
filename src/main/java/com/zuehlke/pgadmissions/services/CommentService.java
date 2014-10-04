@@ -77,9 +77,17 @@ public class CommentService {
     }
 
     public List<Comment> getVisibleComments(Resource resource, User user) {
-        List<Comment> comments = Lists.newArrayList();
+        List<Comment> comments = Lists.newLinkedList();
         if (!actionService.getPermittedActions(resource, user).isEmpty()) {
-            comments = commentDAO.getComments(resource);
+            List<Comment> transitionComments = commentDAO.getStateGroupTransitionComments(resource);
+            int transitionCommentCount = transitionComments.size();
+            for (int i = 0; i < transitionCommentCount; i++) {
+                Comment start = transitionComments.get(i);
+                int nextCommentIndex = i + 1;
+                Comment close = nextCommentIndex == transitionCommentCount ? null : transitionComments.get(nextCommentIndex);
+                comments.addAll(commentDAO.getStateComments(resource, start, close));
+            }
+            
         }
         return comments;
     }
@@ -193,7 +201,7 @@ public class CommentService {
         return new OfferRepresentation();
     }
 
-    public void save(Comment comment) {
+    public void create(Comment comment) {
         Resource resource = comment.getResource();
         Action action = comment.getAction();
 
@@ -217,7 +225,7 @@ public class CommentService {
         comment.getAppointmentPreferences().addAll(persistentPreferences);
     }
 
-    public void updateComment(Integer commentId, CommentDTO commentDTO) {
+    public void update(Integer commentId, CommentDTO commentDTO) {
         Comment comment = getById(commentId);
         actionService.validateUpdateAction(comment);
 
@@ -232,7 +240,7 @@ public class CommentService {
     }
 
     public <T extends Resource> List<Comment> getTransitionComments(Class<T> resourceClass, Integer resourceId, DateTime rangeStart, DateTime rangeClose) {
-        return commentDAO.getTransitionComments(resourceClass, resourceId, rangeStart, rangeClose);
+        return commentDAO.getStateTransitionComments(resourceClass, resourceId, rangeStart, rangeClose);
     }
 
     public void recordStateTransition(Comment comment, State state, State transitionState) {

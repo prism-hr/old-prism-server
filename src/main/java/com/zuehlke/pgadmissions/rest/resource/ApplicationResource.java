@@ -208,7 +208,7 @@ public class ApplicationResource {
     public void updateComment(@PathVariable Integer applicationId, @PathVariable Integer commentId, @RequestBody CommentDTO commentDTO) {
         Comment comment = commentService.getById(commentId);
         Preconditions.checkArgument(comment.getApplication().getId().equals(applicationId));
-        commentService.updateComment(commentId, commentDTO);
+        commentService.update(commentId, commentDTO);
     }
 
     @InitBinder(value = "commentDTO")

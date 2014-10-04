@@ -51,7 +51,7 @@ import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 public class AdvertService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     private final HashMap<LocalDate, HashMap<String, BigDecimal>> exchangeRates = Maps.newHashMap();
 
     @Value("${integration.yahoo.exchange.rate.api.uri}")
@@ -65,13 +65,13 @@ public class AdvertService {
 
     @Autowired
     private AdvertDAO advertDAO;
-    
+
     @Autowired
     private EntityService entityService;
-    
+
     @Autowired
     private ResourceService resourceService;
-    
+
     @Autowired
     private InstitutionService institutionService;
 
@@ -80,7 +80,7 @@ public class AdvertService {
 
     @Autowired
     private GeocodableLocationService geocodableLocationService;
-    
+
     @Autowired
     private RestTemplate restTemplate;
 
@@ -121,13 +121,13 @@ public class AdvertService {
         return advertDAO.getAdvertsWithElapsedClosingDates(baseline);
     }
 
-    public void updateAdvertClosingDate(Advert advert, LocalDate baseline) {
-        advert = getById(advert.getId());
-        AdvertClosingDate nextClosingDate = advertDAO.getNextAdvertClosingDate(advert, baseline);
-        advert.setClosingDate(nextClosingDate);
+    public void updateAdvertClosingDate(Advert transientAdvert, LocalDate baseline) {
+        Advert persistentAdvert = getById(transientAdvert.getId());
+        AdvertClosingDate nextClosingDate = advertDAO.getNextAdvertClosingDate(persistentAdvert, baseline);
+        persistentAdvert.setClosingDate(nextClosingDate);
 
-        if (advert.isProjectAdvert() && nextClosingDate == null) {
-            advert.getProject().setDueDate(baseline);
+        if (persistentAdvert.isProjectAdvert() && nextClosingDate == null) {
+            persistentAdvert.getProject().setDueDate(baseline);
         }
     }
 
@@ -182,17 +182,17 @@ public class AdvertService {
         try {
             Resource resource = resourceService.getById(resourceClass, resourceId);
             Advert advert = (Advert) PropertyUtils.getSimpleProperty(resource, "advert");
-            
+
             Field[] properties = metadataDTO.getClass().getDeclaredFields();
             for (Field property : properties) {
                 String propertyName = property.getName();
                 List<Object> values = (List<Object>) PropertyUtils.getSimpleProperty(metadataDTO, propertyName);
-                
+
                 if (values != null) {
                     Set<Object> persistentMetadata = (Set<Object>) PropertyUtils.getSimpleProperty(advert, propertyName);
                     persistentMetadata.clear();
-                    
-                    boolean isTargetInstitutionsProperty = propertyName.equals("targetInstitution");  
+
+                    boolean isTargetInstitutionsProperty = propertyName.equals("targetInstitution");
                     for (Object value : values) {
                         value = isTargetInstitutionsProperty ? institutionService.getById((Integer) value) : value;
                         persistentMetadata.add(value);
@@ -203,21 +203,21 @@ public class AdvertService {
             throw new Error(e);
         }
     }
-    
-    public void updateCurrencyConversion(Advert advert) throws IOException, JAXBException, IllegalAccessException, InvocationTargetException,
+
+    public void updateCurrencyConversion(Advert transientAdvert) throws IOException, JAXBException, IllegalAccessException, InvocationTargetException,
             NoSuchMethodException {
+        Advert peristentAdvert = getById(transientAdvert.getId());
         LocalDate baseline = new LocalDate();
-        advert = getById(advert.getId());
 
-        if (advert.hasCovertedFee()) {
-            updateConvertedMonetaryValues(advert.getFee(), baseline);
+        if (peristentAdvert.hasCovertedFee()) {
+            updateConvertedMonetaryValues(peristentAdvert.getFee(), baseline);
         }
 
-        if (advert.hasConvertedPay()) {
-            updateConvertedMonetaryValues(advert.getPay(), baseline);
+        if (peristentAdvert.hasConvertedPay()) {
+            updateConvertedMonetaryValues(peristentAdvert.getPay(), baseline);
         }
 
-        advert.setLastCurrencyConversionDate(baseline);
+        peristentAdvert.setLastCurrencyConversionDate(baseline);
     }
 
     public List<Advert> getAdvertsWithElapsedCurrencyConversions(LocalDate baseline) {
@@ -225,7 +225,7 @@ public class AdvertService {
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline, activeProgramStates, activeProjectStates);
     }
-    
+
     private void updateFinancialDetails(FinancialDetails financialDetails, FinancialDetailsDTO financialDetailsDTO, String currencyAtLocale, LocalDate baseline)
             throws Exception {
         DurationUnit interval = financialDetailsDTO.getInterval();
@@ -259,7 +259,7 @@ public class AdvertService {
             setMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated, minimumGenerated,
                     maximumGenerated, "AtLocale");
         } else {
-            try { 
+            try {
                 BigDecimal rate = getExchangeRate(currencySpecified, currencyAtLocale, baseline);
                 setConvertedMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated,
                         minimumGenerated, maximumGenerated, rate);
@@ -268,7 +268,7 @@ public class AdvertService {
             }
         }
     }
-    
+
     private String getCurrencyAtLocale(Advert advert) {
         InstitutionAddress localeAddress = advert.getAddress();
         localeAddress = localeAddress == null ? advert.getInstitution().getAddress() : localeAddress;
@@ -305,18 +305,18 @@ public class AdvertService {
             IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         String currencySpecified = financialDetails.getCurrencySpecified();
         String currencyAtLocale = financialDetails.getCurrencyAtLocale();
-        
+
         try {
             BigDecimal rate = getExchangeRate(currencySpecified, currencyAtLocale, baseline);
-    
+
             BigDecimal minimumSpecified;
             BigDecimal maximumSpecified;
             BigDecimal minimumGenerated;
             BigDecimal maximumGenerated;
-    
+
             DurationUnit interval = financialDetails.getInterval();
             String intervalPrefixGenerated;
-    
+
             if (interval == DurationUnit.MONTH) {
                 minimumSpecified = financialDetails.getMonthMinimumSpecified();
                 maximumSpecified = financialDetails.getMonthMaximumSpecified();
@@ -330,7 +330,7 @@ public class AdvertService {
                 maximumGenerated = financialDetails.getMonthMaximumSpecified();
                 intervalPrefixGenerated = DurationUnit.MONTH.name().toLowerCase();
             }
-    
+
             setConvertedMonetaryValues(financialDetails, interval.name().toLowerCase(), minimumSpecified, maximumSpecified, intervalPrefixGenerated,
                     minimumGenerated, maximumGenerated, rate);
         } catch (Exception e) {
@@ -353,7 +353,7 @@ public class AdvertService {
 
         String query = URLEncoder.encode("select Rate from " + yahooExchangeRateApiTable + " where pair = \"" + pair + "\"", "UTF-8");
         URI request = new DefaultResourceLoader().getResource(
-                yahooExchangeRateApiUri + "?q=" + query + "&env=" + URLEncoder.encode(yahooExchangeRateApiSchema, "UTF-8") + "&format=json").getURI();       
+                yahooExchangeRateApiUri + "?q=" + query + "&env=" + URLEncoder.encode(yahooExchangeRateApiSchema, "UTF-8") + "&format=json").getURI();
         ExchangeRateLookupResponseDTO response = restTemplate.getForObject(request, ExchangeRateLookupResponseDTO.class);
 
         BigDecimal todaysRate = response.getQuery().getResults().getRate().getRate();
@@ -376,14 +376,14 @@ public class AdvertService {
             }
         }
     }
-    
+
     private void updateFee(LocalDate baseline, Advert advert, String currencyAtLocale, FinancialDetailsDTO feeDTO) throws Exception {
         if (advert.getFee() == null) {
             advert.setFee(new FinancialDetails());
         }
         updateFinancialDetails(advert.getFee(), feeDTO, currencyAtLocale, baseline);
     }
-    
+
     private void updatePay(LocalDate baseline, Advert advert, String currencyAtLocale, FinancialDetailsDTO payDTO) throws Exception {
         if (advert.getPay() == null) {
             advert.setPay(new FinancialDetails());

@@ -5,6 +5,9 @@ import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 import java.util.List;
 import java.util.Map;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.services.NotificationService;
 import org.apache.commons.lang.WordUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +76,9 @@ public class StaticDataResource {
     private InstitutionService institutionService;
 
     @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
     private Mapper dozerBeanMapper;
 
     private ToIdFunction toIdFunction = new ToIdFunction();
@@ -131,6 +137,13 @@ public class StaticDataResource {
             filters.add(new FilterRepresentation(filterProperty, filterProperty.getPermittedExpressions(), filterProperty.getPropertyType(), filterProperty.getPermittedScopes()));
         }
         staticData.put("filters", filters);
+
+        Map<PrismScope, List<PrismNotificationTemplate>> templatesMap = Maps.newHashMap();
+        for (PrismScope prismScope : PrismScope.values()) {
+            List<PrismNotificationTemplate> templates = notificationService.getAvailableTemplates(prismScope);
+            templatesMap.put(prismScope, templates);
+        }
+        staticData.put("notificationTemplates", templatesMap);
 
         return staticData;
     }

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -98,7 +99,7 @@ public class NotificationService {
     }
 
     public void deleteObseleteNotificationConfigurations() {
-        notificationDAO.deleteObseleteNotificationConfigurations(getWorkflowTemplates());
+        notificationDAO.deleteObsoleteNotificationConfigurations(getWorkflowTemplates());
     }
 
     public void sendWorkflowNotifications(Resource resource, Comment comment) {
@@ -312,6 +313,10 @@ public class NotificationService {
         model.put("time", new Date());
         model.put("host", host);
         return model;
+    }
+
+    public List<PrismNotificationTemplate> getAvailableTemplates(PrismScope scope){
+        return notificationDAO.getAvailableTemplates(scope);
     }
 
 }

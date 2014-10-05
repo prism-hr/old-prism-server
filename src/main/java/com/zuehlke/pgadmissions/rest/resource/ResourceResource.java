@@ -76,10 +76,10 @@ import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
-@RequestMapping(value = {"api/{resourceScope}"})
+@RequestMapping(value = {"api/{resourceScope:applications|projects|programs|institutions|systems}"})
 public class ResourceResource {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger logger = LoggerFactory.getLogger(ResourceResource.class);
 
     @Autowired
     private EntityService entityService;
@@ -177,7 +177,7 @@ public class ResourceResource {
                 representation.setActions(actionService.getPermittedActions(rowDTO.getSystemId(), rowDTO.getInstitutionId(), rowDTO.getProgramId(),
                         rowDTO.getProjectId(), rowDTO.getApplicationId(), rowDTO.getStateId(), currentUser));
                 representation.setId((Integer) PropertyUtils.getSimpleProperty(rowDTO, resourceScope.getLowerCaseName() + "Id"));
-                
+
                 resourceService.filterResourceListData(representation, currentUser);
 
                 representation.setRaisesUpdateFlag(rowDTO.getUpdatedTimestamp().isAfter(baseline));

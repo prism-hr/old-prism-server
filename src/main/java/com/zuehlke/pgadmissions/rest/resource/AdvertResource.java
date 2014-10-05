@@ -28,46 +28,27 @@ import com.zuehlke.pgadmissions.rest.representation.AdvertRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
 
-@RestController
+@RestController("api/{resourceScope:projects|programs}")
 public class AdvertResource {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     @Autowired
     private AdvertService advertService;
 
-    @Autowired
-    private Mapper dozerBeanMapper;
-
-    @RequestMapping(value = "/api/opportunities", method = RequestMethod.GET, produces = "application/json")
-    public List<AdvertRepresentation> getAdverts() {
-        List<Advert> adverts = advertService.getActiveAdverts();
-        List<AdvertRepresentation> representations = Lists.newArrayListWithExpectedSize(adverts.size());
-        for (Advert advert : adverts) {
-            AdvertRepresentation representation = dozerBeanMapper.map(advert, AdvertRepresentation.class);
-
-            Resource resource = advert.getProgram() != null ? advert.getProgram() : advert.getProject();
-            representation.setUser(dozerBeanMapper.map(resource.getUser(), UserRepresentation.class));
-            representation.setResourceScope(resource.getResourceScope());
-
-            representations.add(representation);
-        }
-        return representations;
-    }
-
-    @RequestMapping(value = "api/{resourceScope}/{resourceId}/advertDetails", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{resourceId}/advertDetails", method = RequestMethod.PUT)
     public void updateAdvertDetails(@ModelAttribute Class<? extends Resource> resourceClass, @PathVariable Integer resourceId,
             @Valid @RequestBody AdvertDetailsDTO advertDetailsDTO) throws Exception {
         advertService.saveAdvertDetails(resourceClass, resourceId, advertDetailsDTO);
     }
 
-    @RequestMapping(value = "api/{resourceScope}/{resourceId}/feesAndPayments", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{resourceId}/feesAndPayments", method = RequestMethod.PUT)
     public void updateFeesAndPayments(@ModelAttribute Class<? extends Resource> resourceClass, @PathVariable Integer resourceId,
             @Valid @RequestBody AdvertFeesAndPaymentsDTO feesAndPaymentsDTO) throws Exception {
         advertService.saveFeesAndPayments(resourceClass, resourceId, feesAndPaymentsDTO);
     }
-    
-    @RequestMapping(value = "api/{resourceScope}/{resourceId}/filterMetadata", method = RequestMethod.PUT)
+
+    @RequestMapping(value = "/{resourceId}/filterMetadata", method = RequestMethod.PUT)
     public void updateFilterMetadata(@ModelAttribute Class<? extends Resource> resourceClass, @PathVariable Integer resourceId,
             @Valid @RequestBody AdvertFilterMetadataDTO metadataDTO) throws Exception {
         advertService.saveFilterMetadata(resourceClass, resourceId, metadataDTO);

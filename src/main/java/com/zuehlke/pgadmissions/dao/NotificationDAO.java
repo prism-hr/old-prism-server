@@ -1,7 +1,11 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.List;
-
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -12,17 +16,7 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
-import com.zuehlke.pgadmissions.domain.NotificationTemplate;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.StateAction;
-import com.zuehlke.pgadmissions.domain.StateActionNotification;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
-import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -57,7 +51,7 @@ public class NotificationDAO {
                 .list();
     }
 
-    public void deleteObseleteNotificationConfigurations(List<NotificationTemplate> activeNotificationWorkflowTemplates) {
+    public void deleteObsoleteNotificationConfigurations(List<NotificationTemplate> activeNotificationWorkflowTemplates) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete NotificationConfiguration " //
                         + "where notificationTemplate not in (:configurableTemplates)") //
@@ -94,7 +88,7 @@ public class NotificationDAO {
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
-    
+
     public List<UserNotificationDefinitionDTO> getIndividualUpdateNotifications(Resource resource, State state, Action action, User invoker, LocalDate baseline) {
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
                 .setProjection(Projections.projectionList() //
@@ -127,7 +121,7 @@ public class NotificationDAO {
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
-    
+
     public List<UserNotificationDefinitionDTO> getIndividualRequestReminders(Resource resource, LocalDate baseline) {
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
                 .setProjection(Projections.projectionList() //
@@ -156,10 +150,10 @@ public class NotificationDAO {
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
-    
+
     public List<UserNotificationDefinitionDTO> getSyndicatedRequestNotifications(Resource resource, LocalDate baseline) {
         String lastNotifiedDateReference = "user.lastNotifiedDate" + resource.getClass().getSimpleName();
-        
+
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
@@ -188,10 +182,10 @@ public class NotificationDAO {
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
-    
+
     public List<UserNotificationDefinitionDTO> getSyndicatedUpdateNotifications(Resource resource, State state, Action action, User invoker, LocalDate baseline) {
         String lastNotifiedDateReference = "user.lastNotifiedDate" + resource.getClass().getSimpleName();
-        
+
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
@@ -224,7 +218,7 @@ public class NotificationDAO {
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
-    
+
     public List<User> getRecommendationNotifications(LocalDate baseline) {
         LocalDate lastSentBaseline = baseline.minusWeeks(1);
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(User.class) //
@@ -234,6 +228,16 @@ public class NotificationDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userAccount.lastNotifiedDateRecommendation")) //
                         .add(Restrictions.lt("userAccount.lastNotifiedDateRecommendation", lastSentBaseline))) //
+                .list();
+    }
+
+    public List<PrismNotificationTemplate> getAvailableTemplates(PrismScope scope) {
+        return (List<PrismNotificationTemplate>) sessionFactory.getCurrentSession().createCriteria(NotificationTemplate.class) //
+                .setProjection(Projections.property("id")) //
+                .createAlias("scope", "scope", JoinType.INNER_JOIN) //
+                .add(Restrictions.ge("scope.precedence", scope.getPrecedence())) //
+                .addOrder(Order.asc("scope.id")) //
+                .addOrder(Order.asc("id")) //
                 .list();
     }
 

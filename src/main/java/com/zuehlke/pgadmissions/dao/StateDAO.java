@@ -95,14 +95,6 @@ public class StateDAO {
                 .executeUpdate();
     }
 
-    public <T extends Resource> List<State> getDeprecatedStates(Class<T> resourceClass) {
-        return (List<State>) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
-                .setProjection(Projections.groupProperty("state")) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.isEmpty("state.stateActions")) //
-                .list();
-    }
-
     public List<State> getOrderedTransitionStates(State state, State... excludedTransitionStates) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("stateTransition.transitionState")) //

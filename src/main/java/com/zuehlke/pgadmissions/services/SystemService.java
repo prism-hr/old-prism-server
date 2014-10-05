@@ -30,7 +30,6 @@ import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.Scope;
@@ -353,8 +352,6 @@ public class SystemService {
         stateService.deleteObsoleteStateDurations();
         notificationService.deleteObseleteNotificationConfigurations();
         roleService.deleteInactiveRoles();
-
-        verifyBackwardResourceCompatibility();
     }
 
     private void initialiseStateActionAssignments(PrismStateAction prismStateAction, StateAction stateAction) {
@@ -430,17 +427,7 @@ public class SystemService {
                     + " which is required for backward compatibility by the workflow engine", e);
         }
     }
-
-    private void verifyBackwardResourceCompatibility() throws WorkflowConfigurationException {
-        for (PrismScope scopeId : scopeService.getScopesDescending()) {
-            Class<? extends Resource> resourceClass = scopeId.getResourceClass();
-            if (!stateService.getDeprecatedStates(resourceClass).isEmpty()) {
-                throw new WorkflowConfigurationException("You attempted to remove a state definition for resources of type " + scopeId.getLowerCaseName()
-                        + " which is required for backward compatibility by the workflow engine");
-            }
-        }
-    }
-
+    
     private String getFileContent(String filePath) {
         try {
             return Joiner.on(java.lang.System.lineSeparator()).join(Resources.readLines(Resources.getResource(filePath), Charsets.UTF_8));

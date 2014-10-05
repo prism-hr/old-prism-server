@@ -7,7 +7,7 @@
     <configuration>
         <custom-converters>
             <converter type="com.zuehlke.pgadmissions.rest.converter.ImportedEntityConverter">
-                <class-a>com.zuehlke.pgadmissions.domain.ImportedInstitution</class-a>
+                <class-a>com.zuehlke.pgadmissions.domain.ImportedEntity</class-a>
                 <class-b>java.lang.Integer</class-b>
             </converter>
             <converter type="com.zuehlke.pgadmissions.rest.converter.ProgramTypeConverter">

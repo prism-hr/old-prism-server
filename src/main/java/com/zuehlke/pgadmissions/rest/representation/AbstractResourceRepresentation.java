@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-
 import java.util.List;
 
 import org.joda.time.DateTime;

@@ -50,7 +50,7 @@ public class ImportedEntityDAO {
     }
     
     public <T extends ImportedEntity> List<T> getEnabledImportedEntities(Institution institution, Class<T> entityClass) {
-        return sessionFactory.getCurrentSession().createCriteria(entityClass)//
+        return sessionFactory.getCurrentSession().createCriteria(entityClass) //
                 .add(Restrictions.eq("institution", institution)) //
                 .add(Restrictions.eq("enabled", true)) //
                 .addOrder(Order.asc("name"))

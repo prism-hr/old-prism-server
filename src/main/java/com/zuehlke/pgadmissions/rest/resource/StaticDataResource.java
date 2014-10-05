@@ -150,8 +150,8 @@ public class StaticDataResource {
             simpleName = WordUtils.uncapitalize(simpleName);
             List<? extends ImportedEntity> entities = importedEntityService.getEnabledImportedEntities(institution, entityClass);
             List<ImportedEntityRepresentation> entityRepresentations = Lists.newArrayListWithCapacity(entities.size());
-            for (Object studyOption : entities) {
-                entityRepresentations.add(dozerBeanMapper.map(studyOption, ImportedEntityRepresentation.class));
+            for (Object entity : entities) {
+                entityRepresentations.add(dozerBeanMapper.map(entity, ImportedEntityRepresentation.class));
             }
             staticData.put(pluralize(simpleName), entityRepresentations);
         }

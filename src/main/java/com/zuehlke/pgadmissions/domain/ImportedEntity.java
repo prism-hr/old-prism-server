@@ -28,6 +28,11 @@ public abstract class ImportedEntity implements IUniqueEntity {
     public PrismImportedEntity getType() {
         return null;
     }
+    
+    @Override
+    public String toString() {
+        return getId().toString() + "-" + getCode() + "-" + getName();
+    }
 
     @Override
     public int hashCode() {

@@ -31,7 +31,6 @@ import org.hibernate.search.annotations.Store;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 
-import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 
 @AnalyzerDef(name = "importedEntityNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
@@ -114,23 +113,6 @@ public abstract class SimpleImportedEntity extends ImportedEntity {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
-    }
-
-    @Override
-    public String toString() {
-        return code + ": " + name;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final SimpleImportedEntity other = (SimpleImportedEntity) obj;
-        return Objects.equal(this.code, other.code) && Objects.equal(this.name, other.name) && Objects.equal(this.enabled, other.enabled);
     }
 
 }

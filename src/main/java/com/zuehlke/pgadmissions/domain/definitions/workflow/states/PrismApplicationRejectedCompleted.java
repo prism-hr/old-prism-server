@@ -88,7 +88,7 @@ public class PrismApplicationRejectedCompleted extends PrismWorkflowState {
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REJECTED_COMPLETED_PURGED) // 
-                        .withTransitionAction(PrismAction.APPLICATION_ESCALATE)))); //
+                        .withTransitionAction(PrismAction.APPLICATION_PURGE)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //

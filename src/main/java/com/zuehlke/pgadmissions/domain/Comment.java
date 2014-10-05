@@ -31,6 +31,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -870,9 +871,22 @@ public class Comment {
     }
 
     public boolean isTransitionComment() {
-        StateGroup stateGroup = state.getStateGroup();
-        StateGroup transitionStateGroup = transitionState.getStateGroup();
-        return action.isTransitionAction() && (stateGroup.getId() != transitionStateGroup.getId() || stateGroup.isRepeatable());
+        StateGroup stateGroup = state == null ? null : state.getStateGroup();
+        StateGroup transitionStateGroup = transitionState == null ? null : transitionState.getStateGroup();
+        if (action.isTransitionAction()) {
+            if (action.getActionType() == PrismActionType.USER_INVOCATION) {
+                return true;
+            } else if (stateGroup == null) {
+                return false;
+            } else if (stateGroup.isRepeatable()) {
+                return true;
+            } else if (transitionStateGroup == null) {
+                return false;
+            } else if (!stateGroup.getId().equals(transitionStateGroup.getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getApplicationRatingDisplay() {

@@ -125,10 +125,6 @@ public class StateService {
         stateDAO.deleteObseleteStateDurations(getConfigurableStates());
     }
 
-    public <T extends Resource> List<State> getDeprecatedStates(Class<T> resourceClass) {
-        return stateDAO.getDeprecatedStates(resourceClass);
-    }
-
     public List<StateAction> getStateActions() {
         return entityService.list(StateAction.class);
     }

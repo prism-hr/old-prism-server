@@ -26,6 +26,8 @@ public class CommentRepresentation {
     private String delegateRole;
 
     private PrismAction action;
+    
+    private boolean transitionComment;
 
     private Boolean declinedResponse;
 
@@ -147,6 +149,14 @@ public class CommentRepresentation {
 
     public void setAction(PrismAction action) {
         this.action = action;
+    }
+
+    public final boolean isTransitionComment() {
+        return transitionComment;
+    }
+
+    public final void setTransitionComment(boolean transitionComment) {
+        this.transitionComment = transitionComment;
     }
 
     public Boolean getDeclinedResponse() {

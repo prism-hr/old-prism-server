@@ -128,7 +128,9 @@ public class ResourceResource {
         List<Comment> comments = commentService.getVisibleComments(resource, currentUser);
         representation.setComments(Lists.<CommentRepresentation>newArrayListWithExpectedSize(comments.size()));
         for (Comment comment : comments) {
-            representation.getComments().add(dozerBeanMapper.map(comment, CommentRepresentation.class));
+            CommentRepresentation commentRepresentation = dozerBeanMapper.map(comment, CommentRepresentation.class);
+            commentRepresentation.setTransitionComment(comment.isTransitionComment());
+            representation.getComments().add(commentRepresentation);
         }
 
         // set list of available actions

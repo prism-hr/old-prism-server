@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
@@ -19,6 +20,8 @@ public abstract class Resource implements IUniqueEntity {
     public abstract String getCode();
     
     public abstract void setCode(String code);
+    
+    public abstract PrismLocale getLocale();
 
     public abstract System getSystem();
 

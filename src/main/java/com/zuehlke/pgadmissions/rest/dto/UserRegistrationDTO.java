@@ -6,6 +6,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+
 public class UserRegistrationDTO {
 
     @NotEmpty
@@ -17,6 +19,9 @@ public class UserRegistrationDTO {
     @NotEmpty
     @Email
     private String email;
+    
+    @NotEmpty
+    private PrismLocale locale;
 
     private String activationCode;
 
@@ -51,6 +56,14 @@ public class UserRegistrationDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public final PrismLocale getLocale() {
+        return locale;
+    }
+
+    public final void setLocale(PrismLocale locale) {
+        this.locale = locale;
     }
 
     public String getActivationCode() {
@@ -100,6 +113,11 @@ public class UserRegistrationDTO {
         return this;
     }
 
+    public UserRegistrationDTO withLocale(PrismLocale locale) {
+        this.locale = locale;
+        return this;
+    }
+    
     public UserRegistrationDTO withActivationCode(final String activationCode) {
         this.activationCode = activationCode;
         return this;

@@ -76,9 +76,9 @@ public class ProgramService {
         Institution institution = entityService.getById(Institution.class, programDTO.getInstitution());
         ProgramType programType = importedEntityService.getImportedEntityByCode(ProgramType.class, institution, programDTO.getProgramType().name());
 
-        Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withTitle(title).withInstitution(institution)
-                .withProgramType(programType).withRequireProjectDefinition(programDTO.getRequireProjectDefinition()).withImported(false).withAdvert(advert)
-                .withDueDate(programDTO.getDueDate());
+        Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withTitle(title).withLocale(programDTO.getLocale())
+                .withInstitution(institution).withProgramType(programType).withRequireProjectDefinition(programDTO.getRequireProjectDefinition())
+                .withImported(false).withAdvert(advert).withDueDate(programDTO.getDueDate());
 
         // TODO: study options
         return program;
@@ -112,7 +112,6 @@ public class ProgramService {
     }
 
     public void update(Integer programId, ProgramDTO programDTO) {
-        String title = programDTO.getTitle();
         Program program = entityService.getById(Program.class, programId);
         Advert advert = program.getAdvert();
 
@@ -123,8 +122,11 @@ public class ProgramService {
         program.setRequireProjectDefinition(programDTO.getRequireProjectDefinition());
 
         if (!program.getImported()) {
+            String title = programDTO.getTitle();
+            
             program.setProgramType(programType);
             program.setTitle(title);
+            program.setLocale(programDTO.getLocale());
 
             programDAO.deleteProgramStudyOptionInstances(program);
             programDAO.deleteProgramStudyOptions(program);

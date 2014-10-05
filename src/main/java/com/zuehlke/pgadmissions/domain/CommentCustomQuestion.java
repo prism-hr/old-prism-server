@@ -17,7 +17,7 @@ import com.google.common.collect.Sets;
 @Entity
 @Table(name = "COMMENT_CUSTOM_QUESTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "action_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "action_id" }), @UniqueConstraint(columnNames = { "program_id", "action_id" }) })
-public class CommentCustomQuestion extends WorkflowResourceConfiguration {
+public class CommentCustomQuestion extends WorkflowResource {
 
     @Id
     private Integer id;

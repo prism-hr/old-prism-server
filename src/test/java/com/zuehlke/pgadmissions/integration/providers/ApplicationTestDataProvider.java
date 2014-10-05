@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.QualificationType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.TestObjectProvider;
@@ -155,7 +156,7 @@ public class ApplicationTestDataProvider {
     private void createReferees(Application application) throws Exception {
         for (int i = 0; i < 3; i++) {
             ApplicationReferee referee = new ApplicationReferee();
-            referee.setUser(userService.getOrCreateUser("Jakis", "Polecacz", "polecacz" + UUID.randomUUID().toString() + "@email.com"));
+            referee.setUser(userService.getOrCreateUser("Jakis", "Polecacz", "polecacz" + UUID.randomUUID().toString() + "@email.com", PrismLocale.EN_GB));
             referee.setJobEmployer("Kozacka firma");
             referee.setJobTitle("Szef wszystkich szefow");
             Address address = new Address();

@@ -43,6 +43,7 @@ import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
@@ -68,6 +69,9 @@ public class SystemService {
 
     @Value("${system.name}")
     private String systemName;
+
+    @Value("${system.locale}")
+    private String systemLocale;
 
     @Value("${system.user.firstName}")
     private String systemUserFirstName;
@@ -261,11 +265,12 @@ public class SystemService {
     }
 
     private System initialiseSystemResource() throws DeduplicationException {
-        User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail);
+        PrismLocale locale = PrismLocale.valueOf(systemLocale);
+        User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail, locale);
         State systemRunning = stateService.getById(PrismState.SYSTEM_RUNNING);
         DateTime startupTimestamp = new DateTime();
-        System transientSystem = new System().withTitle(systemName).withUser(systemUser).withState(systemRunning).withCreatedTimestamp(startupTimestamp)
-                .withUpdatedTimestamp(startupTimestamp);
+        System transientSystem = new System().withTitle(systemName).withLocale(locale).withUser(systemUser).withState(systemRunning)
+                .withCreatedTimestamp(startupTimestamp).withUpdatedTimestamp(startupTimestamp);
         System system = entityService.createOrUpdate(transientSystem);
         system.setCode(resourceService.generateResourceCode(system));
         return system;
@@ -303,8 +308,8 @@ public class SystemService {
 
         for (NotificationTemplate template : createdTemplates.keySet()) {
             template.setReminderTemplate(notificationService.getById(PrismNotificationTemplate.getReminderTemplate(template.getId())));
-            NotificationConfiguration transientConfiguration = new NotificationConfiguration().withSystem(system).withNotificationTemplate(template)
-                    .withNotificationTemplateVersion(createdTemplates.get(template))
+            NotificationConfiguration transientConfiguration = new NotificationConfiguration().withSystem(system).withLocale(system.getLocale())
+                    .withNotificationTemplate(template).withNotificationTemplateVersion(createdTemplates.get(template))
                     .withReminderInterval(PrismNotificationTemplate.getReminderInterval(template.getId()));
             entityService.createOrUpdate(transientConfiguration);
         }
@@ -427,7 +432,7 @@ public class SystemService {
                     + " which is required for backward compatibility by the workflow engine", e);
         }
     }
-    
+
     private String getFileContent(String filePath) {
         try {
             return Joiner.on(java.lang.System.lineSeparator()).join(Resources.readLines(Resources.getResource(filePath), Charsets.UTF_8));

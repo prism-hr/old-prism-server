@@ -26,6 +26,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 
@@ -169,6 +170,11 @@ public class Project extends ParentResource {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+    
+    @Override
+    public PrismLocale getLocale() {
+        return program.getLocale();
     }
 
     @Override

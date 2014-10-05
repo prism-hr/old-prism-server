@@ -40,7 +40,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.Title;
-import com.zuehlke.pgadmissions.domain.WorkflowResource;
+import com.zuehlke.pgadmissions.domain.WorkflowDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
@@ -206,9 +206,9 @@ public class StaticDataResource {
         }
     }
 
-    private static class ToIdFunction implements Function<WorkflowResource, Object> {
+    private static class ToIdFunction implements Function<WorkflowDefinition, Object> {
         @Override
-        public Object apply(WorkflowResource input) {
+        public Object apply(WorkflowDefinition input) {
             return input.getId();
         }
     }

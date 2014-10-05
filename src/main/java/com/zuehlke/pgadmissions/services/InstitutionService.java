@@ -60,7 +60,7 @@ public class InstitutionService {
 
     @Autowired
     private GeocodableLocationService geocodableLocationService;
-    
+
     @Autowired
     private SocialPresenceService socialPresenceService;
 
@@ -100,10 +100,10 @@ public class InstitutionService {
         InstitutionDomicile institutionCountry = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
 
         Institution institution = new Institution().withSystem(systemService.getSystem()).withDomicile(institutionCountry).withAddress(address)
-                .withTitle(institutionDTO.getTitle()).withSummary(institutionDTO.getSummary()).withHomepage(institutionDTO.getHomepage())
-                .withDefaultProgramType(institutionDTO.getDefaultProgramType()).withDefaultStudyOption(institutionDTO.getDefaultStudyOption())
-                .withGoogleId(institutionDTO.getGoogleIdentifier()).withLinkedinUri(institutionDTO.getLinkedinIdentifier())
-                .withCurrency(institutionDTO.getCurrency()).withUser(user);
+                .withTitle(institutionDTO.getTitle()).withLocale(institutionDTO.getLocale()).withSummary(institutionDTO.getSummary())
+                .withHomepage(institutionDTO.getHomepage()).withDefaultProgramType(institutionDTO.getDefaultProgramType())
+                .withDefaultStudyOption(institutionDTO.getDefaultStudyOption()).withGoogleId(institutionDTO.getGoogleIdentifier())
+                .withLinkedinUri(institutionDTO.getLinkedinIdentifier()).withCurrency(institutionDTO.getCurrency()).withUser(user);
 
         setLogoDocument(institution, institutionDTO, PrismAction.SYSTEM_CREATE_INSTITUTION);
         return institution;
@@ -119,6 +119,7 @@ public class InstitutionService {
 
         institution.setDomicile(domicile);
         institution.setTitle(institutionDTO.getTitle());
+        institution.setLocale(institutionDTO.getLocale());
         institution.setSummary(institutionDTO.getSummary());
         institution.setDescription(institutionDTO.getDescription());
 

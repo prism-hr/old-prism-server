@@ -102,13 +102,14 @@ public class ApplicationSectionService {
         }
         for (ApplicationSupervisorDTO supervisorDTO : programDetailDTO.getSupervisors()) {
             User user = userService.getOrCreateUser(supervisorDTO.getUser().getFirstName(), supervisorDTO.getUser().getLastName(), supervisorDTO.getUser()
-                    .getEmail());
+                    .getEmail(), application.getLocale());
             ApplicationSupervisor supervisor = new ApplicationSupervisor().withAware(supervisorDTO.getAcceptedSupervision()).withUser(user);
             application.getSupervisors().add(supervisor);
         }
     }
 
-    public ApplicationSupervisor saveSupervisor(Integer applicationId, Integer supervisorId, ApplicationSupervisorDTO supervisorDTO) throws DeduplicationException {
+    public ApplicationSupervisor saveSupervisor(Integer applicationId, Integer supervisorId, ApplicationSupervisorDTO supervisorDTO)
+            throws DeduplicationException {
         Application application = entityService.getById(Application.class, applicationId);
 
         ApplicationSupervisor supervisor;
@@ -120,7 +121,7 @@ public class ApplicationSectionService {
         }
 
         UserDTO userDTO = supervisorDTO.getUser();
-        User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
+        User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), application.getLocale());
         supervisor.setUser(user);
 
         supervisor.setAcceptedSupervision(supervisorDTO.getAcceptedSupervision());
@@ -129,7 +130,8 @@ public class ApplicationSectionService {
 
     public void deleteSupervisor(Integer applicationId, Integer supervisorId) {
         Application application = entityService.getById(Application.class, applicationId);
-        ApplicationSupervisor supervisor = entityService.getByProperties(ApplicationSupervisor.class, ImmutableMap.of("application", application, "id", supervisorId));
+        ApplicationSupervisor supervisor = entityService.getByProperties(ApplicationSupervisor.class,
+                ImmutableMap.of("application", application, "id", supervisorId));
         application.getSupervisors().remove(supervisor);
     }
 
@@ -156,7 +158,7 @@ public class ApplicationSectionService {
         Gender gender = importedEntityService.getById(Gender.class, institution, personalDetailDTO.getGender());
         Country country = importedEntityService.getById(Country.class, institution, personalDetailDTO.getCountry());
         Language firstNationality = importedEntityService.getById(Language.class, institution, personalDetailDTO.getFirstNationality());
-        Language secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.<Language>getById(Language.class, institution,
+        Language secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.<Language> getById(Language.class, institution,
                 personalDetailDTO.getSecondNationality()) : null;
         Domicile residenceCountry = importedEntityService.getById(Domicile.class, institution, personalDetailDTO.getResidenceCountry());
         Ethnicity ethnicity = importedEntityService.getById(Ethnicity.class, institution, personalDetailDTO.getEthnicity());
@@ -277,7 +279,7 @@ public class ApplicationSectionService {
     }
 
     public ApplicationEmploymentPosition saveEmploymentPosition(Integer applicationId, Integer employmentPositionId,
-                                                                ApplicationEmploymentPositionDTO employmentPositionDTO) {
+            ApplicationEmploymentPositionDTO employmentPositionDTO) {
         Application application = entityService.getById(Application.class, applicationId);
 
         ApplicationEmploymentPosition employmentPosition;
@@ -356,7 +358,7 @@ public class ApplicationSectionService {
         }
 
         UserDTO userDTO = refereeDTO.getUser();
-        User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
+        User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), application.getLocale());
         referee.setUser(user);
 
         referee.setJobEmployer(refereeDTO.getJobEmployer());

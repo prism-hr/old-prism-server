@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition
 @Entity
 @Table(name = "STATE_TRANSITION_EVALUATION")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class StateTransitionEvaluation extends WorkflowResource {
+public class StateTransitionEvaluation extends WorkflowDefinition {
 
     @Id
     @Column(name = "id")

@@ -85,7 +85,7 @@ public class ApplicationService {
 
     @Autowired
     private CommentService commentService;
-    
+
     @Autowired
     private ApplicationExportService applicationExportService;
 
@@ -255,7 +255,7 @@ public class ApplicationService {
         if (comment.isApplicationCompletionComment()) {
             application.setCompletionDate(comment.getCreatedTimestamp().toLocalDate());
         }
-        
+
         if (comment.isApplicationPurgeComment()) {
             purgeApplication(application, comment);
         }
@@ -278,14 +278,14 @@ public class ApplicationService {
         Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withDelegateUser(delegateUser).withAction(action)
                 .withTransitionState(transitionState).withCreatedTimestamp(new DateTime())
                 .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withQualified(commentDTO.getQualified())
-                .withCompetentInWorkLanguage(commentDTO.getCompetentInWorkLanguage())
-                .withInterviewDateTime(commentDTO.getInterviewDateTime()).withInterviewTimeZone(commentDTO.getInterviewTimeZone())
-                .withInterviewDuration(commentDTO.getInterviewDuration()).withInterviewerInstructions(commentDTO.getInterviewerInstructions())
-                .withIntervieweeInstructions(commentDTO.getIntervieweeInstructions()).withInterviewLocation(commentDTO.getInterviewLocation())
-                .withSuitableForInstitution(commentDTO.getSuitableForInstitution()).withSuitableForOpportunity(commentDTO.getSuitableForOpportunity())
-                .withDesireToInterview(commentDTO.getDesireToInterview()).withDesireToRecruit(commentDTO.getDesireToRecruit())
-                .withPositionTitle(commentDTO.getPositionTitle()).withPositionDescription(commentDTO.getPositionDescription())
-                .withPositionProvisionalStartDate(positionProvisionalStartDate).withAppointmentConditions(commentDTO.getAppointmentConditions());
+                .withCompetentInWorkLanguage(commentDTO.getCompetentInWorkLanguage()).withInterviewDateTime(commentDTO.getInterviewDateTime())
+                .withInterviewTimeZone(commentDTO.getInterviewTimeZone()).withInterviewDuration(commentDTO.getInterviewDuration())
+                .withInterviewerInstructions(commentDTO.getInterviewerInstructions()).withIntervieweeInstructions(commentDTO.getIntervieweeInstructions())
+                .withInterviewLocation(commentDTO.getInterviewLocation()).withSuitableForInstitution(commentDTO.getSuitableForInstitution())
+                .withSuitableForOpportunity(commentDTO.getSuitableForOpportunity()).withDesireToInterview(commentDTO.getDesireToInterview())
+                .withDesireToRecruit(commentDTO.getDesireToRecruit()).withPositionTitle(commentDTO.getPositionTitle())
+                .withPositionDescription(commentDTO.getPositionDescription()).withPositionProvisionalStartDate(positionProvisionalStartDate)
+                .withAppointmentConditions(commentDTO.getAppointmentConditions());
 
         if (commentDTO.getResidenceState() != null) {
             ResidenceState residenceState = entityService.getById(ResidenceState.class, commentDTO.getResidenceState());
@@ -330,7 +330,8 @@ public class ApplicationService {
             for (CommentAssignedUserDTO assignedUserDTO : commentDTO.getAssignedUsers()) {
                 UserDTO commentUserDTO = assignedUserDTO.getUser();
 
-                User commentUser = userService.getOrCreateUser(commentUserDTO.getFirstName(), commentUserDTO.getLastName(), commentUserDTO.getEmail());
+                User commentUser = userService.getOrCreateUser(commentUserDTO.getFirstName(), commentUserDTO.getLastName(), commentUserDTO.getEmail(),
+                        application.getLocale());
                 assignedUsers.add(new CommentAssignedUser().withUser(commentUser).withRole(entityService.getById(Role.class, assignedUserDTO.getRole())));
             }
         }
@@ -338,13 +339,13 @@ public class ApplicationService {
         comment.getAssignedUsers().addAll(assignedUsers);
         return actionService.executeUserAction(application, action, comment);
     }
-    
+
     public void filterResourceListData(ResourceListRowRepresentation representation, User currentUser) {
         if (currentUser.getId() == representation.getUser().getId()) {
             representation.setApplicationRatingAverage(null);
         }
     }
-    
+
     public List<Integer> getApplicationsForExport() {
         return applicationDAO.getApplicationsForExport();
     }

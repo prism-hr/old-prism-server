@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTyp
 
 @Entity
 @Table(name = "NOTIFICATION_TEMPLATE")
-public class NotificationTemplate extends WorkflowResource {
+public class NotificationTemplate extends WorkflowDefinition {
 
     @Id
     @Column(name = "id")

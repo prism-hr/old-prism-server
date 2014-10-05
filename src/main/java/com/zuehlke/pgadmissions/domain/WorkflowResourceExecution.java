@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 
-public abstract class WorkflowResourceExecution extends WorkflowResourceConfiguration {
+public abstract class WorkflowResourceExecution extends WorkflowResource {
 
     public abstract Project getProject();
     

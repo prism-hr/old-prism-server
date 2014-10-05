@@ -37,43 +37,15 @@ public class StateDuration extends WorkflowResourceConfiguration {
     @Column(name = "day_duration", nullable = false)
     private Integer duration;
     
+    @Column(name = "locked", nullable = false)
+    private Boolean locked;
+    
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
-    }
-
-    public Integer getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Integer duration) {
-        this.duration = duration;
-    }
-
-    public StateDuration withSystem(System system) {
-        this.system = system;
-        return this;
-    }
-    
-    public StateDuration withState(State state) {
-        this.state = state;
-        return this;
-    }
-    
-    public StateDuration withDuration(Integer duration) {
-        this.duration = duration;
-        return this;
     }
     
     @Override
@@ -104,6 +76,52 @@ public class StateDuration extends WorkflowResourceConfiguration {
     @Override
     public void setProgram(Program program) {
         this.program = program;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+    
+    @Override
+    public final Boolean getLocked() {
+        return locked;
+    }
+
+    @Override
+    public final void setLocked(Boolean locked) {
+        this.locked = locked;
+    }
+
+    public StateDuration withSystem(System system) {
+        this.system = system;
+        return this;
+    }
+    
+    public StateDuration withState(State state) {
+        this.state = state;
+        return this;
+    }
+    
+    public StateDuration withDuration(Integer duration) {
+        this.duration = duration;
+        return this;
+    }
+    
+    public StateDuration withLocked(Boolean locked) {
+        this.locked = locked;
+        return this;
     }
     
     @Override

@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -68,7 +69,7 @@ public class UserService {
 
     @Autowired
     private SystemService systemService;
-    
+
     @Autowired
     private SocialPresenceService socialPresenceService;
 
@@ -91,9 +92,10 @@ public class UserService {
                 .withLastName(user.getLastName()).withEmail(user.getEmail());
     }
 
-    public User getOrCreateUser(String firstName, String lastName, String email) throws DeduplicationException {
+    public User getOrCreateUser(String firstName, String lastName, String email, PrismLocale locale) throws DeduplicationException {
         User user;
-        User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email);
+        User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email)
+                .withLocale(locale);
         User duplicateUser = entityService.getDuplicateEntity(transientUser);
         if (duplicateUser == null) {
             user = transientUser;
@@ -108,7 +110,7 @@ public class UserService {
 
     public User registerUser(UserRegistrationDTO registrationDTO, String referrer) throws DeduplicationException, InterruptedException, IOException,
             JAXBException {
-        User user = getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail());
+        User user = getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail(), registrationDTO.getLocale());
         if ((registrationDTO.getActivationCode() != null && !user.getActivationCode().equals(registrationDTO.getActivationCode()))
                 || user.getUserAccount() != null) {
             throw new ResourceNotFoundException();
@@ -125,7 +127,7 @@ public class UserService {
 
     public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource, Set<PrismRole> roles)
             throws DeduplicationException {
-        User user = getOrCreateUser(firstName, lastName, email);
+        User user = getOrCreateUser(firstName, lastName, email, resource.getLocale());
         for (PrismRole role : roles) {
             roleService.updateUserRole(resource, user, role, PrismRoleTransitionType.CREATE);
         }
@@ -241,7 +243,7 @@ public class UserService {
     public List<Integer> getMatchingUsers(String searchTerm) {
         return userDAO.getMatchingUsers(searchTerm);
     }
-    
+
     public SocialPresenceRepresentation getSocialProfiles(String firstName, String lastName) throws IOException {
         return socialPresenceService.getPotentialUserProfiles(firstName, lastName);
     }

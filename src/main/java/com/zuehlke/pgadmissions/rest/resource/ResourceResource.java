@@ -76,7 +76,7 @@ import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
-@RequestMapping(value = {"api/{resourceScope}"})
+@RequestMapping(value = { "api/{resourceScope}" })
 public class ResourceResource {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -126,7 +126,7 @@ public class ResourceResource {
 
         // set visible comments
         List<Comment> comments = commentService.getVisibleComments(resource, currentUser);
-        representation.setComments(Lists.<CommentRepresentation>newArrayListWithExpectedSize(comments.size()));
+        representation.setComments(Lists.<CommentRepresentation> newArrayListWithExpectedSize(comments.size()));
         for (Comment comment : comments) {
             CommentRepresentation commentRepresentation = dozerBeanMapper.map(comment, CommentRepresentation.class);
             commentRepresentation.setTransitionComment(comment.isTransitionComment());
@@ -155,13 +155,13 @@ public class ResourceResource {
             userRolesRepresentations.add(new ResourceUserRolesRepresentation(userRepresentation, roles));
         }
         representation.setUsers(userRolesRepresentations);
-        MethodUtils.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", new Object[]{resource, representation});
+        MethodUtils.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", new Object[] { resource, representation });
         return representation;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
-                                                            @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws IllegalAccessException,
+            @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws IllegalAccessException,
             NoSuchMethodException, InvocationTargetException, IOException {
         ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
@@ -177,7 +177,7 @@ public class ResourceResource {
                 representation.setActions(actionService.getPermittedActions(rowDTO.getSystemId(), rowDTO.getInstitutionId(), rowDTO.getProgramId(),
                         rowDTO.getProjectId(), rowDTO.getApplicationId(), rowDTO.getStateId(), currentUser));
                 representation.setId((Integer) PropertyUtils.getSimpleProperty(rowDTO, resourceScope.getLowerCaseName() + "Id"));
-                
+
                 resourceService.filterResourceListData(representation, currentUser);
 
                 representation.setRaisesUpdateFlag(rowDTO.getUpdatedTimestamp().isAfter(baseline));
@@ -191,7 +191,8 @@ public class ResourceResource {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ActionOutcomeRepresentation createResource(@RequestBody ActionDTO actionDTO, @RequestHeader(value = "referer", required = false) String referrer) throws WorkflowEngineException {
+    public ActionOutcomeRepresentation createResource(@RequestBody ActionDTO actionDTO, @RequestHeader(value = "referer", required = false) String referrer)
+            throws WorkflowEngineException {
         if (actionDTO.getActionId().getActionCategory() != PrismActionCategory.CREATE_RESOURCE) {
             throw new Error(actionDTO.getActionId().name() + " is not a creation action.");
         }
@@ -211,7 +212,7 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)
     public void addUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                            @RequestBody Map<String, PrismRole> body) throws WorkflowEngineException {
+            @RequestBody Map<String, PrismRole> body) throws WorkflowEngineException {
         PrismRole role = body.get("role");
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
@@ -226,7 +227,8 @@ public class ResourceResource {
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles/{role}", method = RequestMethod.DELETE)
-    public void deleteUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable PrismRole role, @ModelAttribute ResourceDescriptor resourceDescriptor) throws WorkflowEngineException {
+    public void deleteUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable PrismRole role,
+            @ModelAttribute ResourceDescriptor resourceDescriptor) throws WorkflowEngineException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
 
@@ -241,12 +243,13 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     public UserRepresentation addUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                                      @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws WorkflowEngineException {
+            @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws WorkflowEngineException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         UserRepresentation newUser = userRolesRepresentation.getUser();
 
         try {
-            User user = userService.getOrCreateUserWithRoles(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource, userRolesRepresentation.getRoles());
+            User user = userService.getOrCreateUserWithRoles(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource,
+                    userRolesRepresentation.getRoles());
             return dozerBeanMapper.map(user, UserRepresentation.class);
             // TODO: return validation error if workflow engine exception is thrown.
         } catch (DeduplicationException e) {
@@ -256,7 +259,8 @@ public class ResourceResource {
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}", method = RequestMethod.DELETE)
-    public void removeUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor) throws WorkflowEngineException {
+    public void removeUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor)
+            throws WorkflowEngineException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
 

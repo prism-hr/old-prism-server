@@ -56,7 +56,8 @@ public class IT5AssignInstitutionUsers {
 
         Program program = programService.getProgramByImportedCode(null, "RRDCOMSING01");
 
-        User user = userService.getOrCreateUserWithRoles("Jozef", "Oleksy", "jozef@oleksy.pl", program, Sets.newHashSet(PrismRole.PROGRAM_VIEWER, PrismRole.PROGRAM_APPROVER));
+        User user = userService.getOrCreateUserWithRoles("Jozef", "Oleksy", "jozef@oleksy.pl", program,
+                Sets.newHashSet(PrismRole.PROGRAM_VIEWER, PrismRole.PROGRAM_APPROVER));
 
         assertTrue(roleService.hasUserRole(program, user, PrismRole.PROGRAM_VIEWER));
         assertTrue(roleService.hasUserRole(program, user, PrismRole.PROGRAM_APPROVER));

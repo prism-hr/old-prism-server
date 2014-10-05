@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 @Entity
 @Table(name = "SCOPE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Scope extends WorkflowResource {
+public class Scope extends WorkflowDefinition {
 
     @Id
     @Column(name = "id", nullable = false)

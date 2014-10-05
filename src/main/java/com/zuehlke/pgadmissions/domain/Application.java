@@ -27,6 +27,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
@@ -211,6 +212,11 @@ public class Application extends Resource {
     @Override
     public void setUser(User user) {
         this.user = user;
+    }
+    
+    @Override
+    public PrismLocale getLocale() {
+        return program.getLocale();
     }
 
     @Override

@@ -19,6 +19,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 
 @Entity
 @Table(name = "SYSTEM")
@@ -38,6 +39,9 @@ public class System extends Resource {
 
     @Column(name = "title", nullable = false, unique = true)
     private String title;
+    
+    @Column(name = "locale", nullable = false)
+    private PrismLocale locale;
 
     @Column(name = "last_data_import_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -112,6 +116,15 @@ public class System extends Resource {
         this.title = title;
     }
 
+    @Override
+    public final PrismLocale getLocale() {
+        return locale;
+    }
+
+    public final void setLocale(PrismLocale locale) {
+        this.locale = locale;
+    }
+
     public final LocalDate getLastDataImportDate() {
         return lastDataImportDate;
     }
@@ -134,6 +147,11 @@ public class System extends Resource {
 
     public System withTitle(String title) {
         this.title = title;
+        return this;
+    }
+    
+    public System withLocale(PrismLocale locale) {
+        this.locale = locale;
         return this;
     }
 

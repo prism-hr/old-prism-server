@@ -198,7 +198,7 @@ public class ApplicationResource {
         try {
             ActionOutcomeDTO actionOutcome = applicationService.performAction(applicationId, commentDTO);
             return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
-        } catch (Exception e) {
+        } catch (DeduplicationException e) {
             logger.error("Unable to perform action: " + commentDTO.getAction().name() + " on application: " + applicationId.toString(), e);
             throw new ResourceNotFoundException();
         }

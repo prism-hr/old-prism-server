@@ -1,24 +1,23 @@
 package com.zuehlke.pgadmissions.rest.validation.validator.comment;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.stereotype.Component;
-import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldResolution;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
-import com.zuehlke.pgadmissions.rest.validation.validator.AbstractValidator;
 import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
+import org.springframework.validation.Validator;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 @Component
-public class CommentDTOValidator extends AbstractValidator {
+public class CommentDTOValidator extends LocalValidatorFactoryBean implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -26,8 +25,8 @@ public class CommentDTOValidator extends AbstractValidator {
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
-    public void addExtraValidation(Object target, Errors errors) {
+    public void validate(Object target, Errors errors, Object... validationHints) {
+        super.validate(target, errors, validationHints);
         CommentDTO comment = (CommentDTO) target;
         PrismAction action = comment.getAction();
 

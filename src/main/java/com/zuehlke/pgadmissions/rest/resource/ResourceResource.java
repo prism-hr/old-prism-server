@@ -8,6 +8,8 @@ import java.util.Set;
 
 import javax.validation.Valid;
 
+import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
+import com.zuehlke.pgadmissions.rest.RestApiUtils;
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.dozer.Mapper;
@@ -76,7 +78,7 @@ import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
-@RequestMapping(value = {"api/{resourceScope:applications|projects|programs|institutions|systems}"})
+@RequestMapping("api/{resourceScope:applications|projects|programs|institutions|systems}")
 public class ResourceResource {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceResource.class);
@@ -327,47 +329,7 @@ public class ResourceResource {
 
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
-        if ("applications".equals(resourceScope)) {
-            return new ResourceDescriptor(Application.class, ApplicationExtendedRepresentation.class, PrismScope.APPLICATION);
-        } else if ("projects".equals(resourceScope)) {
-            return new ResourceDescriptor(Project.class, ProjectExtendedRepresentation.class, PrismScope.PROJECT);
-        } else if ("programs".equals(resourceScope)) {
-            return new ResourceDescriptor(Program.class, ProgramExtendedRepresentation.class, PrismScope.PROGRAM);
-        } else if ("institutions".equals(resourceScope)) {
-            return new ResourceDescriptor(Institution.class, InstitutionExtendedRepresentation.class, PrismScope.INSTITUTION);
-        } else if ("systems".equals(resourceScope)) {
-            return new ResourceDescriptor(com.zuehlke.pgadmissions.domain.System.class, SystemExtendedRepresentation.class, PrismScope.SYSTEM);
-        }
-        logger.error("Unknown resource scope " + resourceScope);
-        throw new ResourceNotFoundException();
-    }
-
-    private static class ResourceDescriptor {
-
-        private Class<? extends Resource> type;
-
-        private Class<? extends AbstractResourceRepresentation> representationType;
-
-        private PrismScope resourceScope;
-
-        private ResourceDescriptor(Class<? extends Resource> type, Class<? extends AbstractResourceRepresentation> representationType, PrismScope resourceScope) {
-            this.type = type;
-            this.representationType = representationType;
-            this.resourceScope = resourceScope;
-        }
-
-        public Class<? extends Resource> getType() {
-            return type;
-        }
-
-        public Class<? extends AbstractResourceRepresentation> getRepresentationType() {
-            return representationType;
-        }
-
-        public PrismScope getResourceScope() {
-            return resourceScope;
-        }
-
+        return RestApiUtils.getResourceDescriptor(resourceScope);
     }
 
 }

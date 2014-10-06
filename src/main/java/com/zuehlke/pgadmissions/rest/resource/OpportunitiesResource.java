@@ -21,7 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@RestController("/api/opportunities")
+@RestController
+@RequestMapping("/api/opportunities")
 public class OpportunitiesResource {
 
     @Autowired

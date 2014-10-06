@@ -56,7 +56,7 @@
           class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
         <property name="objectMapper" ref="jacksonObjectMapper"/>
     </bean>
-    
+
     <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
     	<property name="messageConverters">
     		<list>
